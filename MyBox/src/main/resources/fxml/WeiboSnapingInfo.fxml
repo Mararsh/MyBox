@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <!--
 Author:     Mara
 License:    Apache License Version 2.0
             http://www.apache.org/licenses/LICENSE-2.0
 -->
+
 <?import javafx.scene.text.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox fx:id="thisPane" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="730.0" prefWidth="850.0" spacing="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.WeiboSnapingInfoController">
+<VBox fx:id="thisPane" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="850.0" spacing="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.WeiboSnapingInfoController">
     <children>
         <ProgressIndicator fx:id="progressIndicator" prefWidth="524.0">
             <VBox.margin>

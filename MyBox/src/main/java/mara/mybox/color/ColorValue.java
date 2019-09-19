@@ -24,13 +24,13 @@ public class ColorValue {
 
     public ColorValue(String colorSpace, String conditions, double[] values) {
         this.colorSpace = colorSpace;
-        d1 = DoubleTools.scale(values[0], 8);
-        d2 = DoubleTools.scale(values[1], 8);
-        d3 = DoubleTools.scale(values[2], 8);
-        this.values = (int) d1 + "  " + (int) d2 + "  " + (int) d3;
+        d1 = DoubleTools.scale(values[0], 2);
+        d2 = DoubleTools.scale(values[1], 2);
+        d3 = DoubleTools.scale(values[2], 2);
+        this.values = d1 + "  " + d2 + "  " + d3;
         if (values.length == 4) {
-            d4 = DoubleTools.scale(values[3], 8);
-            this.values += "  " + (int) d4;
+            d4 = DoubleTools.scale(values[3], 2);
+            this.values += "  " + d4;
         }
         this.conditions = conditions;
     }

@@ -14,12 +14,10 @@ import java.util.TimeZone;
  */
 public class CommonValues {
 
-    public static final String AppVersion = "5.4";
-    public static final String AppVersionDate = "2019-09-15";
+    public static final String AppVersion = "5.5";
+    public static final String AppVersionDate = "2019-09-19";
     public static final String AppDocVersion = "5.0";
 
-    public static final String OldAppDataRoot = System.getProperty("user.home");
-    public static final String DefaultDataRoot = System.getProperty("user.dir");
     public static final String AppDerbyUser = "mara";
     public static final String AppDerbyPassword = "mybox";
 
@@ -48,6 +46,7 @@ public class CommonValues {
     public static final String PdfConvertImagesBatchFxml = "/fxml/PdfConvertImagesBatch.fxml";
     public static final String PdfCompressImagesBatchFxml = "/fxml/PdfCompressImagesBatch.fxml";
     public static final String PdfInformationFxml = "/fxml/PdfInformation.fxml";
+    public static final String PdfOCRBatchFxml = "/fxml/PdfOCRBatch.fxml";
     public static final String ImagesCombinePdfFxml = "/fxml/ImagesCombinePdf.fxml";
     public static final String PdfMergeFxml = "/fxml/PdfMerge.fxml";
     public static final String PdfSplitBatchFxml = "/fxml/PdfSplitBatch.fxml";
@@ -100,6 +99,8 @@ public class CommonValues {
     public static final String ImageStatisticFxml = "/fxml/ImageStatistic.fxml";
     public static final String ImageAlphaExtractBatchFxml = "/fxml/ImageAlphaExtractBatch.fxml";
     public static final String ImageAlphaAddBatchFxml = "/fxml/ImageAlphaAddBatch.fxml";
+    public static final String ImageOCRFxml = "/fxml/ImageOCR.fxml";
+    public static final String ImageOCRBatchFxml = "/fxml/ImageOCRBatch.fxml";
     public static final String PixelsCalculatorFxml = "/fxml/PixelsCalculator.fxml";
     public static final String ConvolutionKernelManagerFxml = "/fxml/ConvolutionKernelManager.fxml";
     public static final String ColorPaletteFxml = "/fxml/ColorPalette.fxml";

@@ -204,6 +204,14 @@ public class MyBoxController extends BaseController {
             }
         });
 
+        MenuItem pdfOcrBatch = new MenuItem(AppVariables.message("PdfOCRBatch"));
+        pdfOcrBatch.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.PdfOCRBatchFxml);
+            }
+        });
+
         MenuItem pdfConvertHtmlsBatch = new MenuItem(AppVariables.message("PdfConvertHtmlsBatch"));
         pdfConvertHtmlsBatch.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -246,14 +254,24 @@ public class MyBoxController extends BaseController {
 
         popMenu = new ContextMenu();
         popMenu.setAutoHide(true);
-        popMenu.getItems().addAll(
-                pdfHtmlViewer, pdfView, new SeparatorMenuItem(),
-                pdfConvertHtmlsBatch, pdfConvertImagesBatch, new SeparatorMenuItem(),
-                pdfExtractImagesBatch, pdfExtractTextsBatch, new SeparatorMenuItem(),
-                PdfSplitBatch, pdfMerge, pdfCompressImagesBatch, imagesCombinePdf, new SeparatorMenuItem(),
-                PDFAttributes, PDFAttributesBatch
-        );
-
+        String os = System.getProperty("os.name").toLowerCase();
+        if (os.contains("windows")) {
+            popMenu.getItems().addAll(
+                    pdfHtmlViewer, pdfView, new SeparatorMenuItem(),
+                    pdfConvertHtmlsBatch, pdfConvertImagesBatch, pdfOcrBatch, new SeparatorMenuItem(),
+                    pdfExtractImagesBatch, pdfExtractTextsBatch, new SeparatorMenuItem(),
+                    PdfSplitBatch, pdfMerge, pdfCompressImagesBatch, imagesCombinePdf, new SeparatorMenuItem(),
+                    PDFAttributes, PDFAttributesBatch
+            );
+        } else {
+            popMenu.getItems().addAll(
+                    pdfHtmlViewer, pdfView, new SeparatorMenuItem(),
+                    pdfConvertHtmlsBatch, pdfConvertImagesBatch, new SeparatorMenuItem(),
+                    pdfExtractImagesBatch, pdfExtractTextsBatch, new SeparatorMenuItem(),
+                    PdfSplitBatch, pdfMerge, pdfCompressImagesBatch, imagesCombinePdf, new SeparatorMenuItem(),
+                    PDFAttributes, PDFAttributesBatch
+            );
+        }
         showMenu(pdfBox, event);
 
         view.setImage(new Image("img/PdfTools.png"));
@@ -307,6 +325,22 @@ public class MyBoxController extends BaseController {
             }
         });
 
+        MenuItem imageOCR = new MenuItem(AppVariables.message("ImageOCR"));
+        imageOCR.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.ImageOCRFxml);
+            }
+        });
+
+        MenuItem imageOCRBatch = new MenuItem(AppVariables.message("ImageOCRBatch"));
+        imageOCRBatch.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.ImageOCRBatchFxml);
+            }
+        });
+
         MenuItem convolutionKernelManager = new MenuItem(AppVariables.message("ConvolutionKernelManager"));
         convolutionKernelManager.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -339,13 +373,24 @@ public class MyBoxController extends BaseController {
 
         popMenu = new ContextMenu();
         popMenu.setAutoHide(true);
-        popMenu.getItems().addAll(
-                imageViewer, imagesBrowser, new SeparatorMenuItem(),
-                ImageManufacture, manufactureBatchMenu, new SeparatorMenuItem(),
-                imageConverterBatch, new SeparatorMenuItem(),
-                framesMenu, mergeMenu, partMenu, new SeparatorMenuItem(),
-                //                imageStatistic, new SeparatorMenuItem(),
-                convolutionKernelManager, pixelsCalculator, colorPalette, csMenu);
+        String os = System.getProperty("os.name").toLowerCase();
+        if (os.contains("windows")) {
+            popMenu.getItems().addAll(
+                    imageViewer, imagesBrowser, new SeparatorMenuItem(),
+                    ImageManufacture, manufactureBatchMenu, new SeparatorMenuItem(),
+                    imageConverterBatch, imageOCR, imageOCRBatch, new SeparatorMenuItem(),
+                    framesMenu, mergeMenu, partMenu, new SeparatorMenuItem(),
+                    //                imageStatistic, new SeparatorMenuItem(),
+                    convolutionKernelManager, pixelsCalculator, colorPalette, csMenu);
+        } else {
+            popMenu.getItems().addAll(
+                    imageViewer, imagesBrowser, new SeparatorMenuItem(),
+                    ImageManufacture, manufactureBatchMenu, new SeparatorMenuItem(),
+                    imageConverterBatch, new SeparatorMenuItem(),
+                    framesMenu, mergeMenu, partMenu, new SeparatorMenuItem(),
+                    //                imageStatistic, new SeparatorMenuItem(),
+                    convolutionKernelManager, pixelsCalculator, colorPalette, csMenu);
+        }
 
         showMenu(imageBox, event);
 
@@ -925,7 +970,7 @@ public class MyBoxController extends BaseController {
     private void showAboutImage(MouseEvent event) {
         hideMenu(event);
 
-        view.setImage(new Image("img/About54.png"));
+        view.setImage(new Image("img/About55.png"));
         text.setText(message("AboutImageTips"));
         locateImage(aboutBox, false);
     }

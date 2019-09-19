@@ -29,7 +29,7 @@ public class PdfExtractImagesBatchController extends PdfBatchController {
     public int handleCurrentPage() {
         int index = 0;
         try {
-            PDPage page = doc.getPage(currentParameters.currentPage - 1);
+            PDPage page = doc.getPage(currentParameters.currentPage - 1);  // 0-based
             PDResources pdResources = page.getResources();
             Iterable<COSName> iterable = pdResources.getXObjectNames();
             if (iterable != null) {

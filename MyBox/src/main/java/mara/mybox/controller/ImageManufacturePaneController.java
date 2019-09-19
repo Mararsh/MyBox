@@ -567,7 +567,7 @@ public class ImageManufacturePaneController extends ImageMaskController {
     public void initOutlineBox() {
         try {
             List<Image> prePixList = Arrays.asList(
-                    new Image("img/About.png"), new Image("img/buttefly1.png"), new Image("img/mybox.png"),
+                    new Image("img/About.png"), new Image("img/buttefly1.png"), new Image("img/MyBox.png"),
                     new Image("img/RecentAccess.png"), new Image("img/FileTools.png"), new Image("img/ImageTools.png"),
                     new Image("img/PdfTools.png"), new Image("img/MediaTools.png"), new Image("img/NetworkTools.png"),
                     new Image("img/bee1.png"), new Image("img/flower1.png"), new Image("img/flower2.png"),

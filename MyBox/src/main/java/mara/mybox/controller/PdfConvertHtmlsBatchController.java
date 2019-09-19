@@ -212,7 +212,7 @@ public class PdfConvertHtmlsBatchController extends PdfBatchController {
                     break;
             }
             PDFDomTree parser = new PDFDomTree(domConfig);
-            parser.setStartPage(start);
+            parser.setStartPage(start);                                       // 1-based
             parser.setEndPage(end);
             try (Writer output = new PrintWriter(htmlFile, "utf-8")) {
                 parser.writeText(doc, output);

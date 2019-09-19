@@ -70,7 +70,7 @@ public class PdfExtractTextsBatchController extends PdfBatchController {
     public int handleCurrentPage() {
         int len = 0;
         try {
-            stripper.setStartPage(currentParameters.currentPage);
+            stripper.setStartPage(currentParameters.currentPage);  // 1-based
             stripper.setEndPage(currentParameters.currentPage);
             String text = stripper.getText(doc);
             if (text != null && !text.trim().isEmpty()) {

@@ -274,7 +274,7 @@ public class WeiboSnapRunController extends BaseController {
 
                                         @Override
                                         public void run() {
-                                            AppVariables.setUserConfigValue("WeiboPassportChecked", "true");
+                                            AppVariables.setUserConfigValue("WeiboPassportChecked", true);
                                             if (done) {
                                                 this.cancel();
                                             } else {

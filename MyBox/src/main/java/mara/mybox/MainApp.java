@@ -24,7 +24,6 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -99,32 +98,40 @@ public class MainApp extends Application {
     }
 
     public boolean initPaths(Stage stage) {
-        return initPaths(stage, AppVariables.MyBoxDataRoot);
+        return initPaths(stage, AppVariables.MyboxDataPath);
     }
 
-    public static boolean initRootPath(Stage stage, String rootPath) {
+    public static boolean initRootPath(Stage stage, String dataPathName) {
         try {
             if (stage == null) {
                 return false;
             }
-            if (rootPath == null) {
-                rootPath = CommonValues.DefaultDataRoot;
+            if (dataPathName == null) {
+                dataPathName = MyBox.defaultDataPath();
             }
-            File myboxPath = new File(rootPath + File.separator + "mybox");
-            File dbPath = new File(rootPath + File.separator + "mybox" + File.separator + "mybox_derby");
-            if (!myboxPath.exists() || !dbPath.exists()) {
+            File dataPath = new File(dataPathName);
+            if (!dataPath.exists()) {
+                if (!dataPath.mkdirs()) {
+                    FxmlStage.alertError(stage,
+                            MessageFormat.format(AppVariables.message(Locale.getDefault().getLanguage().toLowerCase(),
+                                    "UserPathFail"), dataPathName));
+                    return false;
+                }
+            }
+            File dbPath = new File(dataPathName + File.separator + "mybox_derby");
+            if (!dbPath.exists()) {
                 File oldPath;
-                if (rootPath.equals(CommonValues.DefaultDataRoot)) {
-                    oldPath = new File(CommonValues.OldAppDataRoot + File.separator + "mybox");
+                if (dataPathName.equals(MyBox.defaultDataPath())) {
+                    oldPath = new File(System.getProperty("user.home") + File.separator + "mybox");
                 } else {
-                    oldPath = new File(CommonValues.DefaultDataRoot + File.separator + "mybox");
+                    oldPath = new File(MyBox.defaultDataPath() + File.separator + "mybox");
                     if (!oldPath.exists()) {
-                        oldPath = new File(CommonValues.OldAppDataRoot + File.separator + "mybox");
+                        oldPath = new File(System.getProperty("user.home") + File.separator + "mybox");
                     }
                 }
-                if (oldPath.exists()) {
-                    logger.info("Copy app data from orginal path " + oldPath + " to new path " + myboxPath + " ...");
-                    if (FileTools.copyWholeDirectory(oldPath, myboxPath, null, false)) {
+                if (oldPath.exists() && !oldPath.equals(dataPath)) {
+                    logger.info("Copy app data from orginal path " + oldPath + " to new path " + dataPathName + " ...");
+                    if (FileTools.copyWholeDirectory(oldPath, dataPath, null, false)) {
                         File lckFile = new File(dbPath.getAbsolutePath() + File.separator + "db.lck");
                         if (lckFile.exists()) {
                             try {
@@ -133,25 +140,21 @@ public class MainApp extends Application {
                                 logger.error(e.toString());
                             }
                         }
-                    } else {
-                        if (!myboxPath.mkdirs()) {
-                            FxmlStage.alertError(stage,
-                                    MessageFormat.format(AppVariables.message(Locale.getDefault().getLanguage().toLowerCase(),
-                                            "UserPathFail"), myboxPath));
-                            return false;
-                        }
-                    }
-                } else {
-                    if (!myboxPath.exists() && !myboxPath.mkdirs()) {
-                        FxmlStage.alertError(stage,
-                                MessageFormat.format(AppVariables.message(Locale.getDefault().getLanguage().toLowerCase(),
-                                        "UserPathFail"), myboxPath));
-                        return false;
                     }
                 }
             }
-            AppVariables.MyBoxDataRoot = rootPath;
-            ConfigTools.writeConfigValue("MyBoxDataRoot", rootPath);
+            AppVariables.MyboxDataPath = dataPathName;
+            ConfigTools.writeConfigValue("MyBoxDataPath", dataPathName);
+
+            String oldPath = ConfigTools.readConfigValue("MyBoxOldDataPath");
+            if (oldPath != null) {
+                if (oldPath.equals(MyBox.defaultDataPath())) {
+                    FileTools.deleteDirExcept(new File(oldPath), ConfigTools.configFile());
+                } else {
+                    FileTools.deleteDir(new File(oldPath));
+                }
+                ConfigTools.writeConfigValue("MyBoxOldDataPath", null);
+            }
             return true;
         } catch (Exception e) {
             logger.error(e.toString());
@@ -163,16 +166,6 @@ public class MainApp extends Application {
         try {
             if (!initRootPath(stage, rootPath)) {
                 return false;
-            }
-            AppVariables.MyboxDataPath = rootPath + File.separator + "mybox";
-            File dataPath = new File(AppVariables.MyboxDataPath);
-            if (!dataPath.exists()) {
-                if (!dataPath.mkdirs()) {
-                    FxmlStage.alertError(stage,
-                            MessageFormat.format(AppVariables.message(Locale.getDefault().getLanguage().toLowerCase(),
-                                    "UserPathFail"), dataPath));
-                    return false;
-                }
             }
             AppVariables.MyBoxTempPath = new File(AppVariables.MyboxDataPath + File.separator + "AppTemp");
             if (AppVariables.MyBoxTempPath.exists()) {
@@ -191,7 +184,7 @@ public class MainApp extends Application {
             }
 
             AppVariables.MyBoxDerbyPath = new File(AppVariables.MyboxDataPath + File.separator + "mybox_derby");
-            AppVariables.MyBoxDataPaths = new ArrayList<File>() {
+            AppVariables.MyBoxReservePaths = new ArrayList<File>() {
                 {
                     add(AppVariables.MyBoxTempPath);
                     add(AppVariables.MyBoxDerbyPath);

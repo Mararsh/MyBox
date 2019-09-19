@@ -3,61 +3,34 @@
 # MyBox: Set of Easy Tools
 This is GUI program based on JavaFx to provide simple and easy functions. It's free and open sources
 
-## Download
+## Download and Execution
 Packages of each version have been uploaded at [Releases](https://github.com/Mararsh/MyBox/releases?) directory now. You can find them by clicking `releases` tab in main page of this project. 
 
-Following are latest release:
+### Self-contain packages 
+Self-contain packages include all files and need not java env and installation.    
+| Platform | Link | Size | Requirements |    
+| - | - | -  | -  |     
+| win | [MyBox-5.5-win.zip](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-win.zip) | 208MB | None |    
+| linux | [MyBox-5.5-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-linux.tar.gz)  | 163MB | None  |       
+| mac | [MyBox-5.5-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-mac.dmg)  | 164MB | None  |    
 
+User can double click the launcher to start MyBox or run it by command line. The default "Open Method" of image/text/PDF files can be associated to MyBox and a file can be opened directly by MyBox by double clicking the file's name.
+
+(Please unpack it under path with pure-English name.)   
+
+### Jar 
+When JRE or JDK 12 or higher(`Oracle jdk` or `open jdk`) is installed, jar can run:      
 | Platform | Link | Size | Requirements |
 | - | - | -  | -  |
-| win | [MyBox-5.4-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v5.4/MyBox-5.4-exe.zip) | 249MB | None |
-| win | [MyBox-5.4-win.jar](https://github.com/Mararsh/MyBox/releases/download/v5.4/MyBox-5.4-jar-win.zip)  | 64MB | Java 12 or higher |
-| linux | [MyBox-5.4-linux.jar](https://github.com/Mararsh/MyBox/releases/download/v5.4/MyBox-5.4-jar-linux.zip)  | 68MB | Java 12 or higher |
-| mac | [MyBox-5.4-mac.jar](https://github.com/Mararsh/MyBox/releases/download/v5.4/MyBox-5.4-jar-mac.zip)  | 64MB | Java 12 or higher |
-| win/linux/mac | [MyBox-5.4-jar-cross-platform.zip](https://github.com/Mararsh/MyBox/releases/download/v5.4/MyBox-5.4-jar-cross-platform.zip)  | 120MB | Java 12 or higher |
-
-EXE package is avaliable for users who have not java env. It need not installation and users can run the EXE directly after unpack it. (Please unpack it under path with pure-English name.)
-
-Since Java is installed by default in Linux env and Mac env, the installation images are not made for the 2 platfroms. User can download jar file if JRE or JDK 12 or higher(`Oracle jdk` or `open jdk`) is installed.    
-Each platform has its jar, and there is cross-platform jar whose size is larger. 
-
-## Execution
-
-### Launch
-Double click "MyBox.exe" to launch MyBox on Windows. The default "Open Method" of image/text/PDF files can be associated to MyBox.exe and a file can be opened directly by MyBox by double clicking the file's name.
-
-Run following command to launch this program with Jar package: (Please upgrade to Java 12 or higher)   
-<PRE><CODE>     java   -jar   MyBox-5.4.jar</CODE></PRE>
+| win | [MyBox-5.5-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-win-jar.zip)  | 92MB | Java 12 or higher |
+| linux | [MyBox-5.5-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-linux-jar.zip)  | 96MB | Java 12 or higher |
+| mac | [MyBox-5.5-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-mac-jar.zip)  | 93MB | Java 12 or higher |
+    
+Run following command to launch this program with Jar package: 
+<PRE><CODE>     java   -jar   MyBox-5.5.jar</CODE></PRE>
 	
 A file path can follow the command as argument to be opened directly by MyBox. Example, following command will open the image:    
-<PRE><CODE>     java   -jar   MyBox-5.4.jar   /tmp/a1.jpg</CODE></PRE>
-	
-### Installation Path, Execution Path, Data Path
-The directory holding files of MyBox.exe or MyBox-xxx.jar is called "Installation Path"(Although no installtion is need). The directory under which MyBox is started is called "Execution Path". The path where MyBox read/write values and files is called "Data Path".    
-Example, MyBox-5.4.jar is copied under path A, and is started under path B, while MyBox data path can be assigned as any path C.  
-
-### Initialize MyBox
-Example, unpack package of MyBox.exe under path "D:\tmp\MyBox", double click "MyBox.exe", and MyBox is started internally under "app", so the Execution Path is "D:\tmp\MyBox\app".   
-MyBox checks path "D:\tmp\MyBox\app", and does not find file "MyBox.ini", then it starts to initialize this instance automatically:      
-1. Make "D:\tmp\MyBox\app" as the default data root path, and create subdirectory "mybox" under it.   
-2. If directory "mybox" is found under current user's root, which is the data path of MyBox previous versions, then copy all contents of this path to "D:\tmp\MyBox\app\mybox".   
-3. Create file "MyBox.ini" under "D:\tmp\MyBox\app" and write following line to record the location of data path of current MyBox instance:  
-<PRE><CODE>     MyBoxDataRoot=D\:\\tmp\\MyBox\\app </CODE></PRE>
-
-User can edit file "MyBox.ini" to change data path, and copy files under previous path to new path manually.    
-User can also change data path by Setting function of MyBox and the tool will copy old data automatically.     
-
-Another example, copy "MyBox-5.4.jar" under path "d:\tmp\1", and start it from path "d:\tmp\2", then Execution Path is "d:\tmp\2" and MyBox data will be initialized under this path.   
-By this way, MyBox can be executed with different data paths and the instances do not interfere each other. 
-
-### Configuration File
-Under Execution Path, the configuration file "MyBox.ini" records base parameters referred by MyBox when it starts. Modify these parameters in time will cause MyBox restarts itself automatically：   
-1. Data Path, like:   
-<PRE><CODE>     MyBoxDataRoot=/home/mara/data/ </CODE></PRE>
-2. Maximum memory usage of JVM, like:    
-<PRE><CODE>     JVMmemory=-Xms3026m </CODE></PRE>
-3. Whether close "HiDPI", like:   
-<PRE><CODE>     DisableHidpi=false </CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-5.5.jar   /tmp/a1.jpg</CODE></PRE>
 
 ### Supporting HiDPI
 Java supports HiDPI since 9 and interface will adapt current screen resolution aotumatically.   
@@ -66,7 +39,8 @@ MyBox supports enable/disable dpi-aware on line, which will cause MyBox reboots 
 Developers need notice: JavaFx screen is not same as pysical screen and has different dpi definition which considers X/Y scale ratio too.    
 
 ## Limitation
-MyBox.exe can not be lanuched under path including non-English characters.   
+Self-contain packages can not be lanuched under path including non-English characters. Jar files are not affected by this limitation.   
+
 
 # Resource Addresses
 Project Main Page: https://github.com/Mararsh/MyBox
@@ -111,10 +85,11 @@ It is based on following open sources softwares or libraries:
 | GifDecoder | Decode broken gif  | https://github.com/DhyanB/Open-Imaging/ |   
 | EncodingDetect | Determine encoding of text file | https://www.cnblogs.com/ChurchYim/p/8427373.html |   
 | Free Icons | Icon | https://icons8.com/icons/set/home |  
+| tess4j | OCR | http://tess4j.sourceforge.net/ |  
   
  
 # Current Version
-Current version is 5.4. Its features are mentioned below in summary:
+Current version is 5.5. Its features are mentioned below in summary:
 * [Cross platforms](#cross-platform)
 * [Internationalized](#international)
 * [PDF Tools](#pdfTools)
@@ -125,6 +100,7 @@ Current version is 5.4. Its features are mentioned below in summary:
 	- [Color Palette](#ColorPalette)
     - [Image Data](#ImageData)  
     - [Convert Image](#imageConvert)
+    - [Recognize Texts in Image](#imageOCR)
     - [Multi-frames Image](#multiFrames)
     - [Merge Images](#multipleImages)
     - [Part Image](#imagePart)
@@ -145,10 +121,17 @@ Current version is 5.4. Its features are mentioned below in summary:
 * [Settings](#settings)
 * [Window](#windows)
 * [Helps](#helps)
+* [Configuration](#Config)
 
 ## Cross-platform<a name="cross-platform" />
 MyBox is implemented in pure Java and based on open source codes, so it can run any platform which supports Java 12.
 Previous versions are based on Java 8.
+
+Following functions are limited to specific platforms:   
+| Function | Avaliable Platforms | Requirements |   
+| - | - | -  |   
+| Recognize texts in image | Windows  | Users need download data files by themselves |   
+| Recognize texts in PDF | Windows  | Users need download data files by themselves |   
 
 ## Internationalized<a name="international" />
 All codes of MyBox are internationalized. User can switch language in time.
@@ -158,17 +141,19 @@ Currently MyBox supports Chinese and English. To support a new language is just 
 1. View PDF in html mode. Browse and edit html page by page. Bookmarks and thumbnails.
 2. Convert PDF files as html files in batch. Options: Whether one html for each page or one html for each PDF; The way to handle fonts/images: embed, save separately, or ignore.
 3. View PDF file in image mode. DPI can be set to adjust resolution. Page can be cropped as images.
-4. Convert pages of PDF as images. Options like format, density, color space, compression, quality, etc.
-5. Combine multiple images as PDF file. Options like compression, page size, margin size, header, author, etc. 
+4. In image mode, recognize texts in PDF(OCR). PDF pages will be converted as images to do OCR with settings of color space and density in batch. 
+   Only windows is supported currently.
+5. Convert pages of PDF as images. Options like format, density, color space, compression, quality, etc.
+6. Combine multiple images as PDF file. Options like compression, page size, margin size, header, author, etc. 
    Support Chinese and tool can locate system font files. User can input path of ttf font file.
-6. Compress images in PDF file. JPEG quality or threshold of black-white can be set.
-7. Merge multiple PDF files.
-8. Split a PDF file into multiple PDF files, by pages number, by files number, or by start-end list.
-9. Extract images in PDF file. Page range can be set.
-10. Extract texts in PDF file. Splitting line can be customized.
-11. Modify PDF file's attributes like title, author, modify time, user password, owner password, user permissions, etc.
-12. Handle PDF files in batch way.
-13. Maximum main memory of PDF handling can be set.
+7. Compress images in PDF file. JPEG quality or threshold of black-white can be set.
+8. Merge multiple PDF files.
+9. Split a PDF file into multiple PDF files, by pages number, by files number, or by start-end list.
+10. Extract images in PDF file. Page range can be set.
+11. Extract texts in PDF file. Splitting line can be customized.
+12. Modify PDF file's attributes like title, author, modify time, user password, owner password, user permissions, etc.
+13. Handle PDF files in batch way.
+14. Maximum main memory of PDF handling can be set.
 
 ## Image Tools<a name="imageTools" />
 
@@ -256,6 +241,13 @@ Currently MyBox supports Chinese and English. To support a new language is just 
 6. Options of compression types and quality.
 7. For binary, algorithms can be choiced: OTSU, default or threshold. And option of dithering.
 8. Conversion in batch.
+
+### Recognize Texts in Image<a name="imageOCR" />
+1. Users can install Tesseract-OCR and set its data path in MyBox, or download its data files without Tesseract-OCR installation.
+2. Language can be selected. For any selected language, tool will append following packages' names: eng(English), osd()（检测方向和脚本）、equ（检测数学/方程式）
+3. Display image along with recognized texts in same screen. Rectangle can be set to define the area to do OCR.
+4. OCR in batch.
+Only support windows currently.  
 
 ### Multiple frames image file<a name="multiFrames" />
 1. View/Extract images in multiple frames file.
@@ -434,7 +426,43 @@ Currently MyBox supports Chinese and English. To support a new language is just 
 4. Development Guide(Addresses)
 
 
+## Configuration<a name="Config" />
+
+### Installation Path, Execution Path, Data Path
+The directory holding files of self-contain packages or jar file is called "Installation Path"(Although no installtion is need). The directory under which MyBox is started is called "Execution Path". The path where MyBox read/write values and files is called "Data Path".    
+Example, MyBox-5.5.jar is copied under path A, and is started under path B, while MyBox data path can be assigned as any path C.  
+
+### Initialize MyBox
+Example, unpack package of MyBox.exe under path "D:\tmp\MyBox", double click "MyBox.exe", and MyBox is started internally under "app", so the Execution Path is "D:\tmp\MyBox\app".   
+MyBox checks path "D:\tmp\MyBox\app", and does not find file "MyBox.ini", then it starts to initialize this instance automatically:      
+1. Make "D:\tmp\MyBox\app" as the default data root path, and create subdirectory "mybox" under it.   
+2. If directory "mybox" is found under current user's root, which is the data path of MyBox previous versions, then copy all contents of this path to "D:\tmp\MyBox\app\mybox".   
+3. Create file "MyBox.ini" under "D:\tmp\MyBox\app" and write following line to record the location of data path of current MyBox instance:  
+<PRE><CODE>     MyBoxDataRoot=D\:\\tmp\\MyBox\\app </CODE></PRE>
+
+User can edit file "MyBox.ini" to change data path, and copy files under previous path to new path manually.    
+User can also change data path by Setting function of MyBox and the tool will copy old data automatically.     
+
+Another example, copy "MyBox-5.5.jar" under path "d:\tmp\1", and start it from path "d:\tmp\2", then Execution Path is "d:\tmp\2" and MyBox data will be initialized under this path.   
+By this way, MyBox can be executed with different data paths and the instances do not interfere each other. 
+
+### Configuration File
+Under Execution Path, the configuration file "MyBox.ini" records base parameters referred by MyBox when it starts. Modify these parameters in time will cause MyBox restarts itself automatically：   
+1. Data Path, like:   
+<PRE><CODE>     MyBoxDataRoot=/home/mara/data/ </CODE></PRE>
+2. Maximum memory usage of JVM, like:    
+<PRE><CODE>     JVMmemory=-Xms3026m </CODE></PRE>
+3. Whether close "HiDPI", like:   
+<PRE><CODE>     DisableHidpi=false </CODE></PRE>
+
+
+
 # Development Logs<a name="devLog" />
+2019-9-19 v5.5  Recognize texts in image and PDF(OCR) based on tess4j. Rectangle can be set for single image's OCR. Color space and density can be set when do OCR for PDF files in batch.     
+Make self-contain packages for each platform(Window/Linux/Mac).      
+Improve codes: Build with maven without Java 8; make self-contain packages with latest jpackage tool.    
+Fix bugs: WeiBo Snap tool failed to work in last version; and it never worked again on Mac after it ran first time; clicking links caused MyBox dead on Linux; normalization is unnecessary when calculate CIELuv and CIELab.     
+
 2019-9-15 v5.4 Use "Execution Path" instead of "User Path" as default "Data Path". Record base parameters in configuration file.   
 User can modify base parameters on line, including maximum JVM memory usage, whether close dpi-aware, data root path, which will cause MyBox reboot itself.   
 View PDF pages in html mode. Convert PDF files as html files.   

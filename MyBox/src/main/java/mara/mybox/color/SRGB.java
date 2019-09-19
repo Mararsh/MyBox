@@ -2,7 +2,6 @@ package mara.mybox.color;
 
 import java.awt.Color;
 import static mara.mybox.color.AppleRGB.XYZtoAppleRGB;
-import static mara.mybox.color.RGBColorSpace.gammaSRGB;
 import static mara.mybox.color.RGBColorSpace.linearSRGB;
 import mara.mybox.tools.MatrixTools;
 
@@ -69,7 +68,7 @@ public class SRGB {
     }
 
     public static double[] SRGBtoAdobeRGB(double[] srgb) {
-        double[] xyz = SRGB.SRGBd65toXYZd65(srgb);
+        double[] xyz = SRGBd65toXYZd65(srgb);
         return CIEColorSpace.XYZd65toAdobeRGBd65(xyz);
     }
 

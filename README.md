@@ -3,70 +3,38 @@
 # MyBox：简易工具集
 这是利用JavaFx开发的图形化界面程序，目标是提供简单易用的功能。免费开源。
 
-## 下载
+## 下载与运行
 每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases?)目录下（点击上面的`releases`页签）。
 
-
-以下是最新版本的链接：
-
+### 自包含程序包   
+自包含的程序包无需java环境、无需安装、解包可用。   
+| 平台 | 链接 | 大小 | 运行需要 |    
+| - | - | -  | -  |    
+| win | [MyBox-5.5-win.zip](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-win.zip) | 208MB | 无 |       
+| linux | [MyBox-5.5-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-linux.tar.gz)  | 163MB | 无  |     
+| mac | [MyBox-5.5-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-mac.dmg)  | 164MB | 无  |    
+    
+双击或者用命令行执行包内的启动程序即可运行程序。可以把图片/文本/PDF文件的打开方式关联到MyBox.exe，这样双击文件名就直接是用MyBox打开了。
+    
+### Jar包   
+在已安装JRE或者JDK 12或更高版本（`Oracle java`或`Open jdk`均可）的环境下，可以下载jar包。
 | 平台 | 链接 | 大小 | 运行需要 |
 | - | - | -  | -  |
-| win | [MyBox-5.4-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v5.4/MyBox-5.4-exe.zip) | 249MB | 无 |
-| win | [MyBox-5.4-win.jar](https://github.com/Mararsh/MyBox/releases/download/v5.4/MyBox-5.4-jar-win.zip)  | 64MB | Java 12或更高版本 |
-| linux | [MyBox-5.4-linux.jar](https://github.com/Mararsh/MyBox/releases/download/v5.4/MyBox-5.4-jar-linux.zip)  | 68MB | Java 12或更高版本 |
-| mac | [MyBox-5.4-mac.jar](https://github.com/Mararsh/MyBox/releases/download/v5.4/MyBox-5.4-jar-mac.zip)  | 64MB | Java 12或更高版本 |
-| win/linux/mac | [MyBox-5.4-jar-cross-platform.zip](https://github.com/Mararsh/MyBox/releases/download/v5.4/MyBox-5.4-jar-cross-platform.zip)  | 120MB | Java 12或更高版本 |
-
-可以下载exe包，在Windows上无需java环境、无需安装、解包可用(请解包到纯英文目录下) 。
-
-在已安装JRE或者JDK 12或更高版本（`Oracle java`或`Open jdk`均可）的环境下，可以下载jar包。
-每个平台有自己的包，也可用跨平台的包（较大）。
-
-## 运行
-
-### 启动程序
-在Windows上双击“MyBox.exe”即可启动MyBox。可以把图片/文本/PDF文件的打开方式关联到MyBox.exe，这样双击文件名就直接是用MyBox打开了。
-
-在Linux和Mac上缺省有Java环境（请升级至Java 12或更高版本），因此只提供jar包而未制作平台安装包。执行以下命令来启动程序：
-<PRE><CODE>     java   -jar   MyBox-5.4.jar</CODE></PRE>
+| win | [MyBox-5.5-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-win-jar.zip)  | 92MB | Java 12或更高版本 |
+| linux | [MyBox-5.5-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-linux-jar.zip)  | 96MB | Java 12或更高版本 |
+| mac | [MyBox-5.5-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-mac-jar.zip)  | 93MB | Java 12或更高版本 |
+    
+执行以下命令来启动程序：
+<PRE><CODE>     java   -jar   MyBox-5.5.jar</CODE></PRE>
 程序可以跟一个文件名作为参数、以用MyBox直接打开此文件。例如以下命令是打开此图片：
-<PRE><CODE>     java   -jar   MyBox-5.4.jar   /tmp/a1.jpg</CODE></PRE>
-
-### 安装目录、运行目录、数据目录
-保存MyBox.exe或MyBox-xxx.jar的目录称为“安装目录”（尽管不需要安装）。  
-执行启动MyBox命令所在的目录称为“运行目录”。  
-MyBox实例读写数据的目录称为“数据目录”。   
-例如，把MyBox-5.4.jar复制到A目录下，在B目录下运行命令启动它，而MyBox的数据目录可以配置为任意C目录。
-
-### 初始化MyBox
-例如，把MyBox的exe包解开并存放在目录“D:\tmp\MyBox”中，双击“MyBox.exe”，MyBox实际是在子目录“app”下启动的，因此运行目录是“D:\tmp\MyBox\app”。   
-Mybox检查目录“D:\tmp\MyBox\app”，未发现文件“MyBox.ini”，于是自动初始化这个实例：   
-1. 把“D:\tmp\MyBox\app”作为MyBox的缺省数据根目录，创建子目录“mybox”。  
-2. 若在当前用户的根目录发现子目录“mybox”（MyBox旧版本的数据目录），则将此目录全部复制到“D:\tmp\MyBox\app\mybox”中   
-3. 在“D:\tmp\MyBox\app”中创建文件“MyBox.ini”，并写入以下行以记录此实例的数据根目录：  
-<PRE><CODE>     MyBoxDataRoot=D\:\\tmp\\MyBox\\app </CODE></PRE>
-
-用户可以编辑“MyBox.ini”以修改MyBox的数据根目录，并手动将旧数据目录文件复制到新数据目录下。   
-用户也可以在工具的“设置”界面上修改数据根目录，工具将自动复制旧数据。   
-
-又如，把“MyBox-5.4.jar”复制到“d:\tmp\1”下，而在“d:\tmp\2”下启动工具，则此时运行目录是“d:\tmp\2”，数据将被初始化在运行目录下。   
-因此，可以同时在不同目录下启动MyBox而彼此不受干扰。
-
-### 配置文件
-在运行目录下，有配置文件“MyBox.ini”，记录有工具启动时引用的参数，在线修改这些参数将会使MyBox自动重启：   
-1. 数据根目录，如：   
-<PRE><CODE>     MyBoxDataRoot=/home/mara/data/ </CODE></PRE>
-2. JVM内存使用量，如：   
-<PRE><CODE>     JVMmemory=-Xms3026m </CODE></PRE>
-3. 是否“关闭分辨率感知”，如：  
-<PRE><CODE>     DisableHidpi=false </CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-5.5.jar   /tmp/a1.jpg</CODE></PRE>
 
 ### 对于高清晰屏幕的支持
 Java 9以后已支持HiDPI，控件和字体都会适应当前清晰度配置。MyBox支持在线关闭/打开DPI敏感，修改时MyBox会自动重启。   
 开发者需要注意的是：JavaFx虚拟屏幕的dpi不同于物理屏幕的dpi，对于窗口元素尺寸的计算还要考虑伸缩比。   
 
 ### 限制
-在包含非英文字符的路径下无法启动MyBox.exe。请解包到纯英文目录下。Jar包的运行不受此限制。
+在包含非英文字符的路径下无法启动自包含包，请解包到纯英文目录下。Jar包的运行不受此限制。
 
 
 # 资源地址
@@ -113,9 +81,12 @@ https://www.oracle.com/technetwork/java/javafxscenebuilder-1x-archive-2199384.ht
 | GifDecoder | 解码不规范的Gif | https://github.com/DhyanB/Open-Imaging/ |   
 | EncodingDetect | 检测文本编码 | https://www.cnblogs.com/ChurchYim/p/8427373.html |   
 | Free Icons | 图标 | https://icons8.com/icons/set/home |  
+| tess4j | OCR | http://tess4j.sourceforge.net/ |  
+
+
 
 # 当前版本
-当前是版本5.4，已实现的特点概述如下:
+当前是版本5.5，已实现的特点概述如下:
 * [跨平台](#cross-platform)
 * [国际化](#international)
 * [PDF工具](#pdfTools)
@@ -126,6 +97,7 @@ https://www.oracle.com/technetwork/java/javafxscenebuilder-1x-archive-2199384.ht
     - [调色盘](#ColorPalette)
     - [图像数据](#ImageData)  
     - [图片转换](#imageConvert)
+    - [识别图像中的文字](#imageOCR)
     - [多帧图像文件](#multiFrames)
     - [多图合一](#multipleImages)
     - [图像局部化](#imagePart)
@@ -146,11 +118,16 @@ https://www.oracle.com/technetwork/java/javafxscenebuilder-1x-archive-2199384.ht
 * [设置](#settings)
 * [窗口](#windows)
 * [帮助](#helps)
+* [配置](#Config)
 
 ## 跨平台<a name="cross-platform" />
-纯Java实现且基于开源库，因此MyBox可运行于所有支持Java 12的平台。
-
-MyBox v5.3以前的版本均基于Java 8。
+MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持Java 12的平台。（MyBox v5.3以前的版本均基于Java 8）   
+   
+以下功能受限于特定平台：   
+| 功能 | 可运行的平台 | 运行需要 |   
+| - | - | -  |   
+| 识别图像中的文字 | Windows  | 用户需自行下载数据文件 |    
+| 识别PDF中的文字  | Windows  | 用户需自行下载数据文件 |   
 
 ## 国际化<a name="international" />
 所有代码均国际化。可实时切换语言。目前支持中文、英文。扩展语言只需编辑资源文件。
@@ -159,17 +136,19 @@ MyBox v5.3以前的版本均基于Java 8。
 1. 以网页模式查看PDF文件，可逐页查看和编辑页面和html。标签和缩略图。
 2. 批量将PDF转换为网页，可选：每页保存为一个html、还是整个PDF保存为一个html；字体文件/图像文件是嵌入、单独保存、还是忽略。
 3. 以图像模式查看PDF文件，可设置dpi以调整清晰度，可以把页面剪切保存为图片。
-4. 将PDF文件的每页转换为一张图片，包含图像密度、色彩、格式、压缩、质量、色彩转换等选项。
-5. 将多个图片合成PDF文件，可以设置压缩选项、页面尺寸、页边、页眉、作者等。
+4. 在图像模式下，识别PDF页面中的文字（OCR）。批量识别时，可设置转换图像的色彩空间和像素密度。
+   目前仅限windows平台。
+5. 将PDF文件的每页转换为一张图片，包含图像密度、色彩、格式、压缩、质量、色彩转换等选项。
+6. 将多个图片合成PDF文件，可以设置压缩选项、页面尺寸、页边、页眉、作者等。
    支持中文，程序自动定位系统中的字体文件，用户也可以输入ttf字体文件路径。
-6. 压缩PDF文件的图片，设置JPEG质量或者黑白色阈值。
-7. 合并多个PDF文件。
-8. 分割PDF文件为多个PDF文件，可按页数或者文件数来均分，也可以设置起止列表。
-9. 将PDF中的图片提取出来。可以指定页码范围。
-10. 将PDF文件中的文字提取出来，可以定制页的分割行。
-11. 修改PDF的属性，如：标题、作者、版本、修改时间、用户密码、所有者密码、用户权限等
-12. PDF的批量处理。
-13. 可设置PDF处理的主内存使用量。
+7. 压缩PDF文件的图片，设置JPEG质量或者黑白色阈值。
+8. 合并多个PDF文件。
+9. 分割PDF文件为多个PDF文件，可按页数或者文件数来均分，也可以设置起止列表。
+10. 将PDF中的图片提取出来。可以指定页码范围。
+11. 将PDF文件中的文字提取出来，可以定制页的分割行。
+12. 修改PDF的属性，如：标题、作者、版本、修改时间、用户密码、所有者密码、用户权限等
+13. PDF的批量处理。
+14. 可设置PDF处理的主内存使用量。
 
 ## 图像工具<a name="imageTools" />
 
@@ -251,6 +230,12 @@ MyBox v5.3以前的版本均基于Java 8。
 6. 可选压缩类型和质量。
 7. 对于黑白色，可选二值化算法：OTSU、缺省、或输入预置，可选是否抖动处理。
 8. 批量转换。
+### 识别图像中的文字<a name="imageOCR" />
+1. 用户可以安装Tesseract-OCR并在MyBox中指定它的数据文件目录，或者不安装Tesseract-OCR而单独下载所需的数据文件。
+2. 可以选择语言。对于任何所选的语言，工具自动附加以下数据包名：eng（英文）、osd（检测方向和脚本）、equ（检测数学/方程式）
+3. 同步显示图像和识别出的文字。可以设置需要识别的矩形区域。
+4. 批量识别。  
+目前仅限windows平台。
 ### 多帧图像文件<a name="multiFrames" />
 1. 查看、提取多帧图像文件
 2. 创建、编辑多帧tiff文件
@@ -418,11 +403,47 @@ MyBox v5.3以前的版本均基于Java 8。
 3. 用户手册（网址）
 4. 开发指南（网址）
 
+## 配置<a name="Config" />
+
+### 安装目录、运行目录、数据目录
+保存自包含程序或jar文件的目录称为“安装目录”（尽管不需要安装）。  
+执行启动MyBox命令所在的目录称为“运行目录”。  
+MyBox实例读写数据的目录称为“数据目录”。   
+例如，把MyBox-5.5.jar复制到A目录下，在B目录下运行命令启动它，而MyBox的数据目录可以配置为任意C目录。
+
+### 初始化MyBox
+例如，把MyBox的exe包解开并存放在目录“D:\tmp\MyBox”中，双击“MyBox.exe”，MyBox实际是在子目录“app”下启动的，因此运行目录是“D:\tmp\MyBox\app”。   
+Mybox检查目录“D:\tmp\MyBox\app”，未发现文件“MyBox.ini”，于是自动初始化这个实例：   
+1. 把“D:\tmp\MyBox\app”作为MyBox的缺省数据根目录，创建子目录“mybox”。  
+2. 若在当前用户的根目录发现子目录“mybox”（MyBox旧版本的数据目录），则将此目录全部复制到“D:\tmp\MyBox\app\mybox”中   
+3. 在“D:\tmp\MyBox\app”中创建文件“MyBox.ini”，并写入以下行以记录此实例的数据根目录：  
+<PRE><CODE>     MyBoxDataRoot=D\:\\tmp\\MyBox\\app </CODE></PRE>
+
+用户可以编辑“MyBox.ini”以修改MyBox的数据根目录，并手动将旧数据目录文件复制到新数据目录下。   
+用户也可以在工具的“设置”界面上修改数据根目录，工具将自动复制旧数据。   
+
+又如，把“MyBox-5.5.jar”复制到“d:\tmp\1”下，而在“d:\tmp\2”下启动工具，则此时运行目录是“d:\tmp\2”，数据将被初始化在运行目录下。   
+因此，可以同时在不同目录下启动MyBox而彼此不受干扰。
+
+### 配置文件
+在运行目录下，有配置文件“MyBox.ini”，记录有工具启动时引用的参数，在线修改这些参数将会使MyBox自动重启：   
+1. 数据根目录，如：   
+<PRE><CODE>     MyBoxDataRoot=/home/mara/data/ </CODE></PRE>
+2. JVM内存使用量，如：   
+<PRE><CODE>     JVMmemory=-Xms3026m </CODE></PRE>
+3. 是否“关闭分辨率感知”，如：  
+<PRE><CODE>     DisableHidpi=false </CODE></PRE>
+
 
 # 开发日志<a name="devLog" />
+2019-9-19 版本5.5 基于tess4j支持识别图像和PDF中的文字。单图识别可选择矩形区域。PDF批量识别可设置转换图像的色彩空间和像素密度。   
+生成windows/linux/mac的自包含程序包。    
+优化代码：只用maven打包而脱离对java 8的依赖；利用最新jpackage制作自包含包。    
+修正问题：上一版本中微博截图工具挂了；在mac上微博截图工具首次运行后再也无法使用；linux上点击链接则程序僵死；计算CIELuv和CIELab时不应该归一化。   
+
 2019-9-15 版本5.4  “数据目录”改为“运行目录”而不是以前的“用户目录”。用配置文件来保存基础参数。   
 在线修改运行参数：最大可用内存、是否关闭分辨率感知、数据目录。修改这几个参数将会使MyBox自动重启。   
-以网页模式查看PDF页面。批量把PDF转换为网页。    
+基于pdf2html，以网页模式查看PDF页面。批量把PDF转换为网页。    
 重构图像处理的界面：左右幕布式区域、上下风箱式菜单、多页签切换目标、子功能区更细化的显示/隐藏/调整。“按需可见”。   
 粘贴板：保存多个来源的图片以供粘贴，在图片上拖拉来调整位置和大小，可选混合模式，可旋转被粘贴图片。提供示例图片。  
 调色盘：可保存上千种色彩，可自动填写139种常用色彩，可导出为html页面，可在当前图片、图片历史、或参照图上点击取色。  

@@ -5,7 +5,9 @@ import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import javafx.application.Platform;
@@ -22,6 +24,9 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Tooltip;
@@ -38,6 +43,7 @@ import mara.mybox.data.PdfInformation;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
+import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.PdfTools;
@@ -46,6 +52,8 @@ import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonImageValues;
 import mara.mybox.value.CommonValues;
+import net.sourceforge.tess4j.ITesseract;
+import net.sourceforge.tess4j.Tesseract;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
 import org.apache.pdfbox.pdmodel.interactive.action.PDActionGoTo;
@@ -65,11 +73,12 @@ import org.apache.pdfbox.rendering.PDFRenderer;
 public class PdfViewController extends ImageViewerController {
 
     protected PdfInformation pdfInformation;
-    protected int currentPage, currentPageTmp, percent, dpi;
+    protected int currentPage, currentPageTmp, percent, dpi, orcPage;
     protected SimpleBooleanProperty infoLoaded;
     protected boolean isTransparent, scrollEnd, scrollStart, scrolledSet;
     protected Task outlineTask, thumbTask;
     protected String password;
+    protected File ocrPath;
 
     @FXML
     protected Label pageLabel;
@@ -87,6 +96,16 @@ public class PdfViewController extends ImageViewerController {
     protected VBox thumbBox;
     @FXML
     protected TreeView outlineTree;
+    @FXML
+    protected TabPane tabPane;
+    @FXML
+    protected Tab imageTab, ocrTab;
+    @FXML
+    protected TextArea ocrArea;
+    @FXML
+    protected Label setOCRLabel, resultLabel;
+    @FXML
+    protected ComboBox<String> langSelector;
 
     public PdfViewController() {
         baseTitle = AppVariables.message("PdfView");
@@ -263,9 +282,158 @@ public class PdfViewController extends ImageViewerController {
                     Bindings.isNull(imageView.imageProperty())
             );
 
+            String os = System.getProperty("os.name").toLowerCase();
+            if (!os.contains("windows")) {
+                ocrTab.setDisable(true);
+
+            } else {
+
+                tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
+                    @Override
+                    public void changed(ObservableValue ov, Tab oldValue, Tab newValue) {
+                        if (!ocrTab.equals(newValue) || orcPage == currentPage
+                                || imageView.getImage() == null) {
+                            return;
+                        }
+                        startOCR();
+                    }
+                });
+
+                langSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue ov, String oldValue, String newValue) {
+                        startOCR();
+                    }
+                });
+            }
+
         } catch (Exception e) {
             logger.error(e.toString());
         }
+    }
+
+    protected boolean ocrPathDefined() {
+        setOCRLabel.setText("");
+        if (ocrPath != null) {
+            return true;
+        }
+        langSelector.getItems().clear();
+        String p = AppVariables.getUserConfigValue("OCRDataPath", null);
+        if (p != null && !p.isEmpty()) {
+            ocrPath = new File(p);
+            if (!ocrPath.exists() || !ocrPath.isDirectory()) {
+                ocrPath = null;
+            }
+        }
+        if (ocrPath == null) {
+            setOCRLabel.setText(message("SetOCRPath"));
+            settingsAction();
+            return false;
+
+        }
+        File[] files = ocrPath.listFiles();
+        for (File f : files) {
+            String name = f.getName();
+            if (!f.isFile() || !name.endsWith(".traineddata")) {
+                continue;
+            }
+            langSelector.getItems().add(name.substring(0, name.length() - ".traineddata".length()));
+        }
+        if (AppVariables.currentBundle == CommonValues.BundleZhCN) {
+            if (!langSelector.getItems().contains("chi_sim")) {
+                setOCRLabel.setText(message("MissChineseOCRData"));
+                langSelector.getItems().add(0, message("English"));
+
+            } else {
+                langSelector.getItems().add(0, message("SimplifiedChinese"));
+                if (langSelector.getItems().contains("chi_tra")) {
+                    langSelector.getItems().add(1, message("TraditionalChinese"));
+                }
+                langSelector.getItems().add(2, message("English"));
+            }
+            langSelector.getSelectionModel().select(0);
+        } else {
+            langSelector.getSelectionModel().select("eng");
+        }
+        return true;
+    }
+
+    @FXML
+    public void startOCR() {
+        if (imageView.getImage() == null || !ocrPathDefined()) {
+            return;
+        }
+        synchronized (this) {
+            if (task != null) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+
+                private String result;
+                private long cost;
+
+                @Override
+                protected boolean handle() {
+                    try {
+                        cost = new Date().getTime();
+                        ITesseract instance = new Tesseract();
+                        instance.setDatapath(ocrPath.getAbsolutePath());
+                        String lang = langSelector.getValue();
+                        if (lang != null) {
+                            if (message("SimplifiedChinese").equals(lang)) {
+                                instance.setLanguage("chi_sim+chi_sim_vert+eng+osd+equ");
+                            } else if (message("TraditionalChinese").equals(lang)) {
+                                instance.setLanguage("chi_tra+chi_tra_vert+eng+osd+equ");
+                            } else if (message("English").equals(lang)) {
+                                instance.setLanguage("eng+osd+equ");
+                            } else {
+                                instance.setLanguage(lang + "+eng+osd+equ");
+                            }
+                        } else {
+                            instance.setLanguage("eng+osd+equ");
+                        }
+                        Image selected = cropImage();
+                        if (selected == null) {
+                            selected = imageView.getImage();
+                        }
+                        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(selected, null);
+                        if (task == null || isCancelled()) {
+                            return false;
+                        }
+                        result = instance.doOCR(bufferedImage);
+                        cost = new Date().getTime() - cost;
+                        return result != null;
+                    } catch (Exception e) {
+                        error = e.toString();
+                        return false;
+                    }
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    if (result.length() == 0) {
+                        popText(message("OCRMissComments"), 5000, "white", "1.1em", null);
+                    }
+                    ocrArea.setText(result);
+                    resultLabel.setText(MessageFormat.format(message("OCRresults"), result.length(), cost));
+                    orcPage = currentPage;
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
+
+    }
+
+    @FXML
+    public void settingsAction() {
+        SettingsController controller = (SettingsController) openStage(CommonValues.SettingsFxml);
+        controller.setParentController(this);
+        controller.setParentFxml(myFxml);
+        controller.tabPane.getSelectionModel().select(controller.dataTab);
     }
 
     @Override
@@ -372,6 +540,7 @@ public class PdfViewController extends ImageViewerController {
             imageView.setTranslateX(0);
             pdfInformation = null;
             currentPage = page;
+            orcPage = -1;
             infoLoaded.set(pdfInfo != null);
             pageInput.setText("1");
             pageLabel.setText("");
@@ -459,6 +628,7 @@ public class PdfViewController extends ImageViewerController {
         loadPage();
     }
 
+    // currentPage is 0-based
     protected void loadPage() {
         if (pdfInformation == null) {
             return;
@@ -503,6 +673,9 @@ public class PdfViewController extends ImageViewerController {
                     checkSelect();
                     setImageChanged(false);
                     imageView.requestFocus();
+                    if (tabPane.getSelectionModel().getSelectedItem() == ocrTab) {
+                        startOCR();
+                    }
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL, MessageFormat.format(message("LoadingPageNumber"), (currentPage + 1) + ""));
@@ -657,7 +830,7 @@ public class PdfViewController extends ImageViewerController {
                                     continue;
                                 }
                                 try {
-                                    BufferedImage bufferedImage = renderer.renderImageWithDPI(i, 20, ImageType.RGB);
+                                    BufferedImage bufferedImage = renderer.renderImageWithDPI(i, 20, ImageType.RGB);  // 0-based
                                     if (bufferedImage.getWidth() > 200) {
                                         bufferedImage = ImageManufacture.scaleImageWidthKeep(bufferedImage, 200);
                                     }
@@ -874,6 +1047,79 @@ public class PdfViewController extends ImageViewerController {
             return FileTools.getFilePrefix(sourceFile.getName()) + "_p" + (currentPage + 1);
         } else {
             return "";
+        }
+    }
+
+    @FXML
+    public void popSaveOCR(MouseEvent event) { //
+        if (AppVariables.fileRecentNumber <= 0) {
+            return;
+        }
+        new RecentVisitMenu(this, event) {
+            @Override
+            public List<VisitHistory> recentFiles() {
+                return null;
+            }
+
+            @Override
+            public List<VisitHistory> recentPaths() {
+                return VisitHistory.getRecentPath(VisitHistory.FileType.Text);
+            }
+
+            @Override
+            public void handleSelect() {
+                saveOCR();
+            }
+
+            @Override
+            public void handleFile(String fname) {
+
+            }
+
+            @Override
+            public void handlePath(String fname) {
+                File file = new File(fname);
+                if (!file.exists()) {
+                    handleSelect();
+                    return;
+                }
+                AppVariables.setUserConfigValue("TextFilePath", fname);
+                handleSelect();
+            }
+
+        }.pop();
+    }
+
+    @FXML
+    public void saveOCR() {
+        if (ocrArea.getText().isEmpty()) {
+            return;
+        }
+        synchronized (this) {
+            if (task != null) {
+                return;
+            }
+            String name = saveAsPrefix();
+            final File file = chooseSaveFile(AppVariables.getUserConfigPath("TextFilePath"),
+                    name, CommonImageValues.TextExtensionFilter, true);
+            if (file == null) {
+                return;
+            }
+            recordFileWritten(file);
+
+            task = new SingletonTask<Void>() {
+
+                @Override
+                protected boolean handle() {
+                    ok = FileTools.writeFile(file, ocrArea.getText()) != null;
+                    return true;
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
         }
     }
 

@@ -60,9 +60,9 @@ public class MainMenuController extends BaseController {
     private CheckMenuItem monitorMemroyCheck, monitorCpuCheck,
             newWindowCheck, restoreStagesSizeCheck, popRecentCheck, controlTextCheck;
     @FXML
-    private Menu settingsMenu, recentMenu;
+    private Menu settingsMenu, recentMenu, imageMenu, pdfMenu;
     @FXML
-    private MenuItem closeOtherMenu;
+    private MenuItem imageOcrMenu, imageOcrBatchMenu, pdfOcrBatchMenu;
 
     @Override
     public void initializeNext() {
@@ -82,6 +82,13 @@ public class MainMenuController extends BaseController {
                     recentMenu.getItems().addAll(getRecentMenu());
                 }
             });
+
+            String os = System.getProperty("os.name").toLowerCase();
+            if (!os.contains("windows")) {
+                imageMenu.getItems().removeAll(imageOcrMenu, imageOcrBatchMenu);
+                pdfMenu.getItems().removeAll(pdfOcrBatchMenu);
+            }
+
         } catch (Exception e) {
             logger.debug(e.toString());
         }
@@ -698,6 +705,11 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
+    private void openPdfOCRBatch(ActionEvent event) {
+        loadScene(CommonValues.PdfOCRBatchFxml);
+    }
+
+    @FXML
     private void openCompressPdfImagesBatch(ActionEvent event) {
         loadScene(CommonValues.PdfCompressImagesBatchFxml);
     }
@@ -825,6 +837,16 @@ public class MainMenuController extends BaseController {
     @FXML
     private void openImageAlphaAdd(ActionEvent event) {
         loadScene(CommonValues.ImageAlphaAddBatchFxml);
+    }
+
+    @FXML
+    private void openImageOCR(ActionEvent event) {
+        loadScene(CommonValues.ImageOCRFxml);
+    }
+
+    @FXML
+    private void openImageOCRBatch(ActionEvent event) {
+        loadScene(CommonValues.ImageOCRBatchFxml);
     }
 
     @FXML

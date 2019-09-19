@@ -4,7 +4,7 @@
 
     <groupId>mara</groupId>
     <artifactId>MyBox</artifactId>
-    <version>5.4</version>
+    <version>5.5</version>
     <packaging>jar</packaging>
     <name>MyBox</name>
     <properties>
@@ -99,6 +99,11 @@
             <artifactId>slf4j-nop</artifactId>
             <version>2.0.0-alpha0</version>
         </dependency>
+        <dependency>
+            <groupId>net.sourceforge.tess4j</groupId>
+            <artifactId>tess4j</artifactId>
+            <version>4.4.0</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -111,6 +116,7 @@
                     <mainClass>mara.mybox.MyBox</mainClass>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -123,61 +129,42 @@
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>2.10</version>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.1.1</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>mara.mybox.MyBox</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
                 <executions>
                     <execution>
-                        <id>unpack-dependencies</id>
+                        <id>assemble-all</id>
                         <phase>package</phase>
                         <goals>
-                            <goal>unpack-dependencies</goal>
+                            <goal>single</goal>
                         </goals>
-                        <configuration>
-                            <excludeScope>system</excludeScope>
-                            <excludeGroupIds>junit,org.mockito,org.hamcrest</excludeGroupIds>
-                            <outputDirectory>${project.build.directory}/classes</outputDirectory>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.6.0</version>
-                <executions>
-                    <execution>
-                        <id>unpack-dependencies</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>${javapackager}</executable>
-                            <arguments>
-                                <argument>-createjar</argument>
-                                <argument>-nocss2bin</argument>
-                                <argument>-appclass</argument>
-                                <argument>${mainClass}</argument>
-                                <argument>-srcdir</argument>
-                                <argument>${project.build.directory}/classes</argument>
-                                <argument>-outdir</argument>
-                                <argument>${project.build.directory}</argument>
-                                <argument>-outfile</argument>
-                                <argument>${project.build.finalName}.jar</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>default-cli</id>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>${java.home}/bin/java</executable>
-                            <commandlineArgs>${runfx.args}</commandlineArgs>
-                        </configuration>
-                    </execution>
-                </executions>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.1.2</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <mainClass>mara.mybox.MyBox</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
             </plugin>
 
         </plugins>
@@ -188,7 +175,6 @@
             <id>win</id>
             <properties>
                 <platform>win</platform>
-                <javapackager>D:/Programs/Java/jdk1.8.0_212/bin/javapackager</javapackager>
             </properties>
             <activation>
                 <activeByDefault>true</activeByDefault>
@@ -198,7 +184,6 @@
             <id>cross-platform</id>
             <properties>
                 <platform>win</platform>
-                <javapackager>D:/Programs/Java/jdk1.8.0_212/bin/javapackager</javapackager>
             </properties>
             <activation>
                 <activeByDefault>false</activeByDefault>
@@ -271,7 +256,6 @@
             <id>linux</id>
             <properties>
                 <platform>linux</platform>
-                <javapackager>/usr/java/jdk1.8.0_221-amd64/bin/javapackager</javapackager>
             </properties>
             <activation>
                 <activeByDefault>false</activeByDefault>
@@ -281,7 +265,6 @@
             <id>mac</id>
             <properties>
                 <platform>mac</platform>
-                <javapackager>/Library/Java/JavaVirtualMachines/jdk1.8.0_221.jdk/Contents/Home/bin/javapackager</javapackager>
             </properties>
             <activation>
                 <activeByDefault>false</activeByDefault>

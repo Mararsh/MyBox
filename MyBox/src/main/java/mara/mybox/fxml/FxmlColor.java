@@ -8,7 +8,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javafx.scene.paint.Color;
+import mara.mybox.color.CIEColorSpace;
 import mara.mybox.color.SRGB;
+import mara.mybox.image.ImageColor;
+import mara.mybox.tools.DoubleTools;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -255,13 +258,43 @@ public class FxmlColor {
         } else {
             s = color.toString() + "\n";
         }
-        s += message("Opacity") + ":" + Math.round(color.getOpacity() * 100) + "% "
-                + message("Red") + ":" + Math.round(color.getRed() * 255) + " "
+        s += "sRGB  " + message("Red") + ":" + Math.round(color.getRed() * 255) + " "
                 + message("Green") + ":" + Math.round(color.getGreen() * 255) + " "
-                + message("Blue") + ":" + Math.round(color.getBlue() * 255) + "\n";
-        s += message("Hue") + ":" + Math.round(color.getHue()) + " "
+                + message("Blue") + ":" + Math.round(color.getBlue() * 255)
+                + message("Opacity") + ":" + Math.round(color.getOpacity() * 100) + "%\n";
+        s += "HSB  " + message("Hue") + ":" + Math.round(color.getHue()) + " "
                 + message("Saturation") + ":" + Math.round(color.getSaturation() * 100) + "% "
-                + message("Brightness") + ":" + Math.round(color.getBrightness() * 100) + "%";
+                + message("Brightness") + ":" + Math.round(color.getBrightness() * 100) + "%\n";
+
+        double[] xyz = SRGB.toXYZd50(ImageColor.converColor(color));
+
+        double[] adobeRGB = CIEColorSpace.XYZd50toAdobeRGBd65(xyz[0], xyz[1], xyz[2]);
+        s += "Adobe RGB:  " + Math.round(adobeRGB[0] * 255) + " " + Math.round(adobeRGB[1] * 255) + " " + Math.round(adobeRGB[2] * 255) + " \n";
+
+        double[] appleRGB = CIEColorSpace.XYZd50toAppleRGBd65(xyz[0], xyz[1], xyz[2]);
+        s += "Apple RGB:  " + Math.round(appleRGB[0] * 255) + " " + Math.round(appleRGB[1] * 255) + " " + Math.round(appleRGB[2] * 255) + " \n";
+
+        double[] sRGBLinear = CIEColorSpace.XYZd50toSRGBd65Linear(xyz[0], xyz[1], xyz[2]);
+        s += "sRGB Linear:  " + Math.round(sRGBLinear[0] * 255) + " " + Math.round(sRGBLinear[1] * 255) + " " + Math.round(sRGBLinear[2] * 255) + " \n";
+
+        double[] adobeRGBLinear = CIEColorSpace.XYZd50toAdobeRGBd65Linear(xyz[0], xyz[1], xyz[2]);
+        s += "Adobe RGB Linear:  " + Math.round(adobeRGBLinear[0] * 255) + " " + Math.round(adobeRGBLinear[1] * 255) + " " + Math.round(adobeRGBLinear[2] * 255) + " \n";
+
+        double[] appleRGBLinear = CIEColorSpace.XYZd50toAppleRGBd65Linear(xyz[0], xyz[1], xyz[2]);
+        s += "Apple RGB Linear:  " + Math.round(appleRGBLinear[0] * 255) + " " + Math.round(appleRGBLinear[1] * 255) + " " + Math.round(appleRGBLinear[2] * 255) + " \n";
+
+        s += "XYZ  " + DoubleTools.scale(xyz[0], 6) + " "
+                + DoubleTools.scale(xyz[1], 6) + " "
+                + DoubleTools.scale(xyz[2], 6) + "\n";
+        double[] cieLab = CIEColorSpace.XYZd50toCIELab(xyz[0], xyz[1], xyz[2]);
+        s += "CIE-L*ab:  " + DoubleTools.scale(cieLab[0], 2) + " " + DoubleTools.scale(cieLab[1], 2) + " " + DoubleTools.scale(cieLab[2], 2) + " \n";
+        double[] LCHab = CIEColorSpace.LabtoLCHab(cieLab);
+        s += "LCH(ab):  " + DoubleTools.scale(LCHab[0], 2) + " " + DoubleTools.scale(LCHab[1], 2) + " " + DoubleTools.scale(LCHab[2], 2) + " \n";
+        double[] cieLuv = CIEColorSpace.XYZd50toCIELuv(xyz[0], xyz[1], xyz[2]);
+        s += "CIE-L*uv:  " + DoubleTools.scale(cieLuv[0], 2) + " " + DoubleTools.scale(cieLuv[1], 2) + " " + DoubleTools.scale(cieLuv[2], 2) + " \n";
+        double[] LCHuv = CIEColorSpace.LuvtoLCHuv(cieLuv);
+        s += "LCH(uv):  " + DoubleTools.scale(LCHuv[0], 2) + " " + DoubleTools.scale(LCHuv[1], 2) + " " + DoubleTools.scale(LCHuv[2], 2) + " \n";
+
         return s;
     }
 

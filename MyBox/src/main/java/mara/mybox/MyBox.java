@@ -4,9 +4,9 @@ import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import javafx.application.Application;
 import mara.mybox.tools.ConfigTools;
+import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonValues;
@@ -32,8 +32,9 @@ public class MyBox {
 
     public static void launchApp() {
         logger.info("Starting Mybox...");
+        logger.info("JVM path: " + System.getProperty("java.home"));
 
-        if (!internalRestart() && (restoreJVMmemory() || isBundles())) {
+        if (setJVMmemory() && !internalRestart()) {
             restart();
 
         } else {
@@ -42,13 +43,33 @@ public class MyBox {
         }
     }
 
+    public static String defaultDataPath() {
+        File path = new File(System.getProperty("user.dir") + File.separator + "MyBoxData");
+        if (!path.exists()) {
+            path.mkdirs();
+        } else if (!path.isDirectory()) {
+            path.delete();
+            path.mkdirs();
+        }
+        if (!path.exists()) {
+            path = new File(System.getProperty("user.home") + File.separator + "MyBoxData");
+            if (!path.exists()) {
+                path.mkdirs();
+            } else if (!path.isDirectory()) {
+                path.delete();
+                path.mkdirs();
+            }
+        }
+        return path.getAbsolutePath();
+    }
+
     public static boolean internalRestart() {
         return AppVariables.appArgs != null
                 && AppVariables.appArgs.length > 0
                 && InternalRestartFlag.equals(AppVariables.appArgs[0]);
     }
 
-    public static boolean restoreJVMmemory() {
+    public static boolean setJVMmemory() {
         String JVMmemory = ConfigTools.readConfigValue("JVMmemory");
         if (JVMmemory == null) {
             return false;
@@ -64,20 +85,6 @@ public class MyBox {
         return true;
     }
 
-    // All exe are missed in  jre path when jabapackager generates self-contain bundles.
-    // Only one exception: "java.exe" is copied  to "bundles\MyBox\runtime\bin" of MyBox.exe by me.
-    // https://stackoverflow.com/questions/16669122/include-java-exe-in-the-runtime-built
-    public static boolean isBundles() {
-        try {
-            String javaHome = System.getProperty("java.home");
-            File jar = new File(javaHome.substring(0, javaHome.length() - 7) + "app" + File.separator + "MyBox-" + CommonValues.AppVersion + ".jar");
-            return jar.exists();
-        } catch (Exception e) {
-            logger.error(e.toString());
-            return false;
-        }
-    }
-
     // Set properties before JavaFx starting to make sure they take effect against JavaFX
     public static void initEnv() {
         try {
@@ -86,23 +93,22 @@ public class MyBox {
 //            System.setProperty("sun.java2d.cmm", "sun.java2d.cmm.kcms.KcmsServiceProvider");
             System.setProperty("org.apache.pdfbox.rendering.UsePureJavaCMYKConversion", "true");
 
-            // https://blog.csdn.net/weixin_42156742/article/details/81386226
-//            System.setProperty("java.awt.headless", "false");
             // https://stackoverflow.com/questions/47613006/how-to-disable-scaling-the-ui-on-windows-for-java-9-applications?r=SearchResults
 //            System.setProperty("sun.java2d.uiScale", "1.0");
             System.setProperty("prism.allowhidpi", "true".equals(ConfigTools.readConfigValue("DisableHidpi")) ? "false" : "true");
 
-            String rootPath = ConfigTools.readConfigValue("MyBoxDataRoot");
+            String rootPath = ConfigTools.readConfigValue("MyBoxDataPath");
             if (rootPath != null) {
                 File path = new File(rootPath);
                 if (path.exists() && path.isDirectory()) {
-                    AppVariables.MyBoxDataRoot = path.getAbsolutePath();
+                    AppVariables.MyboxDataPath = path.getAbsolutePath();
                 } else {
-                    AppVariables.MyBoxDataRoot = CommonValues.DefaultDataRoot;
+                    AppVariables.MyboxDataPath = defaultDataPath();
                 }
             } else {
-                AppVariables.MyBoxDataRoot = CommonValues.DefaultDataRoot;
+                AppVariables.MyboxDataPath = defaultDataPath();
             }
+            logger.info("MyBox Data Path:" + AppVariables.MyboxDataPath);
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -114,22 +120,29 @@ public class MyBox {
     public static void restart() {
         try {
             String javaHome = System.getProperty("java.home");
-            File exeJar = new File(javaHome.substring(0, javaHome.length() - 7) + "app" + File.separator + "MyBox-" + CommonValues.AppVersion + ".jar");
+            File boundlesJar;
+            String os = System.getProperty("os.name").toLowerCase();
+            if (SystemTools.isMac()) {
+                boundlesJar = new File(javaHome.substring(0, javaHome.length() - "runtime/Contents/Home".length())
+                        + "Java" + File.separator + "MyBox-" + CommonValues.AppVersion + ".jar");
+            } else {
+                boundlesJar = new File(javaHome.substring(0, javaHome.length() - "runtime".length())
+                        + "app" + File.separator + "MyBox-" + CommonValues.AppVersion + ".jar");
 
-            if (exeJar.exists()) {
-                restartExe(exeJar);
+            }
+            if (boundlesJar.exists()) {
+                restartBundles(boundlesJar);
             } else {
                 restartJar();
             }
-
         } catch (Exception e) {
             logger.error(e.toString());
         }
     }
 
-    public static void restartExe(File jar) {
+    public static void restartBundles(File jar) {
         try {
-            logger.info("Restarting Mybox.exe...");
+            logger.info("Restarting Mybox bundles...");
 
             List<String> commands = new ArrayList<>();
             commands.add(System.getProperty("java.home") + File.separator + "bin" + File.separator + "java");
@@ -152,8 +165,6 @@ public class MyBox {
             }
 
             ProcessBuilder pb = new ProcessBuilder(commands);
-            Map<String, String> env = pb.environment();
-            env.clear();                // Bypass env of "MyBox.exe",  to take pure env from java.exe
             pb.start();
 
             System.exit(0);

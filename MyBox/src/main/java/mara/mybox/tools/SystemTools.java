@@ -40,6 +40,18 @@ public class SystemTools {
         }
     }
 
+    public static boolean isLinux() {
+        return os().contains("linux");
+    }
+
+    public static boolean isMac() {
+        return os().contains("mac");
+    }
+
+    public static boolean isWindows() {
+        return os().contains("win");
+    }
+
     // https://blog.csdn.net/sdtvyyb_007/article/details/77160239
     public static void listAllThreads() {
         ThreadGroup currentThreadGroup = Thread.currentThread().getThreadGroup();

@@ -502,6 +502,12 @@ public class ImageManufactureController extends ImageViewerController {
                         refImageController.setPaletteController(null);
                     }
 
+                    if (newValue.equals(dataTab)) {
+                        if (dataController.imageData == null) {
+                            dataController.loadData();
+                        }
+                    }
+
                 }
             });
 

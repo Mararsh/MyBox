@@ -94,24 +94,28 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Button fx:id="previousButton" mnemonicParsing="false" onAction="#previousAction">
-                                    <graphic>
-                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/iconPrevious.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                                <Button fx:id="nextButton" mnemonicParsing="false" onAction="#nextAction">
-                                    <graphic>
-                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/iconNext.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
+                        <HBox fx:id="navBox" alignment="CENTER_LEFT" spacing="5.0">
+                           <children>
+                                      <Button fx:id="previousButton" mnemonicParsing="false" onAction="#previousAction">
+                                          <graphic>
+                                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                  <image>
+                                                      <Image url="@../buttons/iconPrevious.png" />
+                                                  </image>
+                                              </ImageView>
+                                          </graphic>
+                                      </Button>
+                                      <Button fx:id="nextButton" mnemonicParsing="false" onAction="#nextAction">
+                                          <graphic>
+                                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                  <image>
+                                                      <Image url="@../buttons/iconNext.png" />
+                                                  </image>
+                                              </ImageView>
+                                          </graphic>
+                                      </Button>
+                           </children>
+                        </HBox>
                                 <Button fx:id="rotateRightButton" mnemonicParsing="false" onAction="#rotateRight">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -282,7 +286,7 @@ License:    Apache License Version 2.0
                                     </ImageView>
                                 </graphic>
                             </CheckBox>
-                        <HBox fx:id="navBox" alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="5.0">
+                        <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="5.0">
                             <children>
                                 <CheckBox fx:id="openSaveCheck" mnemonicParsing="false">
                                     <graphic>

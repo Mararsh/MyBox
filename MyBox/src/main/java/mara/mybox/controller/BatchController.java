@@ -171,9 +171,8 @@ public abstract class BatchController<T> extends BaseController {
                 }
                 path = new File(p);
             }
-
             if (path != null && path.exists()) {
-                view(path);
+                browseURI(path.toURI());
                 recordFileOpened(path);
             } else {
                 popInformation(AppVariables.message("NoFileGenerated"));
@@ -535,14 +534,13 @@ public abstract class BatchController<T> extends BaseController {
             if (currentParameters == null || sourceFiles.isEmpty()) {
                 return;
             }
-            currentParameters.startTime = new Date();
-            currentParameters.currentTotalHandled = 0;
-            updateInterface("Started");
-
             synchronized (this) {
                 if (task != null) {
                     return;
                 }
+                currentParameters.startTime = new Date();
+                currentParameters.currentTotalHandled = 0;
+                updateInterface("Started");
                 task = new SingletonTask<Void>() {
 
                     @Override
@@ -591,6 +589,12 @@ public abstract class BatchController<T> extends BaseController {
                     public void failed() {
                         super.failed();
                         updateInterface("Failed");
+                    }
+
+                    @Override
+                    protected void taskQuit() {
+                        task = null;
+                        quitProcess();
                     }
 
                 };
@@ -945,6 +949,10 @@ public abstract class BatchController<T> extends BaseController {
                 + message("StartTime") + ":" + DateTools.datetimeToString(currentParameters.startTime) + space
                 + message("EndTime") + ":" + DateTools.datetimeToString(new Date());
         statusLabel.setText(s);
+    }
+
+    public void quitProcess() {
+
     }
 
 }

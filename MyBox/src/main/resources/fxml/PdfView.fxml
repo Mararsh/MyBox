@@ -22,7 +22,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.PdfViewController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.PdfViewController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -67,6 +67,15 @@ License:    Apache License Version 2.0
                         </CheckBox>
                         <HBox fx:id="operation1Box" alignment="CENTER_LEFT" spacing="5.0">
                             <children>
+                                <CheckBox fx:id="selectAreaCheck" mnemonicParsing="false">
+                                    <graphic>
+                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconTarget.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </CheckBox>
                                 <ComboBox fx:id="dpiBox" editable="true" nodeOrientation="LEFT_TO_RIGHT" prefWidth="80.0" />
                                 <Label text="dpi" />
                                 <ComboBox fx:id="percentBox" editable="true" nodeOrientation="LEFT_TO_RIGHT" prefWidth="80.0" />
@@ -216,15 +225,6 @@ License:    Apache License Version 2.0
                                 </ImageView>
                             </graphic>
                         </CheckBox>
-                          <CheckBox fx:id="selectAreaCheck" mnemonicParsing="false">
-                              <graphic>
-                                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                      <image>
-                                          <Image url="@../buttons/iconTarget.png" />
-                                      </image>
-                                  </ImageView>
-                              </graphic>
-                          </CheckBox>
                           <Button fx:id="selectAllButton" mnemonicParsing="false" onAction="#selectAllAction">
                               <graphic>
                                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -243,7 +243,7 @@ License:    Apache License Version 2.0
                                   </ImageView>
                               </graphic>
                           </Button>
-                          <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAsAction" onMouseEntered="#popSaveAs">
+                          <Button fx:id="saveAsButton" mnemonicParsing="false" onAction="#saveAsAction" onMouseEntered="#popSaveAs">
                               <graphic>
                                   <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                       <image>
@@ -303,62 +303,114 @@ License:    Apache License Version 2.0
                                 <TreeView fx:id="outlineTree" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
                             </content>
                         </ScrollPane>
-                        <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
-                            <content>
-                                <AnchorPane fx:id="maskPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#paneClicked" onMouseDragged="#showXY" onMouseMoved="#showXY" onMousePressed="#showXY" onMouseReleased="#showXY" VBox.vgrow="ALWAYS">
-                                    <children>
-                                        <ImageView fx:id="imageView" cache="true" fitHeight="300.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true">
+                  <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                     <tabs>
+                        <Tab fx:id="imageTab" closable="false" text="%Image">
+                           <content>
+                                    <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                                        <content>
+                                            <AnchorPane fx:id="maskPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#paneClicked" onMouseDragged="#showXY" onMouseMoved="#showXY" onMousePressed="#showXY" onMouseReleased="#showXY" VBox.vgrow="ALWAYS">
+                                                <children>
+                                                    <ImageView fx:id="imageView" cache="true" fitHeight="300.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true">
                                         </ImageView>
-                                        <Rectangle fx:id="maskRectangleLine" arcHeight="5.0" arcWidth="5.0" fill="#ffffff00" height="241.0" layoutX="163.0" layoutY="77.0" onMousePressed="#handlerPressed" onMouseReleased="#rectangleReleased" stroke="RED" strokeType="INSIDE" width="334.0">
-                                            <cursor>
-                                                <Cursor fx:constant="MOVE" />
-                                            </cursor>
-                                        </Rectangle>
-                                        <Rectangle fx:id="leftCenterHandler" fill="#ffffff00" height="10.0" layoutX="158.0" layoutY="193.0" onMousePressed="#handlerPressed" onMouseReleased="#leftCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                            <cursor>
-                                                <Cursor fx:constant="W_RESIZE" />
-                                            </cursor>
-                                        </Rectangle>
-                                        <Rectangle fx:id="topRightHandler" fill="#ffffff00" height="10.0" layoutX="492.0" layoutY="72.0" onMousePressed="#handlerPressed" onMouseReleased="#topRightHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                            <cursor>
-                                                <Cursor fx:constant="NE_RESIZE" />
-                                            </cursor>
-                                        </Rectangle>
-                                        <Rectangle fx:id="topCenterHandler" fill="#ffffff00" height="10.0" layoutX="325.0" layoutY="72.0" onMousePressed="#handlerPressed" onMouseReleased="#topCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                            <cursor>
-                                                <Cursor fx:constant="N_RESIZE" />
-                                            </cursor>
-                                        </Rectangle>
-                                        <Rectangle fx:id="rightCenterHandler" fill="#ffffff00" height="10.0" layoutX="492.0" layoutY="193.0" onMousePressed="#handlerPressed" onMouseReleased="#rightCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                            <cursor>
-                                                <Cursor fx:constant="E_RESIZE" />
-                                            </cursor>
-                                        </Rectangle>
-                                        <Rectangle fx:id="bottomRightHandler" fill="#ffffff00" height="10.0" layoutX="492.0" layoutY="313.0" onMousePressed="#handlerPressed" onMouseReleased="#bottomRightHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                            <cursor>
-                                                <Cursor fx:constant="SE_RESIZE" />
-                                            </cursor>
-                                        </Rectangle>
-                                        <Rectangle fx:id="bottomCenterHandler" fill="#ffffff00" height="10.0" layoutX="325.0" layoutY="313.0" onMousePressed="#handlerPressed" onMouseReleased="#bottomCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                            <cursor>
-                                                <Cursor fx:constant="N_RESIZE" />
-                                            </cursor>
-                                        </Rectangle>
-                                        <Rectangle fx:id="bottomLeftHandler" fill="#ffffff00" height="10.0" layoutX="158.0" layoutY="313.0" onMousePressed="#handlerPressed" onMouseReleased="#bottomLeftHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                            <cursor>
-                                                <Cursor fx:constant="SW_RESIZE" />
-                                            </cursor>
-                                        </Rectangle>
-                                        <Rectangle fx:id="topLeftHandler" fill="#ffffff00" height="10.0" layoutX="158.0" layoutY="72.0" onMousePressed="#handlerPressed" onMouseReleased="#topLeftHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                            <cursor>
-                                                <Cursor fx:constant="NW_RESIZE" />
-                                            </cursor>
-                                        </Rectangle>
-                                        <Text strokeType="OUTSIDE" strokeWidth="0.0" x="200.0" y="200.0" fx:id="xyText" />
-                                    </children>
-                                </AnchorPane>
-                            </content>
-                        </ScrollPane>
+                                                    <Rectangle fx:id="maskRectangleLine" arcHeight="5.0" arcWidth="5.0" fill="#ffffff00" height="241.0" layoutX="163.0" layoutY="77.0" onMousePressed="#handlerPressed" onMouseReleased="#rectangleReleased" stroke="RED" strokeType="INSIDE" width="334.0">
+                                                        <cursor>
+                                                            <Cursor fx:constant="MOVE" />
+                                                        </cursor>
+                                                    </Rectangle>
+                                                    <Rectangle fx:id="leftCenterHandler" fill="#ffffff00" height="10.0" layoutX="158.0" layoutY="193.0" onMousePressed="#handlerPressed" onMouseReleased="#leftCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                                        <cursor>
+                                                            <Cursor fx:constant="W_RESIZE" />
+                                                        </cursor>
+                                                    </Rectangle>
+                                                    <Rectangle fx:id="topRightHandler" fill="#ffffff00" height="10.0" layoutX="492.0" layoutY="72.0" onMousePressed="#handlerPressed" onMouseReleased="#topRightHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                                        <cursor>
+                                                            <Cursor fx:constant="NE_RESIZE" />
+                                                        </cursor>
+                                                    </Rectangle>
+                                                    <Rectangle fx:id="topCenterHandler" fill="#ffffff00" height="10.0" layoutX="325.0" layoutY="72.0" onMousePressed="#handlerPressed" onMouseReleased="#topCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                                        <cursor>
+                                                            <Cursor fx:constant="N_RESIZE" />
+                                                        </cursor>
+                                                    </Rectangle>
+                                                    <Rectangle fx:id="rightCenterHandler" fill="#ffffff00" height="10.0" layoutX="492.0" layoutY="193.0" onMousePressed="#handlerPressed" onMouseReleased="#rightCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                                        <cursor>
+                                                            <Cursor fx:constant="E_RESIZE" />
+                                                        </cursor>
+                                                    </Rectangle>
+                                                    <Rectangle fx:id="bottomRightHandler" fill="#ffffff00" height="10.0" layoutX="492.0" layoutY="313.0" onMousePressed="#handlerPressed" onMouseReleased="#bottomRightHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                                        <cursor>
+                                                            <Cursor fx:constant="SE_RESIZE" />
+                                                        </cursor>
+                                                    </Rectangle>
+                                                    <Rectangle fx:id="bottomCenterHandler" fill="#ffffff00" height="10.0" layoutX="325.0" layoutY="313.0" onMousePressed="#handlerPressed" onMouseReleased="#bottomCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                                        <cursor>
+                                                            <Cursor fx:constant="N_RESIZE" />
+                                                        </cursor>
+                                                    </Rectangle>
+                                                    <Rectangle fx:id="bottomLeftHandler" fill="#ffffff00" height="10.0" layoutX="158.0" layoutY="313.0" onMousePressed="#handlerPressed" onMouseReleased="#bottomLeftHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                                        <cursor>
+                                                            <Cursor fx:constant="SW_RESIZE" />
+                                                        </cursor>
+                                                    </Rectangle>
+                                                    <Rectangle fx:id="topLeftHandler" fill="#ffffff00" height="10.0" layoutX="158.0" layoutY="72.0" onMousePressed="#handlerPressed" onMouseReleased="#topLeftHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                                        <cursor>
+                                                            <Cursor fx:constant="NW_RESIZE" />
+                                                        </cursor>
+                                                    </Rectangle>
+                                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" x="200.0" y="200.0" fx:id="xyText" />
+                                                </children>
+                                            </AnchorPane>
+                                        </content>
+                                    </ScrollPane>
+                           </content>
+                        </Tab>
+                        <Tab fx:id="ocrTab" closable="false" text="OCR">
+                           <content>
+                              <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                 <children>
+                                    <HBox fx:id="operation1Box1" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                                       <children>
+                                          <Label text="%Language" />
+                                          <ComboBox fx:id="langSelector" prefWidth="200.0" />
+                                          <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#startOCR">
+                                             <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../buttons/iconRefresh.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </Button>
+                                          <Button fx:id="settingsButton" mnemonicParsing="false" onAction="#settingsAction">
+                                             <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../buttons/iconSetting.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </Button>
+                                          <Label fx:id="setOCRLabel" maxWidth="1.7976931348623157E308" styleClass="darkRed-label" stylesheets="@../styles/MyBox.css" text="%SetOCRPath" />
+                                          <Label fx:id="resultLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                          <Button fx:id="saveOcrButton" mnemonicParsing="false" onAction="#saveOCR" onMouseEntered="#popSaveOCR">
+                                             <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../buttons/iconSave.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </Button>
+                                       </children>
+                                    </HBox>
+                                    <TextArea fx:id="ocrArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+                                 </children>
+                              </VBox>
+                           </content>
+                        </Tab>
+                     </tabs>
+                  </TabPane>
                     </items>
                 </SplitPane>
             </children>

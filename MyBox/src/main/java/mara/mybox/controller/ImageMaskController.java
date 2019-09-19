@@ -158,11 +158,11 @@ public class ImageMaskController extends ImageBaseController {
                 coordinateCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        AppVariables.setUserConfigValue("ImagePopCooridnateKey", coordinateCheck.isSelected());
+                        AppVariables.setUserConfigValue("ImagePopCooridnate", coordinateCheck.isSelected());
                         checkCoordinate();
                     }
                 });
-                coordinateCheck.setSelected(AppVariables.getUserConfigBoolean("ImagePopCooridnateKey", false));
+                coordinateCheck.setSelected(AppVariables.getUserConfigBoolean("ImagePopCooridnate", false));
 
             }
         } catch (Exception e) {
@@ -180,7 +180,7 @@ public class ImageMaskController extends ImageBaseController {
 
     protected void checkCoordinate() {
         if (xyText != null) {
-            boolean show = AppVariables.getUserConfigBoolean("ImagePopCooridnateKey", false);
+            boolean show = AppVariables.getUserConfigBoolean("ImagePopCooridnate", false);
             xyText.setVisible(show);
         }
     }
@@ -1576,7 +1576,7 @@ public class ImageMaskController extends ImageBaseController {
     @FXML
     public DoublePoint showXY(MouseEvent event) {
         if (needNotCoordinates || xyText == null || !xyText.isVisible()
-                || (coordinateCheck != null && !coordinateCheck.isSelected())) {
+                || !AppVariables.ImagePopCooridnate) {
             return null;
         }
         DoublePoint p = getImageXY(event, imageView);
@@ -1586,7 +1586,7 @@ public class ImageMaskController extends ImageBaseController {
 
     public DoublePoint showXY(MouseEvent event, DoublePoint p) {
         if (needNotCoordinates || xyText == null || !xyText.isVisible()
-                || (coordinateCheck != null && !coordinateCheck.isSelected())) {
+                || !AppVariables.ImagePopCooridnate) {
             return null;
         }
         if (p == null) {

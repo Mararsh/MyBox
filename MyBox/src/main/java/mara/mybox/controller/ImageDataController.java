@@ -277,8 +277,7 @@ public class ImageDataController extends ImageViewerController {
                 }
             }
 
-            loadData();
-
+//            loadData();  // Lazy loading
         } catch (Exception e) {
             logger.debug(e.toString());
         }

@@ -61,7 +61,7 @@ public class SettingsController extends BaseController {
     @FXML
     protected TabPane tabPane;
     @FXML
-    protected Tab interfaceTab, baseTab, pdfTab, imageTab;
+    protected Tab interfaceTab, baseTab, pdfTab, imageTab, dataTab;
     @FXML
     protected ToggleGroup langGroup, pdfMemGroup, controlColorGroup;
     @FXML
@@ -69,9 +69,10 @@ public class SettingsController extends BaseController {
             anchorSolidCheck, coordinateCheck, rulerXCheck, rulerYCheck, controlsTextCheck,
             recordLoadCheck, clearCurrentRootCheck, hidpiCheck;
     @FXML
-    protected TextField jvmInput, imageMaxHisInput, dataDirInput, fileRecentInput, thumbnailWidthInput;
+    protected TextField jvmInput, imageMaxHisInput, dataDirInput, fileRecentInput, thumbnailWidthInput,
+            ocrDirInput;
     @FXML
-    protected VBox localBox;
+    protected VBox localBox, dataBox, ocrBox;
     @FXML
     protected ComboBox<String> styleBox, imageWidthBox, fontSizeBox, iconSizeBox,
             strokeWidthBox, anchorWidthBox;
@@ -99,6 +100,7 @@ public class SettingsController extends BaseController {
         try {
             initInterfaceTab();
             initBaseTab();
+            initDataTab();
             initPdfTab();
             initImageTab();
 
@@ -116,7 +118,7 @@ public class SettingsController extends BaseController {
             stopAlarmCheck.setSelected(AppVariables.getUserConfigBoolean("StopAlarmsWhenExit"));
             newWindowCheck.setSelected(AppVariables.openStageInNewWindow);
 
-            coordinateCheck.setSelected(AppVariables.getUserConfigBoolean("ImagePopCooridnateKey", false));
+            coordinateCheck.setSelected(AppVariables.getUserConfigBoolean("ImagePopCooridnate", false));
 
             maxImageHis = AppVariables.getUserConfigInt("MaxImageHistories", 20);
             imageMaxHisInput.setText(maxImageHis + "");
@@ -441,36 +443,21 @@ public class SettingsController extends BaseController {
             settingsJVMButton.setDisable(true);
             isSettingValues = false;
 
-            fileRecentInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
-                    checkRecentFile();
-                }
-            });
-
-            stopAlarmCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
-                    AppVariables.setUserConfigValue("StopAlarmsWhenExit", stopAlarmCheck.isSelected());
-                }
-            });
-
             dataDirInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     String p = dataDirInput.getText();
                     if (isSettingValues || p == null || p.trim().isEmpty()
-                            || p.trim().equals(AppVariables.MyBoxDataRoot)) {
+                            || p.trim().equals(AppVariables.MyboxDataPath)) {
                         settingsChangeRootButton.setDisable(true);
                         return;
                     }
                     settingsChangeRootButton.setDisable(false);
                 }
             });
-            dataDirInput.setText(AppVariables.MyBoxDataRoot);
-            currentDataPathLabel.setText(MessageFormat.format(message("CurrentValue"), AppVariables.MyBoxDataRoot));
-            dafaultPathMovedLabel.setText(MessageFormat.format(message("DefaultPathMovedInfo"), CommonValues.OldAppDataRoot));
+            dataDirInput.setText(AppVariables.MyboxDataPath);
+            currentDataPathLabel.setText(MessageFormat.format(message("CurrentValue"), AppVariables.MyboxDataPath));
+            dafaultPathMovedLabel.setText(MessageFormat.format(message("DefaultPathMovedInfo"), System.getProperty("user.home")));
             clearCurrentRootCheck.setText(MessageFormat.format(message("ClearPathWhenChange"), AppVariables.MyboxDataPath));
 
             hidpiCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -535,6 +522,121 @@ public class SettingsController extends BaseController {
     }
 
     @FXML
+    protected void selectDataPath(ActionEvent event) {
+        try {
+            DirectoryChooser chooser = new DirectoryChooser();
+            chooser.setInitialDirectory(new File(AppVariables.MyboxDataPath));
+            File directory = chooser.showDialog(getMyStage());
+            if (directory == null) {
+                return;
+            }
+            recordFileWritten(directory);
+            dataDirInput.setText(directory.getPath());
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    @FXML
+    protected void changeDataPath(ActionEvent event) {
+        try {
+            String newPath = dataDirInput.getText();
+            if (isSettingValues || newPath == null || newPath.trim().isEmpty()
+                    || newPath.trim().equals(AppVariables.MyboxDataPath)) {
+                return;
+            }
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle(getBaseTitle());
+            alert.setContentText(AppVariables.message("ChangeDataPathConfirm"));
+            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+            stage.setAlwaysOnTop(true);
+            stage.toFront();
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() != ButtonType.OK) {
+                return;
+            }
+            popInformation(message("CopyingFilesFromTo"));
+            String oldPath = AppVariables.MyboxDataPath;
+            if (FileTools.copyWholeDirectory(new File(oldPath), new File(newPath), null, false)) {
+                File lckFile = new File(newPath + File.separator
+                        + "mybox_derby" + File.separator + "db.lck");
+                if (lckFile.exists()) {
+                    try {
+                        lckFile.delete();
+                    } catch (Exception e) {
+                        logger.error(e.toString());
+                    }
+                }
+                AppVariables.MyboxDataPath = newPath;
+                ConfigTools.writeConfigValue("MyBoxDataPath", newPath);
+                dataDirInput.setStyle(null);
+                if (clearCurrentRootCheck.isSelected()) {
+                    ConfigTools.writeConfigValue("MyBoxOldDataPath", oldPath);
+                }
+                MyBox.restart();
+            } else {
+                popFailed();
+                dataDirInput.setStyle(badStyle);
+            }
+
+        } catch (Exception e) {
+            popFailed();
+            dataDirInput.setStyle(badStyle);
+        }
+    }
+
+    /*
+        Data settings
+     */
+    public void initDataTab() {
+        try {
+
+            fileRecentInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable,
+                        String oldValue, String newValue) {
+                    checkRecentFile();
+                }
+            });
+
+            stopAlarmCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+                    AppVariables.setUserConfigValue("StopAlarmsWhenExit", stopAlarmCheck.isSelected());
+                }
+            });
+
+            String os = System.getProperty("os.name").toLowerCase();
+            if (!os.contains("windows")) {
+                dataBox.getChildren().remove(ocrBox);
+            } else {
+                ocrDirInput.textProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                        try {
+                            File file = new File(newValue);
+                            if (!file.exists() || !file.isDirectory()) {
+                                ocrDirInput.setStyle(badStyle);
+                                return;
+                            }
+                            ocrDirInput.setStyle(null);
+                            AppVariables.setUserConfigValue("OCRDataPath", file.getAbsolutePath());
+                        } catch (Exception e) {
+
+                        }
+                    }
+                });
+                ocrDirInput.setText(AppVariables.getUserConfigValue("OCRDataPath", ""));
+            }
+
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+    @FXML
     protected void setFileRecentAction(ActionEvent event) {
         AppVariables.setUserConfigInt("FileRecentNumber", recentFileNumber);
         AppVariables.fileRecentNumber = recentFileNumber;
@@ -568,56 +670,17 @@ public class SettingsController extends BaseController {
     }
 
     @FXML
-    protected void selectDataPath(ActionEvent event) {
+    protected void setOCRPath(ActionEvent event) {
         try {
             DirectoryChooser chooser = new DirectoryChooser();
-            chooser.setInitialDirectory(new File(AppVariables.MyBoxDataRoot));
             File directory = chooser.showDialog(getMyStage());
             if (directory == null) {
                 return;
             }
             recordFileWritten(directory);
-            dataDirInput.setText(directory.getPath());
+            ocrDirInput.setText(directory.getPath());
         } catch (Exception e) {
             logger.error(e.toString());
-        }
-    }
-
-    @FXML
-    protected void changeDataPath(ActionEvent event) {
-        try {
-            String p = dataDirInput.getText();
-            if (isSettingValues || p == null || p.trim().isEmpty()
-                    || p.trim().equals(AppVariables.MyBoxDataRoot)) {
-                return;
-            }
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle(getBaseTitle());
-            alert.setContentText(AppVariables.message("ChangeDataPathConfirm"));
-            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-            stage.setAlwaysOnTop(true);
-            stage.toFront();
-
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() != ButtonType.OK) {
-                return;
-            }
-            popInformation(message("CopyingFilesFromTo"));
-            if (MainApp.initRootPath(myStage, p)) {
-                dataDirInput.setStyle(null);
-                if (clearCurrentRootCheck.isSelected()) {
-                    FileTools.deleteDir(new File(AppVariables.MyboxDataPath));
-                }
-                MyBox.restart();
-            } else {
-                popFailed();
-                dataDirInput.setStyle(badStyle);
-            }
-
-        } catch (Exception e) {
-            popFailed();
-            dataDirInput.setStyle(badStyle);
         }
     }
 
@@ -796,7 +859,7 @@ public class SettingsController extends BaseController {
             coordinateCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    AppVariables.setUserConfigValue("ImagePopCooridnateKey", coordinateCheck.isSelected());
+                    AppVariables.setUserConfigValue("ImagePopCooridnate", coordinateCheck.isSelected());
                 }
             });
 

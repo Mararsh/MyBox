@@ -120,95 +120,102 @@ License:    Apache License Version 2.0
                         </Tab>
                         <Tab fx:id="baseTab" text="%Base">
                             <content>
-                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="15.0">
-                                    <padding>
-                                        <Insets bottom="10.0" left="10.0" right="10.0" top="20.0" />
-                                    </padding>
-                                    <children>
-                              <VBox fx:id="localBox" spacing="15.0">
-                                 <children>
-                                              <HBox fx:id="fileHisBox21" alignment="CENTER_LEFT" layoutX="20.0" layoutY="180.0" spacing="10.0">
-                                                  <children>
-                                                      <Label text="%JvmXmx" />
-                                                      <TextField fx:id="jvmInput" prefWidth="100.0" />
-                                                      <Label text="MB" />
-                                                      <Button fx:id="settingsJVMButton" mnemonicParsing="false" onAction="#setJVM">
-                                                          <graphic>
-                                                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                  <image>
-                                                                      <Image url="@../buttons/iconOK.png" />
-                                                                  </image>
-                                                              </ImageView>
-                                                          </graphic>
-                                                      </Button>
-                                                      <Label text="%RestartWhenChange" />
-                                                  </children>
-                                              </HBox>
-                                              <HBox fx:id="fileHisBox211" alignment="CENTER_LEFT" spacing="10.0">
-                                                  <children>
-                                                      <Label text="%JvmXmx" visible="false" />
-                                                      <Label fx:id="currentJvmLabel" text="Label" />
-                                          <Button fx:id="recoverJVMButton" mnemonicParsing="false" onAction="#recoverJVM">
-                                             <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../buttons/iconRecover.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </graphic>
-                                          </Button>
-                                                  </children>
-                                              </HBox>
-                                              <HBox fx:id="fileHisBox2" alignment="CENTER_LEFT" spacing="10.0">
-                                                  <children>
-                                                      <CheckBox fx:id="hidpiCheck" mnemonicParsing="false" text="%DisableHiDPI" />
-                                                  </children>
-                                              </HBox>
-                                              <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
-                                                  <children>
-                                                      <Label text="%DataDirectory" />
-                                                      <Label fx:id="currentDataPathLabel" text="%CurrentValue" />
-                                                  </children>
-                                              </HBox>
-                                              <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                                  <children>
-                                                      <Label text="%DataDirectory" visible="false" />
-                                                      <TextField fx:id="dataDirInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                      <Button fx:id="settingsDataPathButton" mnemonicParsing="false" onAction="#selectDataPath">
-                                                          <graphic>
-                                                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                  <image>
-                                                                      <Image url="@../buttons/iconOpen.png" />
-                                                                  </image>
-                                                              </ImageView>
-                                                          </graphic>
-                                                      </Button>
-                                                  </children>
-                                              </HBox>
-                                              <HBox fx:id="fileHisBox1" alignment="CENTER_LEFT" spacing="10.0">
-                                                  <children>
-                                                      <Label text="%DataDirectory" visible="false" />
-                                                      <CheckBox fx:id="clearCurrentRootCheck" mnemonicParsing="false" text="label" />
-                                                      <Button fx:id="settingsChangeRootButton" mnemonicParsing="false" onAction="#changeDataPath">
-                                                          <graphic>
-                                                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                  <image>
-                                                                      <Image url="@../buttons/iconOK.png" />
-                                                                  </image>
-                                                              </ImageView>
-                                                          </graphic>
-                                                      </Button>
-                                                      <Label text="%RestartWhenChange" />
-                                                  </children>
-                                              </HBox>
-                                              <HBox fx:id="fileHisBox11" alignment="CENTER_LEFT" spacing="10.0">
-                                                  <children>
-                                                      <Label text="%DataDirectory" visible="false" />
-                                                      <Label fx:id="dafaultPathMovedLabel" layoutX="10.0" layoutY="10.0" text="label" wrapText="true" />
-                                                  </children>
-                                              </HBox>
-                                 </children>
-                              </VBox>
+                        <VBox fx:id="localBox" spacing="20.0">
+                           <children>
+                                        <HBox fx:id="fileHisBox21" alignment="CENTER_LEFT" layoutX="20.0" layoutY="180.0" spacing="10.0">
+                                            <children>
+                                                <Label text="%JvmXmx" />
+                                                <TextField fx:id="jvmInput" prefWidth="100.0" />
+                                                <Label text="MB" />
+                                                <Button fx:id="settingsJVMButton" mnemonicParsing="false" onAction="#setJVM">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconOK.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Label text="%RestartWhenChange" />
+                                            </children>
+                                        </HBox>
+                                        <HBox fx:id="fileHisBox211" alignment="CENTER_LEFT" spacing="10.0">
+                                            <children>
+                                                <Label text="%JvmXmx" visible="false" />
+                                                <Label fx:id="currentJvmLabel" text="Label" />
+                                    <Button fx:id="recoverJVMButton" mnemonicParsing="false" onAction="#recoverJVM">
+                                       <graphic>
+                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/iconRecover.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </Button>
+                                            </children>
+                                        </HBox>
+                                        <HBox fx:id="fileHisBox2" alignment="CENTER_LEFT" spacing="10.0">
+                                            <children>
+                                                <CheckBox fx:id="hidpiCheck" mnemonicParsing="false" text="%DisableHiDPI" />
+                                            </children>
+                                        </HBox>
+                                        <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
+                                            <children>
+                                                <Label text="%DataDirectory" />
+                                                <Label fx:id="currentDataPathLabel" text="%CurrentValue" />
+                                            </children>
+                                        </HBox>
+                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                            <children>
+                                                <Label text="%DataDirectory" visible="false" />
+                                                <TextField fx:id="dataDirInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                <Button fx:id="settingsDataPathButton" mnemonicParsing="false" onAction="#selectDataPath">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconOpen.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                            </children>
+                                        </HBox>
+                                        <HBox fx:id="fileHisBox1" alignment="CENTER_LEFT" spacing="10.0">
+                                            <children>
+                                                <Label text="%DataDirectory" visible="false" />
+                                                <CheckBox fx:id="clearCurrentRootCheck" mnemonicParsing="false" text="label" />
+                                                <Button fx:id="settingsChangeRootButton" mnemonicParsing="false" onAction="#changeDataPath">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconOK.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Label text="%RestartWhenChange" />
+                                            </children>
+                                        </HBox>
+                                        <HBox fx:id="fileHisBox11" alignment="CENTER_LEFT" spacing="10.0">
+                                            <children>
+                                                <Label text="%DataDirectory" visible="false" />
+                                                <Label fx:id="dafaultPathMovedLabel" layoutX="10.0" layoutY="10.0" text="label" wrapText="true" />
+                                            </children>
+                                        </HBox>
+                           </children>
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="20.0" />
+                           </padding>
+                        </VBox>
+                            </content>
+                        </Tab>
+                  <Tab fx:id="dataTab" text="%Data">
+                     <content>
+                        <VBox fx:id="dataBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="20.0">
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="20.0" />
+                           </padding>
+                           <children>
                                         <HBox fx:id="fileHisBox" alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
                                             <children>
                                                 <Label text="%RecentFileHistories" />
@@ -247,10 +254,31 @@ License:    Apache License Version 2.0
                                                 <CheckBox fx:id="stopAlarmCheck" mnemonicParsing="false" selected="true" text="%StopAlarmsExit" />
                                             </children>
                                         </HBox>
-                                    </children>
-                                </VBox>
-                            </content>
-                        </Tab>
+                              <VBox fx:id="ocrBox" spacing="5.0">
+                                 <children>
+                                    <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                       <children>
+                                          <Label text="%OCRDataPath" />
+                                          <TextField fx:id="ocrDirInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                          <Button fx:id="ocrPathButton" mnemonicParsing="false" onAction="#setOCRPath">
+                                             <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../buttons/iconOpen.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </Button>
+                                       </children>
+                                    </HBox>
+                                    <Label text="%TesseractDataComments" />
+                                    <Hyperlink onAction="#link" text=" https://github.com/tesseract-ocr/tesseract/wiki/Data-Files" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </VBox>
+                     </content>
+                  </Tab>
                         <Tab fx:id="pdfTab" text="%PdfTools">
                             <content>
                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="20.0">

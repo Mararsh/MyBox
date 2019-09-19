@@ -45,11 +45,11 @@ public class AppleRGB {
         double linearGreen = -1.0851093 * xyz[0] + 1.9908566 * xyz[1] + 0.0372026 * xyz[2];
         double linearBlue = 0.0854934 * xyz[0] - 0.2694964 * xyz[1] + 1.0912975 * xyz[2];
 
-        double[] adobergb = new double[3];
-        adobergb[0] = gammaAppleRGB(linearRed);
-        adobergb[1] = gammaAppleRGB(linearGreen);
-        adobergb[2] = gammaAppleRGB(linearBlue);
-        return adobergb;
+        double[] applergb = new double[3];
+        applergb[0] = gammaAppleRGB(linearRed);
+        applergb[1] = gammaAppleRGB(linearGreen);
+        applergb[2] = gammaAppleRGB(linearBlue);
+        return applergb;
     }
 
     public static double[] AppleRGBtoSRGB(double[] applergb) {

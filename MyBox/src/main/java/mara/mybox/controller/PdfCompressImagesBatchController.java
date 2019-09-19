@@ -199,7 +199,7 @@ public class PdfCompressImagesBatchController extends PdfBatchController {
     public int handleCurrentPage() {
         int count = 0;
         try {
-            PDPage sourcePage = doc.getPage(currentParameters.currentPage - 1);
+            PDPage sourcePage = doc.getPage(currentParameters.currentPage - 1);  // 0-based
             PDResources pdResources = sourcePage.getResources();
             pdResources.getXObjectNames();
             Iterable<COSName> iterable = pdResources.getXObjectNames();

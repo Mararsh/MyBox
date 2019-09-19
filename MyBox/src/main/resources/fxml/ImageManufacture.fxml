@@ -21,8 +21,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="720.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufactureController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="720.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufactureController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -108,7 +107,6 @@ License:    Apache License Version 2.0
                                                     <content>
                                                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="5.0">
                                                             <children>
-                                                                <CheckBox fx:id="syncCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%SychronizedZooming" />
                                                                 <HBox alignment="CENTER_LEFT" spacing="5.0">
                                                                     <children>
                                                                         <Label text="%ZoomStep" />
@@ -120,9 +118,38 @@ License:    Apache License Version 2.0
                                                                         </Label>
                                                                     </children>
                                                                 </HBox>
-                                                                <CheckBox fx:id="coordinateCheck" mnemonicParsing="false" text="%Coordinate" />
-                                                                <CheckBox fx:id="rulerXCheck" mnemonicParsing="false" text="%RulerX" />
-                                                                <CheckBox fx:id="rulerYCheck" mnemonicParsing="false" text="%RulerY" />
+                                                                <CheckBox fx:id="syncCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%SynchronizedZooming" />
+                                                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                                   <children>
+                                                                      <CheckBox fx:id="coordinateCheck" mnemonicParsing="false">
+                                                         <graphic>
+                                                            <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                               <image>
+                                                                  <Image url="@../buttons/iconLocation.png" />
+                                                               </image>
+                                                            </ImageView>
+                                                         </graphic>
+                                                      </CheckBox>
+                                                                      <CheckBox fx:id="rulerXCheck" mnemonicParsing="false">
+                                                         <graphic>
+                                                            <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                               <image>
+                                                                  <Image url="@../buttons/iconXRuler.png" />
+                                                               </image>
+                                                            </ImageView>
+                                                         </graphic>
+                                                      </CheckBox>
+                                                                      <CheckBox fx:id="rulerYCheck" mnemonicParsing="false">
+                                                         <graphic>
+                                                            <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                               <image>
+                                                                  <Image url="@../buttons/iconYRuler.png" />
+                                                               </image>
+                                                            </ImageView>
+                                                         </graphic>
+                                                      </CheckBox>
+                                                   </children>
+                                                </HBox>
                                                             </children>
                                                         </VBox>
                                                     </content>

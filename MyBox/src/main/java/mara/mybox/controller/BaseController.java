@@ -58,7 +58,9 @@ import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.image.ImageInformation;
+import mara.mybox.tools.ConfigTools;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.MyboxDataPath;
 import static mara.mybox.value.AppVariables.logger;
@@ -1588,7 +1590,9 @@ public class BaseController implements Initializable {
     public void link(ActionEvent event) {
         try {
             Hyperlink link = (Hyperlink) event.getSource();
-            browseURI(new URI(link.getText()));
+            URL url = new URL(link.getText());
+            URI uri = new URI(url.getProtocol(), url.getHost(), url.getPath(), url.getQuery(), null);
+            browseURI(uri);
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -1719,9 +1723,9 @@ public class BaseController implements Initializable {
             if (userPath.exists()) {
                 File[] files = userPath.listFiles();
                 for (File f : files) {
-                    if (f.isFile()) {
+                    if (f.isFile() && !f.equals(ConfigTools.configFile())) {
                         f.delete();
-                    } else if (f.isDirectory() && !AppVariables.MyBoxDataPaths.contains(f)) {
+                    } else if (f.isDirectory() && !AppVariables.MyBoxReservePaths.contains(f)) {
                         FileTools.deleteDir(f);
                     }
                 }
@@ -1743,20 +1747,48 @@ public class BaseController implements Initializable {
         if (uri == null) {
             return false;
         }
-        if (Desktop.isDesktopSupported()) {
+
+        if (SystemTools.isLinux()) {
+            // On my CentOS 7, system hangs when both Desktop.isDesktopSupported() and
+            // desktop.isSupported(Desktop.Action.BROWSE) are true.
+            // https://stackoverflow.com/questions/27879854/desktop-getdesktop-browse-hangs
+            // Workaround for Linux because "Desktop.getDesktop().browse()" doesn't work on some Linux implementations
+            try {
+                if (Runtime.getRuntime().exec(new String[]{"which", "xdg-open"}).getInputStream().read() != -1) {
+                    Runtime.getRuntime().exec(new String[]{"xdg-open", uri.toString()});
+                    return true;
+                } else {
+                }
+            } catch (Exception e) {
+            }
+            popError(message("DesktopNotSupportBrowse"), 6000);
+
+        } else if (SystemTools.isMac()) {
+            // https://stackoverflow.com/questions/5226212/how-to-open-the-default-webbrowser-using-java/28807079#28807079
+            try {
+                Runtime rt = Runtime.getRuntime();
+                rt.exec("open " + uri.toString());
+            } catch (Exception e) {
+            }
+            popError(message("DesktopNotSupportBrowse"), 6000);
+
+        } else if (Desktop.isDesktopSupported()) {
             Desktop desktop = Desktop.getDesktop();
             if (desktop.isSupported(Desktop.Action.BROWSE)) {
                 try {
                     desktop.browse(uri);
                     return true;
-                } catch (Exception ioe) {
+                } catch (Exception e) {
+                    logger.error(e.toString());
                 }
             } else {
                 popError(message("DesktopNotSupportBrowse"), 6000);
             }
+
         } else {
             popError(message("DesktopNotSupportBrowse"), 6000);
         }
+
         view(uri.toString());
         return true;
     }
@@ -2271,7 +2303,7 @@ public class BaseController implements Initializable {
         }
 
         protected void whenSucceeded() {
-
+            popSuccessul();
         }
 
         protected void whenFailed() {

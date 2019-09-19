@@ -34,9 +34,9 @@ public class AppVariables {
     public static String[] appArgs;
     public static boolean disableHiDPI = false;
 
-    public static String MyBoxDataRoot, MyboxDataPath, AlarmClocksFile;
+    public static String MyboxDataPath, AlarmClocksFile;
     public static File MyBoxTempPath, MyBoxDerbyPath;
-    public static List<File> MyBoxDataPaths;
+    public static List<File> MyBoxReservePaths;
 
     public static Logger logger = LogManager.getLogger(AppVariables.class);
     public static ResourceBundle currentBundle;
@@ -47,7 +47,7 @@ public class AppVariables {
     public static AlarmClockController alarmClockController;
     public static MemoryUsageSetting pdfMemUsage;
     public static int sceneFontSize, fileRecentNumber, iconSize;
-    public static boolean openStageInNewWindow, restoreStagesSize, controlDisplayText;
+    public static boolean openStageInNewWindow, restoreStagesSize, controlDisplayText, ImagePopCooridnate;
     public static ControlStyle.ColorStyle ControlColor;
 
     public AppVariables() {
@@ -67,6 +67,7 @@ public class AppVariables {
             iconSize = AppVariables.getUserConfigInt("IconSize", 20);
             ControlColor = ControlStyle.getConfigColorStyle();
             controlDisplayText = AppVariables.getUserConfigBoolean("ControlDisplayText", false);
+            ImagePopCooridnate = AppVariables.getUserConfigBoolean("ImagePopCooridnate", false);
         } catch (Exception e) {
             logger.error(e.toString());
         }

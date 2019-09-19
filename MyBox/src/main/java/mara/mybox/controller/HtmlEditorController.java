@@ -459,7 +459,7 @@ public class HtmlEditorController extends BaseController {
                                         timer.schedule(new TimerTask() {
                                             @Override
                                             public void run() {
-                                                AppVariables.setUserConfigValue("WeiboPassportChecked", "true");
+                                                AppVariables.setUserConfigValue("WeiboPassportChecked", true);
                                                 Platform.runLater(new Runnable() {
                                                     @Override
                                                     public void run() {
@@ -744,7 +744,7 @@ public class HtmlEditorController extends BaseController {
             } else {
                 contents = htmlEditor.getHtmlText();
             }
-            try (BufferedWriter out = new BufferedWriter(new FileWriter(sourceFile, Charset.forName("utf-8"), false))) {
+            try ( BufferedWriter out = new BufferedWriter(new FileWriter(sourceFile, Charset.forName("utf-8"), false))) {
                 out.write(contents);
                 out.flush();
             }
@@ -780,7 +780,7 @@ public class HtmlEditorController extends BaseController {
             } else {
                 contents = codesArea.getText();
             }
-            try (BufferedWriter out = new BufferedWriter(new FileWriter(sourceFile, Charset.forName("utf-8"), false))) {
+            try ( BufferedWriter out = new BufferedWriter(new FileWriter(sourceFile, Charset.forName("utf-8"), false))) {
                 out.write(contents);
                 out.flush();
             }

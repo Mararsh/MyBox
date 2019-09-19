@@ -137,8 +137,8 @@ public class PdfConvertImagesBatchController extends PdfBatchController {
     @Override
     public int handleCurrentPage() {
         try {
-            BufferedImage pageImage = renderer.renderImageWithDPI(currentParameters.currentPage,
-                    attributes.getDensity(), ImageType.ARGB);
+            BufferedImage pageImage = renderer.renderImageWithDPI(currentParameters.currentPage - 1,
+                    attributes.getDensity(), ImageType.ARGB);                              // 0-based
             BufferedImage targetImage = ImageConvert.convertColorSpace(pageImage, attributes);
             if (targetImage == null) {
                 return 0;

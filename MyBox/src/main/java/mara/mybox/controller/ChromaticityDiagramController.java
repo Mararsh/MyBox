@@ -1172,6 +1172,9 @@ public class ChromaticityDiagramController extends BaseController {
             double[] LCHuv = CIEColorSpace.LuvtoLCHuv(cieLuv);
             values.add(new ColorValue("LCH(uv)", "D50", LCHuv));
 
+            double[] hsb = {pColor.getHue(), pColor.getSaturation(), pColor.getBrightness()};
+            values.add(new ColorValue("HSB", "D65", hsb));
+
             values.add(new ColorValue("sRGB", "D65 sRGB_Gamma", srgb, 255));
             double[] sRGBLinear = CIEColorSpace.XYZd50toSRGBd65Linear(X, Y, Z);
             values.add(new ColorValue("sRGB", "D65 Linear", sRGBLinear, 255));

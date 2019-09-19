@@ -11,7 +11,6 @@ import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonImageValues;
-import mara.mybox.value.CommonValues;
 import org.apache.pdfbox.pdmodel.PDDocument;
 
 /**
@@ -101,6 +100,8 @@ public abstract class PdfBatchController extends BatchController<PdfInformation>
         return true;
     }
 
+    // page number is 1-based.
+    // Notice: Some APIs of PdfBox are 0-base and others are 1-based.
     @Override
     public String handleFile(File srcFile, File targetPath) {
         int generated = 0;

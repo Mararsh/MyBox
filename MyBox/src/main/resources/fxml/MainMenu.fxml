@@ -41,6 +41,7 @@ License:    Apache License Version 2.0
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openPdfConvertHtmlsBatch" text="%PdfConvertHtmlsBatch" />
                                 <MenuItem mnemonicParsing="false" onAction="#openPdfConvertImagesBatch" text="%PdfConvertImagesBatch" />
+                                <MenuItem  fx:id="pdfOcrBatchMenu"  mnemonicParsing="false" onAction="#openPdfOCRBatch" text="%PdfOCRBatch" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openPdfExtractImagesBatch" text="%PdfExtractImagesBatch" />
                                 <MenuItem mnemonicParsing="false" onAction="#openPdfExtractTextsBatch" text="%PdfExtractTextsBatch" />
@@ -76,6 +77,8 @@ License:    Apache License Version 2.0
                                 </Menu>
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageConverterBatch" text="%ImageConverterBatch" />
+                                <MenuItem  fx:id="imageOcrMenu"  mnemonicParsing="false" onAction="#openImageOCR" text="%ImageOCR" />
+                                <MenuItem fx:id="imageOcrBatchMenu"  mnemonicParsing="false" onAction="#openImageOCRBatch" text="%ImageOCRBatch" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <Menu mnemonicParsing="false" text="%MultipleFramesImageFile">
                                     <items>
@@ -137,7 +140,7 @@ License:    Apache License Version 2.0
                                 <MenuItem mnemonicParsing="false" onAction="#openMatricesCalculation" text="%MatricesCalculation" />
                             </items>
                         </Menu>
-                        <Menu mnemonicParsing="false" text="%DesktopTools">
+                        <Menu mnemonicParsing="false" text="%FileTools">
                             <items>
                                 <MenuItem mnemonicParsing="false" onAction="#openFilesRename" text="%FilesRename" />
                                 <MenuItem mnemonicParsing="false" onAction="#openFilesArrangement" text="%FilesArrangement" />

@@ -9,8 +9,8 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import mara.mybox.MyBox;
 import static mara.mybox.value.AppVariables.logger;
-import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -20,17 +20,19 @@ import mara.mybox.value.CommonValues;
  */
 public class ConfigTools {
 
-    public static final String ConfigFilePath = CommonValues.DefaultDataRoot;
-    public static final String ConfigFile = ConfigFilePath + File.separator + "MyBox.ini";
+    public static File configFile() {
+        File iniFile = new File(MyBox.defaultDataPath() + File.separator + "MyBox.ini");
+        return iniFile;
+    }
 
     public static Map<String, String> readConfigValues() {
         try {
-            File iniFile = new File(ConfigFile);
+            File iniFile = configFile();
             if (!iniFile.exists()) {
                 return null;
             }
             Map<String, String> values = new HashMap<>();
-            try (InputStream in = new BufferedInputStream(new FileInputStream(iniFile))) {
+            try ( InputStream in = new BufferedInputStream(new FileInputStream(iniFile))) {
                 Properties conf = new Properties();
                 conf.load(in);
                 for (String key : conf.stringPropertyNames()) {
@@ -46,12 +48,12 @@ public class ConfigTools {
 
     public static String readConfigValue(String key) {
         try {
-            File iniFile = new File(ConfigFile);
+            File iniFile = configFile();
             if (!iniFile.exists()) {
                 return null;
             }
             String value;
-            try (InputStream in = new BufferedInputStream(new FileInputStream(iniFile))) {
+            try ( InputStream in = new BufferedInputStream(new FileInputStream(iniFile))) {
                 Properties conf = new Properties();
                 conf.load(in);
                 value = conf.getProperty(key);
@@ -65,24 +67,17 @@ public class ConfigTools {
 
     public static boolean writeConfigValue(String key, String value) {
         try {
-            File path = new File(ConfigFilePath);
-            if (!path.exists()) {
-                path.mkdirs();
-            } else if (!path.isDirectory()) {
-                path.delete();
-                path.mkdirs();
-            }
-            File iniFile = new File(ConfigFile);
+            File iniFile = configFile();
             if (!iniFile.exists()) {
                 if (!iniFile.createNewFile()) {
                     return false;
                 }
             }
             Properties conf = new Properties();
-            try (InputStream in = new FileInputStream(iniFile)) {
+            try ( InputStream in = new FileInputStream(iniFile)) {
                 conf.load(in);
             }
-            try (OutputStream out = new FileOutputStream(iniFile)) {
+            try ( OutputStream out = new FileOutputStream(iniFile)) {
                 if (value == null) {
                     conf.remove(key);
                 } else {

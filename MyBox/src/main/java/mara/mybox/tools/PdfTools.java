@@ -547,6 +547,7 @@ public class PdfTools {
 
     }
 
+    // page is 0-based
     public static BufferedImage page2image(File file, int page) {
         try {
             try (PDDocument doc = PDDocument.load(file, null, AppVariables.pdfMemUsage)) {
@@ -560,6 +561,7 @@ public class PdfTools {
         }
     }
 
+    // page is 0-based
     public static BufferedImage page2image(File file, String password, int page,
             float scale, ImageType imageType) {
         try {
@@ -574,6 +576,7 @@ public class PdfTools {
         }
     }
 
+    // page is 0-based
     public static BufferedImage page2image(File file, String password, int page,
             int dpi, ImageType imageType) {
         try {

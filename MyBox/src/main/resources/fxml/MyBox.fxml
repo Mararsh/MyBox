@@ -26,7 +26,7 @@ License:    Apache License Version 2.0
             <children>
                 <ImageView fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
                     <image>
-                        <Image url="@../img/mybox.png" />
+                        <Image url="@../img/MyBox.png" />
                     </image>
                 </ImageView>
                 <Label maxWidth="1.7976931348623157E308" text="%AppTitle" HBox.hgrow="ALWAYS">
@@ -37,11 +37,11 @@ License:    Apache License Version 2.0
                         <Font size="24.0" />
                     </font>
                 </Label>
-            <CheckBox fx:id="imageCheck" mnemonicParsing="false" text="%ViewImage">
-               <HBox.margin>
-                  <Insets right="30.0" />
-               </HBox.margin>
-            </CheckBox>
+                <CheckBox fx:id="imageCheck" mnemonicParsing="false" text="%ViewImage">
+                    <HBox.margin>
+                        <Insets right="30.0" />
+                    </HBox.margin>
+                </CheckBox>
             </children>
             <padding>
                 <Insets left="5.0" right="5.0" />
@@ -55,9 +55,9 @@ License:    Apache License Version 2.0
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
     </padding>
     <center>
-        <VBox spacing="30.0" BorderPane.alignment="CENTER">
+        <VBox spacing="10.0" BorderPane.alignment="CENTER">
             <children>
-                <HBox alignment="CENTER" spacing="20.0">
+                <HBox alignment="CENTER" spacing="10.0">
                     <children>
                         <VBox fx:id="pdfBox" alignment="CENTER" onMouseEntered="#showPdfMenu" prefHeight="150.0" prefWidth="250.0">
                             <children>
@@ -115,7 +115,7 @@ License:    Apache License Version 2.0
                         </VBox>
                     </children>
                 </HBox>
-                <HBox alignment="CENTER" spacing="20.0">
+                <HBox alignment="CENTER" spacing="10.0">
                     <children>
                         <VBox fx:id="networkBox" alignment="CENTER" onMouseEntered="#showNetworkMenu" prefHeight="150.0" prefWidth="250.0">
                             <children>
@@ -169,7 +169,7 @@ License:    Apache License Version 2.0
                         </VBox>
                     </children>
                 </HBox>
-                <HBox alignment="CENTER" spacing="20.0">
+                <HBox alignment="CENTER" spacing="10.0">
                     <children>
                         <VBox fx:id="recentBox" alignment="CENTER" onMouseEntered="#showRecentMenu" prefHeight="150.0" prefWidth="250.0">
                             <children>
@@ -203,7 +203,7 @@ License:    Apache License Version 2.0
                             <children>
                                 <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../img/About54.png" />
+                                        <Image url="@../img/About55.png" />
                                     </image>
                                 </ImageView>
                                 <Label text="%About">

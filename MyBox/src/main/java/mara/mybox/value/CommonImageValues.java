@@ -15,7 +15,7 @@ import javafx.stage.FileChooser;
  */
 public class CommonImageValues {
 
-    public static final Image AppIcon = new Image("img/mybox.png");
+    public static final Image AppIcon = new Image("img/MyBox.png");
 
     public static List<FileChooser.ExtensionFilter> AllExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
         {

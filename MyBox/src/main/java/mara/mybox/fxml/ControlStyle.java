@@ -462,6 +462,9 @@ public class ControlStyle {
             case "saveCloseCheck":
                 return new ControlStyle("saveCloseCheck", "", message("SaveClose"), "", "iconFlower.png");
 
+            case "synchronizeCheck":
+                return new ControlStyle("synchronizeCheck", "", message("Synchronized"), "", "iconSynchronize.png");
+
             default:
                 return getOtherControlStyle(id);
         }
@@ -1040,6 +1043,15 @@ public class ControlStyle {
 
             case "recoverJVMButton":
                 return new ControlStyle("recoverJVMButton", message("Recover"), "", "iconRecover.png");
+
+            case "ocrPathButton":
+                return new ControlStyle("ocrPathButton", message("Select"), "", "iconOpen.png");
+
+            case "runButton":
+                return new ControlStyle("runButton", message("Run"), "", "iconGo.png");
+
+            case "saveOcrButton":
+                return new ControlStyle("saveOcrButton", message("Save"), "", "iconSave.png");
 
             default:
                 return null;
