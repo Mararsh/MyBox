@@ -7,7 +7,8 @@ This is GUI program based on JavaFx to provide simple and easy functions. It's f
 Packages of each version have been uploaded at [Releases](https://github.com/Mararsh/MyBox/releases?) directory now. You can find them by clicking `releases` tab in main page of this project. 
 
 ### Self-contain packages 
-Self-contain packages include all files and need not java env and installation.    
+Self-contain packages include all files and need not java env and installation.   
+ 
 | Platform | Link | Size | Requirements |    
 | -- | -- | --  | --  |    
 | win | [MyBox-5.5-win.zip](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-win.zip) | 208MB | None |    
@@ -19,12 +20,13 @@ User can double click the launcher to start MyBox or run it by command line. The
 (Please unpack it under path with pure-English name.)   
 
 ### Jar 
-When JRE or JDK 12 or higher(`Oracle jdk` or `open jdk`) is installed, jar can run:      
-| Platform | Link | Size | Requirements |
+When JRE or JDK 12 or higher(`Oracle jdk` or `open jdk`) is installed, jar can run:    
+  
+| Platform | Link | Size | Requirements |   
 | -- | -- | --  | --  |    
 | win | [MyBox-5.5-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-win-jar.zip)  | 92MB | Java 12 or higher |
 | linux | [MyBox-5.5-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-linux-jar.zip)  | 96MB | Java 12 or higher |
-| mac | [MyBox-5.5-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-mac-jar.zip)  | 93MB | Java 12 or higher |
+| mac | [MyBox-5.5-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-mac-jar.zip)  | 93MB | Java 12 or higher |    
     
 Run following command to launch this program with Jar package: 
 <PRE><CODE>     java   -jar   MyBox-5.5.jar</CODE></PRE>
@@ -128,10 +130,11 @@ MyBox is implemented in pure Java and based on open source codes, so it can run 
 Previous versions are based on Java 8.
 
 Following functions are limited to specific platforms:   
+
 | Function | Avaliable Platforms | Requirements |   
 | -- | -- | --  |   
 | Recognize texts in image | Windows  | Users need download data files by themselves |   
-| Recognize texts in PDF | Windows  | Users need download data files by themselves |   
+| Recognize texts in PDF | Windows  | Users need download data files by themselves |     
 
 ## Internationalized<a name="international" />
 All codes of MyBox are internationalized. User can switch language in time.
