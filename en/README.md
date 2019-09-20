@@ -133,8 +133,8 @@ Following functions are limited to specific platforms:
 
 | Function | Avaliable Platforms | Requirements |   
 | -- | -- | --  |   
-| Recognize texts in image | Windows  | Users need download data files by themselves |   
-| Recognize texts in PDF | Windows  | Users need download data files by themselves |     
+| Recognize texts in image/PDF | Windows  | Users need download data files by themselves |   
+ 
 
 ## Internationalized<a name="international" />
 All codes of MyBox are internationalized. User can switch language in time.
@@ -468,7 +468,7 @@ Fix bugs: WeiBo Snap tool failed to work in last version; and it never worked ag
 
 2019-9-15 v5.4 Use "Execution Path" instead of "User Path" as default "Data Path". Record base parameters in configuration file.   
 User can modify base parameters on line, including maximum JVM memory usage, whether close dpi-aware, data root path, which will cause MyBox reboot itself.   
-View PDF pages in html mode. Convert PDF files as html files.   
+Based on pdf2dom, view PDF pages in html mode and convert PDF files as html files.   
 Refine interface of Image Manufacture as "Visible As Need": Left-right areas like curtain, vertical accordion menus, tabs to switch targets, more details of hiding/showing/adjusting in function areas.   
 Image Clipboard: multiple sources to be pasted; drag pasted image to adjust its size and location; blend mode; rotation angle. Example clips are provided.   
 Color Palette: size of thousands; provide 139 named colors; export as html; pick colors on current image, image history, or reference image.   
