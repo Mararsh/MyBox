@@ -9,11 +9,11 @@ Packages of each version have been uploaded at [Releases](https://github.com/Mar
 ### Self-contain packages 
 Self-contain packages include all files and need not java env and installation.   
  
-| Platform | Link | Size | Requirements |    
+| Platform | Link | Size | Launcher |    
 | -- | -- | --  | --  |    
-| win | [MyBox-5.5-win.zip](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-win.zip) | 208MB | None |    
-| linux | [MyBox-5.5-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-linux.tar.gz)  | 163MB | None  |       
-| mac | [MyBox-5.5-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-mac.dmg)  | 164MB | None  |    
+| win | [MyBox-5.5-win.zip](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-win.zip) | 208MB | MyBox.exe |    
+| linux | [MyBox-5.5-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-linux.tar.gz)  | 163MB | bin/MyBox  |       
+| mac | [MyBox-5.5-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-mac.dmg)  | 164MB | MyBox-5.5.app  |    
 
 User can double click the launcher to start MyBox or run it by command line. The default "Open Method" of image/text/PDF files can be associated to MyBox and a file can be opened directly by MyBox by double clicking the file's name.
 
