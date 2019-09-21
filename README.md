@@ -84,7 +84,7 @@ https://www.oracle.com/technetwork/java/javafxscenebuilder-1x-archive-2199384.ht
 | GifDecoder | 解码不规范的Gif | https://github.com/DhyanB/Open-Imaging/ |   
 | EncodingDetect | 检测文本编码 | https://www.cnblogs.com/ChurchYim/p/8427373.html |   
 | Free Icons | 图标 | https://icons8.com/icons/set/home |  
-| tess4j | OCR | http://tess4j.sourceforge.net/ |  
+| tess4j | OCR | https://github.com/nguyenq/tess4j |  
 
 
 

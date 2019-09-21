@@ -5,7 +5,7 @@ This is GUI program based on JavaFx to provide simple and easy functions. It's f
 
 ## Download and Execution
 Packages of each version have been uploaded at [Releases](https://github.com/Mararsh/MyBox/releases?) directory now. You can find them by clicking `releases` tab in main page of this project.    
-If download is hard in github, try from cloud storage: https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F
+If download is hard in github, try cloud storage: https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F
 
 ### Self-contain packages 
 Self-contain packages include all files and need not java env and installation.   
@@ -88,7 +88,7 @@ It is based on following open sources softwares or libraries:
 | GifDecoder | Decode broken gif  | https://github.com/DhyanB/Open-Imaging/ |   
 | EncodingDetect | Determine encoding of text file | https://www.cnblogs.com/ChurchYim/p/8427373.html |   
 | Free Icons | Icon | https://icons8.com/icons/set/home |  
-| tess4j | OCR | http://tess4j.sourceforge.net/ |  
+| tess4j | OCR | https://github.com/nguyenq/tess4j |  
   
  
 # Current Version
