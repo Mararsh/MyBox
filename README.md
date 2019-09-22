@@ -6,6 +6,7 @@
 ## 下载与运行
 每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases?)目录下（点击上面的`releases`页签）。   
 如果github下载太慢，可以在云盘下载：  https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F
+我已把MyBox同步到sourceforge上了：https://sourceforge.net/projects/mara-mybox/files/
 
 ### 自包含程序包   
 自包含的程序包无需java环境、无需安装、解包可用。    
@@ -50,6 +51,8 @@ Java 9以后已支持HiDPI，控件和字体都会适应当前清晰度配置。
 云盘地址：https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F
 
 在线帮助：https://mararsh.github.io/MyBox/mybox_help_zh.html
+
+sourceforge:  https://sourceforge.net/projects/mara-mybox/files/
 
 
 # 文档
