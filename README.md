@@ -4,9 +4,9 @@
 这是利用JavaFx开发的图形化界面程序，目标是提供简单易用的功能。免费开源。
 
 ## 下载与运行
-每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases?)目录下（点击上面的`releases`页签）。   
-如果github下载太慢，可以在云盘下载：  https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F
-我已把MyBox同步到sourceforge上了：https://sourceforge.net/projects/mara-mybox/files/
+每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases?)目录下（点击上面的`releases`页签）。    
+如果github下载太慢，可以在云盘下载：  https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F     
+我已把MyBox同步到sourceforge上了：https://sourceforge.net/projects/mara-mybox/files/    
 
 ### 自包含程序包   
 自包含的程序包无需java环境、无需安装、解包可用。    
@@ -90,7 +90,6 @@ https://www.oracle.com/technetwork/java/javafxscenebuilder-1x-archive-2199384.ht
 | tess4j | OCR | https://github.com/nguyenq/tess4j |  
 
 
-
 # 当前版本
 当前是版本5.5，已实现的特点概述如下:
 * [跨平台](#cross-platform)
@@ -124,9 +123,9 @@ https://www.oracle.com/technetwork/java/javafxscenebuilder-1x-archive-2199384.ht
 * [设置](#settings)
 * [窗口](#windows)
 * [帮助](#helps)
-* [配置](#Config)
-
-## 跨平台<a name="cross-platform" />
+* [配置](#Config)     
+    
+## 跨平台<a name="cross-platform" />   
 MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持Java 12的平台。（MyBox v5.3以前的版本均基于Java 8）   
 
 以下功能受限于特定平台：  
@@ -135,7 +134,7 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 | - | - | -  |  
 | 识别图像/PDF中的文字 | Windows  | 用户需自行下载数据文件 |   
 
-下一个版本将不限平台，并且将把中文和英文数据文件打入程序包。用户下载的数据文件也有用。 
+下一个版本将不限平台，并且将把中文和英文数据文件打入程序包。用户下载的数据文件也有用。   
 
 ## 国际化<a name="international" />
 所有代码均国际化。可实时切换语言。目前支持中文、英文。扩展语言只需编辑资源文件。

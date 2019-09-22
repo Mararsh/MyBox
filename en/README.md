@@ -5,8 +5,8 @@ This is GUI program based on JavaFx to provide simple and easy functions. It's f
 
 ## Download and Execution
 Packages of each version have been uploaded at [Releases](https://github.com/Mararsh/MyBox/releases?) directory now. You can find them by clicking `releases` tab in main page of this project.    
-If download is hard in github, try cloud storage: https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F
-I've imported MyBox in sourceforge now: https://sourceforge.net/projects/mara-mybox/files/
+If download is hard in github, try cloud storage: https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F   
+I've imported MyBox in sourceforge now: https://sourceforge.net/projects/mara-mybox/files/   
 
 ### Self-contain packages 
 Self-contain packages include all files and need not java env and installation.   
@@ -127,7 +127,7 @@ Current version is 5.5. Its features are mentioned below in summary:
 * [Settings](#settings)
 * [Window](#windows)
 * [Helps](#helps)
-* [Configuration](#Config)
+* [Configuration](#Config)    
 
 ## Cross-platform<a name="cross-platform" />
 MyBox is implemented in pure Java and based on open source codes, so it can run any platform which supports Java 12.
