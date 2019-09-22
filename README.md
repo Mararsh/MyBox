@@ -130,7 +130,9 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 
 | 功能 | 可运行的平台 | 运行需要 |  
 | - | - | -  |  
-| 识别图像/PDF中的文字 | Windows  | 用户需自行下载数据文件 |    
+| 识别图像/PDF中的文字 | Windows  | 用户需自行下载数据文件 |   
+
+下一个版本将不限平台，并且将把中文和英文数据文件打入程序包。用户下载的数据文件也有用。 
 
 ## 国际化<a name="international" />
 所有代码均国际化。可实时切换语言。目前支持中文、英文。扩展语言只需编辑资源文件。
@@ -172,7 +174,7 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 6. 重命名、删除
 ### 图像处理<a name="imageManufacture" />
 1. 粘贴板。
-	-  数据来源：对图像整体或选择的部分做“复制”（CTRL+c）、系统粘贴板、系统中的图片文件、示例图片。
+	-  数据来源：对图像整体或选择的部分做“复制”（CTRL+c）、剪切下来的图片部分、系统粘贴板、系统中的图片文件、示例图片。
 	-  管理粘贴板列表：增、删、清除、刷新，可设置最多保存数。
 	-  编辑图像时随时可以按粘贴按钮（CTRL+v）以把粘贴板的第一张图贴到当前图片上，也可以双击粘贴板列表的项目以粘贴。
 	-  在当前图片上拖拉被粘贴图片，调整大小和位置。
@@ -234,11 +236,11 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 7. 对于黑白色，可选二值化算法：OTSU、缺省、或输入预置，可选是否抖动处理。
 8. 批量转换。
 ### 识别图像中的文字<a name="imageOCR" />
+目前仅限windows平台。   
 1. 用户可以安装Tesseract-OCR并在MyBox中指定它的数据文件目录，或者不安装Tesseract-OCR而单独下载所需的数据文件。
 2. 可以选择语言。对于任何所选的语言，工具自动附加以下数据包名：eng（英文）、osd（检测方向和脚本）、equ（检测数学/方程式）
 3. 同步显示图像和识别出的文字。可以设置需要识别的矩形区域。
 4. 批量识别。  
-目前仅限windows平台。
 ### 多帧图像文件<a name="multiFrames" />
 1. 查看、提取多帧图像文件
 2. 创建、编辑多帧tiff文件
@@ -415,12 +417,12 @@ MyBox实例读写数据的目录称为“数据目录”。
 例如，把MyBox-5.5.jar复制到A目录下，在B目录下运行命令启动它，而MyBox的数据目录可以配置为任意C目录。
 
 ### 初始化MyBox
-例如，把MyBox的exe包解开并存放在目录“D:\tmp\MyBox”中，双击“MyBox.exe”，MyBox实际是在子目录“app”下启动的，因此运行目录是“D:\tmp\MyBox\app”。   
-Mybox检查目录“D:\tmp\MyBox\app”，未发现文件“MyBox.ini”，于是自动初始化这个实例：   
-1. 把“D:\tmp\MyBox\app”作为MyBox的缺省数据根目录，创建子目录“mybox”。  
-2. 若在当前用户的根目录发现子目录“mybox”（MyBox旧版本的数据目录），则将此目录全部复制到“D:\tmp\MyBox\app\mybox”中   
-3. 在“D:\tmp\MyBox\app”中创建文件“MyBox.ini”，并写入以下行以记录此实例的数据根目录：  
-<PRE><CODE>     MyBoxDataRoot=D\:\\tmp\\MyBox\\app </CODE></PRE>
+例如，把MyBox的exe包解开并存放在目录“D:\tmp\MyBox”中，双击“MyBox.exe”，则运行目录是“D:\tmp\MyBox\”。   
+Mybox检查目录“D:\tmp\MyBox\”，未发现子目录“MyBoxData”，于是自动初始化这个实例：   
+1. 创建子目录“MyBoxData”，把“D:\tmp\MyBox\MyBoxData”作为MyBox的缺省数据根目录，。  
+2. 若在当前用户的根目录发现子目录“mybox”（MyBox旧版本的数据目录），则将此目录全部复制到“D:\tmp\MyBox\MyBoxData”中   
+3. 在“D:\tmp\MyBox\MyBoxData”中创建文件“MyBox.ini”，并写入以下行以记录此实例的数据根目录：  
+<PRE><CODE>     MyBoxDataRoot=D\:\\tmp\\MyBox\\MyBoxData </CODE></PRE>
 
 用户可以编辑“MyBox.ini”以修改MyBox的数据根目录，并手动将旧数据目录文件复制到新数据目录下。   
 用户也可以在工具的“设置”界面上修改数据根目录，工具将自动复制旧数据。   
@@ -439,7 +441,7 @@ Mybox检查目录“D:\tmp\MyBox\app”，未发现文件“MyBox.ini”，于�
 
 
 # 开发日志<a name="devLog" />
-2019-9-19 版本5.5 基于tess4j支持识别图像和PDF中的文字。单图识别可选择矩形区域。PDF批量识别可设置转换图像的色彩空间和像素密度。   
+2019-9-19 版本5.5 基于tess4j支持识别图像和PDF中的文字。单图识别可选择矩形区域。PDF批量识别可设置转换图像的色彩空间和像素密度。目前只限Windows，并且用户需要下载数据文件。   
 生成windows/linux/mac的自包含程序包。    
 优化代码：只用maven打包而脱离对java 8的依赖；利用最新jpackage制作自包含包。    
 修正问题：上一版本中微博截图工具挂了；在mac上微博截图工具首次运行后再也无法使用；linux上点击链接则程序僵死；计算CIELuv和CIELab时不应该归一化。   

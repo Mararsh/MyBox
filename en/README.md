@@ -136,6 +136,7 @@ Following functions are limited to specific platforms:
 | -- | -- | --  |   
 | Recognize texts in image/PDF | Windows  | Users need download data files by themselves |   
  
+Next version will not limit platforms, and English and Chinese data files will be added into package. Data files download by users are useful too.
 
 ## Internationalized<a name="international" />
 All codes of MyBox are internationalized. User can switch language in time.
@@ -180,7 +181,7 @@ Currently MyBox supports Chinese and English. To support a new language is just 
 
 ### Image Manufacture<a name="imageManufacture" />
 1. Clipboard
-	-  Clip sources: "Copy"(CTRL+c) against whole image or selected part of image, system clipboard, image files in system, example clips.
+	-  Clip sources: "Copy"(CTRL+c) against whole image or selected part of image, cutted part of image, system clipboard, image files in system, example clips.
 	-  Manage clips list: Add, Delete, Clear, Set maximum number of list.
 	-  Click button "Paste"(CTRL+v) anytime while editing image, to paste the first image in clipboard onto current edited image. Or double click item in the clipboard to paste it.
 	-  Drag and move pasted clip on current edited image, to adjust clip's size and location.
@@ -247,11 +248,11 @@ Currently MyBox supports Chinese and English. To support a new language is just 
 8. Conversion in batch.
 
 ### Recognize Texts in Image<a name="imageOCR" />
+Only support windows currently.    
 1. Users can install Tesseract-OCR and set its data path in MyBox, or download its data files without Tesseract-OCR installation.
 2. Language can be selected. For any selected language, tool will append following packages' names: eng(English), osd(Orientation and script detection), equ(Math / equation detection)
 3. Display image along with recognized texts in same screen. Rectangle can be set to define the area to do OCR.
 4. OCR in batch.
-Only support windows currently.  
 
 ### Multiple frames image file<a name="multiFrames" />
 1. View/Extract images in multiple frames file.
@@ -433,16 +434,18 @@ Only support windows currently.
 ## Configuration<a name="Config" />
 
 ### Installation Path, Execution Path, Data Path
-The directory holding files of self-contain packages or jar file is called "Installation Path"(Although no installtion is need). The directory under which MyBox is started is called "Execution Path". The path where MyBox read/write values and files is called "Data Path".    
+The directory holding files of self-contain packages or jar file is called "Installation Path"(Although no installtion is need).    
+The directory under which MyBox is started is called "Execution Path".     
+The path where MyBox read/write values and files is called "Data Path".     
 Example, MyBox-5.5.jar is copied under path A, and is started under path B, while MyBox data path can be assigned as any path C.  
 
 ### Initialize MyBox
-Example, unpack package of MyBox.exe under path "D:\tmp\MyBox", double click "MyBox.exe", and MyBox is started internally under "app", so the Execution Path is "D:\tmp\MyBox\app".   
-MyBox checks path "D:\tmp\MyBox\app", and does not find file "MyBox.ini", then it starts to initialize this instance automatically:      
-1. Make "D:\tmp\MyBox\app" as the default data root path, and create subdirectory "mybox" under it.   
-2. If directory "mybox" is found under current user's root, which is the data path of MyBox previous versions, then copy all contents of this path to "D:\tmp\MyBox\app\mybox".   
-3. Create file "MyBox.ini" under "D:\tmp\MyBox\app" and write following line to record the location of data path of current MyBox instance:  
-<PRE><CODE>     MyBoxDataRoot=D\:\\tmp\\MyBox\\app </CODE></PRE>
+Example, unpack package of MyBox.exe under path "D:\tmp\MyBox", double click "MyBox.exe",and the Execution Path is "D:\tmp\MyBox\".   
+MyBox checks path "D:\tmp\MyBox\", and does not subdirectory "MyBoxData", then it starts to initialize this instance automatically:      
+1. Create subdirectory "mybox", and make "D:\tmp\MyBox\MyBoxData" as the default data root path.   
+2. If directory "mybox" is found under current user's root, which is the data path of MyBox previous versions, then copy all contents of this path to "D:\tmp\MyBox\MyBoxData".   
+3. Create file "MyBox.ini" under "D:\tmp\MyBox\MyBoxData" and write following line to record the location of data path of current MyBox instance:  
+<PRE><CODE>     MyBoxDataRoot=D\:\\tmp\\MyBox\\MyBoxData </CODE></PRE>
 
 User can edit file "MyBox.ini" to change data path, and copy files under previous path to new path manually.    
 User can also change data path by Setting function of MyBox and the tool will copy old data automatically.     
@@ -462,7 +465,7 @@ Under Execution Path, the configuration file "MyBox.ini" records base parameters
 
 
 # Development Logs<a name="devLog" />
-2019-9-19 v5.5  Recognize texts in image and PDF(OCR) based on tess4j. Rectangle can be set for single image's OCR. Color space and density can be set when do OCR for PDF files in batch.     
+2019-9-19 v5.5  Recognize texts in image and PDF(OCR) based on tess4j. Rectangle can be set for single image's OCR. Color space and density can be set when do OCR for PDF files in batch. Currently only Windows is supported and users need download data files by themselves.    
 Make self-contain packages for each platform(Window/Linux/Mac).      
 Improve codes: Build with maven without Java 8; make self-contain packages with latest jpackage tool.    
 Fix bugs: WeiBo Snap tool failed to work in last version; and it never worked again on Mac after it ran first time; clicking links caused MyBox dead on Linux; normalization is unnecessary when calculate CIELuv and CIELab.     
