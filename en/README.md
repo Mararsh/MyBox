@@ -5,8 +5,8 @@ This is GUI program based on JavaFx to provide simple and easy functions. It's f
 
 ## Download and Execution
 Packages of each version have been uploaded at [Releases](https://github.com/Mararsh/MyBox/releases?) directory now. You can find them by clicking `releases` tab in main page of this project.    
-If download is hard in github, try cloud storage: https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F   
-I've imported MyBox in sourceforge now: https://sourceforge.net/projects/mara-mybox/files/   
+Download from cloud storage: https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F   
+Download from sourceforge: https://sourceforge.net/projects/mara-mybox/files/   
 
 ### Self-contain packages 
 Self-contain packages include all files and need not java env and installation.   
@@ -42,7 +42,7 @@ A file path can follow the command as argument to be opened directly by MyBox. E
 Self-contain packages can not be lanuched under path including non-English characters. Jar files are not affected by this limitation.   
 
 ### About OCR on Linux/Mac   
-Current version still does not support OCR on Linux/Mac. The reason is that the based tesseract libraries are different on different platforms and there are not out of box packages available.
+Current version still does not support OCR on Linux/Mac. The reason is that the based tesseract libraries are different on different platforms and there are not out of box packages available.   
 This requirement is delayed due to limited development time. 
 
 
@@ -525,7 +525,7 @@ Options for OCR in batch include whether generate html or PDF, whether merge rec
 13 types of 1-d barcodes and 3 types of 2-d barcodes can be created. Options supported. Picture can be added in QR_Code.    
 9 types of 1-d barcodes and 3 types of 2-d barcodes can be decoded.     
 One clicking to show examples of image manufacture.        
-
+Color Palette: Colors can be named; Display more data like cmyk values and cie values.    
 Happy Birthday, China!    
 
 
