@@ -84,7 +84,7 @@ public class ImageManufactureController extends ImageViewerController {
 
     public static enum ImageOperation {
         Load, History, Saved, Recover, Clipboard, Paste, Arc, Color, Crop, Copy, Text, RichText,
-        Effects, Shadow, Scale, Picture, Transform, Pen, Margins, Mosaic, Convolution
+        Effects, Enhancement, Shadow, Scale, Picture, Transform, Pen, Margins, Mosaic, Convolution
     }
 
     @FXML
@@ -186,9 +186,9 @@ public class ImageManufactureController extends ImageViewerController {
     }
 
     @Override
-    public void shiftHandler(KeyEvent event) {
-        super.shiftHandler(event);
-        if (event.isShiftDown()) {
+    public void altHandler(KeyEvent event) {
+        super.altHandler(event);
+        if (event.isAltDown()) {
             String key = event.getText();
             if (key == null || key.isEmpty()) {
                 return;

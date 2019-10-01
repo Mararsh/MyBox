@@ -196,12 +196,6 @@ License:    Apache License Version 2.0
                                                 <Label text="%RestartWhenChange" />
                                             </children>
                                         </HBox>
-                                        <HBox fx:id="fileHisBox11" alignment="CENTER_LEFT" spacing="10.0">
-                                            <children>
-                                                <Label text="%DataDirectory" visible="false" />
-                                                <Label fx:id="dafaultPathMovedLabel" layoutX="10.0" layoutY="10.0" text="label" wrapText="true" />
-                                            </children>
-                                        </HBox>
                            </children>
                            <padding>
                               <Insets bottom="10.0" left="10.0" right="10.0" top="20.0" />
@@ -254,27 +248,6 @@ License:    Apache License Version 2.0
                                                 <CheckBox fx:id="stopAlarmCheck" mnemonicParsing="false" selected="true" text="%StopAlarmsExit" />
                                             </children>
                                         </HBox>
-                              <VBox fx:id="ocrBox" spacing="5.0">
-                                 <children>
-                                    <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                       <children>
-                                          <Label text="%OCRDataPath" />
-                                          <TextField fx:id="ocrDirInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                          <Button fx:id="ocrPathButton" mnemonicParsing="false" onAction="#setOCRPath">
-                                             <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../buttons/iconOpen.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </graphic>
-                                          </Button>
-                                       </children>
-                                    </HBox>
-                                    <Label text="%TesseractDataComments" />
-                                    <Hyperlink onAction="#link" text=" https://github.com/tesseract-ocr/tesseract/wiki/Data-Files" />
-                                 </children>
-                              </VBox>
                            </children>
                         </VBox>
                      </content>
@@ -296,6 +269,7 @@ License:    Apache License Version 2.0
                                                 <RadioButton fx:id="pdfMemUnlimitRadio" mnemonicParsing="false" onAction="#pdfMemUnlimit" text="%Unlimit" toggleGroup="$pdfMemGroup" />
                                             </children>
                                         </HBox>
+                              <Label text="%PdfMemComments" />
                                     </children>
                                     <padding>
                                         <Insets bottom="10.0" left="10.0" right="10.0" top="20.0" />
@@ -422,6 +396,61 @@ License:    Apache License Version 2.0
                                 </VBox>
                             </content>
                         </Tab>
+                  <Tab fx:id="ocrTab" text="%OCR">
+                     <content>
+                        <VBox fx:id="ocrBox" spacing="5.0">
+                           <children>
+                              <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                 <children>
+                                    <Label text="%OCRDataPath" />
+                                    <TextField fx:id="ocrDirInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                    <Button fx:id="ocrPathButton" mnemonicParsing="false" onAction="#setOCRPath">
+                                       <graphic>
+                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/iconOpen.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </Button>
+                                 </children>
+                              </HBox>
+                              <Label layoutX="10.0" layoutY="68.0" text="%TesseractDataComments" />
+                              <Hyperlink onAction="#link" text=" https://github.com/tesseract-ocr/tesseract/wiki/Data-Files" />
+                              <Label text="%TesseractComments" />
+                              <Hyperlink layoutX="10.0" layoutY="143.0" onAction="#link" text="https://github.com/tesseract-ocr/tesseract/wiki" />
+                              <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                 <children>
+                                    <Button fx:id="moveDownButton" mnemonicParsing="false" onAction="#downAction">
+                                       <graphic>
+                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/iconDown.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </Button>
+                                    <Button fx:id="moveUpButton" mnemonicParsing="false" onAction="#upAction">
+                                       <graphic>
+                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/iconUp.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </Button>
+                                    <Label text="%OCRSelection" />
+                                 </children>
+                              </HBox>
+                              <ListView fx:id="languageList" prefHeight="200.0" prefWidth="200.0" />
+                              <Label fx:id="currentOCRFilesLabel" />
+                           </children>
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="20.0" />
+                           </padding>
+                        </VBox>
+                     </content>
+                  </Tab>
                     </tabs>
                 </TabPane>
                 <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="10.0">

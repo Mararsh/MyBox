@@ -36,7 +36,6 @@ import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonImageValues;
-import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -93,7 +92,7 @@ public class AlarmClockController extends BaseController {
     public void initializeNext() {
         try {
             AppVariables.alarmClockController = this;
-            miao = FxmlControl.getUserFile("/sound/miao4.mp3", "miao4.mp3");
+            miao = FxmlControl.getInternalFile("/sound/miao4.mp3", "sound", "miao4.mp3");
 
             alertClockTableController.setAlarmClockController(this);
 

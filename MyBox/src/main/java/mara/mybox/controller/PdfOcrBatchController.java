@@ -1,29 +1,53 @@
 package mara.mybox.controller;
 
+import com.recognition.software.jdeskew.ImageDeskew;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.HBox;
+import mara.mybox.data.ConvolutionKernel;
 import mara.mybox.fxml.FxmlControl;
+import static mara.mybox.fxml.FxmlControl.badStyle;
+import mara.mybox.image.ImageContrast;
+import mara.mybox.image.ImageConvolution;
+import mara.mybox.image.ImageManufacture;
+import mara.mybox.image.PixelsOperation;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.OCRTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.Tesseract;
+import net.sourceforge.tess4j.util.ImageHelper;
+import org.apache.pdfbox.cos.COSName;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDResources;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
 
 /**
  * @Author Mara
- * @CreateDate 2018-7-4
+ * @CreateDate 2019-9-18
  * @Description
  * @License Apache License Version 2.0
  */
@@ -33,21 +57,30 @@ public class PdfOcrBatchController extends PdfBatchController {
     protected String ocrTexts;
     protected File tmpFile;
     protected String ocrPath;
-    protected String language;
     protected BufferedImage lastImage;
     protected ITesseract OCRinstance;
     protected PDFRenderer renderer;
-    protected int dpi;
-    protected ImageType colorType;
+    protected int dpi, threshold, rotate;
+    protected float scale;
+    protected String selectedLanguages;
 
     @FXML
-    protected CheckBox separatorCheck;
+    protected ToggleGroup getImageType;
+    @FXML
+    protected CheckBox separatorCheck, deskewCheck, invertCheck;
     @FXML
     protected TextField separatorInput;
     @FXML
-    protected Label setOCRLabel;
+    protected ComboBox<String> dpiSelector, enhancementSelector, rotateSelector,
+            binarySelector, scaleSelector;
     @FXML
-    protected ComboBox<String> dpiSelector, langSelector, colorSpaceSelector;
+    protected RadioButton convertRadio, extractRadio;
+    @FXML
+    protected HBox imageOptionsBox, densityBox, scaleBox;
+    @FXML
+    protected ListView languageList;
+    @FXML
+    protected Label currentOCRFilesLabel;
 
     public PdfOcrBatchController() {
         baseTitle = AppVariables.message("PdfOCRBatch");
@@ -57,25 +90,22 @@ public class PdfOcrBatchController extends PdfBatchController {
     @Override
     public void initOptionsSection() {
         try {
-            ocrPathDefined();
+            initPreprocessBox();
+            initOCROptionsBox();
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
 
-            colorType = ImageType.RGB;
-            colorSpaceSelector.getItems().addAll(Arrays.asList(
-                    "RGB", message("Gray"), message("BlackOrWhite")
-            ));
-            colorSpaceSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+    protected void initPreprocessBox() {
+        try {
+            getImageType.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
-                public void changed(ObservableValue<? extends String> v, String oldV, String newV) {
-                    if (message("BlackOrWhite").equals(newV)) {
-                        colorType = ImageType.BINARY;
-                    } else if (message("Gray").equals(newV)) {
-                        colorType = ImageType.GRAY;
-                    } else if ("RGB".equals(newV)) {
-                        colorType = ImageType.RGB;
-                    }
+                public void changed(ObservableValue<? extends Toggle> v, Toggle oldV, Toggle newV) {
+                    checkGetImageType();
                 }
             });
-            colorSpaceSelector.getSelectionModel().select(0);
+            checkGetImageType();
 
             dpi = 96;
             dpiSelector.getItems().addAll(Arrays.asList(
@@ -84,11 +114,165 @@ public class PdfOcrBatchController extends PdfBatchController {
             dpiSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> v, String oldV, String newV) {
-                    dpi = Integer.valueOf(dpiSelector.getValue());
-                    AppVariables.setUserConfigInt("PdfOcrDpi", dpi);
+                    try {
+                        if (newV == null || newV.isEmpty()) {
+                            return;
+                        }
+                        int i = Integer.valueOf(newV);
+                        if (i > 0) {
+                            dpi = i;
+                            dpiSelector.getEditor().setStyle(null);
+                            AppVariables.setUserConfigInt("PdfOcrDpi", dpi);
+                        } else {
+                            dpiSelector.getEditor().setStyle(badStyle);
+                        }
+                    } catch (Exception e) {
+                        dpiSelector.getEditor().setStyle(badStyle);
+                    }
                 }
             });
             dpiSelector.getSelectionModel().select(AppVariables.getUserConfigValue("PdfOcrDpi", "96"));
+
+            scale = 1.0f;
+            scaleSelector.getItems().addAll(Arrays.asList(
+                    "1.0", "1.5", "2.0", "2.5", "3.0", "5.0", "10.0"
+            ));
+            scaleSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> v, String oldV, String newV) {
+                    try {
+                        if (newV == null || newV.isEmpty()) {
+                            return;
+                        }
+                        float f = Float.valueOf(newV);
+                        if (f > 0) {
+                            scale = f;
+                            scaleSelector.getEditor().setStyle(null);
+                        } else {
+                            scaleSelector.getEditor().setStyle(badStyle);
+                        }
+                    } catch (Exception e) {
+                        scaleSelector.getEditor().setStyle(badStyle);
+                    }
+                }
+            });
+            scaleSelector.getSelectionModel().select(0);
+
+            threshold = 0;
+            binarySelector.getItems().addAll(Arrays.asList(
+                    "65", "50", "75", "45", "30", "80", "85", "15"
+            ));
+            binarySelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> v, String oldV, String newV) {
+                    try {
+                        if (newV == null || newV.isEmpty()) {
+                            return;
+                        }
+                        int i = Integer.valueOf(newV);
+                        if (i > 0) {
+                            threshold = i;
+                            binarySelector.getEditor().setStyle(null);
+                        } else {
+                            binarySelector.getEditor().setStyle(badStyle);
+                        }
+                    } catch (Exception e) {
+                        binarySelector.getEditor().setStyle(badStyle);
+                    }
+                }
+            });
+
+            enhancementSelector.getItems().addAll(Arrays.asList(
+                    message("HSBHistogramEqualization"), message("GrayHistogramEqualization"),
+                    message("GrayHistogramStretching"), message("GrayHistogramShifting"),
+                    message("UnsharpMasking"),
+                    message("FourNeighborLaplace"), message("EightNeighborLaplace"),
+                    message("GaussianBlur"), message("AverageBlur")
+            ));
+
+            rotate = 0;
+            rotateSelector.getItems().addAll(Arrays.asList(
+                    "0", "90", "45", "15", "30", "60", "75", "180", "105", "135", "120", "150", "165", "270", "300", "315"
+            ));
+            rotateSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> v, String oldV, String newV) {
+                    try {
+                        if (newV == null || newV.isEmpty()) {
+                            return;
+                        }
+                        rotate = Integer.valueOf(newV);
+                    } catch (Exception e) {
+
+                    }
+                }
+            });
+
+            deskewCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                    AppVariables.setUserConfigValue("ImageOCRDeskew", newValue);
+                }
+            });
+            deskewCheck.setSelected(AppVariables.getUserConfigBoolean("ImageOCRDeskew", false));
+
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+    protected void checkGetImageType() {
+        if (convertRadio.isSelected()) {
+            if (imageOptionsBox.getChildren().contains(scaleBox)) {
+                imageOptionsBox.getChildren().remove(scaleBox);
+            }
+            if (!imageOptionsBox.getChildren().contains(densityBox)) {
+                imageOptionsBox.getChildren().add(densityBox);
+            }
+            scale = 1.0f;
+        } else if (extractRadio.isSelected()) {
+
+            if (imageOptionsBox.getChildren().contains(densityBox)) {
+                imageOptionsBox.getChildren().remove(densityBox);
+            }
+            if (!imageOptionsBox.getChildren().contains(scaleBox)) {
+                imageOptionsBox.getChildren().add(scaleBox);
+            }
+            scale = Float.valueOf(scaleSelector.getValue());
+        }
+    }
+
+    protected void initOCROptionsBox() {
+        try {
+            languageList.getItems().clear();
+            languageList.getItems().addAll(OCRTools.namesList());
+            languageList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+            languageList.setPrefHeight(200);
+            languageList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> ov, String oldVal, String newVal) {
+                    checkLanguages();
+                }
+            });
+            selectedLanguages = AppVariables.getUserConfigValue("ImageOCRLanguages", null);
+            if (selectedLanguages != null && !selectedLanguages.isEmpty()) {
+                currentOCRFilesLabel.setText(
+                        MessageFormat.format(message("CurrentDataFiles"), selectedLanguages));
+                isSettingValues = true;
+                String[] langs = selectedLanguages.split("\\+");
+                Map<String, String> codes = OCRTools.codeName();
+                for (String code : langs) {
+                    String name = codes.get(code);
+                    if (name == null) {
+                        name = code;
+                    }
+                    languageList.getSelectionModel().select(name);
+                }
+                isSettingValues = false;
+            } else {
+                currentOCRFilesLabel.setText(
+                        MessageFormat.format(message("CurrentDataFiles"), ""));
+            }
 
             FxmlControl.setTooltip(separatorInput, message("InsertPageSeparatorComments"));
 
@@ -97,51 +281,32 @@ public class PdfOcrBatchController extends PdfBatchController {
         }
     }
 
-    protected boolean ocrPathDefined() {
-        setOCRLabel.setText("");
-        if (ocrPath != null) {
-            return true;
+    public void checkLanguages() {
+        if (isSettingValues) {
+            return;
         }
-        langSelector.getItems().clear();
-        String p = AppVariables.getUserConfigValue("OCRDataPath", null);
-        if (p != null && !p.isEmpty()) {
-            File ocrP = new File(p);
-            if (!ocrP.exists() || !ocrP.isDirectory()) {
-                ocrPath = null;
+        List<String> langsList = languageList.getSelectionModel().getSelectedItems();
+        selectedLanguages = null;
+        Map<String, String> names = OCRTools.nameCode();
+        for (String name : langsList) {
+            String code = names.get(name);
+            if (code == null) {
+                code = name;
+            }
+            if (selectedLanguages == null) {
+                selectedLanguages = code;
             } else {
-                ocrPath = ocrP.getAbsolutePath();
+                selectedLanguages += "+" + code;
             }
         }
-        if (ocrPath == null) {
-            setOCRLabel.setText(message("SetOCRPath"));
-            settingsAction();
-            return false;
-
-        }
-        File[] files = new File(ocrPath).listFiles();
-        for (File f : files) {
-            String name = f.getName();
-            if (!f.isFile() || !name.endsWith(".traineddata")) {
-                continue;
-            }
-            langSelector.getItems().add(name.substring(0, name.length() - ".traineddata".length()));
-        }
-        if (AppVariables.currentBundle == CommonValues.BundleZhCN) {
-            if (!langSelector.getItems().contains("chi_sim")) {
-                setOCRLabel.setText(message("MissChineseOCRData"));
-                langSelector.getItems().add(0, message("English"));
-            } else {
-                langSelector.getItems().add(0, message("SimplifiedChinese"));
-                if (langSelector.getItems().contains("chi_tra")) {
-                    langSelector.getItems().add(1, message("TraditionalChinese"));
-                }
-                langSelector.getItems().add(2, message("English"));
-            }
-            langSelector.getSelectionModel().select(0);
+        if (selectedLanguages != null) {
+            AppVariables.setUserConfigValue("ImageOCRLanguages", selectedLanguages);
+            currentOCRFilesLabel.setText(
+                    MessageFormat.format(message("CurrentDataFiles"), selectedLanguages));
         } else {
-            langSelector.getSelectionModel().select("eng");
+            currentOCRFilesLabel.setText(
+                    MessageFormat.format(message("CurrentDataFiles"), ""));
         }
-        return true;
     }
 
     @FXML
@@ -149,27 +314,71 @@ public class PdfOcrBatchController extends PdfBatchController {
         SettingsController controller = (SettingsController) openStage(CommonValues.SettingsFxml);
         controller.setParentController(this);
         controller.setParentFxml(myFxml);
-        controller.tabPane.getSelectionModel().select(controller.dataTab);
+        controller.tabPane.getSelectionModel().select(controller.ocrTab);
+    }
+
+    @FXML
+    public void upAction() {
+        List<Integer> selected = new ArrayList<>();
+        selected.addAll(languageList.getSelectionModel().getSelectedIndices());
+        if (selected.isEmpty()) {
+            return;
+        }
+        isSettingValues = true;
+        List<Integer> newselected = new ArrayList<>();
+        for (Integer index : selected) {
+            if (index == 0 || newselected.contains(index - 1)) {
+                newselected.add(index);
+                continue;
+            }
+            String lang = (String) languageList.getItems().get(index);
+            languageList.getItems().set(index, languageList.getItems().get(index - 1));
+            languageList.getItems().set(index - 1, lang);
+            newselected.add(index - 1);
+        }
+        languageList.getSelectionModel().clearSelection();
+        for (int index : newselected) {
+            languageList.getSelectionModel().select(index);
+        }
+        languageList.refresh();
+        isSettingValues = false;
+        checkLanguages();
+    }
+
+    @FXML
+    public void downAction() {
+        List<Integer> selected = new ArrayList<>();
+        selected.addAll(languageList.getSelectionModel().getSelectedIndices());
+        if (selected.isEmpty()) {
+            return;
+        }
+        isSettingValues = true;
+        List<Integer> newselected = new ArrayList<>();
+        for (int i = selected.size() - 1; i >= 0; i--) {
+            int index = selected.get(i);
+            if (index == languageList.getItems().size() - 1
+                    || newselected.contains(index + 1)) {
+                newselected.add(index);
+                continue;
+            }
+            String lang = (String) languageList.getItems().get(index);
+            languageList.getItems().set(index, languageList.getItems().get(index + 1));
+            languageList.getItems().set(index + 1, lang);
+            newselected.add(index + 1);
+        }
+        languageList.getSelectionModel().clearSelection();
+        for (int index : newselected) {
+            languageList.getSelectionModel().select(index);
+        }
+        languageList.refresh();
+        isSettingValues = false;
+        checkLanguages();
     }
 
     @Override
     public boolean makeActualParameters() {
-        if (!ocrPathDefined() || !super.makeActualParameters()) {
+        if (!super.makeActualParameters()) {
             return false;
-        }
-        String lang = langSelector.getValue();
-        if (lang != null) {
-            if (message("SimplifiedChinese").equals(lang)) {
-                language = "chi_sim+chi_sim_vert+eng+osd+equ";
-            } else if (message("TraditionalChinese").equals(lang)) {
-                language = "chi_tra+chi_tra_vert+eng+osd+equ";
-            } else if (message("English").equals(lang)) {
-                language = "eng+osd+equ";
-            } else {
-                language = lang + "+eng+osd+equ";
-            }
-        } else {
-            language = "eng+osd+equ";
         }
         separator = separatorInput.getText();
         if (!separatorCheck.isSelected() || separator == null || separator.isEmpty()) {
@@ -177,8 +386,11 @@ public class PdfOcrBatchController extends PdfBatchController {
         }
         try {
             OCRinstance = new Tesseract();
-            OCRinstance.setDatapath(ocrPath);
-            OCRinstance.setLanguage(language);
+            String path = AppVariables.getUserConfigValue("TessDataPath", null);
+            if (path != null) {
+                OCRinstance.setDatapath(path);
+            }
+            OCRinstance.setLanguage(selectedLanguages);
             return true;
         } catch (Exception e) {
             logger.error(e.toString());
@@ -200,17 +412,21 @@ public class PdfOcrBatchController extends PdfBatchController {
 
     @Override
     public int handleCurrentPage() {
+        if (convertRadio.isSelected()) {
+            return convertPage();
+        } else {
+            return extractPage();
+        }
+    }
+
+    protected int convertPage() {
         try {
             // ImageType.BINARY work bad while ImageType.RGB works best
-            lastImage
-                    = renderer.renderImageWithDPI(currentParameters.currentPage - 1, dpi, colorType);    // 0-based
+            BufferedImage bufferedImage
+                    = renderer.renderImageWithDPI(currentParameters.currentPage - 1, dpi, ImageType.RGB);    // 0-based
 
-            String result = OCRinstance.doOCR(lastImage);
-            if (result != null) {
-                ocrTexts += result;
-                String s = separator.replace("<Page Number>", currentParameters.currentPage + " ");
-                s = s.replace("<Total Number>", doc.getNumberOfPages() + "");
-                ocrTexts += s + System.getProperty("line.separator");
+            if (handleImage(bufferedImage)) {
+                lastImage = bufferedImage;
                 return 1;
             } else {
                 return 0;
@@ -218,6 +434,151 @@ public class PdfOcrBatchController extends PdfBatchController {
         } catch (Exception e) {
             logger.error(e.toString());
             return 0;
+        }
+    }
+
+    protected int extractPage() {
+        int index = 0;
+        try {
+            PDPage page = doc.getPage(currentParameters.currentPage - 1);  // 0-based
+            PDResources pdResources = page.getResources();
+            Iterable<COSName> iterable = pdResources.getXObjectNames();
+            if (iterable != null) {
+                Iterator<COSName> pageIterator = iterable.iterator();
+                while (pageIterator.hasNext()) {
+                    if (task.isCancelled()) {
+                        break;
+                    }
+                    COSName cosName = pageIterator.next();
+                    if (!pdResources.isImageXObject(cosName)) {
+                        continue;
+                    }
+                    PDImageXObject pdxObject = (PDImageXObject) pdResources.getXObject(cosName);
+                    BufferedImage bufferedImage = pdxObject.getImage();
+                    if (handleImage(bufferedImage)) {
+                        lastImage = bufferedImage;
+                        if (isPreview) {
+                            break;
+                        }
+                        index++;
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+        return index;
+    }
+
+    protected boolean handleImage(BufferedImage bufferedImage) {
+        try {
+            lastImage = bufferedImage;
+
+            if (rotate > 0) {
+                lastImage = ImageManufacture.rotateImage(lastImage, rotate);
+            }
+            if (scale > 0 && scale != 1) {
+                lastImage = ImageManufacture.scaleImage(lastImage, scale);
+            }
+
+            String enhance = enhancementSelector.getValue();
+            if (enhance == null) {
+            } else if (message("GrayHistogramEqualization").equals(enhance)) {
+                ImageContrast imageContrast = new ImageContrast(lastImage,
+                        ImageContrast.ContrastAlgorithm.Gray_Histogram_Equalization);
+                lastImage = imageContrast.operateImage();
+
+            } else if (message("GrayHistogramStretching").equals(enhance)) {
+                ImageContrast imageContrast = new ImageContrast(lastImage,
+                        ImageContrast.ContrastAlgorithm.Gray_Histogram_Stretching);
+                imageContrast.setIntPara1(100);
+                imageContrast.setIntPara2(100);
+                lastImage = imageContrast.operateImage();
+
+            } else if (message("GrayHistogramShifting").equals(enhance)) {
+                ImageContrast imageContrast = new ImageContrast(lastImage,
+                        ImageContrast.ContrastAlgorithm.Gray_Histogram_Shifting);
+                imageContrast.setIntPara1(80);
+                lastImage = imageContrast.operateImage();
+
+            } else if (message("HSBHistogramEqualization").equals(enhance)) {
+                ImageContrast imageContrast = new ImageContrast(lastImage,
+                        ImageContrast.ContrastAlgorithm.HSB_Histogram_Equalization);
+                lastImage = imageContrast.operateImage();
+
+            } else if (message("UnsharpMasking").equals(enhance)) {
+                ConvolutionKernel kernel = ConvolutionKernel.makeUnsharpMasking(3);
+                ImageConvolution imageConvolution
+                        = new ImageConvolution(lastImage, null, kernel);
+                lastImage = imageConvolution.operateImage();
+
+            } else if (message("FourNeighborLaplace").equals(enhance)) {
+                ConvolutionKernel kernel = ConvolutionKernel.MakeSharpenFourNeighborLaplace();
+                ImageConvolution imageConvolution
+                        = new ImageConvolution(lastImage, null, kernel);
+                lastImage = imageConvolution.operateImage();
+
+            } else if (message("EightNeighborLaplace").equals(enhance)) {
+                ConvolutionKernel kernel = ConvolutionKernel.MakeSharpenEightNeighborLaplace();
+                ImageConvolution imageConvolution
+                        = new ImageConvolution(lastImage, null, kernel);
+                lastImage = imageConvolution.operateImage();
+
+            } else if (message("GaussianBlur").equals(enhance)) {
+                ConvolutionKernel kernel = ConvolutionKernel.makeGaussBlur(3);
+                ImageConvolution imageConvolution
+                        = new ImageConvolution(lastImage, null, kernel);
+                lastImage = imageConvolution.operateImage();
+
+            } else if (message("AverageBlur").equals(enhance)) {
+                ConvolutionKernel kernel = ConvolutionKernel.makeAverageBlur(1);
+                ImageConvolution imageConvolution
+                        = new ImageConvolution(lastImage, null, kernel);
+                lastImage = imageConvolution.operateImage();
+
+            }
+
+            if (deskewCheck.isSelected()) {
+                ImageDeskew id = new ImageDeskew(lastImage);
+                double imageSkewAngle = id.getSkewAngle();
+                if ((imageSkewAngle > OCRTools.MINIMUM_DESKEW_THRESHOLD
+                        || imageSkewAngle < -(OCRTools.MINIMUM_DESKEW_THRESHOLD))) {
+                    lastImage = ImageHelper.rotateImage(lastImage, -imageSkewAngle);
+                }
+            }
+
+            if (invertCheck.isSelected()) {
+                PixelsOperation pixelsOperation = PixelsOperation.newPixelsOperation(lastImage,
+                        null, PixelsOperation.OperationType.RGB, PixelsOperation.ColorActionType.Invert);
+                lastImage = pixelsOperation.operateImage();
+            }
+
+            if (deskewCheck.isSelected()) {
+                ImageDeskew id = new ImageDeskew(bufferedImage);
+                double imageSkewAngle = id.getSkewAngle();
+                if ((imageSkewAngle > OCRTools.MINIMUM_DESKEW_THRESHOLD
+                        || imageSkewAngle < -(OCRTools.MINIMUM_DESKEW_THRESHOLD))) {
+                    bufferedImage = ImageHelper.rotateImage(bufferedImage, -imageSkewAngle);
+                }
+            }
+
+            String result = OCRinstance.doOCR(bufferedImage);
+            if (result != null) {
+                ocrTexts += result;
+                if (separatorCheck.isSelected()) {
+                    String s = separator.replace("<Page Number>", currentParameters.currentPage + " ");
+                    s = s.replace("<Total Number>", doc.getNumberOfPages() + "");
+                    ocrTexts += s + System.getProperty("line.separator");
+                }
+                return true;
+            } else {
+                return false;
+            }
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return false;
         }
     }
 

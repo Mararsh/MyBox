@@ -1,9 +1,14 @@
 package mara.mybox.controller;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Task;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -24,13 +29,18 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Modality;
 import mara.mybox.controller.ImageManufactureController.ImageOperation;
+import mara.mybox.data.DoubleRectangle;
 import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
+import mara.mybox.fxml.FxmlStage;
 import mara.mybox.image.ImageColor;
+import mara.mybox.image.ImageManufacture;
+import mara.mybox.image.ImageScope;
 import mara.mybox.image.PixelsOperation;
 import mara.mybox.image.PixelsOperation.ColorActionType;
 import mara.mybox.image.PixelsOperation.OperationType;
+import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
@@ -94,7 +104,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
     @Override
     public void eventsHandler(KeyEvent event) {
         keyEventsHandlerDo(event);
-        if (!event.isShiftDown()) {
+        if (!event.isAltDown()) {
             return;
         }
         String key = event.getText();
@@ -168,7 +178,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                 colorRect.setFill(Color.TRANSPARENT);
                 AppVariables.setUserConfigValue("ImageColorSet", Color.TRANSPARENT.toString());
             }
-            FxmlControl.setTooltip(colorRect, FxmlColor.colorDisplay((Color) colorRect.getFill()));
+            FxmlControl.setTooltip(colorRect, FxmlColor.colorNameDisplay((Color) colorRect.getFill()));
 
             checkColorType();
 
@@ -317,7 +327,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
         }
         if (paletteButton.equals(control)) {
             colorRect.setFill(color);
-            FxmlControl.setTooltip(colorRect, FxmlColor.colorDisplay(color));
+            FxmlControl.setTooltip(colorRect, FxmlColor.colorNameDisplay(color));
             AppVariables.setUserConfigValue("ImageColorSet", color.toString());
         }
         return true;
@@ -422,6 +432,161 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
             thread.setDaemon(true);
             thread.start();
         }
+    }
+
+    @FXML
+    protected void demo() {
+        if (imageView.getImage() == null) {
+            return;
+        }
+        Task demoTask = new Task<Void>() {
+            private List<String> files;
+
+            @Override
+            protected Void call() {
+
+                try {
+                    files = new ArrayList<>();
+                    BufferedImage image = SwingFXUtils.fromFXImage(imageView.getImage(), null);
+                    image = ImageManufacture.scaleImageLess(image, 1000000);
+
+                    PixelsOperation pixelsOperation;
+                    BufferedImage bufferedImage;
+                    String tmpFile;
+
+                    BufferedImage outlineSource = SwingFXUtils.fromFXImage(new Image("img/About.png"), null);
+                    ImageScope scope = new ImageScope(SwingFXUtils.toFXImage(image, null));
+                    scope.setScopeType(ImageScope.ScopeType.Outline);
+                    if (sourceFile != null) {
+                        scope.setFile(sourceFile.getAbsolutePath());
+                    }
+                    scope.setRectangle(new DoubleRectangle(0, 0, image.getWidth(), image.getHeight()));
+                    BufferedImage[] outline = ImageManufacture.outline(outlineSource,
+                            scope.getRectangle(), image.getWidth(), image.getHeight(),
+                            false, ImageColor.converColor(Color.WHITE), false);
+                    scope.setOutlineSource(outlineSource);
+                    scope.setOutline(outline[1]);
+
+                    pixelsOperation = PixelsOperation.newPixelsOperation(image,
+                            scope, OperationType.Color, ColorActionType.Set);
+                    pixelsOperation.setColorPara1(ImageColor.converColor(Color.LIGHTPINK));
+                    bufferedImage = pixelsOperation.operate();
+                    tmpFile = AppVariables.MyBoxTempPath + File.separator
+                            + message("Color") + "_" + message("Set") + ".png";
+                    if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
+                        files.add(tmpFile);
+                    }
+
+                    pixelsOperation = PixelsOperation.newPixelsOperation(image,
+                            scope, OperationType.Brightness, ColorActionType.Increase);
+                    pixelsOperation.setFloatPara1(0.5f);
+                    bufferedImage = pixelsOperation.operate();
+                    tmpFile = AppVariables.MyBoxTempPath + File.separator
+                            + message("Brightness") + "_" + message("Increase") + ".png";
+                    if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
+                        files.add(tmpFile);
+                    }
+
+                    pixelsOperation = PixelsOperation.newPixelsOperation(image,
+                            scope, OperationType.Hue, ColorActionType.Decrease);
+                    pixelsOperation.setFloatPara1(0.3f);
+                    bufferedImage = pixelsOperation.operate();
+                    tmpFile = AppVariables.MyBoxTempPath + File.separator
+                            + message("Hue") + "_" + message("Decrease") + ".png";
+                    if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
+                        files.add(tmpFile);
+                    }
+
+                    pixelsOperation = PixelsOperation.newPixelsOperation(image,
+                            scope, OperationType.Saturation, ColorActionType.Increase);
+                    pixelsOperation.setFloatPara1(0.5f);
+                    bufferedImage = pixelsOperation.operate();
+                    tmpFile = AppVariables.MyBoxTempPath + File.separator
+                            + message("Saturation") + "_" + message("Increase") + ".png";
+                    if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
+                        files.add(tmpFile);
+                    }
+
+                    pixelsOperation = PixelsOperation.newPixelsOperation(image,
+                            scope, OperationType.Opacity, ColorActionType.Decrease);
+                    pixelsOperation.setIntPara1(128);
+                    bufferedImage = pixelsOperation.operate();
+                    tmpFile = AppVariables.MyBoxTempPath + File.separator
+                            + message("Opacity") + "_" + message("Decrease") + ".png";
+                    if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
+                        files.add(tmpFile);
+                    }
+
+                    pixelsOperation = PixelsOperation.newPixelsOperation(image,
+                            scope, OperationType.RGB, ColorActionType.Invert);
+                    bufferedImage = pixelsOperation.operate();
+                    tmpFile = AppVariables.MyBoxTempPath + File.separator
+                            + message("RGB") + "_" + message("Invert") + ".png";
+                    if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
+                        files.add(tmpFile);
+                    }
+
+                    pixelsOperation = PixelsOperation.newPixelsOperation(image,
+                            scope, OperationType.Red, ColorActionType.Filter);
+                    bufferedImage = pixelsOperation.operate();
+                    tmpFile = AppVariables.MyBoxTempPath + File.separator
+                            + message("Red") + "_" + message("Filter") + ".png";
+                    if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
+                        files.add(tmpFile);
+                    }
+
+                    pixelsOperation = PixelsOperation.newPixelsOperation(image,
+                            scope, OperationType.Yellow, ColorActionType.Increase);
+                    pixelsOperation.setIntPara1(60);
+                    bufferedImage = pixelsOperation.operate();
+                    tmpFile = AppVariables.MyBoxTempPath + File.separator
+                            + message("Yellow") + "_" + message("Increase") + ".png";
+                    if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
+                        files.add(tmpFile);
+                    }
+
+                    pixelsOperation = PixelsOperation.newPixelsOperation(image,
+                            scope, OperationType.Magenta, ColorActionType.Decrease);
+                    pixelsOperation.setIntPara1(60);
+                    bufferedImage = pixelsOperation.operate();
+                    tmpFile = AppVariables.MyBoxTempPath + File.separator
+                            + message("Magenta") + "_" + message("Decrease") + ".png";
+                    if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
+                        files.add(tmpFile);
+                    }
+
+                } catch (Exception e) {
+
+                }
+                return null;
+            }
+
+            @Override
+            protected void succeeded() {
+                super.succeeded();
+                if (files.isEmpty()) {
+                    return;
+                }
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            ImagesBrowserController controller
+                                    = (ImagesBrowserController) FxmlStage.openStage(CommonValues.ImagesBrowserFxml);
+                            controller.loadFiles(files);
+                        } catch (Exception e) {
+                            logger.error(e.toString());
+                        }
+                    }
+                });
+
+            }
+
+        };
+        Thread thread = new Thread(demoTask);
+        thread.setDaemon(true);
+        thread.start();
+
     }
 
 }

@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
 <!--
 Author:     Mara
 License:    Apache License Version 2.0
             http://www.apache.org/licenses/LICENSE-2.0
 -->
-
 
 <?import javafx.scene.*?>
 <?import javafx.scene.text.*?>
@@ -49,26 +47,16 @@ License:    Apache License Version 2.0
                                     <children>
                                         <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" spacing="5.0">
                                             <children>
-                                                <RadioButton mnemonicParsing="false" selected="true" text="%Clarity">
-                                                    <toggleGroup>
-                                                        <ToggleGroup fx:id="effectsGroup" />
-                                                    </toggleGroup>
-                                                </RadioButton>
-                                                <RadioButton mnemonicParsing="false" text="%Contrast" toggleGroup="$effectsGroup" />
-                                                <RadioButton fx:id="posterizingRadio" mnemonicParsing="false" text="%Posterizing" toggleGroup="$effectsGroup" />
+                                                <RadioButton fx:id="posterizingRadio" mnemonicParsing="false" selected="true" text="%Posterizing">
+                                       <toggleGroup>
+                                          <ToggleGroup fx:id="effectsGroup" />
+                                       </toggleGroup></RadioButton>
                                                 <RadioButton fx:id="thresholdingRadio" mnemonicParsing="false" text="%Thresholding" toggleGroup="$effectsGroup" />
                                                 <RadioButton mnemonicParsing="false" text="%Gray" toggleGroup="$effectsGroup" />
                                                 <RadioButton fx:id="bwRadio" mnemonicParsing="false" text="%BlackOrWhite" toggleGroup="$effectsGroup" />
                                                 <RadioButton mnemonicParsing="false" text="%Sepia" toggleGroup="$effectsGroup" />
-                                            </children>
-                                        </HBox>
-                                        <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" spacing="5.0">
-                                            <children>
                                                 <RadioButton mnemonicParsing="false" text="%Emboss" toggleGroup="$effectsGroup" />
-                                                <RadioButton mnemonicParsing="false" text="%Blur" toggleGroup="$effectsGroup" />
-                                                <RadioButton mnemonicParsing="false" text="%Sharpen" toggleGroup="$effectsGroup" />
                                                 <RadioButton mnemonicParsing="false" text="%EdgeDetection" toggleGroup="$effectsGroup" />
-                                                <RadioButton mnemonicParsing="false" text="%Convolution" toggleGroup="$effectsGroup" />
                                             </children>
                                         </HBox>
                                         <HBox fx:id="setBox" alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" spacing="10.0">

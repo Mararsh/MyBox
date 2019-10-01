@@ -196,17 +196,30 @@ License:    Apache License Version 2.0
                                                                                 </ImageView>
                                                                             </graphic>
                                                                         </Button>
-                                                      <ColorPicker fx:id="colorPicker" />
                                                                     </children>
                                                                     <VBox.margin>
                                                                         <Insets />
                                                                     </VBox.margin>
                                                                 </HBox>
-                                                                <Label text="%ColorValues">
-                                                                    <VBox.margin>
-                                                                        <Insets top="20.0" />
-                                                                    </VBox.margin>
-                                                                </Label>
+                                                <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                                                   <children>
+                                                                      <Label text="%ColorValues">
+                                                                          <VBox.margin>
+                                                                              <Insets top="20.0" />
+                                                                          </VBox.margin>
+                                                                      </Label>
+                                                      <Rectangle fx:id="colorRect" fill="#ffffff00" height="15.0" stroke="BLACK" strokeMiterLimit="0.0" strokeType="INSIDE" width="15.0" />
+                                                      <Button fx:id="paletteButton" mnemonicParsing="false" onAction="#showPalette">
+                                                         <graphic>
+                                                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                               <image>
+                                                                  <Image url="@../buttons/iconPalette.png" />
+                                                               </image>
+                                                            </ImageView>
+                                                         </graphic>
+                                                      </Button>
+                                                   </children>
+                                                </HBox>
                                                 <TableView fx:id="calculatedValuesTable" VBox.vgrow="ALWAYS">
                                                   <columns>
                                                     <TableColumn fx:id="colorSpaceColumn" prefWidth="140.0" text="%ColorSpace" />

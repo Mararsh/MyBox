@@ -124,7 +124,7 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
 
             String c = AppVariables.getUserConfigValue("ImageRichTextBackground", Color.WHITE.toString());
             bgRect.setFill(Color.web(c));
-            FxmlControl.setTooltip(bgRect, FxmlColor.colorDisplay((Color) bgRect.getFill()));
+            FxmlControl.setTooltip(bgRect, FxmlColor.colorNameDisplay((Color) bgRect.getFill()));
             imageController.maskRectangleLine.setFill(bgRect.getFill());
 
             arcBox.getItems().addAll(Arrays.asList("20", "10", "5", "15", "2", "8", "0", "30", "25", "40", "50", "4", "6"));
@@ -257,7 +257,7 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
         }
         if (paletteButton.equals(control)) {
             bgRect.setFill(color);
-            FxmlControl.setTooltip(bgRect, FxmlColor.colorDisplay(color));
+            FxmlControl.setTooltip(bgRect, FxmlColor.colorNameDisplay(color));
             AppVariables.setUserConfigValue("ImageRichTextBackground", color.toString());
             imageController.maskRectangleLine.setFill(bgRect.getFill());
         }

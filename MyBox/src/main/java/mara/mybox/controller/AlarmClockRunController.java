@@ -82,7 +82,7 @@ public class AlarmClockRunController extends BaseController {
                 try {
                     String sound = alarm.getSound();
                     if (AppVariables.message("meow").equals(sound)) {
-                        File miao = FxmlControl.getUserFile("/sound/miao4.mp3", "miao4.mp3");
+                        File miao = FxmlControl.getInternalFile("/sound/miao4.mp3", "sound", "miao4.mp3");
                         sound = miao.getAbsolutePath();
                     }
                     player = SoundTools.playback(sound, alarm.getVolume());

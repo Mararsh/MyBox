@@ -131,10 +131,8 @@ public class FilesMergeController extends FilesBatchController {
                     }
 
                     @Override
-                    protected void succeeded() {
-                        super.succeeded();
+                    protected void whenSucceeded() {
                         updateInterface("Done");
-
                     }
 
                     @Override

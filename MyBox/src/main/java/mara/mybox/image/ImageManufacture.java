@@ -194,6 +194,17 @@ public class ImageManufacture {
         return scaleImage(source, width, height);
     }
 
+    public static BufferedImage scaleImageLess(BufferedImage source, int size) {
+        if (size <= 0) {
+            return source;
+        }
+        float scale = size / (source.getWidth() * source.getHeight());
+        if (scale >= 1) {
+            return source;
+        }
+        return scaleImage(source, scale);
+    }
+
     public static int[] scale(int sourceX, int sourceY, int newWidth, int newHeight, int keepRatioType) {
         int finalW = newWidth;
         int finalH = newHeight;

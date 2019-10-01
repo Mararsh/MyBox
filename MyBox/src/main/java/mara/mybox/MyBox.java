@@ -27,7 +27,61 @@ public class MyBox {
     public static void main(String[] args) {
         AppVariables.appArgs = args.clone();
 
+        initBaseValues();
+        logger.info("MyBox Config file:" + AppVariables.MyboxConfigFile);
+        logger.info("MyBox Data Path:" + AppVariables.MyboxDataPath);
+
         launchApp();
+    }
+
+    public static boolean initBaseValues() {
+        if (AppVariables.appArgs != null) {
+            for (String arg : AppVariables.appArgs) {
+                if (arg.startsWith("config=")) {
+                    String config = arg.substring("config=".length());
+                    File configFile = new File(config);
+                    String dataPath = ConfigTools.readConfigValue(configFile, "MyBoxDataPath");
+                    if (dataPath != null) {
+                        try {
+                            File dataPathFile = new File(dataPath);
+                            if (!dataPathFile.exists()) {
+                                dataPathFile.mkdirs();
+                            } else if (!dataPathFile.isDirectory()) {
+                                dataPathFile.delete();
+                                dataPathFile.mkdirs();
+                            }
+                            if (dataPathFile.exists() && dataPathFile.isDirectory()) {
+                                AppVariables.MyboxConfigFile = configFile;
+                                AppVariables.MyboxDataPath = dataPathFile.getAbsolutePath();
+                                return true;
+                            }
+                        } catch (Exception e) {
+                        }
+                    }
+                }
+            }
+        }
+        AppVariables.MyboxConfigFile = ConfigTools.defaultConfigFile();
+        String dataPath = ConfigTools.readConfigValue("MyBoxDataPath");
+        if (dataPath != null) {
+            try {
+                File dataPathFile = new File(dataPath);
+                if (!dataPathFile.exists()) {
+                    dataPathFile.mkdirs();
+                } else if (!dataPathFile.isDirectory()) {
+                    dataPathFile.delete();
+                    dataPathFile.mkdirs();
+                }
+                if (dataPathFile.exists() && dataPathFile.isDirectory()) {
+                    AppVariables.MyboxDataPath = dataPathFile.getAbsolutePath();
+                    return true;
+                }
+            } catch (Exception e) {
+            }
+        }
+        AppVariables.MyboxDataPath = ConfigTools.defaultDataPathFile().getAbsolutePath();
+        ConfigTools.writeConfigValue("MyBoxDataPath", AppVariables.MyboxDataPath);
+        return true;
     }
 
     public static void launchApp() {
@@ -41,26 +95,6 @@ public class MyBox {
             initEnv();
             Application.launch(MainApp.class, AppVariables.appArgs);
         }
-    }
-
-    public static String defaultDataPath() {
-        File path = new File(System.getProperty("user.dir") + File.separator + "MyBoxData");
-        if (!path.exists()) {
-            path.mkdirs();
-        } else if (!path.isDirectory()) {
-            path.delete();
-            path.mkdirs();
-        }
-        if (!path.exists()) {
-            path = new File(System.getProperty("user.home") + File.separator + "MyBoxData");
-            if (!path.exists()) {
-                path.mkdirs();
-            } else if (!path.isDirectory()) {
-                path.delete();
-                path.mkdirs();
-            }
-        }
-        return path.getAbsolutePath();
     }
 
     public static boolean internalRestart() {
@@ -97,18 +131,10 @@ public class MyBox {
 //            System.setProperty("sun.java2d.uiScale", "1.0");
             System.setProperty("prism.allowhidpi", "true".equals(ConfigTools.readConfigValue("DisableHidpi")) ? "false" : "true");
 
-            String rootPath = ConfigTools.readConfigValue("MyBoxDataPath");
-            if (rootPath != null) {
-                File path = new File(rootPath);
-                if (path.exists() && path.isDirectory()) {
-                    AppVariables.MyboxDataPath = path.getAbsolutePath();
-                } else {
-                    AppVariables.MyboxDataPath = defaultDataPath();
-                }
-            } else {
-                AppVariables.MyboxDataPath = defaultDataPath();
-            }
-            logger.info("MyBox Data Path:" + AppVariables.MyboxDataPath);
+            // https://blog.csdn.net/iteye_3493/article/details/82060349
+            // https://stackoverflow.com/questions/1004327/getting-rid-of-derby-log/1933310#1933310
+            System.setProperty("derby.stream.error.file", AppVariables.MyboxDataPath
+                    + File.separator + "mybox_derby" + File.separator + "derby.log");
 
         } catch (Exception e) {
             logger.error(e.toString());

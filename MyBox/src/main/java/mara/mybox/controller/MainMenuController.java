@@ -83,12 +83,11 @@ public class MainMenuController extends BaseController {
                 }
             });
 
-            String os = System.getProperty("os.name").toLowerCase();
-            if (!os.contains("windows")) {
-                imageMenu.getItems().removeAll(imageOcrMenu, imageOcrBatchMenu);
-                pdfMenu.getItems().removeAll(pdfOcrBatchMenu);
-            }
-
+//            String os = System.getProperty("os.name").toLowerCase();
+//            if (!os.contains("windows")) {
+//                imageMenu.getItems().removeAll(imageOcrMenu, imageOcrBatchMenu);
+//                pdfMenu.getItems().removeAll(pdfOcrBatchMenu);
+//            }
         } catch (Exception e) {
             logger.debug(e.toString());
         }
@@ -755,6 +754,11 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
+    private void openImageManufactureBatchEnhancement(ActionEvent event) {
+        loadScene(CommonValues.ImageManufactureBatchEnhancementFxml);
+    }
+
+    @FXML
     private void openImageManufactureBatchReplaceColor(ActionEvent event) {
         loadScene(CommonValues.ImageManufactureBatchReplaceColorFxml);
     }
@@ -978,6 +982,16 @@ public class MainMenuController extends BaseController {
     private void openWeiboSnap(ActionEvent event) {
         WeiboSnapController controller
                 = (WeiboSnapController) loadScene(CommonValues.WeiboSnapFxml);
+    }
+
+    @FXML
+    private void openBarcodeCreator(ActionEvent event) {
+        loadScene(CommonValues.BarcodeCreatorFxml);
+    }
+
+    @FXML
+    private void openBarcodeDecoder(ActionEvent event) {
+        loadScene(CommonValues.BarcodeDecoderFxml);
     }
 
     @FXML

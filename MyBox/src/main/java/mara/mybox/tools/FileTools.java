@@ -594,7 +594,7 @@ public class FileTools {
             }
             long bytesNumber = file.length() / filesNumber;
             List<File> splittedFiles = new ArrayList<>();
-            try ( FileInputStream inputStream = new FileInputStream(file)) {
+            try (FileInputStream inputStream = new FileInputStream(file)) {
                 String newFilename;
                 int digit = (filesNumber + "").length();
                 byte[] buf = new byte[(int) bytesNumber];
@@ -604,7 +604,7 @@ public class FileTools {
                     endIndex += bufLen;
                     newFilename = filename + "-cut-f" + StringTools.fillLeftZero(fileIndex, digit)
                             + "-b" + (startIndex + 1) + "-b" + endIndex;
-                    try ( FileOutputStream outputStream = new FileOutputStream(newFilename)) {
+                    try (FileOutputStream outputStream = new FileOutputStream(newFilename)) {
                         if (bytesNumber > bufLen) {
                             buf = ByteTools.subBytes(buf, 0, bufLen);
                         }
@@ -620,7 +620,7 @@ public class FileTools {
                     endIndex += bufLen;
                     newFilename = filename + "-cut-f" + StringTools.fillLeftZero(fileIndex, digit)
                             + "-b" + (startIndex + 1) + "-b" + endIndex;
-                    try ( FileOutputStream outputStream = new FileOutputStream(newFilename)) {
+                    try (FileOutputStream outputStream = new FileOutputStream(newFilename)) {
                         outputStream.write(buf);
                     }
                     splittedFiles.add(new File(newFilename));
@@ -640,7 +640,7 @@ public class FileTools {
                 return null;
             }
             List<File> splittedFiles = new ArrayList<>();
-            try ( FileInputStream inputStream = new FileInputStream(file)) {
+            try (FileInputStream inputStream = new FileInputStream(file)) {
                 String newFilename;
                 long fnumber = file.length() / bytesNumber;
                 if (file.length() % bytesNumber > 0) {
@@ -653,7 +653,7 @@ public class FileTools {
                     endIndex += bufLen;
                     newFilename = filename + "-cut-f" + StringTools.fillLeftZero(fileIndex, digit)
                             + "-b" + (startIndex + 1) + "-b" + endIndex;
-                    try ( FileOutputStream outputStream = new FileOutputStream(newFilename)) {
+                    try (FileOutputStream outputStream = new FileOutputStream(newFilename)) {
                         if (bytesNumber > bufLen) {
                             buf = ByteTools.subBytes(buf, 0, bufLen);
                         }
@@ -701,7 +701,7 @@ public class FileTools {
             }
             File tempFile = FileTools.getTempFile();
             String newFilename = filename + "-cut-b" + startIndex + "-b" + endIndex;
-            try ( FileInputStream inputStream = new FileInputStream(file)) {
+            try (FileInputStream inputStream = new FileInputStream(file)) {
                 if (startIndex > 1) {
                     inputStream.skip(startIndex - 1);
                 }
@@ -712,7 +712,7 @@ public class FileTools {
                 if (bufLen == -1) {
                     return null;
                 }
-                try ( FileOutputStream outputStream = new FileOutputStream(tempFile)) {
+                try (FileOutputStream outputStream = new FileOutputStream(tempFile)) {
                     if (cutLength > bufLen) {
                         buf = ByteTools.subBytes(buf, 0, bufLen);
                         newFilename = filename + "-cut-b" + startIndex + "-b" + bufLen;
@@ -735,11 +735,11 @@ public class FileTools {
                 return false;
             }
             int bufSize = 4096;
-            try ( FileOutputStream outputStream = new FileOutputStream(targetFile)) {
+            try (FileOutputStream outputStream = new FileOutputStream(targetFile)) {
                 byte[] buf = new byte[bufSize];
                 int bufLen;
                 for (File file : files) {
-                    try ( FileInputStream inputStream = new FileInputStream(file)) {
+                    try (FileInputStream inputStream = new FileInputStream(file)) {
                         while ((bufLen = inputStream.read(buf)) != -1) {
                             if (bufSize > bufLen) {
                                 buf = ByteTools.subBytes(buf, 0, bufLen);
@@ -759,7 +759,7 @@ public class FileTools {
     public static byte[] readBytes(File file) {
         byte[] data = null;
         try {
-            try ( FileInputStream inputStream = new FileInputStream(file)) {
+            try (FileInputStream inputStream = new FileInputStream(file)) {
                 data = new byte[(int) file.length()];
                 inputStream.read(data);
             }
@@ -775,7 +775,7 @@ public class FileTools {
         }
         try {
             byte[] data;
-            try ( FileInputStream inputStream = new FileInputStream(file)) {
+            try (FileInputStream inputStream = new FileInputStream(file)) {
                 data = new byte[length];
                 inputStream.skip(offset);
                 inputStream.read(data);
@@ -791,7 +791,8 @@ public class FileTools {
     public static String readTexts(File file) {
         try {
             StringBuilder s = new StringBuilder();
-            try ( BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            try (BufferedReader reader = new BufferedReader(
+                    new FileReader(file, Charset.forName("utf-8")))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     s.append(line).append(System.lineSeparator());
@@ -808,7 +809,7 @@ public class FileTools {
             if (file == null || data == null) {
                 return null;
             }
-            try ( FileWriter writer = new FileWriter(file, Charset.forName("utf-8"))) {
+            try (FileWriter writer = new FileWriter(file, Charset.forName("utf-8"))) {
                 writer.write(data);
                 writer.flush();
             }
@@ -828,7 +829,7 @@ public class FileTools {
             if (file == null || data == null) {
                 return false;
             }
-            try ( FileOutputStream outputStream = new FileOutputStream(file)) {
+            try (FileOutputStream outputStream = new FileOutputStream(file)) {
                 outputStream.write(data);
                 outputStream.flush();
             }

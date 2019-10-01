@@ -26,102 +26,105 @@
             </content>
         </TitledPane>
         <TitledPane expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Crop" VBox.vgrow="ALWAYS">
-         <content>
-            <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-               <children>
-                  <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER" />
-               </children>
-            </VBox>
-         </content></TitledPane>
-      <TitledPane expanded="false" layoutX="10.0" layoutY="125.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Size">
-         <content>
-            <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-               <children>
-                  <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER" />
-               </children>
-            </VBox>
-         </content>
-      </TitledPane>
-      <TitledPane expanded="false" layoutX="10.0" layoutY="185.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Color">
-         <content>
-            <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-               <children>
-                  <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER" />
-               </children>
-            </VBox>
-         </content>
-      </TitledPane>
-      <TitledPane expanded="false" layoutX="10.0" layoutY="245.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Effects">
-         <content>
-            <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-               <children>
-                  <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER" />
-               </children>
-            </VBox>
-         </content>
-      </TitledPane>
-      <TitledPane expanded="false" layoutX="10.0" layoutY="305.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Text">
-         <content>
-            <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-               <children>
-                  <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER" />
-               </children>
-            </VBox>
-         </content>
-      </TitledPane>
-      <TitledPane expanded="false" layoutX="10.0" layoutY="365.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Pen">
-         <content>
-            <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-               <children>
-                  <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER" />
-               </children>
-            </VBox>
-         </content>
-      </TitledPane>
-      <TitledPane expanded="false" layoutX="10.0" layoutY="425.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Mosaic">
-         <content>
-            <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-               <children>
-                  <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER" />
-               </children>
-            </VBox>
-         </content>
-      </TitledPane>
-      <TitledPane expanded="false" layoutX="10.0" layoutY="545.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Transform">
-         <content>
-            <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-               <children>
-                  <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER" />
-               </children>
-            </VBox>
-         </content>
-      </TitledPane>
-      <TitledPane expanded="false" layoutX="10.0" layoutY="605.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Arc">
-         <content>
-            <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-               <children>
-                  <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER" />
-               </children>
-            </VBox>
-         </content>
-      </TitledPane>
-      <TitledPane expanded="false" layoutX="10.0" layoutY="485.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Shadow">
-         <content>
-            <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-               <children>
-                  <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER" />
-               </children>
-            </VBox>
-         </content>
-      </TitledPane>
-      <TitledPane expanded="false" layoutX="10.0" layoutY="440.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Margins">
-         <content>
-            <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-               <children>
-                  <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER" />
-               </children>
-            </VBox>
-         </content>
-      </TitledPane>
+            <content>
+                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                    <children>
+                        <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER" />
+                    </children>
+                </VBox>
+            </content>
+        </TitledPane>
+        <TitledPane expanded="false" layoutX="10.0" layoutY="125.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Size">
+            <content>
+                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                    <children>
+                        <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER" />
+                    </children>
+                </VBox>
+            </content>
+        </TitledPane>
+        <TitledPane expanded="false" layoutX="10.0" layoutY="185.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Color">
+            <content>
+                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                    <children>
+                        <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER" />
+                    </children>
+                </VBox>
+            </content>
+        </TitledPane>
+        <TitledPane expanded="false" layoutX="10.0" layoutY="245.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Effects">
+            <content>
+                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                    <children>
+                        <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER" />
+                    </children>
+                </VBox>
+            </content>
+        </TitledPane>
+        <TitledPane fx:id="enhancementPane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Enhancement" />
+ 
+        <TitledPane expanded="false" layoutX="10.0" layoutY="305.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Text">
+            <content>
+                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                    <children>
+                        <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER" />
+                    </children>
+                </VBox>
+            </content>
+        </TitledPane>
+        <TitledPane expanded="false" layoutX="10.0" layoutY="365.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Pen">
+            <content>
+                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                    <children>
+                        <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER" />
+                    </children>
+                </VBox>
+            </content>
+        </TitledPane>
+        <TitledPane expanded="false" layoutX="10.0" layoutY="425.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Mosaic">
+            <content>
+                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                    <children>
+                        <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER" />
+                    </children>
+                </VBox>
+            </content>
+        </TitledPane>
+        <TitledPane expanded="false" layoutX="10.0" layoutY="545.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Transform">
+            <content>
+                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                    <children>
+                        <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER" />
+                    </children>
+                </VBox>
+            </content>
+        </TitledPane>
+        <TitledPane expanded="false" layoutX="10.0" layoutY="605.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Arc">
+            <content>
+                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                    <children>
+                        <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER" />
+                    </children>
+                </VBox>
+            </content>
+        </TitledPane>
+        <TitledPane expanded="false" layoutX="10.0" layoutY="485.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Shadow">
+            <content>
+                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                    <children>
+                        <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER" />
+                    </children>
+                </VBox>
+            </content>
+        </TitledPane>
+        <TitledPane expanded="false" layoutX="10.0" layoutY="440.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Margins">
+            <content>
+                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                    <children>
+                        <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER" />
+                    </children>
+                </VBox>
+            </content>
+        </TitledPane>
     </children>
 </VBox>

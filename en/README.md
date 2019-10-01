@@ -13,9 +13,9 @@ Self-contain packages include all files and need not java env and installation.
  
 | Platform | Link | Size | Launcher |    
 | -- | -- | --  | --  |    
-| win | [MyBox-5.5-win.zip](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-win.zip) | 208MB | MyBox.exe |    
-| linux | [MyBox-5.5-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-linux.tar.gz)  | 163MB | bin/MyBox  |       
-| mac | [MyBox-5.5-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-mac.dmg)  | 164MB | MyBox-5.5.app  |    
+| win | [MyBox-5.6-win.zip](https://github.com/Mararsh/MyBox/releases/download/v5.6/MyBox-5.6-win-exe.zip)  | 219MB | MyBox.exe |       
+| linux | [MyBox-5.6-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v5.6/MyBox-5.6-linux.tar.gz)  | 174MB  | bin/MyBox  |     
+| mac | [MyBox-5.6-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v5.6/MyBox-5.6-mac.dmg)  | 175MB  |  MyBox-5.6.app   |  
 
 User can double click the launcher to start MyBox or run it by command line. The default "Open Method" of image/text/PDF files can be associated to MyBox and a file can be opened directly by MyBox by double clicking the file's name.
 
@@ -26,24 +26,24 @@ When JRE or JDK 12 or higher(`Oracle jdk` or `open jdk`) is installed, jar can r
   
 | Platform | Link | Size | Requirements |   
 | -- | -- | --  | --  |    
-| win | [MyBox-5.5-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-win-jar.zip)  | 92MB | Java 12 or higher |
-| linux | [MyBox-5.5-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-linux-jar.zip)  | 96MB | Java 12 or higher |
-| mac | [MyBox-5.5-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-mac-jar.zip)  | 93MB | Java 12 or higher |    
+| win | [MyBox-5.6-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.6/MyBox-5.6-win-jar.zip)  | 103MB | Java 12 or higher |    
+| linux | [MyBox-5.6-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.6/MyBox-5.6-linux-jar.zip)  | 107MB  | Java 12 or higher |    
+| mac | [MyBox-5.6-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.6/MyBox-5.6-mac-jar.zip)  |  103MB  | Java 12 or higher |    
+ 
     
 Run following command to launch this program with Jar package: 
-<PRE><CODE>     java   -jar   MyBox-5.5.jar</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-5.6.jar</CODE></PRE>
 	
 A file path can follow the command as argument to be opened directly by MyBox. Example, following command will open the image:    
-<PRE><CODE>     java   -jar   MyBox-5.5.jar   /tmp/a1.jpg</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-5.6.jar   /tmp/a1.jpg</CODE></PRE>
 
-### Supporting HiDPI
-Java supports HiDPI since 9 and interface will adapt current screen resolution aotumatically.   
-MyBox supports enable/disable dpi-aware on line, which will cause MyBox reboots itself automatically.   
-
-Developers need notice: JavaFx screen is not same as pysical screen and has different dpi definition which considers X/Y scale ratio too.    
 
 ## Limitation
 Self-contain packages can not be lanuched under path including non-English characters. Jar files are not affected by this limitation.   
+
+### About OCR on Linux/Mac   
+Current version still does not support OCR on Linux/Mac. The reason is that the based tesseract libraries are different on different platforms and there are not out of box packages available.
+This requirement is delayed due to limited development time. 
 
 
 # Resource Addresses
@@ -92,13 +92,17 @@ It is based on following open sources softwares or libraries:
 | EncodingDetect | Determine encoding of text file | https://www.cnblogs.com/ChurchYim/p/8427373.html |   
 | Free Icons | Icon | https://icons8.com/icons/set/home |  
 | tess4j | OCR | https://github.com/nguyenq/tess4j |  
+| tesseract | OCR | https://github.com/tesseract-ocr/tesseract |   
+| barcode4j | Create barcodes | http://barcode4j.sourceforge.net |  
+| zxing | Create/Decode barcodes | https://github.com/zxing/zxing |   
   
  
 # Current Version
-Current version is 5.5. Its features are mentioned below in summary:
-* [Cross platforms](#cross-platform)
-* [Internationalized](#international)
-* [PDF Tools](#pdfTools)
+Current version is 5.6. Its features are mentioned below in summary:   
+ 
+* [Cross platforms](#Cross-platform)
+* [Internationalized](#Internationalized)
+* [PDF Tools](#PDFTools)
 * [Image Tools](#imageTools)
     - [View Image](#viewImage)
     - [Browse Images](#browserImage)
@@ -115,6 +119,8 @@ Current version is 5.5. Its features are mentioned below in summary:
 * [Data Tools](#dataTools)
     - [Matrcies Calculation](#matrixTool)
     - [Color Spaces](#colorSpaces)
+    - [Create Barcodes](#createBarcodes)
+    - [Decode Barcodes](#decodeBarcodes)
 * [File Tools](#fileTools)
     - [Arrage Directories](#directoriesArrange)
     - [Edit Text](#editText)
@@ -127,30 +133,36 @@ Current version is 5.5. Its features are mentioned below in summary:
 * [Settings](#settings)
 * [Window](#windows)
 * [Helps](#helps)
-* [Configuration](#Config)    
+* [Configuration](#Config)     
+* [Supporting HiDPI](#Hidpig)    
 
-## Cross-platform<a name="cross-platform" />
+  
+## Cross platforms <a id="Cross-platform"></a>       
+
 MyBox is implemented in pure Java and based on open source codes, so it can run any platform which supports Java 12.
 Previous versions are based on Java 8.
 
-Following functions are limited to specific platforms:   
+Recognize texts in image/PDF(OCR) works only on Windows currently.    
 
-| Function | Avaliable Platforms | Requirements |   
-| -- | -- | --  |   
-| Recognize texts in image/PDF | Windows  | Users need download data files by themselves |   
- 
-Next version will not limit platforms, and English and Chinese data files will be added into package. Data files download by users are useful too.
-
-## Internationalized<a name="international" />
+## Internationalized <a id="Internationalized"></a>       
 All codes of MyBox are internationalized. User can switch language in time.
 Currently MyBox supports Chinese and English. To support a new language is just to edit a new resource file.
 
-## PDF Tools<a name="pdfTools" />
+## PDF Tools <a id="PDFTools"></a> 
 1. View PDF in html mode. Browse and edit html page by page. Bookmarks and thumbnails.
 2. Convert PDF files as html files in batch. Options: Whether one html for each page or one html for each PDF; The way to handle fonts/images: embed, save separately, or ignore.
 3. View PDF file in image mode. DPI can be set to adjust resolution. Page can be cropped as images.
-4. In image mode, recognize texts in PDF(OCR). PDF pages will be converted as images to do OCR with settings of color space and density in batch. 
-   Only windows is supported currently.
+4. In image mode, recognize texts in PDF(OCR). 
+   When OCR in batch, following can be set:
+	-  Whether convert pages as images, or extract images from pages\
+	-  DPI or scale ratio
+	-  Nine algorithms about image enhancement
+	-  Binary threshold
+	-  Rotation angle
+	-  whether deskew automatically
+	-  Whether invert colors
+	-  Languages list and their order
+	-  whether insert page separators
 5. Convert pages of PDF as images. Options like format, density, color space, compression, quality, etc.
 6. Combine multiple images as PDF file. Options like compression, page size, margin size, header, author, etc. 
    Support Chinese and tool can locate system font files. User can input path of ttf font file.
@@ -161,11 +173,12 @@ Currently MyBox supports Chinese and English. To support a new language is just 
 11. Extract texts in PDF file. Splitting line can be customized.
 12. Modify PDF file's attributes like title, author, modify time, user password, owner password, user permissions, etc.
 13. Handle PDF files in batch way.
-14. Maximum main memory of PDF handling can be set.
+14. Maximum main memory of PDF handling can be set.    
 
-## Image Tools<a name="imageTools" />
+## Image Tools <a id="imageTools"></a>     
 
-### View Image<a name="viewImage" />
+### View Image <a id="viewImage"></a>     
+
 1. "Load Width". Read image file with "Original Size" or with defined width.
 2. "Select Mode". When in this mode, Crop, Copy, and Save As are against the selected area. Or else these operations are against whole image.
 3. Rotation can be saved.
@@ -174,7 +187,8 @@ Currently MyBox supports Chinese and English. To support a new language is just 
 6. Image attributes and image meta. ICC profile embedded in image can be decoded.
 7. Navigation of images under same directory.
 
-### Browse Images<a name="browserImage" />
+### Browse Images <a id="browserImage"></a>     
+
 1. Display multiple images in same screen. Rotation and zoomming can be separated or synchronized.
 2. Rotation can be saved.
 3. Grid Mode. Files number, columns number, and load width can be set.
@@ -182,7 +196,8 @@ Currently MyBox supports Chinese and English. To support a new language is just 
 5. Files List Mode.
 6. Rename and Delete.
 
-### Image Manufacture<a name="imageManufacture" />
+### Image Manufacture <a id="imageManufacture"></a>    
+ 
 1. Clipboard
 	-  Clip sources: "Copy"(CTRL+c) against whole image or selected part of image, cutted part of image, system clipboard, image files in system, example clips.
 	-  Manage clips list: Add, Delete, Clear, Set maximum number of list.
@@ -193,28 +208,29 @@ Currently MyBox supports Chinese and English. To support a new language is just 
 3. Scale: By dargging anchors, by setting scale, or by inputting pixel values with 4 types of keeping aspect ratio.
 4. Color. Increase, decrease, set, filter, or invert value of saturaion, brightness, hue, Red/Green/Blue/Yellow/Cyan/Magenta channel, RGB itself, or opacity. 
    Premultiplied Alpha is supported for setting opacity.
-5. Effect. Clarity, contrast, posterize(reduce colors), thresholding, gray, black-white, Sepia, emboss, edges detect, blur, sharpen. 
+5. Effect. Posterize(reduce colors), thresholding, gray, black-white, Sepia, emboss, edges detect. Algorithms and parameters can be set.
+6. Enhancement. Contrast, smooth, sharpen, convolution. Algorithms and parameters can be set.
    Algorithms and parameters can be set. Convolution can be defined and referred to make more effects.
-6. Rich Text: Edit texts in web page mode. Drag the texts on image to adjust its location and size. Options: background color, opacity, margions width, arc size, rotation angle.
+7. Rich Text: Edit texts in web page mode. Drag the texts on image to adjust its location and size. Options: background color, opacity, margions width, arc size, rotation angle.
    Due to implementation of snapshots, results look blur. I have not found solution. 
-7. Text. Options like font family, style, size, color, opacity, shadow, angle, whether outline, whether veritical. Locating text by clicking image.
-8. Pen:
+8. Text. Options like font family, style, size, color, opacity, shadow, angle, whether outline, whether veritical. Locating text by clicking image.
+9. Pen:
 	-  Polyline: One line by multiple drawing. Options: stroke width, color, whether dotted, opacity.
 	-  Lines: One line by one drawing. Options: stroke width, color, whether dotted, opacity.
 	-  Eraser: One line by one drawing. Always transparent. Option: stroke width.
 	-  Frosted Class: One dot by one drawing. Options: stroke width, intensity, shape(Rectangle or circle).
 	-  Mosaic: One dot by one drwaing. Options: stroke width, intensity, shape(Rectangle or circle).
 	-  Shape: Rectangle, Circle, Ellipse, Polygon. Options: stroke width, color, whether dotted, opacity, whether fill-in, color of fill-in.
-9. Transform. Shear, mirror, and rotate.
-10. Round corner. Arc and background color can be set.
-11. Shadow. Options: background color, shadow size, whether apply Premultiplied Alpha.
-12. Margins. Blur margins with option of whether apply Premultiplied Alpha; Drag anchors to adjust margins; add margins by setting width; cut margins by setting width or color.
-13. Image histories:
+10. Transform. Shear, mirror, and rotate.
+11. Round corner. Arc and background color can be set.
+12. Shadow. Options: background color, shadow size, whether apply Premultiplied Alpha.
+13. Margins. Blur margins with option of whether apply Premultiplied Alpha; Drag anchors to adjust margins; add margins by setting width; cut margins by setting width or color.
+14. Image histories:
 	- Each modification will be recorded as image histories, Option: whether record "Load" as history.
 	- Manage histories:  Delete, Clear, Recover selected history as current editing image, Set maximum number of histories.
 	- Undo(CTRL+z) and redo(CTRL+y) previous modification. Recover to original image(CTRL+r) at any time. Either select one history to recover.
-14. Reference Image: Open other image file to compare with current image.
-15. "Scope":  Rulers to limit pixels to operate, including area rulers, color matching rulers, or rulers mixed by both types.
+15. Reference Image: Open other image file to compare with current image.
+16. "Scope":  Rulers to limit pixels to operate, including area rulers, color matching rulers, or rulers mixed by both types.
 	- Define area: Rectangle, Circle, Ellipse, Polygon. Can be excluded.
 	- Define colors list. Can pick colors directly from image by Color Palette.
 	- Select object for color matching, including Red/Green/Blue channel, saturaion, brightness, hue, RGB, with distance defined. Can be excluded.
@@ -223,24 +239,29 @@ Currently MyBox supports Chinese and English. To support a new language is just 
 	- Scope can be applied against Copy, Crop, Color, Effect, Convolution. 
 	- Scope can be defined against image history and reference image too. The part in scope can be copied into clipboard.
 	- Scopes can be saved with names. User can manage them: Add, Delete, Clear, Edit, Use selected item in scopes list.	
-16. Pop: Current image, image history, or reference image can be viewd in a popped window. Option: Whether always on top.
-17. Option: Whether zoom current image, image history, or reference image synchronously.
-18. Edit existed images, or create new image.
-19. Interface in style of "Visible As Need": Left-right areas like curtain, vertical accordion menus, tabs to switch targets, more details of hiding/showing/adjusting in function areas.
-20. Image Manufacture in batch.
+17. Pop: Current image, image history, or reference image can be viewd in a popped window. Option: Whether always on top.
+18. Option: Whether zoom current image, image history, or reference image synchronously.
+19. Edit existed images, or create new image.
+20. Interface in style of "Visible As Need": Left-right areas like curtain, vertical accordion menus, tabs to switch targets, more details of hiding/showing/adjusting in function areas.
+21. Image Manufacture in batch.
+22. Demo: One clicking to show examples of kinds of image manufacture about "Color", "Effect", and "Enhancement".
 
-### Color Palette<a name="ColorPalette" />
+### Color Palette <a id="ColorPalette"></a>     
+
 1. Thousands of colors can be saved. 139 named colors can be added automatically.
-2. Color is shown in a small rectangle and its name(if has), hexidecimal value, rgb value, and opacity are popped when mouse is moved upon it.
-3. Export colors to html table.
-4. Pick colors on current image, image history, or reference image.
+2. Color is shown in a small rectangle and its name(if has), hexidecimal value, rgb values, opacity, cmyk values, and cie values are popped when mouse is moved upon it.
+3. Name colors
+4. Export colors to html table.
+5. Pick colors on current image, image history, or reference image.
 
-### Image Data<a name="ImageData" />
+### Image Data <a id="ImageData"></a>     
+
 1. Statistic and visualization of image data, including average, variance, skewness, median, mode, minimum, maximum of occurance of each color channel, and their histograms.
 2. Channels of histograms can be selected.
 3. Statistic against selected area.
 
-### Image Conversion<a name="imageConvert" />
+### Image Conversion <a id="imageConvert"></a>     
+
 1. Formats of image file: png, jpg, bmp, tif, gif, wbmp, pnm, pcx, raw.
 2. Color spaces: sRGB, Linear sRGB, ECI RGB, Adobe RGB, Apple RGB, Color Match RGB, ECI CMYK, Adobe CMYK(several), Gray, Binary
 3. Color space based on external ICC profile.
@@ -250,29 +271,47 @@ Currently MyBox supports Chinese and English. To support a new language is just 
 7. For binary, algorithms can be choiced: OTSU, default or threshold. And option of dithering.
 8. Conversion in batch.
 
-### Recognize Texts in Image<a name="imageOCR" />
-Only support windows currently.    
-1. Users can install Tesseract-OCR and set its data path in MyBox, or download its data files without Tesseract-OCR installation.
-2. Language can be selected. For any selected language, tool will append following packages' names: eng(English), osd(Orientation and script detection), equ(Math / equation detection)
-3. Display image along with recognized texts in same screen. Rectangle can be set to define the area to do OCR.
-4. OCR in batch.
+### Recognize Texts in Image <a id="imageOCR"></a>     
 
-### Multiple frames image file<a name="multiFrames" />
+1. Preprocess image:
+	-  Nine algorithms about image enhancement
+	-  Scale ratio
+	-  Binary threshold
+	-  Rotation angle
+	-  whether deskew automatically
+	-  Whether invert colors
+2. Recognization Options:
+	-  Languages list and their order
+	-  whether generate data of "Regions" and level can be set
+	-  whether generate data of "Words" and level can be set
+3. When recognize single image:
+	- Preprocessed image can be saved and loaded
+	- Rectangle can be set to define the area to do OCR.
+	- Display preprocessed image, original image, recognized texts and html. 
+	- Display data of Regions and Words in html which can be saved.
+	- Demo: One clicking to show examples of image enhancement.
+4. When recognize in batch, options:
+	-  Whether generate html or PDF 
+	-  Whether merge recognized texts
+5. Embedded "fast" data files of English and Chinese which support OCR out of box on windows. User can download more data if need.   
+
+### Multiple frames image file <a id="multiFrames"></a>     
+
 1. View/Extract images in multiple frames file.
 2. Create/Edit multiple frames Tiff/Tif file.
 3. View/Extract/Create/Edit animated Gif file. Interval, whether loop, and images' size can be set.
 
-### Merge images<a name="multipleImages" />
+### Merge images <a id="multipleImages"></a>     
 1. Combine images. Options like array ordering, background color, interval, margins, and size.
 2. Combine images in PDF file.
 3. Add Alpha channel.
 
-### Part image<a name="imagePart" />
+### Part image <a id="imagePart"></a>     
 1. Split image. By number, by size, or by customizing. Results can be saved as image files, multiple frames Tiff file, or PDF file.
 2. Subsample image. Options like sample region and sample ratio.
 3. Extract Alpha channel.
 
-### Big Image<a name="bigImage" />
+### Big Image <a id="bigImage"></a>     
 1. Evaulate the required memory for whole image, and judge whether load all data in memory.
 2. If enough memory is available to load whole image, read all data for next operations. Try best to operate in memory and avoid file I/O.
 3. If memory may be out, subsample the image for next operations.
@@ -280,15 +319,15 @@ Only support windows currently.
 5. The sampled image is mainly for displaying, and not suitable for operations against whole image and images merging.
 6. Some operations, like splitting and subsampling, can be handled by reading part of image data and writing-while-reading, so they are suitable for big images. Sampled image is displayed while original image is handled.
 
-### Others<a name="imageOthers" />
+### Others <a id="imageOthers"></a>     
 1. Supported image formats include png, jpg, bmp, tif, gif, wbmp, pnm, pcx.	Adobe YCCK/CMYK jpg file can be decoded.
 2. Pixels calculator
 3. Convolution Kernels Manager
 
 
-## Data Tools<a name="dataTools" />
+## Data Tools <a id="dataTools"></a>     
 
-### Matrices Calculation<a name="matrixTool" />
+### Matrices Calculation <a id="matrixTool"></a>     
 1. Edit matrix data:
 	-  Filter special characters in input/pasted data to fit for data in some format.
 	-  Convert current matrix data into row vector, column vector, or matrix in defined columns number automatically.
@@ -296,7 +335,7 @@ Only support windows currently.
 2. Unary matrix calculation: Transpose, Row Echelon Form, Reduced Row Echelon Form, Determinant By Elimination, Determinant By Complement Minor, Inverse Matrix By Elimination, Inverse Matrix By Adjoint, Matrix Rank, Adjoint Matrix, Complement Minor, Normalize, Set Decimal Scale, Set As Integer, Multiply Number, Divide By Number, Power.
 3. Binary matrices calculation: Plus, Minus, Hadamard Product, Kronecker Product, Horizontally Merge, Vertically Merge.
 	
-### Color Space<a name="colorSpaces" />
+### Color Space <a id="colorSpaces"></a>     
 1. Draw Chromaticity Diagram:
 	-  Outlines of standard data, including CIE 1931 2 Degree Observer(D50), CIE 1964 10 Degree Observer(D50), CIE RGB Gamut, ECI RGB Gamut, 
 	   sRGB Gamut, Adobe RGB Gamut, Apple RGB Gamut, PAL RGB Gamut, NTSC RGB Gamut, ColorMath ProPhoto RGB Gamut, SMPTE-C RGB Gamut.
@@ -336,14 +375,30 @@ Only support windows currently.
 	-  User select or input source white and target white, and the tool will calculate the chromatic adaptation matrix automatically and show the calculation procedure..
 	-  Table and texts are shown for chromatic adaptation matrices by different standard illuminants and different algorithms. Data texts can be exported.
 	
-## Desktop Tools<a name="desktopTools" />
+### Create Barcodes<a id="createBarcodes" />
+1. Supported 1-d barcodes: Code39, Code128, Codabar, Interleaved2Of5, ITF_14, POSTNET, EAN13, EAN8, EAN_128, UPCA, UPCE,
+        Royal_Mail_Customer_Barcode, USPS_Intelligent_Mail
+2. Supported 2-d barcodes: QR_Code, PDF_417, DataMatrix
+3. Options about 1-d barcodes: Orientation, width/height, dpi, text location, font size, quiet-zone width, etc. 
+4. Options about 2-d barcodes: Width/height, margin, error correction level, compact mode, etc.
+5. A picture can be shown in center of QR_Code. Its size can be adjusted automatically according to error correction level.
+6. Examples of parameters and suggested values.
+7. Validate generated barcode at once.
 
-### Manage Directories<a name="directoriesArrange" />
+### Decode Barcodes<a id="decodeBarcodes" />
+1. Supported 1-d barcodes: Code39, Code128, Interleaved2Of5, ITF_14,  EAN13, EAN8, EAN_128, UPCA, UPCE
+2. Supported 2-d barcodes: QR_Code, PDF_417, DataMatrix
+3. Display contents of barcodes and its meta data including barcode type and error correction level if any.
+
+
+## Desktop Tools <a id="desktopTools"></a>     
+
+### Manage Directories <a id="directoriesArrange"></a>     
 1. Rename Files/Directories, with options of files' name and ordering. Renamed files can be recovered as original names in all or in part.
 2. Sychronize directories, with options like whether copy sub-directories or new files, whether only copy modified files after specific date time, whether keep attributes of original files, or whther delete non-existed files/directories under original directory.
 3. Arrange files and reorganize them under new directories by modifed time. This tool can be used to handle lots of files which need be archived according to time, like photoes, screenshots of games, or system logs.
 
-### Edit Texts<a name="editText" />
+### Edit Texts <a id="editText"></a>     
 1. File charset can be either detected automatically or set manually. Target file charset can be selected to implement encoding conversion. BOM setting is supported.
 2. Detect line break automatically. Convert line break. Show lines number. 
 3. Support LF(Unix/Linux), CR(Apple), and CRLF(Windows).
@@ -360,7 +415,7 @@ Only support windows currently.
 	-  Make sure correction of finding, replacing, and filtering of strings that are across pages.
 10. General functions of editing, like copy/paste/cut/delete/selectAll/undo/redo/recover. And their shortcuts.
 
-### Edit Bytes<a name="editBytes" />
+### Edit Bytes <a id="editBytes"></a>     
 1. Bytes are expressed as 2 hexadecimal characters. All blanks, line breaks, and invalid values are ignored.
 2. Input boxes of general ASCII characters.
 3. Break lines, which is only for display and has not actual effect. By bytes number or by some defined bytes.
@@ -378,26 +433,26 @@ Only support windows currently.
 	   When break lines by bytes number, crossing pages need not concerned.
 10. General functions of editing, like copy/paste/cut/delete/selectAll/undo/redo/recover. And their shortcuts.
 
-### Others<a name="fileOthers" />
+### Others <a id="fileOthers"></a>     
 1. Convert files' charset in batch.
 2. Convert files' line break in batch.
 3. Split file, by files number, by bytes number, or by start-end list.
 4. Merge files.
 
-## Media Tools<a name="MediaTools" />
+## Media Tools <a id="MediaTools"></a>     
 1. Monitor images in system clipboard and have user save/view them. Lossless or compression type can be selected.
 2. Alarm clocks, including options of time and music. Support rings of “Meow”, wav files, and mp3. Can run in background.
 
 
-## Network Tools<a name="netTools" />
+## Network Tools <a id="netTools"></a>     
 
-### Html Editor<a name="htmlEditor" />
+### Html Editor <a id="htmlEditor"></a>     
 1. Edit local web pages or online pages in rich text. (Not support FrameSet)
 2. Edit Html codes directly. (Support FrameSet)
 3. Web browser to view contents of Editors or load the online page. Support history browsing, font zooming 、and snapshoting of the whole page as an image or a PDF file.
 4. Rich-text-editor, html-codes-edtor, and web browser are synchronized.
 
-### Weibo Snaping Tool<a name="weiboSnap" />
+### Weibo Snaping Tool <a id="weiboSnap"></a>     
 1. Save Weibo pages of any months of any Weibo accounts automatically.
 2. Set the months range.
 3. Make sure whole page contents loaded. Can expand the comments and pictures in the pages.
@@ -408,7 +463,7 @@ Only support windows currently.
 8. Stop the progress at any time. The interrupted month will be record and input as start month for next execution.
 9. Set the retry times of failure.
 
-## Settings<a name="settings" />
+## Settings <a id="settings"></a>     
 1. Whether restore last size of each scene. Whether open new stage to display scene. Whether pop recent visited files/directories.
 2. Language, font size, interface style, color and size of controls' pictures.
 3. Width and color of stroke and anchor. Whether anchors are solid.
@@ -420,44 +475,29 @@ Only support windows currently.
 9. Base parameters including maximum JVM memory usage, whether close dpi-aware, data root path. MyBox will reboot itself automatically when user changes these parameters.
 10. Clear personal settings. Open user's directory.
 
-## Window<a name="windows" />
+## Window <a id="windows"></a>     
 1. Open/Close monitor bar of Memory.
 2. Open/Close monitor bar of CPU.
 3. Refresh/Reset/Full-screen windows.
 4. Close other windows.
 5. Recent visited tools.
 
-## Helps<a name="helps" />
+## Helps <a id="helps"></a>     
 1. MyBox shortcuts
 2. MyBox Attributes
 3. User Guides(Addresses)
 4. Development Guide(Addresses)
 
 
-## Configuration<a name="Config" />
+## Configuration <a id="Config"></a>     
 
-### Installation Path, Execution Path, Data Path
-The directory holding files of self-contain packages or jar file is called "Installation Path"(Although no installtion is need).    
-The directory under which MyBox is started is called "Execution Path".     
-The path where MyBox read/write values and files is called "Data Path".     
-Example, MyBox-5.5.jar is copied under path A, and is started under path B, while MyBox data path can be assigned as any path C.  
+### Default configuration file “MyBox.ini”
+The default configuration file is under "User Home". Example, it is "C:\Users\<User Name>\mybox\MyBox.ini" on Windows.   
 
-### Initialize MyBox
-Example, unpack package of MyBox.exe under path "D:\tmp\MyBox", double click "MyBox.exe",and the Execution Path is "D:\tmp\MyBox\".   
-MyBox checks path "D:\tmp\MyBox\", and does not subdirectory "MyBoxData", then it starts to initialize this instance automatically:      
-1. Create subdirectory "mybox", and make "D:\tmp\MyBox\MyBoxData" as the default data root path.   
-2. If directory "mybox" is found under current user's root, which is the data path of MyBox previous versions, then copy all contents of this path to "D:\tmp\MyBox\MyBoxData".   
-3. Create file "MyBox.ini" under "D:\tmp\MyBox\MyBoxData" and write following line to record the location of data path of current MyBox instance:  
-<PRE><CODE>     MyBoxDataRoot=D\:\\tmp\\MyBox\\MyBoxData </CODE></PRE>
+The only way to change configuration file temporarily is to add parameter "config=\"FilePath\"" when run jar.
 
-User can edit file "MyBox.ini" to change data path, and copy files under previous path to new path manually.    
-User can also change data path by Setting function of MyBox and the tool will copy old data automatically.     
-
-Another example, copy "MyBox-5.5.jar" under path "d:\tmp\1", and start it from path "d:\tmp\2", then Execution Path is "d:\tmp\2" and MyBox data will be initialized under this path.   
-By this way, MyBox can be executed with different data paths and the instances do not interfere each other. 
-
-### Configuration File
-Under Execution Path, the configuration file "MyBox.ini" records base parameters referred by MyBox when it starts. Modify these parameters in time will cause MyBox restarts itself automatically：   
+### Contents of Configuration File
+Configuration file includes following parameters:
 1. Data Path, like:   
 <PRE><CODE>     MyBoxDataRoot=/home/mara/data/ </CODE></PRE>
 2. Maximum memory usage of JVM, like:    
@@ -465,9 +505,30 @@ Under Execution Path, the configuration file "MyBox.ini" records base parameters
 3. Whether close "HiDPI", like:   
 <PRE><CODE>     DisableHidpi=false </CODE></PRE>
 
+Modify these parameters in time will cause MyBox restarts itself automatically.    
 
 
-# Development Logs<a name="devLog" />
+## Supporting HiDPI<a id="Hidpi" /> 
+Java supports HiDPI since 9 and interface will adapt current screen resolution aotumatically.   
+MyBox supports enable/disable dpi-aware on line, which will cause MyBox reboots itself automatically.   
+
+Developers need notice: JavaFx screen is not same as pysical screen and has different dpi definition which considers X/Y scale ratio too.    
+
+
+# Development Logs <a id="devLog"></a>     
+
+2019-10-01 v5.6 Configuration file is back to "User Home" and always there except for parameter in jar.    
+For OCR, options of image preprocessing include nine enhancement algorithms, scale ratio, binary threashold, rotation angle, whether deskew, whether invert colors. 
+Options of recognizztion include data files list and their order, whether generate data of regions/words and the levels can be set.
+Options for OCR in batch include whether generate html or PDF, whether merge recognized texts.
+"Fast" data files of English and Chinese are included in MyBox and OCR can be done out of box on Windows.    
+13 types of 1-d barcodes and 3 types of 2-d barcodes can be created. Options supported. Picture can be added in QR_Code.    
+9 types of 1-d barcodes and 3 types of 2-d barcodes can be decoded.     
+One clicking to show examples of image manufacture.        
+
+Happy Birthday, China!    
+
+
 2019-9-19 v5.5  Recognize texts in image and PDF(OCR) based on tess4j. Rectangle can be set for single image's OCR. Color space and density can be set when do OCR for PDF files in batch. Currently only Windows is supported and users need download data files by themselves.    
 Make self-contain packages for each platform(Window/Linux/Mac).      
 Improve codes: Build with maven without Java 8; make self-contain packages with latest jpackage tool.    
@@ -677,7 +738,6 @@ This tool might fail to work when weibo would change the accessing channel of pa
     
 
 # Main Interface
-![About](https://mararsh.github.io/MyBox/0-en.jpg)
 
 ![About](https://mararsh.github.io/MyBox/1-en.jpg)
 

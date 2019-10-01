@@ -32,8 +32,7 @@ import org.apache.pdfbox.io.MemoryUsageSetting;
 public class AppVariables {
 
     public static String[] appArgs;
-    public static boolean disableHiDPI = false;
-
+    public static File MyboxConfigFile;
     public static String MyboxDataPath, AlarmClocksFile;
     public static File MyBoxTempPath, MyBoxDerbyPath;
     public static List<File> MyBoxReservePaths;
@@ -47,7 +46,8 @@ public class AppVariables {
     public static AlarmClockController alarmClockController;
     public static MemoryUsageSetting pdfMemUsage;
     public static int sceneFontSize, fileRecentNumber, iconSize;
-    public static boolean openStageInNewWindow, restoreStagesSize, controlDisplayText, ImagePopCooridnate;
+    public static boolean openStageInNewWindow, restoreStagesSize, controlDisplayText,
+            ImagePopCooridnate, disableHiDPI;
     public static ControlStyle.ColorStyle ControlColor;
 
     public AppVariables() {
@@ -68,6 +68,7 @@ public class AppVariables {
             ControlColor = ControlStyle.getConfigColorStyle();
             controlDisplayText = AppVariables.getUserConfigBoolean("ControlDisplayText", false);
             ImagePopCooridnate = AppVariables.getUserConfigBoolean("ImagePopCooridnate", false);
+            disableHiDPI = false;
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -243,7 +244,7 @@ public class AppVariables {
     }
 
     public static int getCommentsDelay() {
-        return getUserConfigInt("CommentsDelay", 2000);
+        return getUserConfigInt("CommentsDelay", 3000);
     }
 
     public static Color getAlphaColor() {

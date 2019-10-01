@@ -7,10 +7,10 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.tools.DateTools;
-import mara.mybox.tools.MatrixTools;
-import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FloatTools;
+import mara.mybox.tools.MatrixTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara
@@ -63,13 +63,12 @@ public class ConvolutionKernel {
 //        }
         ExampleKernels = new ArrayList<>();
         ExampleKernels.add(makeAverageBlur(3));
-        ExampleKernels.add(makeGaussianBlur3());
-        ExampleKernels.add(makeGaussianBlur5());
-        ExampleKernels.add(makeSharpen3a());
-        ExampleKernels.add(makeSharpen3b());
-        ExampleKernels.add(makeSharpen3c());
-        ExampleKernels.add(makeEdgeDetection3a());
-        ExampleKernels.add(makeEdgeDetection3b());
+        ExampleKernels.add(makeGaussBlur(3));
+        ExampleKernels.add(makeGaussBlur(5));
+        ExampleKernels.add(MakeSharpenFourNeighborLaplace());
+        ExampleKernels.add(MakeSharpenEightNeighborLaplace());
+        ExampleKernels.add(makeEdgeDetectionFourNeighborLaplace());
+        ExampleKernels.add(makeEdgeDetectionEightNeighborLaplace());
         ExampleKernels.add(makeEdgeDetection3c());
         ExampleKernels.add(makeUnsharpMasking5());
         ExampleKernels.add(makeMotionBlur3());
@@ -107,47 +106,60 @@ public class ConvolutionKernel {
         return kernel;
     }
 
-    public static ConvolutionKernel makeGaussianBlur3() {
+    public static ConvolutionKernel makeGaussBlur(int radius) {
         ConvolutionKernel kernel = new ConvolutionKernel();
-        kernel.setName(AppVariables.message("GaussianBlur") + " 3*3");
+        int length = radius * 2 + 1;
+        kernel.setName(AppVariables.message("GaussianBlur") + " " + length + "*" + length);
         kernel.setCreateTime(DateTools.datetimeToString(new Date()));
         kernel.setModifyTime(DateTools.datetimeToString(new Date()));
-        kernel.setWidth(3);
-        kernel.setHeight(3);
+        kernel.setWidth(length);
+        kernel.setHeight(length);
         kernel.setType(Convolution_Type.BLUR);
+        kernel.setGray(1);
         kernel.setDescription("");
-        float[][] k = {
-            {1 / 16.0f, 2 / 16.0f, 1 / 16.0f},
-            {2 / 16.0f, 4 / 16.0f, 2 / 16.0f},
-            {1 / 16.0f, 2 / 16.0f, 1 / 16.0f}
-        };
+        float[][] k = makeGaussMatrix(radius);
         kernel.setMatrix(k);
         return kernel;
     }
 
-    public static ConvolutionKernel makeGaussianBlur5() {
-        ConvolutionKernel kernel = new ConvolutionKernel();
-        kernel.setName(AppVariables.message("GaussianBlur") + " 5*5");
-        kernel.setCreateTime(DateTools.datetimeToString(new Date()));
-        kernel.setModifyTime(DateTools.datetimeToString(new Date()));
-        kernel.setWidth(5);
-        kernel.setHeight(5);
-        kernel.setType(Convolution_Type.BLUR);
-        kernel.setDescription("");
-        float[][] k = {
-            {1 / 256.0f, 4 / 256.0f, 6 / 256.0f, 4 / 256.0f, 1 / 256.0f},
-            {4 / 256.0f, 16 / 256.0f, 24 / 256.0f, 16 / 256.0f, 4 / 256.0f},
-            {6 / 256.0f, 24 / 256.0f, 36 / 256.0f, 24 / 256.0f, 6 / 256.0f},
-            {4 / 256.0f, 16 / 256.0f, 24 / 256.0f, 16 / 256.0f, 4 / 256.0f},
-            {1 / 256.0f, 4 / 256.0f, 6 / 256.0f, 4 / 256.0f, 1 / 256.0f}
-        };
-        kernel.setMatrix(k);
-        return kernel;
+    // https://en.wikipedia.org/wiki/Kernel_(image_processing)
+    // https://lodev.org/cgtutor/filtering.html
+    public static float[] makeGaussArray(int radius) {
+        if (radius < 1) {
+            return null;
+        }
+        float sum = 0.0f;
+        int width = radius * 2 + 1;
+        int size = width * width;
+        float sigma = radius / 3.0f;
+        float twoSigmaSquare = 2.0f * sigma * sigma;
+        float sigmaRoot = (float) Math.PI * twoSigmaSquare;
+        float[] data = new float[size];
+        int index = 0;
+        float x, y;
+        for (int i = -radius; i <= radius; i++) {
+            for (int j = -radius; j <= radius; j++) {
+                x = i * i;
+                y = j * j;
+                data[index] = (float) Math.exp(-(x + y) / twoSigmaSquare) / sigmaRoot;
+                sum += data[index];
+                index++;
+            }
+        }
+        for (int k = 0; k < size; k++) {
+            data[k] = FloatTools.roundFloat5(data[k] / sum);
+        }
+        return data;
     }
 
-    public static ConvolutionKernel makeSharpen3a() {
+    public static float[][] makeGaussMatrix(int radius) {
+        return MatrixTools.array2Matrix(makeGaussArray(radius), radius * 2 + 1);
+
+    }
+
+    public static ConvolutionKernel MakeSharpenFourNeighborLaplace() {
         ConvolutionKernel kernel = new ConvolutionKernel();
-        kernel.setName(AppVariables.message("Sharpen") + " 3*3 a");
+        kernel.setName(message("Sharpen") + "   " + message("FourNeighborLaplace"));
         kernel.setCreateTime(DateTools.datetimeToString(new Date()));
         kernel.setModifyTime(DateTools.datetimeToString(new Date()));
         kernel.setWidth(3);
@@ -165,9 +177,9 @@ public class ConvolutionKernel {
 
     // https://www.javaworld.com/article/2076764/java-se/image-processing-with-java-2d.html
     // https://en.wikipedia.org/wiki/Kernel_(image_processing)
-    public static ConvolutionKernel makeSharpen3b() {
+    public static ConvolutionKernel MakeSharpenEightNeighborLaplace() {
         ConvolutionKernel kernel = new ConvolutionKernel();
-        kernel.setName(AppVariables.message("Sharpen") + " 3*3 b");
+        kernel.setName(AppVariables.message("Sharpen") + "   " + message("EightNeighborLaplace"));
         kernel.setCreateTime(DateTools.datetimeToString(new Date()));
         kernel.setModifyTime(DateTools.datetimeToString(new Date()));
         kernel.setWidth(3);
@@ -183,25 +195,7 @@ public class ConvolutionKernel {
         return kernel;
     }
 
-    public static ConvolutionKernel makeSharpen3c() {
-        ConvolutionKernel kernel = new ConvolutionKernel();
-        kernel.setName(AppVariables.message("Sharpen") + " 3*3 b");
-        kernel.setCreateTime(DateTools.datetimeToString(new Date()));
-        kernel.setModifyTime(DateTools.datetimeToString(new Date()));
-        kernel.setWidth(3);
-        kernel.setHeight(3);
-        kernel.setType(Convolution_Type.SHARPNEN);
-        kernel.setDescription("");
-        float[][] k = {
-            {1.0f, 1.0f, 1.0f},
-            {1.0f, -7.0f, 1.0f},
-            {1.0f, 1.0f, 1.0f}
-        };
-        kernel.setMatrix(k);
-        return kernel;
-    }
-
-    public static ConvolutionKernel makeEdgeDetection3a() {
+    public static ConvolutionKernel makeEdgeDetectionFourNeighborLaplace() {
         ConvolutionKernel kernel = new ConvolutionKernel();
         kernel.setName(AppVariables.message("EdgeDetection") + " 3*3 a");
         kernel.setCreateTime(DateTools.datetimeToString(new Date()));
@@ -220,7 +214,7 @@ public class ConvolutionKernel {
     }
 
     // https://www.javaworld.com/article/2076764/java-se/image-processing-with-java-2d.html
-    public static ConvolutionKernel makeEdgeDetection3b() {
+    public static ConvolutionKernel makeEdgeDetectionEightNeighborLaplace() {
         ConvolutionKernel kernel = new ConvolutionKernel();
         kernel.setName(AppVariables.message("EdgeDetection") + " 3*3 b");
         kernel.setCreateTime(DateTools.datetimeToString(new Date()));
@@ -252,6 +246,28 @@ public class ConvolutionKernel {
             {1.0f, -4.0f, 1.0f},
             {0.0f, 1.0f, 0.0f}
         };
+        kernel.setMatrix(k);
+        return kernel;
+    }
+
+    public static ConvolutionKernel makeUnsharpMasking(int radius) {
+        ConvolutionKernel kernel = new ConvolutionKernel();
+        int length = radius * 2 + 1;
+        kernel.setName(AppVariables.message("UnsharpMasking") + " " + length + "*" + length);
+        kernel.setCreateTime(DateTools.datetimeToString(new Date()));
+        kernel.setModifyTime(DateTools.datetimeToString(new Date()));
+        kernel.setWidth(length);
+        kernel.setHeight(length);
+        kernel.setType(Convolution_Type.SHARPNEN);
+        kernel.setDescription("");
+        float[][] k = makeGaussMatrix(radius);
+        for (int i = 0; i < k.length; i++) {
+            for (int j = 0; j < k[i].length; j++) {
+                k[i][j] = 0 - k[i][j];
+            }
+        }
+        k[radius][radius] = 2 + k[radius][radius];
+//        logger.debug(MatrixTools.print(FloatTools.toDouble(k), 0, 8));
         kernel.setMatrix(k);
         return kernel;
     }
@@ -492,57 +508,6 @@ public class ConvolutionKernel {
         };
         kernel.setMatrix(k);
         return kernel;
-    }
-
-    public static ConvolutionKernel makeGaussKernel(int radius) {
-        ConvolutionKernel kernel = new ConvolutionKernel();
-        int width = radius * 2 + 1;
-        kernel.setName(AppVariables.message("GaussianBlur") + " " + width + "*" + width);
-        kernel.setCreateTime(DateTools.datetimeToString(new Date()));
-        kernel.setModifyTime(DateTools.datetimeToString(new Date()));
-        kernel.setWidth(width);
-        kernel.setHeight(width);
-        kernel.setType(Convolution_Type.BLUR);
-        kernel.setGray(1);
-        kernel.setDescription("");
-        float[][] k = makeGaussMatrix(radius);
-        kernel.setMatrix(k);
-        return kernel;
-    }
-
-    // https://en.wikipedia.org/wiki/Kernel_(image_processing)
-    // https://lodev.org/cgtutor/filtering.html
-    public static float[] makeGaussArray(int radius) {
-        if (radius < 1) {
-            return null;
-        }
-        float sum = 0.0f;
-        int width = radius * 2 + 1;
-        int size = width * width;
-        float sigma = radius / 3.0f;
-        float twoSigmaSquare = 2.0f * sigma * sigma;
-        float sigmaRoot = (float) Math.PI * twoSigmaSquare;
-        float[] data = new float[size];
-        int index = 0;
-        float x, y;
-        for (int i = -radius; i <= radius; i++) {
-            for (int j = -radius; j <= radius; j++) {
-                x = i * i;
-                y = j * j;
-                data[index] = (float) Math.exp(-(x + y) / twoSigmaSquare) / sigmaRoot;
-                sum += data[index];
-                index++;
-            }
-        }
-        for (int k = 0; k < size; k++) {
-            data[k] = FloatTools.roundFloat5(data[k] / sum);
-        }
-        return data;
-    }
-
-    public static float[][] makeGaussMatrix(int radius) {
-        return MatrixTools.array2Matrix(makeGaussArray(radius), radius * 2 + 1);
-
     }
 
     public static float[] embossTopKernel = {

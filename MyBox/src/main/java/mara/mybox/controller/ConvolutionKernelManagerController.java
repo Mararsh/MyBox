@@ -158,11 +158,11 @@ public class ConvolutionKernelManagerController extends BaseController {
         tableData.addAll(records);
 
         if (parentController != null && parentFxml != null) {
-            if (parentFxml.contains("ImageManufactureEffects")) {
-                ImageManufactureEffectsController p = (ImageManufactureEffectsController) parentController;
+            if (parentFxml.contains("ImageManufactureEnhancement")) {
+                ImageManufactureEnhancementController p = (ImageManufactureEnhancementController) parentController;
                 p.loadKernelsList(records);
-            } else if (parentFxml.contains("ImageManufactureBatchEffects")) {
-                ImageManufactureBatchEffectsController p = (ImageManufactureBatchEffectsController) parentController;
+            } else if (parentFxml.contains("ImageManufactureBatchEnhancement")) {
+                ImageManufactureBatchEnhancementController p = (ImageManufactureBatchEnhancementController) parentController;
                 p.loadKernelsList(records);
             }
         }

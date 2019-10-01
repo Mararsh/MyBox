@@ -36,7 +36,7 @@ public class PixelsOperation {
     protected int imageWidth, imageHeight;
 
     public enum OperationType {
-        Blur, Sharpen, Clarity, Emboss, EdgeDetect, Thresholding, Quantization, Gray, BlackOrWhite, Sepia,
+        Smooth, Denoise, Blur, Sharpen, Clarity, Emboss, EdgeDetect, Thresholding, Quantization, Gray, BlackOrWhite, Sepia,
         ReplaceColor, Invert, Red, Green, Blue, Yellow, Cyan, Magenta, Mosaic, FrostedGlass,
         Brightness, Saturation, Hue, Opacity, PreOpacity, RGB, Color, ShowScope, Convolution, Contrast
     }

@@ -113,7 +113,7 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
 
             String c = AppVariables.getUserConfigValue("ImageTextBackground", Color.ORANGE.toString());
             colorRect.setFill(Color.web(c));
-            FxmlControl.setTooltip(colorRect, FxmlColor.colorDisplay((Color) colorRect.getFill()));
+            FxmlControl.setTooltip(colorRect, FxmlColor.colorNameDisplay((Color) colorRect.getFill()));
             imageController.maskRectangleLine.setFill(colorRect.getFill());
 
             familyBox.getItems().addAll(javafx.scene.text.Font.getFamilies());
@@ -278,7 +278,7 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
         }
         if (paletteButton.equals(control)) {
             colorRect.setFill(color);
-            FxmlControl.setTooltip(colorRect, FxmlColor.colorDisplay(color));
+            FxmlControl.setTooltip(colorRect, FxmlColor.colorNameDisplay(color));
             AppVariables.setUserConfigValue("ImagTextBackground", color.toString());
             write(true);
         }

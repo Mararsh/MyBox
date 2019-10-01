@@ -58,7 +58,6 @@ import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.image.ImageInformation;
-import mara.mybox.tools.ConfigTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
@@ -560,8 +559,8 @@ public class BaseController implements Initializable {
         if (event.isControlDown()) {
             controlHandler(event);
 
-        } else if (event.isShiftDown()) {
-            shiftHandler(event);
+        } else if (event.isAltDown()) {
+            altHandler(event);
 
         } else if (event.getCode() != null) {
             keyHandler(event.getCode());
@@ -684,8 +683,8 @@ public class BaseController implements Initializable {
 
     }
 
-    public void shiftHandler(KeyEvent event) {
-        if (!event.isShiftDown()) {
+    public void altHandler(KeyEvent event) {
+        if (!event.isAltDown()) {
             return;
         }
         String key = event.getText();
@@ -804,9 +803,10 @@ public class BaseController implements Initializable {
                 }
                 break;
             case F3:
-                if (saveAsButton != null && !saveAsButton.isDisabled()) {
-                    saveAsAction();
+                if (recoverButton != null && !recoverButton.isDisabled()) {
+                    recoverAction();
                 }
+
                 break;
             case F4:
                 closeStage();
@@ -815,8 +815,8 @@ public class BaseController implements Initializable {
                 refresh();
                 break;
             case F11:
-                if (recoverButton != null && !recoverButton.isDisabled()) {
-                    recoverAction();
+                if (saveAsButton != null && !saveAsButton.isDisabled()) {
+                    saveAsAction();
                 }
                 break;
             case F12:
@@ -1723,7 +1723,7 @@ public class BaseController implements Initializable {
             if (userPath.exists()) {
                 File[] files = userPath.listFiles();
                 for (File f : files) {
-                    if (f.isFile() && !f.equals(ConfigTools.configFile())) {
+                    if (f.isFile() && !f.equals(AppVariables.MyboxConfigFile)) {
                         f.delete();
                     } else if (f.isDirectory() && !AppVariables.MyBoxReservePaths.contains(f)) {
                         FileTools.deleteDir(f);
@@ -1970,7 +1970,7 @@ public class BaseController implements Initializable {
     }
 
     public void popText(String text, int delay, String color) {
-        popText(text, delay, color, "1.1em", bottomLabel);
+        popText(text, delay, color, "1.1em", null);
     }
 
     public void popText(String text, int delay, String color, String size, Region attach) {

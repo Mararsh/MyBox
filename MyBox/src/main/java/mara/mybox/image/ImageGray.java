@@ -36,6 +36,12 @@ public class ImageGray extends PixelsOperation {
         this.scope = scope;
     }
 
+    public ImageGray(BufferedImage image, ImageScope scope) {
+        this.image = image;
+        this.operationType = OperationType.Gray;
+        this.scope = scope;
+    }
+
     @Override
     public BufferedImage operate() {
         if (image == null || operationType == null

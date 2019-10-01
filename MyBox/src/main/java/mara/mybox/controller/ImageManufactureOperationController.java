@@ -33,7 +33,7 @@ public class ImageManufactureOperationController extends ImageBaseController {
     @FXML
     protected Accordion accordionPane;
     @FXML
-    protected TitledPane clipboardPane, cropPane, scalePane, colorPane, effectPane,
+    protected TitledPane clipboardPane, cropPane, scalePane, colorPane, effectPane, enhancementPane,
             transformPane, shadowPane, marginsPane, arcPane, penPane, textPane, richTextPane;
 
     public ImageManufactureOperationController() {
@@ -95,6 +95,8 @@ public class ImageManufactureOperationController extends ImageBaseController {
                 newFxml = CommonValues.ImageManufactureColorFxml;
             } else if (thePane.equals(effectPane)) {
                 newFxml = CommonValues.ImageManufactureEffectsFxml;
+            } else if (thePane.equals(enhancementPane)) {
+                newFxml = CommonValues.ImageManufactureEnhancementFxml;
             } else if (thePane.equals(scalePane)) {
                 newFxml = CommonValues.ImageManufactureScaleFxml;
             } else if (thePane.equals(transformPane)) {
@@ -151,6 +153,7 @@ public class ImageManufactureOperationController extends ImageBaseController {
             scalePane.disableProperty().bind(parent.editable.not());
             colorPane.disableProperty().bind(parent.editable.not());
             effectPane.disableProperty().bind(parent.editable.not());
+            enhancementPane.disableProperty().bind(parent.editable.not());
             scalePane.disableProperty().bind(parent.editable.not());
             transformPane.disableProperty().bind(parent.editable.not());
             shadowPane.disableProperty().bind(parent.editable.not());
@@ -199,7 +202,7 @@ public class ImageManufactureOperationController extends ImageBaseController {
     }
 
     public void applyKernel(ConvolutionKernel kernel) {
-        ImageManufactureEffectsController controller = (ImageManufactureEffectsController) expandPane(effectPane);
+        ImageManufactureEnhancementController controller = (ImageManufactureEnhancementController) expandPane(enhancementPane);
         if (controller == null) {
             return;
         }

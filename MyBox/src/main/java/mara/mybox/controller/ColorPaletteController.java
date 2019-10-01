@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
@@ -18,6 +19,7 @@ import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.DropShadow;
@@ -28,6 +30,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import mara.mybox.data.StringTable;
+import mara.mybox.db.TableSRGB;
 import mara.mybox.db.TableStringValues;
 import mara.mybox.fxml.FxmlColor;
 import static mara.mybox.fxml.FxmlColor.colorName;
@@ -75,6 +78,8 @@ public class ColorPaletteController extends BaseController {
     protected CheckBox topCheck, saveCloseCheck;
     @FXML
     protected Button htmlButton;
+    @FXML
+    protected TextField nameInput;
 
     public ColorPaletteController() {
         baseTitle = AppVariables.message("ColorPalette");
@@ -129,6 +134,9 @@ public class ColorPaletteController extends BaseController {
             );
             selectedRect.visibleProperty().bind(
                     selectedArea.textProperty().isNotEmpty()
+            );
+            saveButton.disableProperty().bind(Bindings.isEmpty(nameInput.textProperty())
+                    .or(Bindings.isEmpty(selectedArea.textProperty()))
             );
 
         } catch (Exception e) {
@@ -277,9 +285,15 @@ public class ColorPaletteController extends BaseController {
                                 rect.setWidth(25);
                                 rect.setHeight(25);
                                 clickedRect = rect;
-                                Color color = (Color) rect.getFill();
-                                selectedArea.setText(FxmlColor.colorDisplay(color));
                                 selectedRect.setFill(color);
+                                String name = FxmlColor.colorName(color);
+                                String display = FxmlColor.colorDisplay(color);
+                                nameInput.setText(name);
+                                if (name == null) {
+                                    selectedArea.setText(display);
+                                } else {
+                                    selectedArea.setText(name + "\n" + display);
+                                }
                                 isSettingValues = false;
                             }
                         }
@@ -308,11 +322,13 @@ public class ColorPaletteController extends BaseController {
                             rect.setHeight(20);
                             enteredRect = rect;
                             isSettingValues = false;
+                            FxmlControl.setTooltip(rect,
+                                    new Tooltip(FxmlColor.colorNameDisplay(color)));
+
                         }
                     });
                 }
             });
-            FxmlControl.setTooltip(rect, new Tooltip(FxmlColor.colorDisplay(color)));
 
             int size = colors.size();
             if (size >= 32672 / 11) {
@@ -350,6 +366,24 @@ public class ColorPaletteController extends BaseController {
         } catch (Exception e) {
             logger.error(e.toString());
         }
+    }
+
+    @FXML
+    @Override
+    public void saveAction() {
+        if (nameInput.getText().isEmpty() || selectedRect.getFill() == null) {
+            return;
+        }
+        if (TableSRGB.name(((Color) selectedRect.getFill()).toString(), nameInput.getText())) {
+            Color color = (Color) clickedRect.getFill();
+            String s = FxmlColor.colorNameDisplay(color);
+            selectedArea.setText(s);
+            FxmlControl.setTooltip(clickedRect, s);
+            popSuccessul();
+        } else {
+            popFailed();
+        }
+
     }
 
     @FXML

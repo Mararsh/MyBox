@@ -183,11 +183,11 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
 
             String c = AppVariables.getUserConfigValue("ImagePenStrokeColor", Color.RED.toString());
             strokeRect.setFill(Color.web(c));
-            FxmlControl.setTooltip(strokeRect, FxmlColor.colorDisplay((Color) strokeRect.getFill()));
+            FxmlControl.setTooltip(strokeRect, FxmlColor.colorNameDisplay((Color) strokeRect.getFill()));
 
             c = AppVariables.getUserConfigValue("ImagePenFillColor", Color.WHITE.toString());
             fillRect.setFill(Color.web(c));
-            FxmlControl.setTooltip(fillRect, FxmlColor.colorDisplay((Color) fillRect.getFill()));
+            FxmlControl.setTooltip(fillRect, FxmlColor.colorNameDisplay((Color) fillRect.getFill()));
 
             dottedCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -363,12 +363,12 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
 
         if (paletteButton.equals(control)) {
             strokeRect.setFill(color);
-            FxmlControl.setTooltip(strokeRect, FxmlColor.colorDisplay(color));
+            FxmlControl.setTooltip(strokeRect, FxmlColor.colorNameDisplay(color));
             AppVariables.setUserConfigValue("ImagePenStrokeColor", color.toString());
 
         } else if (fillPaletteButton.equals(control)) {
             fillRect.setFill(color);
-            FxmlControl.setTooltip(fillRect, FxmlColor.colorDisplay(color));
+            FxmlControl.setTooltip(fillRect, FxmlColor.colorNameDisplay(color));
             AppVariables.setUserConfigValue("ImagePenFillColor", color.toString());
         }
         updateMask();

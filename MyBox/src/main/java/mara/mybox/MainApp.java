@@ -71,7 +71,7 @@ public class MainApp extends Application {
                 if (paremeters != null && !paremeters.isEmpty()) {
                     for (String p : paremeters) {
                         try {
-                            if (MyBox.InternalRestartFlag.equals(p)) {
+                            if (MyBox.InternalRestartFlag.equals(p) || p.startsWith("config=")) {
                                 continue;
                             }
                             if (new File(p).exists()) {
@@ -97,41 +97,27 @@ public class MainApp extends Application {
         }
     }
 
-    public boolean initPaths(Stage stage) {
-        return initPaths(stage, AppVariables.MyboxDataPath);
-    }
-
-    public static boolean initRootPath(Stage stage, String dataPathName) {
+    public static boolean initRootPath(Stage stage) {
         try {
             if (stage == null) {
                 return false;
             }
-            if (dataPathName == null) {
-                dataPathName = MyBox.defaultDataPath();
-            }
-            File dataPath = new File(dataPathName);
-            if (!dataPath.exists()) {
-                if (!dataPath.mkdirs()) {
+            File currentDataPath = new File(AppVariables.MyboxDataPath);
+            if (!currentDataPath.exists()) {
+                if (!currentDataPath.mkdirs()) {
                     FxmlStage.alertError(stage,
                             MessageFormat.format(AppVariables.message(Locale.getDefault().getLanguage().toLowerCase(),
-                                    "UserPathFail"), dataPathName));
+                                    "UserPathFail"), AppVariables.MyboxDataPath));
                     return false;
                 }
             }
-            File dbPath = new File(dataPathName + File.separator + "mybox_derby");
+            File defaultPath = ConfigTools.defaultDataPathFile();
+            File dbPath = new File(AppVariables.MyboxDataPath + File.separator + "mybox_derby");
             if (!dbPath.exists()) {
-                File oldPath;
-                if (dataPathName.equals(MyBox.defaultDataPath())) {
-                    oldPath = new File(System.getProperty("user.home") + File.separator + "mybox");
-                } else {
-                    oldPath = new File(MyBox.defaultDataPath() + File.separator + "mybox");
-                    if (!oldPath.exists()) {
-                        oldPath = new File(System.getProperty("user.home") + File.separator + "mybox");
-                    }
-                }
-                if (oldPath.exists() && !oldPath.equals(dataPath)) {
-                    logger.info("Copy app data from orginal path " + oldPath + " to new path " + dataPathName + " ...");
-                    if (FileTools.copyWholeDirectory(oldPath, dataPath, null, false)) {
+                if (defaultPath.exists() && !defaultPath.equals(currentDataPath)) {
+                    logger.info("Copy app data from orginal path " + defaultPath
+                            + " to new path " + AppVariables.MyboxDataPath + " ...");
+                    if (FileTools.copyWholeDirectory(defaultPath, currentDataPath, null, false)) {
                         File lckFile = new File(dbPath.getAbsolutePath() + File.separator + "db.lck");
                         if (lckFile.exists()) {
                             try {
@@ -140,16 +126,15 @@ public class MainApp extends Application {
                                 logger.error(e.toString());
                             }
                         }
+
                     }
                 }
             }
-            AppVariables.MyboxDataPath = dataPathName;
-            ConfigTools.writeConfigValue("MyBoxDataPath", dataPathName);
 
             String oldPath = ConfigTools.readConfigValue("MyBoxOldDataPath");
             if (oldPath != null) {
-                if (oldPath.equals(MyBox.defaultDataPath())) {
-                    FileTools.deleteDirExcept(new File(oldPath), ConfigTools.configFile());
+                if (oldPath.equals(ConfigTools.defaultDataPath())) {
+                    FileTools.deleteDirExcept(new File(oldPath), ConfigTools.defaultConfigFile());
                 } else {
                     FileTools.deleteDir(new File(oldPath));
                 }
@@ -162,9 +147,9 @@ public class MainApp extends Application {
         }
     }
 
-    public static boolean initPaths(Stage stage, String rootPath) {
+    public static boolean initPaths(Stage stage) {
         try {
-            if (!initRootPath(stage, rootPath)) {
+            if (!initRootPath(stage)) {
                 return false;
             }
             AppVariables.MyBoxTempPath = new File(AppVariables.MyboxDataPath + File.separator + "AppTemp");
@@ -216,7 +201,7 @@ public class MainApp extends Application {
             List<String> keeps = Arrays.asList(
                     "iconRGB.png", "iconSaveAs.png", "iconWOW.png", "iconPDF.png",
                     "iconHue.png", "iconColorWheel.png", "iconColor.png", "iconButterfly.png", "iconPalette.png",
-                    "iconMosaic.png"
+                    "iconMosaic.png", "iconBlackWhite.png", "iconGrayscale.png"
             );
             String srcPath = "D:\\MyBox\\src\\main\\resources\\";
             String redPath = srcPath + "buttons\\";

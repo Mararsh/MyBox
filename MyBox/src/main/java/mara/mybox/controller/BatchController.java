@@ -294,7 +294,7 @@ public abstract class BatchController<T> extends BaseController {
                 });
                 isSettingValues = true;
                 FxmlControl.setRadioSelected(targetExistGroup, getUserConfigValue(targetExistKey, message("Replace")));
-                targetAppendInput.setText(getUserConfigValue(targetAppendKey, null));
+                targetAppendInput.setText(getUserConfigValue(targetAppendKey, "_m"));
                 isSettingValues = false;
                 checkTargetExistType();
             }

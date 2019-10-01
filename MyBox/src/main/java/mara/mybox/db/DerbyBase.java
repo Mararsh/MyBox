@@ -164,6 +164,7 @@ public class DerbyBase {
         loadDriver();
         try (Connection conn = DriverManager.getConnection(protocol + dbName() + create);
                 Statement statement = conn.createStatement()) {
+            new TableSRGB().init(statement);
             new TableStringValues().init(statement);
             new TableImageScope().init(statement);
             new TableSystemConf().init(statement);
@@ -194,6 +195,7 @@ public class DerbyBase {
             new TableVisitHistory().drop(statement);
             new TableImageScope().drop(statement);
             new TableStringValues().drop(statement);
+            new TableSRGB().drop(statement);
             return true;
         } catch (Exception e) {
 //            // logger.debug(e.toString());

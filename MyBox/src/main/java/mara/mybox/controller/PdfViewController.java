@@ -78,7 +78,7 @@ public class PdfViewController extends ImageViewerController {
     protected boolean isTransparent, scrollEnd, scrollStart, scrolledSet;
     protected Task outlineTask, thumbTask;
     protected String password;
-    protected File ocrPath;
+    protected String selectedLanguages;
 
     @FXML
     protected Label pageLabel;
@@ -103,7 +103,7 @@ public class PdfViewController extends ImageViewerController {
     @FXML
     protected TextArea ocrArea;
     @FXML
-    protected Label setOCRLabel, resultLabel;
+    protected Label setOCRLabel, resultLabel, currentOCRFilesLabel;
     @FXML
     protected ComboBox<String> langSelector;
 
@@ -282,85 +282,40 @@ public class PdfViewController extends ImageViewerController {
                     Bindings.isNull(imageView.imageProperty())
             );
 
-            String os = System.getProperty("os.name").toLowerCase();
-            if (!os.contains("windows")) {
-                ocrTab.setDisable(true);
-
-            } else {
-
-                tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
-                    @Override
-                    public void changed(ObservableValue ov, Tab oldValue, Tab newValue) {
-                        if (!ocrTab.equals(newValue) || orcPage == currentPage
-                                || imageView.getImage() == null) {
-                            return;
-                        }
-                        startOCR();
+            tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
+                @Override
+                public void changed(ObservableValue ov, Tab oldValue, Tab newValue) {
+                    if (!ocrTab.equals(newValue) || orcPage == currentPage
+                            || imageView.getImage() == null) {
+                        return;
                     }
-                });
+                    startOCR();
+                }
+            });
 
-                langSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                    @Override
-                    public void changed(ObservableValue ov, String oldValue, String newValue) {
-                        startOCR();
-                    }
-                });
-            }
+            checkLanguages();
 
         } catch (Exception e) {
             logger.error(e.toString());
         }
     }
 
-    protected boolean ocrPathDefined() {
-        setOCRLabel.setText("");
-        if (ocrPath != null) {
-            return true;
-        }
-        langSelector.getItems().clear();
-        String p = AppVariables.getUserConfigValue("OCRDataPath", null);
-        if (p != null && !p.isEmpty()) {
-            ocrPath = new File(p);
-            if (!ocrPath.exists() || !ocrPath.isDirectory()) {
-                ocrPath = null;
-            }
-        }
-        if (ocrPath == null) {
-            setOCRLabel.setText(message("SetOCRPath"));
-            settingsAction();
-            return false;
-
-        }
-        File[] files = ocrPath.listFiles();
-        for (File f : files) {
-            String name = f.getName();
-            if (!f.isFile() || !name.endsWith(".traineddata")) {
-                continue;
-            }
-            langSelector.getItems().add(name.substring(0, name.length() - ".traineddata".length()));
-        }
-        if (AppVariables.currentBundle == CommonValues.BundleZhCN) {
-            if (!langSelector.getItems().contains("chi_sim")) {
-                setOCRLabel.setText(message("MissChineseOCRData"));
-                langSelector.getItems().add(0, message("English"));
-
-            } else {
-                langSelector.getItems().add(0, message("SimplifiedChinese"));
-                if (langSelector.getItems().contains("chi_tra")) {
-                    langSelector.getItems().add(1, message("TraditionalChinese"));
-                }
-                langSelector.getItems().add(2, message("English"));
-            }
-            langSelector.getSelectionModel().select(0);
+    public void checkLanguages() {
+        selectedLanguages = AppVariables.getUserConfigValue("ImageOCRLanguages", null);
+        if (selectedLanguages != null && !selectedLanguages.isEmpty()) {
+            currentOCRFilesLabel.setText(
+                    MessageFormat.format(message("CurrentDataFiles"), selectedLanguages));
         } else {
-            langSelector.getSelectionModel().select("eng");
+            currentOCRFilesLabel.setText(
+                    MessageFormat.format(message("CurrentDataFiles"), ""));
         }
-        return true;
     }
 
     @FXML
     public void startOCR() {
-        if (imageView.getImage() == null || !ocrPathDefined()) {
+        checkLanguages();
+        if (imageView.getImage() == null
+                || selectedLanguages == null || selectedLanguages.isEmpty()) {
             return;
         }
         synchronized (this) {
@@ -377,21 +332,14 @@ public class PdfViewController extends ImageViewerController {
                     try {
                         cost = new Date().getTime();
                         ITesseract instance = new Tesseract();
-                        instance.setDatapath(ocrPath.getAbsolutePath());
-                        String lang = langSelector.getValue();
-                        if (lang != null) {
-                            if (message("SimplifiedChinese").equals(lang)) {
-                                instance.setLanguage("chi_sim+chi_sim_vert+eng+osd+equ");
-                            } else if (message("TraditionalChinese").equals(lang)) {
-                                instance.setLanguage("chi_tra+chi_tra_vert+eng+osd+equ");
-                            } else if (message("English").equals(lang)) {
-                                instance.setLanguage("eng+osd+equ");
-                            } else {
-                                instance.setLanguage(lang + "+eng+osd+equ");
-                            }
-                        } else {
-                            instance.setLanguage("eng+osd+equ");
+                        String path = AppVariables.getUserConfigValue("TessDataPath", null);
+                        if (path != null) {
+                            instance.setDatapath(path);
                         }
+                        if (selectedLanguages != null) {
+                            instance.setLanguage(selectedLanguages);
+                        }
+
                         Image selected = cropImage();
                         if (selected == null) {
                             selected = imageView.getImage();
@@ -433,7 +381,7 @@ public class PdfViewController extends ImageViewerController {
         SettingsController controller = (SettingsController) openStage(CommonValues.SettingsFxml);
         controller.setParentController(this);
         controller.setParentFxml(myFxml);
-        controller.tabPane.getSelectionModel().select(controller.dataTab);
+        controller.tabPane.getSelectionModel().select(controller.ocrTab);
     }
 
     @Override

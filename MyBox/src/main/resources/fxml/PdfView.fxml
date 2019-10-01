@@ -371,8 +371,6 @@ License:    Apache License Version 2.0
                                  <children>
                                     <HBox fx:id="operation1Box1" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                                        <children>
-                                          <Label text="%Language" />
-                                          <ComboBox fx:id="langSelector" prefWidth="200.0" />
                                           <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#startOCR">
                                              <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -391,8 +389,7 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                              </graphic>
                                           </Button>
-                                          <Label fx:id="setOCRLabel" maxWidth="1.7976931348623157E308" styleClass="darkRed-label" stylesheets="@../styles/MyBox.css" text="%SetOCRPath" />
-                                          <Label fx:id="resultLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                          <Label fx:id="currentOCRFilesLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                           <Button fx:id="saveOcrButton" mnemonicParsing="false" onAction="#saveOCR" onMouseEntered="#popSaveOCR">
                                              <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

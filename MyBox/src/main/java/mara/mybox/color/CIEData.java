@@ -235,26 +235,26 @@ public class CIEData {
         Source data: CIE standard Observer functions and CIE D50 Reference Illuminant
      */
     public File cie1931Observer2Degree1nmFile() {
-        File f = FxmlControl.getUserFile(
-                "/data/CIE1931-2-degree-1nm.txt", "CIE1931-2-degree-1nm.txt", false);
+        File f = FxmlControl.getInternalFile(
+                "/data/CIE/CIE1931-2-degree-1nm.txt", "CIE", "CIE1931-2-degree-1nm.txt", false);
         return f;
     }
 
     public File cie1964Observer10Degree1nmFile() {
-        File f = FxmlControl.getUserFile(
-                "/data/CIE1964-10-degree-1nm.txt", "CIE1964-10-degree-1nm.txt", false);
+        File f = FxmlControl.getInternalFile(
+                "/data/CIE/CIE1964-10-degree-1nm.txt", "CIE", "CIE1964-10-degree-1nm.txt", false);
         return f;
     }
 
     public File cie1931Observer2Degree5nmFile() {
-        File f = FxmlControl.getUserFile(
-                "/data/CIE1931-2-degree-5nm.txt", "CIE1931-2-degree-5nm.txt", false);
+        File f = FxmlControl.getInternalFile(
+                "/data/CIE/CIE1931-2-degree-5nm.txt", "CIE", "CIE1931-2-degree-5nm.txt", false);
         return f;
     }
 
     public File cie1964Observer10Degree5nmFile() {
-        File f = FxmlControl.getUserFile(
-                "/data/CIE1964-10-degree-5nm.txt", "CIE1964-10-degree-5nm.txt", false);
+        File f = FxmlControl.getInternalFile(
+                "/data/CIE/CIE1964-10-degree-5nm.txt", "CIE", "CIE1964-10-degree-5nm.txt", false);
         return f;
     }
 

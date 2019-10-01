@@ -5,7 +5,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -26,6 +25,7 @@ import javafx.scene.control.ToolBar;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
+import static mara.mybox.controller.BaseController.openImageViewer;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlImageManufacture;
@@ -549,20 +549,11 @@ public class ImagesCombineController extends ImagesListController {
                 }
 
                 @Override
-                protected void succeeded() {
-                    super.succeeded();
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (ok) {
-                                popSuccessul();
-                                openImageViewer(targetFile);
-                            } else {
-                                popFailed();
-                            }
-                        }
-                    });
+                protected void whenSucceeded() {
+                    popSuccessul();
+                    openImageViewer(targetFile);
                 }
+
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);

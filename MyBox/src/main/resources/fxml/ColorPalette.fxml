@@ -35,6 +35,21 @@ License:    Apache License Version 2.0
                         <Insets bottom="5.0" />
                     </VBox.margin>
                 </Label>
+            <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+               <children>
+                  <Label text="%Name" />
+                  <TextField fx:id="nameInput" prefWidth="200.0" HBox.hgrow="NEVER" />
+                  <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/iconSave.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+               </children>
+            </HBox>
                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
                     <children>
                         <Rectangle fx:id="selectedRect" fill="TRANSPARENT" height="15.0" stroke="BLACK" strokeMiterLimit="0.0" strokeType="INSIDE" width="15.0" />

@@ -25,15 +25,10 @@
                                         <Insets bottom="10.0" />
                                     </VBox.margin>
                                     <children>
-                                        <RadioButton fx:id="ContrastRadio" selected="true" text="%Contrast">
-                                            <toggleGroup>
-                                                <ToggleGroup fx:id="effectGroup" />
-                                            </toggleGroup>
-                                        </RadioButton>
-                                        <RadioButton fx:id="ClarityRadio" layoutX="10.0" layoutY="10.0" text="%Clarity" toggleGroup="$effectGroup">
-                                        </RadioButton>
-                                        <RadioButton fx:id="PosterizingRadio" layoutX="103.0" layoutY="10.0" text="%Posterizing" toggleGroup="$effectGroup">
-                                        </RadioButton>
+                                        <RadioButton fx:id="PosterizingRadio" layoutX="103.0" layoutY="10.0" selected="true" text="%Posterizing">
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="effectGroup" />
+                                 </toggleGroup></RadioButton>
                                         <RadioButton fx:id="ThresholdingRadio" layoutX="181.0" layoutY="10.0" text="%Thresholding" toggleGroup="$effectGroup">
                                         </RadioButton>
                                         <RadioButton fx:id="GrayRadio" layoutX="10.0" layoutY="10.0" text="%Gray" toggleGroup="$effectGroup">
@@ -46,14 +41,8 @@
                                         </RadioButton>
                                         <RadioButton fx:id="EmbossRadio" layoutX="10.0" layoutY="85.0" text="%Emboss" toggleGroup="$effectGroup">
                                         </RadioButton>
-                                        <RadioButton fx:id="BlurRadio" layoutX="10.0" layoutY="60.0" text="%Blur" toggleGroup="$effectGroup">
-                                        </RadioButton>
-                                        <RadioButton fx:id="SharpenRadio" layoutX="147.0" layoutY="60.0" text="%Sharpen" toggleGroup="$effectGroup">
-                                        </RadioButton>
-                              <RadioButton fx:id="effectMosaicRadio" mnemonicParsing="false" text="%Mosaic" toggleGroup="$effectGroup" />
-                              <RadioButton fx:id="effectFrostedRadio" mnemonicParsing="false" text="%FrostedGlass" toggleGroup="$effectGroup" />
-                                        <RadioButton fx:id="ConvolutionRadio" layoutX="215.0" layoutY="35.0" text="%Convolution" toggleGroup="$effectGroup">
-                                        </RadioButton>
+                                        <RadioButton fx:id="effectMosaicRadio" mnemonicParsing="false" text="%Mosaic" toggleGroup="$effectGroup" />
+                                        <RadioButton fx:id="effectFrostedRadio" mnemonicParsing="false" text="%FrostedGlass" toggleGroup="$effectGroup" />
                                     </children>
                                     <padding>
                                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
@@ -86,24 +75,38 @@
                                         <Button fx:id="button" mnemonicParsing="false" text="Button" />
                                     </children>
                                 </FlowPane>
-                                  <Button fx:id="okButton" onAction="#okAction">
-                                      <graphic>
-                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                              <image>
-                                                  <Image url="@../buttons/iconOK.png" />
-                                              </image>
-                                          </ImageView>
-                                      </graphic>
-                                  </Button>
-                        <Label fx:id="commentLabel" prefWidth="200.0" styleClass="blue-label," stylesheets="@../styles/MyBox.css" text="%OpScopeComments" wrapText="true" />
+                        <HBox alignment="CENTER_LEFT" spacing="5.0">
+                           <children>
+                                      <Button fx:id="okButton" onAction="#okAction">
+                                          <graphic>
+                                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                  <image>
+                                                      <Image url="@../buttons/iconOK.png" />
+                                                  </image>
+                                              </ImageView>
+                                          </graphic>
+                                      </Button>
+                              <Button fx:id="demoButton" mnemonicParsing="false" onAction="#demo">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/iconRun.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                           </children>
+                        </HBox>
+                                <Label fx:id="commentLabel" prefWidth="200.0" styleClass="blue-label," stylesheets="@../styles/MyBox.css" text="%OpScopeComments" wrapText="true" />
                             </children>
                         </VBox>
                     </content>
                 </TitledPane>
-                                <TitledPane fx:id="richTextPane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%RichText" />
+                <TitledPane fx:id="enhancementPane" layoutX="10.0" layoutY="169.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Enhancement" />
+                <TitledPane fx:id="richTextPane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%RichText" />
                 <TitledPane fx:id="textPane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Text" />
                 <TitledPane fx:id="penPane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Pen" />
-               
+
                 <TitledPane fx:id="transformPane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Transform" />
                 <TitledPane fx:id="arcPane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Arc" />
                 <TitledPane fx:id="shadowPane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Shadow" />

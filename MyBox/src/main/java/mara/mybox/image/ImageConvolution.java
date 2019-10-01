@@ -26,8 +26,12 @@ public class ImageConvolution extends PixelsOperation {
     protected int[][] intMatrix;
     protected int sum;
 
-    public static enum BlurAlgorithm {
+    public static enum SmoothAlgorithm {
         AverageBlur, GaussianBlur
+    }
+
+    public static enum SharpenAlgorithm {
+        UnsharpMasking, EightNeighborLaplace, FourNeighborLaplace
     }
 
     public ImageConvolution() {

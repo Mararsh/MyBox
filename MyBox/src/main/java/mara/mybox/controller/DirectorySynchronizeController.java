@@ -225,7 +225,7 @@ public class DirectorySynchronizeController extends FilesBatchController {
                 task = new SingletonTask<Void>() {
 
                     @Override
-                    protected Void call() {
+                    protected boolean handle() {
                         if (copyAttr.isConditionalCopy()) {
                             paused = false;
                             conditionalCopy(sourcePath, targetPath);
@@ -236,19 +236,17 @@ public class DirectorySynchronizeController extends FilesBatchController {
                                     updateLogs(AppVariables.message("TargetCleared"), true);
                                 } else if (!copyAttr.isContinueWhenError()) {
                                     updateLogs(AppVariables.message("FailClearTarget"), true);
-                                    return null;
+                                    return false;
                                 }
                             }
                             paused = false;
                             copyWholeDirectory(sourcePath, targetPath);
                         }
-                        return null;
+                        return true;
                     }
 
                     @Override
-                    protected void succeeded() {
-                        super.succeeded();
-                        task = null;
+                    protected void whenSucceeded() {
                         updateInterface("Done");
                     }
 

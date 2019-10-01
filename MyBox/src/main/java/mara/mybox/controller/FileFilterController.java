@@ -2,7 +2,6 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.util.Arrays;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
@@ -80,24 +79,15 @@ public class FileFilterController extends FileEditerController {
                 }
 
                 @Override
-                protected void succeeded() {
-                    super.succeeded();
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (file != null) {
-                                if (file.length() == 0) {
-                                    popInformation(AppVariables.message("NoData"));
-                                } else {
-                                    openTextFile(file);
-                                    saveButton.setDisable(true);
-                                }
-                            } else {
-                                popFailed();
-                            }
-                        }
-                    });
+                protected void whenSucceeded() {
+                    if (file.length() == 0) {
+                        popInformation(AppVariables.message("NoData"));
+                    } else {
+                        openTextFile(file);
+                        saveButton.setDisable(true);
+                    }
                 }
+
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);

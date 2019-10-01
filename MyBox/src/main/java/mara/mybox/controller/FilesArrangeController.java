@@ -316,14 +316,12 @@ public class FilesArrangeController extends FilesBatchController {
                 task = new SingletonTask<Void>() {
 
                     @Override
-                    protected Void call() {
-                        arrangeFiles(sourcePath);
-                        return null;
+                    protected boolean handle() {
+                        return arrangeFiles(sourcePath);
                     }
 
                     @Override
-                    protected void succeeded() {
-                        super.succeeded();
+                    protected void whenSucceeded() {
                         updateInterface("Done");
                     }
 

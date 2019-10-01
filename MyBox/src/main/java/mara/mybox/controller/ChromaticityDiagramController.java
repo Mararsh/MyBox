@@ -7,18 +7,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Control;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
@@ -38,21 +38,26 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Modality;
 import mara.mybox.color.CIEColorSpace;
 import mara.mybox.color.CIEData;
 import mara.mybox.color.ChromaticityDiagram;
 import mara.mybox.color.ChromaticityDiagram.DataType;
 import mara.mybox.color.ColorValue;
+import mara.mybox.color.SRGB;
 import mara.mybox.data.VisitHistory;
+import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.fxml.RecentVisitMenu;
+import mara.mybox.image.ImageValue;
 import mara.mybox.image.file.ImageFileWriters;
 import static mara.mybox.tools.DoubleTools.scale;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.FloatTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
@@ -126,7 +131,9 @@ public class ChromaticityDiagramController extends BaseController {
     @FXML
     private TabPane csPane, filePane;
     @FXML
-    private ColorPicker colorPicker;
+    protected Rectangle colorRect;
+    @FXML
+    protected Button paletteButton;
 
     public ChromaticityDiagramController() {
         baseTitle = AppVariables.message("DrawChromaticityDiagram");
@@ -431,25 +438,6 @@ public class ChromaticityDiagramController extends BaseController {
                 }
             });
 
-            colorPicker.valueProperty().addListener(new ChangeListener<Color>() {
-                @Override
-                public void changed(ObservableValue<? extends Color> observable, Color oldValue, Color newValue) {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    CIEData d = new CIEData(newValue);
-                    isSettingValues = true;
-                    XInput.setText(scale(d.getX(), 8) + "");
-                    YInput.setText(scale(d.getY(), 8) + "");
-                    ZInput.setText(scale(d.getZ(), 8) + "");
-                    calculateXYZAction();
-                    isSettingValues = false;
-                    if (calculateCheck.isSelected()) {
-                        displayChromaticityDiagram();
-                    }
-                }
-            });
-
             calculateXYZButton.disableProperty().bind(Bindings.isEmpty(XInput.textProperty())
                     .or(XInput.styleProperty().isEqualTo(badStyle))
                     .or(Bindings.isEmpty(YInput.textProperty()))
@@ -497,6 +485,25 @@ public class ChromaticityDiagramController extends BaseController {
         } catch (Exception e) {
             logger.error(e.toString());
         }
+    }
+
+    @FXML
+    @Override
+    public void showPalette(ActionEvent event) {
+        showPalette(paletteButton, message("DrawChromaticityDiagram"), true);
+    }
+
+    @Override
+    public boolean setColor(Control control, Color color) {
+        if (control == null || color == null) {
+            return false;
+        }
+        if (paletteButton.equals(control)) {
+            colorRect.setFill(color);
+            FxmlControl.setTooltip(colorRect, FxmlColor.colorNameDisplay(color));
+            calculateColor();
+        }
+        return true;
     }
 
     private void checkInputs() {
@@ -713,9 +720,8 @@ public class ChromaticityDiagramController extends BaseController {
                     d10n5TableView.setItems(degree10nm5Data);
                     d10n5Area.setText(degree10nm5String);
 
-                    xInput.setText("0.48");
-                    yInput.setText("0.35");
-                    calculateXYAction();
+                    setColor(paletteButton, Color.THISTLE);
+
                     loadTableData();
                 }
 
@@ -781,23 +787,13 @@ public class ChromaticityDiagramController extends BaseController {
                 }
 
                 @Override
-                protected void succeeded() {
-                    super.succeeded();
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (ok) {
-                                cieDiagram.setImage(image);
-                                FxmlControl.paneSize(cieDiagramScroll, cieDiagram);
-                                d2n1Area.home();
-                                d2n5Area.home();
-                                d10n1Area.home();
-                                d10n5Area.home();
-                            } else {
-                                popFailed();
-                            }
-                        }
-                    });
+                protected void whenSucceeded() {
+                    cieDiagram.setImage(image);
+                    FxmlControl.paneSize(cieDiagramScroll, cieDiagram);
+                    d2n1Area.home();
+                    d2n5Area.home();
+                    d10n1Area.home();
+                    d10n5Area.home();
                 }
 
             };
@@ -871,27 +867,21 @@ public class ChromaticityDiagramController extends BaseController {
                 }
 
                 @Override
-                protected void succeeded() {
-                    super.succeeded();
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (ok) {
-                                sourceInputArea.setStyle(null);
-                                inputInit = false;
+                protected void whenSucceeded() {
+                    sourceInputArea.setStyle(null);
+                    inputInit = false;
 //                            bottomLabel.setText(file.getAbsolutePath() + "\t" + AppVariables.getMessage("ChromaticityDiagramComments"));
-                                isSettingValues = true;
-                                sourceInputArea.setText(texts);
-                                sourceInputArea.home();
-                                isSettingValues = false;
-                                checkInputs();
-                            } else {
-                                popError(AppVariables.message("NoData"));
-                                sourceDataArea.clear();
-//                            bottomLabel.setText("");
-                            }
-                        }
-                    });
+                    isSettingValues = true;
+                    sourceInputArea.setText(texts);
+                    sourceInputArea.home();
+                    isSettingValues = false;
+                    checkInputs();
+                }
+
+                @Override
+                protected void whenFailed() {
+                    popError(AppVariables.message("NoData"));
+                    sourceDataArea.clear();
                 }
 
             };
@@ -1129,6 +1119,19 @@ public class ChromaticityDiagramController extends BaseController {
         openStage(CommonValues.ChromaticLinksFxml);
     }
 
+    protected void calculateColor() {
+        CIEData d = new CIEData((Color) colorRect.getFill());
+        isSettingValues = true;
+        XInput.setText(scale(d.getX(), 8) + "");
+        YInput.setText(scale(d.getY(), 8) + "");
+        ZInput.setText(scale(d.getZ(), 8) + "");
+        calculateXYZAction();
+        isSettingValues = false;
+        if (calculateCheck.isSelected()) {
+            displayChromaticityDiagram();
+        }
+    }
+
     @FXML
     public void calculateXYZAction() {
         CIEData d = new CIEData(-1, X, Y, Z);
@@ -1153,10 +1156,10 @@ public class ChromaticityDiagramController extends BaseController {
             if (!isSettingValues) {
                 isSettingValues = true;
                 Color pColor = new Color((float) srgb[0], (float) srgb[1], (float) srgb[2], 1d);
-                colorPicker.setValue(pColor);
+                colorRect.setFill(pColor);
                 isSettingValues = false;
             }
-            Color pColor = colorPicker.getValue();
+            Color pColor = (Color) colorRect.getFill();
             calculateColor = new java.awt.Color((float) pColor.getRed(), (float) pColor.getGreen(), (float) pColor.getBlue());
 
             List<ColorValue> values = new ArrayList<>();
@@ -1191,6 +1194,18 @@ public class ChromaticityDiagramController extends BaseController {
             double[] appleRGBLinear = CIEColorSpace.XYZd50toAppleRGBd65Linear(X, Y, Z);
             values.add(new ColorValue("Apple RGB", "D65 Linear", appleRGBLinear, 255));
 
+            float[] eciRGB = SRGB.srgb2profile(ImageValue.eciRGBProfile(), pColor);
+            values.add(new ColorValue("ECI RGB", "D50", FloatTools.toDouble(eciRGB), 255));
+
+            double[] cmyk = SRGB.rgb2cmyk(pColor);
+            values.add(new ColorValue("Calculated CMYK", "D65 sRGB_Gamma", cmyk, 100));
+
+            float[] cmyk2 = SRGB.srgb2profile(ImageValue.eciCmykProfile(), pColor);
+            values.add(new ColorValue("ECI CMYK", "D65 sRGB_Gamma", FloatTools.toDouble(cmyk2), 100));
+
+            cmyk2 = SRGB.srgb2profile(ImageValue.adobeCmykProfile(), pColor);
+            values.add(new ColorValue("Adobe CMYK Uncoated FOGRA29", "D65 sRGB_Gamma", FloatTools.toDouble(cmyk2), 100));
+
             calculatedValues.clear();
             calculatedValues.addAll(values);
             calculatedValuesTable.setItems(calculatedValues);
@@ -1201,7 +1216,6 @@ public class ChromaticityDiagramController extends BaseController {
             }
 
         } else {
-            colorPicker.setValue(null);
             calculateColor = null;
             calculatedValues.clear();
             calculatedValuesTable.refresh();
@@ -1237,18 +1251,8 @@ public class ChromaticityDiagramController extends BaseController {
                 }
 
                 @Override
-                protected void succeeded() {
-                    super.succeeded();
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (ok) {
-                                FxmlStage.openImageViewer(null, file);
-                            } else {
-                                popFailed();
-                            }
-                        }
-                    });
+                protected void whenSucceeded() {
+                    FxmlStage.openImageViewer(null, file);
                 }
 
             };
@@ -1279,19 +1283,9 @@ public class ChromaticityDiagramController extends BaseController {
                 }
 
                 @Override
-                protected void succeeded() {
-                    super.succeeded();
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (ok) {
-                                view(file);
-                                popSuccessul();
-                            } else {
-                                popFailed();
-                            }
-                        }
-                    });
+                protected void whenSucceeded() {
+                    view(file);
+                    popSuccessul();
                 }
 
             };

@@ -119,7 +119,7 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
             }
             String c = AppVariables.getUserConfigValue("ImageMarginsColor", Color.TRANSPARENT.toString());
             bgRect.setFill(Color.web(c));
-            FxmlControl.setTooltip(bgRect, FxmlColor.colorDisplay((Color) bgRect.getFill()));
+            FxmlControl.setTooltip(bgRect, FxmlColor.colorNameDisplay((Color) bgRect.getFill()));
 
             marginWidthBox.getItems().clear();
             int width = (int) imageView.getImage().getWidth();
@@ -256,7 +256,7 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
         }
         if (paletteButton.equals(control)) {
             bgRect.setFill(color);
-            FxmlControl.setTooltip(bgRect, FxmlColor.colorDisplay(color));
+            FxmlControl.setTooltip(bgRect, FxmlColor.colorNameDisplay(color));
             AppVariables.setUserConfigValue("ImageShadowBackground", color.toString());
         }
         return true;

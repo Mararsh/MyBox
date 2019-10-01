@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -740,17 +739,11 @@ public class ImageViewerController extends ImageMaskController {
                 }
 
                 @Override
-                protected void succeeded() {
-                    super.succeeded();
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            imageView.setImage(newImage);
-                            checkSelect();
-                            setImageChanged(true);
-                            refinePane();
-                        }
-                    });
+                protected void whenSucceeded() {
+                    imageView.setImage(newImage);
+                    checkSelect();
+                    setImageChanged(true);
+                    refinePane();
                 }
 
             };
@@ -815,18 +808,13 @@ public class ImageViewerController extends ImageMaskController {
                     }
 
                     @Override
-                    protected void succeeded() {
-                        super.succeeded();
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                imageView.setImage(areaImage);
-                                isCroppped = true;
-                                setImageChanged(true);
-                                resetMaskControls();
-                            }
-                        });
+                    protected void whenSucceeded() {
+                        imageView.setImage(areaImage);
+                        isCroppped = true;
+                        setImageChanged(true);
+                        resetMaskControls();
                     }
+
                 };
                 openHandlingStage(task, Modality.WINDOW_MODAL);
                 Thread thread = new Thread(task);
@@ -985,21 +973,12 @@ public class ImageViewerController extends ImageMaskController {
                     }
 
                     @Override
-                    protected void succeeded() {
-                        super.succeeded();
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (ok) {
-                                    image = imageView.getImage();
-                                    popInformation(filename + "   " + AppVariables.message("Saved"));
-                                    setImageChanged(false);
-                                } else {
-                                    popFailed();
-                                }
-                            }
-                        });
+                    protected void whenSucceeded() {
+                        image = imageView.getImage();
+                        popInformation(filename + "   " + AppVariables.message("Saved"));
+                        setImageChanged(false);
                     }
+
                 };
                 openHandlingStage(task, Modality.WINDOW_MODAL);
                 Thread thread = new Thread(task);
@@ -1057,25 +1036,16 @@ public class ImageViewerController extends ImageMaskController {
                     }
 
                     @Override
-                    protected void succeeded() {
-                        super.succeeded();
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (ok) {
-                                    popInformation(AppVariables.message("Saved"));
-                                    if (sourceFile == null) {
-                                        loadImage(file);
-                                    }
-                                    if (openSaveCheck != null && openSaveCheck.isSelected()) {
-                                        openImageViewer(file);
-                                    }
-                                } else {
-                                    popFailed();
-                                }
-                            }
-                        });
+                    protected void whenSucceeded() {
+                        popInformation(AppVariables.message("Saved"));
+                        if (sourceFile == null) {
+                            loadImage(file);
+                        }
+                        if (openSaveCheck != null && openSaveCheck.isSelected()) {
+                            openImageViewer(file);
+                        }
                     }
+
                 };
                 openHandlingStage(task, Modality.WINDOW_MODAL);
                 Thread thread = new Thread(task);
@@ -1314,6 +1284,7 @@ public class ImageViewerController extends ImageMaskController {
                 = (ImageDataController) FxmlStage.openStage(CommonValues.ImageDataFxml);
         controller.parent = this;
         controller.init(sourceFile, image, false);
+        controller.loadData();
     }
 
 }

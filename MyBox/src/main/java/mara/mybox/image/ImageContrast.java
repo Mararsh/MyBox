@@ -5,8 +5,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
-import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.image.file.ImageFileReaders;
+import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -62,7 +62,7 @@ public class ImageContrast extends PixelsOperation {
     }
 
     @Override
-    public BufferedImage operate() {
+    public BufferedImage operateImage() {
         if (image == null || operationType != OperationType.Contrast || null == algorithm) {
             return image;
         }

@@ -242,16 +242,16 @@ public class ControlStyle {
                 return new ControlStyle("colorRGBRadio", "", message("RGB"), "", "iconRGB.png");
 
             case "colorIncreaseButton":
-                return new ControlStyle("colorIncreaseButton", message("Increase"), "SHIFT+2", "iconPlus.png");
+                return new ControlStyle("colorIncreaseButton", message("Increase"), "ALT+2", "iconPlus.png");
 
             case "colorDecreaseButton":
-                return new ControlStyle("colorDecreaseButton", message("Decrease"), "SHIFT+3", "iconMinus.png");
+                return new ControlStyle("colorDecreaseButton", message("Decrease"), "ALT+3", "iconMinus.png");
 
             case "colorFilterButton":
-                return new ControlStyle("colorFilterButton", message("Filter"), "SHIFT+4", "iconFilter.png");
+                return new ControlStyle("colorFilterButton", message("Filter"), "ALT+4", "iconFilter.png");
 
             case "colorInvertButton":
-                return new ControlStyle("colorInvertButton", message("Invert"), "SHIFT+5", "iconInvert.png");
+                return new ControlStyle("colorInvertButton", message("Invert"), "ALT+5", "iconInvert.png");
 
             default:
                 return getOtherControlStyle(id);
@@ -465,6 +465,12 @@ public class ControlStyle {
             case "synchronizeCheck":
                 return new ControlStyle("synchronizeCheck", "", message("Synchronized"), "", "iconSynchronize.png");
 
+            case "deskewCheck":
+                return new ControlStyle("deskewCheck", "", message("Deskew"), "", "iconShear.png");
+
+            case "invertCheck":
+                return new ControlStyle("invertCheck", "", message("Invert"), "", "iconInvert.png");
+
             default:
                 return getOtherControlStyle(id);
         }
@@ -564,7 +570,7 @@ public class ControlStyle {
                 return new ControlStyle("selectSourceButton", message("Select"), "", "iconOpen.png");
 
             case "okButton":
-                return new ControlStyle("okButton", message("OK"), "F1 / CTRL+e / SHIFT+e", "iconOK.png");
+                return new ControlStyle("okButton", message("OK"), "F1 / CTRL+e / ALT+e", "iconOK.png");
 
             case "cancelButton":
                 return new ControlStyle("cancelButton", message("Cancel"), "ESC", "iconCancel.png");
@@ -573,28 +579,28 @@ public class ControlStyle {
                 return new ControlStyle("createButton", message("Create"), "CTRL+n", "iconEdit.png");
 
             case "deleteButton":
-                return new ControlStyle("deleteButton", message("Delete"), "DELETE / CTRL+d / SHIFT+d", "iconDelete.png");
+                return new ControlStyle("deleteButton", message("Delete"), "DELETE / CTRL+d / ALT+d", "iconDelete.png");
 
             case "copyButton":
-                return new ControlStyle("copyButton", message("Copy"), "CTRL+c / SHIFT+c ", "iconCopy.png");
+                return new ControlStyle("copyButton", message("Copy"), "CTRL+c / ALT+c ", "iconCopy.png");
 
             case "pasteButton":
-                return new ControlStyle("pasteButton", message("Paste"), "CTRL+v / SHIFT+v", "iconPaste.png");
+                return new ControlStyle("pasteButton", message("Paste"), "CTRL+v / ALT+v", "iconPaste.png");
 
             case "saveButton":
-                return new ControlStyle("saveButton", message("Save"), "F2 / CTRL+s / SHIFT+s", "iconSave.png");
+                return new ControlStyle("saveButton", message("Save"), "F2 / CTRL+s / ALT+s", "iconSave.png");
 
             case "saveAsButton":
-                return new ControlStyle("saveAsButton", message("SaveAs"), "F3 / CTRL+f / SHIFT+f", "iconSaveAs.png");
+                return new ControlStyle("saveAsButton", message("SaveAs"), "F11 / CTRL+f / ALT+f", "iconSaveAs.png");
 
             case "selectAllButton":
-                return new ControlStyle("selectAllButton", message("SelectAll"), "CTRL+a / SHIFT+a", "iconSelectAll.png");
+                return new ControlStyle("selectAllButton", message("SelectAll"), "CTRL+a / ALT+a", "iconSelectAll.png");
 
             case "cropButton":
-                return new ControlStyle("cropButton", message("Crop"), "CTRL+x / SHIFT+x", "iconCrop.png");
+                return new ControlStyle("cropButton", message("Crop"), "CTRL+x / ALT+x", "iconCrop.png");
 
             case "recoverButton":
-                return new ControlStyle("recoverButton", message("Recover"), "F11 / CTRL+r / SHIFT+r", "iconRecover.png");
+                return new ControlStyle("recoverButton", message("Recover"), "F3 / CTRL+r / ALT+r", "iconRecover.png");
 
             case "renameButton":
                 return new ControlStyle("renameButton", message("Rename"), "", "iconRename.png");
@@ -609,7 +615,7 @@ public class ControlStyle {
                 return new ControlStyle("statisticButton", message("Statistic"), "", "iconStatistic.png");
 
             case "setButton":
-                return new ControlStyle("setButton", message("Set"), "F1 / SHIFT+1", "iconEqual.png");
+                return new ControlStyle("setButton", message("Set"), "F1 / ALT+1", "iconEqual.png");
 
             case "nextButton":
                 return new ControlStyle("nextButton", message("Next"), "PAGE DOWN", "iconNext.png");
@@ -639,13 +645,13 @@ public class ControlStyle {
                 return new ControlStyle("refButton2", message("Ref"), message("UseCurrentImageAsReference"), "CTRL+f", "iconRef.png");
 
             case "redoButton":
-                return new ControlStyle("redoButton", message("Redo"), "CTRL+y / SHIFT+y", "iconRedo.png");
+                return new ControlStyle("redoButton", message("Redo"), "CTRL+y / ALT+y", "iconRedo.png");
 
             case "undoButton":
-                return new ControlStyle("undoButton", message("Undo"), "CTRL+z / SHIFT+z", "iconUndo.png");
+                return new ControlStyle("undoButton", message("Undo"), "CTRL+z / ALT+z", "iconUndo.png");
 
             case "moreButton":
-                return new ControlStyle("moreButton", "", message("MoreControls"), "F12 / CTRL+m / SHIFT+m", "iconMore.png");
+                return new ControlStyle("moreButton", "", message("MoreControls"), "F12 / CTRL+m / ALT+m", "iconMore.png");
 
             case "imageSizeButton":
                 return new ControlStyle("imageSizeButton", message("LoadedSize"), "CTRL+1", "iconPicSmall.png");
@@ -684,7 +690,7 @@ public class ControlStyle {
                 return new ControlStyle("previewButton", message("Preview"), message("PreviewComments"), "", "iconPreview.png");
 
             case "startButton":
-                return new ControlStyle("startButton", "", "F1 / SHIFT+1", "");
+                return new ControlStyle("startButton", "", "F1 / CTRL+e / ALT+e", "");
 
             case "closeButton":
                 return new ControlStyle("closeButton", message("Close"), "F4", "iconClose.png");
@@ -806,6 +812,9 @@ public class ControlStyle {
 
             case "testButton":
                 return new ControlStyle("testButton", message("Test"), "", "iconRun.png");
+
+            case "demoButton":
+                return new ControlStyle("demoButton", message("Demo"), "", "iconRun.png");
 
             case "editButton":
                 return new ControlStyle("editButton", message("Edit"), "", "iconEdit.png");
@@ -1052,6 +1061,45 @@ public class ControlStyle {
 
             case "saveOcrButton":
                 return new ControlStyle("saveOcrButton", message("Save"), "", "iconSave.png");
+
+            case "blackwhiteButton":
+                return new ControlStyle("blackwhiteButton", message("BlackOrWhite"), "", "iconBlackWhite.png");
+
+            case "greyButton":
+                return new ControlStyle("greyButton", message("Greyscale"), "", "iconGreyscale.png");
+
+            case "setEnhanceButton":
+                return new ControlStyle("setEnhanceButton", message("Set"), "", "iconEqual.png");
+
+            case "setScaleButton":
+                return new ControlStyle("setScaleButton", message("Set"), "", "iconEqual.png");
+
+            case "setBinaryButton":
+                return new ControlStyle("setBinaryButton", message("Set"), "", "iconEqual.png");
+
+            case "setRotateButton":
+                return new ControlStyle("setRotateButton", message("Set"), "", "iconEqual.png");
+
+            case "deskewButton":
+                return new ControlStyle("deskewButton", "", message("Deskew"), "", "iconShear.png");
+
+            case "moveUpButton":
+                return new ControlStyle("moveUpButton", message("MoveUp"), "", "iconUp.png");
+
+            case "moveDownButton":
+                return new ControlStyle("moveDownButton", message("MoveDown"), "", "iconDown.png");
+
+            case "zoomIn2Button":
+                return new ControlStyle("zoomIn2Button", message("ZoomIn"), "", "iconZoomIn.png");
+
+            case "zoomOut2Button":
+                return new ControlStyle("zoomOut2Button", message("ZoomOut"), "", "iconZoomOut.png");
+
+            case "imageSize2Button":
+                return new ControlStyle("imageSize2Button", message("LoadedSize"), "", "iconPicSmall.png");
+
+            case "paneSize2Button":
+                return new ControlStyle("paneSize2Button", message("PaneSize"), "", "iconPicBig.png");
 
             default:
                 return null;

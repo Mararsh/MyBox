@@ -1,8 +1,13 @@
 package mara.mybox.color;
 
 import java.awt.Color;
+import java.awt.color.ICC_ColorSpace;
+import java.awt.color.ICC_Profile;
 import static mara.mybox.color.AppleRGB.XYZtoAppleRGB;
 import static mara.mybox.color.RGBColorSpace.linearSRGB;
+import mara.mybox.fxml.FxmlColor;
+import mara.mybox.image.ImageColor;
+import mara.mybox.image.ImageValue;
 import mara.mybox.tools.MatrixTools;
 
 /**
@@ -14,6 +19,11 @@ import mara.mybox.tools.MatrixTools;
  */
 public class SRGB {
 
+    protected String colorValue, colorName, colorDisplay;
+
+    /*
+        static methods
+     */
     public static double[] gammaSRGB(double[] linearRGB) {
         double[] srgb = new double[3];
         srgb[0] = RGBColorSpace.gammaSRGB(linearRGB[0]);
@@ -75,6 +85,74 @@ public class SRGB {
     public static double[] SRGBtoAppleRGB(double[] srgb) {
         double[] xyz = SRGBd65toXYZd65(srgb);
         return XYZtoAppleRGB(xyz);
+    }
+
+    public static float[] srgb2profile(ICC_Profile profile, Color color) {
+        return srgb2profile(profile, ImageColor.toFloat(color));
+    }
+
+    public static float[] srgb2profile(ICC_Profile profile, javafx.scene.paint.Color color) {
+        return srgb2profile(profile, FxmlColor.toFloat(color));
+    }
+
+    public static float[] srgb2profile(ICC_Profile profile, float[] srgb) {
+        if (profile == null) {
+            profile = ImageValue.eciCmykProfile();
+        }
+        ICC_ColorSpace colorSpace = new ICC_ColorSpace(profile);
+        return colorSpace.fromRGB(srgb);
+    }
+
+    // http://www.easyrgb.com/en/math.php
+    public static double[] rgb2cmy(javafx.scene.paint.Color color) {
+        double[] cmy = new double[3];
+        cmy[0] = 1 - color.getRed();
+        cmy[1] = 1 - color.getGreen();
+        cmy[2] = 1 - color.getBlue();
+        return cmy;
+    }
+
+    public static double[] rgb2cmy(Color color) {
+        double[] cmy = new double[3];
+        cmy[0] = 1 - color.getRed() / 255d;
+        cmy[1] = 1 - color.getGreen() / 255d;
+        cmy[2] = 1 - color.getBlue() / 255d;
+        return cmy;
+    }
+
+    public static double[] rgb2cmyk(javafx.scene.paint.Color color) {
+        return CMYKColorSpace.cmy2cmky(rgb2cmy(color));
+    }
+
+    public static double[] rgb2cmyk(Color color) {
+        return CMYKColorSpace.cmy2cmky(rgb2cmy(color));
+    }
+
+    /*
+        get/set
+     */
+    public String getColorValue() {
+        return colorValue;
+    }
+
+    public void setColorValue(String colorValue) {
+        this.colorValue = colorValue;
+    }
+
+    public String getColorName() {
+        return colorName;
+    }
+
+    public void setColorName(String colorName) {
+        this.colorName = colorName;
+    }
+
+    public String getColorDisplay() {
+        return colorDisplay;
+    }
+
+    public void setColorDisplay(String colorDisplay) {
+        this.colorDisplay = colorDisplay;
     }
 
 }

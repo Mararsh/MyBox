@@ -9,7 +9,7 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import mara.mybox.MyBox;
+import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 
 /**
@@ -20,19 +20,32 @@ import static mara.mybox.value.AppVariables.logger;
  */
 public class ConfigTools {
 
-    public static File configFile() {
-        File iniFile = new File(MyBox.defaultDataPath() + File.separator + "MyBox.ini");
-        return iniFile;
+    public static String defaultDataPath() {
+        return defaultDataPathFile().getAbsolutePath();
+    }
+
+    public static File defaultDataPathFile() {
+        File defaultPath = new File(System.getProperty("user.home") + File.separator + "mybox");
+        if (!defaultPath.exists()) {
+            defaultPath.mkdirs();
+        } else if (!defaultPath.isDirectory()) {
+            defaultPath.delete();
+            defaultPath.mkdirs();
+        }
+        return defaultPath;
+    }
+
+    public static File defaultConfigFile() {
+        File defaultPath = defaultDataPathFile();
+        File configFile = new File(defaultPath.getAbsolutePath() + File.separator + "MyBox.ini");
+        return configFile;
     }
 
     public static Map<String, String> readConfigValues() {
         try {
-            File iniFile = configFile();
-            if (!iniFile.exists()) {
-                return null;
-            }
             Map<String, String> values = new HashMap<>();
-            try ( InputStream in = new BufferedInputStream(new FileInputStream(iniFile))) {
+            try (InputStream in = new BufferedInputStream(
+                    new FileInputStream(AppVariables.MyboxConfigFile))) {
                 Properties conf = new Properties();
                 conf.load(in);
                 for (String key : conf.stringPropertyNames()) {
@@ -46,14 +59,13 @@ public class ConfigTools {
         }
     }
 
-    public static String readConfigValue(String key) {
+    public static String readConfigValue(File file, String key) {
         try {
-            File iniFile = configFile();
-            if (!iniFile.exists()) {
+            if (!file.exists() || !file.isFile()) {
                 return null;
             }
             String value;
-            try ( InputStream in = new BufferedInputStream(new FileInputStream(iniFile))) {
+            try (InputStream in = new BufferedInputStream(new FileInputStream(file))) {
                 Properties conf = new Properties();
                 conf.load(in);
                 value = conf.getProperty(key);
@@ -65,19 +77,17 @@ public class ConfigTools {
         }
     }
 
-    public static boolean writeConfigValue(String key, String value) {
+    public static String readConfigValue(String key) {
+        return readConfigValue(AppVariables.MyboxConfigFile, key);
+    }
+
+    public static boolean writeConfigValue(File file, String key, String value) {
         try {
-            File iniFile = configFile();
-            if (!iniFile.exists()) {
-                if (!iniFile.createNewFile()) {
-                    return false;
-                }
-            }
             Properties conf = new Properties();
-            try ( InputStream in = new FileInputStream(iniFile)) {
+            try (InputStream in = new FileInputStream(file)) {
                 conf.load(in);
             }
-            try ( OutputStream out = new FileOutputStream(iniFile)) {
+            try (OutputStream out = new FileOutputStream(file)) {
                 if (value == null) {
                     conf.remove(key);
                 } else {
@@ -86,6 +96,20 @@ public class ConfigTools {
                 conf.store(out, "Update " + key);
             }
             return true;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean writeConfigValue(String key, String value) {
+        try {
+            if (!AppVariables.MyboxConfigFile.exists()) {
+                if (!AppVariables.MyboxConfigFile.createNewFile()) {
+                    return false;
+                }
+            }
+            return writeConfigValue(AppVariables.MyboxConfigFile, key, value);
         } catch (Exception e) {
             logger.error(e.toString());
             return false;

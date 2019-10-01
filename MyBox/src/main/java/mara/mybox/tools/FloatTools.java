@@ -17,4 +17,27 @@ public class FloatTools {
         return (float) DoubleTools.scale(fvalue, 5);
     }
 
+    public static double[] toDouble(float[] f) {
+        if (f == null) {
+            return null;
+        }
+        double[] d = new double[f.length];
+        for (int i = 0; i < f.length; i++) {
+            d[i] = f[i];
+        }
+        return d;
+    }
+
+    public static double[][] toDouble(float[][] f) {
+        if (f == null) {
+            return null;
+        }
+        double[][] d = new double[f.length][f[0].length];
+        for (int i = 0; i < f.length; i++) {
+            for (int j = 0; j < f[i].length; j++) {
+                d[i][j] = f[i][j];
+            }
+        }
+        return d;
+    }
 }

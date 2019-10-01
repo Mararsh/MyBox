@@ -1708,6 +1708,9 @@ public abstract class FileEditerController extends BaseController {
 
                 @Override
                 protected boolean handle() {
+                    if (sourceInformation == null) {
+                        return false;
+                    }
                     sourceInformation.setLineBreak(TextTools.checkLineBreak(sourceFile));
                     sourceInformation.setLineBreakValue(TextTools.lineBreakValue(sourceInformation.getLineBreak()));
                     if (charsetByUser) {
@@ -1718,61 +1721,59 @@ public abstract class FileEditerController extends BaseController {
                 }
 
                 @Override
-                protected void succeeded() {
-                    super.succeeded();
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            bottomLabel.setText("");
-                            if (!ok || sourceInformation == null) {
-                                popFailed();
-                                return;
-                            }
-                            isSettingValues = true;
-                            if (currentLineBreak != null) {
-                                currentLineBreak.setText(sourceInformation.getLineBreak().toString());
-                                switch (sourceInformation.getLineBreak()) {
-                                    case CRLF:
-                                        crlfRadio.fire();
-                                        break;
-                                    case CR:
-                                        crRadio.fire();
-                                        break;
-                                    default:
-                                        lfRadio.fire();
-                                        break;
-                                }
-                            }
-                            if (currentBox != null) {
-                                currentBox.getSelectionModel().select(sourceInformation.getCharset().name());
-                                if (targetBox != null) {
-                                    targetBox.getSelectionModel().select(sourceInformation.getCharset().name());
-                                } else {
-                                    targetInformation.setCharset(sourceInformation.getCharset());
-                                }
-                                if (sourceInformation.isWithBom()) {
-                                    currentBox.setDisable(true);
-                                    bomLabel.setText(AppVariables.message("WithBom"));
-                                    if (targetBomCheck != null) {
-                                        targetBomCheck.setSelected(true);
-                                    }
-                                } else {
-                                    currentBox.setDisable(false);
-                                    bomLabel.setText("");
-                                    if (targetBomCheck != null) {
-                                        targetBomCheck.setSelected(false);
-                                    }
-                                }
-                            }
-                            if (infoButton != null) {
-                                infoButton.setDisable(false);
-                            }
-                            isSettingValues = false;
-
-                            loadPage();
+                protected void whenSucceeded() {
+                    bottomLabel.setText("");
+                    isSettingValues = true;
+                    if (currentLineBreak != null) {
+                        currentLineBreak.setText(sourceInformation.getLineBreak().toString());
+                        switch (sourceInformation.getLineBreak()) {
+                            case CRLF:
+                                crlfRadio.fire();
+                                break;
+                            case CR:
+                                crRadio.fire();
+                                break;
+                            default:
+                                lfRadio.fire();
+                                break;
                         }
-                    });
+                    }
+                    if (currentBox != null) {
+                        currentBox.getSelectionModel().select(sourceInformation.getCharset().name());
+                        if (targetBox != null) {
+                            targetBox.getSelectionModel().select(sourceInformation.getCharset().name());
+                        } else {
+                            targetInformation.setCharset(sourceInformation.getCharset());
+                        }
+                        if (sourceInformation.isWithBom()) {
+                            currentBox.setDisable(true);
+                            bomLabel.setText(AppVariables.message("WithBom"));
+                            if (targetBomCheck != null) {
+                                targetBomCheck.setSelected(true);
+                            }
+                        } else {
+                            currentBox.setDisable(false);
+                            bomLabel.setText("");
+                            if (targetBomCheck != null) {
+                                targetBomCheck.setSelected(false);
+                            }
+                        }
+                    }
+                    if (infoButton != null) {
+                        infoButton.setDisable(false);
+                    }
+                    isSettingValues = false;
+
+                    loadPage();
+
                 }
+
+                @Override
+                protected void whenFailed() {
+                    bottomLabel.setText("");
+                    super.whenFailed();
+                }
+
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
@@ -2100,21 +2101,12 @@ public abstract class FileEditerController extends BaseController {
                 }
 
                 @Override
-                protected void succeeded() {
-                    super.succeeded();
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (ok) {
-                                popSuccessul();
-                                charsetByUser = false;
-                                openFile(file);
-                            } else {
-                                popFailed();
-                            }
-                        }
-                    });
+                protected void whenSucceeded() {
+                    popSuccessul();
+                    charsetByUser = false;
+                    openFile(file);
                 }
+
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
@@ -2163,21 +2155,18 @@ public abstract class FileEditerController extends BaseController {
                 }
 
                 @Override
-                protected void succeeded() {
-                    super.succeeded();
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (ok) {
-                                popSuccessul();
-                                openFile(sourceFile);
-                            } else {
-                                popFailed();
-                            }
-                            updateInterface(false);
-                        }
-                    });
+                protected void whenSucceeded() {
+                    popSuccessul();
+                    openFile(sourceFile);
+                    updateInterface(false);
                 }
+
+                @Override
+                protected void whenFailed() {
+                    updateInterface(false);
+                    super.whenFailed();
+                }
+
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
@@ -2219,24 +2208,14 @@ public abstract class FileEditerController extends BaseController {
                 }
 
                 @Override
-                protected void succeeded() {
-                    super.succeeded();
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (ok) {
-                                if (saveAsType == SaveAsType.Load) {
-                                    openFile(file);
-                                } else if (saveAsType == SaveAsType.Open) {
-                                    FileEditerController controller = openNewStage();
-                                    controller.openFile(file);
-                                }
-                                popSuccessul();
-                            } else {
-                                popFailed();
-                            }
-                        }
-                    });
+                protected void whenSucceeded() {
+                    if (saveAsType == SaveAsType.Load) {
+                        openFile(file);
+                    } else if (saveAsType == SaveAsType.Open) {
+                        FileEditerController controller = openNewStage();
+                        controller.openFile(file);
+                    }
+                    popSuccessul();
                 }
 
             };

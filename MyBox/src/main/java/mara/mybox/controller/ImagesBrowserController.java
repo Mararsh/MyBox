@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -746,21 +745,16 @@ public class ImagesBrowserController extends ImageViewerController {
             task = new SingletonTask<Void>() {
 
                 @Override
-                protected Void call() {
+                protected boolean handle() {
                     loadImageInfos();
-                    return null;
+                    return true;
                 }
 
                 @Override
-                protected void succeeded() {
-                    super.succeeded();
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            makeGridBox();
-                        }
-                    });
+                protected void whenSucceeded() {
+                    makeGridBox();
                 }
+
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
@@ -831,9 +825,9 @@ public class ImagesBrowserController extends ImageViewerController {
                 title += " " + AppVariables.message("Sampled");
                 titleInput.setStyle("-fx-text-box-border: red;   -fx-text-fill: red;");
             }
-            if (imageInfo.isIsScaled()) {
-                title += " " + AppVariables.message("Scaled");
-            }
+//            if (imageInfo.isIsScaled()) {
+//                title += " " + AppVariables.message("Scaled");
+//            }
             titleInput.setText(title);
 
             final int index = i;
@@ -1184,22 +1178,17 @@ public class ImagesBrowserController extends ImageViewerController {
                 task = new SingletonTask<Void>() {
 
                     @Override
-                    protected Void call() {
+                    protected boolean handle() {
                         loadImageInfos();
-                        return null;
+                        return true;
                     }
 
                     @Override
-                    protected void succeeded() {
-                        super.succeeded();
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                tableView.setItems(tableData);
-                                tableView.refresh();
-                            }
-                        });
+                    protected void whenSucceeded() {
+                        tableView.setItems(tableData);
+                        tableView.refresh();
                     }
+
                 };
                 openHandlingStage(task, Modality.WINDOW_MODAL);
                 Thread thread = new Thread(task);

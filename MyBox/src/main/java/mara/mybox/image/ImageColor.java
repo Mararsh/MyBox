@@ -148,6 +148,14 @@ public class ImageColor {
         return new Color(Color.HSBtoRGB(h, s, b));
     }
 
+    public static float[] toFloat(Color color) {
+        float[] srgb = new float[3];
+        srgb[0] = color.getRed() / 255f;
+        srgb[1] = color.getGreen() / 255f;
+        srgb[2] = color.getBlue() / 255f;
+        return srgb;
+    }
+
     // https://en.wikipedia.org/wiki/Color_difference
     public static int calculateColorDistance(Color color1, Color color2) {
         int v = calculateColorDistance2(color1, color2);

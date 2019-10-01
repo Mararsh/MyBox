@@ -723,7 +723,7 @@ public class IccProfileEditorController extends BaseController {
                                     p = new IccProfile(name);
                                     break;
                                 case Internal_File:
-                                    file = FxmlControl.getUserFile("/data/ICC/" + name, name);
+                                    file = FxmlControl.getInternalFile("/data/ICC/" + name, "ICC", name);
                                     p = new IccProfile(file);
                                     break;
                                 case External_File:
@@ -737,41 +737,36 @@ public class IccProfileEditorController extends BaseController {
                     }
 
                     @Override
-                    protected void succeeded() {
-                        super.succeeded();
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (ok) {
-                                    isIccFile = sourceType != SourceType.Embed;
-                                    if (isIccFile) {
-                                        sourceFile = file;
-                                        isSettingValues = true;
-                                        embedICCName = null;
-                                        isSettingValues = false;
-                                    } else {
-                                        embedICCName = name;
-                                        sourceFile = null;
-                                    }
-                                    if (sourceType == SourceType.External_File) {
-                                        embedBox.getSelectionModel().clearSelection();
-                                    }
-                                    profile = p;
-                                    displayProfileData();
-                                } else {
-                                    if (error == null) {
-                                        if (p != null && p.getError() != null) {
-                                            error = p.getError();
-                                        } else {
-                                            error = AppVariables.message("Invalid");
-                                        }
-                                    }
-                                    popError(inputName + " " + error);
-                                }
-                            }
-                        });
-
+                    protected void whenSucceeded() {
+                        isIccFile = sourceType != SourceType.Embed;
+                        if (isIccFile) {
+                            sourceFile = file;
+                            isSettingValues = true;
+                            embedICCName = null;
+                            isSettingValues = false;
+                        } else {
+                            embedICCName = name;
+                            sourceFile = null;
+                        }
+                        if (sourceType == SourceType.External_File) {
+                            embedBox.getSelectionModel().clearSelection();
+                        }
+                        profile = p;
+                        displayProfileData();
                     }
+
+                    @Override
+                    protected void whenFailed() {
+                        if (error == null) {
+                            if (p != null && p.getError() != null) {
+                                error = p.getError();
+                            } else {
+                                error = AppVariables.message("Invalid");
+                            }
+                        }
+                        popError(inputName + " " + error);
+                    }
+
                 };
                 openHandlingStage(task, Modality.WINDOW_MODAL, inputName + " " + message("Loading..."));
                 Thread thread = new Thread(task);

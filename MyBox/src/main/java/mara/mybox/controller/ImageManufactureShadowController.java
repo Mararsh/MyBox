@@ -75,7 +75,7 @@ public class ImageManufactureShadowController extends ImageManufactureOperationC
             }
             String c = AppVariables.getUserConfigValue("ImageShadowBackground", Color.BLACK.toString());
             bgRect.setFill(Color.web(c));
-            FxmlControl.setTooltip(bgRect, FxmlColor.colorDisplay((Color) bgRect.getFill()));
+            FxmlControl.setTooltip(bgRect, FxmlColor.colorNameDisplay((Color) bgRect.getFill()));
 
             shadowBox.getItems().clear();
             int width = (int) imageView.getImage().getWidth();
@@ -116,7 +116,7 @@ public class ImageManufactureShadowController extends ImageManufactureOperationC
         }
         if (paletteButton.equals(control)) {
             bgRect.setFill(color);
-            FxmlControl.setTooltip(bgRect, FxmlColor.colorDisplay(color));
+            FxmlControl.setTooltip(bgRect, FxmlColor.colorNameDisplay(color));
             AppVariables.setUserConfigValue("ImageShadowBackground", color.toString());
         }
         return true;

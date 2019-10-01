@@ -2,7 +2,6 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.util.List;
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -190,21 +189,9 @@ public class ChromaticityBaseController extends BaseController {
                 }
 
                 @Override
-                protected void succeeded() {
-                    super.succeeded();
-                    task = null;
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (ok) {
-                                view(file);
-//                            browseURI(file.toURI());
-                                popSuccessul();
-                            } else {
-                                popFailed();
-                            }
-                        }
-                    });
+                protected void whenSucceeded() {
+                    view(file);
+                    popSuccessul();
                 }
 
             };

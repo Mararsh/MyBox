@@ -75,7 +75,7 @@ public class ImageManufactureCropController extends ImageManufactureOperationCon
                 bgRect.setFill(Color.TRANSPARENT);
                 AppVariables.setUserConfigValue("CropBackgroundColor", Color.TRANSPARENT.toString());
             }
-            FxmlControl.setTooltip(bgRect, FxmlColor.colorDisplay((Color) bgRect.getFill()));
+            FxmlControl.setTooltip(bgRect, FxmlColor.colorNameDisplay((Color) bgRect.getFill()));
 
             putCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -105,7 +105,7 @@ public class ImageManufactureCropController extends ImageManufactureOperationCon
         }
         if (paletteButton.equals(control)) {
             bgRect.setFill(color);
-            FxmlControl.setTooltip(bgRect, FxmlColor.colorDisplay(color));
+            FxmlControl.setTooltip(bgRect, FxmlColor.colorNameDisplay(color));
             AppVariables.setUserConfigValue("CropBackgroundColor", color.toString());
         }
         return true;

@@ -374,7 +374,7 @@ public class ImageValue {
 
     public static ICC_Profile internalProfile(String filename) {
         try {
-            File file = FxmlControl.getUserFile("/data/ICC/" + filename, filename);
+            File file = FxmlControl.getInternalFile("/data/ICC/" + filename, "ICC", filename);
             ICC_Profile profile = ICC_Profile.getInstance(file.getAbsolutePath());
             return iccProfile(profile);
         } catch (Exception ex) {

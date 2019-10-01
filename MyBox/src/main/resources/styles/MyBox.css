@@ -60,6 +60,13 @@ Red increase 151 -> pink
     -fx-font-weight: bolder;
 }
 
+.bottom-label, .bottom-label:focused {
+    -fx-background-color: transparent ;
+    -fx-background-insets: 0px ;
+    -fx-text-fill: #2e598a;
+    -fx-font-size: 1.0em;
+}
+
 .displayField, .displayField:focused {
     -fx-background-color: transparent;
     -fx-border-color: #D0D0D0;

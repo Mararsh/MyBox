@@ -63,7 +63,7 @@ public class ImageManufactureArcController extends ImageManufactureOperationCont
 
             String c = AppVariables.getUserConfigValue("ImageArcBackground", Color.TRANSPARENT.toString());
             bgRect.setFill(Color.web(c));
-            FxmlControl.setTooltip(bgRect, FxmlColor.colorDisplay((Color) bgRect.getFill()));
+            FxmlControl.setTooltip(bgRect, FxmlColor.colorNameDisplay((Color) bgRect.getFill()));
 
             arcBox.getItems().clear();
             int width = (int) imageView.getImage().getWidth();
@@ -104,7 +104,7 @@ public class ImageManufactureArcController extends ImageManufactureOperationCont
         }
         if (paletteButton.equals(control)) {
             bgRect.setFill(color);
-            FxmlControl.setTooltip(bgRect, FxmlColor.colorDisplay(color));
+            FxmlControl.setTooltip(bgRect, FxmlColor.colorNameDisplay(color));
             AppVariables.setUserConfigValue("ImageArcBackground", color.toString());
         }
         return true;

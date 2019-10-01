@@ -86,6 +86,9 @@ public class CIEColorSpace {
     public static double[] XYZtoCIELuv(
             double rX, double rY, double rZ,
             double X, double Y, double Z) {
+        if (X == 0 && Y == 0 && Z == 0) {
+            return new double[3];
+        }
         double yr = Y / rY;
         double u = (4 * X) / (X + 15 * Y + 3 * Z);
         double v = (9 * Y) / (X + 15 * Y + 3 * Z);

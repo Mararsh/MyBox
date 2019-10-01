@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -134,7 +133,7 @@ public class FxmlControl {
             @Override
             protected Void call() {
                 try {
-                    File miao = FxmlControl.getUserFile(file, userFile);
+                    File miao = FxmlControl.getInternalFile(file, "sound", userFile);
                     FloatControl control = SoundTools.getControl(miao);
                     Clip player = SoundTools.playback(miao, control.getMaximum() * 0.6f);
                     player.start();
@@ -381,44 +380,33 @@ public class FxmlControl {
         });
     }
 
-    public static File getUserFile(String resourceFile, String userFile) {
-        return getUserFile(resourceFile, userFile, false);
+    public static File getInternalFile(String resourceFile, String subPath, String userFile) {
+        return getInternalFile(resourceFile, subPath, userFile, false);
     }
 
     // Solution from https://stackoverflow.com/questions/941754/how-to-get-a-path-to-a-resource-in-a-java-jar-file
-    public static File getUserFile(String resourceFile, String userFile,
+    public static File getInternalFile(String resourceFile, String subPath, String userFile,
             boolean deleteExisted) {
         if (resourceFile == null || userFile == null) {
             return null;
         }
         try {
-            File file = new File(MyboxDataPath + File.separator + userFile);
+            File path = new File(MyboxDataPath + File.separator + subPath);
+            if (!path.exists()) {
+                path.mkdirs();
+            }
+            File file = new File(MyboxDataPath + File.separator + subPath + File.separator + userFile);
             if (file.exists() && !deleteExisted) {
                 return file;
             }
-            URL url = FxmlControl.class.getResource(resourceFile);
-            if (url.toString().startsWith("jar:")) {
-                try {
-                    File tmpFile = FileTools.getTempFile();
-                    try (InputStream input = FxmlControl.class.getResourceAsStream(resourceFile);
-                            OutputStream out = new FileOutputStream(tmpFile)) {
-                        int read;
-                        byte[] bytes = new byte[1024];
-                        while ((read = input.read(bytes)) != -1) {
-                            out.write(bytes, 0, read);
-                        }
-                    }
-                    if (file.exists()) {
-                        file.delete();
-                    }
-                    tmpFile.renameTo(file);
-                } catch (Exception e) {
-                    logger.error(e.toString());
-                }
-            } else {
-                //this will probably work in your IDE, but not from a JAR
-                file = new File(FxmlControl.class.getResource(resourceFile).getFile());
+            File tmpFile = getInternalFile(resourceFile);
+            if (tmpFile == null) {
+                return null;
             }
+            if (file.exists()) {
+                file.delete();
+            }
+            FileTools.copyFile(tmpFile, file);
             return file;
         } catch (Exception e) {
             logger.error(e.toString());
@@ -426,31 +414,20 @@ public class FxmlControl {
         }
     }
 
-    public static File getResourceFile(String resourceFile) {
+    public static File getInternalFile(String resourceFile) {
         if (resourceFile == null) {
             return null;
         }
         try {
-            File file = null;
-            URL url = FxmlControl.class.getResource(resourceFile);
-            if (url.toString().startsWith("jar:")) {
-                try {
-                    InputStream input = FxmlControl.class.getResourceAsStream(resourceFile);
-                    file = File.createTempFile("MyBox", "." + getFileSuffix(resourceFile));
-                    OutputStream out = new FileOutputStream(file);
-                    int read;
-                    byte[] bytes = new byte[1024];
-                    while ((read = input.read(bytes)) != -1) {
-                        out.write(bytes, 0, read);
-                    }
-                    file.deleteOnExit();
-                } catch (Exception e) {
-                    logger.error(e.toString());
-                }
-            } else {
-                //this will probably work in your IDE, but not from a JAR
-                file = new File(FxmlControl.class.getResource(resourceFile).getFile());
+            InputStream input = FxmlControl.class.getResourceAsStream(resourceFile);
+            File file = File.createTempFile("MyBox", "." + getFileSuffix(resourceFile));
+            OutputStream out = new FileOutputStream(file);
+            int read;
+            byte[] bytes = new byte[1024];
+            while ((read = input.read(bytes)) != -1) {
+                out.write(bytes, 0, read);
             }
+            file.deleteOnExit();
             return file;
         } catch (Exception e) {
             logger.error(e.toString());

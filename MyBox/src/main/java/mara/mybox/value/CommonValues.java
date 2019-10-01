@@ -14,8 +14,8 @@ import java.util.TimeZone;
  */
 public class CommonValues {
 
-    public static final String AppVersion = "5.5";
-    public static final String AppVersionDate = "2019-09-19";
+    public static final String AppVersion = "5.6";
+    public static final String AppVersionDate = "2019-10-01";
     public static final String AppDocVersion = "5.0";
 
     public static final String AppDerbyUser = "mara";
@@ -68,6 +68,7 @@ public class CommonValues {
     public static final String ImageManufactureCropFxml = "/fxml/ImageManufactureCrop.fxml";
     public static final String ImageManufactureColorFxml = "/fxml/ImageManufactureColor.fxml";
     public static final String ImageManufactureEffectsFxml = "/fxml/ImageManufactureEffects.fxml";
+    public static final String ImageManufactureEnhancementFxml = "/fxml/ImageManufactureEnhancement.fxml";
     public static final String ImageManufactureTextFxml = "/fxml/ImageManufactureText.fxml";
     public static final String ImageManufactureRichTextFxml = "/fxml/ImageManufactureRichText.fxml";
     public static final String ImageManufactureArcFxml = "/fxml/ImageManufactureArc.fxml";
@@ -80,6 +81,7 @@ public class CommonValues {
     public static final String ImageManufactureBatchCropFxml = "/fxml/ImageManufactureBatchCrop.fxml";
     public static final String ImageManufactureBatchColorFxml = "/fxml/ImageManufactureBatchColor.fxml";
     public static final String ImageManufactureBatchEffectsFxml = "/fxml/ImageManufactureBatchEffects.fxml";
+    public static final String ImageManufactureBatchEnhancementFxml = "/fxml/ImageManufactureBatchEnhancement.fxml";
     public static final String ImageManufactureBatchReplaceColorFxml = "/fxml/ImageManufactureBatchReplaceColor.fxml";
     public static final String ImageManufactureBatchTextFxml = "/fxml/ImageManufactureBatchText.fxml";
     public static final String ImageManufactureBatchArcFxml = "/fxml/ImageManufactureBatchArc.fxml";
@@ -132,6 +134,8 @@ public class CommonValues {
     public static final String FilesMergeFxml = "/fxml/FilesMerge.fxml";
     public static final String FilesDeleteFxml = "/fxml/FilesDelete.fxml";
     public static final String RecordImagesInSystemClipboardFxml = "/fxml/RecordImagesInSystemClipboard.fxml";
+    public static final String BarcodeCreatorFxml = "/fxml/BarcodeCreator.fxml";
+    public static final String BarcodeDecoderFxml = "/fxml/BarcodeDecoder.fxml";
 
     public static final Locale LocaleZhCN = new Locale("zh", "CN");
     public static final Locale LocaleEnUS = new Locale("en", "US");

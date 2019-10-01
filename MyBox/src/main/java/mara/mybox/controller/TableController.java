@@ -532,18 +532,20 @@ public abstract class TableController<P> extends BaseController {
         if (selected.isEmpty()) {
             return;
         }
+        List<Integer> newselected = new ArrayList<>();
         for (Integer index : selected) {
-            if (index == 0) {
+            if (index == 0 || newselected.contains(index - 1)) {
+                newselected.add(index);
                 continue;
             }
             P info = tableData.get(index);
-            tableData.set(index, tableData.get(index - 1));
+            tableData.set(index, tableView.getItems().get(index - 1));
             tableData.set(index - 1, info);
+            newselected.add(index - 1);
         }
-        for (Integer index : selected) {
-            if (index > 0) {
-                tableView.getSelectionModel().select(index - 1);
-            }
+        tableView.getSelectionModel().clearSelection();
+        for (Integer index : newselected) {
+            tableView.getSelectionModel().select(index);
         }
         tableView.refresh();
     }
@@ -555,22 +557,25 @@ public abstract class TableController<P> extends BaseController {
         if (selected.isEmpty()) {
             return;
         }
+        List<Integer> newselected = new ArrayList<>();
         for (int i = selected.size() - 1; i >= 0; i--) {
             int index = selected.get(i);
-            if (index == tableData.size() - 1) {
+            if (index == tableData.size() - 1
+                    || newselected.contains(index + 1)) {
+                newselected.add(index);
                 continue;
             }
             P info = tableData.get(index);
             tableData.set(index, tableData.get(index + 1));
             tableData.set(index + 1, info);
+            newselected.add(index + 1);
         }
-        for (int i = selected.size() - 1; i >= 0; i--) {
-            int index = selected.get(i);
-            if (index < tableData.size() - 1) {
-                tableView.getSelectionModel().select(index + 1);
-            }
+        tableView.getSelectionModel().clearSelection();
+        for (Integer index : newselected) {
+            tableView.getSelectionModel().select(index);
         }
         tableView.refresh();
+
     }
 
     public void viewFileAction() {
