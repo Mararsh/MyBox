@@ -1057,7 +1057,7 @@ public class MyBoxController extends BaseController {
     private void showAboutImage(MouseEvent event) {
         hideMenu(event);
 
-        view.setImage(new Image("img/About56.png"));
+        view.setImage(new Image("img/About57.png"));
         text.setText(message("AboutImageTips"));
         locateImage(aboutBox, false);
     }

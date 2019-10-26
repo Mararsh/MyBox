@@ -12,4 +12,4 @@ cd  out
 tar cfz  MyBox-$version-linux.tar.gz  MyBox
 mv MyBox*.gz ..
 cd ..
-cp  MyBox/target/*-with-dependencies.jar  ./MyBox-$version.jar
+cp  MyBox/target/*.jar  ./MyBox-$version.jar

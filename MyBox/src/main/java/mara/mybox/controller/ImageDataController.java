@@ -480,7 +480,7 @@ public class ImageDataController extends ImageViewerController {
                         data.getNode().setStyle("-fx-pie-color: " + colorString + ";");
 
                     }
-                    Set<Node> legendItems = pie.lookupAll("Label.chart-legend-index");
+                    Set<Node> legendItems = pie.lookupAll("Label.chart-legend-item");
                     if (legendItems.isEmpty()) {
                         return;
                     }
