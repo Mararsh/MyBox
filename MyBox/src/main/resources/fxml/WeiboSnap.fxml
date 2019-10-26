@@ -106,7 +106,7 @@ License:    Apache License Version 2.0
                                                       <Insets left="30.0" />
                                                    </HBox.margin>
                                                 </Label>
-                                                <TextField fx:id="intervalInput" prefWidth="80.0" />
+                                                <TextField fx:id="accessIntervalInput" prefWidth="80.0" />
                                                 <Label text="%MinAccessIntervalComments" />
                                                             </children>
                                                         </HBox>
@@ -137,7 +137,7 @@ License:    Apache License Version 2.0
                                                         <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
                                                             <children>
                                                                 <Label text="%Format" />
-                                                                <RadioButton fx:id="pngRadio" mnemonicParsing="false" selected="true" text="%PNG">
+                                                                <RadioButton fx:id="pngRadio" mnemonicParsing="false" text="%PNG">
                                                                     <toggleGroup>
                                                                         <ToggleGroup fx:id="formatGroup" />
                                                                     </toggleGroup>
@@ -147,7 +147,7 @@ License:    Apache License Version 2.0
                                                         <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="100.0" spacing="10.0">
                                                             <children>
                                                                 <Label text="%Format" visible="false" />
-                                                                <RadioButton mnemonicParsing="false" text="%JpegQuailty" toggleGroup="$formatGroup" />
+                                                                <RadioButton mnemonicParsing="false" selected="true" text="%JpegQuailty" toggleGroup="$formatGroup" />
                                                                 <ComboBox fx:id="jpegBox" editable="true" prefWidth="100.0" />
                                                                 <Label text="\%">
                                                                     <padding>
@@ -170,6 +170,16 @@ License:    Apache License Version 2.0
                                                                 <CheckBox fx:id="ditherCheck" mnemonicParsing="false" text="%Dithering" />
                                                             </children>
                                                         </HBox>
+                                          <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                             <children>
+                                                <Label text="%SnapInterval">
+                                                   <HBox.margin>
+                                                      <Insets />
+                                                   </HBox.margin>
+                                                </Label>
+                                                <TextField fx:id="snapIntervalInput" prefWidth="80.0" />
+                                             </children>
+                                          </HBox>
                                                     </children>
                                                     <padding>
                                                         <Insets top="10.0" />

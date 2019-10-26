@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.IntTools;
 
 /**
@@ -24,6 +23,17 @@ public class IntStatistic {
     }
 
     public IntStatistic(String name, long sum, int mean,
+            int variance, int skewness, int minimum, int maximum) {
+        this.name = name;
+        this.sum = sum;
+        this.mean = mean;
+        this.variance = variance;
+        this.skewness = skewness;
+        this.minimum = minimum;
+        this.maximum = maximum;
+    }
+
+    public IntStatistic(String name, long sum, int mean,
             int variance, int skewness, int minimum, int maximum,
             int mode, int median) {
         this.name = name;
@@ -37,6 +47,24 @@ public class IntStatistic {
         this.median = median;
     }
 
+    public IntStatistic(String name, long sum, int mean,
+            int variance, int skewness, int minimum, int maximum,
+            int[] histogram) {
+        this.name = name;
+        this.sum = sum;
+        this.mean = mean;
+        this.variance = variance;
+        this.skewness = skewness;
+        this.minimum = minimum;
+        this.maximum = maximum;
+        this.mode = maximumIndex(histogram);
+        this.median = medianIndex(histogram);
+    }
+
+
+    /*
+        static methods
+     */
     public static long sum(int[] values) {
         long sum = 0;
         for (int i = 0; i < values.length; i++) {
@@ -188,6 +216,9 @@ public class IntStatistic {
         return mid;
     }
 
+    /*
+        get/set
+     */
     public String getName() {
         return name;
     }

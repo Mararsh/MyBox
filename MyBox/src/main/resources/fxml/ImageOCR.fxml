@@ -51,7 +51,7 @@ License:    Apache License Version 2.0
                                                                 </Button>
                                                             </children>
                                                         </HBox>
-                                                        <HBox fx:id="navBox" alignment="CENTER_LEFT" spacing="5.0">
+                                                        <HBox fx:id="imageOpBox" alignment="CENTER_LEFT" spacing="5.0">
                                                             <children>
                                                                 <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction">
                                                                     <graphic>
@@ -86,7 +86,7 @@ License:    Apache License Version 2.0
                                                 </VBox>
                                             </content>
                                         </TitledPane>
-                                        <TitledPane layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Preprocess">
+                                        <TitledPane fx:id="preprocessPane" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Preprocess">
                                             <content>
                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="5.0">
                                                     <children>
@@ -220,7 +220,7 @@ License:    Apache License Version 2.0
                                                 </VBox>
                                             </content>
                                         </TitledPane>
-                                        <TitledPane layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%OCROptions">
+                                        <TitledPane fx:id="ocrOptionsPane" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%OCROptions">
                                             <content>
                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="5.0">
                                                     <children>
@@ -251,6 +251,7 @@ License:    Apache License Version 2.0
                                                                 <ComboBox fx:id="wordSelector" editable="true" prefWidth="200.0" />
                                                             </children>
                                                         </HBox>
+                                                        <Label fx:id="currentOCRFilesLabel" />
                                                         <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                                                             <children>
                                                                 <Button fx:id="moveDownButton" mnemonicParsing="false" onAction="#downAction">
@@ -271,11 +272,19 @@ License:    Apache License Version 2.0
                                                                         </ImageView>
                                                                     </graphic>
                                                                 </Button>
+                                                                <Button fx:id="moveTopButton" mnemonicParsing="false" onAction="#topAction">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/iconDoubleUp.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
                                                             </children>
                                                         </HBox>
                                                         <Label text="%OCRSelection" />
                                                         <ListView fx:id="languageList" prefHeight="200.0" prefWidth="200.0" />
-                                                        <Label fx:id="currentOCRFilesLabel" />
                                                     </children>
                                                 </VBox>
                                             </content>
@@ -284,7 +293,7 @@ License:    Apache License Version 2.0
                                 </VBox>
                             </content>
                         </ScrollPane>
-                        <VBox maxHeight="1.7976931348623157E308">
+                        <VBox fx:id="imagesBox" maxHeight="1.7976931348623157E308">
                             <children>
                                 <HBox>
                                     <children>
@@ -465,7 +474,7 @@ License:    Apache License Version 2.0
                                 </ScrollPane>
                             </children>
                         </VBox>
-                        <VBox maxHeight="1.7976931348623157E308">
+                        <VBox fx:id="resultBox" maxHeight="1.7976931348623157E308">
                             <children>
                                 <HBox fx:id="operation1Box1" alignment="CENTER_LEFT" spacing="5.0">
                                     <children>

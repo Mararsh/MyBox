@@ -54,7 +54,7 @@ public class TextEncodingBatchController extends FilesBatchController {
     public void initializeNext() {
         try {
             tableController.getNameFiltersSelector().getSelectionModel().select(1);
-            tableController.getTableFiltersInput().setText(".html  .htm  .txt ");
+            tableController.getTableFiltersInput().setText("html  htm  txt ");
 
             startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
                     .or(targetPathInput.styleProperty().isEqualTo(badStyle))

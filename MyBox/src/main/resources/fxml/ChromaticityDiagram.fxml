@@ -21,7 +21,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="730.0" prefWidth="1250.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ChromaticityDiagramController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ChromaticityDiagramController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -96,14 +96,13 @@ License:    Apache License Version 2.0
                                                 </Button>
                                             </items>
                                         </ToolBar>
-                                        <ToolBar layoutX="20.0" layoutY="20.0" prefHeight="40.0" prefWidth="200.0" style="-fx-font-size: 12px;">
-                                            <items>
-                                                <Label maxWidth="1.7976931348623157E308" text="" wrapText="true" HBox.hgrow="ALWAYS" />
+                              <FlowPane alignment="CENTER_RIGHT" hgap="5.0" prefWrapLength="1000.0" style="-fx-font-size: 12;" vgap="5.0" VBox.vgrow="NEVER">
+                                 <children>
                                                 <CheckBox fx:id="inputCheck" mnemonicParsing="false" text="%Input" />
-                                                <CheckBox fx:id="calculateCheck" layoutX="142.0" layoutY="17.0" mnemonicParsing="false" selected="true" text="%Calculate" />
-                                                <CheckBox fx:id="gridCheck" layoutX="10.0" layoutY="17.0" mnemonicParsing="false" selected="true" text="%Grid" />
+                                                <CheckBox fx:id="calculateCheck" mnemonicParsing="false" selected="true" text="%Calculate" />
+                                                <CheckBox fx:id="gridCheck" mnemonicParsing="false" selected="true" text="%Grid" />
                                                 <CheckBox fx:id="waveCheck" mnemonicParsing="false" selected="true" text="%Wave" />
-                                                <CheckBox fx:id="whitePointsCheck" layoutX="10.0" layoutY="17.0" mnemonicParsing="false" selected="true" text="%WhitePoints" />
+                                                <CheckBox fx:id="whitePointsCheck" mnemonicParsing="false" selected="true" text="%WhitePoints" />
                                                 <CheckBox fx:id="degree2Check" mnemonicParsing="false" selected="true" text="%2Degree" />
                                                 <CheckBox fx:id="degree10Check" mnemonicParsing="false" text="%10Degree" />
                                                 <CheckBox fx:id="cdCIECheck" mnemonicParsing="false" selected="true" text="CIE">
@@ -124,7 +123,16 @@ License:    Apache License Version 2.0
                                                 </CheckBox>
                                                 <CheckBox fx:id="cdProPhotoCheck" mnemonicParsing="false" text="ProPhoto">
                                                 </CheckBox>
-                                                <CheckBox fx:id="cdSMPTECCheck" layoutX="602.0" layoutY="13.0" mnemonicParsing="false" text="SMPTE-C" />
+                                                <CheckBox fx:id="cdSMPTECCheck" mnemonicParsing="false" text="SMPTE-C" />
+                                    <Button fx:id="allButton" layoutX="1912.0" layoutY="10.0" mnemonicParsing="false" onAction="#allAction">
+                                       <graphic>
+                                          <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/iconCheckAll.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </Button>
                                                 <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
                                                     <graphic>
                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -134,8 +142,8 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </graphic>
                                                 </Button>
-                                            </items>
-                                        </ToolBar>
+                                 </children>
+                              </FlowPane>
                                         <SplitPane dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                                             <items>
                                                 <VBox fx:id="tableBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
@@ -156,7 +164,7 @@ License:    Apache License Version 2.0
                                                         </ToolBar>
                                                         <VBox fx:id="calculateBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS">
                                                             <children>
-                                                                <Label text="%Tristimulus" />
+                                                                <Label text="%Tristimulus" VBox.vgrow="NEVER" />
                                                                 <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                                                                     <children>
                                                                         <Label text="X" />
@@ -176,12 +184,12 @@ License:    Apache License Version 2.0
                                                                         </Button>
                                                                     </children>
                                                                 </HBox>
-                                                                <Label text="%ColorCoordinate">
+                                                                <Label text="%ColorCoordinate" VBox.vgrow="NEVER">
                                                                     <VBox.margin>
-                                                                        <Insets top="20.0" />
+                                                                        <Insets />
                                                                     </VBox.margin>
                                                                 </Label>
-                                                                <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" spacing="5.0">
+                                                                <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" spacing="5.0" VBox.vgrow="NEVER">
                                                                     <children>
                                                                         <Label text="x" />
                                                                         <TextField prefWidth="160.0" fx:id="xInput" />
@@ -220,7 +228,7 @@ License:    Apache License Version 2.0
                                                       </Button>
                                                    </children>
                                                 </HBox>
-                                                <TableView fx:id="calculatedValuesTable" VBox.vgrow="ALWAYS">
+                                                <TableView fx:id="calculatedValuesTable" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                                                   <columns>
                                                     <TableColumn fx:id="colorSpaceColumn" prefWidth="140.0" text="%ColorSpace" />
                                                     <TableColumn fx:id="conditionsColumn" prefWidth="171.0" text="%Conditions" />

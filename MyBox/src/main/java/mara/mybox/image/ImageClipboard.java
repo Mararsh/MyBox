@@ -151,12 +151,20 @@ public class ImageClipboard {
         }
     }
 
+    public static String add(Image image) {
+        return add(image, AppVariables.getUserConfigBoolean("CopyToSystemClipboard", true));
+    }
+
     public static String add(Image image, boolean putSystemClipboard) {
         try {
             return add(SwingFXUtils.fromFXImage(image, null), putSystemClipboard);
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public static String add(File file) {
+        return add(file, AppVariables.getUserConfigBoolean("CopyToSystemClipboard", true));
     }
 
     public static String add(File file, boolean putSystemClipboard) {
@@ -167,6 +175,10 @@ public class ImageClipboard {
             logger.debug(e.toString());
             return null;
         }
+    }
+
+    public static String add(BufferedImage image) {
+        return add(image, AppVariables.getUserConfigBoolean("CopyToSystemClipboard", true));
     }
 
     public static String add(BufferedImage image, boolean putSystemClipboard) {

@@ -547,7 +547,8 @@ public class ConvolutionKernelManagerController extends BaseController {
     }
 
     @FXML
-    private void clearAction(ActionEvent event) {
+    @Override
+    public void clearAction() {
         if (tableData.isEmpty()) {
             return;
         }

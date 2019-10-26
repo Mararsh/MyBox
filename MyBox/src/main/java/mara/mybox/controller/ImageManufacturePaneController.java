@@ -82,7 +82,7 @@ public class ImageManufacturePaneController extends ImageMaskController {
 
     @FXML
     protected CheckBox scopeSetCheck, scopeManageCheck, areaExcludedCheck, colorExcludedCheck,
-            scopeOutlineKeepRatioCheck;
+            scopeOutlineKeepRatioCheck, eightNeighborCheck;
     @FXML
     protected VBox scopeEditBox, scopeManageBox, scopePane;
     @FXML
@@ -559,6 +559,18 @@ public class ImageManufacturePaneController extends ImageMaskController {
                 }
             });
 
+            eightNeighborCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                    if (isSettingValues || scope == null) {
+                        return;
+                    }
+                    scope.setEightNeighbor(eightNeighborCheck.isSelected());
+                    indicateScope();
+                }
+            });
+            FxmlControl.setTooltip(eightNeighborCheck, new Tooltip(message("EightNeighborCheckComments")));
+
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -647,7 +659,7 @@ public class ImageManufacturePaneController extends ImageMaskController {
                     }
                     break;
                 case Matting:
-                    scopeValuesBox.getChildren().addAll(pointsSetBox, scopeMatchBox);
+                    scopeValuesBox.getChildren().addAll(pointsSetBox, eightNeighborCheck, scopeMatchBox);
                     if (paletteController != null) {
                         paletteController.closeStage();
                         paletteController = null;
@@ -847,7 +859,7 @@ public class ImageManufacturePaneController extends ImageMaskController {
                 protected boolean handle() {
                     try {
                         PixelsOperation pixelsOperation
-                                = PixelsOperation.newPixelsOperation(image,
+                                = PixelsOperation.create(image,
                                         scope, PixelsOperation.OperationType.ShowScope);
                         scopedImage = pixelsOperation.operateFxImage();
                         if (task == null || isCancelled()) {
@@ -873,7 +885,7 @@ public class ImageManufacturePaneController extends ImageMaskController {
                 }
 
             };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
+            parent.openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -973,9 +985,6 @@ public class ImageManufacturePaneController extends ImageMaskController {
 
     @FXML
     public void clearColors() {
-        if (isSettingValues) {
-            return;
-        }
         if (isSettingValues) {
             return;
         }
@@ -1272,7 +1281,7 @@ public class ImageManufacturePaneController extends ImageMaskController {
             List<ImageScope> list = TableImageScope.read(sourceFile.getAbsolutePath());
             if (list != null && !list.isEmpty()) {
                 scopeSelector.getItems().setAll(list);
-//                scopeSelector.getSelectionModel().selectFirst();
+                scopeSelector.getSelectionModel().selectFirst();
             }
         } catch (Exception e) {
             logger.debug(e.toString());
@@ -1313,7 +1322,7 @@ public class ImageManufacturePaneController extends ImageMaskController {
                     loadScopes();
                 }
             };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
+            parent.openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -1348,7 +1357,7 @@ public class ImageManufacturePaneController extends ImageMaskController {
                     loadScopes();
                 }
             };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
+            parent.openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -1379,7 +1388,7 @@ public class ImageManufacturePaneController extends ImageMaskController {
                 }
 
             };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
+            parent.openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -1421,6 +1430,7 @@ public class ImageManufacturePaneController extends ImageMaskController {
         showColorData(scope);
         showMatchType(scope);
         showDistanceValue(scope);
+        eightNeighborCheck.setSelected(scope.isEightNeighbor());
         isSettingValues = false;
         if (scope.getScopeType() != ScopeType.Outline) {
             indicateScope();
@@ -1639,6 +1649,7 @@ public class ImageManufacturePaneController extends ImageMaskController {
             if (file == null) {
                 return;
             }
+            recordFileOpened(file);
             loadOutlineSource(file);
         } catch (Exception e) {
             logger.error(e.toString());
@@ -1714,7 +1725,7 @@ public class ImageManufacturePaneController extends ImageMaskController {
                 }
 
             };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
+            parent.openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -1800,7 +1811,7 @@ public class ImageManufacturePaneController extends ImageMaskController {
                     }
 
                 };
-                openHandlingStage(task, Modality.WINDOW_MODAL);
+                parent.openHandlingStage(task, Modality.WINDOW_MODAL);
                 Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();
@@ -1844,7 +1855,7 @@ public class ImageManufacturePaneController extends ImageMaskController {
                     maskView.setFitHeight(outlineImage.getHeight() * radio);
                 }
             };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
+            parent.openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();

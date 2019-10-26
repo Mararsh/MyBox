@@ -29,8 +29,8 @@ import static mara.mybox.value.AppVariables.message;
 public class FileCutController extends FilesBatchController {
 
     private FileSplitType splitType;
-    private int bytesNumber, filesNumber;
-    private List<Integer> startEndList;
+    private long bytesNumber, filesNumber;
+    private List<Long> startEndList;
 
     @FXML
     protected ToggleGroup splitGroup;
@@ -125,7 +125,7 @@ public class FileCutController extends FilesBatchController {
 
     private void checkBytesNumber() {
         try {
-            int v = ByteTools.checkBytesValue(bytesNumberInput.getText());
+            long v = ByteTools.checkBytesValue(bytesNumberInput.getText());
             if (v >= 0) {
                 bytesNumber = v;
                 bytesNumberInput.setStyle(null);
@@ -147,8 +147,8 @@ public class FileCutController extends FilesBatchController {
                     continue;
                 }
                 try {
-                    int start = ByteTools.checkBytesValue(values[0]);
-                    int end = ByteTools.checkBytesValue(values[1]);
+                    long start = ByteTools.checkBytesValue(values[0]);
+                    long end = ByteTools.checkBytesValue(values[1]);
                     if (start > 0 && end > 0) {           // 1-based start
                         startEndList.add(start);
                         startEndList.add(end);

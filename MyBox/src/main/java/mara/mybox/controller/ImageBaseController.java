@@ -2,7 +2,6 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.text.MessageFormat;
-import java.util.Map;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -40,7 +39,7 @@ public abstract class ImageBaseController extends BaseController {
     protected Image image;
 
     protected ImageAttributes attributes;
-    protected Map<String, Object> imageData;
+
     protected boolean careFrames, handleLoadedSize, isPaneSize;
     protected int loadWidth, defaultLoadWidth, frameIndex, sizeChangeAware = 10;
     protected LoadingController loadingController;
@@ -362,7 +361,6 @@ public abstract class ImageBaseController extends BaseController {
                                 sourceFile = file;
                                 imageInformation = imageInfo;
                                 image = imageInformation.getImage();
-                                imageData = null;
                                 loadWidth = inLoadWidth;
                                 frameIndex = inFrameIndex;
                                 careFrames = inCareFrames;
@@ -409,21 +407,10 @@ public abstract class ImageBaseController extends BaseController {
         }
     }
 
-    public void loadImage(File sourceFile, Image image, ImageInformation imageInformation,
-            Map<String, Object> imageData) {
-        this.sourceFile = sourceFile;
-        this.imageInformation = imageInformation;
-        this.image = image;
-        this.imageData = imageData;
-        afterImageLoaded();
-        setImageChanged(true);
-    }
-
     public void loadImage(File sourceFile, Image image, ImageInformation imageInformation) {
         this.sourceFile = sourceFile;
         this.imageInformation = imageInformation;
         this.image = image;
-        imageData = null;
         afterImageLoaded();
         setImageChanged(true);
     }
@@ -432,7 +419,6 @@ public abstract class ImageBaseController extends BaseController {
         this.sourceFile = new File(imageInformation.getFileName());
         this.imageInformation = imageInformation;
         this.image = imageInformation.getImage();
-        imageData = null;
         afterImageLoaded();
         setImageChanged(true);
     }
@@ -440,7 +426,6 @@ public abstract class ImageBaseController extends BaseController {
     public void loadImage(final Image inImage) {
         sourceFile = null;
         imageInformation = null;
-        imageData = null;
         image = inImage;
         afterImageLoaded();
         setImageChanged(true);
@@ -449,7 +434,6 @@ public abstract class ImageBaseController extends BaseController {
     public void loadImage(final Image inImage, int maxWidth) {
         sourceFile = null;
         imageInformation = null;
-        imageData = null;
         image = FxmlImageManufacture.scaleImage(inImage, maxWidth);
         loadWidth = maxWidth;
         afterImageLoaded();
@@ -485,7 +469,6 @@ public abstract class ImageBaseController extends BaseController {
     public ImageBaseController refresh() {
         File oldfile = sourceFile;
         ImageInformation oldInfo = imageInformation;
-        Map<String, Object> oldMeta = imageData;
         Image oldImage = image;
 
         BaseController b = refreshBase();
@@ -494,11 +477,7 @@ public abstract class ImageBaseController extends BaseController {
         }
         ImageBaseController c = (ImageBaseController) b;
         if (oldfile != null && oldImage != null && oldInfo != null) {
-            if (oldMeta != null) {
-                c.loadImage(oldfile, oldImage, oldInfo, oldMeta);
-            } else {
-                c.loadImage(oldfile, oldImage, oldInfo);
-            }
+            c.loadImage(oldfile, oldImage, oldInfo);
         } else if (oldInfo != null) {
             c.loadImage(oldInfo);
         } else if (oldfile != null) {
@@ -535,14 +514,6 @@ public abstract class ImageBaseController extends BaseController {
 
     public void setAttributes(ImageAttributes attributes) {
         this.attributes = attributes;
-    }
-
-    public Map<String, Object> getImageData() {
-        return imageData;
-    }
-
-    public void setImageData(Map<String, Object> imageData) {
-        this.imageData = imageData;
     }
 
     public boolean isCareFrames() {

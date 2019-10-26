@@ -15,6 +15,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.stage.Modality;
+import mara.mybox.data.FileEditInformation;
 import mara.mybox.data.FileEditInformation.Line_Break;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.ByteTools;
@@ -280,7 +281,7 @@ public class BytesEditerController extends FileEditerController {
             findInput.setStyle(badStyle);
             return false;
         } else {
-            if (v.length() >= pageSize * 3) {
+            if (v.length() >= sourceInformation.getPageSize() * 3) {
                 popError(AppVariables.message("FindStringLimitation"));
                 findInput.setStyle(badStyle);
                 return false;
@@ -309,7 +310,7 @@ public class BytesEditerController extends FileEditerController {
             replaceInput.setStyle(badStyle);
             return false;
         } else {
-            if (v.length() >= pageSize * 3) {
+            if (v.length() >= sourceInformation.getPageSize() * 3) {
                 popError(AppVariables.message("FindStringLimitation"));
                 replaceInput.setStyle(badStyle);
                 return false;
@@ -332,8 +333,8 @@ public class BytesEditerController extends FileEditerController {
     protected void initDisplayTab() {
         super.initDisplayTab();
         List<String> setNames = TextTools.getCharsetNames();
-        currentBox.getItems().addAll(setNames);
-        currentBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+        encodeBox.getItems().addAll(setNames);
+        encodeBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue ov, String oldValue, String newValue) {
                 sourceInformation.setCharset(Charset.forName(newValue));
@@ -344,7 +345,7 @@ public class BytesEditerController extends FileEditerController {
                 }
             }
         });
-        currentBox.getSelectionModel().select(AppVariables.getUserConfigValue(BytesCharsetKey, "UTF-8"));
+        encodeBox.getSelectionModel().select(AppVariables.getUserConfigValue(BytesCharsetKey, "UTF-8"));
     }
 
     @Override
@@ -386,7 +387,7 @@ public class BytesEditerController extends FileEditerController {
     @Override
     protected void setSecondArea(String hexFormat) {
         if (isSettingValues || displayArea == null
-                || !splitPane.getItems().contains(displayArea)) {
+                || !contentSplitPane.getItems().contains(displayArea)) {
             return;
         }
         isSettingValues = true;
@@ -412,7 +413,7 @@ public class BytesEditerController extends FileEditerController {
 
     @Override
     protected void setSecondAreaSelection() {
-        if (isSettingValues || displayArea == null || !splitPane.getItems().contains(displayArea)) {
+        if (isSettingValues || displayArea == null || !contentSplitPane.getItems().contains(displayArea)) {
             return;
         }
         displayArea.deselect();
@@ -434,7 +435,7 @@ public class BytesEditerController extends FileEditerController {
     @Override
     public void selectSourceFile() {
         super.selectSourceFile();
-        tabPane.getSelectionModel().select(inputTab);
+        inputPane.setExpanded(true);
     }
 
     @FXML
@@ -450,8 +451,16 @@ public class BytesEditerController extends FileEditerController {
     @Override
     protected void checkFilterStrings() {
         String f = filterInput.getText();
-        boolean invalid = f.isEmpty() || !validateFilterStrings()
-                || sourceFile == null || mainArea.getText().isEmpty();
+        boolean invalid = f.isEmpty() || sourceFile == null || mainArea.getText().isEmpty();
+        if (!invalid) {
+            if (filterType == FileEditInformation.StringFilterType.MatchRegularExpression
+                    || filterType == FileEditInformation.StringFilterType.NotMatchRegularExpression) {
+                filterStrings = new String[1];
+                filterStrings[0] = filterInput.getText();
+            } else {
+                invalid = !validateFilterStrings();
+            }
+        }
         filterButton.setDisable(invalid);
     }
 
@@ -468,7 +477,7 @@ public class BytesEditerController extends FileEditerController {
                 filterInput.setStyle(badStyle);
                 return false;
             }
-            if (v.length() >= pageSize * 3) {
+            if (v.length() >= sourceInformation.getPageSize() * 3) {
                 popError(AppVariables.message("FindStringLimitation"));
                 filterInput.setStyle(badStyle);
                 return false;

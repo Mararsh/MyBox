@@ -14,8 +14,8 @@ import java.util.TimeZone;
  */
 public class CommonValues {
 
-    public static final String AppVersion = "5.6";
-    public static final String AppVersionDate = "2019-10-01";
+    public static final String AppVersion = "5.7";
+    public static final String AppVersionDate = "2019-10-26";
     public static final String AppDocVersion = "5.0";
 
     public static final String AppDerbyUser = "mara";
@@ -61,6 +61,7 @@ public class CommonValues {
     public static final String ImagesBrowserFxml = "/fxml/ImagesBrowser.fxml";
     public static final String ImageConverterBatchFxml = "/fxml/ImageConverterBatch.fxml";
     public static final String ImageManufactureFxml = "/fxml/ImageManufacture.fxml";
+    public static final String ImageManufactureViewFxml = "/fxml/ImageManufactureView.fxml";
     public static final String ImageManufactureClipboardFxml = "/fxml/ImageManufactureClipboard.fxml";
     public static final String ImageManufacturePaletteFxml = "/fxml/ImageManufacturePalette.fxml";
     public static final String ImageManufactureSizeFxml = "/fxml/ImageManufactureSize.fxml";
@@ -133,9 +134,14 @@ public class CommonValues {
     public static final String FileCutFxml = "/fxml/FileCut.fxml";
     public static final String FilesMergeFxml = "/fxml/FilesMerge.fxml";
     public static final String FilesDeleteFxml = "/fxml/FilesDelete.fxml";
+    public static final String FilesCopyFxml = "/fxml/FilesCopy.fxml";
+    public static final String FilesMoveFxml = "/fxml/FilesMove.fxml";
+    public static final String FilesFindFxml = "/fxml/FilesFind.fxml";
     public static final String RecordImagesInSystemClipboardFxml = "/fxml/RecordImagesInSystemClipboard.fxml";
     public static final String BarcodeCreatorFxml = "/fxml/BarcodeCreator.fxml";
     public static final String BarcodeDecoderFxml = "/fxml/BarcodeDecoder.fxml";
+    public static final String MarkdownEditorFxml = "/fxml/MarkdownEditor.fxml";
+    public static final String StringTableFxml = "/fxml/StringTable.fxml";
 
     public static final Locale LocaleZhCN = new Locale("zh", "CN");
     public static final Locale LocaleEnUS = new Locale("en", "US");

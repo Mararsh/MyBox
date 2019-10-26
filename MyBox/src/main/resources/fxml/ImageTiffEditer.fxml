@@ -61,58 +61,6 @@ License:    Apache License Version 2.0
                           <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Save" />
                     </children>
                 </HBox>
-                <TitledPane maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Options" VBox.vgrow="NEVER">
-                    <content>
-                        <VBox fx:id="optionsBox" spacing="5.0">
-                            <children>
-                                <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.columnIndex="1" GridPane.hgrow="NEVER" GridPane.rowIndex="1" VBox.vgrow="NEVER">
-                                    <children>
-                                        <Label text="%ImageColor" GridPane.rowIndex="1" />
-                                        <RadioButton fx:id="RGB" mnemonicParsing="false" selected="true" text="%Colorful">
-                                            <toggleGroup>
-                                                <ToggleGroup fx:id="colorGroup" />
-                                            </toggleGroup>
-                                        </RadioButton>
-                                        <RadioButton fx:id="ARGB" mnemonicParsing="false" text="%ColorAlpha" toggleGroup="$colorGroup" />
-                                        <RadioButton fx:id="Gray" mnemonicParsing="false" text="%ShadesOfGray" toggleGroup="$colorGroup" />
-                                        <RadioButton fx:id="Binary" mnemonicParsing="false" text="%BlackOrWhite" toggleGroup="$colorGroup" />
-                                    </children>
-                                    <VBox.margin>
-                                        <Insets />
-                                    </VBox.margin>
-                                </HBox>
-                                <HBox fx:id="compressBox" alignment="CENTER_LEFT" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                                    <children>
-                                        <Label text="%CompressionType" GridPane.rowIndex="3" />
-                                        <HBox fx:id="compressionBox" spacing="10.0">
-                                            <children>
-                                                <RadioButton mnemonicParsing="false" selected="true" text="%None">
-                                                    <toggleGroup>
-                                                        <ToggleGroup fx:id="compressionGroup" />
-                                                    </toggleGroup>
-                                                </RadioButton>
-                                            </children>
-                                        </HBox>
-                                    </children>
-                                </HBox>
-                                <HBox fx:id="binaryBox" alignment="CENTER_LEFT" spacing="10.0" HBox.hgrow="ALWAYS">
-                                    <children>
-                                        <Label text="%BinaryAlgorithm" GridPane.rowIndex="5" />
-                                        <RadioButton mnemonicParsing="false" selected="true" text="%Default">
-                                            <toggleGroup>
-                                                <ToggleGroup fx:id="binaryGroup" />
-                                            </toggleGroup>
-                                        </RadioButton>
-                                        <RadioButton mnemonicParsing="false" text="%OTSU" toggleGroup="$binaryGroup" />
-                                        <RadioButton mnemonicParsing="false" text="%Threshold" toggleGroup="$binaryGroup" />
-                                        <TextField fx:id="thresholdInput" prefWidth="80.0" promptText="0~255" />
-                                    </children>
-                                </HBox>
-
-                            </children>
-                        </VBox>
-                    </content>
-                </TitledPane>
                 <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%SourceFiles" VBox.vgrow="ALWAYS">
                     <content>
                         <VBox fx:id="tableBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">

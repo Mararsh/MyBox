@@ -71,7 +71,7 @@ public class PdfAttributesBatchController extends PdfBatchController {
 
             tableView.getColumns().removeAll(pdfsTableController.fromColumn, pdfsTableController.toColumn);
 
-            pdfsTableController.setBox.getChildren().remove(pdfsTableController.fromToBax);
+            pdfsTableController.setPDFPane.getChildren().remove(pdfsTableController.fromToBox);
 
             pdfsTableController.tableCommentsLabel.setText(message("PdfAttributesTableComments"));
 

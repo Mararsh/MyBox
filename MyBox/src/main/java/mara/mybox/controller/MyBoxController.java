@@ -83,6 +83,14 @@ public class MyBoxController extends BaseController {
                     }
                 }
             });
+//            String s = "";
+//            if (AppVariables.appArgs != null) {
+//                for (String arg : AppVariables.appArgs) {
+//                    s += arg + "  " + new String(arg.getBytes(), "utf-8");
+//                }
+//            }
+//            popText(s, 10000, "red");
+
         } catch (Exception e) {
             logger.debug(e.toString());
         }
@@ -311,6 +319,14 @@ public class MyBoxController extends BaseController {
             }
         });
 
+        MenuItem imageData = new MenuItem(AppVariables.message("ImageData"));
+        imageData.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.ImageDataFxml);
+            }
+        });
+
         MenuItem ImageManufacture = new MenuItem(AppVariables.message("ImageManufacture"));
         ImageManufacture.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -385,7 +401,7 @@ public class MyBoxController extends BaseController {
         popMenu.setAutoHide(true);
         String os = System.getProperty("os.name").toLowerCase();
         popMenu.getItems().addAll(
-                imageViewer, imagesBrowser, new SeparatorMenuItem(),
+                imageViewer, imagesBrowser, imageData, new SeparatorMenuItem(),
                 ImageManufacture, manufactureBatchMenu,
                 imageConverterBatch, imageOCR, imageOCRBatch, new SeparatorMenuItem(),
                 framesMenu, mergeMenu, partMenu, new SeparatorMenuItem(),
@@ -722,9 +738,20 @@ public class MyBoxController extends BaseController {
             }
         });
 
+        MenuItem markdownEditor = new MenuItem(AppVariables.message("MarkdownEditer"));
+        markdownEditor.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.MarkdownEditorFxml);
+            }
+        });
+
         popMenu = new ContextMenu();
         popMenu.setAutoHide(true);
-        popMenu.getItems().addAll(weiboSnap, htmlEditor);
+        popMenu.getItems().addAll(
+                htmlEditor, markdownEditor, new SeparatorMenuItem(),
+                weiboSnap
+        );
         showMenu(networkBox, event);
 
         view.setImage(new Image("img/NetworkTools.png"));
@@ -817,12 +844,38 @@ public class MyBoxController extends BaseController {
             }
         });
 
+        MenuItem filesCopy = new MenuItem(AppVariables.message("FilesCopy"));
+        filesCopy.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.FilesCopyFxml);
+            }
+        });
+
+        MenuItem filesMove = new MenuItem(AppVariables.message("FilesMove"));
+        filesMove.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.FilesMoveFxml);
+            }
+        });
+
+        MenuItem filesFind = new MenuItem(AppVariables.message("FilesFind"));
+        filesFind.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.FilesFindFxml);
+            }
+        });
+
         popMenu = new ContextMenu();
         popMenu.setAutoHide(true);
         popMenu.getItems().addAll(
-                filesRename, filesArrangement, dirSynchronize, filesDelete, new SeparatorMenuItem(),
-                textEditer, textEncodingBatch, textLineBreakBatch, new SeparatorMenuItem(),
-                bytesEditer, fileCut, filesMerge);
+                textEditer, bytesEditer, new SeparatorMenuItem(),
+                filesFind, filesArrangement, dirSynchronize,
+                filesRename, filesDelete, filesCopy, filesMove,
+                textEncodingBatch, textLineBreakBatch, new SeparatorMenuItem(),
+                fileCut, filesMerge);
 
         showMenu(fileBox, event);
 
@@ -921,6 +974,14 @@ public class MyBoxController extends BaseController {
 
         Menu csMenu = makeColorSpaceMenu();
 
+        MenuItem imageData = new MenuItem(AppVariables.message("ImageData"));
+        imageData.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.ImageDataFxml);
+            }
+        });
+
         MenuItem MatricesCalculation = new MenuItem(AppVariables.message("MatricesCalculation"));
         MatricesCalculation.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -947,9 +1008,10 @@ public class MyBoxController extends BaseController {
 
         popMenu = new ContextMenu();
         popMenu.setAutoHide(true);
-        popMenu.getItems().addAll(csMenu,
-                new SeparatorMenuItem(), MatricesCalculation,
-                new SeparatorMenuItem(), barcodeCreator, barcodeDecoder);
+        popMenu.getItems().addAll(
+                MatricesCalculation, new SeparatorMenuItem(),
+                imageData, csMenu, new SeparatorMenuItem(),
+                barcodeCreator, barcodeDecoder);
 
         showMenu(dataBox, event);
 

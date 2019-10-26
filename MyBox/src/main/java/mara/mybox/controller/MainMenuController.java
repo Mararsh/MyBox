@@ -724,6 +724,11 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
+    private void openImageData(ActionEvent event) {
+        loadScene(CommonValues.ImageDataFxml);
+    }
+
+    @FXML
     private void openImageConverterBatch(ActionEvent event) {
         loadScene(CommonValues.ImageConverterBatchFxml);
     }
@@ -971,6 +976,26 @@ public class MainMenuController extends BaseController {
     @FXML
     private void openFilesDelete(ActionEvent event) {
         loadScene(CommonValues.FilesDeleteFxml);
+    }
+
+    @FXML
+    private void openFilesCopy(ActionEvent event) {
+        loadScene(CommonValues.FilesCopyFxml);
+    }
+
+    @FXML
+    private void openFilesMove(ActionEvent event) {
+        loadScene(CommonValues.FilesMoveFxml);
+    }
+
+    @FXML
+    private void openFilesFind(ActionEvent event) {
+        loadScene(CommonValues.FilesFindFxml);
+    }
+
+    @FXML
+    private void openMarkdownEditer(ActionEvent event) {
+        loadScene(CommonValues.MarkdownEditorFxml);
     }
 
     @FXML

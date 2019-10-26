@@ -23,6 +23,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.VBox;
+import mara.mybox.data.FileInformation.FileSelectorType;
 import mara.mybox.data.ProcessParameters;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
@@ -30,6 +32,7 @@ import mara.mybox.fxml.FxmlStage;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.getUserConfigValue;
 import static mara.mybox.value.AppVariables.logger;
@@ -55,11 +58,13 @@ public abstract class BatchController<T> extends BaseController {
     protected List<Integer> sourcesIndice;
     protected List<String> filesPassword;
 
-    protected boolean sourceCheckSubdir, allowPaused, browseTargets;
+    protected boolean sourceCheckSubdir, allowPaused, browseTargets, createDirectories;
     protected boolean isPreview, paused;
     protected String targetFileType, targetNameAppend;
     protected int dirFilesNumber, dirFilesHandled;
-    protected String[] sourceFilesfilters;
+    protected long fileSelectorSize, fileSelectorTime;
+    protected String[] sourceFilesSelector;
+    protected FileSelectorType fileSelectorType;
 
     protected ProcessParameters actualParameters, previewParameters, currentParameters;
 
@@ -69,6 +74,8 @@ public abstract class BatchController<T> extends BaseController {
 
     @FXML
     protected TableController<T> tableController;
+    @FXML
+    protected VBox tableBox;
     @FXML
     protected ToggleGroup targetExistGroup, fileTypeGroup;
     @FXML
@@ -376,8 +383,9 @@ public abstract class BatchController<T> extends BaseController {
     public void keyEventsHandler(KeyEvent event) {
         super.keyEventsHandler(event);
 //        logger.debug(event.getCode() + " " + event.getText());
-        tableController.keyEventsHandler(event); // pass event to table pane
-
+        if (tableController != null) {
+            tableController.keyEventsHandler(event); // pass event to table pane
+        }
     }
 
     @FXML
@@ -416,13 +424,17 @@ public abstract class BatchController<T> extends BaseController {
         if (tableController.tableSubdirCheck != null) {
             sourceCheckSubdir = tableController.tableSubdirCheck.isSelected();
         }
-        sourceFilesfilters = null;
+
+        fileSelectorType = tableController.fileSelectorType;
+        sourceFilesSelector = null;
         if (tableController.tableFiltersInput != null) {
-            sourceFilesfilters = tableController.tableFiltersInput.getText().trim().split("\\s+");
-            if (sourceFilesfilters.length == 0) {
-                sourceFilesfilters = null;
+            sourceFilesSelector = tableController.tableFiltersInput.getText().trim().split("\\s+");
+            if (sourceFilesSelector.length == 0) {
+                sourceFilesSelector = null;
             }
         }
+        fileSelectorSize = tableController.fileSelectorSize;
+        fileSelectorTime = tableController.fileSelectorTime;
 
         if (targetFileInput != null) {
             actualParameters.finalTargetName = targetFileInput.getText();
@@ -444,6 +456,9 @@ public abstract class BatchController<T> extends BaseController {
             actualParameters.targetSubDir = targetSubdirCheck.isSelected();
             AppVariables.setUserConfigValue(targetSubdirKey, actualParameters.targetSubDir);
         }
+
+        createDirectories = tableController.tableCreateDirCheck != null
+                && tableController.tableCreateDirCheck.isSelected();
 
         actualParameters.fromPage = 1;
         actualParameters.toPage = 0;
@@ -661,9 +676,10 @@ public abstract class BatchController<T> extends BaseController {
             String namePrefix = FileTools.getFilePrefix(sourceFile.getName());
             String nameSuffix = "";
             if (sourceFile.isFile()) {
-                nameSuffix = "." + FileTools.getFileSuffix(sourceFile.getName());
                 if (targetFileType != null) {
                     nameSuffix = "." + targetFileType;
+                } else {
+                    nameSuffix = "." + FileTools.getFileSuffix(sourceFile.getName());
                 }
             }
             return makeTargetFile(namePrefix, nameSuffix, targetPath);
@@ -704,7 +720,7 @@ public abstract class BatchController<T> extends BaseController {
 
     public String handleFile(File file) {
         try {
-            if (!matchFilters(file)) {
+            if (!match(file)) {
                 return AppVariables.message("Skip");
             }
             if (currentParameters.targetPath != null) {
@@ -717,47 +733,101 @@ public abstract class BatchController<T> extends BaseController {
         }
     }
 
-    public boolean matchFilters(File file) {
-        if (sourceFilesfilters == null) {
+    public boolean match(File file) {
+        if (file == null || !file.isFile()) {
+            return false;
+        }
+        if (fileSelectorType == FileSelectorType.All) {
             return true;
         }
+        if (sourceFilesSelector == null) {
+            sourceFilesSelector = new String[0];
+        }
         String fname = file.getName();
-        switch (tableController.getFilterType()) {
-            case None:
+        String suffix = FileTools.getFileSuffix(fname);
+        switch (fileSelectorType) {
+
+            case ExtensionEuqalAny:
+                if (suffix.isBlank()) {
+                    return false;
+                }
+                for (String name : sourceFilesSelector) {
+                    if (suffix.equals(name) || ("." + suffix).equals(name)) {
+                        return true;
+                    }
+                }
+                return false;
+
+            case ExtensionNotEqualAny:
+                if (suffix.isBlank()) {
+                    return true;
+                }
+                for (String name : sourceFilesSelector) {
+                    if (suffix.equals(name) || ("." + suffix).equals(name)) {
+                        return false;
+                    }
+                }
                 return true;
 
-            case IncludeOne:
-                for (String name : sourceFilesfilters) {
+            case NameIncludeAny:
+                for (String name : sourceFilesSelector) {
                     if (fname.contains(name)) {
                         return true;
                     }
                 }
                 return false;
 
-            case IncludeAll:
-                for (String name : sourceFilesfilters) {
+            case NameIncludeAll:
+                for (String name : sourceFilesSelector) {
                     if (!fname.contains(name)) {
                         return false;
                     }
                 }
                 return true;
 
-            case NotIncludeAny:
-                for (String name : sourceFilesfilters) {
+            case NameNotIncludeAny:
+                for (String name : sourceFilesSelector) {
                     if (fname.contains(name)) {
                         return false;
                     }
                 }
                 return true;
 
-            case NotIncludeAll:
-                for (String name : sourceFilesfilters) {
+            case NameNotIncludeAll:
+                for (String name : sourceFilesSelector) {
                     if (!fname.contains(name)) {
                         return true;
                     }
                 }
                 return false;
 
+            case NameMatchAnyRegularExpression:
+                for (String name : sourceFilesSelector) {
+                    if (StringTools.match(fname, name)) {
+                        return true;
+                    }
+                }
+                return false;
+
+            case NameNotMatchAnyRegularExpression:
+                for (String name : sourceFilesSelector) {
+                    if (StringTools.match(fname, name)) {
+                        return false;
+                    }
+                }
+                return true;
+
+            case FileSizeLargerThan:
+                return file.length() > fileSelectorSize;
+
+            case FileSizeSmallerThan:
+                return file.length() < fileSelectorSize;
+
+            case ModifiedTimeEarlierThan:
+                return file.lastModified() < fileSelectorTime;
+
+            case ModifiedTimeLaterThan:
+                return file.lastModified() > fileSelectorTime;
         }
 
         return true;
@@ -767,7 +837,14 @@ public abstract class BatchController<T> extends BaseController {
         try {
             dirFilesNumber = dirFilesHandled = 0;
             if (currentParameters.targetPath != null) {
-                handleDirectory(dir, new File(currentParameters.targetPath));
+                File targetDir;
+                if (createDirectories) {
+                    targetDir = new File(currentParameters.targetPath + File.separator + dir.getName());
+                } else {
+                    targetDir = new File(currentParameters.targetPath);
+                }
+                targetDir.mkdirs();
+                handleDirectory(dir, targetDir);
             } else {
                 handleDirectory(dir, null);
             }
@@ -794,7 +871,7 @@ public abstract class BatchController<T> extends BaseController {
                     if (isPreview && dirFilesHandled > 0) {
                         return;
                     }
-                    if (!matchFilters(srcFile)) {
+                    if (!match(srcFile)) {
                         continue;
                     }
                     String result = handleFile(srcFile, targetPath);
@@ -840,6 +917,13 @@ public abstract class BatchController<T> extends BaseController {
         }
     }
 
+    public void disableControls(boolean disable) {
+        if (tableBox != null) {
+            tableBox.setDisable(disable);
+        }
+        paraBox.setDisable(disable);
+    }
+
     public void updateInterface(final String newStatus) {
         currentParameters.status = newStatus;
         Platform.runLater(new Runnable() {
@@ -867,7 +951,7 @@ public abstract class BatchController<T> extends BaseController {
                                 }
                             });
                         }
-                        paraBox.setDisable(true);
+                        disableControls(true);
                         break;
 
                     case "CompleteFile":
@@ -893,7 +977,7 @@ public abstract class BatchController<T> extends BaseController {
                                     startAction();
                                 }
                             });
-                            paraBox.setDisable(true);
+                            disableControls(true);
                         } else {
                             startButton.setText(AppVariables.message("Start"));
                             startButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -904,7 +988,7 @@ public abstract class BatchController<T> extends BaseController {
                             });
                             pauseButton.setVisible(false);
                             pauseButton.setDisable(true);
-                            paraBox.setDisable(false);
+                            disableControls(false);
                             donePost();
                         }
                         showCost();
@@ -928,7 +1012,7 @@ public abstract class BatchController<T> extends BaseController {
         if (statusLabel == null) {
             return;
         }
-        long cost = (new Date().getTime() - currentParameters.startTime.getTime()) / 1000;
+        long cost = new Date().getTime() - currentParameters.startTime.getTime();
         double avg = countAverageTime(cost);
         String s;
         if (paused) {
@@ -944,7 +1028,7 @@ public abstract class BatchController<T> extends BaseController {
             popInformation(MessageFormat.format(AppVariables.message("FilesGenerated"), count));
         }
         s += MessageFormat.format(AppVariables.message("FilesGenerated"), count) + space;
-        s += message("Cost") + ": " + cost + " " + message("Seconds") + "." + space
+        s += message("Cost") + ": " + DateTools.showTime(cost) + "." + space
                 + message("Average") + ":" + avg + " " + message("SecondsPerItem") + "." + space
                 + message("StartTime") + ":" + DateTools.datetimeToString(currentParameters.startTime) + space
                 + message("EndTime") + ":" + DateTools.datetimeToString(new Date());

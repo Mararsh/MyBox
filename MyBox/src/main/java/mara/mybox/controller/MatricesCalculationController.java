@@ -14,6 +14,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
+import mara.mybox.tools.DateTools;
 import mara.mybox.tools.MatrixTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
@@ -140,7 +141,7 @@ public class MatricesCalculationController extends BaseController {
         matrixResultController.setMatrix();
         long cost = new Date().getTime() - startTime;
         matrixResultController.getBottomLabel().setText(AppVariables.message("Successful") + ":"
-                + message("VerticalMerge") + "  " + message("Cost") + ":" + cost + " ms");
+                + message("VerticalMerge") + "  " + message("Cost") + ":" + DateTools.showTime(cost));
     }
 
     @FXML
@@ -157,7 +158,7 @@ public class MatricesCalculationController extends BaseController {
         matrixResultController.setMatrix();
         long cost = new Date().getTime() - startTime;
         matrixResultController.getBottomLabel().setText(AppVariables.message("Successful") + ":"
-                + message("HorizontalMerge") + "  " + message("Cost") + ":" + cost + " ms");
+                + message("HorizontalMerge") + "  " + message("Cost") + ":" + DateTools.showTime(cost));
     }
 
     @FXML
@@ -174,7 +175,7 @@ public class MatricesCalculationController extends BaseController {
         matrixResultController.setMatrix();
         long cost = new Date().getTime() - startTime;
         matrixResultController.getBottomLabel().setText(AppVariables.message("Successful") + ":" + message("Plus") + "  "
-                + message("Cost") + ":" + cost + " ms");
+                + message("Cost") + ":" + DateTools.showTime(cost));
     }
 
     @FXML
@@ -191,7 +192,7 @@ public class MatricesCalculationController extends BaseController {
         matrixResultController.setMatrix();
         long cost = new Date().getTime() - startTime;
         matrixResultController.getBottomLabel().setText(AppVariables.message("Successful") + ":" + message("Minus") + "  "
-                + message("Cost") + ":" + cost + " ms");
+                + message("Cost") + ":" + DateTools.showTime(cost));
 
     }
 
@@ -209,7 +210,7 @@ public class MatricesCalculationController extends BaseController {
         matrixResultController.setMatrix();
         long cost = new Date().getTime() - startTime;
         matrixResultController.getBottomLabel().setText(AppVariables.message("Successful") + ":" + message("Multiply") + "  "
-                + message("Cost") + ":" + cost + " ms");
+                + message("Cost") + ":" + DateTools.showTime(cost));
     }
 
     @FXML
@@ -226,7 +227,7 @@ public class MatricesCalculationController extends BaseController {
         matrixResultController.setMatrix();
         long cost = new Date().getTime() - startTime;
         matrixResultController.getBottomLabel().setText(AppVariables.message("Successful") + ":" + message("HadamardProduct") + "  "
-                + message("Cost") + ":" + cost + " ms");
+                + message("Cost") + ":" + DateTools.showTime(cost));
     }
 
     @FXML
@@ -243,7 +244,7 @@ public class MatricesCalculationController extends BaseController {
         matrixResultController.setMatrix();
         long cost = new Date().getTime() - startTime;
         matrixResultController.getBottomLabel().setText(AppVariables.message("Successful") + ":" + message("KroneckerProduct") + "  "
-                + message("Cost") + ":" + cost + " ms");
+                + message("Cost") + ":" + DateTools.showTime(cost));
     }
 
 }

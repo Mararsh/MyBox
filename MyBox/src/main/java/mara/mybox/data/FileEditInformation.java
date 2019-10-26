@@ -1,16 +1,17 @@
 package mara.mybox.data;
 
-import mara.mybox.value.AppVariables;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.tools.StringTools;
 import static mara.mybox.tools.TextTools.bomBytes;
 import static mara.mybox.tools.TextTools.bomSize;
 import static mara.mybox.tools.TextTools.checkCharsetByBom;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
 import thridparty.EncodingDetect;
 
 /**
@@ -23,21 +24,26 @@ import thridparty.EncodingDetect;
 public abstract class FileEditInformation extends FileInformation {
 
     protected Edit_Type editType;
-    protected boolean withBom, totalNumberRead;
+    protected boolean withBom, totalNumberRead, findRegex;
     protected Charset charset;
     protected long objectsNumber, currentPageLineStart, currentPageLineEnd;
     protected long linesNumber, pageSize, pagesNumber, currentPage;
     protected long currentPageObjectStart, currentPageObjectEnd;
     protected String findString, replaceString;
     protected String[] filterStrings;
-    protected long currentFound;
+    protected long currentFound, currentLine;
     protected Line_Break lineBreak;
-    protected Filter_Type filterType;
-    protected int lineBreakWidth, currentPosition, currentLine;
+    protected StringFilterType filterType;
+    protected int lineBreakWidth, currentPosition;
     protected String lineBreakValue;
 
     public enum Edit_Type {
         Text, Bytes
+    }
+
+    public enum StringFilterType {
+        IncludeAll, IncludeOne, NotIncludeAll, NotIncludeAny,
+        MatchRegularExpression, NotMatchRegularExpression
     }
 
     public enum Line_Break {
@@ -47,10 +53,6 @@ public abstract class FileEditInformation extends FileInformation {
         Width,
         Value,
         Auto
-    }
-
-    public enum Filter_Type {
-        IncludeAll, IncludeOne, NotIncludeAll, NotIncludeAny
     }
 
     public FileEditInformation() {
@@ -64,14 +66,15 @@ public abstract class FileEditInformation extends FileInformation {
     }
 
     protected final void initValues() {
-        filterType = Filter_Type.IncludeOne;
+        filterType = StringFilterType.IncludeOne;
         withBom = totalNumberRead = false;
         charset = Charset.defaultCharset();
         objectsNumber = linesNumber = -1;
         currentPage = pagesNumber = 1;
         pageSize = 100000;
         currentPageObjectStart = currentPageObjectEnd = -1;
-        currentFound = currentPosition = currentLine = -1;
+        currentFound = currentLine = -1;
+        currentPosition = -1;
         switch (System.lineSeparator()) {
             case "\r\n":
                 lineBreak = Line_Break.CRLF;
@@ -257,6 +260,10 @@ public abstract class FileEditInformation extends FileInformation {
                 return notIncludeAny(string);
             case NotIncludeAll:
                 return notIncludeAll(string);
+            case MatchRegularExpression:
+                return matchRegularExpression(string);
+            case NotMatchRegularExpression:
+                return NotMatchRegularExpression(string);
             default:
                 return false;
         }
@@ -306,20 +313,16 @@ public abstract class FileEditInformation extends FileInformation {
         return false;
     }
 
-    public String filterTypeName() {
-        switch (filterType) {
-            case IncludeOne:
-                return AppVariables.message("IncludeOne");
-            case IncludeAll:
-                return AppVariables.message("IncludeAll");
-            case NotIncludeAny:
-                return AppVariables.message("NotIncludeAny");
-            case NotIncludeAll:
-                return AppVariables.message("NotIncludeAll");
-            default:
-                return "";
-        }
+    public boolean matchRegularExpression(String string) {
+        return StringTools.match(string, filterStrings[0]);
+    }
 
+    public boolean NotMatchRegularExpression(String string) {
+        return !StringTools.match(string, filterStrings[0]);
+    }
+
+    public String filterTypeName() {
+        return message(filterType.name());
     }
 
     public boolean isWithBom() {
@@ -378,11 +381,11 @@ public abstract class FileEditInformation extends FileInformation {
         this.filterStrings = filterStrings;
     }
 
-    public Filter_Type getFilterType() {
+    public StringFilterType getFilterType() {
         return filterType;
     }
 
-    public void setFilterType(Filter_Type filterType) {
+    public void setFilterType(StringFilterType filterType) {
         this.filterType = filterType;
     }
 
@@ -408,38 +411,6 @@ public abstract class FileEditInformation extends FileInformation {
 
     public void setCurrentPageLineEnd(long currentPageLineEnd) {
         this.currentPageLineEnd = currentPageLineEnd;
-    }
-
-    public long getLinesNumber() {
-        return linesNumber;
-    }
-
-    public void setLinesNumber(long linesNumber) {
-        this.linesNumber = linesNumber;
-    }
-
-    public long getPageSize() {
-        return pageSize;
-    }
-
-    public void setPageSize(long pageSize) {
-        this.pageSize = pageSize;
-    }
-
-    public long getPagesNumber() {
-        return pagesNumber;
-    }
-
-    public void setPagesNumber(long pagesNumber) {
-        this.pagesNumber = pagesNumber;
-    }
-
-    public long getCurrentPage() {
-        return currentPage;
-    }
-
-    public void setCurrentPage(long currentPage) {
-        this.currentPage = currentPage;
     }
 
     public long getCurrentPageObjectStart() {
@@ -498,12 +469,52 @@ public abstract class FileEditInformation extends FileInformation {
         this.totalNumberRead = totalNumberRead;
     }
 
-    public int getCurrentLine() {
+    public long getCurrentLine() {
         return currentLine;
     }
 
-    public void setCurrentLine(int currentLine) {
+    public void setCurrentLine(long currentLine) {
         this.currentLine = currentLine;
+    }
+
+    public long getLinesNumber() {
+        return linesNumber;
+    }
+
+    public void setLinesNumber(long linesNumber) {
+        this.linesNumber = linesNumber;
+    }
+
+    public long getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(long pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public long getPagesNumber() {
+        return pagesNumber;
+    }
+
+    public void setPagesNumber(long pagesNumber) {
+        this.pagesNumber = pagesNumber;
+    }
+
+    public long getCurrentPage() {
+        return currentPage;
+    }
+
+    public void setCurrentPage(long currentPage) {
+        this.currentPage = currentPage;
+    }
+
+    public boolean isFindRegex() {
+        return findRegex;
+    }
+
+    public void setFindRegex(boolean findRegex) {
+        this.findRegex = findRegex;
     }
 
 }

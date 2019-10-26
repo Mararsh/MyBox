@@ -76,7 +76,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
     protected Label colorLabel, colorUnit;
     @FXML
     protected Button colorIncreaseButton, colorDecreaseButton, colorFilterButton,
-            colorInvertButton, paletteButton;
+            colorInvertButton, paletteButton, demoButton;
     @FXML
     protected CheckBox preAlphaCheck;
     @FXML
@@ -275,7 +275,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
 
             } else if (colorColorRadio.equals(selected)) {
                 colorOperationType = OperationType.Color;
-                setBox.getChildren().add(alphaBox);
+                setBox.getChildren().add(2, alphaBox);
                 valueBox.getChildren().addAll(colorRect, paletteButton);
                 opBox.getChildren().addAll(setButton);
 
@@ -387,7 +387,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                     if (colorOperationType == OperationType.Opacity && preAlphaCheck.isSelected()) {
                         colorOperationType = OperationType.PreOpacity;
                     }
-                    PixelsOperation pixelsOperation = PixelsOperation.newPixelsOperation(imageView.getImage(),
+                    PixelsOperation pixelsOperation = PixelsOperation.create(imageView.getImage(),
                             parent.scope(), colorOperationType, colorActionType);
                     switch (colorOperationType) {
                         case Hue:
@@ -424,10 +424,10 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                 @Override
                 protected void whenSucceeded() {
                     parent.updateImage(ImageOperation.Color,
-                            colorOperationType.name(), colorActionType.name(), newImage);
+                            colorOperationType.name(), colorActionType.name(), newImage, cost);
                 }
             };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
+            parent.openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -439,6 +439,8 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
         if (imageView.getImage() == null) {
             return;
         }
+        parent.popInformation(message("WaitAndHandling"));
+        demoButton.setDisable(true);
         Task demoTask = new Task<Void>() {
             private List<String> files;
 
@@ -467,7 +469,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                     scope.setOutlineSource(outlineSource);
                     scope.setOutline(outline[1]);
 
-                    pixelsOperation = PixelsOperation.newPixelsOperation(image,
+                    pixelsOperation = PixelsOperation.create(image,
                             scope, OperationType.Color, ColorActionType.Set);
                     pixelsOperation.setColorPara1(ImageColor.converColor(Color.LIGHTPINK));
                     bufferedImage = pixelsOperation.operate();
@@ -477,7 +479,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                         files.add(tmpFile);
                     }
 
-                    pixelsOperation = PixelsOperation.newPixelsOperation(image,
+                    pixelsOperation = PixelsOperation.create(image,
                             scope, OperationType.Brightness, ColorActionType.Increase);
                     pixelsOperation.setFloatPara1(0.5f);
                     bufferedImage = pixelsOperation.operate();
@@ -487,7 +489,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                         files.add(tmpFile);
                     }
 
-                    pixelsOperation = PixelsOperation.newPixelsOperation(image,
+                    pixelsOperation = PixelsOperation.create(image,
                             scope, OperationType.Hue, ColorActionType.Decrease);
                     pixelsOperation.setFloatPara1(0.3f);
                     bufferedImage = pixelsOperation.operate();
@@ -497,7 +499,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                         files.add(tmpFile);
                     }
 
-                    pixelsOperation = PixelsOperation.newPixelsOperation(image,
+                    pixelsOperation = PixelsOperation.create(image,
                             scope, OperationType.Saturation, ColorActionType.Increase);
                     pixelsOperation.setFloatPara1(0.5f);
                     bufferedImage = pixelsOperation.operate();
@@ -507,7 +509,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                         files.add(tmpFile);
                     }
 
-                    pixelsOperation = PixelsOperation.newPixelsOperation(image,
+                    pixelsOperation = PixelsOperation.create(image,
                             scope, OperationType.Opacity, ColorActionType.Decrease);
                     pixelsOperation.setIntPara1(128);
                     bufferedImage = pixelsOperation.operate();
@@ -517,7 +519,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                         files.add(tmpFile);
                     }
 
-                    pixelsOperation = PixelsOperation.newPixelsOperation(image,
+                    pixelsOperation = PixelsOperation.create(image,
                             scope, OperationType.RGB, ColorActionType.Invert);
                     bufferedImage = pixelsOperation.operate();
                     tmpFile = AppVariables.MyBoxTempPath + File.separator
@@ -526,7 +528,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                         files.add(tmpFile);
                     }
 
-                    pixelsOperation = PixelsOperation.newPixelsOperation(image,
+                    pixelsOperation = PixelsOperation.create(image,
                             scope, OperationType.Red, ColorActionType.Filter);
                     bufferedImage = pixelsOperation.operate();
                     tmpFile = AppVariables.MyBoxTempPath + File.separator
@@ -535,7 +537,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                         files.add(tmpFile);
                     }
 
-                    pixelsOperation = PixelsOperation.newPixelsOperation(image,
+                    pixelsOperation = PixelsOperation.create(image,
                             scope, OperationType.Yellow, ColorActionType.Increase);
                     pixelsOperation.setIntPara1(60);
                     bufferedImage = pixelsOperation.operate();
@@ -545,7 +547,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                         files.add(tmpFile);
                     }
 
-                    pixelsOperation = PixelsOperation.newPixelsOperation(image,
+                    pixelsOperation = PixelsOperation.create(image,
                             scope, OperationType.Magenta, ColorActionType.Decrease);
                     pixelsOperation.setIntPara1(60);
                     bufferedImage = pixelsOperation.operate();
@@ -564,6 +566,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
             @Override
             protected void succeeded() {
                 super.succeeded();
+                demoButton.setDisable(false);
                 if (files.isEmpty()) {
                     return;
                 }

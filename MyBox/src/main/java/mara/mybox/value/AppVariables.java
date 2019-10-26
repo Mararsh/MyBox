@@ -49,6 +49,7 @@ public class AppVariables {
     public static boolean openStageInNewWindow, restoreStagesSize, controlDisplayText,
             ImagePopCooridnate, disableHiDPI;
     public static ControlStyle.ColorStyle ControlColor;
+    public static String lastError;
 
     public AppVariables() {
 
@@ -69,6 +70,7 @@ public class AppVariables {
             controlDisplayText = AppVariables.getUserConfigBoolean("ControlDisplayText", false);
             ImagePopCooridnate = AppVariables.getUserConfigBoolean("ImagePopCooridnate", false);
             disableHiDPI = false;
+            lastError = null;
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -276,6 +278,23 @@ public class AppVariables {
                 v = Integer.valueOf(userConfigValues.get(key));
             } else {
                 v = TableUserConf.readInt(key, defaultValue);
+                userConfigValues.put(key, v + "");
+            }
+            return v;
+        } catch (Exception e) {
+//            logger.error(e.toString());
+            return defaultValue;
+        }
+    }
+
+    public static long getUserConfigLong(String key, long defaultValue) {
+        try {
+            long v;
+            if (userConfigValues.containsKey(key)) {
+                v = Long.valueOf(userConfigValues.get(key));
+            } else {
+                String s = TableUserConf.read(key, defaultValue + "");
+                v = Long.valueOf(s);
                 userConfigValues.put(key, v + "");
             }
             return v;

@@ -9,12 +9,13 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.Tooltip;
 import javafx.scene.text.Font;
+import mara.mybox.data.FileEditInformation;
 import mara.mybox.fxml.FxmlControl;
+import mara.mybox.tools.ByteTools;
+import mara.mybox.tools.StringTools;
+import mara.mybox.tools.TextTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
-import mara.mybox.data.FileEditInformation;
-import mara.mybox.tools.ByteTools;
-import mara.mybox.tools.TextTools;
 
 /**
  * @Author Mara
@@ -47,11 +48,11 @@ public class TextEditerController extends FileEditerController {
 
         Tooltip tips = new Tooltip(AppVariables.message("EncodeComments"));
         tips.setFont(new Font(16));
-        FxmlControl.setTooltip(currentBox, tips);
+        FxmlControl.setTooltip(encodeBox, tips);
 
         List<String> setNames = TextTools.getCharsetNames();
-        currentBox.getItems().addAll(setNames);
-        currentBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+        encodeBox.getItems().addAll(setNames);
+        encodeBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue ov, String oldValue, String newValue) {
                 changeCurrentCharset();
@@ -119,7 +120,7 @@ public class TextEditerController extends FileEditerController {
 
     @Override
     protected boolean validateFindString(String string) {
-        if (string.length() >= pageSize) {
+        if (string.length() >= sourceInformation.getPageSize()) {
             popError(AppVariables.message("FindStringLimitation"));
             return false;
         } else {
@@ -129,7 +130,7 @@ public class TextEditerController extends FileEditerController {
 
     @Override
     protected void changeCurrentCharset() {
-        sourceInformation.setCharset(Charset.forName(currentBox.getSelectionModel().getSelectedItem()));
+        sourceInformation.setCharset(Charset.forName(encodeBox.getSelectionModel().getSelectedItem()));
         charsetByUser = !isSettingValues;
         if (!isSettingValues && sourceFile != null) {
             openFile(sourceFile);
@@ -147,7 +148,7 @@ public class TextEditerController extends FileEditerController {
             int p = (int) (sourceInformation.getCurrentFound() / sourceInformation.getPageSize() + 1);
             if (p == currentPage) {
                 if (pos > 0 && sourceInformation.getLineBreak() == FileEditInformation.Line_Break.CRLF) {
-                    pos -= TextTools.countNumber(mainArea.getText().substring(0, pos), "\n");
+                    pos -= StringTools.countNumber(mainArea.getText().substring(0, pos), "\n");
                 }
                 currentFound = pos;
             }
@@ -156,7 +157,7 @@ public class TextEditerController extends FileEditerController {
 
     @Override
     protected void setSecondArea(String text) {
-        if (isSettingValues || displayArea == null || !splitPane.getItems().contains(displayArea)) {
+        if (isSettingValues || displayArea == null || !contentSplitPane.getItems().contains(displayArea)) {
             return;
         }
         isSettingValues = true;
@@ -178,7 +179,7 @@ public class TextEditerController extends FileEditerController {
     @Override
     protected void setSecondAreaSelection() {
         if (isSettingValues
-                || displayArea == null || !splitPane.getItems().contains(displayArea)) {
+                || displayArea == null || !contentSplitPane.getItems().contains(displayArea)) {
             return;
         }
         isSettingValues = true;

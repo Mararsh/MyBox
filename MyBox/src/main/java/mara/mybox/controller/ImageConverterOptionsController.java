@@ -242,6 +242,7 @@ public class ImageConverterOptionsController extends BaseController {
 
         switch (format) {
             case "tif":
+            case "tiff":
                 if (!attrBox1.getChildren().contains(embedProfileCheck)) {
                     attrBox1.getChildren().add(embedProfileCheck);
                 }
@@ -250,6 +251,7 @@ public class ImageConverterOptionsController extends BaseController {
                 break;
             case "png":
             case "jpg":
+            case "jpeg":
                 if (!attrBox1.getChildren().contains(embedProfileCheck)) {
                     attrBox1.getChildren().add(embedProfileCheck);
                 }
@@ -331,6 +333,7 @@ public class ImageConverterOptionsController extends BaseController {
             alphaSelector.getSelectionModel().select(0);
         }
         isSettingValues = false;
+        alphaSelector.setVisibleRowCount(alphaSelector.getItems().size());
 
         checkEmbed();
 

@@ -299,7 +299,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                     thumbnails.add(0, clip);
                 }
             };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
+            parent.openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -368,7 +368,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
 
                     @Override
                     protected boolean handle() {
-                        String name = ImageClipboard.add(file, true);
+                        String name = ImageClipboard.add(file);
                         clip = ImageClipboard.thumbnail(name);
                         return clip != null;
                     }
@@ -378,7 +378,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                         thumbnails.add(0, clip);
                     }
                 };
-                openHandlingStage(task, Modality.WINDOW_MODAL);
+                parent.openHandlingStage(task, Modality.WINDOW_MODAL);
                 Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();
@@ -413,6 +413,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
     }
 
     @FXML
+    @Override
     public void clearAction() {
         ImageClipboard.clear();
         thumbnails.clear();
@@ -475,7 +476,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                     thumbnails.addAll(0, clips);
                 }
             };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
+            parent.openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -529,7 +530,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                     displayClip(0);
                 }
             };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
+            parent.openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -597,7 +598,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                     }
 
                 };
-                openHandlingStage(task, Modality.WINDOW_MODAL);
+                parent.openHandlingStage(task, Modality.WINDOW_MODAL);
                 Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();
@@ -626,7 +627,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
 
     @FXML
     public void copyAction(ActionEvent event) {
-        parent.copy(false);  // This responsea to the button
+        parent.copy(false);  // This response to the button
     }
 
     @FXML
@@ -635,7 +636,8 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
         if (!parent.editable.get()) {
             return;
         }
-        parent.updateImage(ImageOperation.Paste, null, null, imageController.maskView.getImage());
+        parent.updateImage(ImageOperation.Paste, null, null,
+                imageController.maskView.getImage(), -1);
         clipSource = null;
         currentClip = null;
         imageController.clearOperating();

@@ -100,66 +100,76 @@ public abstract class PdfBatchController extends BatchController<PdfInformation>
         return true;
     }
 
+    @Override
+    public boolean match(File file) {
+        if (file == null || !file.isFile()
+                || !PdfTools.isPDF(file)) {
+            return false;
+        }
+
+        return super.match(file);
+    }
+
     // page number is 1-based.
     // Notice: Some APIs of PdfBox are 0-base and others are 1-based.
     @Override
     public String handleFile(File srcFile, File targetPath) {
         int generated = 0;
         doc = null;
-        if (PdfTools.isPDF(srcFile)) {
-            try {
-                currentParameters.currentSourceFile = srcFile;
-                if (!isPreview) {
-                    PdfInformation info = tableData.get(currentParameters.currentIndex);
-                    actualParameters.fromPage = info.getFromPage();
-                    if (actualParameters.fromPage <= 0) {
-                        actualParameters.fromPage = 1;
-                    }
-                    actualParameters.toPage = info.getToPage();
-                    actualParameters.password = info.getUserPassword();
-                    actualParameters.startPage = actualParameters.fromPage;
-                    actualParameters.currentPage = actualParameters.fromPage;
+
+        try {
+            currentParameters.currentSourceFile = srcFile;
+            if (!isPreview) {
+                PdfInformation info = tableData.get(currentParameters.currentIndex);
+                actualParameters.fromPage = info.getFromPage();
+                if (actualParameters.fromPage <= 0) {
+                    actualParameters.fromPage = 1;
                 }
-
-                try (PDDocument pd = PDDocument.load(currentParameters.currentSourceFile,
-                        currentParameters.password, AppVariables.pdfMemUsage)) {
-                    doc = pd;
-                    if (currentParameters.toPage <= 0 || currentParameters.toPage > doc.getNumberOfPages()) {
-                        currentParameters.toPage = doc.getNumberOfPages();
-                    }
-
-                    currentParameters.currentTargetPath = targetPath;
-                    if (currentParameters.targetSubDir) {
-                        currentParameters.currentTargetPath = new File(targetPath.getAbsolutePath() + "/"
-                                + FileTools.getFilePrefix(currentParameters.currentSourceFile.getName()));
-                        if (!currentParameters.currentTargetPath.exists()) {
-                            currentParameters.currentTargetPath.mkdirs();
-                        }
-                    }
-                    if (preHandlePages()) {
-                        int total = currentParameters.toPage - currentParameters.fromPage + 1;
-                        updateFileProgress(0, total);
-                        for (currentParameters.currentPage = currentParameters.startPage;
-                                currentParameters.currentPage <= currentParameters.toPage; currentParameters.currentPage++) {
-                            if (task.isCancelled()) {
-                                break;
-                            }
-
-                            generated += handleCurrentPage();
-
-                            updateFileProgress(currentParameters.currentPage - currentParameters.fromPage + 1, total);
-
-                            currentParameters.currentTotalHandled++;
-                        }
-                    }
-                    postHandlePages();
-                    doc.close();
-                }
-                currentParameters.startPage = 1;
-            } catch (Exception e) {
-                logger.error(e.toString());
+                actualParameters.toPage = info.getToPage();
+                actualParameters.password = info.getUserPassword();
+                actualParameters.startPage = actualParameters.fromPage;
+                actualParameters.currentPage = actualParameters.fromPage;
             }
+
+            try (PDDocument pd = PDDocument.load(currentParameters.currentSourceFile,
+                    currentParameters.password, AppVariables.pdfMemUsage)) {
+                doc = pd;
+                if (currentParameters.toPage <= 0 || currentParameters.toPage > doc.getNumberOfPages()) {
+                    currentParameters.toPage = doc.getNumberOfPages();
+                }
+
+                currentParameters.currentTargetPath = targetPath;
+                if (currentParameters.targetSubDir) {
+                    currentParameters.currentTargetPath = new File(targetPath.getAbsolutePath() + "/"
+                            + FileTools.getFilePrefix(currentParameters.currentSourceFile.getName()));
+                    if (!currentParameters.currentTargetPath.exists()) {
+                        currentParameters.currentTargetPath.mkdirs();
+                    }
+                }
+                if (preHandlePages()) {
+                    int total = currentParameters.toPage - currentParameters.fromPage + 1;
+                    updateFileProgress(0, total);
+                    for (currentParameters.currentPage = currentParameters.startPage;
+                            currentParameters.currentPage <= currentParameters.toPage; currentParameters.currentPage++) {
+                        if (task.isCancelled()) {
+                            break;
+                        }
+
+                        generated += handleCurrentPage();
+
+                        updateFileProgress(currentParameters.currentPage - currentParameters.fromPage + 1, total);
+
+                        currentParameters.currentTotalHandled++;
+                    }
+                }
+                postHandlePages();
+                doc.close();
+            }
+            currentParameters.startPage = 1;
+        } catch (Exception e) {
+            logger.error(e.toString());
         }
+
         updateInterface("CompleteFile");
         return MessageFormat.format(AppVariables.message("HandlePagesGenerateNumber"),
                 currentParameters.currentPage - currentParameters.fromPage, generated);

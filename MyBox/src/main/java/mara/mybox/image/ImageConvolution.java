@@ -228,7 +228,7 @@ public class ImageConvolution extends PixelsOperation {
         }
         BufferedImage target = applyConvolveOp(clearedSource, imageOp);
         if (type == ConvolutionKernel.Convolution_Type.EMBOSS) {
-            PixelsOperation pixelsOperation = PixelsOperation.newPixelsOperation(target, null,
+            PixelsOperation pixelsOperation = PixelsOperation.create(target, null,
                     OperationType.RGB, ColorActionType.Increase);
             pixelsOperation.setIntPara1(128);
             target = pixelsOperation.operate();

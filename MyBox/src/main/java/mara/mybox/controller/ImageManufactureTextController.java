@@ -358,7 +358,7 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
                         maskView.setLayoutX(imageView.getLayoutX());
                         maskView.setLayoutY(imageView.getLayoutY());
                     } else {
-                        parent.updateImage(ImageOperation.Text, textInput.getText(), null, newImage);
+                        parent.updateImage(ImageOperation.Text, textInput.getText(), null, newImage, cost);
                         imageController.operating();
                         imageController.imageLabel.setText(message("ClickImageForText"));
 
@@ -366,7 +366,7 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
                 }
 
             };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
+            parent.openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();

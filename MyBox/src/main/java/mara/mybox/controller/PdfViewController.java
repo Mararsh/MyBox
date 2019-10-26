@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +44,7 @@ import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.image.ImageManufacture;
+import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.value.AppVariables;
@@ -325,12 +325,10 @@ public class PdfViewController extends ImageViewerController {
             task = new SingletonTask<Void>() {
 
                 private String result;
-                private long cost;
 
                 @Override
                 protected boolean handle() {
                     try {
-                        cost = new Date().getTime();
                         ITesseract instance = new Tesseract();
                         String path = AppVariables.getUserConfigValue("TessDataPath", null);
                         if (path != null) {
@@ -349,7 +347,6 @@ public class PdfViewController extends ImageViewerController {
                             return false;
                         }
                         result = instance.doOCR(bufferedImage);
-                        cost = new Date().getTime() - cost;
                         return result != null;
                     } catch (Exception e) {
                         error = e.toString();
@@ -363,7 +360,9 @@ public class PdfViewController extends ImageViewerController {
                         popText(message("OCRMissComments"), 5000, "white", "1.1em", null);
                     }
                     ocrArea.setText(result);
-                    resultLabel.setText(MessageFormat.format(message("OCRresults"), result.length(), cost));
+                    resultLabel.setText(MessageFormat.format(message("OCRresults"),
+                            result.length(), DateTools.showTime(cost)));
+
                     orcPage = currentPage;
                 }
 

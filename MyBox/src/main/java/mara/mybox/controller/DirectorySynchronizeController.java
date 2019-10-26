@@ -18,7 +18,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
@@ -43,27 +42,23 @@ public class DirectorySynchronizeController extends FilesBatchController {
 
     protected boolean isConditional, startHandle;
     protected String lastFileName;
-    protected Date startTime;
     protected FileSynchronizeAttributes copyAttr;
-    protected StringBuffer newLogs;
-    protected int newlines, maxLines, totalLines, cacheLines = 200;
     protected String strFailedCopy, strCreatedSuccessfully, strCopySuccessfully, strFailedDelete;
     protected String strDeleteSuccessfully, strFileDeleteSuccessfully, strDirectoryDeleteSuccessfully;
 
     @FXML
     protected VBox dirsBox, conditionsBox, condBox, logsBox;
     @FXML
-    protected TextField maxLinesinput, notCopyInput;
+    protected TextField notCopyInput;
     @FXML
     protected ToggleGroup copyGroup;
     @FXML
-    protected CheckBox copySubdirCheck, copyEmptyCheck, copyNewCheck, copyHiddenCheck, copyReadonlyCheck, verboseCheck;
+    protected CheckBox copySubdirCheck, copyEmptyCheck, copyNewCheck, copyHiddenCheck, copyReadonlyCheck;
     @FXML
-    protected CheckBox copyExistedCheck, copyModifiedCheck, deleteNonExistedCheck, notCopyCheck, copyAttrCheck, continueCheck;
+    protected CheckBox copyExistedCheck, copyModifiedCheck, deleteNonExistedCheck, notCopyCheck, copyAttrCheck, continueCheck,
+            deleteSourceCheck;
     @FXML
     protected DatePicker modifyAfterInput;
-    @FXML
-    protected TextArea logsTextArea;
 
     public DirectorySynchronizeController() {
         baseTitle = AppVariables.message("DirectorySynchronize");
@@ -85,6 +80,18 @@ public class DirectorySynchronizeController extends FilesBatchController {
                         deleteNonExistedCheck.setStyle("-fx-text-fill: #961c1c; -fx-font-weight: bolder;");
                     } else {
                         deleteNonExistedCheck.setStyle(null);
+                    }
+                }
+            });
+
+            deleteSourceCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov,
+                        Boolean oldValue, Boolean newValue) {
+                    if (deleteSourceCheck.isSelected()) {
+                        deleteSourceCheck.setStyle("-fx-text-fill: #961c1c; -fx-font-weight: bolder;");
+                    } else {
+                        deleteSourceCheck.setStyle(null);
                     }
                 }
             });
@@ -115,11 +122,6 @@ public class DirectorySynchronizeController extends FilesBatchController {
             logger.debug(e.toString());
         }
 
-    }
-
-    @FXML
-    protected void clearAction(ActionEvent event) {
-        logsTextArea.setText("");
     }
 
     protected boolean initAttributes() {
@@ -165,17 +167,9 @@ public class DirectorySynchronizeController extends FilesBatchController {
                         }
                     }
                 }
+                initLogs();
                 logsTextArea.setText(AppVariables.message("SourcePath") + ": " + sourcePathInput.getText() + "\n");
                 logsTextArea.appendText(AppVariables.message("TargetPath") + ": " + targetPathInput.getText() + "\n");
-                newLogs = new StringBuffer();
-                newlines = 0;
-                totalLines = 0;
-
-                try {
-                    maxLines = Integer.parseInt(maxLinesinput.getText());
-                } catch (Exception e) {
-                    maxLines = 5000;
-                }
 
                 strFailedCopy = AppVariables.message("FailedCopy") + ": ";
                 strCreatedSuccessfully = AppVariables.message("CreatedSuccessfully") + ": ";
@@ -226,9 +220,10 @@ public class DirectorySynchronizeController extends FilesBatchController {
 
                     @Override
                     protected boolean handle() {
+                        boolean done = false;
                         if (copyAttr.isConditionalCopy()) {
                             paused = false;
-                            conditionalCopy(sourcePath, targetPath);
+                            done = conditionalCopy(sourcePath, targetPath);
                         } else {
                             if (!paused && targetPath.exists()) {
                                 updateLogs(AppVariables.message("ClearingTarget"), true);
@@ -240,9 +235,16 @@ public class DirectorySynchronizeController extends FilesBatchController {
                                 }
                             }
                             paused = false;
-                            copyWholeDirectory(sourcePath, targetPath);
+                            done = copyWholeDirectory(sourcePath, targetPath);
                         }
-                        return true;
+                        if (!done || task == null || task.isCancelled()) {
+                            return false;
+                        }
+                        if (deleteSourceCheck.isSelected()) {
+                            done = FileTools.deleteDir(sourcePath);
+                            updateLogs(AppVariables.message("SourcePathCleared"), true);
+                        }
+                        return done;
                     }
 
                     @Override
@@ -357,7 +359,7 @@ public class DirectorySynchronizeController extends FilesBatchController {
         if (operationBarController.getStatusLabel() == null) {
             return;
         }
-        long cost = (new Date().getTime() - startTime.getTime()) / 1000;
+        long cost = new Date().getTime() - startTime.getTime();
         double avg = 0;
         if (copyAttr.getCopiedFilesNumber() != 0) {
             avg = DoubleTools.scale3((double) cost / copyAttr.getCopiedFilesNumber());
@@ -369,7 +371,7 @@ public class DirectorySynchronizeController extends FilesBatchController {
             s = message(currentStatus);
         }
         s += ". " + message("HandledThisTime") + ": " + copyAttr.getCopiedFilesNumber() + " "
-                + message("Cost") + ": " + cost + " " + message("Seconds") + ". "
+                + message("Cost") + ": " + DateTools.showTime(cost) + ". "
                 + message("Average") + ": " + avg + " " + message("SecondsPerItem") + ". "
                 + message("StartTime") + ": " + DateTools.datetimeToString(startTime) + ", "
                 + message("EndTime") + ": " + DateTools.datetimeToString(new Date());
@@ -420,40 +422,6 @@ public class DirectorySynchronizeController extends FilesBatchController {
             avg = DoubleTools.scale3((double) cost / copyAttr.getCopiedFilesNumber());
         }
         return avg;
-    }
-
-    protected void updateLogs(final String line) {
-        updateLogs(line, true, false);
-    }
-
-    protected void updateLogs(final String line, boolean immediate) {
-        updateLogs(line, true, immediate);
-    }
-
-    protected void updateLogs(final String line, boolean showTime, boolean immediate) {
-        try {
-            if (showTime) {
-                newLogs.append(DateTools.datetimeToString(new Date())).append("  ");
-            }
-            newLogs.append(line).append("\n");
-            long past = new Date().getTime() - startTime.getTime();
-            if (immediate || newlines++ > cacheLines || past > 5000) {
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        logsTextArea.appendText(newLogs.toString());
-                        totalLines += newlines;
-                        if (totalLines > maxLines + cacheLines) {
-                            logsTextArea.deleteText(0, newLogs.length());
-                        }
-                        newLogs = new StringBuffer();
-                        newlines = 0;
-                    }
-                });
-            }
-        } catch (Exception e) {
-
-        }
     }
 
     protected void checkIsConditional() {

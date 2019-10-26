@@ -202,6 +202,51 @@ License:    Apache License Version 2.0
                                 </VBox>
                             </content>
                         </Tab>
+                  <Tab fx:id="markdownTab" text="Markdown">
+                     <content>
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                           <children>
+                              <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                 <children>
+                                    <Label fx:id="editLabel1" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                    <HBox fx:id="htmlBox" alignment="CENTER_LEFT" spacing="5.0" HBox.hgrow="NEVER">
+                                       <children>
+                                          <Button fx:id="refreshMarkdownButton" mnemonicParsing="false" onAction="#refreshMarkdown">
+                                             <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../buttons/iconRefresh.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </Button>
+                                          <Button fx:id="saveMarkdownButton" mnemonicParsing="false" onAction="#saveMarkdown" onMouseEntered="#popSaveMarkdown">
+                                             <graphic>
+                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../buttons/iconSave.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </Button>
+                                          <Button fx:id="editMarkdownButton" mnemonicParsing="false" onAction="#editMarkdown">
+                                             <graphic>
+                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../buttons/iconEdit.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </Button>
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </HBox>
+                              <TextArea fx:id="markdownArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" VBox.vgrow="ALWAYS" />
+                           </children>
+                        </VBox>
+                     </content>
+                  </Tab>
                     </tabs>
                 </TabPane>
             </children>

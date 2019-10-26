@@ -25,7 +25,21 @@ public class MyBox {
     // To pass arguments to JavaFx GUI
     // https://stackoverflow.com/questions/33549820/javafx-not-calling-mainstring-args-method/33549932#33549932
     public static void main(String[] args) {
-        AppVariables.appArgs = args.clone();
+        if (args == null) {
+            AppVariables.appArgs = null;
+        } else {
+            AppVariables.appArgs = new String[args.length];
+            for (int i = 0; i < args.length; i++) {
+//                try {
+////                    AppVariables.appArgs[i] = new String(args[i].getBytes("utf-8"), "utf-8");
+////                    AppVariables.appArgs[i] = new String(args[i].getBytes("ISO-8859-1"), "utf-8");
+//                } catch (Exception e) {
+//                    AppVariables.appArgs[i] = args[i];
+//                }
+//                logger.debug(args[i] + "    " + AppVariables.appArgs[i]);
+                AppVariables.appArgs[i] = args[i];
+            }
+        }
 
         initBaseValues();
         logger.info("MyBox Config file:" + AppVariables.MyboxConfigFile);
@@ -147,7 +161,6 @@ public class MyBox {
         try {
             String javaHome = System.getProperty("java.home");
             File boundlesJar;
-            String os = System.getProperty("os.name").toLowerCase();
             if (SystemTools.isMac()) {
                 boundlesJar = new File(javaHome.substring(0, javaHome.length() - "runtime/Contents/Home".length())
                         + "Java" + File.separator + "MyBox-" + CommonValues.AppVersion + ".jar");

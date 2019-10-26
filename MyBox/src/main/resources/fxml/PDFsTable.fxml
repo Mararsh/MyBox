@@ -22,8 +22,8 @@ License:    Apache License Version 2.0
 
 <VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.PDFsTableController">
     <children>
-        <ToolBar fx:id="toolbar" maxWidth="1.7976931348623157E308" minHeight="-Infinity" VBox.vgrow="NEVER">
-            <items>
+        <FlowPane hgap="5.0" maxWidth="1.7976931348623157E308" prefWrapLength="800.0" vgap="5.0" VBox.vgrow="NEVER">
+            <children>
                 <Button fx:id="addFilesButton" mnemonicParsing="false" onAction="#addFilesAction" onMouseEntered="#popFileAdd">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -132,6 +132,15 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </CheckBox>
+                <CheckBox fx:id="tableCreateDirCheck" mnemonicParsing="false" selected="true">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconAddFoloder.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </CheckBox>
                 <CheckBox fx:id="tableExpandDirCheck" mnemonicParsing="false">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -150,8 +159,8 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </ToggleButton>
-            </items>
-        </ToolBar>
+            </children>
+        </FlowPane>
         <Label fx:id="tableCommentsLabel" layoutX="10.0" layoutY="522.0" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%PdfTableComments" wrapText="true" />
         <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
             <columns>
@@ -168,15 +177,11 @@ License:    Apache License Version 2.0
                 <TableColumn fx:id="createTimeColumn" editable="false" prefWidth="160.0" text="%CreateTime" />
             </columns>
         </TableView>
-        <HBox fx:id="setBox" alignment="CENTER_LEFT" layoutX="10.0" layoutY="458.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="5.0">
+        <FlowPane fx:id="setPDFPane" hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
             <children>
-                <Label text="%Password">
-                    <HBox.margin>
-                        <Insets />
-                    </HBox.margin>
-                </Label>
-                <TextField fx:id="passwordInput" prefWidth="120.0" HBox.hgrow="NEVER" />
-                <HBox fx:id="fromToBax" alignment="CENTER_LEFT" spacing="5.0">
+                <Label text="%Password" />
+                <TextField fx:id="passwordInput" prefWidth="120.0" />
+                <HBox fx:id="fromToBox" alignment="CENTER_LEFT" spacing="5.0">
                     <children>
                         <Label text="%FromPage" />
                         <TextField fx:id="fromInput" prefWidth="70.0" text="1" />
@@ -195,14 +200,15 @@ License:    Apache License Version 2.0
                 </Button>
                 <Label fx:id="setLabel" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%PdfTableInputComments" />
             </children>
-        </HBox>
-        <HBox fx:id="filterBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="5.0" VBox.vgrow="NEVER">
+        </FlowPane>
+        <FlowPane fx:id="selectPane" hgap="5.0" layoutX="10.0" layoutY="504.0" vgap="5.0">
             <children>
-                <Label text="%FileNameFilters" />
+                <Label text="%FilesSelector" />
                 <ComboBox fx:id="nameFiltersSelector" prefHeight="30.0" prefWidth="257.0" />
-                <TextField fx:id="tableFiltersInput" promptText="%SeparateBySpace" HBox.hgrow="ALWAYS" />
+                <TextField fx:id="tableFiltersInput" prefWidth="400.0" promptText="%SeparateBySpace" />
+                <Hyperlink fx:id="regexLink" onAction="#regexHelp" text="%RegularExpression" />
             </children>
-        </HBox>
+        </FlowPane>
         <Label fx:id="tableLabel" styleClass="blue-label" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER" />
     </children>
 </VBox>

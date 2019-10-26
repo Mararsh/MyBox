@@ -336,6 +336,7 @@ public class PdfSplitBatchController extends PdfBatchController {
             int total = docs.size();
             for (PDDocument pd : docs) {
                 pd.setDocumentInformation(info);
+                pd.setVersion(1.0f);
                 PDPage page = pd.getPage(0);
                 PDPageXYZDestination dest = new PDPageXYZDestination();
                 dest.setPage(page);

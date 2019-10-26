@@ -2,11 +2,10 @@ package mara.mybox.image;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import mara.mybox.data.IntStatistic;
+import mara.mybox.image.ImageColor.ColorComponent;
 import static mara.mybox.value.AppVariables.logger;
 
 /**
@@ -18,41 +17,27 @@ import static mara.mybox.value.AppVariables.logger;
  */
 public class ImageStatistic {
 
-    private BufferedImage image;
+    protected BufferedImage image;
+    protected Map<ColorComponent, ComponentStatistic> data;
 
-    public ImageStatistic() {
+    public static ImageStatistic create(BufferedImage image) {
+        return new ImageStatistic().setImage(image).setData(new HashMap<>());
     }
 
-    public ImageStatistic(BufferedImage image) {
-        this.image = image;
-    }
-
-    public int[] grayHistogram() {
-        return grayHistogram(image);
-    }
-
-    public static int[] grayHistogram(BufferedImage image) {
-        if (image == null) {
-            return null;
-        }
-        BufferedImage grayImage = ImageGray.byteGray(image);
-        int[] histogram = new int[256];
-        for (int y = 0; y < image.getHeight(); y++) {
-            for (int x = 0; x < image.getWidth(); x++) {
-                int grey = new Color(grayImage.getRGB(x, y)).getRed();
-                histogram[grey]++;
-            }
-        }
-        return histogram;
-    }
-
-    public static Map<String, Object> analyze(BufferedImage image) {
-        Map<String, Object> data = new HashMap<>();
+    public ImageStatistic analyze() {
         try {
             if (image == null) {
-                return data;
+                return null;
             }
-            int[] greyHistogram = new int[256];
+            Color color;
+            long redSum, greenSum, blueSum, alphaSum, hueSum, saturationSum, brightnessSum, graySum;
+            redSum = greenSum = blueSum = alphaSum = hueSum = saturationSum = brightnessSum = graySum = 0;
+            int redMaximum, greenMaximum, blueMaximum, alphaMaximum, hueMaximum, saturationMaximum, brightnessMaximum, grayMaximum;
+            redMaximum = greenMaximum = blueMaximum = alphaMaximum = hueMaximum = saturationMaximum = brightnessMaximum = grayMaximum = 0;
+            int redMinimum, greenMinimum, blueMinimum, alphaMinimum, hueMinimum, saturationMinimum, brightnessMinimum, grayMinimum;
+            redMinimum = greenMinimum = blueMinimum = alphaMinimum = hueMinimum = saturationMinimum = brightnessMinimum = grayMinimum = 255;
+            int v;
+            int[] grayHistogram = new int[256];
             int[] redHistogram = new int[256];
             int[] greenHistogram = new int[256];
             int[] blueHistogram = new int[256];
@@ -60,14 +45,6 @@ public class ImageStatistic {
             int[] hueHistogram = new int[361];
             int[] saturationHistogram = new int[101];
             int[] brightnessHistogram = new int[101];
-            Color color;
-            long redSum, greenSum, blueSum, alphaSum, hueSum, saturationSum, brightnessSum, greySum;
-            redSum = greenSum = blueSum = alphaSum = hueSum = saturationSum = brightnessSum = greySum = 0;
-            int redMaximum, greenMaximum, blueMaximum, alphaMaximum, hueMaximum, saturationMaximum, brightnessMaximum, greyMaximum;
-            redMaximum = greenMaximum = blueMaximum = alphaMaximum = hueMaximum = saturationMaximum = brightnessMaximum = greyMaximum = 0;
-            int redMinimum, greenMinimum, blueMinimum, alphaMinimum, hueMinimum, saturationMinimum, brightnessMinimum, greyMinimum;
-            redMinimum = greenMinimum = blueMinimum = alphaMinimum = hueMinimum = saturationMinimum = brightnessMinimum = greyMinimum = 255;
-            int v;
             for (int y = 0; y < image.getHeight(); y++) {
                 for (int x = 0; x < image.getWidth(); x++) {
                     color = new Color(image.getRGB(x, y));
@@ -143,25 +120,17 @@ public class ImageStatistic {
                     }
 
                     v = ImageColor.RGB2GrayValue(color);
-                    greyHistogram[v]++;
-                    greySum += v;
-                    if (v > greyMaximum) {
-                        greyMaximum = v;
+                    grayHistogram[v]++;
+                    graySum += v;
+                    if (v > grayMaximum) {
+                        grayMaximum = v;
                     }
-                    if (v < greyMinimum) {
-                        greyMinimum = v;
+                    if (v < grayMinimum) {
+                        grayMinimum = v;
                     }
 
                 }
             }
-            data.put("greyHistogram", greyHistogram);
-            data.put("redHistogram", redHistogram);
-            data.put("greenHistogram", greenHistogram);
-            data.put("blueHistogram", blueHistogram);
-            data.put("alphaHistogram", alphaHistogram);
-            data.put("hueHistogram", hueHistogram);
-            data.put("saturationHistogram", saturationHistogram);
-            data.put("brightnessHistogram", brightnessHistogram);
 
             long pxielsNumber = image.getWidth() * image.getHeight();
             int redMean = (int) (redSum / pxielsNumber);
@@ -171,12 +140,12 @@ public class ImageStatistic {
             int hueMean = (int) (hueSum / pxielsNumber);
             int saturationMean = (int) (saturationSum / pxielsNumber);
             int brightnessMean = (int) (brightnessSum / pxielsNumber);
-            int greyMean = (int) (greySum / pxielsNumber);
+            int grayMean = (int) (graySum / pxielsNumber);
 
-            long redVariable, greenVariable, blueVariable, alphaVariable, hueVariable, saturationVariable, brightnessVariable, greyVariable;
-            redVariable = greenVariable = blueVariable = alphaVariable = hueVariable = saturationVariable = brightnessVariable = greyVariable = 0;
-            long redSkewness, greenSkewness, blueSkewness, alphaSkewness, hueSkewness, saturationSkewness, brightnessSkewness, greySkewness;
-            redSkewness = greenSkewness = blueSkewness = alphaSkewness = hueSkewness = saturationSkewness = brightnessSkewness = greySkewness = 0;
+            long redVariable, greenVariable, blueVariable, alphaVariable, hueVariable, saturationVariable, brightnessVariable, grayVariable;
+            redVariable = greenVariable = blueVariable = alphaVariable = hueVariable = saturationVariable = brightnessVariable = grayVariable = 0;
+            long redSkewness, greenSkewness, blueSkewness, alphaSkewness, hueSkewness, saturationSkewness, brightnessSkewness, graySkewness;
+            redSkewness = greenSkewness = blueSkewness = alphaSkewness = hueSkewness = saturationSkewness = brightnessSkewness = graySkewness = 0;
             for (int y = 0; y < image.getHeight(); y++) {
                 for (int x = 0; x < image.getWidth(); x++) {
                     color = new Color(image.getRGB(x, y));
@@ -210,8 +179,8 @@ public class ImageStatistic {
                     brightnessSkewness += Math.pow(v - brightnessMean, 3);
 
                     v = ImageColor.RGB2GrayValue(color);
-                    greyVariable += Math.pow(v - greyMean, 2);
-                    greySkewness += Math.pow(v - greyMean, 3);
+                    grayVariable += Math.pow(v - grayMean, 2);
+                    graySkewness += Math.pow(v - grayMean, 3);
 
                 }
             }
@@ -223,7 +192,7 @@ public class ImageStatistic {
             hueVariable = (int) Math.sqrt(hueVariable / pxielsNumber);
             saturationVariable = (int) Math.sqrt(saturationVariable / pxielsNumber);
             brightnessVariable = (int) Math.sqrt(brightnessVariable / pxielsNumber);
-            greyVariable = (int) Math.sqrt(greyVariable / pxielsNumber);
+            grayVariable = (int) Math.sqrt(grayVariable / pxielsNumber);
 
             redSkewness = (int) Math.pow(redSkewness / pxielsNumber, 1.0 / 3);
             greenSkewness = (int) Math.pow(greenSkewness / pxielsNumber, 1.0 / 3);
@@ -232,40 +201,151 @@ public class ImageStatistic {
             hueSkewness = (int) Math.pow(hueSkewness / pxielsNumber, 1.0 / 3);
             saturationSkewness = (int) Math.pow(saturationSkewness / pxielsNumber, 1.0 / 3);
             brightnessSkewness = (int) Math.pow(brightnessSkewness / pxielsNumber, 1.0 / 3);
-            greySkewness = (int) Math.pow(greySkewness / pxielsNumber, 1.0 / 3);
+            graySkewness = (int) Math.pow(graySkewness / pxielsNumber, 1.0 / 3);
 
-            List<IntStatistic> statistic = new ArrayList<>();
-            statistic.add(new IntStatistic("Grey", greySum, greyMean, (int) greyVariable, (int) greySkewness,
-                    greyMinimum, greyMaximum, IntStatistic.maximumIndex(greyHistogram), IntStatistic.medianIndex(greyHistogram)));
-            statistic.add(new IntStatistic("Red", redSum, redMean, (int) redVariable, (int) redSkewness,
-                    redMinimum, redMaximum, IntStatistic.maximumIndex(redHistogram), IntStatistic.medianIndex(redHistogram)));
-            statistic.add(new IntStatistic("Green", greenSum, greenMean, (int) greenVariable, (int) greenSkewness,
-                    greenMinimum, greenMaximum, IntStatistic.maximumIndex(greenHistogram), IntStatistic.medianIndex(greenHistogram)));
-            statistic.add(new IntStatistic("Blue", blueSum, blueMean, (int) blueVariable, (int) blueSkewness,
-                    blueMinimum, blueMaximum, IntStatistic.maximumIndex(blueHistogram), IntStatistic.medianIndex(blueHistogram)));
-            statistic.add(new IntStatistic("Alpha", alphaSum, alphaMean, (int) alphaVariable, (int) alphaSkewness,
-                    alphaMinimum, alphaMaximum, IntStatistic.maximumIndex(alphaHistogram), IntStatistic.medianIndex(alphaHistogram)));
-            statistic.add(new IntStatistic("Hue", hueSum, hueMean, (int) hueVariable, (int) hueSkewness,
-                    hueMinimum, hueMaximum, IntStatistic.maximumIndex(hueHistogram), IntStatistic.medianIndex(hueHistogram)));
-            statistic.add(new IntStatistic("Saturation", saturationSum, saturationMean, (int) saturationVariable, (int) saturationSkewness,
-                    saturationMinimum, saturationMaximum, IntStatistic.maximumIndex(saturationHistogram), IntStatistic.medianIndex(saturationHistogram)));
-            statistic.add(new IntStatistic("Brightness", brightnessSum, brightnessMean, (int) brightnessVariable, (int) brightnessSkewness,
-                    brightnessMinimum, brightnessMaximum, IntStatistic.maximumIndex(brightnessHistogram), IntStatistic.medianIndex(brightnessHistogram)));
+            IntStatistic grayStatistic = new IntStatistic(ColorComponent.Gray.name(),
+                    graySum, grayMean, (int) grayVariable, (int) graySkewness,
+                    grayMinimum, grayMaximum, grayHistogram);
+            ComponentStatistic grayData = ComponentStatistic.create().setComponent(ColorComponent.Gray).
+                    setHistogram(grayHistogram).setStatistic(grayStatistic);
+            data.put(ColorComponent.Gray, grayData);
 
-            data.put("statistic", statistic);
+            IntStatistic redStatistic = new IntStatistic(ColorComponent.RedChannel.name(),
+                    redSum, redMean, (int) redVariable, (int) redSkewness,
+                    redMinimum, redMaximum, redHistogram);
+            ComponentStatistic redData = ComponentStatistic.create().setComponent(ColorComponent.RedChannel).
+                    setHistogram(redHistogram).setStatistic(redStatistic);
+            data.put(ColorComponent.RedChannel, redData);
 
+            IntStatistic greenStatistic = new IntStatistic(ColorComponent.GreenChannel.name(),
+                    greenSum, greenMean, (int) greenVariable, (int) greenSkewness,
+                    greenMinimum, greenMaximum, greenHistogram);
+            ComponentStatistic greenData = ComponentStatistic.create().setComponent(ColorComponent.GreenChannel).
+                    setHistogram(greenHistogram).setStatistic(greenStatistic);
+            data.put(ColorComponent.GreenChannel, greenData);
+
+            IntStatistic blueStatistic = new IntStatistic(ColorComponent.BlueChannel.name(),
+                    blueSum, blueMean, (int) blueVariable, (int) blueSkewness,
+                    blueMinimum, blueMaximum, blueHistogram);
+            ComponentStatistic blueData = ComponentStatistic.create().setComponent(ColorComponent.BlueChannel).
+                    setHistogram(blueHistogram).setStatistic(blueStatistic);
+            data.put(ColorComponent.BlueChannel, blueData);
+
+            IntStatistic hueStatistic = new IntStatistic(ColorComponent.Hue.name(),
+                    hueSum, hueMean, (int) hueVariable, (int) hueSkewness,
+                    hueMinimum, hueMaximum, hueHistogram);
+            ComponentStatistic hueData = ComponentStatistic.create().setComponent(ColorComponent.Hue).
+                    setHistogram(hueHistogram).setStatistic(hueStatistic);
+            data.put(ColorComponent.Hue, hueData);
+
+            IntStatistic saturationStatistic = new IntStatistic(ColorComponent.Saturation.name(),
+                    saturationSum, saturationMean, (int) saturationVariable, (int) saturationSkewness,
+                    saturationMinimum, saturationMaximum, saturationHistogram);
+            ComponentStatistic saturationData = ComponentStatistic.create().setComponent(ColorComponent.Saturation).
+                    setHistogram(saturationHistogram).setStatistic(saturationStatistic);
+            data.put(ColorComponent.Saturation, saturationData);
+
+            IntStatistic brightnessStatistic = new IntStatistic(ColorComponent.Brightness.name(),
+                    brightnessSum, brightnessMean, (int) brightnessVariable, (int) brightnessSkewness,
+                    brightnessMinimum, brightnessMaximum, brightnessHistogram);
+            ComponentStatistic brightnessData = ComponentStatistic.create().setComponent(ColorComponent.Brightness).
+                    setHistogram(brightnessHistogram).setStatistic(brightnessStatistic);
+            data.put(ColorComponent.Brightness, brightnessData);
+
+            IntStatistic alphaStatistic = new IntStatistic(ColorComponent.AlphaChannel.name(),
+                    alphaSum, alphaMean, (int) alphaVariable, (int) alphaSkewness,
+                    alphaMinimum, alphaMaximum, alphaHistogram);
+            ComponentStatistic alphaData = ComponentStatistic.create().setComponent(ColorComponent.AlphaChannel).
+                    setHistogram(alphaHistogram).setStatistic(alphaStatistic);
+            data.put(ColorComponent.AlphaChannel, alphaData);
+
+            return this;
         } catch (Exception e) {
             logger.debug(e.toString());
+            return null;
         }
-        return data;
     }
 
+    public ComponentStatistic data(ColorComponent component) {
+        return data.get(component);
+    }
+
+    public int[] histogram(ColorComponent component) {
+        ComponentStatistic s = data.get(component);
+        return s.getHistogram();
+    }
+
+    public IntStatistic statistic(ColorComponent component) {
+        ComponentStatistic s = data.get(component);
+        return s.getStatistic();
+    }
+
+    /*
+        static methods
+     */
+    public static Color color(ColorComponent component, int index) {
+        switch (component) {
+            case RedChannel:
+                return new Color(index, 0, 0, 255);
+            case GreenChannel:
+                return new Color(0, index, 0, 255);
+            case BlueChannel:
+                return new Color(0, 0, index, 255);
+            case AlphaChannel:
+                Color aColor = ImageColor.color(component);
+                return new Color(aColor.getRed(), aColor.getGreen(), aColor.getBlue(), index);
+            case Gray:
+                return new Color(index, index, index, 255);
+            case Hue:
+                return ImageColor.HSB2RGB(index / 360f, 1f, 1f);
+            case Saturation:
+                float h1 = ImageColor.getHue(ImageColor.color(component));
+                return ImageColor.HSB2RGB(h1, index / 100f, 1f);
+            case Brightness:
+                float h2 = ImageColor.getHue(ImageColor.color(component));
+                return ImageColor.HSB2RGB(h2, 1f, index / 100f);
+        }
+        return null;
+    }
+
+    public static Color color(String name, int index) {
+        return color(ImageColor.component(name), index);
+    }
+
+    public static int[] grayHistogram(BufferedImage image) {
+        if (image == null) {
+            return null;
+        }
+        BufferedImage grayImage = ImageGray.byteGray(image);
+        int[] histogram = new int[256];
+        for (int y = 0; y < image.getHeight(); y++) {
+            for (int x = 0; x < image.getWidth(); x++) {
+                int gray = new Color(grayImage.getRGB(x, y)).getRed();
+                histogram[gray]++;
+            }
+        }
+        return histogram;
+    }
+
+    /*
+        get/set
+     */
     public BufferedImage getImage() {
         return image;
     }
 
-    public void setImage(BufferedImage image) {
+    public ImageStatistic setImage(BufferedImage image) {
         this.image = image;
+        return this;
+    }
+
+    public Map<ColorComponent, ComponentStatistic> getData() {
+        return data;
+    }
+
+    public ImageStatistic setData(Map<ColorComponent, ComponentStatistic> data) {
+        this.data = data;
+        return this;
     }
 
 }

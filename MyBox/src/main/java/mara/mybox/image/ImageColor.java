@@ -1,6 +1,8 @@
 package mara.mybox.image;
 
 import java.awt.Color;
+import java.util.HashMap;
+import java.util.Map;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
 
@@ -44,8 +46,45 @@ public class ImageColor {
     }
 
     /*
-        Static methods
+        Static Data/Methods
      */
+    public static enum ColorComponent {
+        Gray, RedChannel, GreenChannel, BlueChannel, Hue, Saturation, Brightness, AlphaChannel
+    }
+
+    public static Map<ColorComponent, Color> ComponentColor;
+
+    public static Color color(ColorComponent c) {
+        if (ComponentColor == null) {
+            ComponentColor = new HashMap<>();
+            ComponentColor.put(ColorComponent.RedChannel, Color.RED);
+            ComponentColor.put(ColorComponent.GreenChannel, Color.GREEN);
+            ComponentColor.put(ColorComponent.BlueChannel, Color.BLUE);
+            ComponentColor.put(ColorComponent.Hue, Color.PINK);
+            ComponentColor.put(ColorComponent.Brightness, Color.ORANGE);
+            ComponentColor.put(ColorComponent.Saturation, Color.CYAN);
+            ComponentColor.put(ColorComponent.AlphaChannel, Color.YELLOW);
+            ComponentColor.put(ColorComponent.Gray, Color.GRAY);
+        }
+        if (c == null) {
+            return null;
+        }
+        return ComponentColor.get(c);
+    }
+
+    public static Color componentColor(String name) {
+        return color(component(name));
+    }
+
+    public static ColorComponent component(String name) {
+        for (ColorComponent c : ColorComponent.values()) {
+            if (c.name().equals(name) || message(c.name()).equals(name)) {
+                return c;
+            }
+        }
+        return null;
+    }
+
     public static Color getAlphaColor() {
         return ImageColor.converColor(AppVariables.getAlphaColor());
     }
@@ -156,20 +195,29 @@ public class ImageColor {
         return srgb;
     }
 
-    // https://en.wikipedia.org/wiki/Color_difference
     public static int calculateColorDistance(Color color1, Color color2) {
         int v = calculateColorDistance2(color1, color2);
         return (int) Math.round(Math.sqrt(v));
     }
 
+    // https://en.wikipedia.org/wiki/Color_difference
     public static int calculateColorDistance2(Color color1, Color color2) {
         int redDiff = color1.getRed() - color2.getRed();
         int greenDiff = color1.getGreen() - color2.getGreen();
         int blueDiff = color1.getBlue() - color2.getBlue();
-        int v = Math.round(2 * redDiff * redDiff + 4 * greenDiff * greenDiff + 3 * blueDiff * blueDiff);
-        return v;
+        return Math.round(2 * redDiff * redDiff + 4 * greenDiff * greenDiff + 3 * blueDiff * blueDiff);
     }
 
+    // https://www.compuphase.com/cmetric.htm
+//    public static int calculateColorDistance2(Color color1, Color color2) {
+//        int redDiff = color1.getRed() - color2.getRed();
+//        int greenDiff = color1.getGreen() - color2.getGreen();
+//        int blueDiff = color1.getBlue() - color2.getBlue();
+//        int redAvg = (color1.getRed() + color2.getRed()) / 2;
+//        return Math.round(((512 + redAvg) * redDiff * redDiff) >> 8
+//                + 4 * greenDiff * greenDiff
+//                + ((767 - redAvg) * blueDiff * blueDiff) >> 8);
+//    }
     // distance2 = Math.pow(distance, 2)
     public static boolean isColorMatch2(Color color1, Color color2, int distance2) {
         if (color1.equals(color2)) {
@@ -351,6 +399,33 @@ public class ImageColor {
 
     public static int YCbCr2pixel(int Y, int Cb, int Cr) {
         return YCbCr2rgb(Y, Cb, Cr).getRGB();
+    }
+
+    // Convert from 24-bit to 15-bit color
+    public static int convert24BitsTo15Bits(int c) {
+        int r = (c & 0xf80000) >> 19;
+        int g = (c & 0xf800) >> 6;
+        int b = (c & 0xf8) << 7;
+        return b | g | r;
+    }
+
+    // Get red component of a 15-bit color
+    public static int redOf15Bits(int x) {
+        return (x & 31) << 3;
+    }
+
+    // Get green component of a 15-bit color
+    public static int greenOf15Bits(int x) {
+        return (x >> 2) & 0xf8;
+    }
+
+    // Get blue component of a 15-bit color
+    public static int blueOf15Bits(int x) {
+        return (x >> 7) & 0xf8;
+    }
+
+    public static Color ColorOf15Bits(int c) {
+        return new Color(redOf15Bits(c), greenOf15Bits(c), blueOf15Bits(c));
     }
 
     /*

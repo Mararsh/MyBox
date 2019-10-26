@@ -25,6 +25,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import mara.mybox.controller.ImageManufactureController.ImageOperation;
 import mara.mybox.data.ConvolutionKernel;
@@ -62,8 +63,8 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
     private ContrastAlgorithm contrastAlgorithm;
     private SmoothAlgorithm smoothAlgorithm;
     private SharpenAlgorithm sharpenAlgorithm;
-    private ChangeListener<String> intBoxListener, stringBoxListener, intInputListener,
-            intInput2Listener, intInput3Listener;
+    private ChangeListener<String> intBoxListener, stringBoxListener,
+            intInput1Listener, intInput2Listener;
     private ChangeListener<Number> numberBoxListener;
     private ImageView manageView;
 
@@ -72,17 +73,19 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
     @FXML
     protected RadioButton ContrastRadio, smoothRadio, SharpenRadio, ConvolutionRadio;
     @FXML
-    protected TextField intInput, intInput2, intInput3;
+    protected TextField intInput1, intInput2;
     @FXML
-    protected FlowPane setBox;
+    protected VBox setBox;
     @FXML
-    protected ComboBox<String> intBox, stringBox;
+    protected FlowPane stringSelectorPane, intSelectorPane, intInput1Pane, intInput2Pane;
+    @FXML
+    protected ComboBox<String> intSelector, stringSelector;
     @FXML
     protected CheckBox valueCheck;
     @FXML
-    protected Label intLabel, intLabel2, intLabel3, stringLabel;
+    protected Label intListLabel, stringLabel, intLabel1, intLabel2;
     @FXML
-    protected Button button;
+    protected Button button, demoButton;
 
     public ImageManufactureEnhancementController() {
         baseTitle = AppVariables.message("ImageManufactureEnhancement");
@@ -129,22 +132,19 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
     private void clearValues() {
         setBox.getChildren().clear();
         if (stringBoxListener != null) {
-            stringBox.getSelectionModel().selectedItemProperty().removeListener(stringBoxListener);
+            stringSelector.getSelectionModel().selectedItemProperty().removeListener(stringBoxListener);
         }
         if (numberBoxListener != null) {
-            stringBox.getSelectionModel().selectedIndexProperty().removeListener(numberBoxListener);
+            stringSelector.getSelectionModel().selectedIndexProperty().removeListener(numberBoxListener);
         }
         if (intBoxListener != null) {
-            intBox.getSelectionModel().selectedItemProperty().removeListener(intBoxListener);
+            intSelector.getSelectionModel().selectedItemProperty().removeListener(intBoxListener);
         }
-        if (intInputListener != null) {
-            intInput.textProperty().removeListener(intInputListener);
+        if (intInput1Listener != null) {
+            intInput1.textProperty().removeListener(intInput1Listener);
         }
         if (intInput2Listener != null) {
             intInput2.textProperty().removeListener(intInput2Listener);
-        }
-        if (intInput3Listener != null) {
-            intInput3.textProperty().removeListener(intInput3Listener);
         }
         valueCheck.setDisable(false);
         button.setOnAction(null);
@@ -152,16 +152,15 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
         button.setDisable(false);
         okButton.disableProperty().unbind();
         okButton.setDisable(false);
-        stringBox.getItems().clear();
-        stringBox.getEditor().setStyle(null);
-        intBox.getItems().clear();
-        intBox.getEditor().setStyle(null);
-        intInput.setStyle(null);
+        stringSelector.getItems().clear();
+        stringSelector.getEditor().setStyle(null);
+        intSelector.getItems().clear();
+        intSelector.getEditor().setStyle(null);
+        intInput1.setStyle(null);
         intInput2.setStyle(null);
-        intInput3.setStyle(null);
-        stringBox.setEditable(false);
-        intBox.setEditable(false);
-        intBox.setDisable(false);
+        stringSelector.setEditable(false);
+        intSelector.setEditable(false);
+        intSelector.setDisable(false);
     }
 
     private void checkEnhanceType() {
@@ -210,21 +209,21 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                         } else {
                             smoothAlgorithm = SmoothAlgorithm.GaussianBlur;
                         }
-                        FxmlControl.setEditorNormal(stringBox);
+                        FxmlControl.setEditorNormal(stringSelector);
                     } catch (Exception e) {
-                        FxmlControl.setEditorBadStyle(stringBox);
+                        FxmlControl.setEditorBadStyle(stringSelector);
                     }
                 }
             };
-            stringBox.getSelectionModel().selectedItemProperty().addListener(stringBoxListener);
-            stringBox.getItems().addAll(Arrays.asList(
+            stringSelector.getSelectionModel().selectedItemProperty().addListener(stringBoxListener);
+            stringSelector.getItems().addAll(Arrays.asList(
                     message("GaussianBlur"), message("AverageBlur")
             ));
-            stringBox.getSelectionModel().select(message("GaussianBlur"));
+            stringSelector.getSelectionModel().select(message("GaussianBlur"));
 
             intPara1 = 10;
-            intLabel.setText(message("Radius"));
-            intBox.setEditable(true);
+            intListLabel.setText(message("Radius"));
+            intSelector.setEditable(true);
 
             intBoxListener = new ChangeListener<String>() {
                 @Override
@@ -233,23 +232,22 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                         int v = Integer.valueOf(newValue);
                         if (v > 0) {
                             intPara1 = v;
-                            FxmlControl.setEditorNormal(intBox);
+                            FxmlControl.setEditorNormal(intSelector);
                         } else {
-                            FxmlControl.setEditorBadStyle(intBox);
+                            FxmlControl.setEditorBadStyle(intSelector);
                         }
                     } catch (Exception e) {
-                        FxmlControl.setEditorBadStyle(intBox);
+                        FxmlControl.setEditorBadStyle(intSelector);
                     }
                 }
             };
-            intBox.getSelectionModel().selectedItemProperty().addListener(intBoxListener);
-            intBox.getItems().addAll(Arrays.asList("3", "5", "10", "2", "1", "8", "15", "20", "30"));
-            intBox.getSelectionModel().select(0);
+            intSelector.getSelectionModel().selectedItemProperty().addListener(intBoxListener);
+            intSelector.getItems().addAll(Arrays.asList("3", "5", "10", "2", "1", "8", "15", "20", "30"));
+            intSelector.getSelectionModel().select(0);
 
-            setBox.getChildren().addAll(stringLabel, stringBox, intLabel, intBox);
-            okButton.disableProperty().bind(
-                    intBox.getEditor().styleProperty().isEqualTo(badStyle)
-                            .or(stringBox.getEditor().styleProperty().isEqualTo(badStyle))
+            setBox.getChildren().addAll(stringSelectorPane, intSelectorPane);
+            okButton.disableProperty().bind(intSelector.getEditor().styleProperty().isEqualTo(badStyle)
+                    .or(stringSelector.getEditor().styleProperty().isEqualTo(badStyle))
             );
 
         } catch (Exception e) {
@@ -266,31 +264,30 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                     try {
                         if (message("UnsharpMasking").equals(newValue)) {
                             sharpenAlgorithm = SharpenAlgorithm.UnsharpMasking;
-                            intBox.setDisable(false);
+                            intSelector.setDisable(false);
                         } else if (message("FourNeighborLaplace").equals(newValue)) {
                             sharpenAlgorithm = SharpenAlgorithm.FourNeighborLaplace;
-                            intBox.setDisable(true);
+                            intSelector.setDisable(true);
                         } else if (message("EightNeighborLaplace").equals(newValue)) {
                             sharpenAlgorithm = SharpenAlgorithm.EightNeighborLaplace;
-                            intBox.setDisable(true);
+                            intSelector.setDisable(true);
                         }
-                        FxmlControl.setEditorNormal(stringBox);
+                        FxmlControl.setEditorNormal(stringSelector);
                     } catch (Exception e) {
-                        FxmlControl.setEditorBadStyle(stringBox);
+                        FxmlControl.setEditorBadStyle(stringSelector);
                     }
                 }
             };
-            stringBox.getSelectionModel().selectedItemProperty().addListener(stringBoxListener);
-            stringBox.getItems().addAll(Arrays.asList(
+            stringSelector.getSelectionModel().selectedItemProperty().addListener(stringBoxListener);
+            stringSelector.getItems().addAll(Arrays.asList(
                     message("UnsharpMasking"),
                     message("FourNeighborLaplace"), message("EightNeighborLaplace")
             ));
-            stringBox.getSelectionModel().select(message("UnsharpMasking"));
+            stringSelector.getSelectionModel().select(message("UnsharpMasking"));
 
             intPara1 = 2;
-            intLabel.setText(message("Radius"));
-            intBox.setEditable(true);
-
+            intListLabel.setText(message("Radius"));
+            intSelector.setEditable(true);
             intBoxListener = new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
@@ -298,23 +295,22 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                         int v = Integer.valueOf(newValue);
                         if (v > 0) {
                             intPara1 = v;
-                            FxmlControl.setEditorNormal(intBox);
+                            FxmlControl.setEditorNormal(intSelector);
                         } else {
-                            FxmlControl.setEditorBadStyle(intBox);
+                            FxmlControl.setEditorBadStyle(intSelector);
                         }
                     } catch (Exception e) {
-                        FxmlControl.setEditorBadStyle(intBox);
+                        FxmlControl.setEditorBadStyle(intSelector);
                     }
                 }
             };
-            intBox.getSelectionModel().selectedItemProperty().addListener(intBoxListener);
-            intBox.getItems().addAll(Arrays.asList("2", "1", "3", "4", "5"));
-            intBox.getSelectionModel().select(0);
+            intSelector.getSelectionModel().selectedItemProperty().addListener(intBoxListener);
+            intSelector.getItems().addAll(Arrays.asList("2", "1", "3", "4", "5"));
+            intSelector.getSelectionModel().select(0);
 
-            setBox.getChildren().addAll(stringLabel, stringBox, intLabel, intBox);
-            okButton.disableProperty().bind(
-                    intBox.getEditor().styleProperty().isEqualTo(badStyle)
-                            .or(stringBox.getEditor().styleProperty().isEqualTo(badStyle))
+            setBox.getChildren().addAll(stringSelectorPane, intSelectorPane);
+            okButton.disableProperty().bind(intSelector.getEditor().styleProperty().isEqualTo(badStyle)
+                    .or(stringSelector.getEditor().styleProperty().isEqualTo(badStyle))
             );
 
         } catch (Exception e) {
@@ -336,14 +332,14 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                     int index = newValue.intValue();
                     if (index < 0 || index >= kernels.size()) {
                         kernel = null;
-                        FxmlControl.setEditorBadStyle(stringBox);
+                        FxmlControl.setEditorBadStyle(stringSelector);
                         return;
                     }
                     kernel = kernels.get(index);
-                    FxmlControl.setEditorNormal(stringBox);
+                    FxmlControl.setEditorNormal(stringSelector);
                 }
             };
-            stringBox.getSelectionModel().selectedIndexProperty().addListener(numberBoxListener);
+            stringSelector.getSelectionModel().selectedIndexProperty().addListener(numberBoxListener);
 
             manageView.setImage(new Image(ControlStyle.getIcon("iconSetting.png")));
             manageView.setFitWidth(20);
@@ -360,9 +356,8 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                 }
             });
 
-            setBox.getChildren().addAll(stringLabel, stringBox, button);
-            okButton.disableProperty().bind(
-                    stringBox.getEditor().styleProperty().isEqualTo(badStyle)
+            setBox.getChildren().addAll(stringSelectorPane, button);
+            okButton.disableProperty().bind(stringSelector.getEditor().styleProperty().isEqualTo(badStyle)
             );
 
         } catch (Exception e) {
@@ -373,50 +368,57 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
 
     private void makeContrastBox() {
         try {
+            setBox.getChildren().addAll(stringSelectorPane);
             contrastAlgorithm = ContrastAlgorithm.HSB_Histogram_Equalization;
             stringLabel.setText(message("Algorithm"));
+            stringSelector.getItems().addAll(Arrays.asList(message("HSBHistogramEqualization"),
+                    message("GrayHistogramEqualization"),
+                    message("GrayHistogramStretching"),
+                    message("GrayHistogramShifting")
+            //                    getMessage("LumaHistogramEqualization"),
+            //                    getMessage("AdaptiveHistogramEqualization")
+            ));
+
             stringBoxListener = new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     if (setBox.getChildren() != null) {
-                        if (setBox.getChildren().contains(intInput)) {
-                            setBox.getChildren().removeAll(intLabel, intInput);
+                        if (setBox.getChildren().contains(intInput1Pane)) {
+                            setBox.getChildren().removeAll(intInput1Pane);
                         }
-                        if (setBox.getChildren().contains(intInput2)) {
-                            setBox.getChildren().removeAll(intLabel2, intInput2);
+                        if (setBox.getChildren().contains(intInput2Pane)) {
+                            setBox.getChildren().removeAll(intInput2Pane);
                         }
                     }
                     okButton.disableProperty().unbind();
                     if (message("GrayHistogramEqualization").equals(newValue)) {
                         contrastAlgorithm = ContrastAlgorithm.Gray_Histogram_Equalization;
+
                     } else if (message("GrayHistogramStretching").equals(newValue)) {
                         contrastAlgorithm = ContrastAlgorithm.Gray_Histogram_Stretching;
                         intPara1 = 100;
-                        intLabel.setText(message("LeftThreshold"));
-                        intInput = new TextField();
-                        intInput.textProperty().addListener(new ChangeListener<String>() {
+                        intLabel1.setText(message("LeftThreshold"));
+                        intInput1.textProperty().addListener(new ChangeListener<String>() {
                             @Override
                             public void changed(ObservableValue<? extends String> observable,
                                     String oldValue, String newValue) {
                                 try {
-                                    int v = Integer.valueOf(intInput.getText());
+                                    int v = Integer.valueOf(intInput1.getText());
                                     if (v >= 0) {
                                         intPara1 = v;
-                                        intInput.setStyle(null);
+                                        intInput1.setStyle(null);
                                     } else {
-                                        intInput.setStyle(badStyle);
+                                        intInput1.setStyle(badStyle);
                                     }
                                 } catch (Exception e) {
-                                    intInput.setStyle(badStyle);
+                                    intInput1.setStyle(badStyle);
                                 }
                             }
                         });
-
-                        intInput.setText("100");
+                        intInput1.setText("100");
 
                         intPara2 = 100;
-                        intLabel2 = new Label(message("RightThreshold"));
-                        intInput2 = new TextField();
+                        intLabel2.setText(message("RightThreshold"));
                         intInput2.textProperty().addListener(new ChangeListener<String>() {
                             @Override
                             public void changed(ObservableValue<? extends String> observable,
@@ -437,64 +439,55 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                         intInput2.setPrefWidth(100);
                         intInput2.setText("100");
 
-                        setBox.getChildren().addAll(intLabel, intInput, intLabel2, intInput2);
-                        okButton.disableProperty().bind(
-                                intInput.styleProperty().isEqualTo(badStyle)
-                                        .or(intInput2.styleProperty().isEqualTo(badStyle))
-                                        .or(stringBox.getEditor().styleProperty().isEqualTo(badStyle))
+                        setBox.getChildren().addAll(intInput1Pane, intInput2Pane);
+                        okButton.disableProperty().bind(intInput1.styleProperty().isEqualTo(badStyle)
+                                .or(intInput2.styleProperty().isEqualTo(badStyle))
+                                .or(stringSelector.getEditor().styleProperty().isEqualTo(badStyle))
                         );
+
                     } else if (message("GrayHistogramShifting").equals(newValue)) {
                         contrastAlgorithm = ContrastAlgorithm.Gray_Histogram_Shifting;
                         intPara1 = 80;
-                        intLabel.setText(message("Offset"));
-                        intInput = new TextField();
-                        intInput.textProperty().addListener(new ChangeListener<String>() {
+                        intLabel1.setText(message("Offset"));
+                        intInput1.textProperty().addListener(new ChangeListener<String>() {
                             @Override
                             public void changed(ObservableValue<? extends String> observable,
                                     String oldValue, String newValue) {
                                 try {
-                                    int v = Integer.valueOf(intInput.getText());
+                                    int v = Integer.valueOf(intInput1.getText());
                                     if (v >= -255 && v <= 255) {
                                         intPara1 = v;
-                                        intInput.setStyle(null);
+                                        intInput1.setStyle(null);
                                     } else {
-                                        intInput.setStyle(badStyle);
+                                        intInput1.setStyle(badStyle);
                                         popError("-255 ~ 255");
                                     }
                                 } catch (Exception e) {
-                                    intInput.setStyle(badStyle);
+                                    intInput1.setStyle(badStyle);
                                     popError("-255 ~ 255");
                                 }
                             }
                         });
-
-                        intInput.setText("10");
-                        FxmlControl.setTooltip(intInput, new Tooltip("-255 ~ 255"));
-                        setBox.getChildren().addAll(intLabel, intInput);
-                        okButton.disableProperty().bind(
-                                intInput.styleProperty().isEqualTo(badStyle)
-                                        .or(stringBox.getEditor().styleProperty().isEqualTo(badStyle))
+                        intInput1.setText("10");
+                        FxmlControl.setTooltip(intInput1, new Tooltip("-255 ~ 255"));
+                        setBox.getChildren().addAll(intInput1Pane);
+                        okButton.disableProperty().bind(intInput1.styleProperty().isEqualTo(badStyle)
+                                .or(stringSelector.getEditor().styleProperty().isEqualTo(badStyle))
                         );
+
                     } else if (message("LumaHistogramEqualization").equals(newValue)) {
                         contrastAlgorithm = ContrastAlgorithm.Luma_Histogram_Equalization;
+
                     } else if (message("HSBHistogramEqualization").equals(newValue)) {
                         contrastAlgorithm = ContrastAlgorithm.HSB_Histogram_Equalization;
+
                     } else if (message("AdaptiveHistogramEqualization").equals(newValue)) {
                         contrastAlgorithm = ContrastAlgorithm.Adaptive_Histogram_Equalization;
                     }
                 }
             };
-            stringBox.getSelectionModel().selectedItemProperty().addListener(stringBoxListener);
-            stringBox.getItems().addAll(Arrays.asList(message("HSBHistogramEqualization"),
-                    message("GrayHistogramEqualization"),
-                    message("GrayHistogramStretching"),
-                    message("GrayHistogramShifting")
-            //                    getMessage("LumaHistogramEqualization"),
-            //                    getMessage("AdaptiveHistogramEqualization")
-            ));
-            stringBox.getSelectionModel().select(0);
-
-            setBox.getChildren().addAll(stringLabel, stringBox);
+            stringSelector.getSelectionModel().selectedItemProperty().addListener(stringBoxListener);
+            stringSelector.getSelectionModel().select(0);
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -504,31 +497,31 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
     @Override
     public void applyKernel(ConvolutionKernel kernel) {
         ConvolutionRadio.fire();
-        if (stringBox.getItems().contains(kernel.getName())) {
-            stringBox.getSelectionModel().select(kernel.getName());
+        if (stringSelector.getItems().contains(kernel.getName())) {
+            stringSelector.getSelectionModel().select(kernel.getName());
         } else {
-            stringBox.getSelectionModel().select(-1);
+            stringSelector.getSelectionModel().select(-1);
         }
         this.kernel = kernel;
         okAction();
     }
 
     public void loadKernelsList(List<ConvolutionKernel> records) {
-        if (enhanceType != OperationType.Convolution || stringBox == null) {
+        if (enhanceType != OperationType.Convolution || stringSelector == null) {
             return;
         }
         kernels = records;
-        stringBox.getItems().clear();
+        stringSelector.getItems().clear();
         if (kernels != null && !kernels.isEmpty()) {
             List<String> names = new ArrayList<>();
             for (ConvolutionKernel k : kernels) {
                 names.add(k.getName());
             }
-            stringBox.getItems().addAll(names);
-            stringBox.getSelectionModel().select(0);
-            FxmlControl.setEditorNormal(stringBox);
+            stringSelector.getItems().addAll(names);
+            stringSelector.getSelectionModel().select(0);
+            FxmlControl.setEditorNormal(stringSelector);
         } else {
-            FxmlControl.setEditorBadStyle(stringBox);
+            FxmlControl.setEditorBadStyle(stringSelector);
         }
     }
 
@@ -559,7 +552,7 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                             break;
                         case Convolution:
                             if (kernel == null) {
-                                int index = stringBox.getSelectionModel().getSelectedIndex();
+                                int index = stringSelector.getSelectionModel().getSelectedIndex();
                                 if (kernels == null || kernels.isEmpty() || index < 0) {
                                     return false;
                                 }
@@ -611,10 +604,10 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
 
                 @Override
                 protected void whenSucceeded() {
-                    parent.updateImage(ImageOperation.Effects, enhanceType.name(), value, newImage);
+                    parent.updateImage(ImageOperation.Effects, enhanceType.name(), value, newImage, cost);
                 }
             };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
+            parent.openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -626,6 +619,8 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
         if (imageView.getImage() == null) {
             return;
         }
+        parent.popInformation(message("WaitAndHandling"));
+        demoButton.setDisable(true);
         Task demoTask = new Task<Void>() {
             private List<String> files;
 
@@ -748,6 +743,7 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
             @Override
             protected void succeeded() {
                 super.succeeded();
+                demoButton.setDisable(false);
                 if (files.isEmpty()) {
                     return;
                 }

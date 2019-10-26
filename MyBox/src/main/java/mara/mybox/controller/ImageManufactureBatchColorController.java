@@ -280,7 +280,7 @@ public class ImageManufactureBatchColorController extends ImageManufactureBatchC
             if (colorOperationType == OperationType.Opacity && preAlphaCheck.isSelected()) {
                 colorOperationType = OperationType.PreOpacity;
             }
-            PixelsOperation pixelsOperation = PixelsOperation.newPixelsOperation(source, null,
+            PixelsOperation pixelsOperation = PixelsOperation.create(source, null,
                     colorOperationType, colorActionType);
             switch (colorOperationType) {
                 case Hue:

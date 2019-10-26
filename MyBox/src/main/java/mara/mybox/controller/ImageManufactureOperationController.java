@@ -33,8 +33,9 @@ public class ImageManufactureOperationController extends ImageBaseController {
     @FXML
     protected Accordion accordionPane;
     @FXML
-    protected TitledPane clipboardPane, cropPane, scalePane, colorPane, effectPane, enhancementPane,
-            transformPane, shadowPane, marginsPane, arcPane, penPane, textPane, richTextPane;
+    protected TitledPane viewPane, clipboardPane, cropPane, scalePane, colorPane,
+            effectPane, enhancementPane, transformPane, shadowPane,
+            marginsPane, arcPane, penPane, textPane, richTextPane;
 
     public ImageManufactureOperationController() {
         baseTitle = AppVariables.message("ImageManufacture");
@@ -87,7 +88,9 @@ public class ImageManufactureOperationController extends ImageBaseController {
         try {
 
             String newFxml;
-            if (thePane.equals(clipboardPane)) {
+            if (thePane.equals(viewPane)) {
+                newFxml = CommonValues.ImageManufactureViewFxml;
+            } else if (thePane.equals(clipboardPane)) {
                 newFxml = CommonValues.ImageManufactureClipboardFxml;
             } else if (thePane.equals(cropPane)) {
                 newFxml = CommonValues.ImageManufactureCropFxml;
@@ -202,7 +205,8 @@ public class ImageManufactureOperationController extends ImageBaseController {
     }
 
     public void applyKernel(ConvolutionKernel kernel) {
-        ImageManufactureEnhancementController controller = (ImageManufactureEnhancementController) expandPane(enhancementPane);
+        ImageManufactureEnhancementController controller
+                = (ImageManufactureEnhancementController) expandPane(enhancementPane);
         if (controller == null) {
             return;
         }

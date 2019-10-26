@@ -425,14 +425,15 @@ public class ImageManufactureScaleController extends ImageManufactureOperationCo
                             (int) Math.round(imageView.getImage().getWidth()) + "x" + (int) Math.round(imageView.getImage().getHeight()),
                             (int) Math.round(newImage.getWidth()) + "x" + (int) Math.round(newImage.getHeight()));
                     parent.updateImage(ImageOperation.Scale, "Pixels",
-                            (int) Math.round(newImage.getWidth()) + "x" + (int) Math.round(newImage.getHeight()), newImage);
+                            (int) Math.round(newImage.getWidth()) + "x" + (int) Math.round(newImage.getHeight()),
+                            newImage, cost);
                     imageController.imageLabel.setText(info);
                     if (sizeType == SizeType.Dragging) {
                         initDrag(null);
                     }
                 }
             };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
+            parent.openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -466,11 +467,11 @@ public class ImageManufactureScaleController extends ImageManufactureOperationCo
                             (int) Math.round(imageController.image.getWidth()) + "x" + (int) Math.round(imageController.image.getHeight()),
                             (int) Math.round(imageView.getImage().getWidth()) + "x" + (int) Math.round(imageView.getImage().getHeight()),
                             (int) Math.round(newImage.getWidth()) + "x" + (int) Math.round(newImage.getHeight()));
-                    parent.updateImage(ImageOperation.Scale, scale + "", null, newImage);
+                    parent.updateImage(ImageOperation.Scale, scale + "", null, newImage, cost);
                     imageController.imageLabel.setText(info);
                 }
             };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
+            parent.openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();

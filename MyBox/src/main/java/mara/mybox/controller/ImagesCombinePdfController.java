@@ -484,6 +484,7 @@ public class ImagesCombinePdfController extends ImagesListController {
                             info.setProducer("MyBox v" + CommonValues.AppVersion);
                             info.setAuthor(authorInput.getText());
                             document.setDocumentInformation(info);
+                            document.setVersion(1.0f);
                             int count = 0;
                             int total = tableData.size();
                             for (ImageInformation source : tableData) {

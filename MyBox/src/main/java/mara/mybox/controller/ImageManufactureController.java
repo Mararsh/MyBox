@@ -3,7 +3,6 @@ package mara.mybox.controller;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.text.MessageFormat;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -27,10 +26,13 @@ import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TitledPane;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
@@ -49,6 +51,7 @@ import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.darkRedText;
 import mara.mybox.fxml.FxmlImageManufacture;
+import mara.mybox.fxml.FxmlStage;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.image.ImageClipboard;
 import mara.mybox.image.ImageFileInformation;
@@ -60,6 +63,7 @@ import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.FileTools.FileSortMode;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
@@ -75,9 +79,10 @@ public class ImageManufactureController extends ImageViewerController {
     protected SimpleBooleanProperty imageLoaded, imageUpdated;
     protected SimpleIntegerProperty hisIndex;
     protected String imageHistoriesPath;
-    protected boolean pickingColor;
+    protected boolean pickingColor, sychronizeZoom;
     protected ChangeListener<Number> leftDividerListener, rightDividerListener;
     protected int zoomStep;
+
     protected File refFile;
     protected ImageInformation refInformation;
     protected SimpleBooleanProperty editable;
@@ -92,25 +97,27 @@ public class ImageManufactureController extends ImageViewerController {
     @FXML
     protected VBox fileBox, rightPaneBox;
     @FXML
-    protected TitledPane filePane, viewPane, browsePane, tipsPane;
+    protected TitledPane filePane, saveAsPane, browsePane, tipsPane;
     @FXML
     protected VBox displayBox;
     @FXML
     protected Label refLabel, imageTipsLabel;
     @FXML
-    protected CheckBox saveConfirmCheck, saveCheck, syncCheck;
+    protected CheckBox saveConfirmCheck, saveCheck;
     @FXML
     protected ImageView leftPaneControl, rightPaneControl, refView, scopeView;
+    @FXML
+    protected ToggleGroup fileTypeGroup, saveAsGroup, sortGroup;
+    @FXML
+    protected RadioButton saveLoadRadio, saveOpenRadio, saveJustRadio;
     @FXML
     protected ImageManufactureOperationController operationController;
     @FXML
     protected ImageManufacturePaneController currentImageController, hisImageController, refImageController;
     @FXML
-    protected ImageDataController dataController;
-    @FXML
     protected TabPane imageTabs;
     @FXML
-    protected Tab currentImageTab, hisImageTab, refImageTab, dataTab;
+    protected Tab currentImageTab, hisImageTab, refImageTab;
     @FXML
     protected Button imageManuHisAsCurrentButton, imageManuHisDeleteButton, imageManuHisClearButton,
             imageManuHisNextButton, imageManuHisPreviousButton;
@@ -118,8 +125,6 @@ public class ImageManufactureController extends ImageViewerController {
     protected HBox commonBar, currentImageBar;
     @FXML
     protected ComboBox<ImageHistory> hisBox;
-    @FXML
-    protected ComboBox<String> zoomStepSelector;
 
     public ImageManufactureController() {
         baseTitle = AppVariables.message("ImageManufacture");
@@ -137,6 +142,9 @@ public class ImageManufactureController extends ImageViewerController {
         if (imageHistoriesPath == null) {
             imageHistoriesPath = AppVariables.getImageHisPath();
         }
+        zoomStep = 10;
+        sychronizeZoom
+                = AppVariables.getUserConfigBoolean("ImageZoomSychronize", true);
     }
 
     @Override
@@ -145,7 +153,6 @@ public class ImageManufactureController extends ImageViewerController {
             currentImageController.parent = this;
             hisImageController.parent = this;
             refImageController.parent = this;
-            dataController.parent = this;
 
             initLeftPane();
             initRightPane();
@@ -257,9 +264,6 @@ public class ImageManufactureController extends ImageViewerController {
         controller.setParentController(this);
         controller.setParentFxml(myFxml);
         controller.tabPane.getSelectionModel().select(controller.imageTab);
-        rulerXCheck.selectedProperty().bindBidirectional(controller.rulerXCheck.selectedProperty());
-        rulerYCheck.selectedProperty().bindBidirectional(controller.rulerYCheck.selectedProperty());
-        coordinateCheck.selectedProperty().bindBidirectional(controller.coordinateCheck.selectedProperty());
     }
 
     /*
@@ -268,42 +272,65 @@ public class ImageManufactureController extends ImageViewerController {
     protected void initLeftPane() {
         try {
             fileBox.disableProperty().bind(
-                    imageLoaded.isEqualTo(new SimpleBooleanProperty(false))
+                    imageLoaded.not()
             );
-            viewPane.disableProperty().bind(
-                    imageLoaded.isEqualTo(new SimpleBooleanProperty(false))
+            saveAsPane.disableProperty().bind(
+                    imageLoaded.not()
             );
             browsePane.disableProperty().bind(
-                    imageLoaded.isEqualTo(new SimpleBooleanProperty(false))
+                    imageLoaded.not()
             );
-
             saveButton.disableProperty().bind(imageUpdated.not());
 
-            zoomStep = 10;
-            zoomStepSelector.getItems().addAll(
-                    Arrays.asList("10", "20", "5", "1", "3", "15", "30", "25", "45")
-            );
-            zoomStepSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            if (null != saveAsType) {
+                switch (saveAsType) {
+                    case Load:
+                        saveLoadRadio.setSelected(true);
+                        break;
+                    case Open:
+                        saveOpenRadio.setSelected(true);
+                        break;
+                    case None:
+                        saveJustRadio.setSelected(true);
+                        break;
+                    default:
+                        break;
+                }
+            } else {
+                saveAsType = SaveAsType.Load;
+            }
+            saveAsGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
-                public void changed(ObservableValue<? extends String> ov, String oldVal, String newVal) {
-                    zoomStep = Integer.valueOf(newVal);
-                    AppVariables.setUserConfigValue("ImageZoomStep", zoomStep + "");
-                    if (image == null) {
-                        return;
+                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
+                    if (saveLoadRadio.isSelected()) {
+                        saveAsType = SaveAsType.Load;
+                    } else if (saveOpenRadio.isSelected()) {
+                        saveAsType = SaveAsType.Open;
+                    } else if (saveJustRadio.isSelected()) {
+                        saveAsType = SaveAsType.None;
                     }
-                    xZoomStep = (int) (image.getWidth() * zoomStep / 100);
-                    yZoomStep = (int) (image.getHeight() * zoomStep / 100);
-                    currentImageController.xZoomStep = (int) (currentImageController.image.getWidth() * zoomStep / 100);
-                    currentImageController.yZoomStep = (int) (currentImageController.image.getHeight() * zoomStep / 100);
-                    hisImageController.xZoomStep = (int) (hisImageController.image.getWidth() * zoomStep / 100);
-                    hisImageController.yZoomStep = (int) (hisImageController.image.getHeight() * zoomStep / 100);
-                    refImageController.xZoomStep = (int) (refImageController.image.getWidth() * zoomStep / 100);
-                    refImageController.yZoomStep = (int) (refImageController.image.getHeight() * zoomStep / 100);
                 }
             });
-            zoomStepSelector.getSelectionModel().select(AppVariables.getUserConfigValue("ImageZoomStep", "10"));
 
-            initRulersCheck();
+            sortMode = FileTools.FileSortMode.ModifyTimeDesc;
+            sortGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                @Override
+                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
+                    if (newValue == null) {
+                        return;
+                    }
+                    String selected = ((RadioButton) newValue).getText();
+                    for (FileSortMode mode : FileSortMode.values()) {
+                        if (message(mode.name()).equals(selected)) {
+                            sortMode = mode;
+                            break;
+                        }
+                    }
+                    if (!isSettingValues) {
+                        makeImageNevigator();
+                    }
+                }
+            });
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -365,7 +392,7 @@ public class ImageManufactureController extends ImageViewerController {
     protected void initRightPane() {
         try {
             rightPaneBox.disableProperty().bind(
-                    imageLoaded.isEqualTo(new SimpleBooleanProperty(false))
+                    imageLoaded.not()
             );
             operationController.initPane(this);
 
@@ -502,17 +529,10 @@ public class ImageManufactureController extends ImageViewerController {
                         refImageController.setPaletteController(null);
                     }
 
-                    if (newValue.equals(dataTab)) {
-                        if (dataController.imageData == null) {
-                            dataController.loadData();
-                        }
-                    }
-
                 }
             });
 
             initHisImageTab();
-            initDataPane();
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -598,7 +618,7 @@ public class ImageManufactureController extends ImageViewerController {
                         if (task == null || isCancelled()) {
                             return false;
                         }
-                        return ImageClipboard.add(newImage, true) != null;
+                        return ImageClipboard.add(newImage) != null;
                     } catch (Exception e) {
                         error = e.toString();
                         return false;
@@ -679,8 +699,6 @@ public class ImageManufactureController extends ImageViewerController {
             currentImageController.init(sourceFile, image, title + " - " + message("CurrentImage"));
             hisImageController.init(sourceFile, image, title + " - " + message("HistoricalImage"));
             refImageController.init(sourceFile, image, title + " - " + message("ReferenceImage"));
-            operationController.expandPane(operationController.myPane);
-            dataController.init(sourceFile, image, true);
             currentImageController.clearOperating();
 
             imageLoaded.set(true);
@@ -696,6 +714,8 @@ public class ImageManufactureController extends ImageViewerController {
             refImageController.xZoomStep = xZoomStep;
             refImageController.yZoomStep = yZoomStep;
             refInformation = imageInformation;
+
+            operationController.expandPane(operationController.myPane);
 
             hisIndex.set(-1);
             loadImageHistories();
@@ -717,7 +737,7 @@ public class ImageManufactureController extends ImageViewerController {
     @FXML
     @Override
     public void loadedSize() {
-        if (syncCheck.isSelected()) {
+        if (sychronizeZoom) {
             currentImageController.loadedSize();
             hisImageController.loadedSize();
             refImageController.paneSize();
@@ -735,7 +755,7 @@ public class ImageManufactureController extends ImageViewerController {
     @FXML
     @Override
     public void paneSize() {
-        if (syncCheck.isSelected()) {
+        if (sychronizeZoom) {
             currentImageController.paneSize();
             hisImageController.paneSize();
             refImageController.paneSize();
@@ -752,7 +772,7 @@ public class ImageManufactureController extends ImageViewerController {
 
     @Override
     public void fitSize() {
-        if (syncCheck.isSelected()) {
+        if (sychronizeZoom) {
             currentImageController.fitSize();
             hisImageController.fitSize();
             refImageController.fitSize();
@@ -770,7 +790,7 @@ public class ImageManufactureController extends ImageViewerController {
     @FXML
     @Override
     public void zoomIn() {
-        if (syncCheck.isSelected()) {
+        if (sychronizeZoom) {
             currentImageController.zoomIn();
             hisImageController.zoomIn();
             refImageController.zoomIn();
@@ -788,7 +808,7 @@ public class ImageManufactureController extends ImageViewerController {
     @FXML
     @Override
     public void zoomOut() {
-        if (syncCheck.isSelected()) {
+        if (sychronizeZoom) {
             currentImageController.zoomOut();
             hisImageController.zoomOut();
             refImageController.zoomOut();
@@ -1559,10 +1579,11 @@ public class ImageManufactureController extends ImageViewerController {
             return;
         }
         try {
-            String name = null;
+            String name = "";
             if (sourceFile != null) {
                 name = FileTools.getFilePrefix(sourceFile.getName());
             }
+            name += "." + ((RadioButton) fileTypeGroup.getSelectedToggle()).getText();
             final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
                     name, targetExtensionFilter, true);
             if (file == null) {
@@ -1610,22 +1631,23 @@ public class ImageManufactureController extends ImageViewerController {
 
     }
 
-    public void updateImage(ImageOperation operation, Image newImage) {
+    public void updateImage(ImageOperation operation, Image newImage, long cost) {
         if (!editable.get()) {
             return;
         }
-        updateImage(operation, null, null, newImage);
+        updateImage(operation, null, null, newImage, cost);
     }
 
-    public void updateImage(ImageOperation operation, String objectType, String opType, Image newImage) {
+    public void updateImage(ImageOperation operation, String objectType, String opType,
+            Image newImage, long cost) {
         if (!editable.get()) {
             return;
         }
         try {
             currentImageController.updateImage(newImage);
             imageUpdated.set(true);
-            updateBottom(operation);
             recordImageHistory(operation, objectType, opType, newImage);
+
             String info;
             if (operation == ImageOperation.Scale) {
                 info = AppVariables.message("Scale2") + " " + message("Successful");
@@ -1633,12 +1655,18 @@ public class ImageManufactureController extends ImageViewerController {
                 info = AppVariables.message(operation.name()) + " " + message("Successful");
             }
             if (objectType != null) {
-                info += " " + message(objectType);
+                info += "  " + message(objectType);
             }
             if (opType != null) {
-                info += " " + message(opType);
+                info += "  " + message(opType);
             }
+            if (cost > 0) {
+                info += "    " + message("Cost") + ": " + DateTools.showTime(cost);
+            }
+            bottomLabel.setText(info);
+
             popText(info, AppVariables.getCommentsDelay(), "white", "1.5em", null);
+
             currentImageController.clearOperating();
         } catch (Exception e) {
             logger.debug(e.toString());
@@ -1700,7 +1728,7 @@ public class ImageManufactureController extends ImageViewerController {
 
                 @Override
                 protected void whenSucceeded() {
-                    updateImage(ImageOperation.Crop, newImage);
+                    updateImage(ImageOperation.Crop, newImage, cost);
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
@@ -1799,12 +1827,31 @@ public class ImageManufactureController extends ImageViewerController {
 
     }
 
+    @FXML
+    @Override
+    public void statisticAction() {
+        ImageView view = null;
+        File file = null;
+        if (currentImageTab.isSelected()) {
+            view = currentImageController.imageView;
+            file = sourceFile;
 
-    /*
-        Data
-     */
-    protected void initDataPane() {
+        } else if (refImageTab.isSelected()) {
+            view = refImageController.imageView;
+            sourceFile = refFile;
 
+        } else if (hisImageTab.isSelected()) {
+            view = hisImageController.imageView;
+
+        }
+        if (view == null || view.getImage() == null) {
+            return;
+        }
+        ImageDataController controller
+                = (ImageDataController) FxmlStage.openStage(CommonValues.ImageDataFxml);
+        controller.init(file, view.getImage());
+        controller.setParentView(view);
+        controller.loadData();
     }
 
 }

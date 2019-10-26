@@ -165,101 +165,148 @@ public class FileTools {
         if (files == null || files.isEmpty() || sortMode == null) {
             return;
         }
-        switch (sortMode) {
-            case ModifyTimeDesc:
-                Collections.sort(files, new Comparator<File>() {
-                    @Override
-                    public int compare(File f1, File f2) {
-                        return (int) (f2.lastModified() - f1.lastModified());
-                    }
-                });
-                break;
+        try {
+            switch (sortMode) {
+                case ModifyTimeDesc:
+                    Collections.sort(files, new Comparator<File>() {
+                        @Override
+                        public int compare(File f1, File f2) {
+                            long diff = f2.lastModified() - f1.lastModified();
+                            if (diff == 0) {
+                                return 0;
+                            } else if (diff > 0) {
+                                return 1;
+                            } else {
+                                return -1;
+                            }
+                        }
+                    });
+                    break;
 
-            case ModifyTimeAsc:
-                Collections.sort(files, new Comparator<File>() {
-                    @Override
-                    public int compare(File f1, File f2) {
-                        return (int) (f1.lastModified() - f2.lastModified());
-                    }
-                });
-                break;
+                case ModifyTimeAsc:
+                    Collections.sort(files, new Comparator<File>() {
+                        @Override
+                        public int compare(File f1, File f2) {
+                            long diff = f1.lastModified() - f2.lastModified();
+                            if (diff == 0) {
+                                return 0;
+                            } else if (diff > 0) {
+                                return 1;
+                            } else {
+                                return -1;
+                            }
+                        }
+                    });
+                    break;
 
-            case NameDesc:
-                Collections.sort(files, new Comparator<File>() {
-                    @Override
-                    public int compare(File f1, File f2) {
-                        return f2.getAbsolutePath().compareTo(f1.getAbsolutePath());
-                    }
-                });
-                break;
+                case NameDesc:
+                    Collections.sort(files, new Comparator<File>() {
+                        @Override
+                        public int compare(File f1, File f2) {
+                            return f2.getAbsolutePath().compareTo(f1.getAbsolutePath());
+                        }
+                    });
+                    break;
 
-            case NameAsc:
-                Collections.sort(files, new Comparator<File>() {
-                    @Override
-                    public int compare(File f1, File f2) {
-                        return f1.getAbsolutePath().compareTo(f2.getAbsolutePath());
-                    }
-                });
-                break;
+                case NameAsc:
+                    Collections.sort(files, new Comparator<File>() {
+                        @Override
+                        public int compare(File f1, File f2) {
+                            return f1.getAbsolutePath().compareTo(f2.getAbsolutePath());
+                        }
+                    });
+                    break;
 
-            case CreateTimeDesc:
-                Collections.sort(files, new Comparator<File>() {
-                    @Override
-                    public int compare(File f1, File f2) {
-                        long t1 = FileTools.getFileCreateTime(f1.getAbsolutePath());
-                        long t2 = FileTools.getFileCreateTime(f2.getAbsolutePath());
-                        return (int) (t2 - t1);
-                    }
-                });
-                break;
+                case CreateTimeDesc:
+                    Collections.sort(files, new Comparator<File>() {
+                        @Override
+                        public int compare(File f1, File f2) {
+                            long t1 = FileTools.getFileCreateTime(f1.getAbsolutePath());
+                            long t2 = FileTools.getFileCreateTime(f2.getAbsolutePath());
+                            long diff = t2 - t1;
+                            if (diff == 0) {
+                                return 0;
+                            } else if (diff > 0) {
+                                return 1;
+                            } else {
+                                return -1;
+                            }
+                        }
+                    });
+                    break;
 
-            case CreateTimeAsc:
-                Collections.sort(files, new Comparator<File>() {
-                    @Override
-                    public int compare(File f1, File f2) {
-                        long t1 = FileTools.getFileCreateTime(f1.getAbsolutePath());
-                        long t2 = FileTools.getFileCreateTime(f2.getAbsolutePath());
-                        return (int) (t1 - t2);
-                    }
-                });
-                break;
+                case CreateTimeAsc:
+                    Collections.sort(files, new Comparator<File>() {
+                        @Override
+                        public int compare(File f1, File f2) {
+                            long t1 = FileTools.getFileCreateTime(f1.getAbsolutePath());
+                            long t2 = FileTools.getFileCreateTime(f2.getAbsolutePath());
+                            long diff = t1 - t2;
+                            if (diff == 0) {
+                                return 0;
+                            } else if (diff > 0) {
+                                return 1;
+                            } else {
+                                return -1;
+                            }
+                        }
+                    });
+                    break;
 
-            case SizeDesc:
-                Collections.sort(files, new Comparator<File>() {
-                    @Override
-                    public int compare(File f1, File f2) {
-                        return (int) (f2.length() - f1.length());
-                    }
-                });
-                break;
+                case SizeDesc:
+                    Collections.sort(files, new Comparator<File>() {
+                        @Override
+                        public int compare(File f1, File f2) {
+                            long diff = f2.length() - f1.length();
+                            if (diff == 0) {
+                                return 0;
+                            } else if (diff > 0) {
+                                return 1;
+                            } else {
+                                return -1;
+                            }
+                        }
+                    });
+                    break;
 
-            case SizeAsc:
-                Collections.sort(files, new Comparator<File>() {
-                    @Override
-                    public int compare(File f1, File f2) {
-                        return (int) (f1.length() - f2.length());
-                    }
-                });
-                break;
+                case SizeAsc:
+                    Collections.sort(files, new Comparator<File>() {
+                        @Override
+                        public int compare(File f1, File f2) {
+                            long diff = f1.length() - f2.length();
+                            if (diff == 0) {
+                                return 0;
+                            } else if (diff > 0) {
+                                return 1;
+                            } else {
+                                return -1;
+                            }
+                        }
+                    });
+                    break;
 
-            case FormatDesc:
-                Collections.sort(files, new Comparator<File>() {
-                    @Override
-                    public int compare(File f1, File f2) {
-                        return FileTools.getFileSuffix(f2).compareTo(FileTools.getFileSuffix(f1));
-                    }
-                });
-                break;
+                case FormatDesc:
+                    Collections.sort(files, new Comparator<File>() {
+                        @Override
+                        public int compare(File f1, File f2) {
+                            return FileTools.getFileSuffix(f2).compareTo(FileTools.getFileSuffix(f1));
+                        }
+                    });
+                    break;
 
-            case FormatAsc:
-                Collections.sort(files, new Comparator<File>() {
-                    @Override
-                    public int compare(File f1, File f2) {
-                        return FileTools.getFileSuffix(f1).compareTo(FileTools.getFileSuffix(f2));
-                    }
-                });
-                break;
+                case FormatAsc:
+                    Collections.sort(files, new Comparator<File>() {
+                        @Override
+                        public int compare(File f1, File f2) {
+                            return FileTools.getFileSuffix(f1).compareTo(FileTools.getFileSuffix(f2));
+                        }
+                    });
+                    break;
 
+            }
+
+        } catch (Exception e) {
+            logger.debug(e.toString());
         }
     }
 
@@ -672,7 +719,7 @@ public class FileTools {
     }
 
     public static List<File> splitFileByStartEndList(File file,
-            String filename, List<Integer> startEndList) {
+            String filename, List<Long> startEndList) {
         try {
             if (file == null || startEndList == null
                     || startEndList.isEmpty() || startEndList.size() % 2 > 0) {
@@ -809,7 +856,7 @@ public class FileTools {
             if (file == null || data == null) {
                 return null;
             }
-            try (FileWriter writer = new FileWriter(file, Charset.forName("utf-8"))) {
+            try (FileWriter writer = new FileWriter(file, Charset.forName("UTF-8"))) {
                 writer.write(data);
                 writer.flush();
             }

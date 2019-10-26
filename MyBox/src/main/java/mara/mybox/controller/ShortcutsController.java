@@ -73,8 +73,8 @@ public class ShortcutsController extends StringTableController {
             key("F11", "", message("SaveAs"), "CTRL+f / ALT+f");
             key("F12", "", message("MoreControls"), "CTRL+m / ALT+m");
             key("DELETE", "", message("Delete"), "CTRL+d / ALT+d");
-            key("PAGE_UP", "", message("Previous"), "");
-            key("PAGE_DOWN", "", message("Next"), "");
+            key("PAGE_UP", "", message("Previous"), "ALT+PAGE_UP");
+            key("PAGE_DOWN", "", message("Next"), "ALT+PAGE_DOWN");
             key("ESCAPE", "", message("Cancel"), "");
 
             key("CTRL", "e", message("Start") + " / " + message("OK") + " / " + message("Set"), "F1 / ALT+e");
@@ -90,21 +90,26 @@ public class ShortcutsController extends StringTableController {
             key("CTRL", "m", message("MoreControls"), "F12 / ALT+m");
             key("CTRL", "n", message("Create"), "");
             key("CTRL", "a", message("SelectAll"), "ALT+a");
+            key("CTRL", "g", message("Clear"), "ALT+g");
             key("CTRL", "p", message("Pop"), "ALT+p");
-            key("CTRL", "1", message("OriginalSize"), "");
-            key("CTRL", "2", message("PaneSize"), "");
-            key("CTRL", "3", message("ZoomIn"), "");
-            key("CTRL", "4", message("ZoomOut"), "");
+            key("CTRL", "1", message("OriginalSize") + " / " + message("First"), "");
+            key("CTRL", "2", message("PaneSize") + " / " + message("Previous"), "");
+            key("CTRL", "3", message("ZoomIn") + " / " + message("Next"), "");
+            key("CTRL", "4", message("ZoomOut") + " / " + message("Last"), "");
+            key("CTRL", "q", message("Replace"), "");
+            key("CTRL", "w", message("ReplaceAll"), "");
             key("CTRL", "-", message("DecreaseFontSize"), "");
             key("CTRL", "=", message("IncreaseFontSize"), "");
-            key("CTRL", "HOME", message("First"), "");
-            key("CTRL", "END", message("Last"), "");
 
             key("ALT", "1", message("Set"), "F1");
             key("ALT", "2", message("Increase"), "");
             key("ALT", "3", message("Decrease"), "");
             key("ALT", "4", message("Filter"), "");
             key("ALT", "5", message("Invert"), "");
+            key("ALT", "PAGE_UP", message("Previous"), "PAGE_UP");
+            key("ALT", "PAGE_DOWN", message("Next"), "PAGE_DOWN");
+            key("ALT", "HOME", message("First"), "");
+            key("ALT", "END", message("Last"), "");
 
         } catch (Exception e) {
             logger.error(e.toString());

@@ -3,7 +3,7 @@ package mara.mybox.controller;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -27,10 +27,14 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import mara.mybox.data.FileInformation;
+import mara.mybox.data.FileInformation.FileSelectorType;
 import mara.mybox.fxml.FxmlControl;
+import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.TableFileSizeCell;
 import mara.mybox.fxml.TableNumberCell;
 import mara.mybox.fxml.TableTimeCell;
+import mara.mybox.tools.ByteTools;
+import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
@@ -49,13 +53,9 @@ import mara.mybox.value.CommonImageValues;
  */
 public abstract class TableController<P> extends BaseController {
 
-    protected ObservableList<P> tableData = FXCollections.observableArrayList();
-    protected long totalFilesNumber, totalFilesSize;
-    protected FilterType filterType;
-
-    public enum FilterType {
-        IncludeOne, IncludeAll, NotIncludeAny, NotIncludeAll, None
-    }
+    protected ObservableList<P> tableData;
+    protected long totalFilesNumber, totalFilesSize, fileSelectorSize, fileSelectorTime;
+    protected FileSelectorType fileSelectorType;
 
     @FXML
     protected Button addFilesButton, insertFilesButton, addDirectoryButton, insertDirectoryButton,
@@ -68,7 +68,7 @@ public abstract class TableController<P> extends BaseController {
     @FXML
     protected TableColumn<P, Long> numberColumn, sizeColumn, modifyTimeColumn, createTimeColumn;
     @FXML
-    protected CheckBox tableSubdirCheck, tableExpandDirCheck;
+    protected CheckBox tableSubdirCheck, tableCreateDirCheck, tableExpandDirCheck;
     @FXML
     protected ComboBox<String> nameFiltersSelector;
     @FXML
@@ -137,23 +137,92 @@ public abstract class TableController<P> extends BaseController {
                 });
             }
 
-            if (tableFiltersInput != null) {
-                FxmlControl.setTooltip(tableFiltersInput, new Tooltip(message("SeparateBySpace")));
+            if (tableCreateDirCheck != null) {
+                tableCreateDirCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> ov, Boolean oldv, Boolean newv) {
+                        AppVariables.setUserConfigValue("TableCreateDirctories", newv);
+                    }
+                });
+                tableCreateDirCheck.setSelected(AppVariables.getUserConfigBoolean("TableCreateDirctories", true));
             }
+
             if (nameFiltersSelector != null) {
-                nameFiltersSelector.getItems().addAll(Arrays.asList(
-                        message("None"), message("IncludeOne"), message("IncludeAll"),
-                        message("NotIncludeAny"), message("NotIncludeAll")
-                ));
+                for (FileSelectorType type : FileSelectorType.values()) {
+                    nameFiltersSelector.getItems().add(message(type.name()));
+                }
+                nameFiltersSelector.setVisibleRowCount(FileSelectorType.values().length);
                 nameFiltersSelector.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
                     @Override
                     public void changed(ObservableValue ov, Number oldValue, Number newValue) {
-                        checkNameFilter();
+                        String selected = nameFiltersSelector.getSelectionModel().getSelectedItem();
+                        for (FileSelectorType type : FileSelectorType.values()) {
+                            if (message(type.name()).equals(selected)) {
+                                fileSelectorType = type;
+                                break;
+                            }
+                        }
+                        if (regexLink != null) {
+                            regexLink.setVisible(fileSelectorType == FileSelectorType.NameMatchAnyRegularExpression
+                                    || fileSelectorType == FileSelectorType.NameNotMatchAnyRegularExpression
+                            );
+                        }
+
+                        tableFiltersInput.setText("");
+                        switch (fileSelectorType) {
+                            case FileSizeLargerThan:
+                            case FileSizeSmallerThan:
+                                tableFiltersInput.setPromptText(message("FileSizeComments"));
+                                FxmlControl.setTooltip(tableFiltersInput, new Tooltip(message("FileSizeComments")));
+                                break;
+                            case ModifiedTimeEarlierThan:
+                            case ModifiedTimeLaterThan:
+                                tableFiltersInput.setText("2019-10-24 10:10:10");
+                                FxmlControl.setTooltip(tableFiltersInput, new Tooltip("2019-10-24 10:10:10"));
+                                break;
+                            default:
+                                tableFiltersInput.setPromptText(message("SeparateBySpace"));
+                                FxmlControl.setTooltip(tableFiltersInput, new Tooltip(message("SeparateBySpace")));
+                                break;
+                        }
                     }
                 });
                 nameFiltersSelector.getSelectionModel().select(0);
+
+                tableFiltersInput.textProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue<? extends String> ov, String oldv, String newv) {
+                        if (newv == null || newv.trim().isEmpty()) {
+                            tableFiltersInput.setStyle(null);
+                            fileSelectorSize = -1;
+                            fileSelectorTime = -1;
+                            return;
+                        }
+                        if (fileSelectorType == FileSelectorType.FileSizeLargerThan
+                                || fileSelectorType == FileSelectorType.FileSizeSmallerThan) {
+                            long v = ByteTools.checkBytesValue(newv);
+                            if (v >= 0) {
+                                fileSelectorSize = v;
+                                tableFiltersInput.setStyle(null);
+                            } else {
+                                tableFiltersInput.setStyle(badStyle);
+                                popError(message("FileSizeComments"));
+                            }
+
+                        } else if (fileSelectorType == FileSelectorType.ModifiedTimeEarlierThan
+                                || fileSelectorType == FileSelectorType.ModifiedTimeLaterThan) {
+                            Date d = DateTools.stringToDatetime(newv);
+                            if (d != null) {
+                                fileSelectorTime = d.getTime();
+                            } else {
+                                fileSelectorTime = -1;
+                            }
+
+                        }
+                    }
+                });
             }
-            filterType = FilterType.None;
+            fileSelectorType = FileSelectorType.All;
 
             if (tableLabel != null) {
                 tableLabel.setText("");
@@ -163,21 +232,6 @@ public abstract class TableController<P> extends BaseController {
 
         } catch (Exception e) {
             logger.error(e.toString());
-        }
-    }
-
-    protected void checkNameFilter() {
-        String selected = nameFiltersSelector.getSelectionModel().getSelectedItem();
-        if (message("None").equals(selected)) {
-            filterType = FilterType.None;
-        } else if (message("IncludeOne").equals(selected)) {
-            filterType = FilterType.IncludeOne;
-        } else if (message("IncludeAll").equals(selected)) {
-            filterType = FilterType.IncludeAll;
-        } else if (message("NotIncludeAny").equals(selected)) {
-            filterType = FilterType.NotIncludeAny;
-        } else if (message("NotIncludeAll").equals(selected)) {
-            filterType = FilterType.NotIncludeAll;
         }
     }
 
@@ -656,6 +710,7 @@ public abstract class TableController<P> extends BaseController {
         }
     }
 
+
     /*
         get/set
      */
@@ -875,12 +930,12 @@ public abstract class TableController<P> extends BaseController {
         this.tableLabel = tableLabel;
     }
 
-    public FilterType getFilterType() {
-        return filterType;
+    public FileSelectorType getFileSelectorType() {
+        return fileSelectorType;
     }
 
-    public void setFilterType(FilterType filterType) {
-        this.filterType = filterType;
+    public void setFileSelectorType(FileSelectorType fileSelectorType) {
+        this.fileSelectorType = fileSelectorType;
     }
 
 }

@@ -59,7 +59,6 @@ public class LoadingController extends BaseController {
             final long startTime = new Date().getTime();
             final String prefix = AppVariables.message("StartTime") + ": " + DateTools.nowString()
                     + "   " + AppVariables.message("ElapsedTime") + ": ";
-            final String suffix = " " + AppVariables.message("Seconds");
             timer = new Timer();
             timer.schedule(new TimerTask() {
                 @Override
@@ -71,8 +70,8 @@ public class LoadingController extends BaseController {
                                 cancelAction();
                                 return;
                             }
-                            long d = (new Date().getTime() - startTime) / 1000;
-                            timeLabel.setText(prefix + d + suffix);
+                            long d = new Date().getTime() - startTime;
+                            timeLabel.setText(prefix + DateTools.showTime(d));
                         }
                     });
                 }

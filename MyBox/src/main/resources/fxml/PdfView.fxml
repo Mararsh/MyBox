@@ -402,6 +402,7 @@ License:    Apache License Version 2.0
                                        </children>
                                     </HBox>
                                     <TextArea fx:id="ocrArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+                                    <Label fx:id="resultLabel" />
                                  </children>
                               </VBox>
                            </content>

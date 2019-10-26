@@ -22,6 +22,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
+import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.MatrixTools;
 import mara.mybox.tools.StringTools;
@@ -517,6 +518,7 @@ public class MatrixCalculationController extends BaseController {
     }
 
     @FXML
+    @Override
     public void clearAction() {
         isSettingValues = true;
         editArea.clear();
@@ -776,7 +778,7 @@ public class MatrixCalculationController extends BaseController {
                 if (startTime > 0) {
                     long cost = new Date().getTime() - startTime;
                     bottomLabel.setText(AppVariables.message("Successful") + ":" + currentCalculation + "  "
-                            + message("Cost") + ":" + cost + " ms");
+                            + message("Cost") + ":" + DateTools.showTime(cost));
                     startTime = -1;
                 }
 

@@ -310,43 +310,20 @@ public class ImageViewerController extends ImageMaskController {
         if (sortBox == null) {
             return;
         }
-        List<String> svalues = Arrays.asList(AppVariables.message("ModifyTimeDesc"),
-                AppVariables.message("ModifyTimeAsc"),
-                AppVariables.message("SizeDesc"),
-                AppVariables.message("SizeAsc"),
-                AppVariables.message("NameDesc"),
-                AppVariables.message("NameAsc"),
-                AppVariables.message("FormatDesc"),
-                AppVariables.message("FormatAsc"),
-                AppVariables.message("CreateTimeDesc"),
-                AppVariables.message("CreateTimeAsc")
-        );
-        sortBox.getItems().addAll(svalues);
+
+        sortMode = FileTools.FileSortMode.ModifyTimeDesc;
+        sortBox.getItems().clear();
+        for (FileSortMode mode : FileSortMode.values()) {
+            sortBox.getItems().add(message(mode.name()));
+        }
         sortBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue ov, String oldValue, String newValue) {
-                if (AppVariables.message("ModifyTimeDesc").equals(newValue)) {
-                    sortMode = FileTools.FileSortMode.ModifyTimeDesc;
-                } else if (AppVariables.message("ModifyTimeAsc").equals(newValue)) {
-                    sortMode = FileTools.FileSortMode.ModifyTimeAsc;
-                } else if (AppVariables.message("SizeDesc").equals(newValue)) {
-                    sortMode = FileTools.FileSortMode.SizeDesc;
-                } else if (AppVariables.message("SizeAsc").equals(newValue)) {
-                    sortMode = FileTools.FileSortMode.SizeAsc;
-                } else if (AppVariables.message("NameDesc").equals(newValue)) {
-                    sortMode = FileTools.FileSortMode.NameDesc;
-                } else if (AppVariables.message("NameAsc").equals(newValue)) {
-                    sortMode = FileTools.FileSortMode.NameAsc;
-                } else if (AppVariables.message("FormatDesc").equals(newValue)) {
-                    sortMode = FileTools.FileSortMode.FormatDesc;
-                } else if (AppVariables.message("FormatAsc").equals(newValue)) {
-                    sortMode = FileTools.FileSortMode.FormatAsc;
-                } else if (AppVariables.message("CreateTimeDesc").equals(newValue)) {
-                    sortMode = FileTools.FileSortMode.CreateTimeDesc;
-                } else if (AppVariables.message("CreateTimeAsc").equals(newValue)) {
-                    sortMode = FileTools.FileSortMode.CreateTimeAsc;
-                } else {
-                    sortMode = FileTools.FileSortMode.ModifyTimeDesc;
+                for (FileSortMode mode : FileSortMode.values()) {
+                    if (message(mode.name()).equals(newValue)) {
+                        sortMode = mode;
+                        break;
+                    }
                 }
                 if (!isSettingValues) {
                     makeImageNevigator();
@@ -897,7 +874,7 @@ public class ImageViewerController extends ImageMaskController {
                     if (areaImage == null) {
                         areaImage = imageView.getImage();
                     }
-                    return ImageClipboard.add(areaImage, true) != null;
+                    return ImageClipboard.add(areaImage) != null;
                 }
 
                 @Override
@@ -1282,8 +1259,8 @@ public class ImageViewerController extends ImageMaskController {
         }
         ImageDataController controller
                 = (ImageDataController) FxmlStage.openStage(CommonValues.ImageDataFxml);
-        controller.parent = this;
-        controller.init(sourceFile, image, false);
+        controller.init(sourceFile, imageView.getImage());
+        controller.setParentView(imageView);
         controller.loadData();
     }
 

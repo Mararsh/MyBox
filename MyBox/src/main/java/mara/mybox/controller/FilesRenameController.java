@@ -16,8 +16,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.VBox;
 import mara.mybox.data.FileInformation;
+import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.FileTools.FileSortMode;
 import mara.mybox.tools.StringTools;
@@ -34,28 +38,35 @@ import static mara.mybox.value.AppVariables.setUserConfigValue;
  */
 public class FilesRenameController extends FilesBatchController {
 
-    protected String FileNameFillZeroKey;
     protected FilesRenameTableController filesController;
     protected List<String> targetNames;
-    protected int currentAccum, digit;
+    protected int currentAccum, digit, startNumber;
+    protected RenameType renameType;
 
     protected List<File> includeFiles;
     protected Map<String, String> currentNewNames;
     protected Map<String, Map<String, String>> newNames;
 
     @FXML
-    protected CheckBox fillZeroCheck, originalCheck, stringCheck, accumCheck, suffixCheck, descentCheck;
+    protected VBox renameOptionsBox, numberBox, replaceBox;
     @FXML
-    protected TextField stringInput, suffixInput;
+    protected FlowPane suffixPane, prefixPane, extensionPane;
     @FXML
-    protected ToggleGroup sortGroup;
+    protected CheckBox fillZeroCheck, originalCheck, stringCheck, accumCheck,
+            suffixCheck, descentCheck, recountCheck;
+    @FXML
+    protected TextField oldStringInput, newStringInput, newExtInput,
+            prefixInput, suffixInput, stringInput;
+    @FXML
+    protected ToggleGroup sortGroup, renameGroup;
+
+    public static enum RenameType {
+        ReplaceSubString, AppendSuffix, AppendPrefix, AddSequenceNumber, ChangeExtension
+    }
 
     public FilesRenameController() {
         baseTitle = AppVariables.message("FilesRename");
 
-//        targetPathKey = "FileTargetPath";
-//        sourcePathKey = "FileSourcePath";
-        FileNameFillZeroKey = "FileNameFillZeroKey";
     }
 
     @Override
@@ -65,14 +76,6 @@ public class FilesRenameController extends FilesBatchController {
 
             filesController = (FilesRenameTableController) tableController;
 
-            fillZeroCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
-                    setUserConfigValue(FileNameFillZeroKey, fillZeroCheck.isSelected());
-                }
-            });
-            fillZeroCheck.setSelected(AppVariables.getUserConfigBoolean(FileNameFillZeroKey));
-
         } catch (Exception e) {
             logger.debug(e.toString());
         }
@@ -81,14 +84,23 @@ public class FilesRenameController extends FilesBatchController {
     @Override
     public void initTargetSection() {
         try {
-            suffixCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+
+            renameGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
-                public void changed(ObservableValue<? extends Boolean> observable,
-                        Boolean oldValue, Boolean newValue) {
-                    suffixInput.setDisable(!suffixCheck.isSelected());
+                public void changed(ObservableValue<? extends Toggle> ov,
+                        Toggle old_toggle, Toggle new_toggle) {
+                    checkRenameType();
                 }
             });
-            suffixInput.setDisable(!suffixCheck.isSelected());
+            checkRenameType();
+
+            fillZeroCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
+                    setUserConfigValue("FileRenameFillZero", fillZeroCheck.isSelected());
+                }
+            });
+            fillZeroCheck.setSelected(AppVariables.getUserConfigBoolean("FileRenameFillZero", true));
 
             startButton.disableProperty().bind(
                     Bindings.isEmpty(tableData)
@@ -99,25 +111,75 @@ public class FilesRenameController extends FilesBatchController {
         }
     }
 
+    private void checkRenameType() {
+        renameOptionsBox.getChildren().clear();
+
+        RadioButton selected = (RadioButton) renameGroup.getSelectedToggle();
+        if (message("ReplaceSubString").equals(selected.getText())) {
+            renameType = RenameType.ReplaceSubString;
+            renameOptionsBox.getChildren().addAll(replaceBox);
+
+        } else if (message("AppendSuffix").equals(selected.getText())) {
+            renameType = RenameType.AppendSuffix;
+            renameOptionsBox.getChildren().addAll(suffixPane);
+
+        } else if (message("AppendPrefix").equals(selected.getText())) {
+            renameType = RenameType.AppendPrefix;
+            renameOptionsBox.getChildren().addAll(prefixPane);
+
+        } else if (message("AddSequenceNumber").equals(selected.getText())) {
+            renameType = RenameType.AddSequenceNumber;
+            renameOptionsBox.getChildren().addAll(numberBox);
+
+        } else if (message("ChangeExtension").equals(selected.getText())) {
+            renameType = RenameType.ChangeExtension;
+            renameOptionsBox.getChildren().addAll(extensionPane);
+        }
+        FxmlControl.refreshStyle(renameOptionsBox);
+
+    }
+
     @Override
     public boolean makeBatchParameters() {
-        if (isPreview) {
-            digit = 1;
-        } else {
-            sortFileInformations(tableData);
-            try {
-                digit = Integer.valueOf(digitInput.getText());
-            } catch (Exception e) {
-                if (tableController.getTotalFilesNumber() <= 0) {
-                    tableController.countTotal();
+        switch (renameType) {
+            case ReplaceSubString:
+                if (oldStringInput.getText().isBlank()) {
+                    return false;
                 }
-                digit = (tableController.getTotalFilesNumber() + "").length();
-            }
-        }
-        try {
-            currentAccum = Integer.valueOf(acumFromInput.getText());
-        } catch (Exception e) {
-            currentAccum = 0;
+                break;
+            case AppendPrefix:
+                if (prefixInput.getText().isBlank()) {
+                    return false;
+                }
+                break;
+            case AppendSuffix:
+                if (suffixInput.getText().isBlank()) {
+                    return false;
+                }
+                break;
+            case AddSequenceNumber:
+                if (isPreview) {
+                    digit = 1;
+                } else {
+                    sortFileInformations(tableData);
+                    try {
+                        digit = Integer.valueOf(digitInput.getText());
+                    } catch (Exception e) {
+                        if (tableController.getTotalFilesNumber() <= 0) {
+                            tableController.countTotal();
+                        }
+                        digit = (tableController.getTotalFilesNumber() + "").length();
+                    }
+                }
+                try {
+                    startNumber = Integer.valueOf(acumFromInput.getText());
+                } catch (Exception e) {
+                    startNumber = 0;
+                }
+                currentAccum = startNumber;
+                break;
+            case ChangeExtension:
+
         }
 
         newNames = new HashMap<>();
@@ -192,7 +254,7 @@ public class FilesRenameController extends FilesBatchController {
     }
 
     protected String renameFile(File file) {
-        String newName = makeFilename(file);
+        String newName = makeNewFilename(file);
         try {
             if (newName != null) {
                 File newFile = new File(newName);
@@ -227,21 +289,25 @@ public class FilesRenameController extends FilesBatchController {
             return;
         }
         try {
+            if (recountCheck.isSelected()) {
+                currentAccum = startNumber;
+            }
             List<File> files = new ArrayList<>();
             files.addAll(Arrays.asList(sourcePath.listFiles()));
-            sortFiles(files);
-            int bdigit = (files.size() + "").length();
-            if (digit < bdigit) {
-                digit = bdigit;
+            if (renameType == RenameType.AddSequenceNumber) {
+                sortFiles(files);
+                int bdigit = (files.size() + "").length();
+                if (digit < bdigit) {
+                    digit = bdigit;
+                }
             }
-
             for (File file : files) {
                 if (task == null || task.isCancelled()) {
                     return;
                 }
                 if (file.isFile()) {
                     dirFilesNumber++;
-                    if (!matchFilters(file)) {
+                    if (!match(file)) {
                         continue;
                     }
                     String originalName = file.getAbsolutePath();
@@ -271,32 +337,48 @@ public class FilesRenameController extends FilesBatchController {
         openTarget(null);
     }
 
-    protected String makeFilename(File file) {
+    protected String makeNewFilename(File file) {
         try {
             if (file == null || !file.isFile()) {
                 return null;
             }
-            String filename = file.getParent() + "/";
-            if (originalCheck.isSelected()) {
-                filename += FileTools.getFilePrefix(file.getName());
+            String filePath = file.getParent() + File.separator;
+            String newName;
+            switch (renameType) {
+                case ReplaceSubString:
+                    newName = file.getName().replaceAll(
+                            oldStringInput.getText(), newStringInput.getText());
+                    break;
+                case AppendPrefix:
+                    newName = prefixInput.getText() + file.getName();
+                    break;
+                case AppendSuffix:
+                    newName = FileTools.appendName(file.getName(), suffixInput.getText());
+                    break;
+                case AddSequenceNumber:
+                    newName = "";
+                    if (originalCheck.isSelected()) {
+                        newName += FileTools.getFilePrefix(file.getName());
+                    }
+                    if (stringCheck.isSelected()) {
+                        newName += stringInput.getText();
+                    }
+                    String pageNumber = currentAccum + "";
+                    if (fillZeroCheck.isSelected()) {
+                        pageNumber = StringTools.fillLeftZero(currentAccum, digit);
+                    }
+                    newName += pageNumber;
+                    currentAccum++;
+                    newName += "." + FileTools.getFileSuffix(file.getName());
+                    break;
+                case ChangeExtension:
+                    newName = FileTools.replaceFileSuffix(file.getName(), newExtInput.getText());
+                    break;
+                default:
+                    return null;
             }
-            if (stringCheck.isSelected()) {
-                filename += stringInput.getText();
-            }
-            if (accumCheck.isSelected()) {
-                String pageNumber = currentAccum + "";
-                if (fillZeroCheck.isSelected()) {
-                    pageNumber = StringTools.fillLeftZero(currentAccum, digit);
-                }
-                filename += pageNumber;
-                currentAccum++;
-            }
-            if (suffixCheck.isSelected()) {
-                filename += "." + suffixInput.getText();
-            } else {
-                filename += "." + FileTools.getFileSuffix(file.getName());
-            }
-            return filename;
+
+            return filePath + newName;
         } catch (Exception e) {
             logger.error(e.toString());
             return null;

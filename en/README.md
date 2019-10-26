@@ -1,4 +1,4 @@
-# [‰∏≠ÊñáReadMe](https://github.com/Mararsh/MyBox)
+# [÷–ŒƒReadMe](https://github.com/Mararsh/MyBox)
 
 # MyBox: Set of Easy Tools
 This is GUI program based on JavaFx to provide simple and easy functions. It's free and open sources
@@ -9,37 +9,38 @@ Download from cloud storage: https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#lis
 Download from sourceforge: https://sourceforge.net/projects/mara-mybox/files/   
 
 ### Self-contain packages 
-Self-contain packages include all files and need not java env and installation.   
+Self-contain packages include all files and need not java env and installation.   (Please unpack it under path with pure-English name.)   
  
 | Platform | Link | Size | Launcher |    
-| -- | -- | --  | --  |    
-| win | [MyBox-5.6-win.zip](https://github.com/Mararsh/MyBox/releases/download/v5.6/MyBox-5.6-win-exe.zip)  | 219MB | MyBox.exe |       
-| linux | [MyBox-5.6-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v5.6/MyBox-5.6-linux.tar.gz)  | 174MB  | bin/MyBox  |     
-| mac | [MyBox-5.6-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v5.6/MyBox-5.6-mac.dmg)  | 175MB  |  MyBox-5.6.app   |  
+| --- | --- | ---  | ---  |    
+| win | [MyBox-5.7-win.zip](https://github.com/Mararsh/MyBox/releases/download/v5.7/MyBox-5.7-win-exe.zip)  | 234MB | MyBox.exe |       
+| linux | [MyBox-5.7-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v5.7/MyBox-5.7-linux.tar.gz)  | 188MB  | bin/MyBox  |     
+| mac | [MyBox-5.7-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v5.7/MyBox-5.7-mac.dmg)  | 189MB  |  MyBox-5.7.app   |  
 
 User can double click the launcher to start MyBox or run it by command line. The default "Open Method" of image/text/PDF files can be associated to MyBox and a file can be opened directly by MyBox by double clicking the file's name.
-
-(Please unpack it under path with pure-English name.)   
+(File with name including non-ascii can be opened by double clicking currently)
 
 ### Jar 
 When JRE or JDK 12 or higher(`Oracle jdk` or `open jdk`) is installed, jar can run:    
   
 | Platform | Link | Size | Requirements |   
-| -- | -- | --  | --  |    
-| win | [MyBox-5.6-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.6/MyBox-5.6-win-jar.zip)  | 103MB | Java 12 or higher |    
-| linux | [MyBox-5.6-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.6/MyBox-5.6-linux-jar.zip)  | 107MB  | Java 12 or higher |    
-| mac | [MyBox-5.6-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.6/MyBox-5.6-mac-jar.zip)  |  103MB  | Java 12 or higher |    
+| --- | --- | ---  | ---  |    
+| win | [MyBox-5.7-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.7/MyBox-5.7-win-jar.zip)  | 117MB | Java 12 or higher |    
+| linux | [MyBox-5.7-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.7/MyBox-5.7-linux-jar.zip)  | 121MB  | Java 12 or higher |    
+| mac | [MyBox-5.7-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.7/MyBox-5.7-mac-jar.zip)  |  118MB  | Java 12 or higher |    
  
     
 Run following command to launch this program with Jar package: 
-<PRE><CODE>     java   -jar   MyBox-5.6.jar</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-5.7.jar</CODE></PRE>
 	
 A file path can follow the command as argument to be opened directly by MyBox. Example, following command will open the image:    
-<PRE><CODE>     java   -jar   MyBox-5.6.jar   /tmp/a1.jpg</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-5.7.jar   /tmp/a1.jpg</CODE></PRE>
 
 
-## Limitation
-Self-contain packages can not be lanuched under path including non-English characters. Jar files are not affected by this limitation.   
+## Limitation   
+Self-contain packages can not be lanuched under path including non-English characters.  And file with name including non-ascii can be opened by double clicking.
+A bug has been reported to jpackage dev team:
+[JDK-8232936](http://bugs.java.com/bugdatabase/view_bug.do?bug_id=JDK-8232936)
 
 ### About OCR on Linux/Mac   
 Current version still does not support OCR on Linux/Mac. The reason is that the based tesseract libraries are different on different platforms and there are not out of box packages available.   
@@ -62,7 +63,7 @@ sourceforge: https://sourceforge.net/projects/mara-mybox/files/
 
 # Documents
 | Name | Version | Link |
-| - | - | - |  
+| --- | --- | --- |   
 | User Guide - Overview |  5.0 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-Overview-en.pdf) |
 | User Guide - Image Tools | 5.0 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-ImageTools-en.pdf) |
 | User Guide - PDF Tools | 5.0 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-PdfTools-en.pdf) |
@@ -80,7 +81,7 @@ https://www.oracle.com/technetwork/java/javafxscenebuilder-1x-archive-2199384.ht
 It is based on following open sources softwares or libraries:    
 
 | Software | Role | Link |    
-| - | - | - |    
+| --- | --- | --- |    
 | JavaFx | GUI | https://docs.oracle.com/javafx/2/ |     
 | jai-imageio | Image manufacture | https://github.com/jai-imageio/jai-imageio-core |   
 | PDFBox | PDF manufacture | https://pdfbox.apache.org/ |   
@@ -95,10 +96,11 @@ It is based on following open sources softwares or libraries:
 | tesseract | OCR | https://github.com/tesseract-ocr/tesseract |   
 | barcode4j | Create barcodes | http://barcode4j.sourceforge.net |  
 | zxing | Create/Decode barcodes | https://github.com/zxing/zxing |   
-  
+| flexmark-java | Convert Markdown | https://github.com/vsch/flexmark-java |   
+ 
  
 # Current Version
-Current version is 5.6. Its features are mentioned below in summary:   
+Current version is 5.7. Its features are mentioned below in summary:   
  
 * [Cross platforms](#Cross-platform)
 * [Internationalized](#Internationalized)
@@ -106,9 +108,9 @@ Current version is 5.6. Its features are mentioned below in summary:
 * [Image Tools](#imageTools)
     - [View Image](#viewImage)
     - [Browse Images](#browserImage)
+    - [Analyse Image](#ImageData)  
     - [Manufacture Image](#imageManufacture)
-	- [Color Palette](#ColorPalette)
-    - [Image Data](#ImageData)  
+    - [Color Palette](#ColorPalette)
     - [Convert Image](#imageConvert)
     - [Recognize Texts in Image](#imageOCR)
     - [Multi-frames Image](#multiFrames)
@@ -122,13 +124,14 @@ Current version is 5.6. Its features are mentioned below in summary:
     - [Create Barcodes](#createBarcodes)
     - [Decode Barcodes](#decodeBarcodes)
 * [File Tools](#fileTools)
-    - [Arrage Directories](#directoriesArrange)
     - [Edit Text](#editText)
     - [Edit Bytes](#editBytes)
+    - [Manage Files/Directories](#directoriesArrange)
     - [Others](#fileOthers)
 * [Media Tools](#MediaTools)
 * [Network Tools](#netTools)
     - [Edit Html](#htmlEditor)
+    - [Edit Markdown](#markdownEditor)
     - [Snap WeiBo](#weiboSnap)
 * [Settings](#settings)
 * [Window](#windows)
@@ -254,11 +257,14 @@ Currently MyBox supports Chinese and English. To support a new language is just 
 4. Export colors to html table.
 5. Pick colors on current image, image history, or reference image.
 
-### Image Data <a id="ImageData"></a>     
+### Analyse Image <a id="ImageData"></a>     
 
 1. Statistic and visualization of image data, including average, variance, skewness, median, mode, minimum, maximum of occurance of each color channel, and their histograms.
 2. Channels of histograms can be selected.
 3. Statistic against selected area.
+4. Calculate mostly different colors in image by K-Means Clustering.
+5. Calculate mostly occurer colors in image by Popularity Quantization.
+6. Image data can be saved as html file.
 
 ### Image Conversion <a id="imageConvert"></a>     
 
@@ -393,18 +399,13 @@ Currently MyBox supports Chinese and English. To support a new language is just 
 
 ## Desktop Tools <a id="desktopTools"></a>     
 
-### Manage Directories <a id="directoriesArrange"></a>     
-1. Rename Files/Directories, with options of files' name and ordering. Renamed files can be recovered as original names in all or in part.
-2. Sychronize directories, with options like whether copy sub-directories or new files, whether only copy modified files after specific date time, whether keep attributes of original files, or whther delete non-existed files/directories under original directory.
-3. Arrange files and reorganize them under new directories by modifed time. This tool can be used to handle lots of files which need be archived according to time, like photoes, screenshots of games, or system logs.
-
 ### Edit Texts <a id="editText"></a>     
 1. File charset can be either detected automatically or set manually. Target file charset can be selected to implement encoding conversion. BOM setting is supported.
 2. Detect line break automatically. Convert line break. Show lines number. 
 3. Support LF(Unix/Linux), CR(Apple), and CRLF(Windows).
-4. Find and replace. In current page, or in whole file. Counting.
+4. Find and replace. In current page, or in whole file. Counting. Support regular expression.
 5. Locate. Go to position of specified character or specified line.
-6. Filter lines. By ‚ÄúInclude One‚Äù, ‚ÄúNot Include All‚Äù, ‚ÄúInclude All‚Äù, or ‚ÄúNot Include Any‚Äù. 
+6. Filter lines. By °∞Include One°±, °∞Not Include All°±, °∞Include All°±, or °∞Not Include Any°±.   Support regular expression.
 7. Cumulative filter. Filtered results can be saved. Select whether include lines number.
 8. Hexadecimal codes according file's charset can be viewed, scrolled, and selected synchronously.
 9. Paginate. Fit for viewing or editing very large file, such as logs in size of several GBs.
@@ -419,9 +420,9 @@ Currently MyBox supports Chinese and English. To support a new language is just 
 1. Bytes are expressed as 2 hexadecimal characters. All blanks, line breaks, and invalid values are ignored.
 2. Input boxes of general ASCII characters.
 3. Break lines, which is only for display and has not actual effect. By bytes number or by some defined bytes.
-4. Find and replace. In current page, or in whole file. Counting.
+4. Find and replace. In current page, or in whole file. Counting. Support regular expression.
 5. Locate. Go to position of specified character or specified line.
-6. Filter lines. By ‚ÄúInclude One‚Äù, ‚ÄúNot Include All‚Äù, ‚ÄúInclude All‚Äù, or ‚ÄúNot Include Any‚Äù. 
+6. Filter lines. By °∞Include One°±, °∞Not Include All°±, °∞Include All°±, or °∞Not Include Any°±.  Support regular expression.
 7. Cumulative filter. Filtered results can be saved. Select whether include lines number.
 8. Select charset to decode bytes which can be viewed, scrolled, and selected synchronously.
 9. Paginate. Fit for viewing or editing very large file, such as binary file in size of several GBs.
@@ -433,15 +434,21 @@ Currently MyBox supports Chinese and English. To support a new language is just 
 	   When break lines by bytes number, crossing pages need not concerned.
 10. General functions of editing, like copy/paste/cut/delete/selectAll/undo/redo/recover. And their shortcuts.
 
+### Manage Files/Directories <a id="directoriesArrange"></a>     
+1. Find, Delete, Copy, Move, Rename.
+2. Sychronize directories, with options like whether copy sub-directories or new files, whether only copy modified files after specific date time, whether keep attributes of original files, or whther delete non-existed files/directories under original directory.
+3. Arrange files and reorganize them under new directories by modifed time. This tool can be used to handle lots of files which need be archived according to time, like photoes, screenshots of games, or system logs.
+
 ### Others <a id="fileOthers"></a>     
 1. Convert files' charset in batch.
 2. Convert files' line break in batch.
 3. Split file, by files number, by bytes number, or by start-end list.
 4. Merge files.
+5. When operate in batch, select files by extension, file name, file size, or modified time. Regular expression is supported.
 
 ## Media Tools <a id="MediaTools"></a>     
 1. Monitor images in system clipboard and have user save/view them. Lossless or compression type can be selected.
-2. Alarm clocks, including options of time and music. Support rings of ‚ÄúMeow‚Äù, wav files, and mp3. Can run in background.
+2. Alarm clocks, including options of time and music. Support rings of °∞Meow°±, wav files, and mp3. Can run in background.
 
 
 ## Network Tools <a id="netTools"></a>     
@@ -449,8 +456,15 @@ Currently MyBox supports Chinese and English. To support a new language is just 
 ### Html Editor <a id="htmlEditor"></a>     
 1. Edit local web pages or online pages in rich text. (Not support FrameSet)
 2. Edit Html codes directly. (Support FrameSet)
-3. Web browser to view contents of Editors or load the online page. Support history browsing, font zooming „ÄÅand snapshoting of the whole page as an image or a PDF file.
-4. Rich-text-editor, html-codes-edtor, and web browser are synchronized.
+3. Web browser to view contents of Editors or load the online page. Support history browsing, font zooming °¢and snapshoting of the whole page as an image or a PDF file.
+4. Convert to Markdown synchronously°£
+
+### Edit Markdown<a id="markdownEditor" />
+1. Provide buttons to help inputting formats.
+2. Convert to html synchronously. Options supported.
+3. Convert to text synchronously.
+4. Find and replace. Support regular expression.
+5. Locate. Go to position of specified character or specified line.
 
 ### Weibo Snaping Tool <a id="weiboSnap"></a>     
 1. Save Weibo pages of any months of any Weibo accounts automatically.
@@ -491,7 +505,7 @@ Currently MyBox supports Chinese and English. To support a new language is just 
 
 ## Configuration <a id="Config"></a>     
 
-### Default configuration file ‚ÄúMyBox.ini‚Äù
+### Default configuration file °∞MyBox.ini°±
 The default configuration file is under "User Home". Example, it is "C:\Users\<User Name>\mybox\MyBox.ini" on Windows.   
 
 The only way to change configuration file temporarily is to add parameter "config=\"FilePath\"" when run jar.
@@ -517,9 +531,17 @@ Developers need notice: JavaFx screen is not same as pysical screen and has diff
 
 # Development Logs <a id="devLog"></a>     
 
+2019-10-26 v5.7  Edit Markdown. Conversion between html and Markdown.     
+Improve algorithms of image quantization and apply to analysing image. K-Means Clustering is to calculate mostly different colors 
+while Popularity Quantization is to calculate mostly occurred colors. Image data can be saved as html file.    
+Operations to manage files/directories like Find, Delete, Copy, Move. Rename is made better.     
+More selection mode  for batch operations like by extension, by name, by size, or by modified time. Regular expression is supported.    
+Many interfaces are refined to balance layout of controls.   
+WeiBo Snap Tools is fixed. Snapshots of HiDPI screen are in right resolution now.  Images are saved as temporary files to avoid out of memory.   
+
 2019-10-01 v5.6 Configuration file is back to "User Home" and always there except for parameter in jar.    
 For OCR, options of image preprocessing include nine enhancement algorithms, scale ratio, binary threashold, rotation angle, whether deskew, whether invert colors. 
-Options of recognizztion include data files list and their order, whether generate data of regions/words and the levels can be set.
+Options of recognization include data files list and their order, whether generate data of regions/words and the levels can be set.
 Options for OCR in batch include whether generate html or PDF, whether merge recognized texts.
 "Fast" data files of English and Chinese are included in MyBox and OCR can be done out of box on Windows.    
 13 types of 1-d barcodes and 3 types of 2-d barcodes can be created. Options supported. Picture can be added in QR_Code.    
@@ -564,8 +586,8 @@ Matrices Calculation. Edit matrix data: adapt formatted data; transform matrix d
 generate identify matrix, random matrix, random square matrix automatically with defined column/row number.     
 Unary matrix calculation: Transpose, Row Echelon Form, Reduced Row Echelon Form, Determinant By Elimination, Determinant By Complement Minor, Inverse Matrix By Elimination, Inverse Matrix By Adjoint, Matrix Rank, Adjoint Matrix, Complement Minor, Normalize, Set Decimal Scale, Set As Integer, Multiply Number, Divide By Number, Power.     
 Binary matrices calculation: Plus, Minus, Hadamard Product, Kronecker Product, Horizontally Merge, Vertically Merge.     
-Tools of Color Space: draw Chromaticity Diagram, edit ICC profile, adapt primaries of RGB Color Space, transform matrices between Linear RGB and XYZ, transform matrices between Linear RGB and Linear RGBÔºåchromatic adaptation, standard illuminants, chromatic adaptation matrices.    
-Fix bugs: ‚Äú414 Request-URI Too Large‚Äù is returned in WeiBo snap tool constantly; tooltip blinks at edge of screen; some links do not work.    
+Tools of Color Space: draw Chromaticity Diagram, edit ICC profile, adapt primaries of RGB Color Space, transform matrices between Linear RGB and XYZ, transform matrices between Linear RGB and Linear RGB£¨chromatic adaptation, standard illuminants, chromatic adaptation matrices.    
+Fix bugs: °∞414 Request-URI Too Large°± is returned in WeiBo snap tool constantly; tooltip blinks at edge of screen; some links do not work.    
     
 2019-5-1 v5.1 Interface: Controls are displayed in pictures which can be selected in 5 colors and whether display texts.    
 Shorter tips to fit for 14 inches screen of laptop.    

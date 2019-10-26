@@ -75,7 +75,7 @@ public class ColorPaletteController extends BaseController {
     @FXML
     protected Label sizeLabel, promptLabel, titleLabel;
     @FXML
-    protected CheckBox topCheck, saveCloseCheck;
+    protected CheckBox saveCloseCheck;
     @FXML
     protected Button htmlButton;
     @FXML
@@ -89,16 +89,6 @@ public class ColorPaletteController extends BaseController {
     public void initControls() {
         try {
             shadowEffect = new DropShadow();
-
-            topCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                    if (myStage != null) {
-                        myStage.setAlwaysOnTop(topCheck.isSelected());
-                    }
-                    AppVariables.setUserConfigValue("ColorPaletteAlwaysTop", topCheck.isSelected());
-                }
-            });
 
             saveCloseCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -181,8 +171,6 @@ public class ColorPaletteController extends BaseController {
 
         adjustHeight();
         super.toFront();
-        topCheck.setSelected(AppVariables.getUserConfigBoolean("ColorPaletteAlwaysTop", true));
-        myStage.setAlwaysOnTop(topCheck.isSelected());
     }
 
     protected void adjustHeight() {
@@ -418,6 +406,7 @@ public class ColorPaletteController extends BaseController {
     }
 
     @FXML
+    @Override
     public void clearAction() {
         try {
             isSettingValues = true;
@@ -440,7 +429,7 @@ public class ColorPaletteController extends BaseController {
                 return;
             }
             List<String> names = new ArrayList<>();
-            names.addAll(Arrays.asList(message("ID"), message("Name"), message("Value"), message("Color"),
+            names.addAll(Arrays.asList(message("ID"), message("Name"), "RGBA", "RGB",
                     message("Red"), message("Green"), message("Blue"), message("Opacity"),
                     message("Hue"), message("Brightness"), message("Saturation")
             ));

@@ -69,6 +69,7 @@ public class CommonImageValues {
             add(new FileChooser.ExtensionFilter("html", "*.html", "*.htm"));
             add(new FileChooser.ExtensionFilter("xml", "*.xml"));
             add(new FileChooser.ExtensionFilter("json", "*.json"));
+            add(new FileChooser.ExtensionFilter("markdown", "*.md"));
             add(new FileChooser.ExtensionFilter("*", "*.*"));
         }
     };
@@ -93,6 +94,12 @@ public class CommonImageValues {
     public static List<FileChooser.ExtensionFilter> HtmlExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
         {
             add(new FileChooser.ExtensionFilter("htm", "*.html", "*.htm"));
+        }
+    };
+
+    public static List<FileChooser.ExtensionFilter> MarkdownExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
+        {
+            add(new FileChooser.ExtensionFilter("markdown", "*.md", "*.MD"));
         }
     };
 

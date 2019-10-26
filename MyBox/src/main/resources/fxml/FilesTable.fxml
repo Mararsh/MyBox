@@ -13,8 +13,8 @@ License:    Apache License Version 2.0
 
 <VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.FilesTableController">
     <children>
-        <ToolBar fx:id="toolbar" maxWidth="1.7976931348623157E308" minHeight="-Infinity" VBox.vgrow="NEVER">
-            <items>
+        <FlowPane hgap="5.0" maxWidth="1.7976931348623157E308" prefWrapLength="800.0" vgap="5.0" VBox.vgrow="NEVER">
+            <children>
                 <Button fx:id="addFilesButton" mnemonicParsing="false" onAction="#addFilesAction" onMouseEntered="#popFileAdd">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -114,35 +114,44 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-            <CheckBox fx:id="tableSubdirCheck" mnemonicParsing="false" selected="true">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/iconFolder.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </CheckBox>
-            <CheckBox fx:id="tableExpandDirCheck" mnemonicParsing="false">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/iconUnfold.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </CheckBox>
-            <ToggleButton fx:id="moreButton" mnemonicParsing="false">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/iconMore.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </ToggleButton>
-            </items>
-        </ToolBar>
+                <CheckBox fx:id="tableSubdirCheck" mnemonicParsing="false" selected="true">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconFolder.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </CheckBox>
+                <CheckBox fx:id="tableCreateDirCheck" layoutX="755.0" layoutY="18.0" mnemonicParsing="false" selected="true">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconAddFoloder.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </CheckBox>
+                <CheckBox fx:id="tableExpandDirCheck" mnemonicParsing="false">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconUnfold.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </CheckBox>
+                <ToggleButton fx:id="moreButton" mnemonicParsing="false">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconMore.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </ToggleButton>
+            </children>
+        </FlowPane>
         <TableView fx:id="tableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
             <columns>
                 <TableColumn fx:id="handledColumn" editable="false" prefWidth="220.0" text="%Handled" />
@@ -154,13 +163,14 @@ License:    Apache License Version 2.0
                 <TableColumn fx:id="createTimeColumn" editable="false" prefWidth="160.0" text="%CreateTime" />
             </columns>
         </TableView>
-        <HBox fx:id="filterBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="5.0" VBox.vgrow="NEVER">
+        <FlowPane fx:id="selectPane" hgap="5.0" maxWidth="1.7976931348623157E308" prefWrapLength="600.0" vgap="5.0" VBox.vgrow="NEVER">
             <children>
-                <Label text="%FileNameFilters" />
-                <ComboBox fx:id="nameFiltersSelector" prefHeight="30.0" prefWidth="200.0" /> 
-                <TextField fx:id="tableFiltersInput" promptText="%SeparateBySpace" HBox.hgrow="ALWAYS" />
+                <Label text="%FilesSelector" />
+                <ComboBox fx:id="nameFiltersSelector" prefHeight="30.0" prefWidth="260.0" />
+                <TextField fx:id="tableFiltersInput" maxWidth="1.7976931348623157E308" prefWidth="450.0" promptText="%SeparateBySpace" />
+                <Hyperlink fx:id="regexLink" onAction="#regexHelp" text="%RegularExpression" />
             </children>
-        </HBox>
+        </FlowPane>
         <Label fx:id="tableLabel" styleClass="blue-label" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER" />
     </children>
 </VBox>

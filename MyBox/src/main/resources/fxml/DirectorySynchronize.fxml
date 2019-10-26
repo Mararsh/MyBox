@@ -135,7 +135,7 @@ License:    Apache License Version 2.0
                                             <children>
                                                 <CheckBox fx:id="copyAttrCheck" mnemonicParsing="false" selected="true" text="%CopyOriginalFileAttr" />
                                                 <CheckBox fx:id="continueCheck" mnemonicParsing="false" selected="true" text="%ContinueWhenError" />
-                                    <CheckBox fx:id="continueCheck1" layoutX="208.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%DeleteSourcePathAfterComplete" />
+                                    <CheckBox fx:id="deleteSourceCheck" layoutX="208.0" layoutY="10.0" mnemonicParsing="false" text="%DeleteSourcePathAfterComplete" />
                                             </children>
                                         </HBox>
                                     </children>
@@ -155,7 +155,7 @@ License:    Apache License Version 2.0
                                                 <Label text="%MaxLines" />
                                                 <TextField fx:id="maxLinesinput" prefWidth="80.0" text="5000" />
                                                 <CheckBox fx:id="verboseCheck" mnemonicParsing="false" selected="true" text="%VerboseLogs" />
-                                                <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
+                                                <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearLogs">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>

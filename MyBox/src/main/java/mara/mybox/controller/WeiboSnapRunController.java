@@ -26,11 +26,14 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.concurrent.Worker;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Bounds;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.image.Image;
+import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebEvent;
@@ -86,8 +89,8 @@ public class WeiboSnapRunController extends BaseController {
     private Map<String, List<File>> pdfs;
     private Runtime r;
     private final int MaxStasisTimes;
-    private int MinAccessInterval, MaxAccessInterval, loadLoopInterval, pageAccessDelay;
-    private final long mb, snapLoopInterval;
+    private int MinAccessInterval, MaxAccessInterval, loadLoopInterval, pageAccessDelay, snapLoopInterval;
+    private final long mb;
     private final String expandCommentsScript, findPicturesScript, picturesNumberScript, expandPicturesScript, clearScripts;
     private final String AllPicturesLoaded, PictureLoaded, PictureTimeOver, CommentsLoaded, CommentsTimeOver;
     private File tempdir;
@@ -107,7 +110,7 @@ public class WeiboSnapRunController extends BaseController {
         CommentsLoaded = "MyBoxCommentsLoaded";
         CommentsTimeOver = "MyBoxCommentsTimeOver";
         MaxStasisTimes = 6;
-        snapLoopInterval = 300;
+        snapLoopInterval = 2000;
         MinAccessInterval = 2000;
         MaxAccessInterval = MinAccessInterval * 10;
         loadLoopInterval = MinAccessInterval * 3;
@@ -227,10 +230,12 @@ public class WeiboSnapRunController extends BaseController {
     public void start(final WeiboSnapParameters parameters) {
         try {
             this.parameters = parameters;
-            MinAccessInterval = parameters.getInterval();  // To avoid 414
+            MinAccessInterval = parameters.getLoadInterval();  // To avoid 414
             MaxAccessInterval = MinAccessInterval * 10;
             loadLoopInterval = MinAccessInterval * 3;
             pageAccessDelay = 30 * MinAccessInterval;
+
+            snapLoopInterval = parameters.getSnapInterval();
 
 //            logger.debug(parameters.getWebAddress());
             if (parameters.getWebAddress() == null || parameters.getWebAddress().isEmpty()) {
@@ -1195,21 +1200,28 @@ public class WeiboSnapRunController extends BaseController {
             }
             baseText = loadingController.getText();
 
-            snapHeight = 0;
-            final int snapStep = screenHeight - 100; // Offset due to the pop bar in the page.
-            snapFailed = snapCompleted = false;
+            // http://news.kynosarges.org/2017/02/01/javafx-snapshot-scaling/
+            final Bounds bounds = webView.getLayoutBounds();
+            Screen screen = Screen.getPrimary();
+            double scaleX = screen.getOutputScaleX();
+            double scaleY = screen.getOutputScaleY();
+            int imageWidth = (int) Math.round(bounds.getWidth() * scaleX);
+            int imageHeight = (int) Math.round(bounds.getHeight() * scaleY);
             final SnapshotParameters snapPara = new SnapshotParameters();
             snapPara.setFill(Color.TRANSPARENT);
+            snapPara.setTransform(javafx.scene.transform.Transform.scale(scaleX, scaleY));
+
+            final int snapStep = screenHeight - 100; // Offset due to the pop bar in the page.
+            snapFailed = snapCompleted = false;
+            snapHeight = 0;
 
             snapTimer = new Timer();
             snapStartTime = new Date().getTime();
             snapTimer.schedule(new TimerTask() {
                 private int lastHeight = 0, newHeight = -1;
                 private int imageNumber = 0;
-                private List<Image> images = new ArrayList<>();
                 private List<String> imageFiles = new ArrayList<>();
-                BufferedImage bufferedImage;
-                Image snapshot;
+                private Image lastSnap;
 
                 @Override
                 public void run() {
@@ -1230,35 +1242,35 @@ public class WeiboSnapRunController extends BaseController {
                                     loadingController.addLine(AppVariables.message("CurrentPageHeight") + ": " + newHeight);
                                     if (snapHeight < newHeight) {
                                         snapStartTime = new Date().getTime();
-                                        snapshot = webView.snapshot(snapPara, null);
+
+                                        WritableImage snapshot = new WritableImage(imageWidth, imageHeight);
+                                        snapshot = webView.snapshot(snapPara, snapshot);
+                                        lastSnap = snapshot;
+
                                         imageNumber++;
                                         loadingController.addLine(AppVariables.message("CurrentSnapshotNumber") + ": " + imageNumber);
-                                        if (parameters.isUseTempFiles()) {
-                                            try {
-                                                String filename = pdfFilename + "-Image" + imageNumber + ".png";
-                                                bufferedImage = FxmlImageManufacture.getBufferedImage(snapshot);
-                                                snapshot = null;
-                                                ImageFileWriters.writeImageFile(bufferedImage, "png", filename);
-                                                bufferedImage = null;
-                                                imageFiles.add(filename);
-                                            } catch (Exception e) {
-                                                logger.debug(e.toString());
-                                            }
-                                        } else {
-                                            images.add(snapshot);
+
+                                        try {
+                                            String filename = pdfFilename + "-Image" + imageNumber + ".png";
+                                            BufferedImage bufferedImage = SwingFXUtils.fromFXImage(snapshot, null);
+                                            ImageFileWriters.writeImageFile(bufferedImage, "png", filename);
+                                            imageFiles.add(filename);
+                                        } catch (Exception e) {
+                                            logger.debug(e.toString());
                                         }
+
                                         snapHeight += snapStep;
                                         webEngine.executeScript("window.scrollTo(0, " + snapHeight + ");");
 
                                     } else if (newHeight == lastHeight) {
 
-                                        if (images.size() > 0 && snapHeight > pageHeight) {
-                                            Image lasSnap = images.get(images.size() - 1);
+                                        if (lastSnap != null && snapHeight > pageHeight) {
                                             int y1 = snapHeight - pageHeight + 100;
 //                                            logger.debug(pageHeight + " " + snapHeight + " " + screenHeight + " " + y1);
-                                            lasSnap = FxmlImageManufacture.cropOutsideFx(lasSnap, 0, y1,
-                                                    (int) lasSnap.getWidth() - 1, (int) lasSnap.getHeight() - 1);
-                                            images.set(images.size() - 1, lasSnap);
+                                            lastSnap = FxmlImageManufacture.cropOutsideFx(lastSnap, 0, y1 * scaleY,
+                                                    (int) lastSnap.getWidth() - 1, (int) lastSnap.getHeight() - 1);
+                                            BufferedImage bufferedImage = SwingFXUtils.fromFXImage(lastSnap, null);
+                                            ImageFileWriters.writeImageFile(bufferedImage, "png", imageFiles.get(imageFiles.size() - 1));
                                         }
                                         snapCompleted = true;
                                         pageHeight = newHeight;
@@ -1266,7 +1278,6 @@ public class WeiboSnapRunController extends BaseController {
                                     }
 
                                 } catch (Exception e) {
-                                    images = new ArrayList<>();
                                     snapFailed = snapCompleted = true;
                                     errorString = e.toString();
                                     logger.error(e.toString());
@@ -1275,7 +1286,6 @@ public class WeiboSnapRunController extends BaseController {
                         });
 
                     } catch (Exception e) {
-                        images = new ArrayList<>();
                         snapFailed = snapCompleted = true;
                         logger.error(e.toString());
                         errorString = e.toString();
@@ -1291,39 +1301,27 @@ public class WeiboSnapRunController extends BaseController {
                         public void run() {
 
                             if (!snapFailed) {
-                                if (!parameters.isImagePerScreen() && !images.isEmpty()) {
-                                    Image finalImage = FxmlImageManufacture.combineSingleColumn(images);
-//                                    logger.debug("combineSingleColumn");
-                                    images = new ArrayList<>();
-                                    if (finalImage == null) {
-                                        snapFailed = true;
-                                        errorString = AppVariables.message("ImageGenerateError");
-                                    } else {
-                                        images.add(finalImage);
+                                File currentPdf = new File(pdfFilename);
+                                loadingController.addLine(AppVariables.message("Generateing") + ": " + currentPdf.getAbsolutePath());
+                                Boolean isOK = PdfTools.imagesFiles2Pdf(imageFiles, currentPdf, parameters, true);
+                                for (String file : imageFiles) {
+                                    File f = new File(file);
+                                    if (f.exists()) {
+                                        f.delete();
                                     }
                                 }
-                                if (!snapFailed) {
-                                    File currentPdf = new File(pdfFilename);
-                                    loadingController.addLine(AppVariables.message("Generateing") + ": " + currentPdf.getAbsolutePath());
-                                    Boolean isOK;
-                                    if (parameters.isUseTempFiles()) {
-                                        isOK = PdfTools.imagesFiles2Pdf(imageFiles, currentPdf, parameters, true);
-                                        imageFiles = new ArrayList<>();
-                                    } else {
-                                        isOK = PdfTools.images2Pdf(images, currentPdf, parameters);
-                                        images = new ArrayList<>();
+                                imageFiles = new ArrayList<>();
+
+                                if (!isOK || !currentPdf.exists()) {
+                                    snapFailed = true;
+                                    errorString = AppVariables.message("FailedWeiboSnap");
+                                } else {
+                                    List<File> files = pdfs.get(currentMonthString);
+                                    if (files == null) {
+                                        files = new ArrayList<>();
                                     }
-                                    if (!isOK || !currentPdf.exists()) {
-                                        snapFailed = true;
-                                        errorString = AppVariables.message("FailedWeiboSnap");
-                                    } else {
-                                        List<File> files = pdfs.get(currentMonthString);
-                                        if (files == null) {
-                                            files = new ArrayList<>();
-                                        }
-                                        files.add(currentPdf);
-                                        pdfs.put(currentMonthString, files);
-                                    }
+                                    files.add(currentPdf);
+                                    pdfs.put(currentMonthString, files);
                                 }
                             }
 
@@ -1392,6 +1390,7 @@ public class WeiboSnapRunController extends BaseController {
                         info.setProducer("MyBox v" + CommonValues.AppVersion);
                         info.setAuthor(parameters.getAuthor());
                         doc.setDocumentInformation(info);
+                        doc.setVersion(1.0f);
 
                         PDPage page = doc.getPage(0);
                         PDPageXYZDestination dest = new PDPageXYZDestination();

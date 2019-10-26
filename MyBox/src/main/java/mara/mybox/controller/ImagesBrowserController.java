@@ -673,7 +673,7 @@ public class ImagesBrowserController extends ImageViewerController {
                     count++;
                 }
             }
-            popInformation(MessageFormat.format(AppVariables.message("FilesDeleted"), count));
+            popInformation(AppVariables.message("TotalDeletedFiles") + ": " + count);
             makeImagesNevigator(true);
 
         } catch (Exception e) {

@@ -22,7 +22,7 @@ License:    Apache License Version 2.0
 
 <VBox fx:id="thisPane" alignment="CENTER" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.OperationController">
     <children>
-        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="NEVER">
+        <HBox fx:id="barBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="NEVER">
             <children>
                 <Button fx:id="startButton" disable="true" mnemonicParsing="false" onAction="#startAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Start" HBox.hgrow="NEVER" />
                 <Button fx:id="pauseButton" disable="true" mnemonicParsing="false" onAction="#pauseProcess" text="%Pause" visible="false" HBox.hgrow="NEVER" />

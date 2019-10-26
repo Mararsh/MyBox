@@ -63,26 +63,18 @@ public class MainApp extends Application {
 
             logger.info("Loading interface...");
             String inFile = null;
-            if (getParameters() != null) {
-//                logger.info(getParameters().getNamed());
-//                logger.info(getParameters().getUnnamed());
-//                logger.info(getParameters().getRaw());
-                List<String> paremeters = getParameters().getUnnamed();
-                if (paremeters != null && !paremeters.isEmpty()) {
-                    for (String p : paremeters) {
-                        try {
-                            if (MyBox.InternalRestartFlag.equals(p) || p.startsWith("config=")) {
-                                continue;
-                            }
-                            if (new File(p).exists()) {
-                                inFile = p;
-                                break;
-                            }
-                        } catch (Exception e) {
-                        }
+            if (AppVariables.appArgs != null) {
+                for (String arg : AppVariables.appArgs) {
+                    if (MyBox.InternalRestartFlag.equals(arg) || arg.startsWith("config=")) {
+                        continue;
+                    }
+                    if (new File(arg).exists()) {
+                        inFile = arg;
+                        break;
                     }
                 }
             }
+
             if (inFile != null) {
                 BaseController controller = FxmlStage.openTarget(stage, inFile, false);
                 if (controller == null) {
@@ -216,16 +208,16 @@ public class MainApp extends Application {
             File[] icons = new File(srcPath + "buttonsLightBlue").listFiles();
             BufferedImage src = null;
             ImageScope scope = new ImageScope();
-            PixelsOperation redOperation = PixelsOperation.newPixelsOperation(src, scope,
+            PixelsOperation redOperation = PixelsOperation.create(src, scope,
                     OperationType.Hue, ColorActionType.Decrease);
             redOperation.setFloatPara1(215 / 360.0f);
-            PixelsOperation pinkOperation = PixelsOperation.newPixelsOperation(src, scope,
+            PixelsOperation pinkOperation = PixelsOperation.create(src, scope,
                     OperationType.Red, ColorActionType.Increase);
             pinkOperation.setIntPara1(151);
-            PixelsOperation orangeOperation = PixelsOperation.newPixelsOperation(src, scope,
+            PixelsOperation orangeOperation = PixelsOperation.create(src, scope,
                     OperationType.Hue, ColorActionType.Increase);
             orangeOperation.setFloatPara1(171 / 360.0f);
-            PixelsOperation blueOperation = PixelsOperation.newPixelsOperation(src, scope,
+            PixelsOperation blueOperation = PixelsOperation.create(src, scope,
                     OperationType.Saturation, ColorActionType.Increase);
             blueOperation.setFloatPara1(0.5f);
             String filename;

@@ -43,7 +43,7 @@ public class WeiboSnapController extends BaseController {
     private final String WeiboExpandPicturesKey, WeiboExpandCommentsKey, WeiboUseTempKey;
     private final String WeiboPdfKey, WeiboHtmlKey, WeiboPixKey, WeiboKeepPageKey, WeiboMiaoKey;
     final private String AuthorKey;
-    private int interval, webWidth, categoryType, retry, startPage;
+    private int accessInterval, webWidth, categoryType, retry, startPage, snapInterval;
     private boolean isImageSize;
     private String webAddress;
     private WeiboSnapParameters parameters;
@@ -59,8 +59,9 @@ public class WeiboSnapController extends BaseController {
     private ComboBox<String> addressBox, zoomBox, widthBox, retryBox,
             MarginsBox, standardSizeBox, standardDpiBox, jpegBox, pdfScaleBox;
     @FXML
-    private TextField startMonthInput, endMonthInput, startPageInput, intervalInput,
-            customWidthInput, customHeightInput, authorInput, thresholdInput, headerInput;
+    private TextField startMonthInput, endMonthInput, startPageInput, accessIntervalInput,
+            snapIntervalInput, customWidthInput, customHeightInput, authorInput, thresholdInput,
+            headerInput;
     @FXML
     private Button wowButton;
     @FXML
@@ -237,26 +238,26 @@ public class WeiboSnapController extends BaseController {
         });
         expandPicturesCheck.setSelected(AppVariables.getUserConfigBoolean(WeiboExpandPicturesKey));
 
-        interval = 2000;
-        intervalInput.textProperty().addListener(new ChangeListener<String>() {
+        accessInterval = 2000;
+        accessIntervalInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable,
                     String oldValue, String newValue) {
                 try {
                     int v = Integer.parseInt(newValue);
                     if (v > 0) {
-                        intervalInput.setStyle(null);
-                        interval = v;
-                        AppVariables.setUserConfigInt("WeiBoSnapInterval", v);
+                        accessIntervalInput.setStyle(null);
+                        accessInterval = v;
+                        AppVariables.setUserConfigInt("WeiBoAccessInterval", v);
                     } else {
-                        intervalInput.setStyle(badStyle);
+                        accessIntervalInput.setStyle(badStyle);
                     }
                 } catch (Exception e) {
-                    intervalInput.setStyle(badStyle);
+                    accessIntervalInput.setStyle(badStyle);
                 }
             }
         });
-        intervalInput.setText(AppVariables.getUserConfigInt("WeiBoSnapInterval", 2000) + "");
+        accessIntervalInput.setText(AppVariables.getUserConfigInt("WeiBoAccessInterval", 2000) + "");
 
     }
 
@@ -392,6 +393,27 @@ public class WeiboSnapController extends BaseController {
             }
         });
         checkThreshold();
+
+        snapInterval = 2000;
+        snapIntervalInput.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable,
+                    String oldValue, String newValue) {
+                try {
+                    int v = Integer.parseInt(newValue);
+                    if (v > 0) {
+                        snapIntervalInput.setStyle(null);
+                        snapInterval = v;
+                        AppVariables.setUserConfigInt("WeiBoSnapInterval", v);
+                    } else {
+                        snapIntervalInput.setStyle(badStyle);
+                    }
+                } catch (Exception e) {
+                    snapIntervalInput.setStyle(badStyle);
+                }
+            }
+        });
+        snapIntervalInput.setText(AppVariables.getUserConfigInt("WeiBoSnapInterval", 2000) + "");
 
     }
 
@@ -935,7 +957,7 @@ public class WeiboSnapController extends BaseController {
             parameters.setStartPage(startPage);
             parameters.setZoomScale(zoomScale);
             parameters.setWebWidth(webWidth);
-            parameters.setInterval(interval);
+            parameters.setLoadInterval(accessInterval);
             parameters.setImagePerScreen(true);
             parameters.setFormat(format);
             parameters.setJpegQuality(jpegQuality);
@@ -962,6 +984,8 @@ public class WeiboSnapController extends BaseController {
             parameters.setOpenPathWhenStop(openPathCheck.isSelected());
             parameters.setFontName("幼圆");
             parameters.setDithering(ditherCheck.isSelected());
+            parameters.setUseTempFiles(true);
+            parameters.setSnapInterval(snapInterval);
             return parameters;
         } catch (Exception e) {
             parameters = null;

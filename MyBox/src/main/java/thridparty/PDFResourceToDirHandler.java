@@ -1,4 +1,4 @@
-package mara.mybox.tools;
+package thridparty;
 
 import java.io.File;
 import java.io.IOException;

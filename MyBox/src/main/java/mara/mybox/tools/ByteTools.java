@@ -320,15 +320,15 @@ public class ByteTools {
     }
 
     public static int countNumber(byte[] bytes, byte[] subBytes) {
-        return TextTools.countNumber(bytesToHex(bytes), bytesToHex(subBytes));
+        return StringTools.countNumber(bytesToHex(bytes), bytesToHex(subBytes));
     }
 
     public static int countNumber(byte[] bytes, byte c) {
-        return TextTools.countNumber(bytesToHex(bytes), byteToHex(c));
+        return StringTools.countNumber(bytesToHex(bytes), byteToHex(c));
     }
 
     public static int countNumber(byte[] bytes, String hex) {
-        return TextTools.countNumber(bytesToHex(bytes), hex);
+        return StringTools.countNumber(bytesToHex(bytes), hex);
     }
 
     public static int lineIndex(String lineText, Charset charset, int offset) {
@@ -428,11 +428,14 @@ public class ByteTools {
         return text;
     }
 
-    public static int checkBytesValue(String string) {
+    public static long checkBytesValue(String string) {
         try {
             String strV = string.trim().toLowerCase();
-            int unit = 1;
-            if (strV.endsWith("k")) {
+            long unit = 1;
+            if (strV.endsWith("b")) {
+                unit = 1;
+                strV = strV.substring(0, strV.length() - 1);
+            } else if (strV.endsWith("k")) {
                 unit = 1024;
                 strV = strV.substring(0, strV.length() - 1);
             } else if (strV.endsWith("m")) {
@@ -442,7 +445,7 @@ public class ByteTools {
                 unit = 1024 * 1024 * 1024;
                 strV = strV.substring(0, strV.length() - 1);
             }
-            int v = Integer.valueOf(strV);
+            long v = Integer.valueOf(strV.trim());
             if (v >= 0) {
                 return v * unit;
             } else {

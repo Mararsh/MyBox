@@ -50,6 +50,15 @@ License:    Apache License Version 2.0
                         </CheckBox>
                         <HBox fx:id="operation1Box" alignment="CENTER_LEFT" spacing="5.0" HBox.hgrow="NEVER">
                             <children>
+                        <Button fx:id="manufactureButton" mnemonicParsing="false" onAction="#manufactureAction">
+                           <graphic>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../buttons/iconEdit.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
                                 <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -101,6 +110,15 @@ License:    Apache License Version 2.0
                 </HBox>
             <HBox fx:id="operation2Box" alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
                <children>
+                          <CheckBox fx:id="selectAreaCheck" mnemonicParsing="false">
+                              <graphic>
+                                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                      <image>
+                                          <Image url="@../buttons/iconTarget.png" />
+                                      </image>
+                                  </ImageView>
+                              </graphic>
+                          </CheckBox>
                         <CheckBox fx:id="coordinateCheck" mnemonicParsing="false">
                             <graphic>
                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -128,15 +146,6 @@ License:    Apache License Version 2.0
                                 </ImageView>
                             </graphic>
                         </CheckBox>
-                          <CheckBox fx:id="selectAreaCheck" mnemonicParsing="false">
-                              <graphic>
-                                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                      <image>
-                                          <Image url="@../buttons/iconTarget.png" />
-                                      </image>
-                                  </ImageView>
-                              </graphic>
-                          </CheckBox>
                           <Button fx:id="rotateRightButton" mnemonicParsing="false" onAction="#rotateRight">
                               <graphic>
                                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

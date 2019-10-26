@@ -8,13 +8,15 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javafx.scene.control.IndexRange;
 import mara.mybox.data.FileEditInformation;
-import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.data.FileEditInformation.Line_Break;
-
+import static mara.mybox.value.AppVariables.logger;
 import thridparty.EncodingDetect;
 
 /**
@@ -316,50 +318,7 @@ public class TextTools {
         return new IndexRange(hBegin, hEnd);
     }
 
-    public static int countNumber(String string, String subString) {
-        if (string == null || string.isEmpty()
-                || subString == null || subString.isEmpty()
-                || string.length() < subString.length()) {
-            return 0;
-        }
-        int fromIndex = 0;
-        int count = 0;
-        while (true) {
-            int index = string.indexOf(subString, fromIndex);
-            if (index < 0) {
-                break;
-            }
-            fromIndex = index + 1;
-            count++;
-        }
-        return count;
-    }
 
-    public static int[] lastAndCount(String string, String subString) {
-        int[] results = new int[2];
-        results[0] = -1;
-        results[1] = 0;
-        if (string == null || string.isEmpty()
-                || subString == null || subString.isEmpty()
-                || string.length() < subString.length()) {
-            return results;
-        }
-        int fromIndex = 0;
-        int count = 0;
-        int last = -1;
-        while (true) {
-            int index = string.indexOf(subString, fromIndex);
-            if (index < 0) {
-                break;
-            }
-            last = index;
-            fromIndex = index + 1;
-            count++;
-        }
-        results[0] = last;
-        results[1] = count;
-        return results;
-    }
 
     public static Line_Break checkLineBreak(File file) {
         try {
@@ -423,5 +382,8 @@ public class TextTools {
     public static String lineBreakHexFormat(Line_Break lb, Charset charset) {
         return ByteTools.bytesToHexFormat(lineBreakBytes(lb, charset));
     }
+
+
+
 
 }

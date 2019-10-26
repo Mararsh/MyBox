@@ -99,6 +99,7 @@ public class PdfTools {
             info.setProducer("MyBox v" + CommonValues.AppVersion);
             info.setAuthor(author);
             document.setDocumentInformation(info);
+            document.setVersion(1.0f);
             document.save(file);
             targetDoc = document;
         } catch (Exception e) {
@@ -207,6 +208,7 @@ public class PdfTools {
                 info.setModificationDate(Calendar.getInstance());
                 info.setProducer("MyBox v" + CommonValues.AppVersion);
                 document.setDocumentInformation(info);
+                document.setVersion(1.0f);
                 BufferedImage bufferedImage;
                 PDRectangle pageSize = new PDRectangle(PDRectangle.A4.getHeight(), PDRectangle.A4.getWidth());
                 int marginSize = 20, total = images.size();
@@ -287,6 +289,7 @@ public class PdfTools {
                 info.setProducer("MyBox v" + CommonValues.AppVersion);
                 info.setAuthor(p.getAuthor());
                 document.setDocumentInformation(info);
+                document.setVersion(1.0f);
                 PDFont font = getFont(document, p.getFontName());
 
                 BufferedImage bufferedImage;
@@ -344,6 +347,7 @@ public class PdfTools {
                 info.setProducer("MyBox v" + CommonValues.AppVersion);
                 info.setAuthor(p.getAuthor());
                 document.setDocumentInformation(info);
+                document.setVersion(1.0f);
                 PDFont font = getFont(document, p.getFontName());
 
                 BufferedImage bufferedImage;
@@ -503,6 +507,7 @@ public class PdfTools {
                 info.setProducer("MyBox v" + CommonValues.AppVersion);
                 info.setAuthor(author);
                 document.setDocumentInformation(info);
+                document.setVersion(1.0f);
                 int x1, y1, x2, y2;
                 BufferedImage wholeSource = null;
                 if (!imageInformation.isIsSampled()) {

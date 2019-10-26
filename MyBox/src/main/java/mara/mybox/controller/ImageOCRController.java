@@ -7,7 +7,6 @@ import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import javafx.application.Platform;
@@ -16,6 +15,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -23,9 +23,12 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TitledPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import mara.mybox.data.ConvolutionKernel;
 import mara.mybox.data.VisitHistory;
@@ -40,6 +43,7 @@ import mara.mybox.image.ImageConvolution;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.image.PixelsOperation;
 import mara.mybox.image.file.ImageFileWriters;
+import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.OCRTools;
 import mara.mybox.value.AppVariables;
@@ -76,6 +80,12 @@ public class ImageOCRController extends ImageViewerController {
     protected ContrastAlgorithm contrastAlgorithm;
 
     @FXML
+    protected HBox imageOpBox;
+    @FXML
+    protected VBox imagesBox, resultBox;
+    @FXML
+    protected TitledPane preprocessPane, ocrOptionsPane;
+    @FXML
     protected ScrollPane leftPane, originalScrollPane;
     @FXML
     protected TextArea textArea;
@@ -94,6 +104,8 @@ public class ImageOCRController extends ImageViewerController {
     protected StringTableController regionsTableController, wordsTableController;
     @FXML
     protected HtmlViewerController htmlController;
+    @FXML
+    protected Button demoButton;
 
     public ImageOCRController() {
         baseTitle = AppVariables.message("ImageOCR");
@@ -104,6 +116,9 @@ public class ImageOCRController extends ImageViewerController {
         targetPathKey = "TextFilePath";
         targetExtensionFilter = CommonImageValues.TextExtensionFilter;
 
+        needNotRulers = true;
+        needNotCoordinates = true;
+
     }
 
     @Override
@@ -112,6 +127,13 @@ public class ImageOCRController extends ImageViewerController {
             initImageBox();
             initPreprocessBox();
             initOCROptionsBox();
+
+            imageOpBox.disableProperty().bind(originalView.imageProperty().isNull());
+            imagesBox.disableProperty().bind(originalView.imageProperty().isNull());
+            resultBox.disableProperty().bind(originalView.imageProperty().isNull());
+            preprocessPane.disableProperty().bind(originalView.imageProperty().isNull());
+            ocrOptionsPane.disableProperty().bind(originalView.imageProperty().isNull());
+
         } catch (Exception e) {
             logger.debug(e.toString());
         }
@@ -529,7 +551,8 @@ public class ImageOCRController extends ImageViewerController {
         if (imageView.getImage() == null) {
             return;
         }
-
+        popInformation(message("WaitAndHandling"));
+        demoButton.setDisable(true);
         Task demoTask = new Task<Void>() {
             private List<String> files;
 
@@ -639,6 +662,7 @@ public class ImageOCRController extends ImageViewerController {
             @Override
             protected void succeeded() {
                 super.succeeded();
+                demoButton.setDisable(false);
                 if (files.isEmpty()) {
                     return;
                 }
@@ -761,7 +785,7 @@ public class ImageOCRController extends ImageViewerController {
                 @Override
                 protected boolean handle() {
                     try {
-                        PixelsOperation pixelsOperation = PixelsOperation.newPixelsOperation(imageView.getImage(),
+                        PixelsOperation pixelsOperation = PixelsOperation.create(imageView.getImage(),
                                 null, PixelsOperation.OperationType.RGB, PixelsOperation.ColorActionType.Invert);
                         ocrImage = pixelsOperation.operateFxImage();
                         return ocrImage != null;
@@ -1060,6 +1084,29 @@ public class ImageOCRController extends ImageViewerController {
         checkLanguages();
     }
 
+    @FXML
+    public void topAction() {
+        List<Integer> selectedIndices = new ArrayList<>();
+        selectedIndices.addAll(languageList.getSelectionModel().getSelectedIndices());
+        if (selectedIndices.isEmpty()) {
+            return;
+        }
+        List<String> selected = new ArrayList<>();
+        selected.addAll(languageList.getSelectionModel().getSelectedItems());
+        isSettingValues = true;
+        int size = selectedIndices.size();
+        for (int i = size - 1; i >= 0; i--) {
+            int index = selectedIndices.get(i);
+            languageList.getItems().remove(index);
+        }
+        languageList.getSelectionModel().clearSelection();
+        languageList.getItems().addAll(0, selected);
+        languageList.getSelectionModel().selectRange(0, size);
+        languageList.refresh();
+        isSettingValues = false;
+        checkLanguages();
+    }
+
     /*
         OCR
      */
@@ -1078,12 +1125,10 @@ public class ImageOCRController extends ImageViewerController {
                 private String texts, html;
                 private List<Rectangle> rectangles;
                 private List<Word> words;
-                private long cost;
 
                 @Override
                 protected boolean handle() {
                     try {
-                        cost = new Date().getTime();
                         ITesseract instance = new Tesseract();
                         String path = AppVariables.getUserConfigValue("TessDataPath", null);
                         if (path != null) {
@@ -1128,7 +1173,6 @@ public class ImageOCRController extends ImageViewerController {
                             rectangles = instance.getSegmentedRegions(bufferedImage, regionLevel);
                         }
 
-                        cost = new Date().getTime() - cost;
                         return texts != null;
                     } catch (Exception e) {
                         error = e.toString();
@@ -1142,7 +1186,8 @@ public class ImageOCRController extends ImageViewerController {
                         popText(message("OCRMissComments"), 5000, "white", "1.1em", null);
                     }
                     textArea.setText(texts);
-                    resultLabel.setText(MessageFormat.format(message("OCRresults"), texts.length(), cost));
+                    resultLabel.setText(MessageFormat.format(message("OCRresults"),
+                            texts.length(), DateTools.showTime(cost)));
 
                     htmlController.load(html);
 

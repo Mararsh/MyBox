@@ -450,7 +450,7 @@ public class FxmlImageManufacture {
                 case CircleColor:
                 case EllipseColor:
                 case PolygonColor:
-                    pixelsOperation = PixelsOperation.newPixelsOperation(srcImage,
+                    pixelsOperation = PixelsOperation.create(srcImage,
                             scope, PixelsOperation.OperationType.Color, PixelsOperation.ColorActionType.Set);
                     pixelsOperation.setColorPara1(ImageColor.converColor(bgColor));
                     newImage = pixelsOperation.operateFxImage();
@@ -1462,7 +1462,7 @@ public class FxmlImageManufacture {
             scope.setColorScopeType(ImageScope.ColorScopeType.Color);
             scope.getColors().add(ImageColor.converColor(oldColor));
             scope.setColorDistance(distance);
-            PixelsOperation pixelsOperation = PixelsOperation.newPixelsOperation(image,
+            PixelsOperation pixelsOperation = PixelsOperation.create(image,
                     scope, PixelsOperation.OperationType.Color, PixelsOperation.ColorActionType.Set);
             pixelsOperation.setColorPara1(ImageColor.converColor(newColor));
             Image newImage = pixelsOperation.operateFxImage();

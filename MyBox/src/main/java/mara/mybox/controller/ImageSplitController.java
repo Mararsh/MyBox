@@ -24,14 +24,13 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
@@ -51,10 +50,7 @@ import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.fxml.FxmlStage;
-import mara.mybox.image.ImageAttributes;
-import mara.mybox.image.ImageConvert;
 import mara.mybox.image.ImageManufacture;
-import mara.mybox.image.ImageValue;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.image.file.ImageFileWriters;
 import static mara.mybox.image.file.ImageTiffFile.getPara;
@@ -72,7 +68,6 @@ import mara.mybox.value.CommonValues;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.font.PDFont;
-import org.apache.pdfbox.rendering.ImageType;
 
 /**
  * @Author Mara
@@ -87,37 +82,35 @@ public class ImageSplitController extends ImageViewerController {
             marginSize, pageWidth, pageHeight, jpegQuality, threshold;
     private boolean isImageSize;
     private double scale;
-    private PdfImageFormat pdfFormat;
     protected SimpleBooleanProperty splitValid;
     private SplitMethod splitMethod;
     private LoadingController imageController, pdfController, tiffController;
     private Task imageTask, pdfTask, tiffTask;
 
     public static enum SplitMethod {
-        ByNumber, BySize, Customize
+        Predefined, ByNumber, BySize, Customize
     }
 
     @FXML
-    private TabPane tabPane;
+    private ToggleGroup splitGroup, pdfSizeGroup;
     @FXML
-    private Tab splitTab, tiffTab, pdfTab;
+    private FlowPane splitPredefinedPane, splitSizePane, splitNumberPane,
+            splitCustomized1Pane, splitCustomized2Pane;
     @FXML
-    private ToggleGroup splitGroup, sizeGroup, formatGroup, colorGroup, compressionGroup, binaryGroup;
-    @FXML
-    private Button saveImagesButton, saveTiffButton, savePdfButton, clearColsButton, clearRowsButton;
+    private Button saveImagesButton, saveTiffButton, savePdfButton;
     @FXML
     private TextField rowsInput, colsInput, customizedRowsInput, customizedColsInput,
-            customWidthInput, customHeightInput, authorInput, pdfThresholdInput, headerInput, tiffThresholdInput;
+            widthInput, heightInput, customWidthInput, customHeightInput, authorInput, headerInput;
     @FXML
-    private CheckBox displaySizeCheck, pageNumberCheck, pdfDitherCheck, tiffDitherCheck;
+    private CheckBox displaySizeCheck, pageNumberCheck;
     @FXML
-    protected ComboBox<String> MarginsBox, standardSizeBox, standardDpiBox, jpegBox, fontBox;
+    protected ComboBox<String> MarginsBox, standardSizeBox, standardDpiBox, fontBox;
     @FXML
-    private VBox showBox;
+    private VBox splitOptionsBox, optionsBox, showBox;
     @FXML
-    private HBox opBox, byBox, customBox, compressionBox, binaryBox, predefinedBox, optionsBox1, optionsBox2;
+    private HBox opBox;
     @FXML
-    private Label rowsLabel, colsLabel, commentLabel, promptLabel;
+    private Label promptLabel;
 
     public ImageSplitController() {
         baseTitle = AppVariables.message("ImageSplit");
@@ -129,7 +122,6 @@ public class ImageSplitController extends ImageViewerController {
         try {
             initCommon();
             initSplitTab();
-            initTiffTab();
             initPdfTab();
         } catch (Exception e) {
             logger.error(e.toString());
@@ -140,18 +132,14 @@ public class ImageSplitController extends ImageViewerController {
     public void afterSceneLoaded() {
         super.afterSceneLoaded();
         checkSplitMethod();
-        checkColorType();
         checkPageSize();
-        checkPdfFormat();
-        checkJpegQuality();
-        checkPdfThreshold();
         FxmlControl.setTooltip(okButton, new Tooltip(message("OK") + "\nF1 / CTRL+g"));
 
     }
 
     private void initCommon() {
         opBox.disableProperty().bind(imageView.imageProperty().isNull());
-        tabPane.disableProperty().bind(imageView.imageProperty().isNull());
+        optionsBox.disableProperty().bind(imageView.imageProperty().isNull());
         showBox.disableProperty().bind(imageView.imageProperty().isNull());
 
         splitValid = new SimpleBooleanProperty(false);
@@ -164,18 +152,15 @@ public class ImageSplitController extends ImageViewerController {
         });
 
         saveImagesButton.disableProperty().bind(
-                splitValid.isEqualTo(new SimpleBooleanProperty(false))
+                splitValid.not()
         );
         savePdfButton.disableProperty().bind(
-                splitValid.isEqualTo(new SimpleBooleanProperty(false))
+                splitValid.not()
                         .or(customWidthInput.styleProperty().isEqualTo(badStyle))
                         .or(customHeightInput.styleProperty().isEqualTo(badStyle))
-                        .or(jpegBox.styleProperty().isEqualTo(badStyle))
-                        .or(pdfThresholdInput.styleProperty().isEqualTo(badStyle))
         );
         saveTiffButton.disableProperty().bind(
-                splitValid.isEqualTo(new SimpleBooleanProperty(false))
-                        .or(tiffThresholdInput.styleProperty().isEqualTo(badStyle))
+                splitValid.not()
         );
     }
 
@@ -185,6 +170,14 @@ public class ImageSplitController extends ImageViewerController {
             public void changed(ObservableValue<? extends Toggle> ov,
                     Toggle old_toggle, Toggle new_toggle) {
                 checkSplitMethod();
+            }
+        });
+
+        widthInput.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable,
+                    String oldValue, String newValue) {
+                checkSizeValues();
             }
         });
 
@@ -232,8 +225,7 @@ public class ImageSplitController extends ImageViewerController {
     }
 
     private void checkSplitMethod() {
-        optionsBox1.getChildren().clear();
-        optionsBox2.getChildren().clear();
+        splitOptionsBox.getChildren().clear();
         imageView.setImage(image);
         List<Node> nodes = new ArrayList<>();
         nodes.addAll(maskPane.getChildren());
@@ -244,18 +236,19 @@ public class ImageSplitController extends ImageViewerController {
             }
         }
         RadioButton selected = (RadioButton) splitGroup.getSelectedToggle();
-        if (AppVariables.message("Customize").equals(selected.getText())) {
+        if (AppVariables.message("Predefined").equals(selected.getText())) {
+            splitMethod = SplitMethod.Predefined;
+            splitOptionsBox.getChildren().addAll(splitPredefinedPane);
+            promptLabel.setText("");
+        } else if (AppVariables.message("Customize").equals(selected.getText())) {
             splitMethod = SplitMethod.Customize;
-            optionsBox2.getChildren().add(customBox);
-            commentLabel.setText(AppVariables.message("SplitCustomComments"));
+            splitOptionsBox.getChildren().addAll(splitCustomized1Pane, splitCustomized2Pane);
+            promptLabel.setText(AppVariables.message("SplitCustomComments"));
             checkCustomValues();
         } else if (AppVariables.message("ByNumber").equals(selected.getText())) {
             splitMethod = SplitMethod.ByNumber;
-            optionsBox1.getChildren().add(predefinedBox);
-            optionsBox2.getChildren().add(byBox);
-            commentLabel.setText("");
-            rowsLabel.setText(message("RowsNumber"));
-            colsLabel.setText(message("ColumnsNumber"));
+            splitOptionsBox.getChildren().addAll(splitNumberPane, okButton);
+            promptLabel.setText("");
             isSettingValues = true;
             rowsInput.setText("3");
             colsInput.setText("3");
@@ -263,18 +256,15 @@ public class ImageSplitController extends ImageViewerController {
             checkNumberValues();
         } else if (AppVariables.message("BySize").equals(selected.getText())) {
             splitMethod = SplitMethod.BySize;
-            optionsBox2.getChildren().add(byBox);
-            commentLabel.setText(AppVariables.message("SplitSizeComments"));
-            rowsLabel.setText(message("Width"));
-            colsLabel.setText(message("Height"));
+            splitOptionsBox.getChildren().addAll(splitSizePane, okButton);
+            promptLabel.setText(AppVariables.message("SplitSizeComments"));
             isSettingValues = true;
-            rowsInput.setText(imageInformation.getWidth() / 3 + "");
-            colsInput.setText(imageInformation.getHeight() / 3 + "");
+            widthInput.setText(imageInformation.getWidth() / 3 + "");
+            heightInput.setText(imageInformation.getHeight() / 3 + "");
             isSettingValues = false;
             checkSizeValues();
         }
-        FxmlControl.refreshStyle(optionsBox1);
-        FxmlControl.refreshStyle(optionsBox2);
+        FxmlControl.refreshStyle(splitOptionsBox);
 
     }
 
@@ -324,26 +314,26 @@ public class ImageSplitController extends ImageViewerController {
             return;
         }
         try {
-            int v = Integer.valueOf(rowsInput.getText());
+            int v = Integer.valueOf(widthInput.getText());
             if (v > 0 && v < imageInformation.getWidth()) {
-                rowsInput.setStyle(null);
+                widthInput.setStyle(null);
                 width = v;
             } else {
-                rowsInput.setStyle(badStyle);
+                widthInput.setStyle(badStyle);
             }
         } catch (Exception e) {
-            rowsInput.setStyle(badStyle);
+            widthInput.setStyle(badStyle);
         }
         try {
-            int v = Integer.valueOf(colsInput.getText());
+            int v = Integer.valueOf(heightInput.getText());
             if (v > 0 && v < imageInformation.getHeight()) {
-                colsInput.setStyle(null);
+                heightInput.setStyle(null);
                 height = v;
             } else {
-                colsInput.setStyle(badStyle);
+                heightInput.setStyle(badStyle);
             }
         } catch (Exception e) {
-            colsInput.setStyle(badStyle);
+            heightInput.setStyle(badStyle);
         }
     }
 
@@ -412,151 +402,9 @@ public class ImageSplitController extends ImageViewerController {
         }
     }
 
-    private void initTiffTab() {
-        try {
-
-            attributes = new ImageAttributes();
-            attributes.setImageFormat("tif");
-
-            colorGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                @Override
-                public void changed(ObservableValue<? extends Toggle> ov,
-                        Toggle old_toggle, Toggle new_toggle) {
-                    checkColorType();
-                }
-            });
-
-            compressionGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                @Override
-                public void changed(ObservableValue<? extends Toggle> ov,
-                        Toggle old_toggle, Toggle new_toggle) {
-                    checkCompressionType();
-                }
-            });
-
-            binaryGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                @Override
-                public void changed(ObservableValue<? extends Toggle> ov,
-                        Toggle old_toggle, Toggle new_toggle) {
-                    checkBinary();
-                }
-            });
-
-            tiffThresholdInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
-                    checkTiffThreshold();
-                }
-            });
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    private void checkColorType() {
-        try {
-            binaryBox.setDisable(true);
-            tiffThresholdInput.setStyle(null);
-            RadioButton selected = (RadioButton) colorGroup.getSelectedToggle();
-            String s = selected.getText();
-            if (message("Colorful").equals(s)) {
-                attributes.setColorType(ImageType.RGB);
-            } else if (message("ColorAlpha").equals(s)) {
-                attributes.setColorType(ImageType.ARGB);
-            } else if (message("ShadesOfGray").equals(s)) {
-                attributes.setColorType(ImageType.GRAY);
-            } else if (message("BlackOrWhite").equals(s)) {
-                attributes.setColorType(ImageType.BINARY);
-                checkBinary();
-            } else {
-                attributes.setColorType(ImageType.RGB);
-            }
-            setCompressionTypes();
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    protected void setCompressionTypes() {
-        try {
-            compressionBox.getChildren().clear();
-            compressionGroup = new ToggleGroup();
-            String[] compressionTypes
-                    = ImageValue.getCompressionTypes("tif", attributes.getColorType());
-            for (String ctype : compressionTypes) {
-                if (ctype.equals("ZLib")) { // This type looks not work for mutiple frames tiff file
-                    continue;
-                }
-                RadioButton newv = new RadioButton(ctype);
-                newv.setToggleGroup(compressionGroup);
-                compressionBox.getChildren().add(newv);
-            }
-
-            compressionGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                @Override
-                public void changed(ObservableValue<? extends Toggle> ov,
-                        Toggle old_toggle, Toggle new_toggle) {
-                    checkCompressionType();
-                }
-            });
-            compressionGroup.selectToggle((RadioButton) compressionBox.getChildren().get(0));
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    protected void checkCompressionType() {
-        try {
-            RadioButton selected = (RadioButton) compressionGroup.getSelectedToggle();
-            attributes.setCompressionType(selected.getText());
-        } catch (Exception e) {
-            attributes.setCompressionType(null);
-        }
-    }
-
-    protected void checkBinary() {
-        try {
-            binaryBox.setDisable(false);
-            tiffThresholdInput.setStyle(null);
-            RadioButton selected = (RadioButton) binaryGroup.getSelectedToggle();
-            String s = selected.getText();
-            if (message("Threshold").equals(s)) {
-                attributes.setBinaryConversion(ImageAttributes.BinaryConversion.BINARY_THRESHOLD);
-                checkTiffThreshold();
-            } else if (message("OTSU").equals(s)) {
-                attributes.setBinaryConversion(ImageAttributes.BinaryConversion.BINARY_OTSU);
-            } else {
-                attributes.setBinaryConversion(ImageAttributes.BinaryConversion.DEFAULT);
-            }
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    protected void checkTiffThreshold() {
-        try {
-            if (attributes.getBinaryConversion() != ImageAttributes.BinaryConversion.BINARY_THRESHOLD) {
-                tiffThresholdInput.setStyle(null);
-                return;
-            }
-            int inputValue = Integer.parseInt(tiffThresholdInput.getText());
-            if (inputValue >= 0 && inputValue <= 255) {
-                attributes.setThreshold(inputValue);
-                tiffThresholdInput.setStyle(null);
-            } else {
-                tiffThresholdInput.setStyle(badStyle);
-            }
-        } catch (Exception e) {
-            tiffThresholdInput.setStyle(badStyle);
-        }
-    }
-
     private void initPdfTab() {
 
-        sizeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+        pdfSizeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
             public void changed(ObservableValue<? extends Toggle> ov,
                     Toggle old_toggle, Toggle new_toggle) {
@@ -623,40 +471,6 @@ public class ImageSplitController extends ImageViewerController {
             }
         });
 
-        formatGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-            @Override
-            public void changed(ObservableValue<? extends Toggle> ov,
-                    Toggle old_toggle, Toggle new_toggle) {
-                checkPdfFormat();
-            }
-        });
-
-        jpegBox.getItems().addAll(Arrays.asList(
-                "100",
-                "75",
-                "90",
-                "50",
-                "60",
-                "80",
-                "30",
-                "10"
-        ));
-        jpegBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> ov,
-                    String oldValue, String newValue) {
-                checkJpegQuality();
-            }
-        });
-        jpegBox.getSelectionModel().select(0);
-
-        pdfThresholdInput.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                checkPdfThreshold();
-            }
-        });
-
         MarginsBox.getItems().addAll(Arrays.asList("20", "10", "15", "5", "25", "30"));
         MarginsBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -717,7 +531,7 @@ public class ImageSplitController extends ImageViewerController {
         customHeightInput.setStyle(null);
         isImageSize = false;
 
-        RadioButton selected = (RadioButton) sizeGroup.getSelectedToggle();
+        RadioButton selected = (RadioButton) pdfSizeGroup.getSelectedToggle();
         if (AppVariables.message("ImagesSize").equals(selected.getText())) {
             isImageSize = true;
         } else if (AppVariables.message("StandardSize").equals(selected.getText())) {
@@ -812,7 +626,7 @@ public class ImageSplitController extends ImageViewerController {
 
     private void checkPdfCustomValues() {
 
-        RadioButton selected = (RadioButton) sizeGroup.getSelectedToggle();
+        RadioButton selected = (RadioButton) pdfSizeGroup.getSelectedToggle();
         if (!AppVariables.message("Custom").equals(selected.getText())) {
             return;
         }
@@ -842,58 +656,6 @@ public class ImageSplitController extends ImageViewerController {
             customHeightInput.setStyle(badStyle);
         }
 
-    }
-
-    private void checkPdfFormat() {
-        jpegBox.setDisable(true);
-        jpegBox.setStyle(null);
-        pdfThresholdInput.setDisable(true);
-
-        RadioButton selected = (RadioButton) formatGroup.getSelectedToggle();
-        if (AppVariables.message("PNG").equals(selected.getText())) {
-            pdfFormat = PdfImageFormat.Original;
-        } else if (AppVariables.message("BlackOrWhite").equals(selected.getText())) {
-            pdfFormat = PdfImageFormat.Tiff;
-            pdfThresholdInput.setDisable(false);
-        } else if (AppVariables.message("JpegQuailty").equals(selected.getText())) {
-            pdfFormat = PdfImageFormat.Jpeg;
-            jpegBox.setDisable(false);
-            checkJpegQuality();
-        }
-    }
-
-    private void checkJpegQuality() {
-        jpegQuality = 100;
-        try {
-            jpegQuality = Integer.valueOf(jpegBox.getSelectionModel().getSelectedItem());
-            if (jpegQuality >= 0 && jpegQuality <= 100) {
-                jpegBox.setStyle(null);
-            } else {
-                jpegBox.setStyle(badStyle);
-            }
-        } catch (Exception e) {
-            jpegBox.setStyle(badStyle);
-        }
-    }
-
-    private void checkPdfThreshold() {
-        try {
-            if (pdfThresholdInput.getText().isEmpty()) {
-                threshold = -1;
-                pdfThresholdInput.setStyle(null);
-                return;
-            }
-            threshold = Integer.valueOf(pdfThresholdInput.getText());
-            if (threshold >= 0 && threshold <= 255) {
-                pdfThresholdInput.setStyle(null);
-            } else {
-                threshold = -1;
-                pdfThresholdInput.setStyle(badStyle);
-            }
-        } catch (Exception e) {
-            threshold = -1;
-            pdfThresholdInput.setStyle(badStyle);
-        }
     }
 
     @Override
@@ -1015,8 +777,28 @@ public class ImageSplitController extends ImageViewerController {
     }
 
     @FXML
+    private void do24Action(ActionEvent event) {
+        divideImageByNumber(2, 4);
+    }
+
+    @FXML
+    private void do41Action(ActionEvent event) {
+        divideImageByNumber(4, 1);
+    }
+
+    @FXML
+    private void do14Action(ActionEvent event) {
+        divideImageByNumber(1, 4);
+    }
+
+    @FXML
     private void do43Action(ActionEvent event) {
         divideImageByNumber(4, 3);
+    }
+
+    @FXML
+    private void do34Action(ActionEvent event) {
+        divideImageByNumber(3, 4);
     }
 
     @FXML
@@ -1365,7 +1147,6 @@ public class ImageSplitController extends ImageViewerController {
         final boolean inPageNumber = pageNumberCheck.isSelected();
         final String header = headerInput.getText();
         final String fontName = fontBox.getSelectionModel().getSelectedItem();
-        final boolean isDithering = pdfDitherCheck.isSelected();
         if (pdfTask != null) {
             pdfTask.cancel();
             pdfController = null;
@@ -1379,7 +1160,6 @@ public class ImageSplitController extends ImageViewerController {
                 try {
                     final String sourceFormat = imageInformation.getImageFormat();
                     final String sourcefile = sourceFile.getAbsolutePath();
-                    attributes.setIsDithering(isDithering);
                     File tmpFile = FileTools.getTempFile();
                     try (PDDocument document = new PDDocument(AppVariables.pdfMemUsage)) {
                         PDFont font = PdfTools.getFont(document, fontName);
@@ -1387,8 +1167,10 @@ public class ImageSplitController extends ImageViewerController {
                         info.setCreationDate(Calendar.getInstance());
                         info.setModificationDate(Calendar.getInstance());
                         info.setProducer("MyBox v" + CommonValues.AppVersion);
+
                         info.setAuthor(authorInput.getText());
                         document.setDocumentInformation(info);
+                        document.setVersion(1.0f);
                         int x1, y1, x2, y2;
                         BufferedImage wholeSource = null;
                         if (!imageInformation.isIsSampled()) {
@@ -1418,9 +1200,9 @@ public class ImageSplitController extends ImageViewerController {
                                     return null;
                                 }
                                 PdfTools.writePage(document, font, sourceFormat, target,
-                                        ++count, total, pdfFormat,
+                                        ++count, total, PdfImageFormat.Original,
                                         threshold, jpegQuality, isImageSize, inPageNumber,
-                                        pageWidth, pageHeight, marginSize, header, isDithering);
+                                        pageWidth, pageHeight, marginSize, header, true);
 
                                 updateLabel(total, (i + 1) * (j + 1));
                             }
@@ -1501,13 +1283,12 @@ public class ImageSplitController extends ImageViewerController {
             protected Void call() {
                 final String sourceFormat = imageInformation.getImageFormat();
                 final String filename = sourceFile.getAbsolutePath();
-                attributes.setIsDithering(tiffDitherCheck.isSelected());
                 try {
                     ImageWriter writer = getWriter();
                     File tmpFile = FileTools.getTempFile();
                     try (ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                         writer.setOutput(out);
-                        ImageWriteParam param = getPara(attributes, writer);
+                        ImageWriteParam param = getPara(null, writer);
                         writer.prepareWriteSequence(null);
                         int x1, y1, x2, y2;
                         BufferedImage wholeSource = null;
@@ -1536,8 +1317,7 @@ public class ImageSplitController extends ImageViewerController {
                                 if (tiffTask == null || isCancelled()) {
                                     return null;
                                 }
-                                bufferedImage = ImageConvert.convertColorType(bufferedImage, attributes);
-                                IIOMetadata metaData = getWriterMeta(attributes, bufferedImage, writer, param);
+                                IIOMetadata metaData = getWriterMeta(null, bufferedImage, writer, param);
                                 if (tiffTask == null || isCancelled()) {
                                     return null;
                                 }

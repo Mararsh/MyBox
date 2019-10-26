@@ -14,6 +14,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.util.Callback;
 import javafx.util.converter.IntegerStringConverter;
@@ -44,7 +45,9 @@ public class PDFsTableController extends TableController<PdfInformation> {
     @FXML
     protected Button pdfSetButton;
     @FXML
-    protected HBox setBox, fromToBax, filterBox;
+    protected FlowPane selectPane, setPDFPane;
+    @FXML
+    protected HBox fromToBox;
     @FXML
     protected Label tableCommentsLabel, setLabel;
 
@@ -270,17 +273,17 @@ public class PDFsTableController extends TableController<PdfInformation> {
             if (!thisPane.getChildren().contains(tableCommentsLabel)) {
                 thisPane.getChildren().add(1, tableCommentsLabel);
             }
-            if (!thisPane.getChildren().contains(setBox)) {
-                thisPane.getChildren().add(3, setBox);
+            if (!thisPane.getChildren().contains(setPDFPane)) {
+                thisPane.getChildren().add(3, setPDFPane);
             }
-            if (!thisPane.getChildren().contains(filterBox)) {
-                thisPane.getChildren().add(4, filterBox);
+            if (!thisPane.getChildren().contains(selectPane)) {
+                thisPane.getChildren().add(4, selectPane);
             }
             if (!thisPane.getChildren().contains(tableLabel)) {
                 thisPane.getChildren().add(5, tableLabel);
             }
         } else {
-            thisPane.getChildren().removeAll(tableCommentsLabel, setBox, filterBox, tableLabel);
+            thisPane.getChildren().removeAll(tableCommentsLabel, setPDFPane, selectPane, tableLabel);
         }
         FxmlControl.refreshStyle(thisPane);
         AppVariables.setUserConfigValue("PDFTableMore", moreButton.isSelected());
@@ -313,28 +316,28 @@ public class PDFsTableController extends TableController<PdfInformation> {
         this.pdfSetButton = pdfSetButton;
     }
 
-    public HBox getFilterBox() {
-        return filterBox;
+    public FlowPane getSelectPane() {
+        return selectPane;
     }
 
-    public void setFilterBox(HBox filterBox) {
-        this.filterBox = filterBox;
+    public void setSelectPane(FlowPane selectPane) {
+        this.selectPane = selectPane;
     }
 
-    public HBox getSetBox() {
-        return setBox;
+    public FlowPane getSetPDFPane() {
+        return setPDFPane;
     }
 
-    public void setSetBox(HBox setBox) {
-        this.setBox = setBox;
+    public void setSetPDFPane(FlowPane setPDFPane) {
+        this.setPDFPane = setPDFPane;
     }
 
-    public HBox getFromToBax() {
-        return fromToBax;
+    public HBox getFromToBox() {
+        return fromToBox;
     }
 
-    public void setFromToBax(HBox fromToBax) {
-        this.fromToBax = fromToBax;
+    public void setFromToBox(HBox fromToBox) {
+        this.fromToBox = fromToBox;
     }
 
     public Label getTableCommentsLabel() {

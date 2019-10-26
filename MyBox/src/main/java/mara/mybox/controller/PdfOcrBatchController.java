@@ -375,6 +375,29 @@ public class PdfOcrBatchController extends PdfBatchController {
         checkLanguages();
     }
 
+    @FXML
+    public void topAction() {
+        List<Integer> selectedIndices = new ArrayList<>();
+        selectedIndices.addAll(languageList.getSelectionModel().getSelectedIndices());
+        if (selectedIndices.isEmpty()) {
+            return;
+        }
+        List<String> selected = new ArrayList<>();
+        selected.addAll(languageList.getSelectionModel().getSelectedItems());
+        isSettingValues = true;
+        int size = selectedIndices.size();
+        for (int i = size - 1; i >= 0; i--) {
+            int index = selectedIndices.get(i);
+            languageList.getItems().remove(index);
+        }
+        languageList.getSelectionModel().clearSelection();
+        languageList.getItems().addAll(0, selected);
+        languageList.getSelectionModel().selectRange(0, size);
+        languageList.refresh();
+        isSettingValues = false;
+        checkLanguages();
+    }
+
     @Override
     public boolean makeActualParameters() {
         if (!super.makeActualParameters()) {
@@ -549,7 +572,7 @@ public class PdfOcrBatchController extends PdfBatchController {
             }
 
             if (invertCheck.isSelected()) {
-                PixelsOperation pixelsOperation = PixelsOperation.newPixelsOperation(lastImage,
+                PixelsOperation pixelsOperation = PixelsOperation.create(lastImage,
                         null, PixelsOperation.OperationType.RGB, PixelsOperation.ColorActionType.Invert);
                 lastImage = pixelsOperation.operateImage();
             }

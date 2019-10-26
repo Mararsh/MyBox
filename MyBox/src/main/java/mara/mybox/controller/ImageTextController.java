@@ -36,7 +36,7 @@ public class ImageTextController extends BaseController {
     @FXML
     protected HBox barBox, closeBox;
     @FXML
-    protected CheckBox topCheck, saveCloseCheck;
+    protected CheckBox saveCloseCheck;
 
     public ImageTextController() {
         baseTitle = AppVariables.message("Texts");
@@ -45,16 +45,6 @@ public class ImageTextController extends BaseController {
     @Override
     public void initControls() {
         try {
-
-            topCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                    if (myStage != null) {
-                        myStage.setAlwaysOnTop(topCheck.isSelected());
-                    }
-                    AppVariables.setUserConfigValue("ImageTextAlwaysTop", topCheck.isSelected());
-                }
-            });
 
             htmlEditor.addEventHandler(DragEvent.DRAG_EXITED, new EventHandler<InputEvent>() { // work
                 @Override
@@ -75,12 +65,6 @@ public class ImageTextController extends BaseController {
 
     }
 
-    @Override
-    public void toFront() {
-        super.toFront();
-        myStage.setAlwaysOnTop(topCheck.isSelected());
-    }
-
     private void checkHtmlEditorChanged() {
         if (parent == null || parent.webView == null || !parent.webView.isVisible()) {
             return;
@@ -98,18 +82,6 @@ public class ImageTextController extends BaseController {
                 AppVariables.setUserConfigValue("ImageTextSaveClose", newValue);
             }
         });
-
-        topCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                if (myStage != null) {
-                    myStage.setAlwaysOnTop(topCheck.isSelected());
-                }
-                AppVariables.setUserConfigValue("ImageTextAlwaysTop", newValue);
-            }
-        });
-        topCheck.setSelected(AppVariables.getUserConfigBoolean("ImageTextAlwaysTop", true));
-        myStage.setAlwaysOnTop(topCheck.isSelected());
 
         Object contents = parent.webEngine.executeScript("document.documentElement.outerHTML");
         if (contents != null) {

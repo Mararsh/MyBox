@@ -93,8 +93,12 @@ public class HtmlViewerController extends BaseController {
             if (html == null) {
                 return;
             }
+            String name = title;
+            if (name != null) {
+                name += ".htm";
+            }
             final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
-                    baseTitle, targetExtensionFilter, true);
+                    name, targetExtensionFilter, true);
             if (file == null) {
                 return;
             }

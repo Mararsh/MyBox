@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
 <!--
 Author:     Mara
 License:    Apache License Version 2.0
             http://www.apache.org/licenses/LICENSE-2.0
 -->
-
 
 <?import javafx.scene.*?>
 <?import javafx.scene.text.*?>
@@ -47,32 +45,13 @@ License:    Apache License Version 2.0
                         </ToolBar>
                     </children>
                 </HBox>
-                <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT">
+                <HBox alignment="CENTER_RIGHT" nodeOrientation="LEFT_TO_RIGHT" spacing="5.0">
                     <children>
-                        <ToolBar HBox.hgrow="ALWAYS">
-                            <items>
-                                <Button mnemonicParsing="false" text=" " visible="false" />
-                            </items>
-                        </ToolBar>
-                        <ToolBar HBox.hgrow="NEVER">
-                            <items>
-                                <HBox fx:id="filterTypesBox" alignment="CENTER_LEFT" spacing="5.0">
-                                    <children>
-                                        <RadioButton fx:id="filterIncludeRadio" mnemonicParsing="false" selected="true" text="%IncludeOne">
-                                            <toggleGroup>
-                                                <ToggleGroup fx:id="filterGroup" />
-                                            </toggleGroup>
-                                        </RadioButton>
-                                        <RadioButton mnemonicParsing="false" text="%IncludeAll" toggleGroup="$filterGroup" />
-                                        <RadioButton mnemonicParsing="false" text="%NotIncludeAll" toggleGroup="$filterGroup" />
-                                        <RadioButton mnemonicParsing="false" text="%NotIncludeAny" toggleGroup="$filterGroup" />
-                                    </children>
-                                </HBox>
-                                <TextField fx:id="filterInput" prefWidth="300.0" promptText="%SeparateByCommaBlanksInvolved" />
-                                <CheckBox fx:id="filterLineNumberCheck" mnemonicParsing="false" selected="true" text="%LineNumber" />
-                                <Button fx:id="filterButton" disable="true" mnemonicParsing="false" onAction="#filterAction" text="%Filter" />
-                            </items>
-                        </ToolBar>
+                        <Hyperlink fx:id="regexLink" onAction="#regexHelp" text="%RegularExpression" />
+                        <ComboBox fx:id="filterTypeSelector" prefWidth="240.0" />
+                        <TextField fx:id="filterInput" prefWidth="400.0" />
+                        <CheckBox fx:id="filterLineNumberCheck" mnemonicParsing="false" selected="true" text="%LineNumber" />
+                        <Button fx:id="filterButton" disable="true" mnemonicParsing="false" onAction="#filterAction" text="%Filter" />
                     </children>
                 </HBox>
                 <HBox>
@@ -92,14 +71,45 @@ License:    Apache License Version 2.0
                 </SplitPane>
                 <HBox alignment="CENTER_LEFT" VBox.vgrow="NEVER">
                     <children>
-                        <ToolBar fx:id="rangeBar" HBox.hgrow="ALWAYS">
-                            <items>
-                                <TextField fx:id="bottomText" editable="false" focusTraversable="false" prefWidth="520.0" styleClass="copyable-label" stylesheets="@../styles/MyBox.css" />
-                                <Button mnemonicParsing="false" text=" " visible="false" />
-                            </items>
-                        </ToolBar>
-                        <ToolBar fx:id="pageBar" disable="true" HBox.hgrow="NEVER">
-                            <items>
+                        <Label maxWidth="1.7976931348623157E308" visible="false" HBox.hgrow="ALWAYS" />
+                        <HBox fx:id="pageBox" alignment="CENTER_LEFT" spacing="5.0">
+                            <children>
+                                <Button fx:id="pageFirstButton" mnemonicParsing="false" onAction="#pageFirstAction">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconFirst.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="pagePreviousButton" mnemonicParsing="false" onAction="#pagePreviousAction">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconPrevious.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="pageNextButton" mnemonicParsing="false" onAction="#pageNextAction">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconNext.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="pageLastButton" mnemonicParsing="false" onAction="#pageLastAction">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconLast.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
                                 <Label text="%Page" />
                                 <TextField fx:id="pageInput" prefWidth="60.0" text="1" />
                                 <Label fx:id="pageLabel" />
@@ -112,44 +122,8 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Button fx:id="firstButton" mnemonicParsing="false" onAction="#firstAction">
-                                    <graphic>
-                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/iconFirst.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                                <Button fx:id="lastButton" mnemonicParsing="false" onAction="#lastAction">
-                                    <graphic>
-                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/iconLast.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                                <Button fx:id="previousButton" mnemonicParsing="false" onAction="#previousAction">
-                                    <graphic>
-                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/iconPrevious.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                                <Button fx:id="nextButton" mnemonicParsing="false" onAction="#nextAction">
-                                    <graphic>
-                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/iconNext.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                            </items>
-                        </ToolBar>
+                            </children>
+                        </HBox>
                     </children>
                 </HBox>
             </children>
@@ -159,9 +133,14 @@ License:    Apache License Version 2.0
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
     </padding>
     <bottom>
-        <HBox alignment="CENTER_LEFT">
+        <HBox alignment="CENTER_LEFT" BorderPane.alignment="CENTER">
             <children>
-                <Label fx:id="bottomLabel" BorderPane.alignment="CENTER" />
+                <Label fx:id="bottomLabel" HBox.hgrow="ALWAYS" />
+                <Label fx:id="selectionLabel" HBox.hgrow="NEVER">
+                    <HBox.margin>
+                        <Insets left="20.0" />
+                    </HBox.margin>
+                </Label>
             </children>
         </HBox>
     </bottom>

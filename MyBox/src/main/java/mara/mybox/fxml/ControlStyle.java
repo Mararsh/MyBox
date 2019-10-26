@@ -317,16 +317,16 @@ public class ControlStyle {
                 return new ControlStyle("scopeDeleteButton", message("Delete"), "", "iconDelete.png");
 
             case "scopeDeletePointButton":
-                return new ControlStyle("scopeDeletePointButton", message("Create"), "", "iconOK2.png");
+                return new ControlStyle("scopeDeletePointButton", message("Delete"), "", "iconDelete.png");
 
             case "scopeClearPointsButton":
-                return new ControlStyle("scopeClearPointsButton", message("Delete"), "", "iconClear.png");
+                return new ControlStyle("scopeClearPointsButton", message("Clear"), "", "iconClear.png");
 
             case "scopeDeleteColorButton":
-                return new ControlStyle("scopeDeleteColorButton", message("Clear"), "", "iconOK2.png");
+                return new ControlStyle("scopeDeleteColorButton", message("Delete"), "", "iconDelete.png");
 
             case "scopeClearColorsButton":
-                return new ControlStyle("scopeClearColorsButton", message("Delete"), "", "iconClear.png");
+                return new ControlStyle("scopeClearColorsButton", message("Clear"), "", "iconClear.png");
 
             case "scopeOutlineFileButton":
                 return new ControlStyle("scopeOutlineFileButton", message("Open"), "", "iconOpen.png");
@@ -407,6 +407,9 @@ public class ControlStyle {
 
             case "tableExpandDirCheck":
                 return new ControlStyle("tableExpandDirCheck", "", message("ExpandDirectories"), "", "iconUnfold.png");
+
+            case "tableCreateDirCheck":
+                return new ControlStyle("tableCreateDirCheck", "", message("CreateDirectories"), "", "iconAddFoloder.png");
 
             case "tableThumbCheck":
                 return new ControlStyle("tableThumbCheck", "", message("Thumbnail"), "", "iconThumbsList.png");
@@ -624,10 +627,10 @@ public class ControlStyle {
                 return new ControlStyle("previousButton", message("Previous"), "PAGE UP", "iconPrevious.png");
 
             case "firstButton":
-                return new ControlStyle("firstButton", message("First"), "CTRL+HOME", "iconFirst.png");
+                return new ControlStyle("firstButton", message("First"), "ALT+HOME", "iconFirst.png");
 
             case "lastButton":
-                return new ControlStyle("lastButton", message("Last"), "CTRL+END", "iconLast.png");
+                return new ControlStyle("lastButton", message("Last"), "ALT+END", "iconLast.png");
 
             case "goButton":
                 return new ControlStyle("goButton", message("Go"), "", "iconGo.png");
@@ -696,25 +699,25 @@ public class ControlStyle {
                 return new ControlStyle("closeButton", message("Close"), "F4", "iconClose.png");
 
             case "findNextButton":
-                return new ControlStyle("findNextButton", message("Next"), "CTRL+n", "iconNext.png");
+                return new ControlStyle("findNextButton", message("Next"), "CTRL+3", "iconNext.png");
 
             case "findPreviousButton":
-                return new ControlStyle("findPreviousButton", message("Previous"), "CTRL+p", "iconPrevious.png");
+                return new ControlStyle("findPreviousButton", message("Previous"), "CTRL+2", "iconPrevious.png");
 
             case "findLastButton":
-                return new ControlStyle("findLastButton", message("Last"), "CTRL+l", "iconLast.png");
+                return new ControlStyle("findLastButton", message("Last"), "CTRL+4", "iconLast.png");
 
             case "findFirstButton":
-                return new ControlStyle("findFirstButton", message("First"), "CTRL+f", "iconFirst.png");
+                return new ControlStyle("findFirstButton", message("First"), "CTRL+1", "iconFirst.png");
 
             case "replaceButton":
-                return new ControlStyle("replaceButton", message("Replace"), "CTRL+e", "iconReplace.png");
+                return new ControlStyle("replaceButton", message("Replace"), "CTRL+q", "iconReplace.png");
 
             case "replaceAllButton":
-                return new ControlStyle("replaceAllButton", message("ReplaceAll"), "", "iconReplaceAll.png");
+                return new ControlStyle("replaceAllButton", message("ReplaceAll"), "CTRL+w", "iconReplaceAll.png");
 
             case "clearButton":
-                return new ControlStyle("clearButton", message("Clear"), "", "iconClear.png");
+                return new ControlStyle("clearButton", message("CTRL+g"), "", "iconClear.png");
 
             case "clearFilesButton":
                 return new ControlStyle("clearFilesButton", message("Clear"), "", "iconClear.png");
@@ -1089,6 +1092,9 @@ public class ControlStyle {
             case "moveDownButton":
                 return new ControlStyle("moveDownButton", message("MoveDown"), "", "iconDown.png");
 
+            case "moveTopButton":
+                return new ControlStyle("moveTopButton", message("MoveTop"), "", "iconDoubleUp.png");
+
             case "zoomIn2Button":
                 return new ControlStyle("zoomIn2Button", message("ZoomIn"), "", "iconZoomIn.png");
 
@@ -1100,6 +1106,45 @@ public class ControlStyle {
 
             case "paneSize2Button":
                 return new ControlStyle("paneSize2Button", message("PaneSize"), "", "iconPicBig.png");
+
+            case "pagePreviousButton":
+                return new ControlStyle("pagePreviousButton", message("Previous"), "ALT+PAGE_UP", "iconPrevious.png");
+
+            case "pageNextButton":
+                return new ControlStyle("pageNextButton", message("Next"), "ALT+PAGE_DOWN", "iconNext.png");
+
+            case "pageFirstButton":
+                return new ControlStyle("pageFirstButton", message("First"), "ALT+HOME", "iconFirst.png");
+
+            case "pageLastButton":
+                return new ControlStyle("pageLastButton", message("Last"), "ALT+END", "iconLast.png");
+
+            case "allButton":
+                return new ControlStyle("allButton", message("All"), "CTRL+a", "iconCheckAll.png");
+
+            case "refreshHtmlButton":
+                return new ControlStyle("refreshHtmlButton", message("Refresh"), "", "iconRefresh.png");
+
+            case "saveHtmlButton":
+                return new ControlStyle("saveHtmlButton", message("Save"), "", "iconSave.png");
+
+            case "editHtmlButton":
+                return new ControlStyle("editHtmlButton", message("Edit"), "", "iconEdit.png");
+
+            case "saveTextButton":
+                return new ControlStyle("saveTextButton", message("Save"), "", "iconSave.png");
+
+            case "refreshTextButton":
+                return new ControlStyle("refreshTextButton", message("Refresh"), "", "iconRefresh.png");
+
+            case "editMarkdownButton":
+                return new ControlStyle("editMarkdownButton", message("Edit"), "", "iconEdit.png");
+
+            case "saveMarkdownButton":
+                return new ControlStyle("saveMarkdownButton", message("Save"), "", "iconSave.png");
+
+            case "refreshMarkdownButton":
+                return new ControlStyle("refreshMarkdownButton", message("Refresh"), "", "iconRefresh.png");
 
             default:
                 return null;

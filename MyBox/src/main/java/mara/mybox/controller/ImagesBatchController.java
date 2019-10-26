@@ -5,6 +5,7 @@ import javafx.stage.Modality;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.image.ImageFileInformation;
 import mara.mybox.image.ImageInformation;
+import mara.mybox.tools.FileTools;
 import mara.mybox.value.CommonImageValues;
 
 /**
@@ -75,6 +76,16 @@ public abstract class ImagesBatchController extends FilesBatchController {
 
     public void afterImageInfoLoaded() {
 
+    }
+
+    @Override
+    public boolean match(File file) {
+        if (file == null || !file.isFile()
+                || !FileTools.isSupportedImage(file)) {
+            return false;
+        }
+
+        return super.match(file);
     }
 
 }

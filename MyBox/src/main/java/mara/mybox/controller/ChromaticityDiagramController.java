@@ -1089,6 +1089,7 @@ public class ChromaticityDiagramController extends BaseController {
     }
 
     @FXML
+    @Override
     public void clearAction() {
         isSettingValues = true;
 
@@ -1108,6 +1109,33 @@ public class ChromaticityDiagramController extends BaseController {
         inputCheck.setSelected(false);
         calculateCheck.setSelected(false);
         whitePointsCheck.setSelected(false);
+
+        isSettingValues = false;
+
+        displayChromaticityDiagram();
+    }
+
+    @FXML
+    @Override
+    public void allAction() {
+        isSettingValues = true;
+
+        cdProPhotoCheck.setSelected(true);
+        cdColorMatchCheck.setSelected(true);
+        cdNTSCCheck.setSelected(true);
+        cdPALCheck.setSelected(true);
+        cdAppleCheck.setSelected(true);
+        cdAdobeCheck.setSelected(true);
+        cdSRGBCheck.setSelected(true);
+        cdECICheck.setSelected(true);
+        cdCIECheck.setSelected(true);
+        cdSMPTECCheck.setSelected(true);
+        degree2Check.setSelected(true);
+        degree10Check.setSelected(true);
+        waveCheck.setSelected(true);
+        inputCheck.setSelected(true);
+        calculateCheck.setSelected(true);
+        whitePointsCheck.setSelected(true);
 
         isSettingValues = false;
 

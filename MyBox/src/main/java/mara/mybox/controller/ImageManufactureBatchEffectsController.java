@@ -41,10 +41,10 @@ import static mara.mybox.value.AppVariables.message;
 public class ImageManufactureBatchEffectsController extends ImageManufactureBatchController {
 
     private OperationType effectType;
-    protected int intPara1, intPara2, intPara3;
+    protected int intPara1, intPara2, intPara3, bitDepth;
     private ConvolutionKernel kernel;
-    private ComboBox<String> intBox, stringBox;
-    private Label intLabel, stringLabel;
+    private ComboBox<String> intBox, depthBox, stringBox;
+    private Label intLabel, stringLabel, depthLabel;
     private CheckBox valueCheck;
     private TextField intInput;
     private RadioButton radio1, radio2, radio3;
@@ -247,22 +247,36 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
         try {
             FxmlControl.setTooltip(effectTipsView, new Tooltip(message("QuantizationComments")));
 
-            quantizationAlgorithm = QuantizationAlgorithm.RGB_Uniform;
+            quantizationAlgorithm = QuantizationAlgorithm.RGBUniformQuantization;
             stringLabel = new Label(message("Algorithm"));
             stringBox = new ComboBox<>();
             stringBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    if (message("RGBUniformQuantization").equals(newValue)) {
-                        quantizationAlgorithm = QuantizationAlgorithm.RGB_Uniform;
-                    } else if (message("HSBUniformQuantization").equals(newValue)) {
-                        quantizationAlgorithm = QuantizationAlgorithm.HSB_Uniform;
+                    for (QuantizationAlgorithm algorithm : QuantizationAlgorithm.values()) {
+                        if (message(algorithm.name()).equals(newValue)) {
+                            quantizationAlgorithm = algorithm;
+                            break;
+                        }
+                    }
+                    if (quantizationAlgorithm == QuantizationAlgorithm.HSBUniformQuantization
+                            || quantizationAlgorithm == QuantizationAlgorithm.RGBUniformQuantization) {
+                        if (setBox.getChildren().contains(depthBox)) {
+                            setBox.getChildren().removeAll(depthBox, depthLabel);
+                        }
+                    } else {
+                        if (!setBox.getChildren().contains(depthBox)) {
+                            setBox.getChildren().add(5, depthLabel);
+                            setBox.getChildren().add(6, depthBox);
+                        }
                     }
                 }
             });
-            stringBox.getItems().addAll(Arrays.asList(message("RGBUniformQuantization"),
-                    message("HSBUniformQuantization")));
-            stringBox.getSelectionModel().select(message("RGBUniformQuantization"));
+            for (QuantizationAlgorithm algorithm : QuantizationAlgorithm.values()) {
+                stringBox.getItems().add(message(algorithm.name()));
+            }
+            stringBox.getSelectionModel().select(0);
+
             intPara1 = 64;
             intLabel = new Label(message("ColorsNumber"));
             intBox = new ComboBox<>();
@@ -285,12 +299,31 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
                 }
             });
             intBox.getItems().addAll(Arrays.asList(
-                    "64", "512", "8", "4096", "216", "343", "27", "125", "1000", "729", "1728", "8000"));
+                    "256", "64", "8", "16", "27", "512", "4096", "216", "343", "125", "1000", "729", "1728", "8000"));
             intBox.getSelectionModel().select(0);
+
             valueCheck = new CheckBox(message("Dithering"));
             valueCheck.setSelected(true);
 
-            setBox.getChildren().addAll(effectTipsView, stringLabel, stringBox, intLabel, intBox, ditherTipsView, valueCheck);
+            bitDepth = 4;
+            depthLabel = new Label(message("RegionsBitDepth"));
+            depthBox = new ComboBox<>();
+            depthBox.setEditable(false);
+            depthBox.setPrefWidth(100);
+            depthBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    try {
+                        bitDepth = Integer.valueOf(newValue);
+                    } catch (Exception e) {
+                    }
+                }
+            });
+            depthBox.getItems().addAll(Arrays.asList(
+                    "4", "5", "6", "7", "8", "3", "2", "1"));
+            depthBox.getSelectionModel().select(0);
+
+            setBox.getChildren().addAll(effectTipsView, stringLabel, stringBox, intLabel, intBox, valueCheck);
             startButton.disableProperty().bind(
                     intBox.getEditor().styleProperty().isEqualTo(badStyle)
                             .or(Bindings.isEmpty(targetPathInput.textProperty()))
@@ -533,17 +566,17 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
                         target = imageConvolution.operate();
                         break;
                     case Thresholding:
-                        pixelsOperation = PixelsOperation.newPixelsOperation(ImageManufacture.removeAlpha(source), null, effectType);
+                        pixelsOperation = PixelsOperation.create(ImageManufacture.removeAlpha(source), null, effectType);
                         pixelsOperation.setIntPara1(intPara1);
                         pixelsOperation.setIntPara2(intPara2);
                         pixelsOperation.setIntPara3(intPara3);
                         target = pixelsOperation.operate();
                         break;
                     case Quantization:
-                        int channelSize = (int) Math.round(Math.pow(intPara1, 1.0 / 3.0));
-                        ImageQuantization quantization = new ImageQuantization(ImageManufacture.removeAlpha(source),
-                                quantizationAlgorithm, channelSize);
-                        quantization.setIsDithering(valueCheck.isSelected());
+                        ImageQuantization quantization = ImageQuantization.create(
+                                ImageManufacture.removeAlpha(source),
+                                null, quantizationAlgorithm, intPara1, bitDepth, false,
+                                valueCheck.isSelected());
                         target = quantization.operate();
                         break;
                     case Gray:
@@ -567,7 +600,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
                         target = imageBinary.operate();
                         break;
                     case Sepia:
-                        pixelsOperation = PixelsOperation.newPixelsOperation(source, null, effectType);
+                        pixelsOperation = PixelsOperation.create(source, null, effectType);
                         pixelsOperation.setIntPara1(intPara1);
                         target = pixelsOperation.operate();
                         break;

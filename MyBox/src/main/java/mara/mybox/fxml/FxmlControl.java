@@ -19,6 +19,7 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
@@ -29,11 +30,14 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.web.WebView;
 import javafx.stage.Popup;
@@ -707,6 +711,27 @@ public class FxmlControl {
         } catch (Exception e) {
         }
         return null;
+    }
+
+    public static Image snap(Node node) {
+        try {
+            final Bounds bounds = node.getLayoutBounds();
+            Screen screen = Screen.getPrimary();
+            double scaleX = screen.getOutputScaleX();
+            double scaleY = screen.getOutputScaleY();
+            int imageWidth = (int) Math.round(bounds.getWidth() * scaleX);
+            int imageHeight = (int) Math.round(bounds.getHeight() * scaleY);
+            final SnapshotParameters snapPara = new SnapshotParameters();
+            snapPara.setFill(Color.TRANSPARENT);
+            snapPara.setTransform(javafx.scene.transform.Transform.scale(scaleX, scaleY));
+            WritableImage snapshot = new WritableImage(imageWidth, imageHeight);
+            snapshot = node.snapshot(snapPara, snapshot);
+            return snapshot;
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return null;
+        }
+
     }
 
 }

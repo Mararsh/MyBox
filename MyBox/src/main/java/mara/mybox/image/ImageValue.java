@@ -97,12 +97,14 @@ public class ImageValue {
         String[] compressionTypes;
         switch (imageFormat) {
             case "jpg":
+            case "jpeg":
                 compressionTypes = getJpegCompressionTypes();
                 break;
             case "gif":
                 compressionTypes = new String[]{"LZW"};
                 break;
-            case "tif":   // Summarized based on API of class "com.github.jaiimageio.plugins.tiff.TIFFImageWriteParam" and debugging
+            case "tif":
+            case "tiff": // Summarized based on API of class "com.github.jaiimageio.plugins.tiff.TIFFImageWriteParam" and debugging
                 if (message("BlackOrWhite").equals(colorSpace)) {
                     compressionTypes = new String[]{"CCITT T.6", "CCITT RLE", "CCITT T.4", "ZLib", "Deflate", "LZW", "PackBits"};
                 } else {
@@ -136,12 +138,14 @@ public class ImageValue {
         String[] compressionTypes = null;
         switch (imageFormat) {
             case "jpg":
+            case "jpeg":
                 compressionTypes = getJpegCompressionTypes();
                 break;
             case "gif":
                 String[] giftypes = {"LZW"};
                 return giftypes;
-            case "tif":   // Summarized based on API of class "com.github.jaiimageio.plugins.tiff.TIFFImageWriteParam" and debugging
+            case "tif":
+            case "tiff":  // Summarized based on API of class "com.github.jaiimageio.plugins.tiff.TIFFImageWriteParam" and debugging
                 switch (imageColor) {
                     case BINARY: {
                         String[] types = {"CCITT T.6", "CCITT RLE", "CCITT T.4", "ZLib", "Deflate", "LZW", "PackBits"};

@@ -354,7 +354,7 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
 
                 @Override
                 protected void whenSucceeded() {
-                    parent.updateImage(ImageOperation.Margins, opType.name(), value, newImage);
+                    parent.updateImage(ImageOperation.Margins, opType.name(), value, newImage, cost);
                     if (opType == OperationType.SetMarginsByDragging) {
 //                        opGroup.selectToggle(null);
                         initDragging();
@@ -362,7 +362,7 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
 
                 }
             };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
+            parent.openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();

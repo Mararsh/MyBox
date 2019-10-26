@@ -15,7 +15,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.image.*?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.RGB2XYZConversionMatrixController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.RGB2XYZConversionMatrixController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -64,21 +64,33 @@ License:    Apache License Version 2.0
                                                 <Button fx:id="calculateButton" mnemonicParsing="false" onAction="#calculateAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Calculate" />
                                             </children>
                                         </HBox>
-                                        <TitledPane text="%RGBColorSpace" VBox.vgrow="NEVER">
-                                            <content>
-                                                <fx:include fx:id="rgb" source="RGBColorSpace.fxml" />
-                                            </content>
-                                        </TitledPane>
-                                        <TitledPane text="%XYZReferenceWhite" VBox.vgrow="NEVER">
-                                            <content>
-                                                <fx:include source="WhitePoint.fxml" fx:id="xyz" />
-                                            </content>
-                                        </TitledPane>
-                                        <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%LinearRGB2XYZMatrix" VBox.vgrow="ALWAYS">
-                                            <content>
-                                                <TextArea fx:id="calculateArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
-                                            </content>
-                                        </TitledPane>
+                              <SplitPane dividerPositions="0.6" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                 <items>
+                                    <ScrollPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefViewportHeight="674.0" prefViewportWidth="1918.0">
+                                       <content>
+                                          <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                             <children>
+                                                          <TitledPane text="%RGBColorSpace" VBox.vgrow="NEVER">
+                                                              <content>
+                                                                  <fx:include fx:id="rgb" source="RGBColorSpace.fxml" />
+                                                              </content>
+                                                          </TitledPane>
+                                                          <TitledPane text="%XYZReferenceWhite" VBox.vgrow="NEVER">
+                                                              <content>
+                                                                  <fx:include source="WhitePoint.fxml" fx:id="xyz" />
+                                                              </content>
+                                                          </TitledPane>
+                                             </children>
+                                          </VBox>
+                                       </content>
+                                    </ScrollPane>
+                                              <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%LinearRGB2XYZMatrix">
+                                                  <content>
+                                                      <TextArea fx:id="calculateArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+                                                  </content>
+                                              </TitledPane>
+                                 </items>
+                              </SplitPane>
                                     </children>
                                     <padding>
                                         <Insets top="10.0" />

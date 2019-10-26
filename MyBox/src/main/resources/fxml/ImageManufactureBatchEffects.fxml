@@ -48,9 +48,10 @@ License:    Apache License Version 2.0
                                         <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" spacing="5.0">
                                             <children>
                                                 <RadioButton fx:id="posterizingRadio" mnemonicParsing="false" selected="true" text="%Posterizing">
-                                       <toggleGroup>
-                                          <ToggleGroup fx:id="effectsGroup" />
-                                       </toggleGroup></RadioButton>
+                                                    <toggleGroup>
+                                                        <ToggleGroup fx:id="effectsGroup" />
+                                                    </toggleGroup>
+                                                </RadioButton> 
                                                 <RadioButton fx:id="thresholdingRadio" mnemonicParsing="false" text="%Thresholding" toggleGroup="$effectsGroup" />
                                                 <RadioButton mnemonicParsing="false" text="%Gray" toggleGroup="$effectsGroup" />
                                                 <RadioButton fx:id="bwRadio" mnemonicParsing="false" text="%BlackOrWhite" toggleGroup="$effectsGroup" />
@@ -141,7 +142,7 @@ License:    Apache License Version 2.0
                                                     </toggleGroup>
                                                 </RadioButton>
                                                 <RadioButton fx:id="targetRenameRadio" mnemonicParsing="false" selected="true" text="%TargetNameAppend" toggleGroup="$targetExistGroup" />
-                                              
+
                                                 <TextField fx:id="targetAppendInput" prefWidth="70.0" text="-m" />
                                                 <RadioButton fx:id="targetSkipRadio" mnemonicParsing="false" text="%Skip" toggleGroup="$targetExistGroup" />
                                             </children>

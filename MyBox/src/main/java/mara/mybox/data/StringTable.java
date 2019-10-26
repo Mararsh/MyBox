@@ -3,6 +3,7 @@ package mara.mybox.data;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.tools.HtmlTools;
+import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara
@@ -11,10 +12,10 @@ import mara.mybox.tools.HtmlTools;
  */
 public class StringTable {
 
-    protected String title, style = HtmlTools.defaultStyle;
+    protected String title, style = HtmlTools.DefaultStyle;
     protected List<List<String>> data;
     protected List<String> names;
-    protected int colorIndex = -1;
+    protected int colorIndex = -1;  // 0-based
     protected static String indent = "    ";
 
     public StringTable() {
@@ -107,17 +108,21 @@ public class StringTable {
         StringBuilder s = new StringBuilder();
         String title = table.getTitle();
         if (title != null && !title.trim().isEmpty()) {
-            s.append(indent).append(indent).append("<H2>").append(title).append("</H2>\n");
+            s.append(indent).append(indent).append("<H2 class=\"center\">").append(title).append("</H2>\n");
         }
         s.append(indent).append(indent).append("<DIV align=\"center\">\n");
-        s.append(indent).append(indent).append(indent).append("<TABLE>\n");
+        s.append(indent).append(indent).append(indent).append("<TABLE >\n");
         List<String> names = table.getNames();
         if (names != null) {
             s.append(indent).append(indent).append(indent).append(indent).append("<TR>");
             for (int i = 0; i < names.size(); i++) {
                 String name = names.get(i);
                 s.append("<TH>").append(name).append("</TH>");
+                if (i == table.getColorIndex()) {
+                    s.append("<TH>").append(message("Color")).append("</TH>");
+                }
             }
+
             s.append("</TR>\n");
         }
         for (List<String> row : table.getData()) {
@@ -125,7 +130,9 @@ public class StringTable {
             for (int i = 0; i < row.size(); i++) {
                 String value = row.get(i);
                 if (i == table.getColorIndex()) {
-                    s.append("<TD bgcolor=\"").append(value).append("\">").append(value).append("</TD>");
+                    s.append("<TD>").append(value).append(" </TD>");
+                    s.append("<TD align=\"center\"><DIV style=\"width: 50px;  background-color:").
+                            append(value).append("; \">&nbsp;&nbsp;&nbsp;</DIV></TD>");
                 } else {
                     s.append("<TD>").append(value).append("</TD>");
                 }
@@ -137,6 +144,9 @@ public class StringTable {
             for (int i = 0; i < names.size(); i++) {
                 String name = names.get(i);
                 s.append("<TH>").append(name).append("</TH>");
+                if (i == table.getColorIndex()) {
+                    s.append("<TH>").append(message("Color")).append("</TH>");
+                }
             }
             s.append("</TR>\n");
         }

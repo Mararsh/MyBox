@@ -122,7 +122,8 @@ public class AlarmClockTableController extends BaseController {
     }
 
     @FXML
-    private void clearAction(ActionEvent event) {
+    @Override
+    public void clearAction() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(getBaseTitle());
         alert.setContentText(AppVariables.message("SureClearAlarmClocks"));

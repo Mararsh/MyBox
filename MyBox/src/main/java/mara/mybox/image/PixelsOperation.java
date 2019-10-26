@@ -56,19 +56,19 @@ public class PixelsOperation {
         this.scope = scope;
     }
 
-    public static PixelsOperation newPixelsOperation(Image image,
+    public static PixelsOperation create(Image image,
             ImageScope scope, OperationType operationType) {
         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
-        return PixelsOperation.newPixelsOperation(bufferedImage, scope, operationType);
+        return PixelsOperation.create(bufferedImage, scope, operationType);
     }
 
-    public static PixelsOperation newPixelsOperation(Image image,
+    public static PixelsOperation create(Image image,
             ImageScope scope, OperationType operationType, ColorActionType colorActionType) {
         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
-        return PixelsOperation.newPixelsOperation(bufferedImage, scope, operationType, colorActionType);
+        return PixelsOperation.create(bufferedImage, scope, operationType, colorActionType);
     }
 
-    public static PixelsOperation newPixelsOperation(BufferedImage image,
+    public static PixelsOperation create(BufferedImage image,
             ImageScope scope, OperationType operationType) {
         switch (operationType) {
             case ShowScope:
@@ -82,7 +82,7 @@ public class PixelsOperation {
         }
     }
 
-    public static PixelsOperation newPixelsOperation(BufferedImage image,
+    public static PixelsOperation create(BufferedImage image,
             ImageScope scope, OperationType operationType, ColorActionType colorActionType) {
         switch (operationType) {
             case ReplaceColor:
@@ -291,7 +291,7 @@ public class PixelsOperation {
                 thisLine[0] = new Color(image.getRGB(0, 0), true);
             }
             Color newColor;
-            int pixel, transpaernt = 0, white = Color.WHITE.getRGB();
+            int pixel, transparent = 0, white = Color.WHITE.getRGB();
             for (int y = 0; y < image.getHeight(); y++) {
                 for (int x = 0; x < image.getWidth(); x++) {
                     pixel = image.getRGB(x, y);
@@ -308,7 +308,7 @@ public class PixelsOperation {
                         if (isShowScope) {
                             newColor = color;
                             if (inScope) {
-                                target.setRGB(x, y, transpaernt);
+                                target.setRGB(x, y, transparent);
                             } else {
                                 target.setRGB(x, y, white);
                             }
@@ -383,6 +383,7 @@ public class PixelsOperation {
             boolean[][] visited = new boolean[imageHeight][imageWidth];
             Queue<IntPoint> queue = new LinkedList<>();
             int transpaernt = 0, white = Color.WHITE.getRGB();
+            boolean eightNeighbor = scope.isEightNeighbor();
             for (IntPoint point : points) {
                 Color startColor = new Color(image.getRGB(point.getX(), point.getY()), true);
                 queue.add(point);
@@ -417,6 +418,13 @@ public class PixelsOperation {
                         queue.add(new IntPoint(x - 1, y));
                         queue.add(new IntPoint(x, y + 1));
                         queue.add(new IntPoint(x, y - 1));
+
+                        if (eightNeighbor) {
+                            queue.add(new IntPoint(x + 1, y + 1));
+                            queue.add(new IntPoint(x + 1, y - 1));
+                            queue.add(new IntPoint(x - 1, y + 1));
+                            queue.add(new IntPoint(x - 1, y - 1));
+                        }
                     }
                 }
             }
@@ -1405,20 +1413,45 @@ public class PixelsOperation {
     /*
         get/set
      */
+    public OperationType getOperationType() {
+        return operationType;
+    }
+
+    public PixelsOperation setOperationType(OperationType operationType) {
+        this.operationType = operationType;
+        return this;
+    }
+
     public BufferedImage getImage() {
         return image;
     }
 
-    public void setImage(BufferedImage image) {
+    public PixelsOperation setImage(BufferedImage image) {
         this.image = image;
+        return this;
+    }
+
+    public PixelsOperation setImage(Image image) {
+        this.image = SwingFXUtils.fromFXImage(image, null);
+        return this;
     }
 
     public boolean isIsDithering() {
         return isDithering;
     }
 
-    public void setIsDithering(boolean isDithering) {
+    public PixelsOperation setIsDithering(boolean isDithering) {
         this.isDithering = isDithering;
+        return this;
+    }
+
+    public ImageScope getScope() {
+        return scope;
+    }
+
+    public PixelsOperation setScope(ImageScope scope) {
+        this.scope = scope;
+        return this;
     }
 
     public boolean isBoolPara() {
@@ -1467,22 +1500,6 @@ public class PixelsOperation {
 
     public void setFloatPara2(float floatPara2) {
         this.floatPara2 = floatPara2;
-    }
-
-    public ImageScope getScope() {
-        return scope;
-    }
-
-    public void setScope(ImageScope scope) {
-        this.scope = scope;
-    }
-
-    public OperationType getOperationType() {
-        return operationType;
-    }
-
-    public void setOperationType(OperationType operationType) {
-        this.operationType = operationType;
     }
 
     public Color[] getThisLine() {

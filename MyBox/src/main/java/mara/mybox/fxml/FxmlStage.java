@@ -30,6 +30,7 @@ import mara.mybox.controller.ImageStatisticController;
 import mara.mybox.controller.ImageViewerController;
 import mara.mybox.controller.ImagesBrowserController;
 import mara.mybox.controller.LoadingController;
+import mara.mybox.controller.MarkdownEditerController;
 import mara.mybox.controller.PdfViewController;
 import mara.mybox.controller.TextEditerController;
 import mara.mybox.data.VisitHistory;
@@ -249,7 +250,16 @@ public class FxmlStage {
     }
 
     public static HtmlEditorController openHtmlEditor(Stage stage, File file) {
-        return openHtmlEditor(stage, file.toURI().toString());
+        try {
+            final HtmlEditorController controller
+                    = (HtmlEditorController) openScene(stage, CommonValues.HtmlEditorFxml);
+            controller.switchBroswerTab();
+            controller.sourceFileChanged(file);
+            return controller;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
     }
 
     public static ImageManufactureController openImageManufacture(Stage stage, File file) {
@@ -362,6 +372,18 @@ public class FxmlStage {
         }
     }
 
+    public static MarkdownEditerController openMarkdownEditer(Stage stage, File file) {
+        try {
+            final MarkdownEditerController controller
+                    = (MarkdownEditerController) openScene(stage, CommonValues.MarkdownEditorFxml);
+            controller.openFile(file);
+            return controller;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
     public static ImageInformationController openImageInformation(Stage stage, ImageInformation info) {
         try {
             if (info == null) {
@@ -458,12 +480,14 @@ public class FxmlStage {
         }
 
         String suffix = FileTools.getFileSuffix(file.getAbsolutePath()).toLowerCase();
-
         if (CommonValues.SupportedImages.contains(suffix)) {
             controller = openImageViewer(stage, file);
 
         } else if ("html".equals(suffix) || "htm".equals(suffix)) {
             controller = openHtmlEditor(stage, file);
+
+        } else if ("md".equals(suffix)) {
+            controller = openMarkdownEditer(stage, file);
 
         } else if (Arrays.asList(CommonValues.TextFileSuffix).contains(suffix)) {
             controller = openTextEditer(stage, file);

@@ -4,7 +4,7 @@ import java.io.File;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.FlowPane;
 import mara.mybox.data.FileInformation;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.value.AppVariables;
@@ -23,7 +23,7 @@ import static mara.mybox.value.AppVariables.logger;
 public class FilesTableController extends TableController<FileInformation> {
 
     @FXML
-    protected HBox filterBox;
+    protected FlowPane selectPane;
 
     public FilesTableController() {
     }
@@ -53,14 +53,14 @@ public class FilesTableController extends TableController<FileInformation> {
     @Override
     public void moreAction() {
         if (moreButton.isSelected()) {
-            if (!thisPane.getChildren().contains(filterBox)) {
-                thisPane.getChildren().add(2, filterBox);
+            if (!thisPane.getChildren().contains(selectPane)) {
+                thisPane.getChildren().add(2, selectPane);
             }
             if (!thisPane.getChildren().contains(tableLabel)) {
                 thisPane.getChildren().add(3, tableLabel);
             }
         } else {
-            thisPane.getChildren().removeAll(filterBox, tableLabel);
+            thisPane.getChildren().removeAll(selectPane, tableLabel);
         }
         FxmlControl.refreshStyle(thisPane);
         AppVariables.setUserConfigValue("FileTableMore", moreButton.isSelected());

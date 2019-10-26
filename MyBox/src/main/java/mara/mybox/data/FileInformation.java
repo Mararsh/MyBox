@@ -18,6 +18,13 @@ public class FileInformation {
     protected String fileName, newName, fileSuffix, handled, fileType;
     protected final int IO_BUF_LENGTH = 4096;
 
+    public enum FileSelectorType {
+        All, ExtensionEuqalAny, ExtensionNotEqualAny,
+        NameIncludeAny, NameIncludeAll, NameNotIncludeAny, NameNotIncludeAll,
+        NameMatchAnyRegularExpression, NameNotMatchAnyRegularExpression,
+        FileSizeLargerThan, FileSizeSmallerThan, ModifiedTimeEarlierThan, ModifiedTimeLaterThan
+    }
+
     public FileInformation() {
 
     }

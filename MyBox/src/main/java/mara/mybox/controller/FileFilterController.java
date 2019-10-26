@@ -2,13 +2,20 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.util.Arrays;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.stage.Modality;
 import mara.mybox.data.FileEditInformation;
+import mara.mybox.data.FileEditInformation.StringFilterType;
+import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara
@@ -18,6 +25,8 @@ import static mara.mybox.value.AppVariables.logger;
  */
 public class FileFilterController extends FileEditerController {
 
+    @FXML
+    protected ComboBox<String> filterTypeSelector;
     @FXML
     private TextField filterConditionsLabel;
 
@@ -32,8 +41,43 @@ public class FileFilterController extends FileEditerController {
         try {
             initFilterTab();
 
+            filterTypeSelector.getItems().clear();
+            for (StringFilterType type : StringFilterType.values()) {
+                filterTypeSelector.getItems().add(message(type.name()));
+            }
+            filterTypeSelector.valueProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> ov, String oldv, String newv) {
+                    checkFilterType();
+                }
+            });
+            filterTypeSelector.getSelectionModel().select(0);
+
         } catch (Exception e) {
             logger.error(e.toString());
+        }
+    }
+
+    @Override
+    protected void checkFilterType() {
+        String selected = filterTypeSelector.getValue();
+        for (StringFilterType type : StringFilterType.values()) {
+            if (message(type.name()).equals(selected)) {
+                filterType = type;
+                break;
+            }
+        }
+        if (filterType == StringFilterType.MatchRegularExpression
+                || filterType == StringFilterType.NotMatchRegularExpression) {
+            if (regexLink != null) {
+                regexLink.setVisible(true);
+            }
+            FxmlControl.removeTooltip(filterInput);
+        } else {
+            if (regexLink != null) {
+                regexLink.setVisible(false);
+            }
+            FxmlControl.setTooltip(filterInput, new Tooltip(message("SeparateByCommaBlanksInvolved")));
         }
     }
 
@@ -87,7 +131,6 @@ public class FileFilterController extends FileEditerController {
                         saveButton.setDisable(true);
                     }
                 }
-
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);

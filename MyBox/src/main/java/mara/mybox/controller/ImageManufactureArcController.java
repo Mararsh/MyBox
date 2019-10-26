@@ -141,11 +141,11 @@ public class ImageManufactureArcController extends ImageManufactureOperationCont
 
                 @Override
                 protected void whenSucceeded() {
-                    parent.updateImage(ImageOperation.Arc, arc + "", null, newImage);
+                    parent.updateImage(ImageOperation.Arc, arc + "", null, newImage, cost);
                 }
 
             };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
+            parent.openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();

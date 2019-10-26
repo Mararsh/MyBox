@@ -46,6 +46,7 @@ public class VisitHistory {
         public static int Html = 11;
         public static int Icc = 12;
         public static int Xml = 13;
+        public static int Markdown = 14;
 
         public static int None = 100;
     }

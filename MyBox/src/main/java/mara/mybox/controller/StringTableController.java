@@ -35,16 +35,16 @@ public class StringTableController extends HtmlViewerController {
         try {
             super.initControls();
 
-            style = HtmlTools.defaultStyle;
+            style = HtmlTools.DefaultStyle;
             consoleCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
                     AppVariables.setUserConfigValue("InformationConsoleKey", consoleCheck.isSelected()
                     );
                     if (consoleCheck.isSelected()) {
-                        style = HtmlTools.consoleStyle;
+                        style = HtmlTools.ConsoleStyle;
                     } else {
-                        style = HtmlTools.defaultStyle;
+                        style = HtmlTools.DefaultStyle;
                     }
                     loadInformation();
                 }
@@ -56,6 +56,17 @@ public class StringTableController extends HtmlViewerController {
         }
     }
 
+    @FXML
+    protected void editHtml() {
+        if (table == null) {
+            return;
+        }
+        table.display();
+        if (table.getTitle() != null) {
+            myStage.setTitle(table.getTitle());
+        }
+    }
+
     public void loadInformation() {
         try {
             if (table == null) {
@@ -63,9 +74,22 @@ public class StringTableController extends HtmlViewerController {
             }
             html = HtmlTools.html(title, style, StringTable.tableDiv(table));
             webView.getEngine().loadContent​(html);
+            if (myStage != null && table.getTitle() != null) {
+                myStage.setTitle(table.getTitle());
+            }
         } catch (Exception e) {
             logger.error(e.toString());
         }
+    }
+
+    public void loadTable(StringTable table) {
+        this.table = table;
+        if (table == null) {
+            return;
+        }
+        this.title = table.getTitle();
+        this.fields = table.getNames();
+        loadInformation();
     }
 
     public void initTable(String title, List<String> fields) {

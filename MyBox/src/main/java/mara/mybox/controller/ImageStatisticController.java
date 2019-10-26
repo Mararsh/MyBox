@@ -29,7 +29,6 @@ import javafx.stage.Modality;
 import javafx.util.Callback;
 import mara.mybox.data.IntStatistic;
 import mara.mybox.image.ImageColor;
-import mara.mybox.image.ImageQuantization;
 import mara.mybox.image.ImageQuantization.QuantizationAlgorithm;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
@@ -301,29 +300,29 @@ public class ImageStatisticController extends ImageViewerController {
     // https://stackoverflow.com/questions/15219334/javafx-change-piechart-color
     private void makeStatistic() {
         QuantizationAlgorithm algorithm;
-        switch (algorithmBox.getSelectionModel().getSelectedIndex()) {
-            case 0:
-                algorithm = QuantizationAlgorithm.RGB_Uniform;
-                break;
-            case 1:
-                algorithm = QuantizationAlgorithm.HSB_Uniform;
-                break;
-            case 4:
-                algorithm = QuantizationAlgorithm.Statistic;
-                break;
-            case 5:
-                algorithm = QuantizationAlgorithm.kMeansClustering;
-                break;
-            case 6:
-                algorithm = QuantizationAlgorithm.ANN;
-                break;
-            default:
-                return;
-        }
-        int channelSize = (int) Math.round(Math.pow(paletteSize, 1.0 / 3.0));
-        final ImageQuantization quantization = new ImageQuantization(image);
-        quantization.set(algorithm, channelSize);
-        quantization.setIsDithering(ditheringCheck.isSelected());
+//        switch (algorithmBox.getSelectionModel().getSelectedIndex()) {
+//            case 0:
+//                algorithm = QuantizationAlgorithm.RGBUniformQuantization;
+//                break;
+//            case 1:
+//                algorithm = QuantizationAlgorithm.HSBUniformQuantization;
+//                break;
+//            case 4:
+//                algorithm = QuantizationAlgorithm.Popularity;
+//                break;
+//            case 5:
+//                algorithm = QuantizationAlgorithm.KMeansClustering;
+//                break;
+//            case 6:
+//                algorithm = QuantizationAlgorithm.ANN;
+//                break;
+//            default:
+//                return;
+//        }
+//        int channelSize = (int) Math.round(Math.pow(paletteSize, 1.0 / 3.0));
+//        PixelsOperation quantization = ImageQuantization.create(
+//                QuantizationAlgorithm.RGBUniformQuantization, image, channelSize);
+//        quantization.setIsDithering(ditheringCheck.isSelected());
 
         colorList.clear();
         colorSummaryList.clear();

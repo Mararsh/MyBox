@@ -20,43 +20,78 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="730.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.FilesDeleteController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.FilesDeleteController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
     <center>
         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
             <children>
-                <TitledPane maxWidth="1.7976931348623157E308" text="%Files" VBox.vgrow="NEVER">
-                    <content>
-                        <fx:include fx:id="sourceTable" source="FilesTable.fxml" />
-                    </content>
-                </TitledPane>
-                <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="10.0" text="%Logs" VBox.vgrow="ALWAYS">
-                    <content>
-                        <VBox fx:id="logsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                            <children>
-                                <TextArea fx:id="logsTextArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" VBox.vgrow="ALWAYS" />
-                                <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="NEVER">
-                                    <children>
-                                        <Label text="%MaxLines" />
-                                        <TextField fx:id="maxLinesinput" prefWidth="80.0" text="5000" />
-                                        <CheckBox fx:id="verboseCheck" mnemonicParsing="false" text="%VerboseLogs" />
-                                        <Button fx:id="clearButton1" mnemonicParsing="false" onAction="#clearLogsAction">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/iconClear.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                    </children>
-                                </HBox>
-                            </children>
+                <SplitPane dividerPositions="0.6" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                    <items>
+                  <VBox fx:id="tableBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                     <children>
+                              <fx:include fx:id="table" source="FilesTable.fxml" />
+                     </children>
+                  </VBox>
+                  <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                     <children>
+                        <VBox fx:id="paraBox" minHeight="-Infinity" VBox.vgrow="NEVER">
+                           <children>
+                              <TitledPane fx:id="optionsPane" minHeight="-Infinity" text="%Options">
+                                 <content>
+                                    <VBox spacing="5.0">
+                                       <children>
+                                          <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                             <children>
+                                                <RadioButton fx:id="trashRadio" mnemonicParsing="false" selected="true" text="%MoveToTrash">
+                                                   <toggleGroup>
+                                                      <ToggleGroup fx:id="deleteType" />
+                                                   </toggleGroup>
+                                                </RadioButton>
+                                                <RadioButton fx:id="deleteRadio" mnemonicParsing="false" text="%DeleteDirectly" toggleGroup="$deleteType" />
+                                             </children>
+                                          </HBox>
+                                          <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                                             <children>
+                                                <CheckBox fx:id="deleteEmptyCheck" mnemonicParsing="false" text="%DeleteEmptyDirectories" />
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </VBox>
+                                 </content>
+                              </TitledPane>
+                           </children>
                         </VBox>
-                    </content>
-                </TitledPane>
+                              <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="10.0" text="%Logs" VBox.vgrow="ALWAYS">
+                                  <content>
+                                      <VBox fx:id="logsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                          <children>
+                                              <TextArea fx:id="logsTextArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" VBox.vgrow="ALWAYS" />
+                                              <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="NEVER">
+                                                  <children>
+                                                      <Label text="%MaxLines" />
+                                                      <TextField fx:id="maxLinesinput" prefWidth="80.0" text="5000" />
+                                                      <CheckBox fx:id="verboseCheck" mnemonicParsing="false" text="%VerboseLogs" />
+                                                      <Button fx:id="clearButton1" mnemonicParsing="false" onAction="#clearLogs">
+                                                          <graphic>
+                                                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                  <image>
+                                                                      <Image url="@../buttons/iconClear.png" />
+                                                                  </image>
+                                                              </ImageView>
+                                                          </graphic>
+                                                      </Button>
+                                                  </children>
+                                              </HBox>
+                                          </children>
+                                      </VBox>
+                                  </content>
+                              </TitledPane>
+                     </children>
+                  </VBox>
+                    </items>
+                </SplitPane>
                 <fx:include fx:id="operationBar" source="Operation.fxml" />
             </children>
         </VBox>

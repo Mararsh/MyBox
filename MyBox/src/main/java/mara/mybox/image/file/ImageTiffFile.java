@@ -74,6 +74,8 @@ public class ImageTiffFile {
                 param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
                 if (attributes != null && attributes.getCompressionType() != null) {
                     param.setCompressionType(attributes.getCompressionType());
+                } else {
+                    param.setCompressionType("LZW");
                 }
                 if (attributes != null && attributes.getQuality() > 0) {
                     param.setCompressionQuality(attributes.getQuality() / 100.0f);

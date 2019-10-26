@@ -14,7 +14,7 @@ import javafx.scene.control.ToggleGroup;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.PDFResourceToDirHandler;
+import thridparty.PDFResourceToDirHandler;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;

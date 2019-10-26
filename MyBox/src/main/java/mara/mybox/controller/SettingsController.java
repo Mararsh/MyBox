@@ -72,8 +72,9 @@ public class SettingsController extends BaseController {
     protected ToggleGroup langGroup, pdfMemGroup, controlColorGroup;
     @FXML
     protected CheckBox stopAlarmCheck, newWindowCheck, restoreStagesSizeCheck,
-            anchorSolidCheck, coordinateCheck, rulerXCheck, rulerYCheck, controlsTextCheck,
-            recordLoadCheck, clearCurrentRootCheck, hidpiCheck;
+            copyToSystemClipboardCheck,
+            anchorSolidCheck, controlsTextCheck, recordLoadCheck, clearCurrentRootCheck,
+            hidpiCheck;
     @FXML
     protected TextField jvmInput, imageMaxHisInput, dataDirInput, fileRecentInput, thumbnailWidthInput,
             ocrDirInput;
@@ -127,8 +128,6 @@ public class SettingsController extends BaseController {
         try {
             stopAlarmCheck.setSelected(AppVariables.getUserConfigBoolean("StopAlarmsWhenExit"));
             newWindowCheck.setSelected(AppVariables.openStageInNewWindow);
-
-            coordinateCheck.setSelected(AppVariables.getUserConfigBoolean("ImagePopCooridnate", false));
 
             maxImageHis = AppVariables.getUserConfigInt("MaxImageHistories", 20);
             imageMaxHisInput.setText(maxImageHis + "");
@@ -738,11 +737,11 @@ public class SettingsController extends BaseController {
             strokeWidthBox.getSelectionModel().select(AppVariables.getUserConfigValue("StrokeWidth", "3"));
 
             try {
-                String c = AppVariables.getUserConfigValue("StrokeColor", Color.RED.toString());
+                String c = AppVariables.getUserConfigValue("StrokeColor", ImageMaskController.DefaultStrokeColor);
                 strokeRect.setFill(Color.web(c));
             } catch (Exception e) {
-                strokeRect.setFill(Color.RED);
-                AppVariables.setUserConfigValue("StrokeColor", Color.RED.toString());
+                strokeRect.setFill(Color.web(ImageMaskController.DefaultStrokeColor));
+                AppVariables.setUserConfigValue("StrokeColor", ImageMaskController.DefaultStrokeColor);
             }
             FxmlControl.setTooltip(strokeRect, FxmlColor.colorNameDisplay((Color) strokeRect.getFill()));
 
@@ -772,11 +771,11 @@ public class SettingsController extends BaseController {
             anchorWidthBox.getSelectionModel().select(AppVariables.getUserConfigValue("AnchorWidth", "10"));
 
             try {
-                String color = AppVariables.getUserConfigValue("AnchorColor", Color.BLUE.toString());
+                String color = AppVariables.getUserConfigValue("AnchorColor", ImageMaskController.DefaultAnchorColor);
                 anchorRect.setFill(Color.web(color));
             } catch (Exception e) {
-                anchorRect.setFill(Color.BLUE);
-                AppVariables.setUserConfigValue("AnchorColor", Color.BLUE.toString());
+                anchorRect.setFill(Color.web(ImageMaskController.DefaultAnchorColor));
+                AppVariables.setUserConfigValue("AnchorColor", ImageMaskController.DefaultAnchorColor);
             }
             FxmlControl.setTooltip(anchorRect, FxmlColor.colorNameDisplay((Color) anchorRect.getFill()));
 
@@ -806,35 +805,6 @@ public class SettingsController extends BaseController {
                 AppVariables.setUserConfigValue("AlphaAsColor", Color.WHITE.toString());
             }
             FxmlControl.setTooltip(alphaRect, FxmlColor.colorNameDisplay((Color) alphaRect.getFill()));
-
-            rulerXCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    AppVariables.setUserConfigValue("ImageRulerXKey", rulerXCheck.isSelected());
-                    if (parentController != null) {
-                        parentController.drawMaskRulerX();
-                    }
-                }
-            });
-            rulerXCheck.setSelected(AppVariables.getUserConfigBoolean("ImageRulerXKey", false));
-
-            rulerYCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    AppVariables.setUserConfigValue("ImageRulerYKey", rulerYCheck.isSelected());
-                    if (parentController != null) {
-                        parentController.drawMaskRulerY();
-                    }
-                }
-            });
-            rulerYCheck.setSelected(AppVariables.getUserConfigBoolean("ImageRulerYKey", false));
-
-            coordinateCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    AppVariables.setUserConfigValue("ImagePopCooridnate", coordinateCheck.isSelected());
-                }
-            });
 
             FxmlControl.setTooltip(imageHisBox, new Tooltip(message("ImageHisComments")));
 
@@ -895,6 +865,14 @@ public class SettingsController extends BaseController {
                 }
             });
             imageWidthBox.getSelectionModel().select(AppVariables.getUserConfigValue("MaxImageSampleWidth", "4096"));
+
+            copyToSystemClipboardCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    AppVariables.setUserConfigValue("CopyToSystemClipboard", copyToSystemClipboardCheck.isSelected());
+                }
+            });
+            copyToSystemClipboardCheck.setSelected(AppVariables.getUserConfigBoolean("CopyToSystemClipboard", true));
 
         } catch (Exception e) {
             logger.debug(e.toString());
@@ -1043,7 +1021,6 @@ public class SettingsController extends BaseController {
      */
     protected void initOCRTab() {
         try {
-
             OCRTools.initDataFiles();
             ocrDirInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -1056,7 +1033,8 @@ public class SettingsController extends BaseController {
                         }
                         ocrDirInput.setStyle(null);
                         AppVariables.setUserConfigValue("TessDataPath", file.getAbsolutePath());
-                        OCRTools.initDataFiles();
+
+                        setLanguagesList();
                     } catch (Exception e) {
                         logger.debug(e.toString());
                     }
@@ -1064,6 +1042,14 @@ public class SettingsController extends BaseController {
             });
             ocrDirInput.setText(AppVariables.getUserConfigValue("TessDataPath", ""));
 
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+    protected void setLanguagesList() {
+        try {
+            OCRTools.initDataFiles();
             languageList.getItems().clear();
             languageList.getItems().addAll(OCRTools.namesList());
             languageList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
@@ -1174,6 +1160,29 @@ public class SettingsController extends BaseController {
     }
 
     @FXML
+    public void topAction() {
+        List<Integer> selectedIndices = new ArrayList<>();
+        selectedIndices.addAll(languageList.getSelectionModel().getSelectedIndices());
+        if (selectedIndices.isEmpty()) {
+            return;
+        }
+        List<String> selected = new ArrayList<>();
+        selected.addAll(languageList.getSelectionModel().getSelectedItems());
+        isSettingValues = true;
+        int size = selectedIndices.size();
+        for (int i = size - 1; i >= 0; i--) {
+            int index = selectedIndices.get(i);
+            languageList.getItems().remove(index);
+        }
+        languageList.getSelectionModel().clearSelection();
+        languageList.getItems().addAll(0, selected);
+        languageList.getSelectionModel().selectRange(0, size);
+        languageList.refresh();
+        isSettingValues = false;
+        checkLanguages();
+    }
+
+    @FXML
     public void downAction() {
         List<Integer> selected = new ArrayList<>();
         selected.addAll(languageList.getSelectionModel().getSelectedIndices());
@@ -1219,17 +1228,4 @@ public class SettingsController extends BaseController {
         closeStage();
     }
 
-    @Override
-    public boolean leavingScene() {
-        try {
-            rulerXCheck.selectedProperty().unbind();
-            rulerYCheck.selectedProperty().unbind();
-            coordinateCheck.selectedProperty().unbind();
-            return true;
-        } catch (Exception e) {
-            logger.debug(e.toString());
-            return false;
-        }
-
-    }
 }

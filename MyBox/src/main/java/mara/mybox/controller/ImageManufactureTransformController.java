@@ -131,10 +131,11 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
 
                 @Override
                 protected void whenSucceeded() {
-                    parent.updateImage(ImageOperation.Transform, "rotateRight", rotateAngle + "", newImage);
+                    parent.updateImage(ImageOperation.Transform, "rotateRight", rotateAngle + "",
+                            newImage, cost);
                 }
             };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
+            parent.openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -162,11 +163,12 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
 
                 @Override
                 protected void whenSucceeded() {
-                    parent.updateImage(ImageOperation.Transform, "rotateLeft", (360 - rotateAngle) + "", newImage);
+                    parent.updateImage(ImageOperation.Transform, "rotateLeft", (360 - rotateAngle) + "",
+                            newImage, cost);
                 }
 
             };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
+            parent.openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -194,11 +196,11 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
 
                 @Override
                 protected void whenSucceeded() {
-                    parent.updateImage(ImageOperation.Transform, "horizontal", null, newImage);
+                    parent.updateImage(ImageOperation.Transform, "horizontal", null, newImage, cost);
                 }
 
             };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
+            parent.openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -226,11 +228,11 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
 
                 @Override
                 protected void whenSucceeded() {
-                    parent.updateImage(ImageOperation.Transform, "vertical", null, newImage);
+                    parent.updateImage(ImageOperation.Transform, "vertical", null, newImage, cost);
                 }
 
             };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
+            parent.openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -258,12 +260,12 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
 
                 @Override
                 protected void whenSucceeded() {
-                    parent.updateImage(ImageOperation.Transform, "shear", shearX + "", newImage);
+                    parent.updateImage(ImageOperation.Transform, "shear", shearX + "", newImage, cost);
 
                 }
 
             };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
+            parent.openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -298,10 +300,10 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
 
                 @Override
                 protected void whenSucceeded() {
-                    parent.updateImage(ImageOperation.Transform, "rotate", angle + "", newImage);
+                    parent.updateImage(ImageOperation.Transform, "rotate", angle + "", newImage, cost);
                 }
             };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
+            parent.openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();

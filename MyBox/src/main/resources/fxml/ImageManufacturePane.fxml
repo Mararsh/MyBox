@@ -249,6 +249,7 @@ License:    Apache License Version 2.0
                                         <Label fx:id="colorsSizeLabel" text=" " />
                                     </children>
                                 </FlowPane>
+                        <CheckBox fx:id="eightNeighborCheck" layoutX="10.0" layoutY="68.0" mnemonicParsing="false" selected="true" text="%EightNeighbor" />
                                 <FlowPane fx:id="scopeMatchBox" hgap="5.0" minHeight="-Infinity" prefWrapLength="550.0" vgap="5.0">
                                     <children>
                                         <Label fx:id="scopeMatchLabel" text="%Match" />

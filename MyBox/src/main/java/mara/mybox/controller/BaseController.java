@@ -7,6 +7,7 @@ import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -28,6 +29,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Control;
@@ -114,7 +116,7 @@ public class BaseController implements Initializable {
     @FXML
     protected ToggleButton moreButton;
     @FXML
-    protected Button selectSourceButton, createButton, copyButton, pasteButton, cancelButton,
+    protected Button allButton, clearButton, selectSourceButton, createButton, copyButton, pasteButton, cancelButton,
             deleteButton, saveButton, infoButton, metaButton, selectAllButton, setButton,
             okButton, startButton, firstButton, lastButton, previousButton, nextButton, goButton, previewButton,
             cropButton, saveAsButton, recoverButton, renameButton, tipsButton, viewButton, popButton, refButton,
@@ -127,6 +129,10 @@ public class BaseController implements Initializable {
     protected ImageView tipsView, linksView;
     @FXML
     protected ChoiceBox saveAsOptionsBox;
+    @FXML
+    protected Hyperlink regexLink;
+    @FXML
+    protected CheckBox topCheck;
 
     public BaseController() {
         baseTitle = AppVariables.message("AppTitle");
@@ -328,6 +334,18 @@ public class BaseController implements Initializable {
                 });
             }
 
+            if (topCheck != null) {
+                topCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        if (myStage != null) {
+                            myStage.setAlwaysOnTop(topCheck.isSelected());
+                        }
+                        AppVariables.setUserConfigValue(baseName + "Top", newValue);
+                    }
+                });
+            }
+
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -428,11 +446,15 @@ public class BaseController implements Initializable {
                     @Override
                     public void run() {
                         myStage.toFront();
+                        if (topCheck != null) {
+                            topCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "Top", true));
+                            myStage.setAlwaysOnTop(topCheck.isSelected());
+                        }
                         timer = null;
                     }
                 });
             }
-        }, 500);
+        }, 1000);
     }
 
     public class FullscreenListener implements ChangeListener<Boolean> {
@@ -571,18 +593,6 @@ public class BaseController implements Initializable {
         if (!event.isControlDown()) {
             return;
         }
-        switch (event.getCode()) {
-            case HOME:
-                if (firstButton != null && !firstButton.isDisabled()) {
-                    firstAction();
-                }
-                return;
-            case END:
-                if (lastButton != null && !lastButton.isDisabled()) {
-                    lastAction();
-                }
-                return;
-        }
         String key = event.getText();
         if (key == null || key.isEmpty()) {
             return;
@@ -640,7 +650,9 @@ public class BaseController implements Initializable {
                 return;
             case "a":
             case "A":
-                if (selectAllButton != null && !selectAllButton.isDisabled()) {
+                if (allButton != null && !allButton.isDisabled()) {
+                    allAction();
+                } else if (selectAllButton != null && !selectAllButton.isDisabled()) {
                     selectAllAction();
                 }
                 return;
@@ -648,6 +660,12 @@ public class BaseController implements Initializable {
             case "X":
                 if (cropButton != null && !cropButton.isDisabled()) {
                     cropAction();
+                }
+                return;
+            case "g":
+            case "G":
+                if (clearButton != null && !clearButton.isDisabled()) {
+                    clearAction();
                 }
                 return;
             case "r":
@@ -686,6 +704,18 @@ public class BaseController implements Initializable {
     public void altHandler(KeyEvent event) {
         if (!event.isAltDown()) {
             return;
+        }
+        switch (event.getCode()) {
+            case HOME:
+                if (firstButton != null && !firstButton.isDisabled()) {
+                    firstAction();
+                }
+                return;
+            case END:
+                if (lastButton != null && !lastButton.isDisabled()) {
+                    lastAction();
+                }
+                return;
         }
         String key = event.getText();
         if (key == null || key.isEmpty()) {
@@ -732,7 +762,9 @@ public class BaseController implements Initializable {
                 break;
             case "a":
             case "A":
-                if (selectAllButton != null && !selectAllButton.isDisabled()) {
+                if (allButton != null && !allButton.isDisabled()) {
+                    allAction();
+                } else if (selectAllButton != null && !selectAllButton.isDisabled()) {
                     selectAllAction();
                 }
                 break;
@@ -742,6 +774,12 @@ public class BaseController implements Initializable {
                     cropAction();
                 }
                 break;
+            case "g":
+            case "G":
+                if (clearButton != null && !clearButton.isDisabled()) {
+                    clearAction();
+                }
+                return;
             case "r":
             case "R":
                 if (recoverButton != null && !recoverButton.isDisabled()) {
@@ -1599,6 +1637,23 @@ public class BaseController implements Initializable {
     }
 
     @FXML
+    public void regexHelp() {
+        try {
+            String link;
+            switch (AppVariables.getLanguage()) {
+                case "zh":
+                    link = "https://baike.baidu.com/item/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/1700215";
+                    break;
+                default:
+                    link = "https://en.wikipedia.org/wiki/Regular_expression";
+            }
+            browseURI(new URI(link));
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    @FXML
     public void okAction() {
 
     }
@@ -1650,6 +1705,16 @@ public class BaseController implements Initializable {
 
     @FXML
     public void undoAction() {
+
+    }
+
+    @FXML
+    public void allAction() {
+
+    }
+
+    @FXML
+    public void clearAction() {
 
     }
 
@@ -1752,7 +1817,7 @@ public class BaseController implements Initializable {
             // On my CentOS 7, system hangs when both Desktop.isDesktopSupported() and
             // desktop.isSupported(Desktop.Action.BROWSE) are true.
             // https://stackoverflow.com/questions/27879854/desktop-getdesktop-browse-hangs
-            // Workaround for Linux because "Desktop.getDesktop().browse()" doesn't work on some Linux implementations
+            // Below workaround for Linux because "Desktop.getDesktop().browse()" doesn't work on some Linux implementations
             try {
                 if (Runtime.getRuntime().exec(new String[]{"which", "xdg-open"}).getInputStream().read() != -1) {
                     Runtime.getRuntime().exec(new String[]{"xdg-open", uri.toString()});
@@ -1911,8 +1976,22 @@ public class BaseController implements Initializable {
             if (defaultPath != null && defaultPath.exists()) {
                 fileChooser.setInitialDirectory(defaultPath);
             }
-            if (defaultName != null) {
-                fileChooser.setInitialFileName(defaultName);
+            String name = defaultName;
+            String suffix = null;
+            if (filters != null) {
+                suffix = FileTools.getFileSuffix(filters.get(0).getExtensions().get(0));
+            }
+            if (suffix != null) {
+                if (name == null) {
+                    name = "." + suffix;
+                } else {
+                    if (FileTools.getFileSuffix(name).isEmpty()) {
+                        name += "." + suffix;
+                    }
+                }
+            }
+            if (name != null) {
+                fileChooser.setInitialFileName(name);
             }
             if (filters != null) {
                 fileChooser.getExtensionFilters().addAll(filters);
@@ -1926,14 +2005,6 @@ public class BaseController implements Initializable {
             // https://stackoverflow.com/questions/20637865/javafx-2-2-get-selected-file-extension
             // This is a pretty annoying thing in JavaFX - they will automatically append the extension on Windows, but not on Linux or Mac.
             if (mustHaveExtension && FileTools.getFileSuffix(file.getName()).isEmpty()) {
-                String suffix = null;
-                if (filters != null) {
-                    try {
-                        suffix = FileTools.getFileSuffix(fileChooser.getSelectedExtensionFilter().getExtensions().get(0));
-                    } catch (Exception e) {
-                        suffix = FileTools.getFileSuffix(filters.get(0).getExtensions().get(0));
-                    }
-                }
                 if (suffix == null) {
                     popError(message("NoFileExtension"), 3000);
                     return null;
@@ -2266,10 +2337,12 @@ public class BaseController implements Initializable {
 
         protected boolean ok;
         protected String error;
+        protected long startTime, cost;
 
         @Override
         protected Void call() {
             try {
+                startTime = new Date().getTime();
                 if (!handle() || isCancelled()) {
                     return null;
                 }
@@ -2289,6 +2362,7 @@ public class BaseController implements Initializable {
         protected void succeeded() {
             super.succeeded();
             taskQuit();
+            cost = new Date().getTime() - startTime;
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {

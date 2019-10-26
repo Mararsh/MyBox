@@ -189,7 +189,7 @@ public class ImageManufactureBatchReplaceColorController extends ImageManufactur
             scope.setHsbDistance(distance / 360.0f);
         }
         scope.setColorExcluded(excludeCheck.isSelected());
-        PixelsOperation pixelsOperation = PixelsOperation.newPixelsOperation(source, scope,
+        PixelsOperation pixelsOperation = PixelsOperation.create(source, scope,
                 PixelsOperation.OperationType.ReplaceColor);
         pixelsOperation.setColorPara1(ImageColor.converColor(oldColorPicker.getValue()));
         pixelsOperation.setColorPara2(ImageColor.converColor(newColorPicker.getValue()));

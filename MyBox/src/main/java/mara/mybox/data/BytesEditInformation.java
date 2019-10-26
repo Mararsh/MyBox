@@ -4,12 +4,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
-import static mara.mybox.value.AppVariables.logger;
+import java.util.Map;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
-import mara.mybox.tools.TextTools;
-import static mara.mybox.tools.TextTools.countNumber;
+import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -60,7 +59,7 @@ public class BytesEditInformation extends FileEditInformation {
                         if (len < IO_BUF_LENGTH) {
                             buf = ByteTools.subBytes(buf, 0, len);
                         }
-                        totalLines += TextTools.countNumber(ByteTools.bytesToHexFormat(buf), lineBreakValue);
+                        totalLines += StringTools.countNumber(ByteTools.bytesToHexFormat(buf), lineBreakValue);
                     }
                     linesNumber = totalLines;
                 }
@@ -139,7 +138,7 @@ public class BytesEditInformation extends FileEditInformation {
                         buf = ByteTools.subBytes(buf, 0, len);
                     }
                     pageText = ByteTools.bytesToHexFormat(buf);
-                    lineIndex += TextTools.countNumber(pageText, lineBreakValue);
+                    lineIndex += StringTools.countNumber(pageText, lineBreakValue);
                     if (pageIndex == pageNumber) {
                         lineEnd = lineIndex;
                         break;
@@ -294,13 +293,21 @@ public class BytesEditInformation extends FileEditInformation {
                         }
                         lineEnd = lineStart + linesThisPage - 1;
                     } else {
-                        lineEnd += countNumber(bufHex, lineBreakValue);
+                        lineEnd += StringTools.countNumber(bufHex, lineBreakValue);
                     }
                     if (pageIndex >= previousPage) {
                         if (previousPage == pageIndex) {
-                            pos = (crossString + bufHex).indexOf(findString, previousPos + 3);
+                            if (findRegex) {
+                                pos = StringTools.firstRegex(crossString + bufHex, findString, previousPos + 3);
+                            } else {
+                                pos = (crossString + bufHex).indexOf(findString, previousPos + 3);
+                            }
                         } else {
-                            pos = (crossString + bufHex).indexOf(findString);
+                            if (findRegex) {
+                                pos = StringTools.firstRegex(crossString + bufHex, findString);
+                            } else {
+                                pos = (crossString + bufHex).indexOf(findString);
+                            }
                         }
                         if (pos >= 0) {
                             currentFound = (pageIndex - 1) * pageSize + (pos - crossString.length()) / 3; // position of byte
@@ -388,16 +395,24 @@ public class BytesEditInformation extends FileEditInformation {
                         }
                         lineEnd = lineStart + linesThisPage - 1;
                     } else {
-                        lineEnd += countNumber(bufHex, lineBreakValue);
+                        lineEnd += StringTools.countNumber(bufHex, lineBreakValue);
                     }
                     if (cuPage == pageIndex) {
                         if (cuPos > 0) {
-                            pos = (crossString + bufHex).substring(0, cuPos + crossString.length() - 3).lastIndexOf(findString);
+                            if (findRegex) {
+                                pos = StringTools.lastRegex((crossString + bufHex).substring(0, cuPos + crossString.length() - 3), findString);
+                            } else {
+                                pos = (crossString + bufHex).substring(0, cuPos + crossString.length() - 3).lastIndexOf(findString);
+                            }
                         } else {
                             pos = -1;
                         }
                     } else {
-                        pos = (crossString + bufHex).lastIndexOf(findString);
+                        if (findRegex) {
+                            pos = StringTools.lastRegex(crossString + bufHex, findString);
+                        } else {
+                            pos = (crossString + bufHex).lastIndexOf(findString);
+                        }
                     }
                     if (pos >= 0) {
                         if (!crossString.isEmpty() && pos < findLen) {
@@ -480,10 +495,14 @@ public class BytesEditInformation extends FileEditInformation {
                         }
                         lineEnd = lineStart + linesThisPage - 1;
                     } else {
-                        lineEnd += countNumber(bufHex, lineBreakValue);
+                        lineEnd += StringTools.countNumber(bufHex, lineBreakValue);
                     }
                     addedStr = crossString + bufHex;
-                    pos = addedStr.lastIndexOf(findString);
+                    if (findRegex) {
+                        pos = StringTools.lastRegex(addedStr, findString);
+                    } else {
+                        pos = addedStr.lastIndexOf(findString);
+                    }
                     if (pos >= 0) {
                         if (!crossString.isEmpty() && pos < findLen) {
                             maxPage = pageIndex - 1;
@@ -555,7 +574,7 @@ public class BytesEditInformation extends FileEditInformation {
                         }
                         lineEnd = lineStart + linesThisPage - 1;
                     } else {
-                        lineEnd += countNumber(bufHex, lineBreakValue);
+                        lineEnd += StringTools.countNumber(bufHex, lineBreakValue);
                     }
                     if (currentLine >= lineStart && currentLine <= lineEnd) {
                         pageText = bufHex;
@@ -604,19 +623,31 @@ public class BytesEditInformation extends FileEditInformation {
                         buf = ByteTools.subBytes(buf, 0, bufLen);
                     }
                     thisPage = crossString + ByteTools.bytesToHexFormat(buf);
-                    int[] ret = TextTools.lastAndCount(thisPage, findString);
-                    int lastPos = ret[0];
+                    Map<String, Object> ret;
+                    if (findRegex) {
+                        ret = StringTools.lastAndCountRegex(thisPage, findString);
+                    } else {
+                        ret = StringTools.lastAndCount(thisPage, findString);
+                    }
+                    int lastPos = (int) ret.get("lastIndex");
                     int crossFrom, pagelen = thisPage.length();
                     if (lastPos >= 0) {
-                        int num = ret[1];
+                        int num = (int) ret.get("count");
+                        findLen = ((String) ret.get("lastMatch")).length();
                         replaceAllNumber += num;
+                        String oldString;
                         if (lastPos + findLen == pagelen) {
                             crossString = "";
-                            thisPage = thisPage.replaceAll(findString, replaceString);
+                            oldString = thisPage;
                         } else {
                             crossFrom = Math.max(lastPos + findLen, pagelen - findLen + 3);
                             crossString = thisPage.substring(crossFrom, pagelen);
-                            thisPage = thisPage.substring(0, crossFrom).replaceAll(findString, replaceString);
+                            oldString = thisPage.substring(0, crossFrom);
+                        }
+                        if (findRegex) {
+                            thisPage = oldString.replaceAll(findString, replaceString);
+                        } else {
+                            thisPage = StringTools.replaceAll(oldString, findString, replaceString);
                         }
                     } else {
                         crossFrom = pagelen - findLen + 3;
@@ -654,11 +685,17 @@ public class BytesEditInformation extends FileEditInformation {
                         buf = ByteTools.subBytes(buf, 0, bufLen);
                     }
                     thisPage = crossString + ByteTools.bytesToHexFormat(buf);
-                    int[] ret = TextTools.lastAndCount(thisPage, findString);
-                    int lastPos = ret[0];
+                    Map<String, Object> ret;
+                    if (findRegex) {
+                        ret = StringTools.lastAndCountRegex(thisPage, findString);
+                    } else {
+                        ret = StringTools.lastAndCount(thisPage, findString);
+                    }
+                    int lastPos = (int) ret.get("lastIndex");
                     int crossFrom, pagelen = thisPage.length();
                     if (lastPos >= 0) {
-                        int num = ret[1];
+                        int num = (int) ret.get("count");
+                        findLen = ((String) ret.get("lastMatch")).length();
                         count += num;
                         if (lastPos + findLen == pagelen) {
                             crossString = "";

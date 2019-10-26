@@ -368,7 +368,7 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
                 parameters.setTransform(Transform.scale(scaleX, scaleY));
                 parameters.setFill(Color.TRANSPARENT);
                 webView.snapshot(parameters, snap);
-                if (!parent.editable.get() || snap == null) {
+                if (!parent.editable.get()) {
                     return;
                 }
                 task = new SingletonTask<Void>() {
@@ -407,13 +407,13 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
                                     = (ImageViewerController) openStage(CommonValues.ImageFxml);
                             controller.loadImage(blended);
                         } else {
-                            parent.updateImage(ImageOperation.RichText, null, null, blended);
+                            parent.updateImage(ImageOperation.RichText, null, null, blended, cost);
                             webView = null;
                         }
                     }
 
                 };
-                openHandlingStage(task, Modality.WINDOW_MODAL);
+                parent.openHandlingStage(task, Modality.WINDOW_MODAL);
                 Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();

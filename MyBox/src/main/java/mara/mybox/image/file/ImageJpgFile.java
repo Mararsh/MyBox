@@ -28,7 +28,6 @@ import mara.mybox.image.ImageValue;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
-import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 /**
@@ -91,7 +90,6 @@ public class ImageJpgFile {
         return bufferedImage;
     }
 
-    // https://docs.oracle.com/javase/10/docs/api/javax/imageio/metadata/doc-files/jpeg_metadata.html#image
     public static ImageWriter getWriter() {
         ImageWriter writer = ImageIO.getImageWritersByFormatName("jpg").next();
         return writer;
@@ -118,6 +116,50 @@ public class ImageJpgFile {
         }
     }
 
+    // https://docs.oracle.com/javase/10/docs/api/javax/imageio/metadata/doc-files/jpeg_metadata.html#image
+    public static IIOMetadata getWriterMeta2(ImageAttributes attributes, BufferedImage image,
+            ImageWriter writer, ImageWriteParam param) {
+        try {
+
+            IIOMetadata metaData = writer.getDefaultImageMetadata(new ImageTypeSpecifier(image), param);
+            if (metaData == null || metaData.isReadOnly() || attributes == null) {
+                return metaData;
+            }
+            String nativeFormat = metaData.getNativeMetadataFormatName();// "javax_imageio_jpeg_image_1.0"
+
+            IIOMetadataNode root = new IIOMetadataNode(nativeFormat);
+            IIOMetadataNode jpegVariety = new IIOMetadataNode("JPEGvariety");
+            IIOMetadataNode markerSequence = new IIOMetadataNode("markerSequence");
+            IIOMetadataNode app0JFIF = new IIOMetadataNode("app0JFIF");
+            root.appendChild(jpegVariety);
+            root.appendChild(markerSequence);
+            jpegVariety.appendChild(app0JFIF);
+
+            app0JFIF.setAttribute("majorVersion", "1");
+            app0JFIF.setAttribute("minorVersion", "2");
+            app0JFIF.setAttribute("thumbWidth", "0");
+            app0JFIF.setAttribute("thumbHeight", "0");
+
+            if (attributes.getDensity() > 0) {
+                app0JFIF.setAttribute("Xdensity", attributes.getDensity() + "");
+                app0JFIF.setAttribute("Ydensity", attributes.getDensity() + "");
+                app0JFIF.setAttribute("resUnits", "1"); // density is dots per inch
+            }
+
+            if (attributes.isEmbedProfile() && attributes.getProfile() != null) {
+                IIOMetadataNode app2ICC = new IIOMetadataNode("app2ICC");
+                app0JFIF.appendChild(app2ICC);
+                app2ICC.setUserObject(attributes.getProfile());
+            }
+
+            metaData.mergeTree(nativeFormat, root);
+            return metaData;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
     public static IIOMetadata getWriterMeta(ImageAttributes attributes, BufferedImage image,
             ImageWriter writer, ImageWriteParam param) {
         try {
@@ -126,21 +168,36 @@ public class ImageJpgFile {
                 return metaData;
             }
             String nativeFormat = metaData.getNativeMetadataFormatName();// "javax_imageio_jpeg_image_1.0"
-            Element nativeTree = (Element) metaData.getAsTree(nativeFormat);
-            Element app0JFIF;
+            IIOMetadataNode nativeTree = (IIOMetadataNode) metaData.getAsTree(nativeFormat);
+
+            IIOMetadataNode JPEGvariety, markerSequence;
+            NodeList JPEGvarietyNode = nativeTree.getElementsByTagName("JPEGvariety");
+            if (JPEGvarietyNode != null && JPEGvarietyNode.getLength() > 0) {
+                JPEGvariety = (IIOMetadataNode) JPEGvarietyNode.item(0);
+            } else {
+                JPEGvariety = new IIOMetadataNode("JPEGvariety");
+                nativeTree.appendChild(JPEGvariety);
+            }
+            NodeList markerSequenceNode = nativeTree.getElementsByTagName("markerSequence");
+            if (markerSequenceNode == null) {
+                markerSequence = new IIOMetadataNode("markerSequence");
+                nativeTree.appendChild(markerSequence);
+            }
+            IIOMetadataNode app0JFIF;
             NodeList app0JFIFNode = nativeTree.getElementsByTagName("app0JFIF");
             if (app0JFIFNode != null && app0JFIFNode.getLength() > 0) {
-                app0JFIF = (Element) app0JFIFNode.item(0);
+                app0JFIF = (IIOMetadataNode) app0JFIFNode.item(0);
             } else {
                 app0JFIF = new IIOMetadataNode("app0JFIF");
-                nativeTree.appendChild(app0JFIF);
+                JPEGvariety.appendChild(app0JFIF);
             }
+
             if (attributes.getDensity() > 0) {
                 app0JFIF.setAttribute("Xdensity", attributes.getDensity() + "");
                 app0JFIF.setAttribute("Ydensity", attributes.getDensity() + "");
                 app0JFIF.setAttribute("resUnits", "1"); // density is dots per inch
-
             }
+
             if (attributes.isEmbedProfile() && attributes.getProfile() != null) {
                 IIOMetadataNode app2ICC;
                 NodeList app2ICCNode = nativeTree.getElementsByTagName("app2ICC");
@@ -152,6 +209,7 @@ public class ImageJpgFile {
                 }
                 app2ICC.setUserObject(attributes.getProfile());
             }
+
             metaData.mergeTree(nativeFormat, nativeTree);
             return metaData;
         } catch (Exception e) {

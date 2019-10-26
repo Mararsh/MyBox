@@ -8,16 +8,21 @@
 
 /*
 https://old.icons8.com/
-Icons color #4788c7  #dff0fe
-Hue reduce 215-> red
-Hue increase 171 -> Orange
-Saturation increase 50% -> Blue
-Red increase 151 -> pink
+Icons color           -> lightBlue             #4788c7  #dff0fe
+Hue reduce 215    -> red              #c94d58   #feb6be
+Hue increase 171   -> Orange      #c8754b      #fecdb6
+Saturation increase 50% -> Blue       #0066cc            #92cbfe
+Red increase 151 -> pink                #de88c7         #ffdcfe
 */
 
 /*.label {
     -fx-text-overrun: leading-ellipsis ;
 }*/
+
+.title, .title:focused {
+    -fx-font-weight: bolder;
+    -fx-font-size: 1.5em;
+}
 
 .copyable-label, .copyable-label:focused {
     -fx-background-color: transparent ;

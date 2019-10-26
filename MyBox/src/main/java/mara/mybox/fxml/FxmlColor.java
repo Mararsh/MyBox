@@ -341,6 +341,22 @@ public class FxmlColor {
         return s;
     }
 
+    public static String colorDisplaySimple(Color color) {
+        if (color == null) {
+            return "";
+        }
+        String s = color.toString() + "\n";
+        s += "sRGB  " + message("Red") + ":" + Math.round(color.getRed() * 255) + " "
+                + message("Green") + ":" + Math.round(color.getGreen() * 255) + " "
+                + message("Blue") + ":" + Math.round(color.getBlue() * 255)
+                + message("Opacity") + ":" + Math.round(color.getOpacity() * 100) + "%\n";
+        s += "HSB  " + message("Hue") + ":" + Math.round(color.getHue()) + " "
+                + message("Saturation") + ":" + Math.round(color.getSaturation() * 100) + "% "
+                + message("Brightness") + ":" + Math.round(color.getBrightness() * 100) + "%\n";
+
+        return s;
+    }
+
     public static String rgb2Hex(Color color) {
         return String.format("#%02X%02X%02X",
                 (int) (color.getRed() * 255),
@@ -361,6 +377,16 @@ public class FxmlColor {
                 + (int) (color.getGreen() * 255) + ","
                 + (int) (color.getBlue() * 255) + ","
                 + color.getOpacity() + ")";
+    }
+
+    public static String rgb2Hex(java.awt.Color color) {
+        return String.format("#%02X%02X%02X",
+                color.getRed(), color.getGreen(), color.getBlue());
+    }
+
+    public static String rgb2AlphaHex(java.awt.Color color) {
+        return String.format("#%02X%02X%02X%02X",
+                color.getAlpha(), color.getRed(), color.getGreen(), color.getBlue());
     }
 
     public static float[] toFloat(Color color) {

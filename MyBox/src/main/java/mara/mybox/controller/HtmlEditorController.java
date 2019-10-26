@@ -1,5 +1,7 @@
 package mara.mybox.controller;
 
+import com.vladsch.flexmark.html2md.converter.*;
+import com.vladsch.flexmark.util.data.MutableDataSet;
 import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -22,6 +24,7 @@ import javafx.concurrent.Worker.State;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Bounds;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Alert;
@@ -39,10 +42,12 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.ToolBar;
 import javafx.scene.image.Image;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.web.HTMLEditor;
@@ -65,6 +70,7 @@ import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.NetworkTools;
@@ -74,6 +80,7 @@ import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonImageValues;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -106,11 +113,11 @@ public class HtmlEditorController extends BaseController {
     @FXML
     private WebView webView;
     @FXML
-    private TextArea codesArea;
+    private TextArea codesArea, markdownArea;
     @FXML
     private TabPane tabPane;
     @FXML
-    private Tab editorTab, codesTab, browserTab;
+    private Tab editorTab, codesTab, browserTab, markdownTab;
     @FXML
     private ComboBox<String> urlBox, delayBox;
     @FXML
@@ -173,67 +180,56 @@ public class HtmlEditorController extends BaseController {
                     isSettingValues = true;
                     try {
                         String contents = "";
-                        Object object = null;
+                        Object object;
 
-                        if (editorTab.equals(newValue)) {
-
-                            if (codesTab.equals(oldValue)) {
-                                object = codesArea.getText();
-                            } else if (browserTab.equals(oldValue)) {
-                                object = webEngine.executeScript("document.documentElement.outerHTML");
-                            }
-
-                            if (object != null) {
-                                contents = (String) object;
-                            }
-
-                            isFrameSet = contents.toUpperCase().contains("</FRAMESET>");
+                        if (editorTab.equals(oldValue)) {
                             if (isFrameSet) {
-//                            popError(AppVariables.getMessage("NotSupportFrameSet"));
-                                htmlEditor.setHtmlText("<p>" + AppVariables.message("NotSupportFrameSet") + "</p>");
-                            } else {
-                                htmlEditor.setHtmlText(contents);
-                            }
-
-                        } else if (codesTab.equals(newValue)) {
-
-                            if (editorTab.equals(oldValue)) {
-
-                                if (isFrameSet) {
-                                    object = webEngine.executeScript("document.documentElement.outerHTML");
-                                } else {
-                                    object = htmlEditor.getHtmlText();
-                                }
-
-                            } else if (browserTab.equals(oldValue)) {
                                 object = webEngine.executeScript("document.documentElement.outerHTML");
+                            } else {
+                                object = htmlEditor.getHtmlText();
                             }
-
                             if (object != null) {
                                 contents = (String) object;
-                            }
-
-                            isFrameSet = contents.toUpperCase().contains("</FRAMESET>");
-                            codesArea.setText(contents);
-
-                        } else if (browserTab.equals(newValue)) {
-                            if (editorTab.equals(oldValue)) {
-                                if (isFrameSet) {
-                                    object = codesArea.getText();
-                                } else {
-                                    object = htmlEditor.getHtmlText();
+                                isFrameSet = contents.toUpperCase().contains("</FRAMESET>");
+                                codesArea.setText(contents);
+                                if (!isFrameSet) {
+                                    webEngine.loadContent(contents);
                                 }
-                            } else if (codesTab.equals(oldValue)) {
-                                object = codesArea.getText();
+                                html2markdown(contents);
                             }
+
+                        } else if (codesTab.equals(oldValue)) {
+                            object = codesArea.getText();
                             if (object != null) {
                                 contents = (String) object;
+                                isFrameSet = contents.toUpperCase().contains("</FRAMESET>");
+                                if (isFrameSet) {
+                                    htmlEditor.setHtmlText("<p>" + AppVariables.message("NotSupportFrameSet") + "</p>");
+                                } else {
+                                    htmlEditor.setHtmlText(contents);
+                                    webEngine.loadContent(contents);
+                                }
+                                html2markdown(contents);
                             }
-                            isFrameSet = contents.toUpperCase().contains("</FRAMESET>");
-                            if (!isFrameSet) {
-                                webEngine.loadContent(contents);
+
+                        } else if (browserTab.equals(oldValue)) {
+                            object = webEngine.executeScript("document.documentElement.outerHTML");
+                            if (object != null) {
+                                contents = (String) object;
+                                isFrameSet = contents.toUpperCase().contains("</FRAMESET>");
+                                codesArea.setText(contents);
+                                if (isFrameSet) {
+                                    htmlEditor.setHtmlText("<p>" + AppVariables.message("NotSupportFrameSet") + "</p>");
+                                } else {
+                                    htmlEditor.setHtmlText(contents);
+                                }
+                                html2markdown(contents);
                             }
+
+                        } else if (markdownTab.equals(oldValue)) {
+
                         }
+
                     } catch (Exception e) {
                         logger.debug(e.toString());
                     }
@@ -651,6 +647,7 @@ public class HtmlEditorController extends BaseController {
     }
 
     public void loadLink(File file) {
+        sourceFile = file;
         loadLink(file.toURI().toString());
     }
 
@@ -744,7 +741,7 @@ public class HtmlEditorController extends BaseController {
             } else {
                 contents = htmlEditor.getHtmlText();
             }
-            try ( BufferedWriter out = new BufferedWriter(new FileWriter(sourceFile, Charset.forName("utf-8"), false))) {
+            try (BufferedWriter out = new BufferedWriter(new FileWriter(sourceFile, Charset.forName("utf-8"), false))) {
                 out.write(contents);
                 out.flush();
             }
@@ -780,7 +777,7 @@ public class HtmlEditorController extends BaseController {
             } else {
                 contents = codesArea.getText();
             }
-            try ( BufferedWriter out = new BufferedWriter(new FileWriter(sourceFile, Charset.forName("utf-8"), false))) {
+            try (BufferedWriter out = new BufferedWriter(new FileWriter(sourceFile, Charset.forName("utf-8"), false))) {
                 out.write(contents);
                 out.flush();
             }
@@ -933,8 +930,18 @@ public class HtmlEditorController extends BaseController {
             webEngine.executeScript("window.scrollTo(0,0 );");
             final int scrollDelay = 300;
             bottomText.setText(AppVariables.message("SnapingImage..."));
+
+            // http://news.kynosarges.org/2017/02/01/javafx-snapshot-scaling/
+            final Bounds bounds = webView.getLayoutBounds();
+            Screen screen = Screen.getPrimary();
+            double scaleX = screen.getOutputScaleX();
+            double scaleY = screen.getOutputScaleY();
+            int imageWidth = (int) Math.round(bounds.getWidth() * scaleX);
+            int imageHeight = (int) Math.round(bounds.getHeight() * scaleY);
             final SnapshotParameters parameters = new SnapshotParameters();
             parameters.setFill(Color.TRANSPARENT);
+            parameters.setTransform(javafx.scene.transform.Transform.scale(scaleX, scaleY));
+
             if (timer != null) {
                 timer.cancel();
             }
@@ -950,15 +957,19 @@ public class HtmlEditorController extends BaseController {
                             public void run() {
                                 try {
 
-                                    Image snapshot = webView.snapshot(parameters, null);
+                                    WritableImage snapshot = new WritableImage(imageWidth, imageHeight);
+                                    snapshot = webView.snapshot(parameters, snapshot);
+
+                                    Image cropped;
                                     if (totalHeight < snapHeight + snapStep) { // last snap
-                                        snapshot = FxmlImageManufacture.cropOutsideFx(snapshot, 0, snapStep - (totalHeight - snapHeight),
+                                        cropped = FxmlImageManufacture.cropOutsideFx(snapshot, 0,
+                                                (snapStep - (totalHeight - snapHeight)) * scaleY,
                                                 width - 1, (int) snapshot.getHeight() - 1);
                                     } else {
-                                        snapshot = FxmlImageManufacture.cropOutsideFx(snapshot, 0, 0,
+                                        cropped = FxmlImageManufacture.cropOutsideFx(snapshot, 0, 0,
                                                 width - 1, (int) snapshot.getHeight() - 1);
                                     }
-                                    images.add(snapshot);
+                                    images.add(cropped);
                                     snapHeight += snapStep;
                                     loadingController.setInfo(AppVariables.message("CurrentPageHeight") + ": " + snapHeight);
                                     if (totalHeight <= snapHeight) { // last snap
@@ -1065,6 +1076,139 @@ public class HtmlEditorController extends BaseController {
             logger.debug(e.toString());
         }
 
+    }
+
+    /*
+        Markdown
+     */
+    protected void html2markdown(String contents) {
+        if (contents == null || contents.isEmpty()) {
+            markdownArea.setText("");
+            return;
+        }
+        synchronized (this) {
+            if (task != null) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+
+                private String md;
+
+                @Override
+                protected boolean handle() {
+                    try {
+                        MutableDataSet options = new MutableDataSet();
+                        md = FlexmarkHtmlConverter.builder(options).build().convert(contents);
+                        return md != null;
+                    } catch (Exception e) {
+                        error = e.toString();
+                        return false;
+                    }
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    markdownArea.setText(md);
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
+    }
+
+    @FXML
+    protected void editMarkdown() {
+        if (markdownArea.getText().isEmpty()) {
+            return;
+        }
+        MarkdownEditerController controller
+                = (MarkdownEditerController) openStage(CommonValues.MarkdownEditorFxml);
+        controller.loadMarkdown(markdownArea.getText());
+    }
+
+    @FXML
+    protected void refreshMarkdown() {
+        html2markdown(codesArea.getText());
+    }
+
+    @FXML
+    protected void saveMarkdown() {
+        if (markdownArea.getText().isEmpty()) {
+            return;
+        }
+        synchronized (this) {
+            if (task != null) {
+                return;
+            }
+
+            String name = "";
+            if (sourceFile != null) {
+                name = FileTools.getFilePrefix(sourceFile.getName());
+            }
+            final File file = chooseSaveFile(AppVariables.getUserConfigPath("MarkdownFilePath"),
+                    name, CommonImageValues.MarkdownExtensionFilter, true);
+            if (file == null) {
+                return;
+            }
+            recordFileWritten(file, "MarkdownFilePath",
+                    VisitHistory.FileType.Markdown, VisitHistory.FileType.Markdown);
+
+            task = new SingletonTask<Void>() {
+
+                @Override
+                protected boolean handle() {
+                    return FileTools.writeFile(file, markdownArea.getText()) != null;
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
+    }
+
+    @FXML
+    public void popSaveMarkdown(MouseEvent event) { //
+        if (AppVariables.fileRecentNumber <= 0) {
+            return;
+        }
+        new RecentVisitMenu(this, event) {
+            @Override
+            public List<VisitHistory> recentFiles() {
+                return null;
+            }
+
+            @Override
+            public List<VisitHistory> recentPaths() {
+                return VisitHistory.getRecentPath(VisitHistory.FileType.Markdown);
+            }
+
+            @Override
+            public void handleSelect() {
+                saveMarkdown();
+            }
+
+            @Override
+            public void handleFile(String fname) {
+
+            }
+
+            @Override
+            public void handlePath(String fname) {
+                File file = new File(fname);
+                if (!file.exists()) {
+                    handleSelect();
+                    return;
+                }
+                AppVariables.setUserConfigValue("MarkdownFilePath", fname);
+                handleSelect();
+            }
+
+        }.pop();
     }
 
     @Override

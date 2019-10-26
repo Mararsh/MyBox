@@ -15,8 +15,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
@@ -39,12 +37,9 @@ import static mara.mybox.value.AppVariables.message;
 public class FilesArrangeController extends FilesBatchController {
 
     protected String lastFileName;
-    protected Date startTime;
     private boolean startHandle, isCopy, byModifyTime;
     private int dirType, replaceType;
     protected String renameAppdex = "-m";
-    protected StringBuffer newLogs;
-    protected int newlines, maxLines, totalLines, cacheLines = 200;
     protected String strFailedCopy, strCreatedSuccessfully, strCopySuccessfully, strDeleteSuccessfully, strFailedDelete;
     protected FileSynchronizeAttributes copyAttr;
     private final String FileArrangeSubdirKey, FileArrangeCopyKey, FileArrangeExistedKey, FileArrangeModifyTimeKey, FileArrangeCategoryKey;
@@ -67,17 +62,13 @@ public class FilesArrangeController extends FilesBatchController {
     @FXML
     private ToggleGroup filesGroup, byGroup, dirGroup, replaceGroup;
     @FXML
-    protected TextField maxLinesinput;
-    @FXML
     protected VBox dirsBox, conditionsBox, logsBox;
-    @FXML
-    protected TextArea logsTextArea;
     @FXML
     private RadioButton copyRadio, moveRadio, replaceModifiedRadio, replaceRadio, renameRadio, notCopyRadio;
     @FXML
     private RadioButton modifiyTimeRadio, createTimeRadio, monthRadio, dayRadio, yearRadio;
     @FXML
-    private CheckBox verboseCheck, handleSubdirCheck;
+    private CheckBox handleSubdirCheck;
 
     public FilesArrangeController() {
         baseTitle = AppVariables.message("FilesArrangement");
@@ -255,17 +246,9 @@ public class FilesArrangeController extends FilesBatchController {
             if (!paused || lastFileName == null) {
                 copyAttr = new FileSynchronizeAttributes();
 
+                initLogs();
                 logsTextArea.setText(AppVariables.message("SourcePath") + ": " + sourcePathInput.getText() + "\n");
                 logsTextArea.appendText(AppVariables.message("TargetPath") + ": " + targetPathInput.getText() + "\n");
-                newLogs = new StringBuffer();
-                newlines = 0;
-                totalLines = 0;
-
-                try {
-                    maxLines = Integer.parseInt(maxLinesinput.getText());
-                } catch (Exception e) {
-                    maxLines = 5000;
-                }
 
                 strFailedCopy = AppVariables.message("FailedCopy") + ": ";
                 strCreatedSuccessfully = AppVariables.message("CreatedSuccessfully") + ": ";
@@ -436,7 +419,7 @@ public class FilesArrangeController extends FilesBatchController {
         if (operationBarController.getStatusLabel() == null) {
             return;
         }
-        long cost = (new Date().getTime() - startTime.getTime()) / 1000;
+        long cost = new Date().getTime() - startTime.getTime();
         double avg = 0;
         if (copyAttr.getCopiedFilesNumber() != 0) {
             avg = DoubleTools.scale3((double) cost / copyAttr.getCopiedFilesNumber());
@@ -448,7 +431,7 @@ public class FilesArrangeController extends FilesBatchController {
             s = message(currentStatus);
         }
         s += ". " + message("HandledThisTime") + ": " + copyAttr.getCopiedFilesNumber() + " "
-                + message("Cost") + ": " + cost + " " + message("Seconds") + ". "
+                + message("Cost") + ": " + DateTools.showTime(cost) + ". "
                 + message("Average") + ": " + avg + " " + message("SecondsPerItem") + ". "
                 + message("StartTime") + ": " + DateTools.datetimeToString(startTime) + ", "
                 + message("EndTime") + ": " + DateTools.datetimeToString(new Date());
@@ -643,45 +626,6 @@ public class FilesArrangeController extends FilesBatchController {
             return newFile;
         }
         return renameExistedFile(newFile);
-    }
-
-    protected void updateLogs(final String line) {
-        updateLogs(line, true, false);
-    }
-
-    protected void updateLogs(final String line, boolean immediate) {
-        updateLogs(line, true, immediate);
-    }
-
-    protected void updateLogs(final String line, boolean showTime, boolean immediate) {
-        try {
-            if (showTime) {
-                newLogs.append(DateTools.datetimeToString(new Date())).append("  ");
-            }
-            newLogs.append(line).append("\n");
-            long past = new Date().getTime() - startTime.getTime();
-            if (immediate || newlines++ > cacheLines || past > 5000) {
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        logsTextArea.appendText(newLogs.toString());
-                        totalLines += newlines;
-                        if (totalLines > maxLines + cacheLines) {
-                            logsTextArea.deleteText(0, newLogs.length());
-                        }
-                        newLogs = new StringBuffer();
-                        newlines = 0;
-                    }
-                });
-            }
-        } catch (Exception e) {
-
-        }
-    }
-
-    @FXML
-    protected void clearAction(ActionEvent event) {
-        logsTextArea.setText("");
     }
 
 }

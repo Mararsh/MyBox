@@ -68,7 +68,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
     @FXML
     protected Label commentLabel;
     @FXML
-    protected Button withdrawButton, clearButton, paletteButton, fillPaletteButton;
+    protected Button withdrawButton, paletteButton, fillPaletteButton;
     @FXML
     protected CheckBox fillCheck, dottedCheck;
     @FXML
@@ -451,7 +451,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                 }
 
             };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
+            parent.openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -490,7 +490,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                 }
 
             };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
+            parent.openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -529,7 +529,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                 }
 
             };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
+            parent.openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -574,7 +574,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                 }
 
             };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
+            parent.openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -640,7 +640,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                 }
 
             };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
+            parent.openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -840,6 +840,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
     }
 
     @FXML
+    @Override
     public void clearAction() {
         switch (opType) {
             case Polyline:
@@ -928,14 +929,14 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
 
                 @Override
                 protected void whenSucceeded() {
-                    parent.updateImage(ImageOperation.Pen, opType.name(), null, newImage);
+                    parent.updateImage(ImageOperation.Pen, opType.name(), null, newImage, cost);
                     typeGroup.selectToggle(null);
 
                 }
 
             };
 
-            openHandlingStage(task, Modality.WINDOW_MODAL);
+            parent.openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();

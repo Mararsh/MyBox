@@ -12,6 +12,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.PixelReader;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -32,6 +33,7 @@ import mara.mybox.data.DoublePolygon;
 import mara.mybox.data.DoublePolyline;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.IntPoint;
+import mara.mybox.fxml.FxmlColor;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 
@@ -42,6 +44,8 @@ import static mara.mybox.value.AppVariables.logger;
  * @License Apache License Version 2.0
  */
 public class ImageMaskController extends ImageBaseController {
+
+    public static final String DefaultStrokeColor = "#c94d58", DefaultAnchorColor = "#dff0fe";
 
     protected boolean needNotRulers, needNotCoordinates, changed;
     protected DoubleRectangle maskRectangleData;
@@ -159,10 +163,11 @@ public class ImageMaskController extends ImageBaseController {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                         AppVariables.setUserConfigValue("ImagePopCooridnate", coordinateCheck.isSelected());
+                        AppVariables.ImagePopCooridnate = coordinateCheck.isSelected();
                         checkCoordinate();
                     }
                 });
-                coordinateCheck.setSelected(AppVariables.getUserConfigBoolean("ImagePopCooridnate", false));
+                coordinateCheck.setSelected(AppVariables.ImagePopCooridnate);
 
             }
         } catch (Exception e) {
@@ -179,10 +184,10 @@ public class ImageMaskController extends ImageBaseController {
     }
 
     protected void checkCoordinate() {
-        if (xyText != null) {
-            boolean show = AppVariables.getUserConfigBoolean("ImagePopCooridnate", false);
-            xyText.setVisible(show);
-        }
+//        if (xyText != null) {
+//            boolean show = AppVariables.getUserConfigBoolean("ImagePopCooridnate", false);
+//            xyText.setVisible(show);
+//        }
     }
 
     @Override
@@ -216,10 +221,10 @@ public class ImageMaskController extends ImageBaseController {
                 return;
             }
             double strokeWidth = AppVariables.getUserConfigInt("StrokeWidth", 2);
-            Color strokeColor = Color.web(AppVariables.getUserConfigValue("StrokeColor", "#FF0000"));
+            Color strokeColor = Color.web(AppVariables.getUserConfigValue("StrokeColor", DefaultStrokeColor));
             setMaskLinesStroke(strokeColor, strokeWidth, true);
 
-            Color anchorColor = Color.web(AppVariables.getUserConfigValue("AnchorColor", "#0000FF"));
+            Color anchorColor = Color.web(AppVariables.getUserConfigValue("AnchorColor", DefaultAnchorColor));
             int anchorWidth = AppVariables.getUserConfigInt("AnchorWidth", 10);
             setMaskAnchorsStroke(anchorColor, anchorWidth);
 
@@ -1575,8 +1580,9 @@ public class ImageMaskController extends ImageBaseController {
 
     @FXML
     public DoublePoint showXY(MouseEvent event) {
-        if (needNotCoordinates || xyText == null || !xyText.isVisible()
-                || !AppVariables.ImagePopCooridnate) {
+        if (needNotCoordinates
+                || !AppVariables.ImagePopCooridnate
+                || xyText == null || !xyText.isVisible()) {
             return null;
         }
         DoublePoint p = getImageXY(event, imageView);
@@ -1585,8 +1591,9 @@ public class ImageMaskController extends ImageBaseController {
     }
 
     public DoublePoint showXY(MouseEvent event, DoublePoint p) {
-        if (needNotCoordinates || xyText == null || !xyText.isVisible()
-                || !AppVariables.ImagePopCooridnate) {
+        if (needNotCoordinates
+                || !AppVariables.ImagePopCooridnate
+                || xyText == null || !xyText.isVisible()) {
             return null;
         }
         if (p == null) {
@@ -1596,8 +1603,12 @@ public class ImageMaskController extends ImageBaseController {
             }
             return null;
         }
-        String s = (int) Math.round(p.getX()) + "," + (int) Math.round(p.getY());
+
         if (xyText != null && xyText.isVisible()) {
+            PixelReader pixelReader = imageView.getImage().getPixelReader();
+            Color color = pixelReader.getColor((int) p.getX(), (int) p.getY());
+            String s = (int) Math.round(p.getX()) + "," + (int) Math.round(p.getY()) + "\n"
+                    + FxmlColor.colorDisplaySimple(color);
             xyText.setText(s);
             xyText.setX(event.getX() + 10);
             xyText.setY(event.getY());

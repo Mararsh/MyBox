@@ -13,6 +13,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.layout.HBox;
 import mara.mybox.value.AppVariables;
 
 /**
@@ -22,6 +23,8 @@ import mara.mybox.value.AppVariables;
  */
 public class OperationController extends BaseController {
 
+    @FXML
+    protected HBox barBox;
     @FXML
     protected Button pauseButton, openTargetButton;
     @FXML
@@ -34,28 +37,29 @@ public class OperationController extends BaseController {
     @Override
     public void initializeNext() {
 
-        if (miaoCheck != null) {
-            miaoCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    AppVariables.setUserConfigValue("Miao", newValue);
+        miaoCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                AppVariables.setUserConfigValue("Miao", newValue);
 
-                }
-            });
-            miaoCheck.setSelected(AppVariables.getUserConfigBoolean("Miao"));
-        }
+            }
+        });
+        miaoCheck.setSelected(AppVariables.getUserConfigBoolean("Miao"));
 
-        if (openCheck != null) {
-            openCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    AppVariables.setUserConfigValue("OpenWhenComplete", newValue);
+        openCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                AppVariables.setUserConfigValue("OpenWhenComplete", newValue);
 
-                }
-            });
-            openCheck.setSelected(AppVariables.getUserConfigBoolean("OpenWhenComplete"));
-        }
+            }
+        });
+        openCheck.setSelected(AppVariables.getUserConfigBoolean("OpenWhenComplete"));
+        
+    }
 
+    public void deleteOpenControls() {
+        openCheck.setSelected(false);
+        barBox.getChildren().removeAll(openCheck, openTargetButton);
     }
 
     @FXML

@@ -126,7 +126,6 @@ public class ImageManufacture {
                     }
                 }
             }
-
             return target;
         } catch (Exception e) {
             logger.error(e.toString());

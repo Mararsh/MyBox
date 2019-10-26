@@ -159,11 +159,11 @@ public class ImageManufactureShadowController extends ImageManufactureOperationC
 
                 @Override
                 protected void whenSucceeded() {
-                    parent.updateImage(ImageOperation.Shadow, shadow + "", null, newImage);
+                    parent.updateImage(ImageOperation.Shadow, shadow + "", null, newImage, cost);
                 }
 
             };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
+            parent.openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();

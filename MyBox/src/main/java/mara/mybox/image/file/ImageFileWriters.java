@@ -108,7 +108,7 @@ public class ImageFileWriters {
             BufferedImage checked = ImageManufacture.checkAlpha(image, targetFormat);
             ImageWriter writer = getWriter(targetFormat);
             ImageWriteParam param = getWriterParam(attributes, writer);
-            IIOMetadata metaData = ImageFileWriters.getWriterMetaData(targetFormat, attributes, image, writer, param);
+            IIOMetadata metaData = ImageFileWriters.getWriterMetaData(targetFormat, attributes, checked, writer, param);
             File tmpFile = FileTools.getTempFile();
             try (ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                 writer.setOutput(out);

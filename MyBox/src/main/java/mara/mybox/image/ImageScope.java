@@ -39,7 +39,7 @@ public class ImageScope {
     protected DoublePolygon polygon;
     protected int colorDistance, colorDistance2;
     protected float hsbDistance;
-    protected boolean areaExcluded, colorExcluded;
+    protected boolean areaExcluded, colorExcluded, eightNeighbor;
     protected Image image, clip;
     protected double opacity;
     protected Date createTime, modifyTime;
@@ -78,6 +78,8 @@ public class ImageScope {
         colorDistance2 = colorDistance * colorDistance;
         hsbDistance = 0.5f;
         opacity = 0.3;
+        areaExcluded = colorExcluded = false;
+        eightNeighbor = true;
         if (image != null) {
             rectangle = new DoubleRectangle(image.getWidth() / 4, image.getHeight() / 4,
                     image.getWidth() * 3 / 4, image.getHeight() * 3 / 4);
@@ -472,6 +474,7 @@ public class ImageScope {
             targetScope.setOpacity(sourceScope.getOpacity());
             targetScope.setCreateTime(sourceScope.getCreateTime());
             targetScope.setOutline(sourceScope.getOutline());
+            targetScope.setEightNeighbor(sourceScope.isEightNeighbor());
         } catch (Exception e) {
         }
     }
@@ -2125,6 +2128,14 @@ public class ImageScope {
 
     public void setClip(Image clip) {
         this.clip = clip;
+    }
+
+    public boolean isEightNeighbor() {
+        return eightNeighbor;
+    }
+
+    public void setEightNeighbor(boolean eightNeighbor) {
+        this.eightNeighbor = eightNeighbor;
     }
 
 }

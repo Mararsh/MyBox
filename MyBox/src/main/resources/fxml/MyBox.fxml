@@ -203,7 +203,7 @@ License:    Apache License Version 2.0
                             <children>
                                 <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../img/About56.png" />
+                                        <Image url="@../img/About57.png" />
                                     </image>
                                 </ImageView>
                                 <Label text="%About">
