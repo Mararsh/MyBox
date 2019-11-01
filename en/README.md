@@ -1,4 +1,4 @@
-# [÷–ŒƒReadMe](https://github.com/Mararsh/MyBox)
+# [‰∏≠ÊñáReadMe](https://github.com/Mararsh/MyBox)
 
 # MyBox: Set of Easy Tools
 This is GUI program based on JavaFx to provide simple and easy functions. It's free and open sources
@@ -38,7 +38,7 @@ A file path can follow the command as argument to be opened directly by MyBox. E
 
 
 ## Limitation   
-Self-contain packages can not be lanuched under path including non-English characters.  And file with name including non-ascii can be opened by double clicking.
+Self-contain packages can not be lanuched under path including non-English characters.  And file with name including non-ascii can not be opened by double clicking.
 A bug has been reported to jpackage dev team:
 [JDK-8232936](http://bugs.java.com/bugdatabase/view_bug.do?bug_id=JDK-8232936)
 
@@ -405,7 +405,7 @@ Currently MyBox supports Chinese and English. To support a new language is just 
 3. Support LF(Unix/Linux), CR(Apple), and CRLF(Windows).
 4. Find and replace. In current page, or in whole file. Counting. Support regular expression.
 5. Locate. Go to position of specified character or specified line.
-6. Filter lines. By °∞Include One°±, °∞Not Include All°±, °∞Include All°±, or °∞Not Include Any°±.   Support regular expression.
+6. Filter lines. By ‚ÄúInclude One‚Äù, ‚ÄúNot Include All‚Äù, ‚ÄúInclude All‚Äù, or ‚ÄúNot Include Any‚Äù.   Support regular expression.
 7. Cumulative filter. Filtered results can be saved. Select whether include lines number.
 8. Hexadecimal codes according file's charset can be viewed, scrolled, and selected synchronously.
 9. Paginate. Fit for viewing or editing very large file, such as logs in size of several GBs.
@@ -422,7 +422,7 @@ Currently MyBox supports Chinese and English. To support a new language is just 
 3. Break lines, which is only for display and has not actual effect. By bytes number or by some defined bytes.
 4. Find and replace. In current page, or in whole file. Counting. Support regular expression.
 5. Locate. Go to position of specified character or specified line.
-6. Filter lines. By °∞Include One°±, °∞Not Include All°±, °∞Include All°±, or °∞Not Include Any°±.  Support regular expression.
+6. Filter lines. By ‚ÄúInclude One‚Äù, ‚ÄúNot Include All‚Äù, ‚ÄúInclude All‚Äù, or ‚ÄúNot Include Any‚Äù.  Support regular expression.
 7. Cumulative filter. Filtered results can be saved. Select whether include lines number.
 8. Select charset to decode bytes which can be viewed, scrolled, and selected synchronously.
 9. Paginate. Fit for viewing or editing very large file, such as binary file in size of several GBs.
@@ -448,7 +448,7 @@ Currently MyBox supports Chinese and English. To support a new language is just 
 
 ## Media Tools <a id="MediaTools"></a>     
 1. Monitor images in system clipboard and have user save/view them. Lossless or compression type can be selected.
-2. Alarm clocks, including options of time and music. Support rings of °∞Meow°±, wav files, and mp3. Can run in background.
+2. Alarm clocks, including options of time and music. Support rings of ‚ÄúMeow‚Äù, wav files, and mp3. Can run in background.
 
 
 ## Network Tools <a id="netTools"></a>     
@@ -456,8 +456,8 @@ Currently MyBox supports Chinese and English. To support a new language is just 
 ### Html Editor <a id="htmlEditor"></a>     
 1. Edit local web pages or online pages in rich text. (Not support FrameSet)
 2. Edit Html codes directly. (Support FrameSet)
-3. Web browser to view contents of Editors or load the online page. Support history browsing, font zooming °¢and snapshoting of the whole page as an image or a PDF file.
-4. Convert to Markdown synchronously°£
+3. Web browser to view contents of Editors or load the online page. Support history browsing, font zooming „ÄÅand snapshoting of the whole page as an image or a PDF file.
+4. Convert to Markdown synchronously„ÄÇ
 
 ### Edit Markdown<a id="markdownEditor" />
 1. Provide buttons to help inputting formats.
@@ -505,7 +505,7 @@ Currently MyBox supports Chinese and English. To support a new language is just 
 
 ## Configuration <a id="Config"></a>     
 
-### Default configuration file °∞MyBox.ini°±
+### Default configuration file ‚ÄúMyBox.ini‚Äù
 The default configuration file is under "User Home". Example, it is "C:\Users\<User Name>\mybox\MyBox.ini" on Windows.   
 
 The only way to change configuration file temporarily is to add parameter "config=\"FilePath\"" when run jar.
@@ -526,7 +526,7 @@ Modify these parameters in time will cause MyBox restarts itself automatically.
 Java supports HiDPI since 9 and interface will adapt current screen resolution aotumatically.   
 MyBox supports enable/disable dpi-aware on line, which will cause MyBox reboots itself automatically.   
 
-Developers need notice: JavaFx screen is not same as pysical screen and has different dpi definition which considers X/Y scale ratio too.    
+Developers need notice: JavaFx screen is not same as physical screen and has different dpi definition which considers X/Y scale ratio too.    
 
 
 # Development Logs <a id="devLog"></a>     
@@ -586,8 +586,8 @@ Matrices Calculation. Edit matrix data: adapt formatted data; transform matrix d
 generate identify matrix, random matrix, random square matrix automatically with defined column/row number.     
 Unary matrix calculation: Transpose, Row Echelon Form, Reduced Row Echelon Form, Determinant By Elimination, Determinant By Complement Minor, Inverse Matrix By Elimination, Inverse Matrix By Adjoint, Matrix Rank, Adjoint Matrix, Complement Minor, Normalize, Set Decimal Scale, Set As Integer, Multiply Number, Divide By Number, Power.     
 Binary matrices calculation: Plus, Minus, Hadamard Product, Kronecker Product, Horizontally Merge, Vertically Merge.     
-Tools of Color Space: draw Chromaticity Diagram, edit ICC profile, adapt primaries of RGB Color Space, transform matrices between Linear RGB and XYZ, transform matrices between Linear RGB and Linear RGB£¨chromatic adaptation, standard illuminants, chromatic adaptation matrices.    
-Fix bugs: °∞414 Request-URI Too Large°± is returned in WeiBo snap tool constantly; tooltip blinks at edge of screen; some links do not work.    
+Tools of Color Space: draw Chromaticity Diagram, edit ICC profile, adapt primaries of RGB Color Space, transform matrices between Linear RGB and XYZ, transform matrices between Linear RGB and Linear RGBÔºåchromatic adaptation, standard illuminants, chromatic adaptation matrices.    
+Fix bugs: ‚Äú414 Request-URI Too Large‚Äù is returned in WeiBo snap tool constantly; tooltip blinks at edge of screen; some links do not work.    
     
 2019-5-1 v5.1 Interface: Controls are displayed in pictures which can be selected in 5 colors and whether display texts.    
 Shorter tips to fit for 14 inches screen of laptop.    
