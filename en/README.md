@@ -82,7 +82,12 @@ It is based on following open sources softwares or libraries:
 
 | Software | Role | Link |    
 | --- | --- | --- |    
-| JavaFx | GUI | https://docs.oracle.com/javafx/2/ |     
+| JDK | Java | http://jdk.java.net/13/    
+|   |   | https://www.oracle.com/technetwork/java/javase/downloads/index.html /    
+| JavaFx | GUI| https://docs.oracle.com/javafx/2/  |     
+|   |   |   https://gluonhq.com/products/javafx/ |     
+|   |   |   https://www.oracle.com/technetwork/java/javafxscenebuilder-1x-archive-2199384.html  |     
+| NetBeans | IDE| https://netbeans.org/ |     
 | jai-imageio | Image manufacture | https://github.com/jai-imageio/jai-imageio-core |   
 | PDFBox | PDF manufacture | https://pdfbox.apache.org/ |   
 | PDF2DOM | PDF to html | http://cssbox.sourceforge.net/pdf2dom/ |   

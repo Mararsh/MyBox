@@ -77,10 +77,12 @@ MyBox基于以下开源软件：
 
 | 软件 | 角色 | 链接 |  
 | --- | --- | --- | 
-| JDK 13 | Java语言 | http://jdk.java.net/13/  https://www.oracle.com/technetwork/java/javase/downloads/index.html |     
-| JavaFx 13 | Java图形化界面 | https://docs.oracle.com/javafx/2/   https://github.com/openjdk/jfx |     
-| NetBeans 11.1 | 集成开发环境 | https://netbeans.org/ |     
-| JavaFX Scene Builder 2.0 | JavaFx开发工具 | https://www.oracle.com/technetwork/java/javafxscenebuilder-1x-archive-2199384.html |     
+| JDK | Java语言 | http://jdk.java.net/13/    
+|   |   | https://www.oracle.com/technetwork/java/javase/downloads/index.html /    
+| JavaFx | 图形化界面 | https://docs.oracle.com/javafx/2/  |     
+|   |   |   https://gluonhq.com/products/javafx/ |     
+|   |   |  https://www.oracle.com/technetwork/java/javafxscenebuilder-1x-archive-2199384.html |     
+| NetBeans | 集成开发环境 | https://netbeans.org/ |     
 | jai-imageio | 图像处理 | https://github.com/jai-imageio/jai-imageio-core |   
 | PDFBox | PDF处理 | https://pdfbox.apache.org/ |   
 | PDF2DOM | PDF转换html | http://cssbox.sourceforge.net/pdf2dom/ |   
