@@ -36,7 +36,7 @@
 
 ### 限制   
 自包含包：无法在包含非英文字符的路径下启动；而且无法双击打开包含汉字的文件。已向jpackage开发组报告这个问题：
-[JDK-8232936](http://bugs.java.com/bugdatabase/view_bug.do?bug_id=JDK-8232936)
+[JDK-8232936](http://bugs.java.com/bugdatabase/view_bug.do?bug_id=JDK-8232936) 
 
 
 ### 关于在Linux/Mac上文字识别（OCR）
@@ -83,6 +83,7 @@ MyBox基于以下开源软件：
 |   |   |   https://gluonhq.com/products/javafx/ |     
 |   |   |  https://www.oracle.com/technetwork/java/javafxscenebuilder-1x-archive-2199384.html |     
 | NetBeans | 集成开发环境 | https://netbeans.org/ |     
+| jpackage | 自包含包 | http://jdk.java.net/jpackage/ |     
 | jai-imageio | 图像处理 | https://github.com/jai-imageio/jai-imageio-core |   
 | PDFBox | PDF处理 | https://pdfbox.apache.org/ |   
 | PDF2DOM | PDF转换html | http://cssbox.sourceforge.net/pdf2dom/ |   
@@ -92,6 +93,7 @@ MyBox基于以下开源软件：
 | GifDecoder | 解码不规范的Gif | https://github.com/DhyanB/Open-Imaging/ |   
 | EncodingDetect | 检测文本编码 | https://www.cnblogs.com/ChurchYim/p/8427373.html |   
 | Free Icons | 图标 | https://icons8.com/icons/set/home |  
+| Lindbloom | 色彩理论 | http://brucelindbloom.com/index.html |  
 | tess4j | OCR | https://github.com/nguyenq/tess4j |  
 | tesseract | OCR | https://github.com/tesseract-ocr/tesseract |   
 | barcode4j | 生成条码 | http://barcode4j.sourceforge.net |  

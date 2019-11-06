@@ -88,6 +88,7 @@ It is based on following open sources softwares or libraries:
 |   |   |   https://gluonhq.com/products/javafx/ |     
 |   |   |   https://www.oracle.com/technetwork/java/javafxscenebuilder-1x-archive-2199384.html  |     
 | NetBeans | IDE| https://netbeans.org/ |     
+| jpackage | self-contain package| http://jdk.java.net/jpackage/ |     
 | jai-imageio | Image manufacture | https://github.com/jai-imageio/jai-imageio-core |   
 | PDFBox | PDF manufacture | https://pdfbox.apache.org/ |   
 | PDF2DOM | PDF to html | http://cssbox.sourceforge.net/pdf2dom/ |   
@@ -96,6 +97,7 @@ It is based on following open sources softwares or libraries:
 | Derby | Database | http://db.apache.org/derby/ |   
 | GifDecoder | Decode broken gif  | https://github.com/DhyanB/Open-Imaging/ |   
 | EncodingDetect | Determine encoding of text file | https://www.cnblogs.com/ChurchYim/p/8427373.html |   
+| Lindbloom | Color theory| http://brucelindbloom.com/index.html |  
 | Free Icons | Icon | https://icons8.com/icons/set/home |  
 | tess4j | OCR | https://github.com/nguyenq/tess4j |  
 | tesseract | OCR | https://github.com/tesseract-ocr/tesseract |   
