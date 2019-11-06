@@ -74,11 +74,8 @@ sourceforge: https://sourceforge.net/projects/mara-mybox/files/
 | Development Logs |  | [html](#devLog) |
 
 # Implementation
-MyBox is developed with Netbeans 11.1 and JavaFX Scene Builder 2.0:    
-https://netbeans.org/    
-https://www.oracle.com/technetwork/java/javafxscenebuilder-1x-archive-2199384.html    
 
-It is based on following open sources softwares or libraries:    
+MyBox is based on following open sources softwares:    
 
 | Software | Role | Link |    
 | --- | --- | --- |    
@@ -152,7 +149,7 @@ Current version is 5.7. Its features are mentioned below in summary:
 MyBox is implemented in pure Java and based on open source codes, so it can run any platform which supports Java 12.
 Previous versions are based on Java 8.
 
-Recognize texts in image/PDF(OCR) works only on Windows currently.    
+Recognizing texts in image/PDF(OCR) works only on Windows currently.    
 
 ## Internationalized <a id="Internationalized"></a>       
 All codes of MyBox are internationalized. User can switch language in time.
