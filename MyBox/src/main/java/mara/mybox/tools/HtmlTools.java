@@ -13,11 +13,12 @@ public class HtmlTools {
 
     public static String Indent = "    ";
     public static final String DefaultStyle
-            = ".center { text-align:center; }\n"
-            + "table { border-collapse:collapse; width:85%; }\n"
-            + "table, th, td { border: 1px solid; }\n"
-            //            + "tr { height: 1.2em;;  }\n"
-            + "td { padding: 5px;  }\n";
+            = ".center { text-align:center;  max-width:95%; }\n"
+            + "table { border-collapse:collapse;  margin: 10px;}\n"
+            + "table, th, td { border: 1px solid; padding:10px;}\n"
+            + "th { font-weight:bold;  text-align:center;}\n"
+            + "tr { height: 1.2em;;  }\n"
+            + "td { padding: 5px; }\n";
     public static final String ConsoleStyle
             = "body { background-color:black; color:#66FF66; }\n"
             + "table, th, td { border: #66FF66; }\n"
@@ -26,7 +27,7 @@ public class HtmlTools {
             + DefaultStyle;
     public static final String LinkStyle
             = "body { background-color:transparent;  }\n"
-            + "table { border-collapse:collapse; width:90%; }\n"
+            + "table { border-collapse:collapse; max-width:95%; }\n"
             + "table, th, td { border: 0px solid; }\n"
             + "td { padding:20px;  }\n";
 

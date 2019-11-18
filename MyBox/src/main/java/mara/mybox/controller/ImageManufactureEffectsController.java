@@ -674,12 +674,16 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
                         switch (effectType) {
                             case EdgeDetect:
                                 kernel = ConvolutionKernel.makeEdgeDetectionEightNeighborLaplace();
-                                imageConvolution = new ImageConvolution(imageView.getImage(), parent.scope(), kernel);
+                                imageConvolution = ImageConvolution.create().
+                                        setImage(imageView.getImage()).setScope(parent.scope()).
+                                        setKernel(kernel);
                                 newImage = imageConvolution.operateFxImage();
                                 break;
                             case Emboss:
                                 kernel = ConvolutionKernel.makeEmbossKernel(intPara1, intPara2, valueCheck.isSelected());
-                                imageConvolution = new ImageConvolution(imageView.getImage(), parent.scope(), kernel);
+                                imageConvolution = ImageConvolution.create().
+                                        setImage(imageView.getImage()).setScope(parent.scope()).
+                                        setKernel(kernel);
                                 newImage = imageConvolution.operateFxImage();
                                 break;
                             case Quantization:
@@ -865,7 +869,8 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
                     }
 
                     kernel = ConvolutionKernel.makeEdgeDetectionEightNeighborLaplace();
-                    imageConvolution = new ImageConvolution(image, scope, kernel);
+                    imageConvolution = ImageConvolution.create().
+                            setImage(image).setScope(scope).setKernel(kernel);
                     bufferedImage = imageConvolution.operateImage();
                     tmpFile = AppVariables.MyBoxTempPath + File.separator
                             + message("EdgeDetection") + ".png";
@@ -874,7 +879,8 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
                     }
 
                     kernel = ConvolutionKernel.makeEmbossKernel(Direction.Top, 3, true);
-                    imageConvolution = new ImageConvolution(image, scope, kernel);
+                    imageConvolution = ImageConvolution.create().
+                            setImage(image).setScope(scope).setKernel(kernel);
                     bufferedImage = imageConvolution.operate();
                     tmpFile = AppVariables.MyBoxTempPath + File.separator
                             + message("Emboss") + ".png";

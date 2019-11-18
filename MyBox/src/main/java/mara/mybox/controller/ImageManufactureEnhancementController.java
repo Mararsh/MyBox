@@ -204,10 +204,11 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        if (message("AverageBlur").equals(newValue)) {
-                            smoothAlgorithm = SmoothAlgorithm.AverageBlur;
-                        } else {
-                            smoothAlgorithm = SmoothAlgorithm.GaussianBlur;
+                        for (SmoothAlgorithm a : SmoothAlgorithm.values()) {
+                            if (message(a.name()).equals(newValue)) {
+                                smoothAlgorithm = a;
+                                break;
+                            }
                         }
                         FxmlControl.setEditorNormal(stringSelector);
                     } catch (Exception e) {
@@ -216,13 +217,13 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                 }
             };
             stringSelector.getSelectionModel().selectedItemProperty().addListener(stringBoxListener);
-            stringSelector.getItems().addAll(Arrays.asList(
-                    message("GaussianBlur"), message("AverageBlur")
-            ));
-            stringSelector.getSelectionModel().select(message("GaussianBlur"));
+            for (SmoothAlgorithm a : SmoothAlgorithm.values()) {
+                stringSelector.getItems().add(message(a.name()));
+            }
+            stringSelector.getSelectionModel().select(0);
 
             intPara1 = 10;
-            intListLabel.setText(message("Radius"));
+            intListLabel.setText(message("Intensity"));
             intSelector.setEditable(true);
 
             intBoxListener = new ChangeListener<String>() {
@@ -262,16 +263,13 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        if (message("UnsharpMasking").equals(newValue)) {
-                            sharpenAlgorithm = SharpenAlgorithm.UnsharpMasking;
-                            intSelector.setDisable(false);
-                        } else if (message("FourNeighborLaplace").equals(newValue)) {
-                            sharpenAlgorithm = SharpenAlgorithm.FourNeighborLaplace;
-                            intSelector.setDisable(true);
-                        } else if (message("EightNeighborLaplace").equals(newValue)) {
-                            sharpenAlgorithm = SharpenAlgorithm.EightNeighborLaplace;
-                            intSelector.setDisable(true);
+                        for (SharpenAlgorithm a : SharpenAlgorithm.values()) {
+                            if (message(a.name()).equals(newValue)) {
+                                sharpenAlgorithm = a;
+                                break;
+                            }
                         }
+                        intSelector.setDisable(sharpenAlgorithm != SharpenAlgorithm.UnsharpMasking);
                         FxmlControl.setEditorNormal(stringSelector);
                     } catch (Exception e) {
                         FxmlControl.setEditorBadStyle(stringSelector);
@@ -279,14 +277,13 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                 }
             };
             stringSelector.getSelectionModel().selectedItemProperty().addListener(stringBoxListener);
-            stringSelector.getItems().addAll(Arrays.asList(
-                    message("UnsharpMasking"),
-                    message("FourNeighborLaplace"), message("EightNeighborLaplace")
-            ));
-            stringSelector.getSelectionModel().select(message("UnsharpMasking"));
+            for (SharpenAlgorithm a : SharpenAlgorithm.values()) {
+                stringSelector.getItems().add(message(a.name()));
+            }
+            stringSelector.getSelectionModel().select(0);
 
             intPara1 = 2;
-            intListLabel.setText(message("Radius"));
+            intListLabel.setText(message("Intensity"));
             intSelector.setEditable(true);
             intBoxListener = new ChangeListener<String>() {
                 @Override
@@ -558,7 +555,9 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                                 }
                                 kernel = kernels.get(index);
                             }
-                            imageConvolution = new ImageConvolution(imageView.getImage(), parent.scope(), kernel);
+                            imageConvolution = ImageConvolution.create().
+                                    setImage(imageView.getImage()).setScope(parent.scope()).
+                                    setKernel(kernel);
                             newImage = imageConvolution.operateFxImage();
                             break;
                         case Smooth:
@@ -572,7 +571,9 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                                 default:
                                     return false;
                             }
-                            imageConvolution = new ImageConvolution(imageView.getImage(), parent.scope(), kernel);
+                            imageConvolution = ImageConvolution.create().
+                                    setImage(imageView.getImage()).setScope(parent.scope()).
+                                    setKernel(kernel);
                             newImage = imageConvolution.operateFxImage();
                             value = intPara1 + "";
                             break;
@@ -590,7 +591,9 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                                 default:
                                     return false;
                             }
-                            imageConvolution = new ImageConvolution(imageView.getImage(), parent.scope(), kernel);
+                            imageConvolution = ImageConvolution.create().
+                                    setImage(imageView.getImage()).setScope(parent.scope()).
+                                    setKernel(kernel);
                             newImage = imageConvolution.operateFxImage();
                             break;
                         default:
@@ -685,8 +688,8 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                     ImageScope scope = null;
 
                     ConvolutionKernel kernel = ConvolutionKernel.makeUnsharpMasking(3);
-                    ImageConvolution imageConvolution
-                            = new ImageConvolution(image, scope, kernel);
+                    ImageConvolution imageConvolution = ImageConvolution.create().
+                            setImage(image).setScope(scope).setKernel(kernel);
                     bufferedImage = imageConvolution.operateImage();
                     tmpFile = AppVariables.MyBoxTempPath + File.separator
                             + message("UnsharpMasking") + ".png";
@@ -695,8 +698,8 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                     }
 
                     kernel = ConvolutionKernel.MakeSharpenFourNeighborLaplace();
-                    imageConvolution
-                            = new ImageConvolution(image, null, kernel);
+                    imageConvolution = ImageConvolution.create().
+                            setImage(image).setScope(scope).setKernel(kernel);
                     bufferedImage = imageConvolution.operateImage();
                     tmpFile = AppVariables.MyBoxTempPath + File.separator
                             + message("FourNeighborLaplace") + ".png";
@@ -705,8 +708,8 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                     }
 
                     kernel = ConvolutionKernel.MakeSharpenEightNeighborLaplace();
-                    imageConvolution
-                            = new ImageConvolution(image, scope, kernel);
+                    imageConvolution = ImageConvolution.create().
+                            setImage(image).setScope(scope).setKernel(kernel);
                     bufferedImage = imageConvolution.operateImage();
                     tmpFile = AppVariables.MyBoxTempPath + File.separator
                             + message("EightNeighborLaplace") + ".png";
@@ -715,8 +718,8 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                     }
 
                     kernel = ConvolutionKernel.makeGaussBlur(3);
-                    imageConvolution
-                            = new ImageConvolution(image, scope, kernel);
+                    imageConvolution = ImageConvolution.create().
+                            setImage(image).setScope(scope).setKernel(kernel);
                     bufferedImage = imageConvolution.operateImage();
                     tmpFile = AppVariables.MyBoxTempPath + File.separator
                             + message("GaussianBlur") + ".png";
@@ -725,8 +728,8 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                     }
 
                     kernel = ConvolutionKernel.makeAverageBlur(3);
-                    imageConvolution
-                            = new ImageConvolution(image, scope, kernel);
+                    imageConvolution = ImageConvolution.create().
+                            setImage(image).setScope(scope).setKernel(kernel);
                     bufferedImage = imageConvolution.operateImage();
                     tmpFile = AppVariables.MyBoxTempPath + File.separator
                             + message("AverageBlur") + ".png";

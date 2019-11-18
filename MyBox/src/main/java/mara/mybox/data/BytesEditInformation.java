@@ -1,5 +1,7 @@
 package mara.mybox.data;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -9,6 +11,7 @@ import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -38,7 +41,7 @@ public class BytesEditInformation extends FileEditInformation {
             }
             objectsNumber = file.length();
             if (lineBreak == Line_Break.Width && lineBreakWidth > 0) {
-                try (FileInputStream inputStream = new FileInputStream(file)) {
+                try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
                     byte[] buf = new byte[(int) pageSize];
                     long totalLines = 0;
                     int len;
@@ -51,14 +54,12 @@ public class BytesEditInformation extends FileEditInformation {
                     linesNumber = totalLines;
                 }
             } else if (lineBreakValue != null) {
-                try (FileInputStream inputStream = new FileInputStream(file)) {
-                    byte[] buf = new byte[IO_BUF_LENGTH];
+                try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
+                    byte[] buf = new byte[CommonValues.IOBufferLength];
                     long totalLines = 1;
                     int len;
                     while ((len = inputStream.read(buf)) != -1) {
-                        if (len < IO_BUF_LENGTH) {
-                            buf = ByteTools.subBytes(buf, 0, len);
-                        }
+                        buf = ByteTools.subBytes(buf, 0, len);
                         totalLines += StringTools.countNumber(ByteTools.bytesToHexFormat(buf), lineBreakValue);
                     }
                     linesNumber = totalLines;
@@ -87,7 +88,7 @@ public class BytesEditInformation extends FileEditInformation {
             }
             String pageText;
             byte[] buf = new byte[(int) pageSize];
-            try (FileInputStream inputStream = new FileInputStream(file)) {
+            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
                 inputStream.skip(pageSize * (pageNumber - 1));
                 int len = inputStream.read(buf);
                 if (len == -1) {
@@ -130,7 +131,7 @@ public class BytesEditInformation extends FileEditInformation {
             }
             long lineIndex = 1, lineStart = 1, lineEnd = 1, pageIndex = 1;
             String pageText = null;
-            try (FileInputStream inputStream = new FileInputStream(file)) {
+            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
                 byte[] buf = new byte[(int) pageSize];
                 int len;
                 while ((len = inputStream.read(buf)) != -1) {
@@ -185,7 +186,7 @@ public class BytesEditInformation extends FileEditInformation {
             if (file == null || charset == null || hex == null || hex.isEmpty()) {
                 return false;
             }
-            try (FileOutputStream outputStream = new FileOutputStream(file)) {
+            try ( BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file))) {
                 byte[] bytes = ByteTools.hexFormatToBytes(hex);
                 outputStream.write(bytes);
             }
@@ -213,8 +214,8 @@ public class BytesEditInformation extends FileEditInformation {
             if (sourceInfo.getFile().equals(file)) {
                 targetFile = FileTools.getTempFile();
             }
-            try (FileInputStream inputStream = new FileInputStream(sourceInfo.getFile());
-                    FileOutputStream outputStream = new FileOutputStream(targetFile)) {
+            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(sourceInfo.getFile()));
+                     BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(targetFile))) {
                 int psize = (int) sourceInfo.getPageSize();
                 byte[] buf = new byte[psize];
                 int bufLen, pageIndex = 1;
@@ -270,7 +271,7 @@ public class BytesEditInformation extends FileEditInformation {
                 previousPos = -1;
             }
             String pageText = null, preText;
-            try (FileInputStream inputStream = new FileInputStream(file)) {
+            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
                 if (previousPage > 1) {
                     lineStart = lineEnd = currentPageLineStart;
                     pageIndex = previousPage;
@@ -377,7 +378,7 @@ public class BytesEditInformation extends FileEditInformation {
             String pageText = null, preText;
             long maxIndex = -1;
             int maxLineStart = -1, maxLineEnd = -1, maxPage = 1;
-            try (FileInputStream inputStream = new FileInputStream(file)) {
+            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
                 byte[] buf = new byte[(int) pageSize];
                 int len, pos, findLen = findString.length();
                 String bufHex = null, crossString = "";
@@ -477,7 +478,7 @@ public class BytesEditInformation extends FileEditInformation {
             String pageText = null, preText;
             long maxIndex = -1;
             int maxLineStart = -1, maxLineEnd = -1, maxPage = 1;
-            try (FileInputStream inputStream = new FileInputStream(file)) {
+            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
                 byte[] buf = new byte[(int) pageSize];
                 int len, pos, findLen = findString.length();
                 String bufHex = null, crossString = "", addedStr;
@@ -558,7 +559,7 @@ public class BytesEditInformation extends FileEditInformation {
             }
             int lineEnd = 1, lineStart = 1, pageIndex = 1, linesThisPage;
             String pageText = null;
-            try (FileInputStream inputStream = new FileInputStream(file)) {
+            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
                 byte[] buf = new byte[(int) pageSize];
                 int len;
                 String bufHex;
@@ -613,8 +614,8 @@ public class BytesEditInformation extends FileEditInformation {
         int replaceAllNumber = 0;
         try {
             File targetFile = FileTools.getTempFile();
-            try (FileInputStream inputStream = new FileInputStream(file);
-                    FileOutputStream outputStream = new FileOutputStream(targetFile)) {
+            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
+                     BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(targetFile))) {
                 byte[] buf = new byte[(int) pageSize];
                 int bufLen, findLen = findString.length();
                 String thisPage, crossString = "";
@@ -676,7 +677,7 @@ public class BytesEditInformation extends FileEditInformation {
         }
         int count = 0;
         try {
-            try (FileInputStream inputStream = new FileInputStream(file)) {
+            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
                 byte[] buf = new byte[(int) pageSize];
                 int bufLen, findLen = findString.length();
                 String thisPage, crossString = "";
@@ -728,9 +729,9 @@ public class BytesEditInformation extends FileEditInformation {
             }
             File targetFile = FileTools.getTempFile();
             int lineEnd = 1, lineStart = 1;
-            try (FileInputStream inputStream = new FileInputStream(file);
-                    FileOutputStream outputStream = new FileOutputStream(targetFile);
-                    OutputStreamWriter writer = new OutputStreamWriter(outputStream, "UTF-8")) {
+            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
+                     BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(targetFile));
+                     OutputStreamWriter writer = new OutputStreamWriter(outputStream, "UTF-8")) {
                 byte[] buf = new byte[(int) pageSize];
                 int bufLen;
                 String pageText;

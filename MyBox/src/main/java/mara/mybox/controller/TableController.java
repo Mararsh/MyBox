@@ -26,6 +26,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import mara.mybox.data.FileInformation;
 import mara.mybox.data.FileInformation.FileSelectorType;
 import mara.mybox.fxml.FxmlControl;
@@ -40,6 +41,7 @@ import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonImageValues;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -60,7 +62,7 @@ public abstract class TableController<P> extends BaseController {
     @FXML
     protected Button addFilesButton, insertFilesButton, addDirectoryButton, insertDirectoryButton,
             deleteFilesButton, clearFilesButton, upFilesButton, downFilesButton, viewFileButton,
-            unselectAllFilesButton, selectAllFilesButton;
+            unselectAllFilesButton, selectAllFilesButton, listButton;
     @FXML
     protected TableView<P> tableView;
     @FXML
@@ -147,85 +149,12 @@ public abstract class TableController<P> extends BaseController {
                 tableCreateDirCheck.setSelected(AppVariables.getUserConfigBoolean("TableCreateDirctories", true));
             }
 
-            if (nameFiltersSelector != null) {
-                for (FileSelectorType type : FileSelectorType.values()) {
-                    nameFiltersSelector.getItems().add(message(type.name()));
-                }
-                nameFiltersSelector.setVisibleRowCount(FileSelectorType.values().length);
-                nameFiltersSelector.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
-                    @Override
-                    public void changed(ObservableValue ov, Number oldValue, Number newValue) {
-                        String selected = nameFiltersSelector.getSelectionModel().getSelectedItem();
-                        for (FileSelectorType type : FileSelectorType.values()) {
-                            if (message(type.name()).equals(selected)) {
-                                fileSelectorType = type;
-                                break;
-                            }
-                        }
-                        if (regexLink != null) {
-                            regexLink.setVisible(fileSelectorType == FileSelectorType.NameMatchAnyRegularExpression
-                                    || fileSelectorType == FileSelectorType.NameNotMatchAnyRegularExpression
-                            );
-                        }
-
-                        tableFiltersInput.setText("");
-                        switch (fileSelectorType) {
-                            case FileSizeLargerThan:
-                            case FileSizeSmallerThan:
-                                tableFiltersInput.setPromptText(message("FileSizeComments"));
-                                FxmlControl.setTooltip(tableFiltersInput, new Tooltip(message("FileSizeComments")));
-                                break;
-                            case ModifiedTimeEarlierThan:
-                            case ModifiedTimeLaterThan:
-                                tableFiltersInput.setText("2019-10-24 10:10:10");
-                                FxmlControl.setTooltip(tableFiltersInput, new Tooltip("2019-10-24 10:10:10"));
-                                break;
-                            default:
-                                tableFiltersInput.setPromptText(message("SeparateBySpace"));
-                                FxmlControl.setTooltip(tableFiltersInput, new Tooltip(message("SeparateBySpace")));
-                                break;
-                        }
-                    }
-                });
-                nameFiltersSelector.getSelectionModel().select(0);
-
-                tableFiltersInput.textProperty().addListener(new ChangeListener<String>() {
-                    @Override
-                    public void changed(ObservableValue<? extends String> ov, String oldv, String newv) {
-                        if (newv == null || newv.trim().isEmpty()) {
-                            tableFiltersInput.setStyle(null);
-                            fileSelectorSize = -1;
-                            fileSelectorTime = -1;
-                            return;
-                        }
-                        if (fileSelectorType == FileSelectorType.FileSizeLargerThan
-                                || fileSelectorType == FileSelectorType.FileSizeSmallerThan) {
-                            long v = ByteTools.checkBytesValue(newv);
-                            if (v >= 0) {
-                                fileSelectorSize = v;
-                                tableFiltersInput.setStyle(null);
-                            } else {
-                                tableFiltersInput.setStyle(badStyle);
-                                popError(message("FileSizeComments"));
-                            }
-
-                        } else if (fileSelectorType == FileSelectorType.ModifiedTimeEarlierThan
-                                || fileSelectorType == FileSelectorType.ModifiedTimeLaterThan) {
-                            Date d = DateTools.stringToDatetime(newv);
-                            if (d != null) {
-                                fileSelectorTime = d.getTime();
-                            } else {
-                                fileSelectorTime = -1;
-                            }
-
-                        }
-                    }
-                });
-            }
-            fileSelectorType = FileSelectorType.All;
-
             if (tableLabel != null) {
-                tableLabel.setText("");
+                if (nameFiltersSelector != null) {
+                    tableLabel.setText(message("FilesSelectBasedTable"));
+                } else {
+                    tableLabel.setText("");
+                }
             }
 
             tableSelected();
@@ -246,7 +175,7 @@ public abstract class TableController<P> extends BaseController {
                 fileColumn.setPrefWidth(320);
             }
             if (typeColumn != null) {
-                typeColumn.setCellValueFactory(new PropertyValueFactory<>("fileType"));
+                typeColumn.setCellValueFactory(new PropertyValueFactory<>("fileSuffix"));
             }
             if (numberColumn != null) {
                 numberColumn.setCellValueFactory(new PropertyValueFactory<>("filesNumber"));
@@ -285,16 +214,20 @@ public abstract class TableController<P> extends BaseController {
             if (downFilesButton != null) {
                 downFilesButton.setDisable(true);
             }
-            deleteFilesButton.setDisable(true);
-            clearFilesButton.setDisable(true);
+            if (deleteFilesButton != null) {
+                deleteFilesButton.setDisable(true);
+            }
+            if (clearFilesButton != null) {
+                clearFilesButton.setDisable(true);
+            }
         } else {
-            clearFilesButton.setDisable(false);
+            if (clearFilesButton != null) {
+                clearFilesButton.setDisable(false);
+            }
         }
         if (tableLabel != null) {
             countTotal();
-            tableLabel.setText(MessageFormat.format(message("TotalFilesNumberSize"),
-                    totalFilesNumber, FileTools.showFileSize(totalFilesSize)) + "    "
-                    + message("DoubleClickToView"));
+
         }
         if (parentController != null) {
             parentController.dataChanged();
@@ -304,8 +237,9 @@ public abstract class TableController<P> extends BaseController {
     protected void tableSelected() {
         P selected = tableView.getSelectionModel().getSelectedItem();
         boolean none = (selected == null);
-        deleteFilesButton.setDisable(none);
-
+        if (deleteFilesButton != null) {
+            deleteFilesButton.setDisable(none);
+        }
         if (upFilesButton != null) {
             upFilesButton.setDisable(none);
         }
@@ -370,6 +304,95 @@ public abstract class TableController<P> extends BaseController {
         return true;
     }
 
+    protected void initSelector() {
+        try {
+            fileSelectorType = FileSelectorType.All;
+            if (nameFiltersSelector == null) {
+                return;
+            }
+            for (FileSelectorType type : FileSelectorType.values()) {
+                nameFiltersSelector.getItems().add(message(type.name()));
+            }
+            nameFiltersSelector.setVisibleRowCount(FileSelectorType.values().length);
+            nameFiltersSelector.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+                @Override
+                public void changed(ObservableValue ov, Number oldValue, Number newValue) {
+                    String selected = nameFiltersSelector.getSelectionModel().getSelectedItem();
+                    for (FileSelectorType type : FileSelectorType.values()) {
+                        if (message(type.name()).equals(selected)) {
+                            fileSelectorType = type;
+                            break;
+                        }
+                    }
+                    if (regexLink != null) {
+                        regexLink.setVisible(fileSelectorType == FileSelectorType.NameMatchAnyRegularExpression
+                                || fileSelectorType == FileSelectorType.NameNotMatchAnyRegularExpression
+                        );
+                    }
+
+                    tableFiltersInput.setText("");
+                    switch (fileSelectorType) {
+                        case FileSizeLargerThan:
+                        case FileSizeSmallerThan:
+                            tableFiltersInput.setPromptText(message("FileSizeComments"));
+                            FxmlControl.setTooltip(tableFiltersInput, new Tooltip(message("FileSizeComments")));
+                            break;
+                        case ModifiedTimeEarlierThan:
+                        case ModifiedTimeLaterThan:
+                            tableFiltersInput.setText("2019-10-24 10:10:10");
+                            FxmlControl.setTooltip(tableFiltersInput, new Tooltip("2019-10-24 10:10:10"));
+                            break;
+                        default:
+                            tableFiltersInput.setPromptText(message("SeparateBySpace"));
+                            FxmlControl.setTooltip(tableFiltersInput, new Tooltip(message("SeparateBySpace")));
+                            break;
+                    }
+                }
+            });
+            nameFiltersSelector.getSelectionModel().select(0);
+
+            tableFiltersInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> ov, String oldv, String newv) {
+                    if (newv == null || newv.trim().isEmpty()) {
+                        tableFiltersInput.setStyle(null);
+                        fileSelectorSize = -1;
+                        fileSelectorTime = -1;
+                        return;
+                    }
+                    if (fileSelectorType == FileSelectorType.FileSizeLargerThan
+                            || fileSelectorType == FileSelectorType.FileSizeSmallerThan) {
+                        long v = ByteTools.checkBytesValue(newv);
+                        if (v >= 0) {
+                            fileSelectorSize = v;
+                            tableFiltersInput.setStyle(null);
+                        } else {
+                            tableFiltersInput.setStyle(badStyle);
+                            popError(message("FileSizeComments"));
+                        }
+
+                    } else if (fileSelectorType == FileSelectorType.ModifiedTimeEarlierThan
+                            || fileSelectorType == FileSelectorType.ModifiedTimeLaterThan) {
+                        Date d = DateTools.stringToDatetime(newv);
+                        if (d != null) {
+                            fileSelectorTime = d.getTime();
+                        } else {
+                            fileSelectorTime = -1;
+                        }
+
+                    }
+                }
+            });
+
+            if (previewButton != null && tableView != null) {
+                previewButton.disableProperty().bind(tableView.itemsProperty().isNull());
+            }
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
     /*
         Public methods
      */
@@ -379,6 +402,7 @@ public abstract class TableController<P> extends BaseController {
             super.initControls();
 
             initTable();
+            initSelector();
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -428,7 +452,10 @@ public abstract class TableController<P> extends BaseController {
             if (files == null || files.isEmpty()) {
                 return;
             }
+            isSettingValues = true;
             addFiles(index, files);
+            isSettingValues = false;
+            tableChanged();
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -465,12 +492,15 @@ public abstract class TableController<P> extends BaseController {
             if (infos.isEmpty()) {
                 return;
             }
+            isSettingValues = true;
             if (index < 0 || index >= tableData.size()) {
                 tableData.addAll(infos);
             } else {
                 tableData.addAll(index, infos);
             }
             tableView.refresh();
+            isSettingValues = false;
+            tableChanged();
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -509,6 +539,7 @@ public abstract class TableController<P> extends BaseController {
         try {
             recordFileOpened(directory);
 
+            isSettingValues = true;
             if (tableExpandDirCheck != null && tableExpandDirCheck.isSelected()) {
                 List<File> files = FileTools.allFiles(directory);
                 List<File> valids = new ArrayList<>();
@@ -530,6 +561,8 @@ public abstract class TableController<P> extends BaseController {
                 }
                 tableView.refresh();
             }
+            isSettingValues = false;
+            tableChanged();
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -638,8 +671,8 @@ public abstract class TableController<P> extends BaseController {
             return;
         }
         FileInformation info = fileInformation(index);
-        if (info.getNewName() != null && !info.getNewName().isEmpty()) {
-            view(info.getNewName());
+        if (info.getData() != null && !info.getData().isEmpty()) {
+            view(info.getData());
         } else {
             view(info.getFile());
         }
@@ -669,6 +702,7 @@ public abstract class TableController<P> extends BaseController {
         if (selected.isEmpty()) {
             return;
         }
+        isSettingValues = true;
         for (int i = selected.size() - 1; i >= 0; i--) {
             int index = selected.get(i);
             if (index < 0 || index > tableData.size() - 1) {
@@ -677,12 +711,17 @@ public abstract class TableController<P> extends BaseController {
             tableData.remove(index);
         }
         tableView.refresh();
+        isSettingValues = false;
+        tableChanged();
     }
 
     @FXML
     public void clearFilesAction() {
+        isSettingValues = true;
         tableData.clear();
         tableView.refresh();
+        isSettingValues = false;
+        tableChanged();
     }
 
     public void markFileHandled(int index, String message) {
@@ -703,10 +742,62 @@ public abstract class TableController<P> extends BaseController {
         if (tableData == null || tableData.isEmpty()) {
             return;
         }
-        for (int i = 0; i < tableData.size(); i++) {
-            FileInformation info = fileInformation(i);
-            totalFilesNumber += info.getFilesNumber();
-            totalFilesSize += info.getFileSize();
+        synchronized (this) {
+            if (task != null) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+
+                @Override
+                protected boolean handle() {
+                    for (int i = 0; i < tableData.size(); i++) {
+                        FileInformation info = fileInformation(i);
+                        info.countDirectorySize();
+                        totalFilesNumber += info.getFilesNumber();
+                        totalFilesSize += info.getFileSize();
+                    }
+                    return true;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    tableView.refresh();
+                    tableLabel.setText(MessageFormat.format(message("TotalFilesNumberSize"),
+                            totalFilesNumber, FileTools.showFileSize(totalFilesSize)) + "    "
+                            + message("DoubleClickToView"));
+                }
+
+            };
+            super.openHandlingStage(task, Modality.WINDOW_MODAL, message("CountingFilesSize"));
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
+    }
+
+    public void listAction() {
+        try {
+            if (tableData.isEmpty()) {
+                return;
+            }
+            FilesFindController controller
+                    = (FilesFindController) openStage(CommonValues.FilesFindFxml);
+            controller.tableData.clear();
+            for (int i = 0; i < tableData.size(); i++) {
+                FileInformation finfo = fileInformation(i);
+                controller.tableData.add(finfo);
+            }
+            controller.tableView.refresh();
+            if (nameFiltersSelector != null) {
+                controller.tableController.nameFiltersSelector.getSelectionModel().
+                        select(nameFiltersSelector.getValue());
+                controller.tableController.tableFiltersInput.
+                        setText(tableFiltersInput.getText());
+            }
+            controller.startAction();
+
+        } catch (Exception e) {
+            logger.debug(e.toString());
         }
     }
 

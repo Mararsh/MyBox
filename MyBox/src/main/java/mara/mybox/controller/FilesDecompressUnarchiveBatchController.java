@@ -1,0 +1,272 @@
+package mara.mybox.controller;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.OutputStream;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.text.MessageFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import mara.mybox.tools.CompressTools;
+import mara.mybox.tools.DateTools;
+import mara.mybox.tools.FileTools;
+import mara.mybox.tools.TextTools;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
+import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.ArchiveInputStream;
+import org.apache.commons.compress.archivers.ArchiveStreamFactory;
+import org.apache.commons.compress.compressors.CompressorStreamFactory;
+import org.apache.commons.compress.utils.IOUtils;
+
+/**
+ * @Author Mara
+ * @CreateDate 2019-11-2
+ * @License Apache License Version 2.0
+ */
+// http://commons.apache.org/proper/commons-compress/examples.html
+public class FilesDecompressUnarchiveBatchController extends FilesBatchController {
+
+    protected CompressorStreamFactory cFactory;
+    protected ArchiveStreamFactory aFactory;
+    protected String fileName, archiver, compressor, encoding;
+    protected int archiveSuccess, archiveFail;
+    protected boolean charsetIncorrect;
+
+    @FXML
+    protected CheckBox deleteCheck;
+    @FXML
+    protected ComboBox<String> encodeBox;
+
+    public FilesDecompressUnarchiveBatchController() {
+        baseTitle = AppVariables.message("FilesDecompressUnarchiveBatch");
+        viewTargetPath = true;
+    }
+
+    @Override
+    public void initOptionsSection() {
+        try {
+            List<String> setNames = TextTools.getCharsetNames();
+            encodeBox.getItems().addAll(setNames);
+            encodeBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> ov,
+                        String oldItem, String newItem) {
+                    encoding = newItem;
+                    AppVariables.setUserConfigValue("FilesUnarchiveEncoding", encoding);
+                }
+            });
+            encoding = AppVariables.getUserConfigValue("FilesUnarchiveEncoding", Charset.defaultCharset().name());
+            encodeBox.getSelectionModel().select(encoding);
+
+            deleteCheck.setSelected(
+                    AppVariables.getUserConfigBoolean("FilesDecompressUnarchiveDelete", false));
+            deleteCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> observable,
+                        Boolean oldValue, Boolean newValue) {
+                    AppVariables.setUserConfigValue("FilesDecompressUnarchiveDelete", newValue);
+                }
+            });
+
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+    @Override
+    public boolean beforeHandleFiles() {
+        try {
+            cFactory = new CompressorStreamFactory();
+            aFactory = new ArchiveStreamFactory();
+            archiveSuccess = archiveFail = 0;
+            charsetIncorrect = false;
+            return true;
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    @Override
+    public String handleFile(File srcFile, File targetPath) {
+        try {
+            showHandling(srcFile);
+            long s = new Date().getTime();
+            fileName = srcFile.getName();
+
+            updateLogs(MessageFormat.format(message("HandlingObject"), srcFile), true, true);
+
+            File decompressedFile = null, archiveSource;
+            Map<String, Object> uncompress = CompressTools.decompress(srcFile, null);
+            String archiveExt = FileTools.getFileSuffix(fileName);
+            if (uncompress != null) {
+                compressor = (String) uncompress.get("compressor");
+                decompressedFile = (File) uncompress.get("decompressedFile");
+                updateLogs(MessageFormat.format(message("FileDecompressedSuccessfully"),
+                        srcFile, DateTools.showTime(new Date().getTime() - s), true, true
+                ));
+                archiveSource = decompressedFile;
+                String suffix = "." + CompressTools.extensionByCompressor(compressor);
+                if (fileName.toLowerCase().endsWith(suffix)) {
+                    archiveExt = fileName.substring(0, fileName.length() - suffix.length());
+                }
+            } else {
+                archiveSource = srcFile;
+            }
+
+            s = new Date().getTime();
+            archiveFail = archiveSuccess = 0;
+            unarchive(archiveSource, archiveExt);
+            if (archiveSuccess > 0 || archiveFail > 0) {
+                totalHandled++;
+                updateLogs(MessageFormat.format(message("FileUnarchived"),
+                        srcFile, archiveSuccess, archiveFail,
+                        DateTools.showTime(new Date().getTime() - s), true, true
+                ));
+                if (archiveFail > 0) {
+                    return AppVariables.message("Failed");
+                } else {
+                    if (deleteCheck.isSelected()) {
+                        srcFile.delete();
+                    }
+                    return AppVariables.message("Successful");
+                }
+            }
+
+            if (decompressedFile == null) {
+                return AppVariables.message("Failed");
+            }
+
+            targetFile = makeTargetFile(decompressedFile, targetPath);
+            if (targetFile == null) {
+                return AppVariables.message("Skip");
+            }
+
+            if (targetFile.exists()) {
+                targetFile.delete();
+            }
+            if (!decompressedFile.renameTo(targetFile)) {
+                Files.copy(Paths.get(decompressedFile.getAbsolutePath()),
+                        Paths.get(targetFile.getAbsolutePath()));
+                decompressedFile.delete();
+            }
+            totalHandled++;
+            currentParameters.finalTargetName = targetFile.toString();
+            targetFiles.add(targetFile);
+            if (deleteCheck.isSelected()) {
+                srcFile.delete();
+            }
+            return AppVariables.message("Successful");
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return AppVariables.message("Failed");
+        }
+    }
+
+    protected void unarchive(File srcFile, String archiveExt) {
+        try {
+            try ( BufferedInputStream fileIn = new BufferedInputStream(new FileInputStream(srcFile))) {
+                if (archiveExt != null && aFactory.getInputStreamArchiveNames().contains(archiveExt)) {
+                    try ( ArchiveInputStream in = aFactory.createArchiveInputStream(
+                            archiveExt, fileIn, encoding)) {
+                        unarchive(in);
+                    } catch (Exception e) {
+                        try ( ArchiveInputStream in = aFactory.createArchiveInputStream(
+                                ArchiveStreamFactory.detect(fileIn), fileIn, encoding)) {
+                            unarchive(in);
+                        } catch (Exception ex) {
+//                            logger.debug(ex.toString());
+
+                        }
+                    }
+                } else {
+                    try ( ArchiveInputStream in = aFactory.createArchiveInputStream(
+                            ArchiveStreamFactory.detect(fileIn), fileIn, encoding)) {
+                        unarchive(in);
+                    } catch (Exception e) {
+//                        logger.debug(e.toString());
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+//            logger.debug(e.toString());
+        }
+    }
+
+    protected void unarchive(ArchiveInputStream archiveInputStream) {
+        try {
+            if (archiveInputStream == null) {
+                return;
+            }
+            ArchiveEntry entry;
+            while ((entry = archiveInputStream.getNextEntry()) != null) {
+                updateLogs(message("Handling...") + ":   " + entry.getName());
+                if (!archiveInputStream.canReadEntryData(entry)) {
+                    archiveFail++;
+                    updateLogs(message("CanNotReadEntryData" + ":" + entry.getName()));
+                    continue;
+                }
+
+                if (entry.isDirectory()) {
+                    File file = new File(targetPath + File.separator + entry.getName());
+                    if (!file.isDirectory() && !file.mkdirs()) {
+                        archiveFail++;
+                        updateLogs(message("FailOpenFile" + ":" + file));
+                    } else {
+                        archiveSuccess++;
+                        currentParameters.finalTargetName = file.toString();
+                        targetFiles.add(file);
+                    }
+                } else {
+                    File file = makeTargetFile(entry.getName(), targetPath);
+                    if (file == null) {
+                        continue;
+                    }
+                    File parent = file.getParentFile();
+                    if (!parent.isDirectory() && !parent.mkdirs()) {
+                        archiveFail++;
+                        updateLogs(message("FailOpenFile" + ":" + file));
+                    }
+                    try ( OutputStream o = Files.newOutputStream(file.toPath())) {
+                        IOUtils.copy(archiveInputStream, o);
+                    }
+                    archiveSuccess++;
+                    currentParameters.finalTargetName = file.toString();
+                    targetFiles.add(file);
+                }
+            }
+        } catch (Exception e) {
+            archiveFail++;
+            String s = e.toString();
+            updateLogs(s);
+            if (s.contains("java.nio.charset.MalformedInputException")
+                    || s.contains("Illegal char")) {
+                updateLogs(message("CharsetIncorrect"));
+                charsetIncorrect = true;
+            }
+        }
+    }
+
+    @Override
+    public void donePost() {
+        super.donePost();
+        if (charsetIncorrect) {
+            alertError(message("CharsetIncorrect"));
+            statusLabel.setText(message("CharsetIncorrect") + " " + statusLabel.getText());
+        }
+
+    }
+
+}

@@ -8,9 +8,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javax.imageio.ImageIO;
 import mara.mybox.controller.BaseController;
+import mara.mybox.controller.InformationController;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.image.ImageScope;
@@ -24,6 +30,8 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
+import mara.mybox.value.CommonImageValues;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -33,6 +41,9 @@ import static mara.mybox.value.AppVariables.message;
  */
 public class MainApp extends Application {
 
+    private InformationController infoController;
+    private String lang;
+
     @Override
     public void init() throws Exception {
     }
@@ -40,106 +51,128 @@ public class MainApp extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         try {
-            if (!initPaths(stage)) {
-                return;
-            }
+            FXMLLoader fxmlLoader = new FXMLLoader(
+                    FxmlStage.class.getResource(CommonValues.InformationFxml));
+            Pane pane = fxmlLoader.load();
+            Scene scene = new Scene(pane);
+            stage.getIcons().add(CommonImageValues.AppIcon);
+            stage.setScene(scene);
+            stage.show();
+            infoController = (InformationController) fxmlLoader.getController();
+            lang = Locale.getDefault().getLanguage().toLowerCase();
+            infoController.setInfo(message(lang, "Initializing..."));
 
-//            makeIcons();  // Uncomment this line to generate Icons automatically in different color styles
-            logger.info("Initialize data under " + AppVariables.MyboxDataPath + " ...");
-            if (!DerbyBase.initTables()) {
-                AppVariables.initAppVaribles();
-                FxmlStage.alertWarning(stage,
-                        MessageFormat.format(message(Locale.getDefault().getLanguage().toLowerCase(),
-                                "DerbyNotAvalibale"), AppVariables.MyBoxDerbyPath));
-            } else {
-                // The following statements should be done in this order
-                AppVariables.initAppVaribles();
-                DerbyBase.checkUpdates();
-            }
-
-            ImageValue.registrySupportedImageFormats();
-            ImageIO.setUseCache(true);
-            ImageIO.setCacheDirectory(AppVariables.MyBoxTempPath);
-
-            logger.info("Loading interface...");
-            String inFile = null;
-            if (AppVariables.appArgs != null) {
-                for (String arg : AppVariables.appArgs) {
-                    if (MyBox.InternalRestartFlag.equals(arg) || arg.startsWith("config=")) {
-                        continue;
-                    }
-                    if (new File(arg).exists()) {
-                        inFile = arg;
-                        break;
-                    }
-                }
-            }
-
-            if (inFile != null) {
-                BaseController controller = FxmlStage.openTarget(stage, inFile, false);
-                if (controller == null) {
-                    FxmlStage.openMyBox(stage);
-                }
-            } else {
-                FxmlStage.openMyBox(stage);
-            }
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    public static boolean initRootPath(Stage stage) {
-        try {
-            if (stage == null) {
-                return false;
-            }
-            File currentDataPath = new File(AppVariables.MyboxDataPath);
-            if (!currentDataPath.exists()) {
-                if (!currentDataPath.mkdirs()) {
-                    FxmlStage.alertError(stage,
-                            MessageFormat.format(AppVariables.message(Locale.getDefault().getLanguage().toLowerCase(),
-                                    "UserPathFail"), AppVariables.MyboxDataPath));
-                    return false;
-                }
-            }
-            File defaultPath = ConfigTools.defaultDataPathFile();
-            File dbPath = new File(AppVariables.MyboxDataPath + File.separator + "mybox_derby");
-            if (!dbPath.exists()) {
-                if (defaultPath.exists() && !defaultPath.equals(currentDataPath)) {
-                    logger.info("Copy app data from orginal path " + defaultPath
-                            + " to new path " + AppVariables.MyboxDataPath + " ...");
-                    if (FileTools.copyWholeDirectory(defaultPath, currentDataPath, null, false)) {
-                        File lckFile = new File(dbPath.getAbsolutePath() + File.separator + "db.lck");
-                        if (lckFile.exists()) {
-                            try {
-                                lckFile.delete();
-                            } catch (Exception e) {
-                                logger.error(e.toString());
+            Task task = new Task<Void>() {
+                @Override
+                protected Void call() {
+                    try {
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                infoController.setInfo(MessageFormat.format(message(lang,
+                                        "InitializeDataUnder"), AppVariables.MyboxDataPath));
                             }
+                        });
+                        if (!initPaths(stage)) {
+                            return null;
                         }
 
-                    }
-                }
-            }
+                        // Uncomment this line to generate Icons automatically in different color styles
+//                        makeIcons();
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                infoController.setInfo(MessageFormat.format(message(lang,
+                                        "LoadingDatabase"), AppVariables.MyBoxDerbyPath));
+                            }
+                        });
+                        String initDB = DerbyBase.initDatabase();
+                        if (initDB == null) {
+                            FxmlStage.alertWarning(stage,
+                                    MessageFormat.format(message(lang,
+                                            "DerbyNotAvalibale"), AppVariables.MyBoxDerbyPath));
+                        } else {
+                            Platform.runLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    infoController.setInfo(initDB);
+                                }
+                            });
+                            // The following statements should be done in this order
+                            AppVariables.initAppVaribles();
+                            DerbyBase.checkUpdates();
+                        }
 
-            String oldPath = ConfigTools.readConfigValue("MyBoxOldDataPath");
-            if (oldPath != null) {
-                if (oldPath.equals(ConfigTools.defaultDataPath())) {
-                    FileTools.deleteDirExcept(new File(oldPath), ConfigTools.defaultConfigFile());
-                } else {
-                    FileTools.deleteDir(new File(oldPath));
+                        ImageValue.registrySupportedImageFormats();
+                        ImageIO.setUseCache(true);
+                        ImageIO.setCacheDirectory(AppVariables.MyBoxTempPath);
+
+                    } catch (Exception e) {
+
+                    }
+                    return null;
                 }
-                ConfigTools.writeConfigValue("MyBoxOldDataPath", null);
-            }
-            return true;
+
+                @Override
+                protected void succeeded() {
+                    super.succeeded();
+
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            infoController.setInfo(message(lang, "LoadingInterface"));
+
+                            String inFile = null;
+                            if (AppVariables.appArgs != null) {
+                                for (String arg : AppVariables.appArgs) {
+                                    if (MyBox.InternalRestartFlag.equals(arg) || arg.startsWith("config=")) {
+                                        continue;
+                                    }
+                                    if (new File(arg).exists()) {
+                                        inFile = arg;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if (inFile != null) {
+                                BaseController controller = FxmlStage.openTarget(stage, inFile, false);
+                                if (controller == null) {
+                                    FxmlStage.openMyBox(stage);
+                                }
+                            } else {
+                                FxmlStage.openMyBox(stage);
+                            }
+
+                        }
+                    });
+
+                }
+
+                @Override
+                protected void failed() {
+                    super.failed();
+                    stage.close();
+                }
+
+                @Override
+                protected void cancelled() {
+                    super.cancelled();
+                    stage.close();
+                }
+            };
+
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+
         } catch (Exception e) {
             logger.error(e.toString());
-            return false;
+            stage.close();
         }
     }
 
-    public static boolean initPaths(Stage stage) {
+    public boolean initPaths(Stage stage) {
         try {
             if (!initRootPath(stage)) {
                 return false;
@@ -154,7 +187,7 @@ public class MainApp extends Application {
             } else {
                 if (!AppVariables.MyBoxTempPath.mkdirs()) {
                     FxmlStage.alertError(stage,
-                            MessageFormat.format(AppVariables.message(Locale.getDefault().getLanguage().toLowerCase(), "UserPathFail"),
+                            MessageFormat.format(AppVariables.message(lang, "UserPathFail"),
                                     AppVariables.MyBoxTempPath));
                     return false;
                 }
@@ -168,6 +201,61 @@ public class MainApp extends Application {
                 }
             };
             AppVariables.AlarmClocksFile = AppVariables.MyboxDataPath + File.separator + ".alarmClocks";
+            return true;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return false;
+        }
+    }
+
+    public boolean initRootPath(Stage stage) {
+        try {
+            if (stage == null) {
+                return false;
+            }
+            File currentDataPath = new File(AppVariables.MyboxDataPath);
+            if (!currentDataPath.exists()) {
+                if (!currentDataPath.mkdirs()) {
+                    FxmlStage.alertError(stage,
+                            MessageFormat.format(AppVariables.message(lang,
+                                    "UserPathFail"), AppVariables.MyboxDataPath));
+                    return false;
+                }
+            }
+            File defaultPath = ConfigTools.defaultDataPathFile();
+            File dbPath = new File(AppVariables.MyboxDataPath + File.separator + "mybox_derby");
+            if (!dbPath.exists()) {
+                if (defaultPath.exists() && !defaultPath.equals(currentDataPath)) {
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            infoController.setInfo(MessageFormat.format(
+                                    AppVariables.message(lang, "CopyingAppData"),
+                                    defaultPath, AppVariables.MyboxDataPath));
+                        }
+                    });
+                    if (FileTools.copyWholeDirectory(defaultPath, currentDataPath, null, false)) {
+                        File lckFile = new File(dbPath.getAbsolutePath() + File.separator + "db.lck");
+                        if (lckFile.exists()) {
+                            try {
+                                lckFile.delete();
+                            } catch (Exception e) {
+                                logger.error(e.toString());
+                            }
+                        }
+                    }
+                }
+            }
+
+            String oldPath = ConfigTools.readConfigValue("MyBoxOldDataPath");
+            if (oldPath != null) {
+                if (oldPath.equals(ConfigTools.defaultDataPath())) {
+                    FileTools.deleteDirExcept(new File(oldPath), ConfigTools.defaultConfigFile());
+                } else {
+                    FileTools.deleteDir(new File(oldPath));
+                }
+                ConfigTools.writeConfigValue("MyBoxOldDataPath", null);
+            }
             return true;
         } catch (Exception e) {
             logger.error(e.toString());

@@ -79,13 +79,8 @@ public abstract class ImagesBatchController extends FilesBatchController {
     }
 
     @Override
-    public boolean match(File file) {
-        if (file == null || !file.isFile()
-                || !FileTools.isSupportedImage(file)) {
-            return false;
-        }
-
-        return super.match(file);
+    public boolean matchType(File file) {
+        return FileTools.isSupportedImage(file);
     }
 
 }

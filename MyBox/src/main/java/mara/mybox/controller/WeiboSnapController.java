@@ -61,9 +61,9 @@ public class WeiboSnapController extends BaseController {
     @FXML
     private TextField startMonthInput, endMonthInput, startPageInput, accessIntervalInput,
             snapIntervalInput, customWidthInput, customHeightInput, authorInput, thresholdInput,
-            headerInput;
+            headerInput, passportInput;
     @FXML
-    private Button wowButton;
+    private Button wowButton, recoverPassportButton;
     @FXML
     private CheckBox pdfCheck, htmlCheck, pixCheck, keepPageCheck, miaoCheck, ditherCheck,
             expandCommentsCheck, expandPicturesCheck, openPathCheck, closeWindowCheck;
@@ -101,6 +101,7 @@ public class WeiboSnapController extends BaseController {
             initWebOptions();
             initSnapOptions();
             initPdfOptionsSection();
+            initNetworkOptions();
             initTargetOptions();
 
         } catch (Exception e) {
@@ -201,25 +202,6 @@ public class WeiboSnapController extends BaseController {
             }
         });
 
-        retryBox.getItems().addAll(Arrays.asList("3", "0", "1", "5", "7", "10"));
-        retryBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> ov,
-                    String oldValue, String newValue) {
-                try {
-                    retry = Integer.valueOf(newValue);
-                    if (retry > 0) {
-                        AppVariables.setUserConfigValue(WeiboRetryKey, retry + "");
-                    } else {
-                        retry = 3;
-                    }
-                } catch (Exception e) {
-                    retry = 3;
-                }
-            }
-        });
-        retryBox.getSelectionModel().select(AppVariables.getUserConfigValue(WeiboRetryKey, "3"));
-
         expandCommentsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> ov,
@@ -237,27 +219,6 @@ public class WeiboSnapController extends BaseController {
             }
         });
         expandPicturesCheck.setSelected(AppVariables.getUserConfigBoolean(WeiboExpandPicturesKey));
-
-        accessInterval = 2000;
-        accessIntervalInput.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable,
-                    String oldValue, String newValue) {
-                try {
-                    int v = Integer.parseInt(newValue);
-                    if (v > 0) {
-                        accessIntervalInput.setStyle(null);
-                        accessInterval = v;
-                        AppVariables.setUserConfigInt("WeiBoAccessInterval", v);
-                    } else {
-                        accessIntervalInput.setStyle(badStyle);
-                    }
-                } catch (Exception e) {
-                    accessIntervalInput.setStyle(badStyle);
-                }
-            }
-        });
-        accessIntervalInput.setText(AppVariables.getUserConfigInt("WeiBoAccessInterval", 2000) + "");
 
     }
 
@@ -734,6 +695,70 @@ public class WeiboSnapController extends BaseController {
 
     }
 
+    private void initNetworkOptions() {
+
+        retryBox.getItems().addAll(Arrays.asList("3", "0", "1", "5", "7", "10"));
+        retryBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> ov,
+                    String oldValue, String newValue) {
+                try {
+                    retry = Integer.valueOf(newValue);
+                    if (retry > 0) {
+                        AppVariables.setUserConfigValue(WeiboRetryKey, retry + "");
+                    } else {
+                        retry = 3;
+                    }
+                } catch (Exception e) {
+                    retry = 3;
+                }
+            }
+        });
+        retryBox.getSelectionModel().select(AppVariables.getUserConfigValue(WeiboRetryKey, "3"));
+
+        accessInterval = 2000;
+        accessIntervalInput.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable,
+                    String oldValue, String newValue) {
+                try {
+                    int v = Integer.parseInt(newValue);
+                    if (v > 0) {
+                        accessIntervalInput.setStyle(null);
+                        accessInterval = v;
+                        AppVariables.setUserConfigInt("WeiBoAccessInterval", v);
+                    } else {
+                        accessIntervalInput.setStyle(badStyle);
+                    }
+                } catch (Exception e) {
+                    accessIntervalInput.setStyle(badStyle);
+                }
+            }
+        });
+        accessIntervalInput.setText(AppVariables.getUserConfigInt("WeiBoAccessInterval", 2000) + "");
+
+        passportInput.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable,
+                    String oldValue, String newValue) {
+                if (newValue == null || !newValue.startsWith("https://")) {
+                    passportInput.setStyle(badStyle);
+                    return;
+                }
+                passportInput.setStyle(null);
+                AppVariables.setUserConfigValue("WeiboPassportAddress", newValue);
+            }
+        });
+        passportInput.setText(AppVariables.getUserConfigValue("WeiboPassportAddress",
+                "https://passport.weibo.com/visitor/visitor?entry=miniblog"));
+
+    }
+
+    @FXML
+    protected void recoverPassport() {
+        passportInput.setText("https://passport.weibo.com/visitor/visitor?entry=miniblog");
+    }
+
     private void checkTargetFiles() {
         if (!pdfCheck.isSelected() && !htmlCheck.isSelected() && !pixCheck.isSelected()) {
             popError(AppVariables.message("NothingSave"));
@@ -1001,7 +1026,7 @@ public class WeiboSnapController extends BaseController {
                 return;
             }
 
-            final WeiboSnapRunController controller = (WeiboSnapRunController) openStage(CommonValues.WeiboSnapRunFxml);
+            WeiboSnapRunController controller = (WeiboSnapRunController) openStage(CommonValues.WeiboSnapRunFxml);
             controller.start(parameters);
             if (closeWindowCheck.isSelected()) {
                 controller.setParent(null);

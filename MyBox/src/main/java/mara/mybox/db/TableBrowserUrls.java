@@ -7,7 +7,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.tools.DateTools;
 
 /**
@@ -57,7 +56,7 @@ public class TableBrowserUrls extends DerbyBase {
                 }
             }
             return true;
-        } catch (Exception e) {
+        } catch (Exception e) {  failed(e);
 //            // logger.debug(e.toString());
             return false;
         }
@@ -65,21 +64,23 @@ public class TableBrowserUrls extends DerbyBase {
 
     public static List<String> read() {
         List<String> urls = new ArrayList<>();
-        try (Connection conn = DriverManager.getConnection(protocol + dbName() + login);
-                Statement statement = conn.createStatement()) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbName() + login);
+                 Statement statement = conn.createStatement()) {
             String sql = "SELECT address FROM Browser_URLs ORDER BY last_visit DESC";
             ResultSet results = statement.executeQuery(sql);
             while (results.next()) {
                 urls.add(results.getString("address"));
             }
             if (urls.size() > Max_Browser_URLs) {
+                conn.setAutoCommit(false);
                 for (int i = Max_Browser_URLs; i < urls.size(); i++) {
                     sql = "DELETE FROM Browser_URLs WHERE address='" + urls.get(i) + "'";
                     statement.executeUpdate(sql);
                 }
+                conn.commit();
                 return urls.subList(0, Max_Browser_URLs);
             }
-        } catch (Exception e) {
+        } catch (Exception e) {  failed(e);
             // logger.debug(e.toString());
         }
         return urls;
@@ -95,8 +96,8 @@ public class TableBrowserUrls extends DerbyBase {
             if (!d.toLowerCase().startsWith("http")) {
                 return urls;
             }
-            try (Connection conn = DriverManager.getConnection(protocol + dbName() + login);
-                    Statement statement = conn.createStatement()) {
+            try ( Connection conn = DriverManager.getConnection(protocol + dbName() + login);
+                     Statement statement = conn.createStatement()) {
                 String sql;
                 if (urls.contains(d)) {
                     sql = "UPDATE Browser_URLs SET last_visit='" + DateTools.datetimeToString(new Date())
@@ -108,11 +109,11 @@ public class TableBrowserUrls extends DerbyBase {
                     statement.executeUpdate(sql);
                 }
                 urls = read();
-            } catch (Exception e) {
+            } catch (Exception e) {  failed(e);
                 // logger.debug(e.toString());
             }
 
-        } catch (Exception e) {
+        } catch (Exception e) {  failed(e);
             // logger.debug(e.toString());
         }
 

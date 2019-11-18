@@ -2,13 +2,11 @@ package mara.mybox.controller;
 
 import java.awt.Desktop;
 import java.io.File;
-import java.util.Date;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
-import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
@@ -19,8 +17,6 @@ import static mara.mybox.value.AppVariables.message;
  * @License Apache License Version 2.0
  */
 public class FilesDeleteController extends FilesBatchController {
-
-    protected int totalDeleted = 0;
 
     @FXML
     protected ToggleGroup deleteType;
@@ -58,17 +54,12 @@ public class FilesDeleteController extends FilesBatchController {
     }
 
     @Override
-    public boolean makeBatchParameters() {
-        totalDeleted = 0;
-        return super.makeBatchParameters();
-    }
-
-    @Override
     public String handleFile(File srcFile, File targetPath) {
         try {
             if (srcFile == null || !srcFile.isFile()) {
                 return AppVariables.message("Skip");
             }
+            showHandling(srcFile);
             boolean ok;
             String msg;
             if (deleteRadio.isSelected()) {
@@ -79,7 +70,7 @@ public class FilesDeleteController extends FilesBatchController {
                 msg = message("FileMoveToTrashSuccessfully") + ": " + srcFile.getAbsolutePath();
             }
             if (ok) {
-                totalDeleted++;
+                totalHandled++;
                 updateLogs(msg);
                 return AppVariables.message("Successful");
             } else {
@@ -92,10 +83,10 @@ public class FilesDeleteController extends FilesBatchController {
     }
 
     @Override
-    protected void handleDirectory(File sourcePath, File targetPath) {
+    protected boolean handleDirectory(File sourcePath, File targetPath) {
         if (sourcePath == null || !sourcePath.exists() || !sourcePath.isDirectory()
                 || (isPreview && dirFilesHandled > 0)) {
-            return;
+            return false;
         }
         try {
             File[] files = sourcePath.listFiles();
@@ -105,8 +96,10 @@ public class FilesDeleteController extends FilesBatchController {
                 super.handleDirectory(sourcePath, targetPath);
                 deleteEmptyDirectory(sourcePath);
             }
+            return true;
         } catch (Exception e) {
             logger.error(e.toString());
+            return false;
         }
     }
 
@@ -131,16 +124,6 @@ public class FilesDeleteController extends FilesBatchController {
         } catch (Exception e) {
             logger.error(e.toString());
         }
-    }
-
-    @Override
-    public void donePost() {
-        super.donePost();
-
-        updateLogs(message("StartTime") + ": " + DateTools.datetimeToString(startTime) + "   "
-                + AppVariables.message("Cost") + ": " + DateTools.showTime(new Date().getTime() - startTime.getTime()), false, true);
-        updateLogs(message("TotalDeletedFiles") + ": " + totalDeleted);
-
     }
 
 }

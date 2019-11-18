@@ -1,11 +1,10 @@
 package mara.mybox.tools;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -44,8 +43,7 @@ public class ConfigTools {
     public static Map<String, String> readConfigValues() {
         try {
             Map<String, String> values = new HashMap<>();
-            try (InputStream in = new BufferedInputStream(
-                    new FileInputStream(AppVariables.MyboxConfigFile))) {
+            try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(AppVariables.MyboxConfigFile))) {
                 Properties conf = new Properties();
                 conf.load(in);
                 for (String key : conf.stringPropertyNames()) {
@@ -65,7 +63,7 @@ public class ConfigTools {
                 return null;
             }
             String value;
-            try (InputStream in = new BufferedInputStream(new FileInputStream(file))) {
+            try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
                 Properties conf = new Properties();
                 conf.load(in);
                 value = conf.getProperty(key);
@@ -81,13 +79,22 @@ public class ConfigTools {
         return readConfigValue(AppVariables.MyboxConfigFile, key);
     }
 
+    public static int readConfigInt(String key, int defaultValue) {
+        try {
+            String v = readConfigValue(key);
+            return Integer.parseInt(v);
+        } catch (Exception e) {
+            return defaultValue;
+        }
+    }
+
     public static boolean writeConfigValue(File file, String key, String value) {
         try {
             Properties conf = new Properties();
-            try (InputStream in = new FileInputStream(file)) {
+            try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
                 conf.load(in);
             }
-            try (OutputStream out = new FileOutputStream(file)) {
+            try ( BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file))) {
                 if (value == null) {
                     conf.remove(key);
                 } else {

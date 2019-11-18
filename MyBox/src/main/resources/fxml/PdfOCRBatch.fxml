@@ -99,6 +99,7 @@ License:    Apache License Version 2.0
                                                                         </CheckBox>
                                                                     </children>
                                                                 </HBox>
+                                                <Label styleClass="bottom-label" stylesheets="@../styles/MyBox.css" text="%OCRPreprocessComment" wrapText="true" />
                                                             </children>
                                                         </VBox>
                                                     </content>
@@ -176,7 +177,7 @@ License:    Apache License Version 2.0
                                                                             </HBox.margin>
                                                                         </Label>
                                                                         <TextField fx:id="targetPathInput" HBox.hgrow="ALWAYS" />
-                                                                        <Button fx:id="selectTargetPathButton" mnemonicParsing="false" onAction="#selectTargetPath" onMouseEntered="#popTargetPath" HBox.hgrow="NEVER">
+                                                                        <Button fx:id="selectPathTargetButton" mnemonicParsing="false" onAction="#selectTargetPath" onMouseEntered="#popTargetPath" HBox.hgrow="NEVER">
                                                                             <graphic>
                                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                                     <image>

@@ -5,10 +5,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.Date;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
-import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
@@ -20,8 +18,6 @@ import static mara.mybox.value.AppVariables.message;
  */
 public class FilesCopyController extends FilesBatchController {
 
-    protected int totalCopied = 0;
-
     @FXML
     protected CheckBox copyAttrCheck;
 
@@ -30,14 +26,9 @@ public class FilesCopyController extends FilesBatchController {
     }
 
     @Override
-    public boolean makeBatchParameters() {
-        totalCopied = 0;
-        return super.makeBatchParameters();
-    }
-
-    @Override
     public String handleFile(File srcFile, File targetPath) {
         try {
+            showHandling(srcFile);
             File target = makeTargetFile(srcFile, targetPath);
             if (target == null) {
                 return AppVariables.message("Skip");
@@ -53,7 +44,7 @@ public class FilesCopyController extends FilesBatchController {
             if (path == null) {
                 return AppVariables.message("Failed");
             }
-            totalCopied++;
+            totalHandled++;
             updateLogs(message("FileCopiedSuccessfully") + ": " + path.toString());
             currentParameters.finalTargetName = path.toString();
             targetFiles.add(target);
@@ -63,16 +54,6 @@ public class FilesCopyController extends FilesBatchController {
             logger.error(e.toString());
             return AppVariables.message("Failed");
         }
-    }
-
-    @Override
-    public void donePost() {
-        super.donePost();
-
-        updateLogs(message("StartTime") + ": " + DateTools.datetimeToString(startTime) + "   "
-                + AppVariables.message("Cost") + ": " + DateTools.showTime(new Date().getTime() - startTime.getTime()), false, true);
-        updateLogs(message("TotalCopiedFiles") + ": " + totalCopied);
-
     }
 
 }

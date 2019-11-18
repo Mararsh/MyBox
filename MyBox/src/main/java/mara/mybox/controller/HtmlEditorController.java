@@ -73,9 +73,9 @@ import mara.mybox.fxml.FxmlStage;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.NetworkTools;
 import static mara.mybox.tools.NetworkTools.checkWeiboPassport;
 import mara.mybox.tools.PdfTools;
+import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
@@ -101,7 +101,7 @@ public class HtmlEditorController extends BaseController {
     private List<String> urls;
     private LoadingController loadingController;
     private float zoomScale;
-    protected boolean loadSynchronously, isFrameSet;
+    protected boolean loadSynchronously, isFrameSet, notChangedAfterLoad;
     protected SimpleBooleanProperty fileChanged;
     protected int cols, rows;
     protected int lastTextLen;
@@ -329,11 +329,11 @@ public class HtmlEditorController extends BaseController {
     protected void initBroswer() {
         try {
 
-            urlBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            urlBox.valueProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> ov,
                         String oldValue, String newv) {
-                    if (isSettingValues) {
+                    if (isSettingValues || newv == null || newv.trim().isEmpty()) {
                         return;
                     }
                     final String newValue = newv;
@@ -360,7 +360,7 @@ public class HtmlEditorController extends BaseController {
                             } catch (Exception e) {
 //                                    loadFailed = loadCompleted = true;
 //                                    errorString = e.toString();
-                                logger.error(e.toString());
+//                                logger.error(e.toString());
                                 urlBox.getEditor().setStyle(badStyle);
                             }
                         }
@@ -451,7 +451,7 @@ public class HtmlEditorController extends BaseController {
                                         timer.cancel();
                                     }
                                     timer = new Timer();
-                                    if (NetworkTools.isOtherPlatforms()) {
+                                    if (SystemTools.isOtherPlatforms()) {
                                         timer.schedule(new TimerTask() {
                                             @Override
                                             public void run() {
@@ -542,6 +542,12 @@ public class HtmlEditorController extends BaseController {
                                         logger.debug(e.toString());
                                     }
                                     loadSynchronously = false;
+                                }
+
+                                if (notChangedAfterLoad) {
+                                    fileChanged.set(false);
+                                    getMyStage().setTitle(getBaseTitle());
+                                    notChangedAfterLoad = false;
                                 }
 
                                 break;
@@ -637,11 +643,13 @@ public class HtmlEditorController extends BaseController {
     public void sourceFileChanged(final File file) {
         sourceFile = file;
         loadLink(file);
+
     }
 
     public void loadLink(String link) {
         isFrameSet = false;
         loadSynchronously = true;
+        notChangedAfterLoad = true;
         webEngine.load(link);
         urlBox.getEditor().setText(link);
     }
@@ -933,14 +941,12 @@ public class HtmlEditorController extends BaseController {
 
             // http://news.kynosarges.org/2017/02/01/javafx-snapshot-scaling/
             final Bounds bounds = webView.getLayoutBounds();
-            Screen screen = Screen.getPrimary();
-            double scaleX = screen.getOutputScaleX();
-            double scaleY = screen.getOutputScaleY();
-            int imageWidth = (int) Math.round(bounds.getWidth() * scaleX);
-            int imageHeight = (int) Math.round(bounds.getHeight() * scaleY);
+            double scale = FxmlControl.dpiScale();
+            int imageWidth = (int) Math.round(bounds.getWidth() * scale);
+            int imageHeight = (int) Math.round(bounds.getHeight() * scale);
             final SnapshotParameters parameters = new SnapshotParameters();
             parameters.setFill(Color.TRANSPARENT);
-            parameters.setTransform(javafx.scene.transform.Transform.scale(scaleX, scaleY));
+            parameters.setTransform(javafx.scene.transform.Transform.scale(scale, scale));
 
             if (timer != null) {
                 timer.cancel();
@@ -963,7 +969,7 @@ public class HtmlEditorController extends BaseController {
                                     Image cropped;
                                     if (totalHeight < snapHeight + snapStep) { // last snap
                                         cropped = FxmlImageManufacture.cropOutsideFx(snapshot, 0,
-                                                (snapStep - (totalHeight - snapHeight)) * scaleY,
+                                                (snapStep - (totalHeight - snapHeight)) * scale,
                                                 width - 1, (int) snapshot.getHeight() - 1);
                                     } else {
                                         cropped = FxmlImageManufacture.cropOutsideFx(snapshot, 0, 0,
@@ -1254,12 +1260,21 @@ public class HtmlEditorController extends BaseController {
             if (result.get() == buttonSave) {
                 saveAction();
                 return true;
-            } else if (result.get() == buttonNotSave) {
-                return true;
             } else {
-                return false;
+                return result.get() == buttonNotSave;
             }
         }
+    }
+
+    /*
+        get/set
+     */
+    public boolean isNotChangedAfterLoad() {
+        return notChangedAfterLoad;
+    }
+
+    public void setNotChangedAfterLoad(boolean notChangedAfterLoad) {
+        this.notChangedAfterLoad = notChangedAfterLoad;
     }
 
 }

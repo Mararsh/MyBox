@@ -15,7 +15,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import mara.mybox.fxml.FxmlControl;
@@ -69,9 +68,7 @@ public class BarcodeCreatorController extends ImageViewerController {
     protected BarcodeDecoderController decodeController;
 
     @FXML
-    protected HBox codeBox, imageParaBox, actionBox;
-    @FXML
-    protected VBox d1ParaBox, qrParaBox, pdf417ParaBox, dmParaBox;
+    protected VBox optionsBox, d1ParaBox, qrParaBox, pdf417ParaBox, dmParaBox;
     @FXML
     protected ComboBox<String> dpiSelector, typeSelecor, sizeSelector, fontSelector,
             orientationSelecor, barRatioSelecor, textPositionSelector, qrErrorCorrectionSelecor,
@@ -128,58 +125,60 @@ public class BarcodeCreatorController extends ImageViewerController {
                     codeType = BarcodeType.valueOf(newV);
                     AppVariables.setUserConfigValue("BarcodeType", newV);
 
-                    contentBox.getChildren().clear();
+                    optionsBox.getChildren().clear();
                     switch (codeType) {
                         case QR_Code:
-                            contentBox.getChildren().addAll(codeBox, qrParaBox, actionBox, scrollPane);
-                            codeInput.setText("MyBox 5.6 \n欢迎报告问题和提出需求。");
+                            optionsBox.getChildren().addAll(qrParaBox);
+                            codeInput.setText("MyBox " + CommonValues.AppVersion
+                                    + " \n欢迎报告问题和提出需求。");
                             break;
                         case PDF_417:
-                            contentBox.getChildren().addAll(codeBox, pdf417ParaBox, actionBox, scrollPane);
-                            codeInput.setText("MyBox 5.6 \n欢迎报告问题和提出需求。");
+                            optionsBox.getChildren().addAll(pdf417ParaBox);
+                            codeInput.setText("MyBox " + CommonValues.AppVersion
+                                    + " \n欢迎报告问题和提出需求。");
                             break;
                         case DataMatrix:
                             codeInput.setText("01234567890");
-                            contentBox.getChildren().addAll(codeBox, dmParaBox, actionBox, scrollPane);
+                            optionsBox.getChildren().addAll(dmParaBox);
                             break;
                         case USPS_Intelligent_Mail:
                             codeInput.setText("01234567890123456789");
-                            contentBox.getChildren().addAll(codeBox, imageParaBox, d1ParaBox, actionBox, scrollPane);
+                            optionsBox.getChildren().addAll(d1ParaBox);
                             suggestedSettings();
                             break;
                         case UPCE: //  7
                             codeInput.setText("0123456");
-                            contentBox.getChildren().addAll(codeBox, imageParaBox, d1ParaBox, actionBox, scrollPane);
+                            optionsBox.getChildren().addAll(d1ParaBox);
                             suggestedSettings();
                             break;
                         case UPCA:  // 11
                             codeInput.setText("01234567890");
-                            contentBox.getChildren().addAll(codeBox, imageParaBox, d1ParaBox, actionBox, scrollPane);
+                            optionsBox.getChildren().addAll(d1ParaBox);
                             suggestedSettings();
                             break;
                         case ITF_14: // 13
                             codeInput.setText("0123456789012");
-                            contentBox.getChildren().addAll(codeBox, imageParaBox, d1ParaBox, actionBox, scrollPane);
+                            optionsBox.getChildren().addAll(d1ParaBox);
                             suggestedSettings();
                             break;
                         case EAN13:  // 12
                             codeInput.setText("012345678901");
-                            contentBox.getChildren().addAll(codeBox, imageParaBox, d1ParaBox, actionBox, scrollPane);
+                            optionsBox.getChildren().addAll(d1ParaBox);
                             suggestedSettings();
                             break;
                         case EAN8:  // 7
                             codeInput.setText("0123456");
-                            contentBox.getChildren().addAll(codeBox, imageParaBox, d1ParaBox, actionBox, scrollPane);
+                            optionsBox.getChildren().addAll(d1ParaBox);
                             suggestedSettings();
                             break;
                         case EAN_128:    //
                             codeInput.setText("55012345678");
-                            contentBox.getChildren().addAll(codeBox, imageParaBox, d1ParaBox, actionBox, scrollPane);
+                            optionsBox.getChildren().addAll(d1ParaBox);
                             suggestedSettings();
                             break;
                         default:
                             codeInput.setText("0123456789");
-                            contentBox.getChildren().addAll(codeBox, imageParaBox, d1ParaBox, actionBox, scrollPane);
+                            optionsBox.getChildren().addAll(d1ParaBox);
                             suggestedSettings();
                     }
 
@@ -648,8 +647,24 @@ public class BarcodeCreatorController extends ImageViewerController {
     }
 
     @Override
-    public void sourceFileChanged(final File file) {
+    public void checkSourceFileInput() {
+        String v = sourceFileInput.getText();
+        if (v == null || v.isEmpty()) {
+            sourceFile = null;
+            return;
+        }
+        final File file = new File(v);
+        if (!file.exists()) {
+            sourceFile = null;
+            return;
+        }
         sourceFile = file;
+    }
+
+    @FXML
+    @Override
+    public void cancelAction() {
+        sourceFileInput.setText("");
     }
 
     @FXML

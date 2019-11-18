@@ -34,6 +34,7 @@ import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
@@ -243,38 +244,34 @@ public class PdfViewController extends ImageViewerController {
             });
             dpiBox.getSelectionModel().select(0);
 
-            scrollPane.vvalueProperty().addListener(new ChangeListener<Number>() {
+            scrollPane.addEventHandler(ScrollEvent.SCROLL, new EventHandler<ScrollEvent>() {
                 @Override
-                public void changed(ObservableValue ov, Number oldValue, Number newValue) {
-                    if (scrolledSet) {
-                        scrolledSet = false;
-                        return;
-                    }
-                    if (scrollPane.getVvalue() == scrollPane.getVmax()) {
-                        if (scrollEnd) {
-                            scrollEnd = false;
-                            nextAction();
-                        } else {
-                            scrollEnd = true;
-                            scrolledSet = true;
-                            scrollPane.setVvalue(0.99);
-                        }
+                public void handle(ScrollEvent event) {
+                    double deltaY = event.getDeltaY();
+                    if (event.isControlDown()) {
+//                        event.consume();                      
+//                        logger.debug(event.isConsumed());
+//                        if (deltaY > 0) {
+//                            zoomIn();
+//                        } else {
+//                            zoomOut();
+//                        }
                     } else {
-                        scrollEnd = false;
+                        if (deltaY > 0) {
+                            if (scrollPane.getVvalue() == scrollPane.getVmin()) {
+                                event.consume();
+                                previousAction();
+                            }
+                        } else {
+
+                            if (scrollPane.getHeight() >= imageView.getFitHeight()
+                                    || scrollPane.getVvalue() == scrollPane.getVmax()) {
+                                event.consume();
+                                nextAction();
+                            }
+                        }
                     }
 
-                    if (scrollPane.getVvalue() == scrollPane.getVmin()) {
-                        if (scrollStart) {
-                            scrollStart = false;
-                            previousAction();
-                        } else {
-                            scrollStart = true;
-                            scrolledSet = true;
-                            scrollPane.setVvalue(0.01);
-                        }
-                    } else {
-                        scrollStart = false;
-                    }
                 }
             });
 
@@ -526,7 +523,7 @@ public class PdfViewController extends ImageViewerController {
                 @Override
                 protected boolean handle() {
                     try {
-                        try (PDDocument doc = PDDocument.load(sourceFile, inPassword, AppVariables.pdfMemUsage)) {
+                        try ( PDDocument doc = PDDocument.load(sourceFile, inPassword, AppVariables.pdfMemUsage)) {
                             password = inPassword;
                             pdfInformation.setUserPassword(inPassword);
                             pdfInformation.readInfo(doc);
@@ -767,7 +764,7 @@ public class PdfViewController extends ImageViewerController {
                 @Override
                 protected Void call() {
                     try {
-                        try (PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage)) {
+                        try ( PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage)) {
                             PDFRenderer renderer = new PDFRenderer(doc);
                             images = new HashMap<>();
                             end = Math.min(pos + 20, pdfInformation.getNumberOfPages());

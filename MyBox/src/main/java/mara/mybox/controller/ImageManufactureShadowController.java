@@ -64,6 +64,7 @@ public class ImageManufactureShadowController extends ImageManufactureOperationC
             if (parent == null) {
                 return;
             }
+            imageController.operatingNeedNotScope();
 
             if (parent.imageInformation != null
                     && CommonValues.NoAlphaImages.contains(parent.imageInformation.getImageFormat())) {

@@ -24,10 +24,11 @@ public class ImageConvolution extends PixelsOperation {
     protected boolean keepOpacity, isEmboss, isGray;
     protected float[][] matrix;
     protected int[][] intMatrix;
-    protected int sum;
+    protected int intScale;
 
     public static enum SmoothAlgorithm {
-        AverageBlur, GaussianBlur
+        GaussianBlur, AverageBlur
+//        , MotionBlur
     }
 
     public static enum SharpenAlgorithm {
@@ -38,71 +39,20 @@ public class ImageConvolution extends PixelsOperation {
         this.operationType = OperationType.Convolution;
     }
 
-    public ImageConvolution(BufferedImage image) {
-        this.image = image;
-        this.operationType = OperationType.Convolution;
-        this.scope = null;
+    public static ImageConvolution create() {
+        return new ImageConvolution();
     }
 
-    public ImageConvolution(BufferedImage image, ImageScope scope) {
-        this.image = image;
-        this.operationType = OperationType.Convolution;
-        this.scope = scope;
-    }
-
-    public ImageConvolution(BufferedImage image, ConvolutionKernel kernel) {
-        this.image = image;
-        this.operationType = OperationType.Convolution;
-        this.scope = null;
-        init(kernel);
-    }
-
-    public ImageConvolution(BufferedImage image, ImageScope scope, ConvolutionKernel kernel) {
-        this.image = image;
-        this.operationType = OperationType.Convolution;
-        this.scope = scope;
-        init(kernel);
-    }
-
-    public ImageConvolution(Image image) {
-        this.image = SwingFXUtils.fromFXImage(image, null);
-        this.operationType = OperationType.Convolution;
-    }
-
-    public ImageConvolution(Image image, ImageScope scope) {
-        this.image = SwingFXUtils.fromFXImage(image, null);
-        this.operationType = OperationType.Convolution;
-        this.scope = scope;
-    }
-
-    public ImageConvolution(Image image, ConvolutionKernel kernel) {
-        this.image = SwingFXUtils.fromFXImage(image, null);
-        this.operationType = OperationType.Convolution;
-        this.scope = null;
-        init(kernel);
-    }
-
-    public ImageConvolution(Image image, ImageScope scope, ConvolutionKernel kernel) {
-        this.image = SwingFXUtils.fromFXImage(image, null);
-        this.operationType = OperationType.Convolution;
-        this.scope = scope;
-        init(kernel);
-    }
-
-    private void init(ConvolutionKernel kernel) {
-        setKernel(kernel);
-    }
-
-    public void setKernel(ConvolutionKernel kernel) {
+    public ImageConvolution setKernel(ConvolutionKernel kernel) {
         this.kernel = kernel;
         matrix = kernel.getMatrix();
         matrixWidth = matrix[0].length;
         matrixHeight = matrix.length;
         intMatrix = new int[matrixHeight][matrixWidth];
-        sum = 10000; // Run integer calcualation instead of float/double calculation
+        intScale = 10000; // Run integer calcualation instead of float/double calculation
         for (int matrixY = 0; matrixY < matrixHeight; matrixY++) {
             for (int matrixX = 0; matrixX < matrixWidth; matrixX++) {
-                intMatrix[matrixY][matrixX] = Math.round(matrix[matrixY][matrixX] * sum);
+                intMatrix[matrixY][matrixX] = Math.round(matrix[matrixY][matrixX] * intScale);
             }
         }
         edge_op = kernel.getEdge();
@@ -114,6 +64,7 @@ public class ImageConvolution extends PixelsOperation {
         isGray = (kernel.getGray() > 0);
         keepOpacity = (kernel.getType() != ConvolutionKernel.Convolution_Type.EMBOSS
                 && kernel.getType() != ConvolutionKernel.Convolution_Type.EDGE_DETECTION);
+        return this;
     }
 
     @Override
@@ -186,11 +137,11 @@ public class ImageConvolution extends PixelsOperation {
                     }
                 }
             }
-            red = Math.min(Math.max(red / sum, 0), 255);
-            green = Math.min(Math.max(green / sum, 0), 255);
-            blue = Math.min(Math.max(blue / sum, 0), 255);
+            red = Math.min(Math.max(red / intScale, 0), 255);
+            green = Math.min(Math.max(green / intScale, 0), 255);
+            blue = Math.min(Math.max(blue / intScale, 0), 255);
             if (keepOpacity) {
-                opacity = Math.min(Math.max(opacity / sum, 0), 255);
+                opacity = Math.min(Math.max(opacity / intScale, 0), 255);
             } else {
                 opacity = 255;
             }
@@ -254,96 +205,146 @@ public class ImageConvolution extends PixelsOperation {
         return target;
     }
 
+    /*
+        get/set
+     */
+    @Override
+    public ImageConvolution setImage(BufferedImage image) {
+        this.image = image;
+        return this;
+    }
+
+    @Override
+    public ImageConvolution setImage(Image image) {
+        this.image = SwingFXUtils.fromFXImage(image, null);
+        return this;
+    }
+
+    @Override
+    public ImageConvolution setScope(ImageScope scope) {
+        this.scope = scope;
+        return this;
+    }
+
     public ConvolutionKernel getKernel() {
         return kernel;
+    }
+
+    public int[][] getIntMatrix() {
+        return intMatrix;
+    }
+
+    public ImageConvolution setIntMatrix(int[][] intMatrix) {
+        this.intMatrix = intMatrix;
+        return this;
+    }
+
+    public int getIntScale() {
+        return intScale;
+    }
+
+    public ImageConvolution setSum(int sum) {
+        this.intScale = sum;
+        return this;
     }
 
     public int getMatrixWidth() {
         return matrixWidth;
     }
 
-    public void setMatrixWidth(int matrixWidth) {
+    public ImageConvolution setMatrixWidth(int matrixWidth) {
         this.matrixWidth = matrixWidth;
+        return this;
     }
 
     public int getMatrixHeight() {
         return matrixHeight;
     }
 
-    public void setMatrixHeight(int matrixHeight) {
+    public ImageConvolution setMatrixHeight(int matrixHeight) {
         this.matrixHeight = matrixHeight;
+        return this;
     }
 
     public int getEdge_op() {
         return edge_op;
     }
 
-    public void setEdge_op(int edge_op) {
+    public ImageConvolution setEdge_op(int edge_op) {
         this.edge_op = edge_op;
+        return this;
     }
 
     public int getRadiusX() {
         return radiusX;
     }
 
-    public void setRadiusX(int radiusX) {
+    public ImageConvolution setRadiusX(int radiusX) {
         this.radiusX = radiusX;
+        return this;
     }
 
     public int getRadiusY() {
         return radiusY;
     }
 
-    public void setRadiusY(int radiusY) {
+    public ImageConvolution setRadiusY(int radiusY) {
         this.radiusY = radiusY;
+        return this;
     }
 
     public int getMaxX() {
         return maxX;
     }
 
-    public void setMaxX(int maxX) {
+    public ImageConvolution setMaxX(int maxX) {
         this.maxX = maxX;
+        return this;
     }
 
     public int getMaxY() {
         return maxY;
     }
 
-    public void setMaxY(int maxY) {
+    public ImageConvolution setMaxY(int maxY) {
         this.maxY = maxY;
+        return this;
     }
 
     public boolean isKeepOpacity() {
         return keepOpacity;
     }
 
-    public void setKeepOpacity(boolean keepOpacity) {
+    public ImageConvolution setKeepOpacity(boolean keepOpacity) {
         this.keepOpacity = keepOpacity;
+        return this;
     }
 
     public boolean isIsEmboss() {
         return isEmboss;
     }
 
-    public void setIsEmboss(boolean isEmboss) {
+    public ImageConvolution setIsEmboss(boolean isEmboss) {
         this.isEmboss = isEmboss;
+        return this;
     }
 
     public boolean isIsGray() {
         return isGray;
     }
 
-    public void setIsGray(boolean isGray) {
+    public ImageConvolution setIsGray(boolean isGray) {
         this.isGray = isGray;
+        return this;
     }
 
     public float[][] getMatrix() {
         return matrix;
     }
 
-    public void setMatrix(float[][] matrix) {
+    public ImageConvolution setMatrix(float[][] matrix) {
         this.matrix = matrix;
+        return this;
     }
 
 }

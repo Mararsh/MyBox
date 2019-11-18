@@ -39,7 +39,7 @@ License:    Apache License Version 2.0
                                                     <children>
                                                         <FlowPane hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
                                                             <children>
-                                                                <Button fx:id="selectSourceButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile">
+                                                                <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                             <image>
@@ -75,6 +75,28 @@ License:    Apache License Version 2.0
                                                 </VBox>
                                             </content>
                                         </TitledPane>
+                                        <TitledPane fx:id="encodePane" layoutX="10.0" layoutY="515.0" text="%Encode">
+                                            <content>
+                                                <VBox spacing="5.0">
+                                                    <children>
+                                                        <FlowPane hgap="5.0" vgap="5.0">
+                                                            <children>
+                                                                <Label text="%CurrentFileCharset" />
+                                                                <ComboBox fx:id="encodeBox" prefWidth="150.0" />
+                                                                <Label fx:id="bomLabel" />
+                                                            </children>
+                                                        </FlowPane>
+                                                        <FlowPane hgap="5.0" vgap="5.0">
+                                                            <children>
+                                                                <Label text="%ChangeAsWhenSave" />
+                                                                <ComboBox fx:id="targetBox" prefWidth="150.0" />
+                                                            </children>
+                                                        </FlowPane>
+                                                        <CheckBox fx:id="targetBomCheck" mnemonicParsing="false" text="BOM" />
+                                                    </children>
+                                                </VBox>
+                                            </content>
+                                        </TitledPane>
                                         <TitledPane fx:id="bytesPane" layoutX="10.0" layoutY="711.0" text="%Bytes">
                                             <content>
                                                 <VBox spacing="5.0">
@@ -85,7 +107,7 @@ License:    Apache License Version 2.0
                                                 </VBox>
                                             </content>
                                         </TitledPane>
-                                        <TitledPane fx:id="findPane" expanded="false" layoutX="10.0" layoutY="10.0" text="%FindReplace">
+                                        <TitledPane fx:id="findPane" layoutX="10.0" layoutY="10.0" text="%FindReplace">
                                             <content>
                                                 <VBox spacing="5.0">
                                                     <children>
@@ -170,17 +192,18 @@ License:    Apache License Version 2.0
                                                                         </ImageView>
                                                                     </graphic>
                                                                 </Button>
-                                                                <Button fx:id="replaceAllButton" disable="true" mnemonicParsing="false" onAction="#replaceAllAction">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/iconReplaceAll.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </Button>
+                                                <CheckBox fx:id="replaceJumpCheck" mnemonicParsing="false" selected="true" text="%JumpNextAfterReplace" />
                                                             </children>
                                                         </FlowPane>
+                                                          <Button fx:id="replaceAllButton" disable="true" mnemonicParsing="false" onAction="#replaceAllAction">
+                                                              <graphic>
+                                                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                      <image>
+                                                                          <Image url="@../buttons/iconReplaceAll.png" />
+                                                                      </image>
+                                                                  </ImageView>
+                                                              </graphic>
+                                                          </Button>
                                                     </children>
                                                 </VBox>
                                             </content>
@@ -256,28 +279,6 @@ License:    Apache License Version 2.0
                                                 </VBox>
                                             </content>
                                         </TitledPane>
-                                        <TitledPane fx:id="encodePane" expanded="false" layoutX="10.0" layoutY="515.0" text="%Encode">
-                                            <content>
-                                                <VBox spacing="5.0">
-                                                    <children>
-                                                        <FlowPane hgap="5.0" vgap="5.0">
-                                                            <children>
-                                                                <Label text="%CurrentFileCharset" />
-                                                                <ComboBox fx:id="encodeBox" prefWidth="150.0" />
-                                                                <Label fx:id="bomLabel" />
-                                                            </children>
-                                                        </FlowPane>
-                                                        <FlowPane hgap="5.0" vgap="5.0">
-                                                            <children>
-                                                                <Label text="%ChangeAsWhenSave" />
-                                                                <ComboBox fx:id="targetBox" prefWidth="150.0" />
-                                                            </children>
-                                                        </FlowPane>
-                                                        <CheckBox fx:id="targetBomCheck" mnemonicParsing="false" text="BOM" />
-                                                    </children>
-                                                </VBox>
-                                            </content>
-                                        </TitledPane>
                                         <TitledPane fx:id="breakLinePane" expanded="false" layoutX="10.0" layoutY="613.0" text="%BreakLine">
                                             <content>
                                                 <VBox spacing="5.0">
@@ -334,7 +335,7 @@ License:    Apache License Version 2.0
                                     <children>
                                         <ImageView fx:id="leftPaneControl" fitHeight="20.0" fitWidth="20.0" onMouseClicked="#controlLeftPane" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                                <Image url="@../buttons/iconsDoubleLeft.png" />
+                                                <Image url="@../buttons/iconDoubleLeft.png" />
                                             </image>
                                         </ImageView>
                                         <Label fx:id="editLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />

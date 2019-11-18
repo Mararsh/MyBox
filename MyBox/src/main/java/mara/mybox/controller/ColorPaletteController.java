@@ -29,9 +29,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import mara.mybox.color.SRGB;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.TableSRGB;
-import mara.mybox.db.TableStringValues;
 import mara.mybox.fxml.FxmlColor;
 import static mara.mybox.fxml.FxmlColor.colorName;
 import mara.mybox.fxml.FxmlControl;
@@ -154,14 +154,11 @@ public class ColorPaletteController extends BaseController {
         });
         isSettingValues = true;
         colors = new ArrayList<>();
-        List<String> saveColors = TableStringValues.read("ColorPalette");
-        for (String c : saveColors) {
+        List<SRGB> saveColors = TableSRGB.readPalette();
+        for (SRGB srgb : saveColors) {
             try {
-                String cc = c.trim();
-                if (cc.isEmpty()) {
-                    continue;
-                }
-                Color color = Color.web(cc);
+                String value = srgb.getColorValue();
+                Color color = Color.web(value);
                 addColor(color, false);
             } catch (Exception e) {
                 logger.error(e.toString());
@@ -232,13 +229,25 @@ public class ColorPaletteController extends BaseController {
         Rectangle rect = addColor(color, true);
         if (rect != null) {
             FxmlControl.fireMouseClicked(rect);
-            TableStringValues.add("ColorPalette", color.toString());
             return true;
         } else {
+            Rectangle find = findRect(color);
+            if (find != null) {
+                FxmlControl.fireMouseClicked(find);
+                return true;
+            }
             selectedArea.setText("");
             selectedRect.setFill(null);
             return false;
         }
+    }
+
+    public Rectangle findRect(Color color) {
+        int pos = colors.indexOf(color);
+        if (pos < 0) {
+            return null;
+        }
+        return (Rectangle) colorsBox.getChildren().get(pos);
     }
 
     protected Rectangle addColor(Color color, boolean ahead) {
@@ -318,11 +327,6 @@ public class ColorPaletteController extends BaseController {
                 }
             });
 
-            int size = colors.size();
-            if (size >= 32672 / 11) {
-                colors.remove(size - 1);
-                colorsBox.getChildren().remove(size - 1);
-            }
             if (ahead) {
                 colors.add(0, color);
                 colorsBox.getChildren().add(0, rect);
@@ -330,7 +334,9 @@ public class ColorPaletteController extends BaseController {
                 colors.add(color);
                 colorsBox.getChildren().add(rect);
             }
-
+            if (!isSettingValues) {
+                TableSRGB.updatePaletteColor(colors);
+            }
             return rect;
         } catch (Exception e) {
             return null;
@@ -342,15 +348,12 @@ public class ColorPaletteController extends BaseController {
         try {
             isSettingValues = true;
             List<Color> commonColors = FxmlColor.commonColors();
-            List<String> values = new ArrayList<>();
             for (Color color : commonColors) {
                 addColor(color, false);
-                values.add(color.toString());
             }
             isSettingValues = false;
             adjustHeight();
-
-            TableStringValues.add("ColorPalette", values);
+            TableSRGB.updatePaletteColor(colors);
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -362,7 +365,7 @@ public class ColorPaletteController extends BaseController {
         if (nameInput.getText().isEmpty() || selectedRect.getFill() == null) {
             return;
         }
-        if (TableSRGB.name(((Color) selectedRect.getFill()).toString(), nameInput.getText())) {
+        if (TableSRGB.setName(((Color) selectedRect.getFill()).toString(), nameInput.getText())) {
             Color color = (Color) clickedRect.getFill();
             String s = FxmlColor.colorNameDisplay(color);
             selectedArea.setText(s);
@@ -399,7 +402,7 @@ public class ColorPaletteController extends BaseController {
             }
             isSettingValues = false;
             adjustHeight();
-            TableStringValues.delete("ColorPalette", c.toString());
+            TableSRGB.updatePaletteColor(colors);
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -416,7 +419,7 @@ public class ColorPaletteController extends BaseController {
             enteredRect = null;
             isSettingValues = false;
             adjustHeight();
-            TableStringValues.clear("ColorPalette");
+            TableSRGB.clearPalette();
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -429,11 +432,11 @@ public class ColorPaletteController extends BaseController {
                 return;
             }
             List<String> names = new ArrayList<>();
-            names.addAll(Arrays.asList(message("ID"), message("Name"), "RGBA", "RGB",
+            names.addAll(Arrays.asList(message("ID"), message("Name"), message("Color"),
                     message("Red"), message("Green"), message("Blue"), message("Opacity"),
                     message("Hue"), message("Brightness"), message("Saturation")
             ));
-            StringTable table = new StringTable(names, message("ColorPalette"), 3);
+            StringTable table = new StringTable(names, message("ColorPalette"), 2);
             int id = 1;
             for (Color color : colors) {
                 List<String> row = new ArrayList<>();
@@ -446,8 +449,7 @@ public class ColorPaletteController extends BaseController {
                 int blue = (int) Math.round(color.getBlue() * 255);
 //                float alpha = (float) color.getOpacity();
 //                String cString = "rgba(" + red + "," + green + "," + blue + "," + alpha + ")";
-                String cString = "#" + color.toString().substring(2, 8);
-                row.addAll(Arrays.asList((id++) + "", name, color.toString(), cString,
+                row.addAll(Arrays.asList((id++) + "", name, color.toString(),
                         red + " ", green + " ", blue + " ",
                         (int) Math.round(color.getOpacity() * 100) + "%",
                         Math.round(color.getHue()) + " ",

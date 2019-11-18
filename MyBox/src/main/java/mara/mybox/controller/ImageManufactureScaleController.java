@@ -269,7 +269,7 @@ public class ImageManufactureScaleController extends ImageManufactureOperationCo
     }
 
     private void initDrag(String info) {
-        imageController.operating();
+        imageController.operatingNeedNotScope();
         imageController.setMaskRectangleLineVisible(true);
         imageController.maskRectangleData = new DoubleRectangle(0, 0,
                 imageView.getImage().getWidth() - 1,

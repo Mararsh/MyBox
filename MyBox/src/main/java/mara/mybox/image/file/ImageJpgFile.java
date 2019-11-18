@@ -47,7 +47,7 @@ public class ImageJpgFile {
             int index, int xscale, int yscale) {
         BufferedImage bufferedImage = null;
         try {
-            logger.debug("here");
+       
             if (imageInfo.getColorChannels() != 4) {
                 return null;
             }

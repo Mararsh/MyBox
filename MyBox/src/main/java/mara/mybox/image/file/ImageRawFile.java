@@ -6,6 +6,7 @@ import com.github.jaiimageio.impl.plugins.raw.RawImageWriteParam;
 import com.github.jaiimageio.impl.plugins.raw.RawImageWriter;
 import com.github.jaiimageio.impl.plugins.raw.RawImageWriterSpi;
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -77,7 +78,7 @@ public class ImageRawFile {
             ImageWriteParam param = getPara(attributes, writer);
             IIOMetadata metaData = getWriterMeta(attributes, image, writer, param);
             File tmpFile = FileTools.getTempFile();
-            try (ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
+            try ( ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                 writer.setOutput(out);
                 writer.write(null, new IIOImage(image, null, metaData), param);
                 out.flush();
@@ -105,7 +106,7 @@ public class ImageRawFile {
             RawImageReader reader = new RawImageReader(tiffspi);
 
             byte[] rawData;
-            try (InputStream fileInput = new FileInputStream(file)) {
+            try ( BufferedInputStream fileInput = new BufferedInputStream(new FileInputStream(file))) {
                 rawData = new byte[fileInput.available()];
                 logger.debug(fileInput.available());
                 fileInput.read(rawData);
@@ -129,7 +130,7 @@ public class ImageRawFile {
     public static File readRawData2(File file) {
         try {
             byte[] rawData;
-            try (InputStream fileInput = new FileInputStream(file)) {
+            try ( BufferedInputStream fileInput = new BufferedInputStream(new FileInputStream(file))) {
                 rawData = new byte[fileInput.available()];
                 logger.debug(fileInput.available());
                 fileInput.read(rawData);

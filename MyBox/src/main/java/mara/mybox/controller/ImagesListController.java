@@ -18,6 +18,7 @@ import mara.mybox.image.ImageInformation;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara
@@ -127,7 +128,6 @@ public abstract class ImagesListController extends ImageViewerController {
             tableController.isOpenning = true;
 
             tableController.addFile(0, file);
-
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -164,6 +164,33 @@ public abstract class ImagesListController extends ImageViewerController {
             }
         } else {
             return true;
+        }
+    }
+
+    @Override
+    public void updateLabelTitle() {
+        try {
+            if (getMyStage() == null) {
+                return;
+            }
+            String title;
+            if (sourceFile != null) {
+                title = getBaseTitle() + " " + sourceFile.getAbsolutePath();
+                if (imageInformation != null) {
+                    if (imageInformation.isIsSampled()) {
+                        title += " - " + message("Sampled");
+                    }
+                }
+            } else {
+                title = getBaseTitle();
+            }
+            if (imageChanged) {
+                title += "  " + "*";
+            }
+            getMyStage().setTitle(title);
+
+        } catch (Exception e) {
+            logger.debug(e.toString());
         }
     }
 
@@ -256,6 +283,19 @@ public abstract class ImagesListController extends ImageViewerController {
             logger.error(e.toString());
         }
 
+    }
+
+    @Override
+    public ImagesListController refresh() {
+        File oldfile = sourceFile;
+        List<ImageInformation> oldInfo = tableData;
+
+        ImagesListController c = (ImagesListController) refreshBase();
+        if (c == null) {
+            return null;
+        }
+        c.loadFile(oldfile, oldInfo);
+        return c;
     }
 
 }

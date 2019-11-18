@@ -98,6 +98,7 @@ public class MarkdownEditerController extends TextEditerController {
             initPage(null);
             initFileTab();
             initConversionOptions();
+            initCharsetTab();
             initLocateTab();
             initReplaceTab();
 
@@ -410,6 +411,7 @@ public class MarkdownEditerController extends TextEditerController {
     protected void insertText(String string) {
         IndexRange range = mainArea.getSelection();
         mainArea.insertText(range.getStart(), string);
+        mainArea.requestFocus();
     }
 
     protected void addTextInFrontOfCurrentLine(String string) {
@@ -421,6 +423,7 @@ public class MarkdownEditerController extends TextEditerController {
             }
             first--;
         }
+        mainArea.requestFocus();
         mainArea.insertText(first, string);
     }
 
@@ -451,6 +454,7 @@ public class MarkdownEditerController extends TextEditerController {
                 break;
             }
         }
+        mainArea.requestFocus();
     }
 
     protected void addTextAround(String string) {
@@ -459,8 +463,16 @@ public class MarkdownEditerController extends TextEditerController {
 
     protected void addTextAround(String prefix, String suffix) {
         IndexRange range = mainArea.getSelection();
-        mainArea.insertText(range.getStart(), prefix);
-        mainArea.insertText(range.getEnd() + prefix.length(), suffix);
+        if (range.getLength() == 0) {
+            String s = prefix + message("Text") + suffix;
+            mainArea.insertText(range.getStart(), s);
+            mainArea.selectRange(range.getStart() + prefix.length(),
+                    range.getStart() + prefix.length() + message("Text").length());
+        } else {
+            mainArea.insertText(range.getStart(), prefix);
+            mainArea.insertText(range.getEnd() + prefix.length(), suffix);
+        }
+        mainArea.requestFocus();
     }
 
     /*
@@ -549,6 +561,7 @@ public class MarkdownEditerController extends TextEditerController {
                 break;
             }
         }
+        mainArea.requestFocus();
     }
 
     @FXML

@@ -4,6 +4,7 @@ import java.awt.Rectangle;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
@@ -87,7 +88,8 @@ public class ImageFileReaders {
         try {
 
             ImageReader reader = getReader(format);
-            try (ImageInputStream in = ImageIO.createImageInputStream(new FileInputStream(filename))) {
+            try ( ImageInputStream in = ImageIO.createImageInputStream(
+                    new BufferedInputStream(new BufferedInputStream(new FileInputStream(filename))))) {
                 reader.setInput(in, false);
                 if (reader.getHeight(0) <= height) {
                     scale = 1;
@@ -115,7 +117,7 @@ public class ImageFileReaders {
         int scale = 1;
         try {
             ImageReader reader = getReader(format);
-            try (ImageInputStream in = ImageIO.createImageInputStream(new FileInputStream(filename))) {
+            try ( ImageInputStream in = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
                 reader.setInput(in, false);
                 if (reader.getWidth(0) <= width) {
                     scale = 1;
@@ -142,17 +144,17 @@ public class ImageFileReaders {
         try {
             ImageReader reader = getReader(format);
             logger.debug(reader != null);
-            try (ImageInputStream in = ImageIO.createImageInputStream(new FileInputStream(filename))) {
-                logger.debug("here");
+            try ( ImageInputStream in = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
+
                 reader.setInput(in, false);
-                logger.debug("here");
+
                 ImageReadParam param = reader.getDefaultReadParam();
-                logger.debug("here");
+
                 param.setSourceSubsampling(scale, scale, 0, 0);
-                logger.debug("here");
+
                 bufferedImage = reader.read(0);
 //                bufferedImage = reader.read(0, param);
-                logger.debug("here");
+
                 logger.debug(bufferedImage.getWidth() + " " + bufferedImage.getHeight());
                 reader.dispose();
             }
@@ -181,7 +183,7 @@ public class ImageFileReaders {
                 return null;
             }
             ImageReader reader = getReader(format);
-            try (ImageInputStream in = ImageIO.createImageInputStream(new FileInputStream(filename))) {
+            try ( ImageInputStream in = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
                 reader.setInput(in, false);
                 ImageReadParam param = reader.getDefaultReadParam();
                 param.setSourceRegion(new Rectangle(x1, y1, x2 - x1 + 1, y2 - y1 + 1));
@@ -200,7 +202,7 @@ public class ImageFileReaders {
         try {
             List<BufferedImage> images = new ArrayList<>();
             ImageReader reader = getReader(format);
-            try (ImageInputStream in = ImageIO.createImageInputStream(new FileInputStream(filename))) {
+            try ( ImageInputStream in = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
                 reader.setInput(in, false);
                 int count = 0;
                 while (true) {
@@ -231,7 +233,7 @@ public class ImageFileReaders {
             List<BufferedImage> images = new ArrayList<>();
             ImageReader reader = getReader(format);
             boolean broken = false;
-            try (ImageInputStream in = ImageIO.createImageInputStream(new FileInputStream(filename))) {
+            try ( ImageInputStream in = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
                 reader.setInput(in, false);
                 int count = 0, scale;
                 ImageReadParam param = reader.getDefaultReadParam();
@@ -345,7 +347,7 @@ public class ImageFileReaders {
             ImageReader reader = getReader(format);
             int total = imagesInfo.size();
 
-            try (ImageInputStream in = ImageIO.createImageInputStream(new FileInputStream(filename))) {
+            try ( ImageInputStream in = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
                 reader.setInput(in, false);
                 int scale;
                 ImageReadParam param = reader.getDefaultReadParam();
@@ -401,7 +403,7 @@ public class ImageFileReaders {
         try {
             BufferedImage bufferedImage;
             ImageReader reader = getReader(format);
-            try (ImageInputStream in = ImageIO.createImageInputStream(new FileInputStream(filename))) {
+            try ( ImageInputStream in = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
                 reader.setInput(in, false);
                 int scale = 1;
                 ImageReadParam param = reader.getDefaultReadParam();
@@ -456,7 +458,7 @@ public class ImageFileReaders {
         try {
 
             ImageReader reader = getReader(format);
-            try (ImageInputStream in = ImageIO.createImageInputStream(new FileInputStream(filename))) {
+            try ( ImageInputStream in = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
                 reader.setInput(in, false);
                 try {
                     bufferedImage = reader.read(index);
@@ -493,7 +495,7 @@ public class ImageFileReaders {
             }
             BufferedImage bufferedImage;
             ImageReader reader = getReader(format);
-            try (ImageInputStream in = ImageIO.createImageInputStream(new FileInputStream(filename))) {
+            try ( ImageInputStream in = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
                 reader.setInput(in, false);
                 ImageReadParam param = reader.getDefaultReadParam();
                 param.setSourceRegion(bounds);
@@ -577,7 +579,7 @@ public class ImageFileReaders {
         ImageFileInformation fileInfo = new ImageFileInformation(file);
 
         try {
-            try (ImageInputStream iis = ImageIO.createImageInputStream(file)) {
+            try ( ImageInputStream iis = ImageIO.createImageInputStream(file)) {
                 Iterator<ImageReader> readers = ImageIO.getImageReaders(iis);
                 if (readers.hasNext()) {
                     ImageReader reader = readers.next();
@@ -1093,7 +1095,7 @@ public class ImageFileReaders {
 
     public static IIOMetadata getIIOMetadata(File file) {
         try {
-            try (ImageInputStream iis = ImageIO.createImageInputStream(file)) {
+            try ( ImageInputStream iis = ImageIO.createImageInputStream(file)) {
                 Iterator<ImageReader> readers = ImageIO.getImageReaders(iis);
                 if (readers.hasNext()) {
                     ImageReader reader = readers.next();

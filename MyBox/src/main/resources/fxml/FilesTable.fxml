@@ -163,14 +163,23 @@ License:    Apache License Version 2.0
                 <TableColumn fx:id="createTimeColumn" editable="false" prefWidth="160.0" text="%CreateTime" />
             </columns>
         </TableView>
+        <Label fx:id="tableLabel" styleClass="blue-label" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER" />
         <FlowPane fx:id="selectPane" hgap="5.0" maxWidth="1.7976931348623157E308" prefWrapLength="600.0" vgap="5.0" VBox.vgrow="NEVER">
             <children>
                 <Label text="%FilesSelector" />
                 <ComboBox fx:id="nameFiltersSelector" prefHeight="30.0" prefWidth="260.0" />
                 <TextField fx:id="tableFiltersInput" maxWidth="1.7976931348623157E308" prefWidth="450.0" promptText="%SeparateBySpace" />
+            <Button fx:id="listButton" mnemonicParsing="false" onAction="#listAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/iconList.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
                 <Hyperlink fx:id="regexLink" onAction="#regexHelp" text="%RegularExpression" />
             </children>
         </FlowPane>
-        <Label fx:id="tableLabel" styleClass="blue-label" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER" />
     </children>
 </VBox>

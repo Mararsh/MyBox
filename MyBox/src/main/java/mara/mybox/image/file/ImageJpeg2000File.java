@@ -4,6 +4,7 @@ import com.github.jaiimageio.jpeg2000.J2KImageReadParam;
 import com.github.jaiimageio.jpeg2000.J2KImageWriteParam;
 import com.github.jaiimageio.jpeg2000.impl.J2KImageReader;
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import javax.imageio.ImageIO;
@@ -53,7 +54,8 @@ public class ImageJpeg2000File {
         try {
             J2KImageReader reader = (J2KImageReader) getReader();
             BufferedImage bufferedImage;
-            try (ImageInputStream in = ImageIO.createImageInputStream(new FileInputStream(file))) {
+            try ( ImageInputStream in = ImageIO.createImageInputStream(
+                    new BufferedInputStream(new FileInputStream(file)))) {
                 J2KImageReadParam param = (J2KImageReadParam) reader.getDefaultReadParam();
                 param.getResolution();
                 reader.setInput(in, false, true);

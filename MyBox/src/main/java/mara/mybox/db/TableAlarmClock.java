@@ -70,11 +70,11 @@ public class TableAlarmClock extends DerbyBase {
                 }
                 try {
                     new File(AppVariables.AlarmClocksFile).delete();
-                } catch (Exception e) {
+                } catch (Exception e) {  failed(e);
                 }
             }
             return true;
-        } catch (Exception e) {
+        } catch (Exception e) {  failed(e);
 //            // logger.debug(e.toString());
             return false;
         }
@@ -82,8 +82,8 @@ public class TableAlarmClock extends DerbyBase {
 
     public static List<AlarmClock> read() {
         List<AlarmClock> alarms = new ArrayList<>();
-        try (Connection conn = DriverManager.getConnection(protocol + dbName() + login);
-                Statement statement = conn.createStatement()) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbName() + login);
+                 Statement statement = conn.createStatement()) {
             String sql = " SELECT * FROM Alarm_Clock";
             ResultSet results = statement.executeQuery(sql);
             while (results.next()) {
@@ -103,7 +103,7 @@ public class TableAlarmClock extends DerbyBase {
                 a.setVolume(results.getFloat("volume"));
                 alarms.add(a);
             }
-        } catch (Exception e) {
+        } catch (Exception e) {  failed(e);
 //            // logger.debug(e.toString());
         }
         return alarms;
@@ -113,8 +113,9 @@ public class TableAlarmClock extends DerbyBase {
         if (alarms == null || alarms.isEmpty()) {
             return false;
         }
-        try (Connection conn = DriverManager.getConnection(protocol + dbName() + login);
-                Statement statement = conn.createStatement()) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbName() + login);
+                 Statement statement = conn.createStatement()) {
+            conn.setAutoCommit(false);
             String sql;
             for (AlarmClock a : alarms) {
                 sql = " SELECT alarm_type FROM Alarm_Clock WHERE key_value=" + a.getKey();
@@ -146,8 +147,9 @@ public class TableAlarmClock extends DerbyBase {
                     statement.executeUpdate(sql);
                 }
             }
+            conn.commit();
             return true;
-        } catch (Exception e) {
+        } catch (Exception e) {  failed(e);
 //            // logger.debug(e.toString());
             return false;
         }
@@ -157,16 +159,19 @@ public class TableAlarmClock extends DerbyBase {
         if (alarms == null || alarms.isEmpty()) {
             return false;
         }
-        try (Connection conn = DriverManager.getConnection(protocol + dbName() + login);
-                Statement statement = conn.createStatement()) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbName() + login);
+                 Statement statement = conn.createStatement()) {
             String sql;
+            conn.setAutoCommit(false);
+
             for (AlarmClock a : alarms) {
                 sql = "DELETE FROM Alarm_Clock ";
                 sql += " WHERE key_value=" + a.getKey();
                 statement.executeUpdate(sql);
             }
+            conn.commit();
             return true;
-        } catch (Exception e) {
+        } catch (Exception e) {  failed(e);
 //            // logger.debug(e.toString());
             return false;
         }

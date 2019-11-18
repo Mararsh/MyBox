@@ -29,6 +29,7 @@ import mara.mybox.controller.ImageMetaDataController;
 import mara.mybox.controller.ImageStatisticController;
 import mara.mybox.controller.ImageViewerController;
 import mara.mybox.controller.ImagesBrowserController;
+import mara.mybox.controller.InformationController;
 import mara.mybox.controller.LoadingController;
 import mara.mybox.controller.MarkdownEditerController;
 import mara.mybox.controller.PdfViewController;
@@ -59,7 +60,10 @@ public class FxmlStage {
             }
             FXMLLoader fxmlLoader = new FXMLLoader(FxmlStage.class.getResource(newFxml), AppVariables.currentBundle);
             Pane pane = fxmlLoader.load();
-            pane.getStylesheets().add(FxmlStage.class.getResource(AppVariables.getStyle()).toExternalForm());
+            try {
+                pane.getStylesheets().add(FxmlStage.class.getResource(AppVariables.getStyle()).toExternalForm());
+            } catch (Exception e) {
+            }
             Scene scene = new Scene(pane);
 
             final BaseController controller = (BaseController) fxmlLoader.getController();
@@ -210,6 +214,10 @@ public class FxmlStage {
             }
 
             if (AppVariables.scheduledTasks == null || AppVariables.scheduledTasks.isEmpty()) {
+
+//                logger.debug("Shut down Derby server...");
+//                DerbyBase.shutdownDerbyServer();
+                logger.debug("Exit now. Bye!");
                 Platform.exit(); // Some thread may still be alive after this
                 System.exit(0);  // Go
             }
@@ -254,6 +262,7 @@ public class FxmlStage {
             final HtmlEditorController controller
                     = (HtmlEditorController) openScene(stage, CommonValues.HtmlEditorFxml);
             controller.switchBroswerTab();
+            controller.setNotChangedAfterLoad(true);
             controller.sourceFileChanged(file);
             return controller;
         } catch (Exception e) {
@@ -555,6 +564,29 @@ public class FxmlStage {
             alert.showAndWait();
         } catch (Exception e) {
             logger.error(e.toString());
+        }
+    }
+
+    public static InformationController showInformation(String information) {
+        try {
+            Stage stage = new Stage();
+            stage.initModality(Modality.NONE);
+            stage.initStyle(StageStyle.DECORATED);
+            stage.getIcons().add(CommonImageValues.AppIcon);
+            FXMLLoader fxmlLoader = new FXMLLoader(
+                    FxmlStage.class.getResource(CommonValues.InformationFxml));
+            Pane pane = fxmlLoader.load();
+            Scene scene = new Scene(pane);
+            stage.setScene(scene);
+            stage.show();
+
+            InformationController c = (InformationController) fxmlLoader.getController();
+            c.setInfo(information);
+            c.setStage(stage);
+            return c;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
         }
     }
 

@@ -4,42 +4,42 @@
 这是利用JavaFx开发的图形化界面程序，目标是提供简单易用的功能。免费开源。  
 
 ## 下载与运行
-每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases?)目录下（点击上面的`releases`页签）。    
-从云盘下载：  https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F     
-从sourceforge下载：https://sourceforge.net/projects/mara-mybox/files/     
+每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases?)目录下（点击上面的`releases`页签）。       
 
 ### 自包含程序包   
 自包含的程序包无需java环境、无需安装、解包可用。（解包的目录名不要包含汉字）  
   
 | 平台 | 链接 | 大小 | 启动文件 |    
 | --- | --- | --- |  --- |   
-| win | [MyBox-5.7-win.zip](https://github.com/Mararsh/MyBox/releases/download/v5.7/MyBox-5.7-win-exe.zip)  | 234MB | MyBox.exe |       
-| linux | [MyBox-5.7-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v5.7/MyBox-5.7-linux.tar.gz)  | 188MB  | bin/MyBox  |     
-| mac | [MyBox-5.7-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v5.7/MyBox-5.7-mac.dmg)  | 189MB  |  MyBox-5.7.app   |   
+| win | [MyBox-5.8-win.zip](https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-5.8-win-exe.zip)  | 183MB | MyBox.exe |       
+| linux | [MyBox-5.8-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-5.8-linux.tar.gz)  | 190MB  | bin/MyBox  |     
+| mac | [MyBox-5.8-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-5.8-mac.dmg)  | 193MB  |  MyBox-5.8.app   |   
 
 双击或者用命令行执行包内的启动文件即可运行程序。可以把图片/文本/PDF文件的打开方式关联到MyBox，这样双击文件名就直接是用MyBox打开了。
-（目前无法双击打开包含汉字的文件） 
+（目前无法双击打开路径包含汉字的文件） 
     
 ### Jar包   
 在已安装JRE或者JDK 12或更高版本（`Oracle java`或`Open jdk`均可）的环境下，可以下载jar包。   
  
 | 平台 | 链接 | 大小 | 运行需要 |    
 | --- | --- | --- |  --- |   
-| win | [MyBox-5.7-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.7/MyBox-5.7-win-jar.zip)  | 117MB | Java 12或更高版本 |    
-| linux | [MyBox-5.7-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.7/MyBox-5.7-linux-jar.zip)  | 121MB  | Java 12或更高版本 |    
-| mac | [MyBox-5.7-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.7/MyBox-5.7-mac-jar.zip)  |  118MB  | Java 12或更高版本 |    
+| win | [MyBox-5.8-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-5.8-win-jar.zip)  | 118MB | Java 13.0.1或更高版本 |    
+| linux | [MyBox-5.8-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-5.8-linux-jar.zip)  | 125MB  | Java 13.0.1或更高版本 |    
+| mac | [MyBox-5.8-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-5.8-mac-jar.zip)  |  121MB  | Java 13.0.1或更高版本 |    
     
 执行以下命令来启动程序：
-<PRE><CODE>     java   -jar   MyBox-5.7.jar</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-5.8.jar</CODE></PRE>
 程序可以跟一个文件名作为参数、以用MyBox直接打开此文件。例如以下命令是打开此图片：
-<PRE><CODE>     java   -jar   MyBox-5.7.jar   /tmp/a1.jpg</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-5.8.jar   /tmp/a1.jpg</CODE></PRE>
+
+### 其它下载地址  
+从云盘下载：  https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F     
+从sourceforge下载：https://sourceforge.net/projects/mara-mybox/files/     
 
 ### 限制   
 自包含包：无法在包含非英文字符的路径下启动；而且无法双击打开包含汉字的文件。已向jpackage开发组报告这个问题：
 [JDK-8232936](http://bugs.java.com/bugdatabase/view_bug.do?bug_id=JDK-8232936) 
 
-
-### 关于在Linux/Mac上文字识别（OCR）
 本版本仍未能支持在Linux/Mac上文字识别，原因是：所依托的tesseract库与各种平台紧密相关，没有统一的打包途径。   
 时间有限，目前暂搁此需求。
 
@@ -67,7 +67,7 @@ sourceforge:  https://sourceforge.net/projects/mara-mybox/files/
 | 用户手册-PDF工具 | 5.0 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-PdfTools-zh.pdf) |
 | 用户手册-桌面工具 | 5.0 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-DesktopTools-zh.pdf) |
 | 用户手册-网络工具 | 5.0 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-NetworkTools-zh.pdf) |
-| 开发指南 | 1.0 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-DevGuide-1.0-zh.pdf) |
+| 开发指南 | 2.0 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-DevGuide-2.0-zh.pdf) |
 | 快捷键 | 1.0 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts.html) |
 | 开发日志 |  | [html](#devLog) |
 
@@ -79,8 +79,8 @@ MyBox基于以下开源软件：
 | --- | --- | --- | 
 | JDK | Java语言 | http://jdk.java.net/13/    
 |   |   | https://www.oracle.com/technetwork/java/javase/downloads/index.html /    
-| JavaFx | 图形化界面 | https://docs.oracle.com/javafx/2/  |     
-|   |   |   https://gluonhq.com/products/javafx/ |     
+| JavaFx | 图形化界面 | https://gluonhq.com/products/javafx/  |     
+|   |   |  https://docs.oracle.com/javafx/2/  |     
 |   |   |  https://www.oracle.com/technetwork/java/javafxscenebuilder-1x-archive-2199384.html |     
 | NetBeans | 集成开发环境 | https://netbeans.org/ |     
 | jpackage | 自包含包 | http://jdk.java.net/jpackage/ |     
@@ -99,10 +99,12 @@ MyBox基于以下开源软件：
 | barcode4j | 生成条码 | http://barcode4j.sourceforge.net |  
 | zxing | 生成/解码条码 | https://github.com/zxing/zxing |   
 | flexmark-java | 转换Markdown | https://github.com/vsch/flexmark-java |   
+| commons-compress | 归档/压缩 | https://commons.apache.org/proper/commons-compress |   
+| XZ for Java | 归档/压缩 | https://tukaani.org/xz/java.html |   
 
 
 # 当前版本
-当前是版本5.7，已实现的特点概述如下:
+当前是版本5.8，已实现的特点概述如下:
 * [跨平台](#cross-platform)
 * [国际化](#international)
 * [PDF工具](#pdfTools)
@@ -124,15 +126,19 @@ MyBox基于以下开源软件：
     - [色彩空间](#colorSpaces)
     - [生成条码](#createBarcodes)
     - [解码条码](#decodeBarcodes)
+    - [消息摘要](#messageDigest)
 * [文件工具](#fileTools)
     - [编辑文本](#editText)
     - [编辑字节](#editBytes)
     - [管理文件/目录](#directoriesArrange)
+    - [归档/压缩/解压/解档](#archiveCompress)
+    - [检查冗余文件](#filesRedundancy)
     - [其它](#fileOthers)  
 * [媒体工具](#MediaTools)
 * [网络工具](#netTools)
     - [编辑网页](#htmlEditor)
     - [编辑Markdown](#markdownEditor)
+    - [html与Markdown互换](#htmlMarkdownConversion)
     - [微博截图工具](#weiboSnap)
 * [设置](#settings)
 * [窗口](#windows)
@@ -141,7 +147,7 @@ MyBox基于以下开源软件：
 * [对于高清晰屏幕的支持](#Hidpig)    
     
 ## 跨平台<a id="cross-platform" />   
-MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持Java 12的平台。（MyBox v5.3以前的版本均基于Java 8）
+MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持Java 13的平台。（MyBox v5.3以前的版本均基于Java 8）
 
 图像识别文字目前只支持windows平台。
 
@@ -239,7 +245,7 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 21. 批量图像处理。
 22. 演示：对于“颜色”、“效果”、“增强”，一键展示各种数据处理的示例。
 ### 调色盘<a id="ColorPalette" />
-1. 可保存上千种色彩。可自动填写139种常用色彩。
+1. 可保存任意色彩。可自动填写139种常用色彩。
 2. 色块直观显示颜色。弹出颜色的名字（如果有）、十六进制值、rgb值、hsb值、不透明值、cmyk值、cie值。
 3. 可以给每个颜色命名。
 4. 可选把调色盘中颜色导出为html列表。
@@ -372,7 +378,11 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 ### 解码条码<a id="decodeBarcodes" />
 1. 支持的一维码类型： Code39, Code128, Interleaved2Of5, ITF_14,  EAN13, EAN8, EAN_128, UPCA, UPCE
 2. 支持的二维码类型：QR_Code, PDF_417, DataMatrix
-3. 显示条码内容和元数据（条码类型、纠错级别等）
+3. 显示条码内容和元数据（条码类型、纠错级别等） 
+
+### 消息摘要<a id="messageDigest" />
+1. 生成文件或者输入文本的消息摘要   
+2. 支持MD5/SHA1/SHA256   
 
 ## 文件工具<a id="fileTools" />
 ### 编辑文本<a id="editText" />
@@ -390,6 +400,7 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 	-  先加载显示首页，同时后端扫描文件以统计字符数和行数；统计期间部分功能不可用；统计完毕自动刷新界面。
 	-  对于跨页字符串，确保查找、替换、过滤的正确性。
 10. 通用的编辑功能（复制/粘贴/剪切/删除/全选/撤销/重做/恢复）及其快捷键。
+
 ### 编辑字节<a id="editBytes" />
 1. 字节被表示为两个十六进制字符。所有空格、换行、非法值将被忽略。
 2. 常用ASCII字符的输入选择框。
@@ -404,16 +415,34 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 	- 先加载显示首页，同时后端扫描文件以统计字节数和行数；统计期间部分功能不可用；统计完毕自动刷新界面。
 	- 对于跨页字节组，确保查找、替换、过滤的正确性。若按字节数换行，则行过滤时不考虑跨页。
 9. 通用的编辑功能（复制/粘贴/剪切/删除/全选/撤销/重做/恢复）及其快捷键。
+
 ### 管理文件/目录<a id="directoriesArrange" />
 1. 查找、删除、复制、移动、重命名。
 2. 目录同步，包含复制子目录、新文件、特定时间以后已修改文件、原文件属性，以及删除源目录不存在文件和目录，等选项。
 3. 整理文件，将文件按修改时间或者生成时间重新归类在新目录下。此功能可用于处理照片、游戏截图、和系统日志等需要按时间归档的批量文件。
+
+### 归档/压缩/解压/解档<a id="archiveCompress" />  
+1. 归档是把多个文件/目录聚集为单个文件的过程，有的归档格式支持同时实现压缩（如zip和7z）。解档是还原归档文件的过程。 
+2. 压缩是把单个文件转变为一个更小的文件的过程。通常是先归档再压缩。解压是还原压缩文件的过程。  
+3. 支持归档格式： zip, tar, 7z, ar, cpio。  
+4. 支持解档格式： zip, tar, 7z, ar, cpio, arj, dump。  
+5. 支持压缩格式：gzip, bzip2, xz, lzma, Pack200, DEFLATE, snappy-framed, lz4-block, lz4-framed。 
+6. 支持解压格式：gzip, bzip2, xz, lzma, Pack200, DEFLATE, snappy-framed, lz4-block, lz4-framed, DEFLATE64,  Z。 
+7. 解档/解压时，可自动检测格式，也可由用户指定格式（有的格式无法自动检测出来）。 
+8. 解档时，提供树状结构方便用户选择提取内容。 
+
+### 检查冗余文件<a id="filesRedundancy" />  
+1. 根据MD5检查重复的文件。  
+2. 提供树状结构方便用户删除冗余文件。   
+3. 支持边检查边删除。  
+
 ### 其它<a id="fileOthers" />
 1. 批量转换文件的字符集。
-2. 批量转换文件的换行符
+2. 批量转换文件的换行符。
 3. 切割文件。切割方式可以是：按文件数、按字节数、或按起止列表。
 4. 合并文件。
-5. 批量处理时，选择文件的方式：扩展名、文件名、文件大小、文件修改时间，支持正则表达式。
+5. 比较文件（字节）。
+6. 批量处理时，选择文件的方式：扩展名、文件名、文件大小、文件修改时间，支持正则表达式。
 
 ## 媒体工具<a id="MediaTools" />
 1. 记录系统粘贴板中的图像：保存或查看粘贴板中的图像，可选无损图像或压缩类型。
@@ -433,6 +462,10 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 3. 同步转换为文本。
 4. 查找与替换。支持正则表达式。
 5. 定位。跳转到指定的字符位置或行号
+
+### html与Markdown互换<a id="htmlMarkdownConversion" />
+1. html到Markdown的批量互换。
+2. Markdown到html的批量互换。
 
 ### 微博截图工具<a id="weiboSnap" />
 1. 自动保存任意微博账户的任意月份的微博内容
@@ -455,7 +488,8 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 7. PDF可用最大主内存
 8. 退出程序时是否关闭闹钟
 9. 基础参数：最大可用内存、是否关闭分辨率感知、数据目录。修改这几个参数将会使MyBox自动重启。
-10. 清除个人设置、查看用户目录。
+10. Derby数据库的运行模式。提醒：在一些机器上启动和关闭Derby网络模式都非常慢。 
+11. 清除个人设置、查看用户目录。
 
 ## 窗口<a id="windows" />
 1. 开/关内存监视条
@@ -484,11 +518,13 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 <PRE><CODE>     JVMmemory=-Xms3026m </CODE></PRE>
 3. 是否“关闭分辨率感知”，如：  
 <PRE><CODE>     DisableHidpi=false </CODE></PRE>    
+4. Derby数据库的运行模式，如：  
+<PRE><CODE>     DerbyMode=embedded </CODE></PRE>    
 
 用户可以编辑配置文件，并手动将旧数据目录文件复制到新数据目录下。   
 用户也可以在工具的“设置”界面上修改数据根目录，工具将自动复制旧数据。 
 
-在线修改这些参数将会使MyBox自动重启。
+除了DerbyMode，在线修改这些参数将会使MyBox自动重启。
 
 
 ## 对于高清晰屏幕的支持<a id="Hidpi" />  
@@ -499,12 +535,25 @@ Java 9以后已支持HiDPI，控件和字体都会适应当前清晰度配置。
 
 # 开发日志<a id="devLog" />    
 
+2019-11-18 版本5.8  升级至jdk13+javafx13+derby15。  
+Derby数据库可以在网络模式和嵌入模式之间切换。提醒：在一些机器上启动和关闭Derby网络模式都非常慢。   
+可对文件或输入文本生成消息摘要。支持：MD5/SHA1/SHA256。   
+文件的归档/压缩/解压/解档。支持：zip, tar, 7z, ar, cpio, gzip, bzip2, xz, lzma, Pack200, DEFLATE, snappy-framed, lz4-block, lz4-framed等。  
+检查文件冗余：根据MD5查找重复的文件，提供树状结构方便用户删除冗余文件，可边查边删。  
+html与Markdown之间批量互换。   
+解决问题：多个界面上有失效控件；无内容页面会阻塞微博截图工具；图像混合时还要考虑背景透明的情形；图像“换色”功能失效。   
+《开发者指南》v2.0。
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.8)    
+
+
 2019-10-26 版本5.7  编辑Markdown。同步转换html和Markdown。   
 增加图像量化的算法并用于分析图象：K-Means适用于计算最不同的颜色，统计量化适用于计算出现最多的颜色。图象数据可以保存为html文件。   
 文件/目录操作：查找、删除、复制、移动，并改进重命名功能。   
 改进批量处理时选择文件的方式：扩展名、文件名、文件大小、文件修改时间，支持正则表达式。   
 改进多个工具的界面以平衡控件的布局。   
 改进微博截图工具：提高在高清屏幕上截图的分辨率；截图保存为文件以免内存溢出。   
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.7)    
+
 
 2019-10-01 版本5.6 配置文件仍定位于用户目录。   
 对于OCR，图像预处理选项：九种增强算法、伸缩比例、黑白阈值、旋转角度、是否自动矫正偏斜、是否反色。
@@ -517,11 +566,14 @@ Java 9以后已支持HiDPI，控件和字体都会适应当前清晰度配置。
 解码9种一维码和3种二维码，显示条码内容和元数据（条码类型、纠错级别等）。   
 调色盘：可命名颜色；增加显示cmyk值和cie值。        
 生日快乐，中国！
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.6)    
+
 
 2019-9-19 版本5.5 基于tess4j支持识别图像和PDF中的文字。单图识别可选择矩形区域。PDF批量识别可设置转换图像的色彩空间和像素密度。目前只限Windows，并且用户需要下载数据文件。   
 生成windows/linux/mac的自包含程序包。    
 优化代码：只用maven打包而脱离对java 8的依赖；利用最新jpackage制作自包含包。    
 修正问题：上一版本中微博截图工具挂了；在mac上微博截图工具首次运行后再也无法使用；linux上点击链接则程序僵死；计算CIELuv和CIELab时不应该归一化。   
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.5)    
 
 2019-9-15 版本5.4  “数据目录”改为“运行目录”而不是以前的“用户目录”。用配置文件来保存基础参数。   
 在线修改运行参数：最大可用内存、是否关闭分辨率感知、数据目录。修改这几个参数将会使MyBox自动重启。   
@@ -534,7 +586,8 @@ Java 9以后已支持HiDPI，控件和字体都会适应当前清晰度配置。
 统一快捷键，并提供帮助页面。  
 优化代码：用公开的API替换掉内部类引用。确保单例程任务互斥进入和干净退出。写文件时先写到临时文件中以免意外导致源文件损害。        
 修正问题。上一版本中以下工具失效：“修改PDF属性”、“压缩PDF”、“分割PDF”。阴影处理和3种混合模式中遗漏对于透明像素的处理。      
-    
+ [此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.4)    
+   
 2019-8-8 版本5.3 迁移至： netbeans 11 + Java 12。    
 优化批量处理界面：可添加目录、展开目录、过滤文件名、选择如何处理重名文件。    
 优化图像转换：可选择更多的颜色空间并支持引用外部ICC特性文件、可选图像嵌入ICC特性文件、可选对透明通道的处理。    
@@ -543,6 +596,7 @@ Java 9以后已支持HiDPI，控件和字体都会适应当前清晰度配置。
 初版《开发指南》。    
 修正问题：”图像处理-颜色-透明度“的预乘透明算法用错了；在linux上另存图像时未自动添加扩展名而导致保存失败；    
 linux上无法打开链接；ICC特性文件版本解码/编码错误、数据太多时界面会僵住、未解码的数据会导致xml无法生成。    
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.3)    
     
 2019-6-30 版本5.2 图像解码：可读Adobe YCCK/CMYK的jpg图像；读取和显示多帧图像文件中所有图像的属性和元数据。    
 PDF工具：标签（目录）和缩略图；可修改PDF文件的属性，如作者、版本、用户密码、用户权限、所有者密码等。    
@@ -554,12 +608,14 @@ PDF工具：标签（目录）和缩略图；可修改PDF文件的属性，如�
 色彩空间的工具：绘制色度图；编辑ICC色彩特性文件；RGB色彩空间基色的色适应；线性RGB与XYZ之间的转换矩阵；    
 线性RGB到线性RGB的转换矩阵；颜色值的色适应；标准光源；色度适应矩阵。    
 修正问题：微博截图工具经常“414 Request-URI Too Large”；按钮的提示在屏幕边沿闪烁；一些链接不可用。    
-    
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.2)    
+   
 2019-5-1 版本5.1 界面：控件显示为图片，5种颜色可选，可选是否显示控件文字。    
 简化小提示，以适应14英寸的笔记本屏幕。    
 图像工具：提取/添加透明通道。    
 修正若干问题，包括：图像处理中过滤透明像素的错误条件。    
 劳动节快乐！    
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.1)    
     
 2019-4-21 版本5.0 以拖拉锚点的方式选择图像操作的区域。    
 “涂鸦”：在图像上粘贴图片、添加形状（矩形/圆形/椭圆/多边形）的线条或填充形状、绘制多笔一线或一笔一线。    
@@ -572,12 +628,15 @@ PDF工具：标签（目录）和缩略图；可修改PDF文件的属性，如�
 查看JVM属性；刷新/重置窗口；保存和恢复界面尺寸；弹出最近访问的文件/目录；记录最近使用的工具。    
 代码重构：以子类而不是分支语句来实现选择逻辑、把判断移至循环外；循环中避免浮点计算；理顺继承关系、减少重复代码；    
 统一管理窗口的打开和关闭、避免线程残留。    
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.0)    
     
 2019-2-20 版本4.9 图像对比度处理，可选算法。颜色量化时可选是否抖动处理。    
 图像的统计数据分析，包含各颜色通道的均值/方差/斜率/中值/众数以及直方图。    
 系统粘贴板内图像的记录工具。    
 随时修改界面字体。    
 查看图像：可选择区域来剪裁、复制、保存。    
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av4.9)    
+
     
 2019-1-29 版本4.8 以图像模式查看PDF文件，可以设置dpi以调整清晰度，可以把页面剪切保存为图片。    
 文本/字节编辑器的“定位”功能：跳转到指定的字符/字节位置、或跳转到指定的行号。    
@@ -585,6 +644,7 @@ PDF工具：标签（目录）和缩略图；可修改PDF文件的属性，如�
 合并文件：把多个文件按字节合并为一个新文件。    
 程序可以跟一个文件名作为参数，以用MyBox直接打开此文件。    
 在Windows上可以把图片/文本/PDF文件的打开方式缺省关联到MyBox.exe，可以在以双击文件时直接用MyBox打开。    
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av4.8)    
     
 2019-1-15 版本4.7  编辑字节：常用ASCII字符的输入选择框；按字节数、或按一组字节值来换行；查找与替换，本页或整个文件，计数功能；    
 行过滤，“包含任一”、“不含所有”、“包含所有”、“不含任一”，累加过滤，保存过滤结果，是否包含行号；    
@@ -593,6 +653,7 @@ PDF工具：标签（目录）和缩略图；可修改PDF文件的属性，如�
 批量改变文件的换行符。    
 合并“文件重命名”和“目录文件重命名”。    
 图像模糊改为“平均模糊”算法，它足够好且更快。    
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av4.7)    
     
 2018-12-31 版本4.6  编辑文本：自动检测换行符；转换换行符；支持LF（Unix/Linux）、CR（iOS）、CRLF（Windows）。    
 查找与替换，可只本页查找、或整个文件查找。    
@@ -600,18 +661,21 @@ PDF工具：标签（目录）和缩略图；可修改PDF文件的属性，如�
 分页：可用于查看和编辑非常大的文件，如几十G的运行日志；可设置页尺寸；对于跨页字符串确保查找、替换、过滤的正确性。    
 先加载显示首页，同时后端扫描文件以统计字符数和行数；统计期间部分功能不可用；统计完毕自动刷新界面。    
 进度等待界面添加按钮“MyBox”和“取消”，以使用户可使用其它功能、或取消当前进程。    
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av4.6)    
     
 2018-12-15 版本4.5 文字编码：自动检测或手动设置文件编码；设置目标文件编码以实现转码；支持BOM设置；    
 十六进制同步显示、同步选择；显示行号。批量文字转码。    
 图像分割支持按尺寸的方式。    
 可将图像或图像的选中部分复制到系统粘贴板（Ctrl-c）。    
 在查看图像的界面可裁剪保存。    
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av4.5)    
     
 2018-12-03 版本4.4 多帧图像文件的查看、提取、创建、编辑。支持多帧Tiff文件。    
 对于所有以图像文件为输入的操作，处理多帧图像文件的情形。    
 对于所有以图像文件为输入的操作，处理极大图像（加载所需内存超出可用内存）的情形。自动评估、判断、给出提示信息和下一步处理的选择。    
 对于极大图像，支持局部读取、边读边写的图像分割，可保存为多个图像文件、多帧Tiff、或者PDF。    
 对于极大图像，支持降采样。可设置采样区域和采样比率。    
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av4.4)    
     
 2018-11-22 版本4.3 支持动画Gif。查看动画Gif：设置间隔、暂停/继续、显示指定帧并导览上下帧。    
 提取动画Gif：可选择起止帧、文件类型。    
@@ -620,6 +684,7 @@ PDF工具：标签（目录）和缩略图；可修改PDF文件的属性，如�
 颜色匹配可针对：红/蓝/绿通道、饱和度、明暗、色相；可方便地增减抠图的点集和颜色列表；均可反选。    
 归并图像处理的“颜色”、“滤镜”、“效果”、“换色”，以减少界面选择和用户输入。    
 多图查看界面：可调整每屏文件数；更均匀地显示图片。    
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av4.3)    
     
 2018-11-13 版本4.2 图像处理的“范围”：全部、抠图、矩形、圆形、色彩匹配、色相匹配、矩形/圆形累加色彩/色相匹配。    
 “抠图”如PhotoShop的魔术棒或者windows画图的油漆桶。    
@@ -748,6 +813,7 @@ PDF工具：标签（目录）和缩略图；可修改PDF文件的属性，如�
     
 2018-06-12 版本1.0 实现功能：将PDF文件的每页转换为一张图片，包含图像密度、类型、格式等选项，并且可以暂停/继续转换过程。    
 
+[未定义版本的已关闭的需求/问题列表](https://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+no%3Amilestone)    
 
 # 主界面
 

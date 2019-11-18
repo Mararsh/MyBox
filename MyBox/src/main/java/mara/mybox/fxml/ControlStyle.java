@@ -253,6 +253,9 @@ public class ControlStyle {
             case "colorInvertButton":
                 return new ControlStyle("colorInvertButton", message("Invert"), "ALT+5", "iconInvert.png");
 
+            case "colorReplaceRadio":
+                return new ControlStyle("colorReplaceRadio", "", message("ReplaceColor"), "", "iconReplace.png");
+
             default:
                 return getOtherControlStyle(id);
         }
@@ -534,10 +537,10 @@ public class ControlStyle {
                 return new ControlStyle("effectTipsView", "", "", "", "iconTips.png");
 
             case "leftPaneControl":
-                return new ControlStyle("leftPaneControl", "", "", "", "iconsDoubleLeft.png");
+                return new ControlStyle("leftPaneControl", "", "", "", "iconDoubleLeft.png");
 
             case "rightPaneControl":
-                return new ControlStyle("rightPaneControl", "", "", "", "iconsDoubleRight.png");
+                return new ControlStyle("rightPaneControl", "", "", "", "iconDoubleRight.png");
 
             default:
                 return getOtherControlStyle(id);
@@ -567,13 +570,53 @@ public class ControlStyle {
         if (id == null || id.isEmpty()) {
             return null;
         }
+        if (id.startsWith("selectFile")) {
+            return new ControlStyle(id, message("Select"), "", "iconOpen.png");
+        }
+        if (id.startsWith("selectPath")) {
+            return new ControlStyle(id, message("Select"), "", "iconFolder.png");
+        }
+        if (id.equals("clearButton")) {
+            return new ControlStyle(id, message("Clear"), "CTRL+g", "iconClear.png");
+        }
+        if (id.startsWith("clear")) {
+            return new ControlStyle(id, message("Clear"), "", "iconClear.png");
+        }
+        if (id.startsWith("recover")) {
+            switch (id) {
+                case "recoverButton":
+                    return new ControlStyle("recoverButton", message("Recover"), "F3 / CTRL+r / ALT+r", "iconRecover.png");
+
+                case "recoveryAllButton":
+                    return new ControlStyle("recoveryAllButton", message("RecoverAll"), "", "iconRecover.png");
+
+                case "recoverySelectedButton":
+                    return new ControlStyle("recoverySelectedButton", message("RecoverSelected"), "", "iconRestoreFile.png");
+
+                default:
+                    return new ControlStyle(id, message("Recover"), "", "iconRecover.png");
+            }
+        }
+
         switch (id) {
 
-            case "selectSourceButton":
-                return new ControlStyle("selectSourceButton", message("Select"), "", "iconOpen.png");
+            case "selectAllButton":
+                return new ControlStyle("selectAllButton", message("SelectAll"), "CTRL+a / ALT+a", "iconSelectAll.png");
+
+            case "selectAllFilesButton":
+                return new ControlStyle("selectAllFilesButton", message("SelectAll"), "CTRL+a", "iconSelectAll.png");
+
+            case "unselectAllFilesButton":
+                return new ControlStyle("unselectAllFilesButton", message("UnselectAll"), "", "iconSelectNone.png");
 
             case "okButton":
                 return new ControlStyle("okButton", message("OK"), "F1 / CTRL+e / ALT+e", "iconOK.png");
+
+            case "ok2Button":
+                return new ControlStyle("ok2Button", message("OK"), "", "iconOK2.png");
+
+            case "listButton":
+                return new ControlStyle(id, message("List"), "", "iconList.png");
 
             case "cancelButton":
                 return new ControlStyle("cancelButton", message("Cancel"), "ESC", "iconCancel.png");
@@ -596,14 +639,8 @@ public class ControlStyle {
             case "saveAsButton":
                 return new ControlStyle("saveAsButton", message("SaveAs"), "F11 / CTRL+f / ALT+f", "iconSaveAs.png");
 
-            case "selectAllButton":
-                return new ControlStyle("selectAllButton", message("SelectAll"), "CTRL+a / ALT+a", "iconSelectAll.png");
-
             case "cropButton":
                 return new ControlStyle("cropButton", message("Crop"), "CTRL+x / ALT+x", "iconCrop.png");
-
-            case "recoverButton":
-                return new ControlStyle("recoverButton", message("Recover"), "F3 / CTRL+r / ALT+r", "iconRecover.png");
 
             case "renameButton":
                 return new ControlStyle("renameButton", message("Rename"), "", "iconRename.png");
@@ -690,7 +727,7 @@ public class ControlStyle {
                 return new ControlStyle("downFilesButton", message("MoveDown"), "", "iconDown.png");
 
             case "previewButton":
-                return new ControlStyle("previewButton", message("Preview"), message("PreviewComments"), "", "iconPreview.png");
+                return new ControlStyle("previewButton", message("Preview"), message("Preview"), "", "iconPreview.png");
 
             case "startButton":
                 return new ControlStyle("startButton", "", "F1 / CTRL+e / ALT+e", "");
@@ -716,12 +753,6 @@ public class ControlStyle {
             case "replaceAllButton":
                 return new ControlStyle("replaceAllButton", message("ReplaceAll"), "CTRL+w", "iconReplaceAll.png");
 
-            case "clearButton":
-                return new ControlStyle("clearButton", message("CTRL+g"), "", "iconClear.png");
-
-            case "clearFilesButton":
-                return new ControlStyle("clearFilesButton", message("Clear"), "", "iconClear.png");
-
             case "withdrawButton":
                 return new ControlStyle("withdrawButton", message("Withdraw"), "", "iconWithdraw.png");
 
@@ -737,15 +768,6 @@ public class ControlStyle {
             case "insertFilesButton":
                 return new ControlStyle("insertFilesButton", message("InsertFiles"), "", "iconInsertFile.png");
 
-            case "selectSourcePathButton":
-                return new ControlStyle("selectSourcePathButton", message("Select"), "", "iconFolder.png");
-
-            case "selectTargetPathButton":
-                return new ControlStyle("selectTargetPathButton", message("Select"), "", "iconFolder.png");
-
-            case "selectTargetFileButton":
-                return new ControlStyle("selectTargetFileButton", message("Select"), "", "iconOpen.png");
-
             case "addDirectoryButton":
                 return new ControlStyle("addDirectoryButton", message("AddDirectory"), "", "iconAddFolder.png");
 
@@ -758,12 +780,6 @@ public class ControlStyle {
             case "deleteFilesButton":
                 return new ControlStyle("deleteFilesButton", message("Delete"), "", "iconDeleteFile.png");
 
-            case "selectAllFilesButton":
-                return new ControlStyle("selectAllFilesButton", message("SelectAll"), "CTRL+a", "iconSelectAll.png");
-
-            case "unselectAllFilesButton":
-                return new ControlStyle("unselectAllFilesButton", message("UnselectAll"), "", "iconSelectNone.png");
-
             case "openTargetButton":
                 return new ControlStyle("openTargetButton", message("Open"), "", "iconOpen.png");
 
@@ -775,9 +791,6 @@ public class ControlStyle {
 
             case "browseButton":
                 return new ControlStyle("browseButton", message("Browse"), "", "iconBrowse.png");
-
-            case "selectRefButton":
-                return new ControlStyle("selectRefButton", message("Select"), "", "iconOpen.png");
 
             case "sytemClipboardButton":
                 return new ControlStyle("sytemClipboardButton", "", message("LoadImageInSystemClipboard"), "", "iconPicSmall.png");
@@ -803,12 +816,6 @@ public class ControlStyle {
 
             case "pdfSetButton":
                 return new ControlStyle("pdfSetButton", message("Set"), "", "iconEqual.png");
-
-            case "clearRowsButton":
-                return new ControlStyle("clearRowsButton", message("Clear"), "", "iconClear.png");
-
-            case "clearColsButton":
-                return new ControlStyle("clearColsButton", message("Clear"), "", "iconClear.png");
 
             case "examplesButton":
                 return new ControlStyle("examplesButton", message("Examples"), "", "iconExamples.png");
@@ -888,23 +895,11 @@ public class ControlStyle {
             case "locateObjectButton":
                 return new ControlStyle("locateObjectButton", message("Go"), "", "iconGo.png");
 
-            case "recoveryAllButton":
-                return new ControlStyle("recoveryAllButton", message("RecoverAll"), "", "iconRecover.png");
-
-            case "recoverySelectedButton":
-                return new ControlStyle("recoverySelectedButton", message("RecoverSelected"), "", "iconRestoreFile.png");
-
             case "playButton":
                 return new ControlStyle("playButton", message("Play"), "", "iconPlay.png");
 
             case "pauseButton":
                 return new ControlStyle("pauseButton", message("Pause"), "", "iconPause.png");
-
-            case "selectSoundButton":
-                return new ControlStyle("selectSoundButton", message("Select"), "", "iconOpen.png");
-
-            case "selectMusicButton":
-                return new ControlStyle("selectMusicButton", message("Select"), "", "iconOpen.png");
 
             case "pixSelectButton":
                 return new ControlStyle("pixSelectButton", message("Select"), "", "iconOpen.png");
@@ -1052,9 +1047,6 @@ public class ControlStyle {
 
             case "htmlButton":
                 return new ControlStyle("htmlButton", message("DisplayHtml"), "", "iconHtml.png");
-
-            case "recoverJVMButton":
-                return new ControlStyle("recoverJVMButton", message("Recover"), "", "iconRecover.png");
 
             case "ocrPathButton":
                 return new ControlStyle("ocrPathButton", message("Select"), "", "iconOpen.png");
@@ -1359,14 +1351,17 @@ public class ControlStyle {
                 return;
             }
             ImageView v = new ImageView(icon);
-            v.setFitWidth(AppVariables.iconSize);
-            v.setFitHeight(AppVariables.iconSize);
 
             if (node instanceof Labeled) {
+                v.setFitWidth(AppVariables.iconSize);
+                v.setFitHeight(AppVariables.iconSize);
                 ((Labeled) node).setGraphic(v);
 
             } else if (node instanceof ImageView) {
-                ((ImageView) node).setImage(v.getImage());
+                ImageView nodev = (ImageView) node;
+                nodev.setImage(v.getImage());
+                nodev.setFitWidth(AppVariables.iconSize);
+                nodev.setFitHeight(AppVariables.iconSize);
 
             }
 

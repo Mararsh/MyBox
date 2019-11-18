@@ -112,6 +112,7 @@ public class ImageConverterBatchController extends ImagesBatchController {
     @Override
     public String handleFile(File srcFile, File targetPath) {
         try {
+            showHandling(srcFile);
             File target = makeTargetFile(srcFile, targetPath);
             if (target == null) {
                 return AppVariables.message("Skip");

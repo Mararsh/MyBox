@@ -101,13 +101,8 @@ public abstract class PdfBatchController extends BatchController<PdfInformation>
     }
 
     @Override
-    public boolean match(File file) {
-        if (file == null || !file.isFile()
-                || !PdfTools.isPDF(file)) {
-            return false;
-        }
-
-        return super.match(file);
+    public boolean matchType(File file) {
+        return PdfTools.isPDF(file);
     }
 
     // page number is 1-based.
@@ -116,8 +111,8 @@ public abstract class PdfBatchController extends BatchController<PdfInformation>
     public String handleFile(File srcFile, File targetPath) {
         int generated = 0;
         doc = null;
-
         try {
+            showHandling(srcFile);
             currentParameters.currentSourceFile = srcFile;
             if (!isPreview) {
                 PdfInformation info = tableData.get(currentParameters.currentIndex);
@@ -131,7 +126,7 @@ public abstract class PdfBatchController extends BatchController<PdfInformation>
                 actualParameters.currentPage = actualParameters.fromPage;
             }
 
-            try (PDDocument pd = PDDocument.load(currentParameters.currentSourceFile,
+            try ( PDDocument pd = PDDocument.load(currentParameters.currentSourceFile,
                     currentParameters.password, AppVariables.pdfMemUsage)) {
                 doc = pd;
                 if (currentParameters.toPage <= 0 || currentParameters.toPage > doc.getNumberOfPages()) {

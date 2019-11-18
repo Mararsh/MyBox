@@ -2,7 +2,6 @@ package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
-import java.util.List;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -11,19 +10,15 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import mara.mybox.data.VisitHistory;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonImageValues;
-import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -153,41 +148,6 @@ public class ImageAlphaAddBatchController extends ImageManufactureBatchControlle
         } else {
             blendMode = AlphaBlendMode.Set;
         }
-    }
-
-    @FXML
-    public void popAlphaFile(MouseEvent event) {
-        if (AppVariables.fileRecentNumber <= 0) {
-            return;
-        }
-        new RecentVisitMenu(this, event) {
-            @Override
-            public List<VisitHistory> recentFiles() {
-                int fileNumber = AppVariables.fileRecentNumber * 2 / 3 + 1;
-                return VisitHistory.getRecentAlphaImages(fileNumber);
-            }
-
-            @Override
-            public List<VisitHistory> recentPaths() {
-                return recentSourcePathsBesidesFiles();
-            }
-
-            @Override
-            public void handleSelect() {
-                selectSourceFile();
-            }
-
-            @Override
-            public void handleFile(String fname) {
-
-            }
-
-            @Override
-            public void handlePath(String fname) {
-                handleTargetPath(fname);
-            }
-
-        }.pop();
     }
 
     @Override

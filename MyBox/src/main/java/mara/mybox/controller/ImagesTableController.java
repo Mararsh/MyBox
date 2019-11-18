@@ -188,7 +188,6 @@ public class ImagesTableController extends TableController<ImageInformation> {
             task = new SingletonTask<Void>() {
 
                 private List<ImageInformation> infos;
-                private String error;
                 private boolean hasSampled;
 
                 @Override

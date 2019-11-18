@@ -1,27 +1,31 @@
 package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ColorPicker;
+import javafx.scene.control.Control;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
-import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
-import static mara.mybox.value.AppVariables.logger;
+import javafx.scene.shape.Rectangle;
+import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageColor;
 import mara.mybox.image.ImageScope;
 import mara.mybox.image.PixelsOperation;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -34,11 +38,8 @@ public class ImageManufactureBatchReplaceColorController extends ImageManufactur
 
     private int distance;
     private boolean isColor;
+    private java.awt.Color originalColor, newColor;
 
-    @FXML
-    private HBox colorBox;
-    @FXML
-    private ColorPicker oldColorPicker, newColorPicker;
     @FXML
     private TextField distanceInput;
     @FXML
@@ -47,6 +48,10 @@ public class ImageManufactureBatchReplaceColorController extends ImageManufactur
     private ToggleGroup replaceScopeGroup;
     @FXML
     private CheckBox excludeCheck;
+    @FXML
+    protected Rectangle originalRect, newRect;
+    @FXML
+    protected Button originalPaletteButton, newPaletteButton;
 
     public ImageManufactureBatchReplaceColorController() {
         baseTitle = AppVariables.message("ImageManufactureBatchReplaceColor");
@@ -74,23 +79,23 @@ public class ImageManufactureBatchReplaceColorController extends ImageManufactur
         try {
             super.initOptionsSection();
 
-            newColorPicker.valueProperty().addListener(new ChangeListener<Color>() {
-                @Override
-                public void changed(ObservableValue<? extends Color> observable,
-                        Color oldValue, Color newValue) {
-                    checkDistance();
-                }
-            });
-            newColorPicker.setValue(Color.WHITE);
+            try {
+                String c = AppVariables.getUserConfigValue("ImageColorOriginal", Color.WHITE.toString());
+                originalRect.setFill(Color.web(c));
+            } catch (Exception e) {
+                originalRect.setFill(Color.WHITE);
+                AppVariables.setUserConfigValue("ImageColorOriginal", Color.WHITE.toString());
+            }
+            FxmlControl.setTooltip(originalRect, FxmlColor.colorNameDisplay((Color) originalRect.getFill()));
 
-            oldColorPicker.valueProperty().addListener(new ChangeListener<Color>() {
-                @Override
-                public void changed(ObservableValue<? extends Color> observable,
-                        Color oldValue, Color newValue) {
-                    checkDistance();
-                }
-            });
-            oldColorPicker.setValue(Color.BLACK);
+            try {
+                String c = AppVariables.getUserConfigValue("ImageColorNew", Color.TRANSPARENT.toString());
+                newRect.setFill(Color.web(c));
+            } catch (Exception e) {
+                newRect.setFill(Color.TRANSPARENT);
+                AppVariables.setUserConfigValue("ImageColorNew", Color.TRANSPARENT.toString());
+            }
+            FxmlControl.setTooltip(newRect, FxmlColor.colorNameDisplay((Color) newRect.getFill()));
 
             distanceInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -127,8 +132,10 @@ public class ImageManufactureBatchReplaceColorController extends ImageManufactur
 
     private void checkDistance() {
         try {
-            distance = Integer.valueOf(distanceInput.getText());
-            if (oldColorPicker.getValue() == newColorPicker.getValue() && distance == 0) {
+            int v = Integer.valueOf(distanceInput.getText());
+
+            if (v == 0
+                    && ((Color) originalRect.getFill()).equals(((Color) newRect.getFill()))) {
                 popError(message("OriginalNewSameColor"));
                 distanceInput.setStyle(badStyle);
                 return;
@@ -138,7 +145,7 @@ public class ImageManufactureBatchReplaceColorController extends ImageManufactur
                 max = 360;
             }
             if (distance >= 0 && distance <= max) {
-
+                distance = v;
                 distanceInput.setStyle(null);
             } else {
                 distanceInput.setStyle(badStyle);
@@ -148,39 +155,50 @@ public class ImageManufactureBatchReplaceColorController extends ImageManufactur
         }
     }
 
-    @FXML
-    private void transparentForOld(ActionEvent event) {
-        oldColorPicker.setValue(Color.TRANSPARENT);
+    @Override
+    public boolean setColor(Control control, Color color) {
+        if (control == null || color == null) {
+            return false;
+        }
+        if (originalPaletteButton.equals(control)) {
+            originalRect.setFill(color);
+            FxmlControl.setTooltip(originalRect, FxmlColor.colorNameDisplay(color));
+            AppVariables.setUserConfigValue("ImageColorOriginal", color.toString());
+
+        } else if (newPaletteButton.equals(control)) {
+            newRect.setFill(color);
+            FxmlControl.setTooltip(newRect, FxmlColor.colorNameDisplay(color));
+            AppVariables.setUserConfigValue("ImageColorNew", color.toString());
+        }
+        return true;
     }
 
     @FXML
-    private void whiteForOld(ActionEvent event) {
-        oldColorPicker.setValue(Color.WHITE);
+    public void originalPalette(ActionEvent event) {
+        showPalette(originalPaletteButton, message("OriginalColor"), true);
     }
 
     @FXML
-    private void blackForOld(ActionEvent event) {
-        oldColorPicker.setValue(Color.BLACK);
+    public void newPalette(ActionEvent event) {
+        showPalette(newPaletteButton, message("NewColor"), true);
     }
 
-    @FXML
-    private void transparentForNew(ActionEvent event) {
-        newColorPicker.setValue(Color.TRANSPARENT);
-    }
-
-    @FXML
-    private void whiteForNew(ActionEvent event) {
-        newColorPicker.setValue(Color.WHITE);
-    }
-
-    @FXML
-    private void blackForNew(ActionEvent event) {
-        newColorPicker.setValue(Color.BLACK);
+    @Override
+    public boolean makeBatchParameters() {
+        originalColor = ImageColor.converColor((Color) originalRect.getFill());
+        newColor = ImageColor.converColor((Color) newRect.getFill());
+        return super.makeBatchParameters();
     }
 
     @Override
     protected BufferedImage handleImage(BufferedImage source) {
+
         ImageScope scope = new ImageScope();
+        scope.setScopeType(ImageScope.ScopeType.Color);
+        scope.setColorScopeType(ImageScope.ColorScopeType.Color);
+        List<java.awt.Color> colors = new ArrayList();
+        colors.add(originalColor);
+        scope.setColors(colors);
         if (isColor) {
             scope.setColorScopeType(ImageScope.ColorScopeType.Color);
             scope.setColorDistance(distance);
@@ -190,15 +208,11 @@ public class ImageManufactureBatchReplaceColorController extends ImageManufactur
         }
         scope.setColorExcluded(excludeCheck.isSelected());
         PixelsOperation pixelsOperation = PixelsOperation.create(source, scope,
-                PixelsOperation.OperationType.ReplaceColor);
-        pixelsOperation.setColorPara1(ImageColor.converColor(oldColorPicker.getValue()));
-        pixelsOperation.setColorPara2(ImageColor.converColor(newColorPicker.getValue()));
+                PixelsOperation.OperationType.ReplaceColor, PixelsOperation.ColorActionType.Set);
+        pixelsOperation.setColorPara1(originalColor);
+        pixelsOperation.setColorPara2(newColor);
         BufferedImage target = pixelsOperation.operate();
 
-//        BufferedImage target = ImageReplaceColorTools.replaceColor(source,
-//                FxmlManufactureTools.colorConvert(oldColorPicker.getValue()),
-//                FxmlManufactureTools.colorConvert(newColorPicker.getValue()),
-//                distance, isColor, excludeCheck.isSelected());
         return target;
     }
 

@@ -58,7 +58,7 @@ License:    Apache License Version 2.0
                             <items>
                                 <MenuItem mnemonicParsing="false" onAction="#openImageViewer" text="%ImageViewer" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImagesBrowser" text="%ImagesBrowser" />
-                                <MenuItem mnemonicParsing="false" onAction="#openImageData" text="%ImageData" />
+                                <MenuItem mnemonicParsing="false" onAction="#openImageData" text="%ImageAnalyse" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufacture" text="%ImageManufacture" />
                                 <Menu mnemonicParsing="false" text="%ImageManufactureBatch">
@@ -126,7 +126,7 @@ License:    Apache License Version 2.0
                             <items>
                                 <MenuItem mnemonicParsing="false" onAction="#openMatricesCalculation" text="%MatricesCalculation" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
-                                <MenuItem mnemonicParsing="false" onAction="#openImageData" text="%ImageData" />
+                                <MenuItem mnemonicParsing="false" onAction="#openImageData" text="%ImageAnalyse" />
                                 <Menu mnemonicParsing="false" text="%ColorSpace">
                                     <items>
                                         <MenuItem mnemonicParsing="false" onAction="#openChromaticityDiagram" text="%DrawChromaticityDiagram" />
@@ -141,6 +141,8 @@ License:    Apache License Version 2.0
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openBarcodeCreator" text="%BarcodeCreator" />
                                 <MenuItem mnemonicParsing="false" onAction="#openBarcodeDecoder" text="%BarcodeDecoder" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem mnemonicParsing="false" onAction="#openMessageDigest" text="%MessageDigest" />
                             </items>
                         </Menu>
                         <Menu mnemonicParsing="false" text="%FileTools">
@@ -148,18 +150,25 @@ License:    Apache License Version 2.0
                                 <MenuItem mnemonicParsing="false" onAction="#openTextEditer" text="%TextEditer" />
                                 <MenuItem mnemonicParsing="false" onAction="#openBytesEditer" text="%BytesEditer" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem mnemonicParsing="false" onAction="#openTextEncodingBatch" text="%TextEncodingBatch" />
+                                <MenuItem mnemonicParsing="false" onAction="#openTextLineBreakBatch" text="%TextLineBreakBatch" />
+                                <MenuItem mnemonicParsing="false" onAction="#openFileCut" text="%FileCut" />
+                                <MenuItem mnemonicParsing="false" onAction="#openFilesMerge" text="%FilesMerge" />
+                                <MenuItem mnemonicParsing="false" onAction="#openFilesArchiveCompress" text="%FilesArchiveCompress" />
+                                <MenuItem mnemonicParsing="false" onAction="#openFilesCompressBatch" text="%FilesCompressBatch" />
+                                <MenuItem mnemonicParsing="false" onAction="#openFileDecompressUnarchive" text="%FileDecompressUnarchive" />
+                                <MenuItem mnemonicParsing="false" onAction="#openFilesDecompressUnarchiveBatch" text="%FilesDecompressUnarchiveBatch" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openFilesFind" text="%FilesFind" />
-                                <MenuItem mnemonicParsing="false" onAction="#openFilesArrangement" text="%FilesArrangement" />
-                                <MenuItem mnemonicParsing="false" onAction="#openDirectorySynchronize" text="%DirectorySynchronize" />
+                                <MenuItem mnemonicParsing="false" onAction="#openFilesCompare" text="%FilesCompare" />
+                                <MenuItem mnemonicParsing="false" onAction="#openFilesRedundancy" text="%FilesRedundancy" />
                                 <MenuItem mnemonicParsing="false" onAction="#openFilesRename" text="%FilesRename" />
                                 <MenuItem mnemonicParsing="false" onAction="#openFilesDelete" text="%FilesDelete" />
                                 <MenuItem mnemonicParsing="false" onAction="#openFilesCopy" text="%FilesCopy" />
                                 <MenuItem mnemonicParsing="false" onAction="#openFilesMove" text="%FilesMove" />
-                                <MenuItem mnemonicParsing="false" onAction="#openTextEncodingBatch" text="%TextEncodingBatch" />
-                                <MenuItem mnemonicParsing="false" onAction="#openTextLineBreakBatch" text="%TextLineBreakBatch" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
-                                <MenuItem mnemonicParsing="false" onAction="#openFileCut" text="%FileCut" />
-                                <MenuItem mnemonicParsing="false" onAction="#openFilesMerge" text="%FilesMerge" />
+                                <MenuItem mnemonicParsing="false" onAction="#openFilesArrangement" text="%FilesArrangement" />
+                                <MenuItem mnemonicParsing="false" onAction="#openDirectorySynchronize" text="%DirectorySynchronize" />
                             </items>
                         </Menu>
                         <Menu mnemonicParsing="false" text="%MediaTools">
@@ -173,6 +182,8 @@ License:    Apache License Version 2.0
                             <items>
                                 <MenuItem mnemonicParsing="false" onAction="#openHtmlEditor" text="%HtmlEditor" />
                                 <MenuItem mnemonicParsing="false" onAction="#openMarkdownEditer" text="%MarkdownEditer" />
+                                <MenuItem mnemonicParsing="false" onAction="#openHtmlToMarkdown" text="%HtmlToMarkdown" />
+                                <MenuItem mnemonicParsing="false" onAction="#openMarkdownToHtml" text="%MarkdownToHtml" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openWeiboSnap" text="%WeiboSnap" />
                             </items>

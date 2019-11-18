@@ -278,7 +278,8 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
             }
             final Image clip = SystemTools.fetchImageInClipboard(false);
             if (clip == null
-                    || (lastSystemClip != null && FxmlImageManufacture.isImageSame(lastSystemClip, clip))) {
+                    || (lastSystemClip != null
+                    && FxmlImageManufacture.sameImage(lastSystemClip, clip))) {
                 parent.popInformation(message("NoImageInClipboard"));
                 return;
             }
@@ -338,7 +339,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                 }
 
             };
-//            openHandlingStage(task, Modality.WINDOW_MODAL);
+            parent.openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -518,7 +519,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
 
                 @Override
                 protected void whenSucceeded() {
-                    imageController.operating();
+                    imageController.operatingNeedNotScope();
                     imageController.maskRectangleData = new DoubleRectangle(0, 0,
                             currentClip.getWidth() - 1, currentClip.getHeight() - 1);
                     imageController.scope.setRectangle(imageController.maskRectangleData.cloneValues());

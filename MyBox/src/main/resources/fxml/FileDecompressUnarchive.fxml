@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.scene.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.web.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.effect.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<BorderPane fx:id="thisPane" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.FileDecompressUnarchiveController">
+    <top>
+        <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
+    </top>
+    <center>
+        <VBox fx:id="contentBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" BorderPane.alignment="CENTER">
+            <children>
+                <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                    <children>
+                        <Label text="%SourceFile" />
+                        <TextField fx:id="sourceFileInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile">
+                            <graphic>
+                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconOpen.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+
+                    </children>
+                </HBox>
+                <TitledPane text="%CompressionFormat" VBox.vgrow="NEVER">
+                    <content>
+                        <VBox fx:id="compressBox" spacing="5.0">
+                            <children>
+                                <FlowPane fx:id="commonCompressPane" hgap="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" vgap="5.0" VBox.vgrow="NEVER">
+                                    <children>
+                                        <RadioButton layoutX="15.0" layoutY="56.0" selected="true" text="%DetectAutomatically">
+                                            <toggleGroup>
+                                                <ToggleGroup fx:id="compressGroup" />
+                                            </toggleGroup>
+                                        </RadioButton>
+                                        <RadioButton fx:id="gzRadio" layoutX="103.0" layoutY="10.0" text="gz" toggleGroup="$compressGroup" />
+                                        <RadioButton layoutX="15.0" layoutY="15.0" text="bzip2" toggleGroup="$compressGroup" />
+                                        <RadioButton layoutX="183.0" layoutY="15.0" text="xz" toggleGroup="$compressGroup" />
+                              <RadioButton layoutX="140.0" layoutY="56.0" text="z" toggleGroup="$compressGroup" />
+                                        <RadioButton fx:id="pack200Radio" layoutX="99.0" layoutY="15.0" text="pack200" toggleGroup="$compressGroup" />
+                                        <RadioButton layoutX="435.0" layoutY="15.0" text="deflate" toggleGroup="$compressGroup" />
+                              <RadioButton layoutX="140.0" layoutY="56.0" text="deflate64" toggleGroup="$compressGroup" />
+                                        <RadioButton layoutX="319.0" layoutY="56.0" text="lzma" toggleGroup="$compressGroup" />
+                                        <RadioButton layoutX="15.0" layoutY="97.0" text="snappy-framed" toggleGroup="$compressGroup" />
+                                        <RadioButton layoutX="176.0" layoutY="56.0" text="lz4-block" toggleGroup="$compressGroup" />
+                                        <RadioButton layoutX="266.0" layoutY="138.0" text="lz4-framed" toggleGroup="$compressGroup" />
+                              <RadioButton text="%None" toggleGroup="$compressGroup" />
+                                    </children>
+                                    <padding>
+                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                    </padding>
+                                </FlowPane>
+                            </children>
+                        </VBox>
+                    </content>
+                </TitledPane>
+                <TitledPane fx:id="optionsPane" text="%ArchiverFormat" VBox.vgrow="NEVER">
+                    <content>
+                        <VBox fx:id="archiveBox" spacing="10.0">
+                            <children>
+                                <FlowPane hgap="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" vgap="5.0" VBox.vgrow="NEVER">
+                                    <children>
+                                        <RadioButton selected="true" text="%DetectAutomatically">
+                                            <toggleGroup>
+                                                <ToggleGroup fx:id="archiverGroup" />
+                                            </toggleGroup>
+                                        </RadioButton>
+                                        <RadioButton fx:id="PosterizingRadio22" layoutX="266.0" layoutY="15.0" text="zip" toggleGroup="$archiverGroup" />
+                                        <RadioButton fx:id="PosterizingRadio21" layoutX="266.0" layoutY="15.0" text="tar" toggleGroup="$archiverGroup" />
+                                        <RadioButton fx:id="PosterizingRadio2" layoutX="15.0" layoutY="15.0" text="jar" toggleGroup="$archiverGroup" />
+                                        <RadioButton fx:id="PosterizingRadio211" layoutX="596.0" layoutY="15.0" text="7z" toggleGroup="$archiverGroup" />
+                                        <RadioButton fx:id="PosterizingRadio" layoutX="103.0" layoutY="10.0" text="ar" toggleGroup="$archiverGroup" />
+                                        <RadioButton fx:id="ThresholdingRadio2" layoutX="94.0" layoutY="15.0" text="cpio" toggleGroup="$archiverGroup" />
+                              <RadioButton fx:id="ThresholdingRadio21" text="arj" toggleGroup="$archiverGroup" />
+                              <RadioButton fx:id="ThresholdingRadio211" layoutX="997.0" layoutY="15.0" text="dump" toggleGroup="$archiverGroup" />
+                              <RadioButton text="%None" toggleGroup="$archiverGroup" />
+                                    </children>
+                                    <padding>
+                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                    </padding>
+                                </FlowPane>
+                                <FlowPane fx:id="sevenZCompressPane" hgap="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" vgap="5.0" VBox.vgrow="NEVER">
+                                    <children>
+                                        <RadioButton layoutX="144.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="LZMA2">
+                                            <toggleGroup>
+                                                <ToggleGroup fx:id="sevenCompressGroup" />
+                                            </toggleGroup>
+                                        </RadioButton>
+                                        <RadioButton layoutX="359.0" layoutY="10.0" mnemonicParsing="false" text="DEFLATE" toggleGroup="$sevenCompressGroup" />
+                                        <RadioButton layoutX="574.0" layoutY="10.0" mnemonicParsing="false" text="BZIP2" toggleGroup="$sevenCompressGroup" />
+                                        <RadioButton mnemonicParsing="false" text="COPY" toggleGroup="$sevenCompressGroup" />
+                                    </children>
+                                </FlowPane>
+                            </children>
+                        </VBox>
+                    </content>
+                </TitledPane>
+            </children>
+            <BorderPane.margin>
+                <Insets />
+            </BorderPane.margin>
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            </padding>
+        </VBox>
+    </center>
+    <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+    </padding>
+</BorderPane>

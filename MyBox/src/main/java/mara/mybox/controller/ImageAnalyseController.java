@@ -27,9 +27,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
@@ -37,12 +35,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Text;
 import javafx.scene.transform.Transform;
 import javafx.scene.web.WebView;
 import javafx.stage.Modality;
-import javafx.stage.Screen;
-import javafx.util.Callback;
 import mara.mybox.data.IntStatistic;
 import mara.mybox.data.StringTable;
 import mara.mybox.data.VisitHistory;
@@ -59,6 +54,7 @@ import mara.mybox.image.ImageStatistic;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlTools;
+import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
@@ -70,11 +66,10 @@ import mara.mybox.value.CommonImageValues;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImageDataController extends ImageViewerController {
+public class ImageAnalyseController extends ImageViewerController {
 
     protected ImageStatistic data;
     protected ImageView parentView;
-    protected ObservableList<IntStatistic> componentsTableData = FXCollections.observableArrayList();
     protected ChangeListener<Number> leftDividerListener;
     protected int colorNumber1, bitDepth1, bitDepth2, colorNumber2;
 
@@ -94,13 +89,6 @@ public class ImageDataController extends ImageViewerController {
     protected Tab colorsTab, dominantTab, redTab, greenTab, blueTab,
             hueTab, brightnessTab, saturationTab, grayTab, alphaTab;
     @FXML
-    protected TableView<IntStatistic> colorsTable;
-    @FXML
-    protected TableColumn<IntStatistic, String> colorColumn;
-    @FXML
-    protected TableColumn<IntStatistic, Integer> meanColumn, varianceColumn,
-            skewnessColumn, maximumColumn, minimumColumn, modeColumn, medianColumn;
-    @FXML
     protected BarChart colorsBarchart, grayBarchart, redBarchart, greenBarchart, blueBarchart,
             hueBarchart, saturationBarchart, brightnessBarchart, alphaBarchart;
     @FXML
@@ -109,14 +97,14 @@ public class ImageDataController extends ImageViewerController {
     protected ComboBox<String> colorsNumberSelectors1, colorsNumberSelectors2,
             regionsDepthSelector1, regionsDepthSelector2;
     @FXML
-    protected WebView dominantView1, dominantView2,
+    protected WebView colorsView, dominantView1, dominantView2,
             grayView, redView, greenView, blueView,
             hueView, saturationView, brightnessView, alphaView;
     @FXML
     protected PieChart dominantPie1, dominantPie2;
 
-    public ImageDataController() {
-        baseTitle = message("ImageData");
+    public ImageAnalyseController() {
+        baseTitle = message("ImageAnalyse");
 
         SourceFileType = VisitHistory.FileType.Image;
         SourcePathType = VisitHistory.FileType.Image;
@@ -274,20 +262,20 @@ public class ImageDataController extends ImageViewerController {
         if (splitPane.getItems().contains(leftBox)) {
             splitPane.getDividers().get(0).positionProperty().removeListener(leftDividerListener);
             splitPane.getItems().remove(leftBox);
-            leftPaneControl.setImage(new Image(ControlStyle.getIcon("iconsDoubleRight.png")));
+            ControlStyle.setIcon(leftPaneControl, ControlStyle.getIcon("iconDoubleRight.png"));
 
         } else {
             splitPane.getItems().add(0, leftBox);
-            leftPaneControl.setImage(new Image(ControlStyle.getIcon("iconsDoubleLeft.png")));
             try {
                 String v = AppVariables.getUserConfigValue("ImageDataLeftPanePosition", "0.4");
                 splitPane.setDividerPosition(0, Double.parseDouble(v));
             } catch (Exception e) {
                 splitPane.setDividerPosition(0, 0.3);
             }
-            splitPane.applyCss();
             splitPane.getDividers().get(0).positionProperty().addListener(leftDividerListener);
+            ControlStyle.setIcon(leftPaneControl, ControlStyle.getIcon("iconDoubleLeft.png"));
         }
+        splitPane.applyCss();
 
         isSettingValues = false;
     }
@@ -399,6 +387,8 @@ public class ImageDataController extends ImageViewerController {
             });
             colorsNumberSelectors2.getSelectionModel().select(0);
 
+            FxmlControl.setTooltip(tipsView, new Tooltip(message("QuantizationBitDepthComments")));
+
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -418,7 +408,8 @@ public class ImageDataController extends ImageViewerController {
             ImageQuantization quantization = ImageQuantization.create(image,
                     null, KMeansClustering,
                     colorNumber1, bitDepth1, true, true);
-            showDominantData(quantization, image, dominantView1, dominantPie1);
+            showDominantData(quantization, image,
+                    message("DominantKMeansComments"), dominantView1, dominantPie1);
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -438,7 +429,8 @@ public class ImageDataController extends ImageViewerController {
             ImageQuantization quantization = ImageQuantization.create(image,
                     null, QuantizationAlgorithm.PopularityQuantization,
                     colorNumber2, bitDepth2, true, true);
-            return showDominantData(quantization, image, dominantView2, dominantPie2);
+            return showDominantData(quantization, image,
+                    message("DominantPopularityComments"), dominantView2, dominantPie2);
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -446,7 +438,7 @@ public class ImageDataController extends ImageViewerController {
     }
 
     protected boolean showDominantData(ImageQuantization quantization,
-            BufferedImage image, WebView view, PieChart pie) {
+            BufferedImage image, String title, WebView view, PieChart pie) {
         if (quantization == null || image == null) {
             return false;
         }
@@ -456,6 +448,7 @@ public class ImageDataController extends ImageViewerController {
             if (table == null) {
                 return false;
             }
+            table.setTitle(title);
             final long total = quantization.getTotalCount();
             final String html = StringTable.tableHtml(table);
             List<ColorCount> sortedCounts = quantization.getSortedCounts();
@@ -589,71 +582,8 @@ public class ImageDataController extends ImageViewerController {
             });
             componentsLegendCheck.setSelected(AppVariables.getUserConfigBoolean("ImageHistLegend", true));
 
-            colorsTable.setItems(componentsTableData);
-            colorColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-            colorColumn.setCellFactory(new Callback<TableColumn<IntStatistic, String>, TableCell<IntStatistic, String>>() {
-                @Override
-                public TableCell<IntStatistic, String> call(TableColumn<IntStatistic, String> param) {
-                    return new NameCell();
-                }
-            });
-            meanColumn.setCellValueFactory(new PropertyValueFactory<>("mean"));
-            meanColumn.setCellFactory(new Callback<TableColumn<IntStatistic, Integer>, TableCell<IntStatistic, Integer>>() {
-                @Override
-                public TableCell<IntStatistic, Integer> call(TableColumn<IntStatistic, Integer> param) {
-                    return new IntStatisticColorCell();
-                }
-            });
-            varianceColumn.setCellValueFactory(new PropertyValueFactory<>("variance"));
-            skewnessColumn.setCellValueFactory(new PropertyValueFactory<>("skewness"));
-            medianColumn.setCellValueFactory(new PropertyValueFactory<>("median"));
-            medianColumn.setCellFactory(new Callback<TableColumn<IntStatistic, Integer>, TableCell<IntStatistic, Integer>>() {
-                @Override
-                public TableCell<IntStatistic, Integer> call(TableColumn<IntStatistic, Integer> param) {
-                    return new IntStatisticColorCell();
-                }
-            });
-            modeColumn.setCellValueFactory(new PropertyValueFactory<>("mode"));
-            modeColumn.setCellFactory(new Callback<TableColumn<IntStatistic, Integer>, TableCell<IntStatistic, Integer>>() {
-                @Override
-                public TableCell<IntStatistic, Integer> call(TableColumn<IntStatistic, Integer> param) {
-                    return new IntStatisticColorCell();
-                }
-            });
-            maximumColumn.setCellValueFactory(new PropertyValueFactory<>("maximum"));
-            maximumColumn.setCellFactory(new Callback<TableColumn<IntStatistic, Integer>, TableCell<IntStatistic, Integer>>() {
-                @Override
-                public TableCell<IntStatistic, Integer> call(TableColumn<IntStatistic, Integer> param) {
-                    return new IntStatisticColorCell();
-                }
-            });
-            minimumColumn.setCellValueFactory(new PropertyValueFactory<>("minimum"));
-            minimumColumn.setCellFactory(new Callback<TableColumn<IntStatistic, Integer>, TableCell<IntStatistic, Integer>>() {
-                @Override
-                public TableCell<IntStatistic, Integer> call(TableColumn<IntStatistic, Integer> param) {
-                    return new IntStatisticColorCell();
-                }
-            });
-
         } catch (Exception e) {
             logger.error(e.toString());
-        }
-    }
-
-    protected class NameCell extends TableCell<IntStatistic, String> {
-
-        final Text text = new Text();
-
-        @Override
-        protected void updateItem(final String item, boolean empty) {
-            super.updateItem(item, empty);
-            if (item != null && !empty) {
-                text.setText(message(item));
-                setGraphic(text);
-            } else {
-                setGraphic(null);
-                setText(null);
-            }
         }
     }
 
@@ -721,23 +651,70 @@ public class ImageDataController extends ImageViewerController {
 
     protected void showComponentsTable() {
         try {
-
             if (image == null || data == null || isSettingValues) {
                 return;
             }
-            componentsTableData.clear();
-            componentsTableData.add(data.statistic(ColorComponent.Gray));
-            componentsTableData.add(data.statistic(ColorComponent.RedChannel));
-            componentsTableData.add(data.statistic(ColorComponent.GreenChannel));
-            componentsTableData.add(data.statistic(ColorComponent.BlueChannel));
-            componentsTableData.add(data.statistic(ColorComponent.Hue));
-            componentsTableData.add(data.statistic(ColorComponent.Saturation));
-            componentsTableData.add(data.statistic(ColorComponent.Brightness));
-            componentsTableData.add(data.statistic(ColorComponent.AlphaChannel));
+            StringBuilder s = new StringBuilder();
+            String indent = "    ";
+            s.append(indent).append(indent).append("<DIV align=\"center\" >\n");
+            s.append(indent).append(indent).append(indent).append("<TABLE >\n");
+
+            s.append(indent).append(indent).append(indent).append(indent).
+                    append("<TR  style=\"font-weight:bold; \">");
+            s.append("<TH>").append(message("ColorComponent")).append("</TH>");
+            s.append("<TH>").append(message("Mean")).append("</TH>");
+            s.append("<TH>").append(message("Variance")).append("</TH>");
+            s.append("<TH>").append(message("Skewness")).append("</TH>");
+            s.append("<TH>").append(message("Mode")).append("</TH>");
+            s.append("<TH>").append(message("Median")).append("</TH>");
+            s.append("<TH>").append(message("Maximum")).append("</TH>");
+            s.append("<TH>").append(message("Minimum")).append("</TH>");
+            s.append("</TR>\n");
+
+            s.append(componentRow(ColorComponent.Gray, indent));
+            s.append(componentRow(ColorComponent.RedChannel, indent));
+            s.append(componentRow(ColorComponent.GreenChannel, indent));
+            s.append(componentRow(ColorComponent.BlueChannel, indent));
+            s.append(componentRow(ColorComponent.Hue, indent));
+            s.append(componentRow(ColorComponent.Saturation, indent));
+            s.append(componentRow(ColorComponent.Brightness, indent));
+            s.append(componentRow(ColorComponent.AlphaChannel, indent));
+
+            s.append(indent).append(indent).append(indent).append("</TABLE >\n");
+            s.append(indent).append(indent).append("</DIV>\n");
+
+            final String html = HtmlTools.html(null, s.toString());
+            colorsView.getEngine().loadContent​(html);
 
         } catch (Exception e) {
             logger.error(e.toString());
         }
+    }
+
+    protected String componentRow(ColorComponent component, String indent) {
+        IntStatistic d = data.statistic(component);
+        StringBuilder s = new StringBuilder();
+        s.append(indent).append(indent).append(indent).append(indent).append("<TR>");
+        s.append("<TD>").append(message(component.name())).append("</TD>");
+        s.append(componentColumn(component, d.getMean()));
+        s.append(componentColumn(component, d.getVariance()));
+        s.append(componentColumn(component, d.getSkewness()));
+        s.append(componentColumn(component, d.getMode()));
+        s.append(componentColumn(component, d.getMedian()));
+        s.append(componentColumn(component, d.getMaximum()));
+        s.append(componentColumn(component, d.getMinimum()));
+        s.append("</TR>\n");
+        return s.toString();
+    }
+
+    protected String componentColumn(ColorComponent component, int value) {
+        Color color = ImageColor.converColor(ImageStatistic.color(component, value));
+        String rgb = "#" + color.toString().substring(2, 8);
+        String v = StringTools.fillRightBlank(value + "", 3);
+        return "<TD align=\"center\"><DIV style=\"white-space:nowrap;\">"
+                + "<DIV style=\"display: inline-block; \">" + v + "&nbsp;&nbsp;</DIV>"
+                + "<DIV style=\"display: inline-block; width: 30px;  background-color:" + rgb
+                + "; \">&nbsp;&nbsp;&nbsp;</DIV></DIV></TD>";
     }
 
     protected void showComponentsHistogram() {
@@ -901,11 +878,12 @@ public class ImageDataController extends ImageViewerController {
             WebView view, BarChart barchart) {
         try {
             List<String> names = new ArrayList<>();
-            names.addAll(Arrays.asList(message("Value"), message("PixelsNumber"), message("Percentage"),
-                    "RGBA", "RGB", message("Red"), message("Green"), message("Blue"), message("Opacity"),
+            names.addAll(Arrays.asList(message("Value"), message("PixelsNumber"),
+                    message("Percentage"), message("Color"),
+                    message("Red"), message("Green"), message("Blue"), message("Opacity"),
                     message("Hue"), message("Brightness"), message("Saturation")
             ));
-            StringTable table = new StringTable(names, message(component.name()), 4);
+            StringTable table = new StringTable(names, message(component.name()), 3);
             long total = (long) (image.getWidth() * image.getHeight());
             int[] histogram = data.histogram(component);
             for (int i = histogram.length - 1; i >= 0; i--) {
@@ -915,11 +893,9 @@ public class ImageDataController extends ImageViewerController {
                 int green = aColor.getGreen();
                 int blue = aColor.getBlue();
                 Color fColor = ImageColor.converColor(aColor);
-                String cString = "#" + fColor.toString().substring(2, 8);
                 row.addAll(Arrays.asList(i + "", histogram[i] + "",
                         (int) (histogram[i] * 100 / total) + "%",
-                        fColor.toString(), cString,
-                        red + " ", green + " ", blue + " ",
+                        fColor.toString(), red + " ", green + " ", blue + " ",
                         (int) Math.round(fColor.getOpacity() * 100) + "%",
                         Math.round(fColor.getHue()) + " ",
                         Math.round(fColor.getSaturation() * 100) + "%",
@@ -947,21 +923,6 @@ public class ImageDataController extends ImageViewerController {
             }
             barchart.setLegendVisible(false);
 
-//            ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
-//            for (int i = histogram.length - 1; i >= 0; i--) {
-//                Color color = colorValue(colorName, i);
-//                String name = "#" + color.toString().substring(2, 8) + "  "
-//                        + (int) (histogram[i] * 100 / total) + "%";
-//                pieChartData.add(new PieChart.Data(name, histogram[i]));
-//            }
-//            pie.setLegendVisible(false);
-//            pie.setData(pieChartData);
-//            for (int i = histogram.length - 1; i >= 0; i--) {
-//                Color color = colorValue(colorName, i);
-//                String colorString = FxmlColor.rgb2Hex(ImageColor.converColor(color));
-//                PieChart.Data data = pieChartData.get(i);
-//                data.getNode().setStyle("-fx-pie-color: " + colorString + ";");
-//            }
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -985,146 +946,142 @@ public class ImageDataController extends ImageViewerController {
             }
             recordFileWritten(file);
 
-            Screen screen = Screen.getPrimary();
-            double scaleX = screen.getOutputScaleX();
-            double scaleY = screen.getOutputScaleY();
+            double scale = FxmlControl.dpiScale();
             SnapshotParameters snapPara = new SnapshotParameters();
             snapPara.setFill(Color.TRANSPARENT);
-            snapPara.setTransform(Transform.scale(scaleX, scaleY));
+            snapPara.setTransform(Transform.scale(scale, scale));
 
-            Bounds bounds = colorsTable.getLayoutBounds();
-            int imageWidth = (int) Math.round(bounds.getWidth() * scaleX);
-            int imageHeight = (int) Math.round(bounds.getHeight() * scaleY);
-            WritableImage snapshot = new WritableImage(imageWidth, imageHeight);
-            final Image colorsTableSnap = colorsTable.snapshot(snapPara, snapshot);
-
-            bounds = colorsBarchart.getLayoutBounds();
-            imageWidth = (int) Math.round(bounds.getWidth() * scaleX);
-            imageHeight = (int) Math.round(bounds.getHeight() * scaleY);
-            snapshot = new WritableImage(imageWidth, imageHeight);
-            final Image colorsBarchartSnap = colorsBarchart.snapshot(snapPara, snapshot);
-
+            // Display the object when make snapshot, so need switch to each tab
             Tab currentTab = dataPane.getSelectionModel().getSelectedItem();
 
-            popInformation(message("Handling..."));
+            dataPane.getSelectionModel().select(colorsTab);
+            String html = (String) colorsView.getEngine().executeScript("document.documentElement.outerHTML");
+            Thread.sleep(50);
+            final String colorsViewHml = HtmlTools.body(html);
+
+            Bounds bounds = colorsBarchart.getLayoutBounds();
+            int imageWidth = (int) Math.round(bounds.getWidth() * scale);
+            int imageHeight = (int) Math.round(bounds.getHeight() * scale);
+            WritableImage snapshot = new WritableImage(imageWidth, imageHeight);
+            final Image colorsBarchartSnap = colorsBarchart.snapshot(snapPara, snapshot);
 
             dataPane.getSelectionModel().select(dominantTab);
-            String html = (String) dominantView1.getEngine().executeScript("document.documentElement.outerHTML");
-            Thread.sleep(150);
+            html = (String) dominantView1.getEngine().executeScript("document.documentElement.outerHTML");
+            Thread.sleep(50);
             final String dominantView1Hml = HtmlTools.body(html);
 
             bounds = dominantPie1.getLayoutBounds();
-            imageWidth = (int) Math.round(bounds.getWidth() * scaleX);
-            imageHeight = (int) Math.round(bounds.getHeight() * scaleY);
+            imageWidth = (int) Math.round(bounds.getWidth() * scale);
+            imageHeight = (int) Math.round(bounds.getHeight() * scale);
             snapshot = new WritableImage(imageWidth, imageHeight);
-            Thread.sleep(150);
+            Thread.sleep(50);
             final Image dominantPie1Snap = dominantPie1.snapshot(snapPara, snapshot);
 
             html = (String) dominantView2.getEngine().executeScript("document.documentElement.outerHTML");
-            Thread.sleep(150);
+            Thread.sleep(50);
             final String dominantView2Hml = HtmlTools.body(html);
 
             bounds = dominantPie2.getLayoutBounds();
-            imageWidth = (int) Math.round(bounds.getWidth() * scaleX);
-            imageHeight = (int) Math.round(bounds.getHeight() * scaleY);
+            imageWidth = (int) Math.round(bounds.getWidth() * scale);
+            imageHeight = (int) Math.round(bounds.getHeight() * scale);
             snapshot = new WritableImage(imageWidth, imageHeight);
-            Thread.sleep(150);
+            Thread.sleep(50);
             final Image dominantPie2Snap = dominantPie2.snapshot(snapPara, snapshot);
 
             dataPane.getSelectionModel().select(grayTab);
             html = (String) grayView.getEngine().executeScript("document.documentElement.outerHTML");
-            Thread.sleep(150);
+            Thread.sleep(50);
             final String greyHtml = HtmlTools.body(html);
 
             bounds = grayBarchart.getLayoutBounds();
-            imageWidth = (int) Math.round(bounds.getWidth() * scaleX);
-            imageHeight = (int) Math.round(bounds.getHeight() * scaleY);
+            imageWidth = (int) Math.round(bounds.getWidth() * scale);
+            imageHeight = (int) Math.round(bounds.getHeight() * scale);
             snapshot = new WritableImage(imageWidth, imageHeight);
-            Thread.sleep(150);
+            Thread.sleep(50);
             final Image greyBarchartSnap = grayBarchart.snapshot(snapPara, snapshot);
 
             dataPane.getSelectionModel().select(redTab);
             html = (String) redView.getEngine().executeScript("document.documentElement.outerHTML");
-            Thread.sleep(150);
+            Thread.sleep(50);
             final String redHtml = HtmlTools.body(html);
 
             bounds = redBarchart.getLayoutBounds();
-            imageWidth = (int) Math.round(bounds.getWidth() * scaleX);
-            imageHeight = (int) Math.round(bounds.getHeight() * scaleY);
+            imageWidth = (int) Math.round(bounds.getWidth() * scale);
+            imageHeight = (int) Math.round(bounds.getHeight() * scale);
             snapshot = new WritableImage(imageWidth, imageHeight);
-            Thread.sleep(150);
+            Thread.sleep(50);
             final Image redBarchartSnap = redBarchart.snapshot(snapPara, snapshot);
 
             dataPane.getSelectionModel().select(greenTab);
             html = (String) greenView.getEngine().executeScript("document.documentElement.outerHTML");
-            Thread.sleep(150);
+            Thread.sleep(50);
             final String greenHtml = HtmlTools.body(html);
 
             bounds = greenBarchart.getLayoutBounds();
-            imageWidth = (int) Math.round(bounds.getWidth() * scaleX);
-            imageHeight = (int) Math.round(bounds.getHeight() * scaleY);
+            imageWidth = (int) Math.round(bounds.getWidth() * scale);
+            imageHeight = (int) Math.round(bounds.getHeight() * scale);
             snapshot = new WritableImage(imageWidth, imageHeight);
-            Thread.sleep(150);
+            Thread.sleep(50);
             final Image greenBarchartSnap = greenBarchart.snapshot(snapPara, snapshot);
 
             dataPane.getSelectionModel().select(blueTab);
             html = (String) blueView.getEngine().executeScript("document.documentElement.outerHTML");
-            Thread.sleep(150);
+            Thread.sleep(50);
             final String blueHtml = HtmlTools.body(html);
 
             bounds = blueBarchart.getLayoutBounds();
-            imageWidth = (int) Math.round(bounds.getWidth() * scaleX);
-            imageHeight = (int) Math.round(bounds.getHeight() * scaleY);
+            imageWidth = (int) Math.round(bounds.getWidth() * scale);
+            imageHeight = (int) Math.round(bounds.getHeight() * scale);
             snapshot = new WritableImage(imageWidth, imageHeight);
-            Thread.sleep(150);
+            Thread.sleep(50);
             final Image blueBarchartSnap = blueBarchart.snapshot(snapPara, snapshot);
 
             dataPane.getSelectionModel().select(hueTab);
             html = (String) hueView.getEngine().executeScript("document.documentElement.outerHTML");
-            Thread.sleep(150);
+            Thread.sleep(50);
             final String hueHtml = HtmlTools.body(html);
 
             bounds = hueBarchart.getLayoutBounds();
-            imageWidth = (int) Math.round(bounds.getWidth() * scaleX);
-            imageHeight = (int) Math.round(bounds.getHeight() * scaleY);
+            imageWidth = (int) Math.round(bounds.getWidth() * scale);
+            imageHeight = (int) Math.round(bounds.getHeight() * scale);
             snapshot = new WritableImage(imageWidth, imageHeight);
-            Thread.sleep(150);
+            Thread.sleep(50);
             final Image hueBarchartSnap = hueBarchart.snapshot(snapPara, snapshot);
 
             dataPane.getSelectionModel().select(brightnessTab);
             html = (String) brightnessView.getEngine().executeScript("document.documentElement.outerHTML");
-            Thread.sleep(150);
+            Thread.sleep(50);
             final String brightnessHtml = HtmlTools.body(html);
 
             bounds = brightnessBarchart.getLayoutBounds();
-            imageWidth = (int) Math.round(bounds.getWidth() * scaleX);
-            imageHeight = (int) Math.round(bounds.getHeight() * scaleY);
+            imageWidth = (int) Math.round(bounds.getWidth() * scale);
+            imageHeight = (int) Math.round(bounds.getHeight() * scale);
             snapshot = new WritableImage(imageWidth, imageHeight);
-            Thread.sleep(150);
+            Thread.sleep(50);
             final Image brightnessBarchartSnap = brightnessBarchart.snapshot(snapPara, snapshot);
 
             dataPane.getSelectionModel().select(saturationTab);
             html = (String) saturationView.getEngine().executeScript("document.documentElement.outerHTML");
-            Thread.sleep(150);
+            Thread.sleep(50);
             final String saturationHtml = HtmlTools.body(html);
 
             bounds = saturationBarchart.getLayoutBounds();
-            imageWidth = (int) Math.round(bounds.getWidth() * scaleX);
-            imageHeight = (int) Math.round(bounds.getHeight() * scaleY);
+            imageWidth = (int) Math.round(bounds.getWidth() * scale);
+            imageHeight = (int) Math.round(bounds.getHeight() * scale);
             snapshot = new WritableImage(imageWidth, imageHeight);
-            Thread.sleep(150);
+            Thread.sleep(50);
             final Image saturationBarchartSnap = saturationBarchart.snapshot(snapPara, snapshot);
 
             dataPane.getSelectionModel().select(alphaTab);
             html = (String) alphaView.getEngine().executeScript("document.documentElement.outerHTML");
-            Thread.sleep(150);
+            Thread.sleep(50);
             final String alphaHtml = HtmlTools.body(html);
 
             bounds = alphaBarchart.getLayoutBounds();
-            imageWidth = (int) Math.round(bounds.getWidth() * scaleX);
-            imageHeight = (int) Math.round(bounds.getHeight() * scaleY);
+            imageWidth = (int) Math.round(bounds.getWidth() * scale);
+            imageHeight = (int) Math.round(bounds.getHeight() * scale);
             snapshot = new WritableImage(imageWidth, imageHeight);
-            Thread.sleep(150);
+            Thread.sleep(50);
             final Image alphaBarchartSnap = alphaBarchart.snapshot(snapPara, snapshot);
 
             dataPane.getSelectionModel().select(currentTab);
@@ -1144,7 +1101,7 @@ public class ImageDataController extends ImageViewerController {
                             (new File(path)).mkdirs();
 
                             StringBuilder s = new StringBuilder();
-                            s.append("<h1  class=\"center\">").append(message("ImageData")).append("</h1>\n");
+                            s.append("<h1  class=\"center\">").append(message("ImageAnalyse")).append("</h1>\n");
                             s.append("<hr>\n");
 
                             s.append("<h2  class=\"center\">").append(message("Image")).append("</h2>\n");
@@ -1154,21 +1111,14 @@ public class ImageDataController extends ImageViewerController {
                             BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
                             ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "image.jpg");
                             String imageName = subPath + "/image.jpg";
-                            s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"width:85%;\"></div>\n");
+                            s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"max-width:95%;\"></div>\n");
                             if (task == null || isCancelled()) {
                                 return false;
                             }
                             s.append("<hr>\n");
 
                             s.append("<h2  class=\"center\">").append(message("Summary")).append("</h2>\n");
-                            bufferedImage = SwingFXUtils.fromFXImage(colorsTableSnap, null);
-                            ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "colorsTableImage.jpg");
-                            imageName = subPath + "/colorsTableImage.jpg";
-                            s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"width:85%;\"></div>\n");
-                            if (task == null || isCancelled()) {
-                                return false;
-                            }
-
+                            s.append(colorsViewHml);
                             bufferedImage = SwingFXUtils.fromFXImage(colorsBarchartSnap, null);
                             ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "colorsBarchartImage.jpg");
                             imageName = subPath + "/colorsBarchartImage.jpg";
@@ -1178,7 +1128,6 @@ public class ImageDataController extends ImageViewerController {
                             }
 
                             s.append("\n<h2  class=\"center\">").append(message("DominantColors")).append("</h2>\n");
-                            s.append("<h3  class=\"center\">").append(message("DominantKMeansComments")).append("</h3>");
                             s.append(dominantView1Hml);
                             bufferedImage = SwingFXUtils.fromFXImage(dominantPie1Snap, null);
                             ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "dominantPie1Image.jpg");
@@ -1188,12 +1137,11 @@ public class ImageDataController extends ImageViewerController {
                                 return false;
                             }
 
-                            s.append("<h3  class=\"center\">").append(message("DominantPopularityComments")).append("</h3>");
                             s.append(dominantView2Hml);
                             bufferedImage = SwingFXUtils.fromFXImage(dominantPie2Snap, null);
                             ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "dominantPie2Image.jpg");
                             imageName = subPath + "/dominantPie2Image.jpg";
-                            s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"width:85%;\" ></div>\n");
+                            s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"max-width:95%;\" ></div>\n");
                             if (task == null || isCancelled()) {
                                 return false;
                             }
@@ -1202,7 +1150,7 @@ public class ImageDataController extends ImageViewerController {
                             bufferedImage = SwingFXUtils.fromFXImage(greyBarchartSnap, null);
                             ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "greyBarchartImage.jpg");
                             imageName = subPath + "/greyBarchartImage.jpg";
-                            s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"width:85%;\" ></div>\n");
+                            s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"max-width:95%;\" ></div>\n");
                             if (task == null || isCancelled()) {
                                 return false;
                             }
@@ -1211,7 +1159,7 @@ public class ImageDataController extends ImageViewerController {
                             bufferedImage = SwingFXUtils.fromFXImage(redBarchartSnap, null);
                             ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "redBarchartImage.jpg");
                             imageName = subPath + "/redBarchartImage.jpg";
-                            s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"width:85%;\" ></div>\n");
+                            s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"max-width:95%;\" ></div>\n");
                             if (task == null || isCancelled()) {
                                 return false;
                             }
@@ -1220,7 +1168,7 @@ public class ImageDataController extends ImageViewerController {
                             bufferedImage = SwingFXUtils.fromFXImage(greenBarchartSnap, null);
                             ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "greenBarchartImage.jpg");
                             imageName = subPath + "/greenBarchartImage.jpg";
-                            s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"width:85%;\" ></div>\n");
+                            s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"max-width:95%;\" ></div>\n");
                             if (task == null || isCancelled()) {
                                 return false;
                             }
@@ -1229,7 +1177,7 @@ public class ImageDataController extends ImageViewerController {
                             bufferedImage = SwingFXUtils.fromFXImage(blueBarchartSnap, null);
                             ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "blueBarchartImage.jpg");
                             imageName = subPath + "/blueBarchartImage.jpg";
-                            s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"width:85%;\" ></div>\n");
+                            s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"max-width:95%;\" ></div>\n");
                             if (task == null || isCancelled()) {
                                 return false;
                             }
@@ -1238,7 +1186,7 @@ public class ImageDataController extends ImageViewerController {
                             bufferedImage = SwingFXUtils.fromFXImage(hueBarchartSnap, null);
                             ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "hueBarchartImage.jpg");
                             imageName = subPath + "/hueBarchartImage.jpg";
-                            s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"width:85%;\" ></div>\n");
+                            s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"max-width:95%;\" ></div>\n");
                             if (task == null || isCancelled()) {
                                 return false;
                             }
@@ -1247,7 +1195,7 @@ public class ImageDataController extends ImageViewerController {
                             bufferedImage = SwingFXUtils.fromFXImage(saturationBarchartSnap, null);
                             ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "saturationBarchartImage.jpg");
                             imageName = subPath + "/saturationBarchartImage.jpg";
-                            s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"width:85%;\" ></div>\n");
+                            s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"max-width:95%;\" ></div>\n");
                             if (task == null || isCancelled()) {
                                 return false;
                             }
@@ -1256,7 +1204,7 @@ public class ImageDataController extends ImageViewerController {
                             bufferedImage = SwingFXUtils.fromFXImage(brightnessBarchartSnap, null);
                             ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "brightnessBarchartImage.jpg");
                             imageName = subPath + "/brightnessBarchartImage.jpg";
-                            s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"width:85%;\" ></div>\n");
+                            s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"max-width:95%;\" ></div>\n");
                             if (task == null || isCancelled()) {
                                 return false;
                             }
@@ -1265,7 +1213,7 @@ public class ImageDataController extends ImageViewerController {
                             bufferedImage = SwingFXUtils.fromFXImage(alphaBarchartSnap, null);
                             ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "alphaBarchartImage.jpg");
                             imageName = subPath + "/alphaBarchartImage.jpg";
-                            s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"width:85%;\" ></div>\n");
+                            s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"max-width:95%;\" ></div>\n");
                             if (task == null || isCancelled()) {
                                 return false;
                             }

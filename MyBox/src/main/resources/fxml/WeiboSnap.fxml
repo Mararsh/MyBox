@@ -93,23 +93,6 @@ License:    Apache License Version 2.0
                                                                 </CheckBox>
                                                             </children>
                                                         </HBox>
-                                                        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="140.0" spacing="10.0">
-                                                            <children>
-                                                                <Label text="%FailedRetryTimes">
-                                                                    <HBox.margin>
-                                                                        <Insets />
-                                                                    </HBox.margin>
-                                                                </Label>
-                                                                <ComboBox fx:id="retryBox" prefWidth="80.0" />
-                                                <Label text="%MinAccessInterval">
-                                                   <HBox.margin>
-                                                      <Insets left="30.0" />
-                                                   </HBox.margin>
-                                                </Label>
-                                                <TextField fx:id="accessIntervalInput" prefWidth="80.0" />
-                                                <Label text="%MinAccessIntervalComments" />
-                                                            </children>
-                                                        </HBox>
                                                     </children>
                                                     <padding>
                                                         <Insets top="10.0" />
@@ -279,6 +262,50 @@ License:    Apache License Version 2.0
                                                 </VBox>
                                             </content>
                                         </Tab>
+                              <Tab text="%NetworkOptions">
+                                 <content>
+                                    <VBox spacing="10.0">
+                                       <padding>
+                                          <Insets top="10.0" />
+                                       </padding>
+                                       <children>
+                                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                                            <children>
+                                                                <Label text="%FailedRetryTimes">
+                                                                    <HBox.margin>
+                                                                        <Insets />
+                                                                    </HBox.margin>
+                                                                </Label>
+                                                                <ComboBox fx:id="retryBox" prefWidth="80.0" />
+                                                <Label text="%MinAccessInterval">
+                                                   <HBox.margin>
+                                                      <Insets left="30.0" />
+                                                   </HBox.margin>
+                                                </Label>
+                                                <TextField fx:id="accessIntervalInput" prefWidth="80.0" />
+                                                <Label text="%MinAccessIntervalComments" />
+                                                            </children>
+                                                        </HBox>
+                                          <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="20.0" spacing="10.0">
+                                             <children>
+                                                <Label text="%PassportAddress" />
+                                                <TextField fx:id="passportInput" maxWidth="1.7976931348623157E308" text="https://passport.weibo.com/visitor/visitor?entry=miniblog" HBox.hgrow="ALWAYS" />
+                                                <Button fx:id="recoverPassportButton" mnemonicParsing="false" onAction="#recoverPassport" onMouseEntered="#popTargetPath">
+                                                   <graphic>
+                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                         <image>
+                                                            <Image url="@../buttons/iconRecover.png" />
+                                                         </image>
+                                                      </ImageView>
+                                                   </graphic>
+                                                </Button>
+                                             </children>
+                                          </HBox>
+                                          <Label text="%WeiboPassportComments" />
+                                       </children>
+                                    </VBox>
+                                 </content>
+                              </Tab>
                                     </tabs>
                                     <VBox.margin>
                                         <Insets />
@@ -299,7 +326,7 @@ License:    Apache License Version 2.0
                                     <children>
                                         <Label text="%FilesPath" />
                                         <TextField fx:id="targetPathInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                        <Button fx:id="selectTargetPathButton" mnemonicParsing="false" onAction="#selectTargetPath" onMouseEntered="#popTargetPath">
+                                        <Button fx:id="selectPathTargetButton" mnemonicParsing="false" onAction="#selectTargetPath" onMouseEntered="#popTargetPath">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>

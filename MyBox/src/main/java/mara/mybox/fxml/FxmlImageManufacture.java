@@ -980,7 +980,23 @@ public class FxmlImageManufacture {
         return newImage;
     }
 
-    public static boolean isImageSame(Image imageA, Image imageB) {
+    public static byte[] bytes(Image image) {
+        return ImageManufacture.bytes(SwingFXUtils.fromFXImage(image, null));
+    }
+
+    public static boolean same(Image imageA, Image imageB) {
+        if (imageA == null || imageB == null
+                || imageA.getWidth() != imageB.getWidth()
+                || imageA.getHeight() != imageB.getHeight()) {
+            return false;
+        }
+        return ImageManufacture.same(
+                SwingFXUtils.fromFXImage(imageA, null),
+                SwingFXUtils.fromFXImage(imageB, null));
+    }
+
+    // This way may be more quicker than comparing digests
+    public static boolean sameImage(Image imageA, Image imageB) {
         if (imageA == null || imageB == null
                 || imageA.getWidth() != imageB.getWidth()
                 || imageA.getHeight() != imageB.getHeight()) {

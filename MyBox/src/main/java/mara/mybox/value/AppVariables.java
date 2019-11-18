@@ -52,7 +52,6 @@ public class AppVariables {
     public static String lastError;
 
     public AppVariables() {
-
     }
 
     public static void initAppVaribles() {

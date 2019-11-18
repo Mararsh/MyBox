@@ -14,7 +14,6 @@ import javafx.scene.control.ToggleGroup;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.tools.FileTools;
-import thridparty.PDFResourceToDirHandler;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
@@ -23,6 +22,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.fit.pdfdom.PDFDomTree;
 import org.fit.pdfdom.PDFDomTreeConfig;
 import org.fit.pdfdom.resource.IgnoreResourceHandler;
+import thridparty.PDFResourceToDirHandler;
 
 /**
  * @Author Mara
@@ -107,9 +107,9 @@ public class PdfConvertHtmlsBatchController extends PdfBatchController {
     public String handleFile(File srcFile, File targetPath) {
         int generated = 0;
         doc = null;
-
         if (PdfTools.isPDF(srcFile)) {
             try {
+                showHandling(srcFile);
                 currentParameters.currentSourceFile = srcFile;
                 if (!isPreview) {
                     PdfInformation info = tableData.get(currentParameters.currentIndex);
@@ -123,7 +123,7 @@ public class PdfConvertHtmlsBatchController extends PdfBatchController {
                     actualParameters.currentPage = actualParameters.fromPage;
                 }
 
-                try (PDDocument pd = PDDocument.load(currentParameters.currentSourceFile,
+                try ( PDDocument pd = PDDocument.load(currentParameters.currentSourceFile,
                         currentParameters.password, AppVariables.pdfMemUsage)) {
                     doc = pd;
 
@@ -214,7 +214,7 @@ public class PdfConvertHtmlsBatchController extends PdfBatchController {
             PDFDomTree parser = new PDFDomTree(domConfig);
             parser.setStartPage(start);                                       // 1-based
             parser.setEndPage(end);
-            try (Writer output = new PrintWriter(htmlFile, "utf-8")) {
+            try ( Writer output = new PrintWriter(htmlFile, "utf-8")) {
                 parser.writeText(doc, output);
                 return htmlFile;
             } catch (Exception e) {

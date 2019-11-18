@@ -16,13 +16,16 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.shape.Line;
+import javax.imageio.ImageIO;
 import mara.mybox.data.DoubleCircle;
 import mara.mybox.data.DoubleEllipse;
 import mara.mybox.data.DoubleLines;
@@ -34,6 +37,7 @@ import mara.mybox.data.DoubleShape;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.image.ImageCombine.CombineSizeType;
 import mara.mybox.image.ImageMosaic.MosaicType;
+import mara.mybox.tools.SystemTools;
 import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonImageValues;
 import mara.mybox.value.CommonValues;
@@ -154,6 +158,43 @@ public class ImageManufacture {
             logger.error(e.toString());
             return null;
         }
+    }
+
+    // https://stackoverflow.com/questions/24038524/how-to-get-byte-from-javafx-imageview
+    public static byte[] bytes(BufferedImage image) {
+        byte[] bytes = null;
+        try ( ByteArrayOutputStream stream = new ByteArrayOutputStream();) {
+            ImageIO.write(image, "png", stream);
+            bytes = stream.toByteArray();
+        } catch (Exception e) {
+        }
+        return bytes;
+    }
+
+    public static boolean same(BufferedImage imageA, BufferedImage imageB) {
+        if (imageA == null || imageB == null
+                || imageA.getWidth() != imageB.getWidth()
+                || imageA.getHeight() != imageB.getHeight()) {
+            return false;
+        }
+        return Arrays.equals(SystemTools.MD5(imageA), SystemTools.MD5(imageB));
+    }
+
+    // This way may be more quicker than comparing digests
+    public static boolean sameImage(BufferedImage imageA, BufferedImage imageB) {
+        if (imageA == null || imageB == null
+                || imageA.getWidth() != imageB.getWidth()
+                || imageA.getHeight() != imageB.getHeight()) {
+            return false;
+        }
+        for (int y = 0; y < imageA.getHeight(); y++) {
+            for (int x = 0; x < imageA.getWidth(); x++) {
+                if (imageA.getRGB(x, y) != imageB.getRGB(x, y)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     public static BufferedImage scaleImage(BufferedImage source, int width, int height) {

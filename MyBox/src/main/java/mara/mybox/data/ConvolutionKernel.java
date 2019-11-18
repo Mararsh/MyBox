@@ -292,6 +292,30 @@ public class ConvolutionKernel {
         return kernel;
     }
 
+    public static ConvolutionKernel makeMotionBlur(int radius, int angle) {
+        ConvolutionKernel kernel = new ConvolutionKernel();
+        int length = radius * 2 + 1;
+        kernel.setName(AppVariables.message("MotionBlur") + " " + length + "*" + length);
+        kernel.setCreateTime(DateTools.datetimeToString(new Date()));
+        kernel.setModifyTime(DateTools.datetimeToString(new Date()));
+        kernel.setWidth(length);
+        kernel.setHeight(length);
+        kernel.setType(Convolution_Type.BLUR);
+        kernel.setDescription("");
+
+        float[][] k = new float[length][length];
+        for (int i = 0; i < length; i++) {
+            for (int j = 0; j < length; j++) {
+                k[i][j] = (float) Math.sin(angle);
+            }
+        }
+
+        k[radius][radius] = 2 + k[radius][radius];
+//        logger.debug(MatrixTools.print(FloatTools.toDouble(k), 0, 8));
+        kernel.setMatrix(k);
+        return kernel;
+    }
+
     public static ConvolutionKernel makeMotionBlur3() {
         ConvolutionKernel kernel = new ConvolutionKernel();
         kernel.setName(AppVariables.message("MotionBlur") + " 3*3");

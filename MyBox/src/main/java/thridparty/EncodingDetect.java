@@ -89,15 +89,11 @@ public class EncodingDetect {
         }
 
         public int detectEncoding(File testfile) {
-            FileInputStream fileis;
             byte[] rawtext = new byte[MAX_CHECK_BYTES];  // ##### Updated by Mara
-            try {
-                fileis = new FileInputStream(testfile);
+            try ( FileInputStream fileis = new FileInputStream(testfile)) {
                 fileis.read(rawtext);
-                fileis.close();
             } catch (Exception e) {
-                System.err.println("Error: " + e);
-                System.err.println();
+                return OTHER;
             }
             return detectEncoding(rawtext);
         }

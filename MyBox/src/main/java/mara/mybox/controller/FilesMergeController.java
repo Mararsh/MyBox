@@ -1,20 +1,20 @@
 package mara.mybox.controller;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.util.Date;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
 import mara.mybox.data.FileInformation;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonImageValues;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -23,6 +23,8 @@ import mara.mybox.value.CommonImageValues;
  * @License Apache License Version 2.0
  */
 public class FilesMergeController extends FilesBatchController {
+
+    protected BufferedOutputStream outputStream;
 
     public FilesMergeController() {
         baseTitle = AppVariables.message("FilesMerge");
@@ -56,112 +58,60 @@ public class FilesMergeController extends FilesBatchController {
 
     }
 
-    @FXML
     @Override
-    public void selectTargetFile() {
+    public void selectTargetFileFromPath(File path) {
         try {
-            final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
-                    null, CommonImageValues.AllExtensionFilter, false);
+            final File file = chooseSaveFile(path, null, CommonImageValues.AllExtensionFilter, true);
             if (file == null) {
                 return;
             }
-            recordFileWritten(file);
-            targetFileInput.setText(file.getAbsolutePath());
+            selectTargetFile(file);
         } catch (Exception e) {
 //            logger.error(e.toString());
         }
     }
 
     @Override
-    public void doCurrentProcess() {
+    public boolean makeBatchParameters() {
         try {
-            if (targetFile == null || tableData.isEmpty()) {
-                return;
-            }
-            currentParameters.startTime = new Date();
-            currentParameters.currentTotalHandled = 0;
-            updateInterface("Started");
-            synchronized (this) {
-                if (task != null) {
-                    return;
-                }
-                task = new SingletonTask<Void>() {
-
-                    @Override
-                    protected Void call() {
-                        try {
-                            int bufSize = 4096;
-                            try (FileOutputStream outputStream = new FileOutputStream(targetFile)) {
-                                byte[] buf = new byte[bufSize];
-                                int bufLen;
-                                for (; currentParameters.currentIndex < sourcesIndice.size();) {
-                                    if (isCancelled()) {
-                                        break;
-                                    }
-                                    FileInformation d = tableData.get(sourcesIndice.get(currentParameters.currentIndex));
-                                    try (FileInputStream inputStream
-                                            = new FileInputStream(d.getFile())) {
-                                        while ((bufLen = inputStream.read(buf)) != -1) {
-                                            if (bufSize > bufLen) {
-                                                buf = ByteTools.subBytes(buf, 0, bufLen);
-                                            }
-                                            outputStream.write(buf);
-                                        }
-                                    }
-                                    d.setHandled(AppVariables.message("Successful"));
-                                    tableView.refresh();
-                                    currentParameters.currentIndex++;
-                                    currentParameters.currentTotalHandled++;
-
-                                    updateTaskProgress(currentParameters.currentIndex, sourcesIndice.size());
-
-                                    if (isCancelled() || isPreview) {
-                                        break;
-                                    }
-                                }
-                            }
-                            actualParameters.finalTargetName = targetFile.getAbsolutePath();
-                            targetFiles.add(targetFile);
-                            ok = true;
-                        } catch (Exception e) {
-                            logger.error(e.toString());
-                        }
-
-                        return null;
-                    }
-
-                    @Override
-                    protected void whenSucceeded() {
-                        updateInterface("Done");
-                    }
-
-                    @Override
-                    protected void cancelled() {
-                        super.cancelled();
-                        updateInterface("Canceled");
-                    }
-
-                    @Override
-                    protected void failed() {
-                        super.failed();
-                        updateInterface("Failed");
-                    }
-                };
-                operationBarController.progressValue.textProperty().bind(task.messageProperty());
-                operationBarController.progressBar.progressProperty().bind(task.progressProperty());
-                Thread thread = new Thread(task);
-                thread.setDaemon(true);
-                thread.start();
-            }
+            outputStream = new BufferedOutputStream(new FileOutputStream(targetFile));
         } catch (Exception e) {
-            updateInterface("Failed");
-            logger.error(e.toString());
+            return false;
+        }
+        return super.makeBatchParameters();
+    }
+
+    @Override
+    public String handleFile(File file) {
+        try {
+            if (!match(file)) {
+                return AppVariables.message("Skip");
+            }
+            byte[] buf = new byte[CommonValues.IOBufferLength];
+            int bufLen;
+            FileInformation d = tableData.get(currentParameters.currentIndex);
+            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(d.getFile()))) {
+                while ((bufLen = inputStream.read(buf)) != -1) {
+                    buf = ByteTools.subBytes(buf, 0, bufLen);
+                    outputStream.write(buf);
+                }
+            }
+            return AppVariables.message("Successful");
+        } catch (Exception e) {
+            return AppVariables.message("Failed");
         }
     }
 
     @Override
-    public void openTarget(ActionEvent event) {
-        view(targetFile);
+    public void donePost() {
+        try {
+            outputStream.close();
+            actualParameters.finalTargetName = targetFile.getAbsolutePath();
+            targetFiles.add(targetFile);
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+        super.donePost();
     }
 
 }

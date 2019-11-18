@@ -20,6 +20,7 @@ import javafx.scene.control.SelectionMode;
 import mara.mybox.data.ConvolutionKernel;
 import mara.mybox.data.StringTable;
 import static mara.mybox.fxml.FxmlControl.badStyle;
+import mara.mybox.image.ImageBinary;
 import mara.mybox.image.ImageContrast;
 import mara.mybox.image.ImageConvolution;
 import mara.mybox.image.ImageManufacture;
@@ -91,6 +92,7 @@ public class ImageOCRBatchController extends ImagesBatchController {
                 public void changed(ObservableValue<? extends String> v, String oldV, String newV) {
                     try {
                         if (newV == null || newV.isEmpty()) {
+                            scale = 1;
                             return;
                         }
                         float f = Float.valueOf(newV);
@@ -116,6 +118,7 @@ public class ImageOCRBatchController extends ImagesBatchController {
                 public void changed(ObservableValue<? extends String> v, String oldV, String newV) {
                     try {
                         if (newV == null || newV.isEmpty()) {
+                            threshold = 0;
                             return;
                         }
                         int i = Integer.valueOf(newV);
@@ -148,6 +151,7 @@ public class ImageOCRBatchController extends ImagesBatchController {
                 public void changed(ObservableValue<? extends String> v, String oldV, String newV) {
                     try {
                         if (newV == null || newV.isEmpty()) {
+                            rotate = 0;
                             return;
                         }
                         rotate = Integer.valueOf(newV);
@@ -418,7 +422,7 @@ public class ImageOCRBatchController extends ImagesBatchController {
     @Override
     public String handleFile(File srcFile, File targetPath) {
         try {
-
+            showHandling(srcFile);
             File target = makeTargetFile(srcFile, targetPath);
             if (target == null) {
                 return AppVariables.message("Skip");
@@ -429,7 +433,12 @@ public class ImageOCRBatchController extends ImagesBatchController {
                 return AppVariables.message("Failed");
             }
 
-            if (rotate > 0) {
+            if (threshold > 0) {
+                ImageBinary bin = new ImageBinary(lastImage, threshold);
+                lastImage = bin.operateImage();
+            }
+
+            if (rotate != 0) {
                 lastImage = ImageManufacture.rotateImage(lastImage, rotate);
             }
             if (scale > 0 && scale != 1) {
@@ -437,7 +446,7 @@ public class ImageOCRBatchController extends ImagesBatchController {
             }
 
             String enhance = enhancementSelector.getValue();
-            if (enhance == null) {
+            if (enhance == null || enhance.trim().isEmpty()) {
             } else if (message("GrayHistogramEqualization").equals(enhance)) {
                 ImageContrast imageContrast = new ImageContrast(lastImage,
                         ImageContrast.ContrastAlgorithm.Gray_Histogram_Equalization);
@@ -463,32 +472,32 @@ public class ImageOCRBatchController extends ImagesBatchController {
 
             } else if (message("UnsharpMasking").equals(enhance)) {
                 ConvolutionKernel kernel = ConvolutionKernel.makeUnsharpMasking(3);
-                ImageConvolution imageConvolution
-                        = new ImageConvolution(lastImage, null, kernel);
+                ImageConvolution imageConvolution = ImageConvolution.create().
+                        setImage(lastImage).setKernel(kernel);
                 lastImage = imageConvolution.operateImage();
 
             } else if (message("FourNeighborLaplace").equals(enhance)) {
                 ConvolutionKernel kernel = ConvolutionKernel.MakeSharpenFourNeighborLaplace();
-                ImageConvolution imageConvolution
-                        = new ImageConvolution(lastImage, null, kernel);
+                ImageConvolution imageConvolution = ImageConvolution.create().
+                        setImage(lastImage).setKernel(kernel);
                 lastImage = imageConvolution.operateImage();
 
             } else if (message("EightNeighborLaplace").equals(enhance)) {
                 ConvolutionKernel kernel = ConvolutionKernel.MakeSharpenEightNeighborLaplace();
-                ImageConvolution imageConvolution
-                        = new ImageConvolution(lastImage, null, kernel);
+                ImageConvolution imageConvolution = ImageConvolution.create().
+                        setImage(lastImage).setKernel(kernel);
                 lastImage = imageConvolution.operateImage();
 
             } else if (message("GaussianBlur").equals(enhance)) {
                 ConvolutionKernel kernel = ConvolutionKernel.makeGaussBlur(3);
-                ImageConvolution imageConvolution
-                        = new ImageConvolution(lastImage, null, kernel);
+                ImageConvolution imageConvolution = ImageConvolution.create().
+                        setImage(lastImage).setKernel(kernel);
                 lastImage = imageConvolution.operateImage();
 
             } else if (message("AverageBlur").equals(enhance)) {
                 ConvolutionKernel kernel = ConvolutionKernel.makeAverageBlur(1);
-                ImageConvolution imageConvolution
-                        = new ImageConvolution(lastImage, null, kernel);
+                ImageConvolution imageConvolution = ImageConvolution.create().
+                        setImage(lastImage).setKernel(kernel);
                 lastImage = imageConvolution.operateImage();
 
             }
@@ -528,6 +537,9 @@ public class ImageOCRBatchController extends ImagesBatchController {
             if (htmlCheck.isSelected()) {
                 File hocrFile = new File(prefix + ".hocr");
                 File htmlFile = new File(prefix + ".html");
+                if (htmlFile.exists()) {
+                    htmlFile.delete();
+                }
                 hocrFile.renameTo(htmlFile);
                 targetFiles.add(htmlFile);
             }
@@ -559,7 +571,7 @@ public class ImageOCRBatchController extends ImagesBatchController {
                 String html = StringTable.tableHtml(table);
                 File wordsFile = new File(prefix + "_words.html");
                 if (FileTools.writeFile(wordsFile, html) != null) {
-                    targetFiles.add(wordsFile);;
+                    targetFiles.add(wordsFile);
                 } else {
                 }
             }
@@ -583,7 +595,7 @@ public class ImageOCRBatchController extends ImagesBatchController {
                 String html = StringTable.tableHtml(table);
                 File regionsFile = new File(prefix + "_regions.html");
                 if (FileTools.writeFile(regionsFile, html) != null) {
-                    targetFiles.add(regionsFile);;
+                    targetFiles.add(regionsFile);
                 } else {
                 }
             }

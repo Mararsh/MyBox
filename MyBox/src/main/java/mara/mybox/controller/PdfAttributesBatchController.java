@@ -357,9 +357,10 @@ public class PdfAttributesBatchController extends PdfBatchController {
             return message("Skip");
         }
         try {
+            showHandling(srcFile);
             PdfInformation rowInfo = tableData.get(currentParameters.currentIndex);
             String filePassword = rowInfo.getOwnerPassword();
-            try (PDDocument pd = PDDocument.load(srcFile, filePassword, AppVariables.pdfMemUsage)) {
+            try ( PDDocument pd = PDDocument.load(srcFile, filePassword, AppVariables.pdfMemUsage)) {
                 PDDocumentInformation docInfo = pd.getDocumentInformation();
                 if (authorCheck.isSelected()) {
                     docInfo.setAuthor(authorInput.getText());

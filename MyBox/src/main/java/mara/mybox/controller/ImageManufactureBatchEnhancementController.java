@@ -566,7 +566,8 @@ public class ImageManufactureBatchEnhancementController extends ImageManufacture
                         if (kernel == null) {
                             return null;
                         }
-                        imageConvolution = new ImageConvolution(source, kernel);
+                        imageConvolution = ImageConvolution.create().
+                                setImage(source).setKernel(kernel);
                         target = imageConvolution.operate();
                         break;
                     default:

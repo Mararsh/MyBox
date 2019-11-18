@@ -201,6 +201,7 @@ License:    Apache License Version 2.0
                 <Label fx:id="setLabel" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%PdfTableInputComments" />
             </children>
         </FlowPane>
+        <Label fx:id="tableLabel" styleClass="blue-label" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER" />
         <FlowPane fx:id="selectPane" hgap="5.0" layoutX="10.0" layoutY="504.0" vgap="5.0">
             <children>
                 <Label text="%FilesSelector" />
@@ -209,6 +210,5 @@ License:    Apache License Version 2.0
                 <Hyperlink fx:id="regexLink" onAction="#regexHelp" text="%RegularExpression" />
             </children>
         </FlowPane>
-        <Label fx:id="tableLabel" styleClass="blue-label" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER" />
     </children>
 </VBox>

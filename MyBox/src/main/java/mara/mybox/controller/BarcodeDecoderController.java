@@ -38,7 +38,8 @@ public class BarcodeDecoderController extends ImageViewerController {
 
     public BarcodeDecoderController() {
         baseTitle = AppVariables.message("BarcodeDecoder");
-
+        needNotRulers = true;
+        needNotCoordinates = true;
     }
 
     @Override

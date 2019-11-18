@@ -29,16 +29,7 @@ public class MyBox {
             AppVariables.appArgs = null;
         } else {
             AppVariables.appArgs = new String[args.length];
-            for (int i = 0; i < args.length; i++) {
-//                try {
-////                    AppVariables.appArgs[i] = new String(args[i].getBytes("utf-8"), "utf-8");
-////                    AppVariables.appArgs[i] = new String(args[i].getBytes("ISO-8859-1"), "utf-8");
-//                } catch (Exception e) {
-//                    AppVariables.appArgs[i] = args[i];
-//                }
-//                logger.debug(args[i] + "    " + AppVariables.appArgs[i]);
-                AppVariables.appArgs[i] = args[i];
-            }
+            System.arraycopy(args, 0, AppVariables.appArgs, 0, args.length);
         }
 
         initBaseValues();
@@ -49,6 +40,7 @@ public class MyBox {
     }
 
     public static boolean initBaseValues() {
+        logger.info("Checking configuration parameters...");
         if (AppVariables.appArgs != null) {
             for (String arg : AppVariables.appArgs) {
                 if (arg.startsWith("config=")) {
@@ -95,6 +87,7 @@ public class MyBox {
         }
         AppVariables.MyboxDataPath = ConfigTools.defaultDataPathFile().getAbsolutePath();
         ConfigTools.writeConfigValue("MyBoxDataPath", AppVariables.MyboxDataPath);
+
         return true;
     }
 
@@ -145,11 +138,16 @@ public class MyBox {
 //            System.setProperty("sun.java2d.uiScale", "1.0");
             System.setProperty("prism.allowhidpi", "true".equals(ConfigTools.readConfigValue("DisableHidpi")) ? "false" : "true");
 
+//            System.setProperty("jdk.tls.client.protocols", "TLSv1");
             // https://blog.csdn.net/iteye_3493/article/details/82060349
             // https://stackoverflow.com/questions/1004327/getting-rid-of-derby-log/1933310#1933310
             System.setProperty("derby.stream.error.file", AppVariables.MyboxDataPath
                     + File.separator + "mybox_derby" + File.separator + "derby.log");
 
+//            System.setProperty("javax.net.debug", "all");
+//            System.setProperty("javax.net.ssl.trustStore", "D:\\Programs\\Java\\jdk12.0.1\\lib\\security\\cacerts");
+//            System.setProperty("java.net.ssl.trustStorePassword", "changeit");
+//            System.setProperty("com.sun.security.enableAIAcaIssuers", "true");
         } catch (Exception e) {
             logger.error(e.toString());
         }

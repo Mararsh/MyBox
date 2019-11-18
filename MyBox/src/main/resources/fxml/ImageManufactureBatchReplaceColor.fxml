@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
 <!--
 Author:     Mara
 License:    Apache License Version 2.0
             http://www.apache.org/licenses/LICENSE-2.0
 -->
-
 
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.*?>
@@ -50,29 +48,42 @@ License:    Apache License Version 2.0
                                     <children>
                                         <HBox fx:id="colorBox" alignment="CENTER_LEFT" spacing="10.0">
                                             <children>
-                                                <Label text="%OriginalColor" />
-                                                <ColorPicker fx:id="oldColorPicker" />
-                                                <Button fx:id="transparentButton" mnemonicParsing="false" onAction="#transparentForOld">
-                                                    <graphic>
-                                                        <Rectangle fill="#ffffff00" height="15.0" stroke="BLACK" strokeMiterLimit="0.0" strokeType="INSIDE" width="15.0" />
-                                                    </graphic>
-                                                </Button>
-                                                <Button fx:id="whiteButton" mnemonicParsing="false" onAction="#whiteForOld">
-                                                    <graphic>
-                                                        <Rectangle fill="WHITE" height="15.0" stroke="BLACK" strokeType="INSIDE" width="15.0" />
-                                                    </graphic>
-                                                </Button>
-                                                <Button fx:id="blackButton" mnemonicParsing="false" onAction="#blackForOld">
-                                                    <graphic>
-                                                        <Rectangle height="15.0" stroke="BLACK" strokeType="INSIDE" width="15.0" />
-                                                    </graphic>
-                                                </Button>
+                                    <Label fx:id="colorUnit1" text="%OriginalColor" />
+                                    <Rectangle fx:id="originalRect" fill="#ffffff00" height="15.0" stroke="BLACK" strokeMiterLimit="0.0" strokeType="INSIDE" width="15.0" />
+                                    <Button fx:id="originalPaletteButton" mnemonicParsing="false" onAction="#originalPalette">
+                                       <graphic>
+                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/iconPalette.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </Button>
+                                    <Label fx:id="colorUnit11" text="%NewColor">
+                                       <HBox.margin>
+                                          <Insets left="20.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                    <Rectangle fx:id="newRect" fill="#ffffff00" height="15.0" stroke="BLACK" strokeMiterLimit="0.0" strokeType="INSIDE" width="15.0" />
+                                    <Button fx:id="newPaletteButton" mnemonicParsing="false" onAction="#newPalette">
+                                       <graphic>
+                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/iconPalette.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </Button>
+                                            </children>
+                                        </HBox>
+                              <HBox fx:id="colorBox1" alignment="CENTER_LEFT" layoutX="32.0" layoutY="32.0" spacing="10.0">
+                                 <children>
                                                 <ImageView fx:id="distanceTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
                                                         <Image url="@../buttons/iconTips.png" />
                                                     </image>
                                                     <HBox.margin>
-                                                        <Insets left="20.0" />
+                                                        <Insets />
                                                     </HBox.margin>
                                                 </ImageView>
                                                 <Label text="%Distance">
@@ -92,29 +103,8 @@ License:    Apache License Version 2.0
                                                 <RadioButton fx:id="hueRadio" mnemonicParsing="false" text="%Hue" toggleGroup="$replaceScopeGroup" />
                                                 <Label prefWidth="20.0" text=" " />
                                                 <CheckBox fx:id="excludeCheck" mnemonicParsing="false" text="%Excluded" />
-                                            </children>
-                                        </HBox>
-                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                            <children>
-                                                <Label text="%NewColor" />
-                                                <ColorPicker fx:id="newColorPicker" />
-                                                <Button fx:id="transForNewButton" mnemonicParsing="false" onAction="#transparentForNew">
-                                                    <graphic>
-                                                        <Rectangle fill="#ffffff00" height="15.0" stroke="BLACK" strokeMiterLimit="0.0" strokeType="INSIDE" width="15.0" />
-                                                    </graphic>
-                                                </Button>
-                                                <Button mnemonicParsing="false" onAction="#whiteForNew">
-                                                    <graphic>
-                                                        <Rectangle fill="WHITE" height="15.0" stroke="BLACK" strokeType="INSIDE" width="15.0" />
-                                                    </graphic>
-                                                </Button>
-                                                <Button mnemonicParsing="false" onAction="#blackForNew">
-                                                    <graphic>
-                                                        <Rectangle height="15.0" stroke="BLACK" strokeType="INSIDE" width="15.0" />
-                                                    </graphic>
-                                                </Button>
-                                            </children>
-                                        </HBox>
+                                 </children>
+                              </HBox>
                                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                                             <children>
                                                 <RadioButton fx:id="whiteRadio" mnemonicParsing="false" selected="true" text="%ReplaceAlphaAsWhite">
@@ -140,7 +130,7 @@ License:    Apache License Version 2.0
                                             <children>
                                                 <Label text="%FilesPath" />
                                                 <TextField fx:id="targetPathInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                <Button fx:id="selectTargetPathButton" mnemonicParsing="false" onAction="#selectTargetPath" onMouseEntered="#popTargetPath">
+                                                <Button fx:id="selectPathTargetButton" mnemonicParsing="false" onAction="#selectTargetPath" onMouseEntered="#popTargetPath">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>

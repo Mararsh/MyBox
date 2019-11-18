@@ -20,6 +20,7 @@ import mara.mybox.tools.MatrixTools;
 public class SRGB {
 
     protected String colorValue, colorName, colorDisplay;
+    protected int paletteIndex;
 
     /*
         static methods
@@ -153,6 +154,14 @@ public class SRGB {
 
     public void setColorDisplay(String colorDisplay) {
         this.colorDisplay = colorDisplay;
+    }
+
+    public int getPaletteIndex() {
+        return paletteIndex;
+    }
+
+    public void setPaletteIndex(int paletteIndex) {
+        this.paletteIndex = paletteIndex;
     }
 
 }

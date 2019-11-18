@@ -46,7 +46,8 @@ public class ImageScope {
     protected BufferedImage outlineSource, outline;
 
     public enum ScopeType {
-        Invalid, All, Matting, Rectangle, Circle, Ellipse, Polygon, Color, RectangleColor,
+        Invalid, All, Matting, Rectangle, Circle, Ellipse, Polygon, Color,
+        RectangleColor,
         CircleColor, EllipseColor, PolygonColor, Outline, Operate
     }
 
@@ -84,7 +85,7 @@ public class ImageScope {
             rectangle = new DoubleRectangle(image.getWidth() / 4, image.getHeight() / 4,
                     image.getWidth() * 3 / 4, image.getHeight() * 3 / 4);
             circle = new DoubleCircle(image.getWidth() / 2, image.getHeight() / 2,
-                    image.getHeight() / 4);
+                    Math.min(image.getWidth(), image.getHeight()) / 4);
             ellipse = new DoubleEllipse(rectangle);
         } else {
             rectangle = new DoubleRectangle();
@@ -476,6 +477,7 @@ public class ImageScope {
             targetScope.setOutline(sourceScope.getOutline());
             targetScope.setEightNeighbor(sourceScope.isEightNeighbor());
         } catch (Exception e) {
+//            logger.debug(e.toString());
         }
     }
 
@@ -486,6 +488,7 @@ public class ImageScope {
             ImageScope.cloneValues(newScope, sourceScope);
             return newScope;
         } catch (Exception e) {
+//            logger.debug(e.toString());
             return sourceScope;
         }
     }

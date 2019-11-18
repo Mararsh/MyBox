@@ -33,6 +33,7 @@ public class VisitHistory {
 
     public static class FileType {
 
+        public static int All = 0;
         public static int General = 1;
         public static int Image = 2;
         public static int PDF = 3;
@@ -175,6 +176,9 @@ public class VisitHistory {
         }
         List<VisitHistory> records;
         if (fileType == FileType.MultipleFrames) {
+            int[] types = {FileType.Gif, FileType.Tif, FileType.MultipleFrames};
+            records = TableVisitHistory.find(ResourceType.File, types, number);
+        } else if (fileType == FileType.MultipleFrames) {
             int[] types = {FileType.Gif, FileType.Tif, FileType.MultipleFrames};
             records = TableVisitHistory.find(ResourceType.File, types, number);
         } else if (fileType == FileType.Image) {

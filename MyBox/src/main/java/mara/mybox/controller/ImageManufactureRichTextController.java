@@ -232,7 +232,7 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
         webView.setVisible(true);
 
         if (!imageController.maskRectangleLine.isVisible()) {
-            imageController.operating();
+            imageController.operatingNeedNotScope();
             imageController.maskRectangleData = new DoubleRectangle(0, 0,
                     imageView.getImage().getWidth() / 2, imageView.getImage().getHeight() / 2);
             imageController.scope.setRectangle(imageController.maskRectangleData.cloneValues());
@@ -359,13 +359,12 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
 //                webEngine.executeScript("document.body.style.backgroundColor = 'rgba(0,0,0,0)';");
 
                 // http://news.kynosarges.org/2017/02/01/javafx-snapshot-scaling/
-                double scaleX = Screen.getPrimary().getOutputScaleX();
-                double scaleY = Screen.getPrimary().getOutputScaleY();
+                double scale = FxmlControl.dpiScale();
                 final WritableImage snap = new WritableImage(
-                        (int) Math.round(webView.getWidth() * scaleX),
-                        (int) Math.round(webView.getHeight() * scaleY));
+                        (int) Math.round(webView.getWidth() * scale),
+                        (int) Math.round(webView.getHeight() * scale));
                 final SnapshotParameters parameters = new SnapshotParameters();
-                parameters.setTransform(Transform.scale(scaleX, scaleY));
+                parameters.setTransform(Transform.scale(scale, scale));
                 parameters.setFill(Color.TRANSPARENT);
                 webView.snapshot(parameters, snap);
                 if (!parent.editable.get()) {

@@ -9,6 +9,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckMenuItem;
@@ -29,6 +30,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Popup;
 import mara.mybox.MyBox;
 import mara.mybox.data.AlarmClock;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.ConfigTools;
 import mara.mybox.value.AppVariables;
@@ -83,13 +85,6 @@ public class MyBoxController extends BaseController {
                     }
                 }
             });
-//            String s = "";
-//            if (AppVariables.appArgs != null) {
-//                for (String arg : AppVariables.appArgs) {
-//                    s += arg + "  " + new String(arg.getBytes(), "utf-8");
-//                }
-//            }
-//            popText(s, 10000, "red");
 
         } catch (Exception e) {
             logger.debug(e.toString());
@@ -100,8 +95,8 @@ public class MyBoxController extends BaseController {
     private void makeImagePopup() {
         try {
             imagePop = new Popup();
-            imagePop.setWidth(510);
-            imagePop.setHeight(560);
+            imagePop.setWidth(600);
+            imagePop.setHeight(600);
 
             VBox vbox = new VBox();
             VBox.setVgrow(vbox, Priority.ALWAYS);
@@ -118,7 +113,9 @@ public class MyBoxController extends BaseController {
 
             text = new Text();
             text.setStyle("-fx-font-size: 1.5em;");
+
             vbox.getChildren().add(text);
+            vbox.setPadding(new Insets(15, 15, 15, 15));
 
         } catch (Exception e) {
             logger.debug(e.toString());
@@ -319,11 +316,11 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        MenuItem imageData = new MenuItem(AppVariables.message("ImageData"));
+        MenuItem imageData = new MenuItem(AppVariables.message("ImageAnalyse"));
         imageData.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                loadScene(CommonValues.ImageDataFxml);
+                loadScene(CommonValues.ImageAnalyseFxml);
             }
         });
 
@@ -746,10 +743,26 @@ public class MyBoxController extends BaseController {
             }
         });
 
+        MenuItem markdownToHtml = new MenuItem(AppVariables.message("MarkdownToHtml"));
+        markdownToHtml.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.MarkdownToHtmlFxml);
+            }
+        });
+
+        MenuItem htmlToMarkdown = new MenuItem(AppVariables.message("HtmlToMarkdown"));
+        htmlToMarkdown.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.HtmlToMarkdownFxml);
+            }
+        });
         popMenu = new ContextMenu();
         popMenu.setAutoHide(true);
         popMenu.getItems().addAll(
-                htmlEditor, markdownEditor, new SeparatorMenuItem(),
+                htmlEditor, markdownEditor,
+                htmlToMarkdown, markdownToHtml, new SeparatorMenuItem(),
                 weiboSnap
         );
         showMenu(networkBox, event);
@@ -868,14 +881,66 @@ public class MyBoxController extends BaseController {
             }
         });
 
+        MenuItem filesCompare = new MenuItem(AppVariables.message("FilesCompare"));
+        filesCompare.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.FilesCompareFxml);
+            }
+        });
+
+        MenuItem filesRedundancy = new MenuItem(AppVariables.message("FilesRedundancy"));
+        filesRedundancy.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.FilesRedundancyFxml);
+            }
+        });
+
+        MenuItem filesArchiveCompress = new MenuItem(AppVariables.message("FilesArchiveCompress"));
+        filesArchiveCompress.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.FilesArchiveCompressFxml);
+            }
+        });
+
+        MenuItem filesCompress = new MenuItem(AppVariables.message("FilesCompressBatch"));
+        filesCompress.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.FilesCompressBatchFxml);
+            }
+        });
+
+        MenuItem filesDecompressUnarchive = new MenuItem(AppVariables.message("FileDecompressUnarchive"));
+        filesDecompressUnarchive.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.FileDecompressUnarchiveFxml);
+            }
+        });
+
+        MenuItem filesDecompressUnarchiveBatch = new MenuItem(AppVariables.message("FilesDecompressUnarchiveBatch"));
+        filesDecompressUnarchiveBatch.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.FilesDecompressUnarchiveBatchFxml);
+            }
+        });
+
         popMenu = new ContextMenu();
         popMenu.setAutoHide(true);
         popMenu.getItems().addAll(
                 textEditer, bytesEditer, new SeparatorMenuItem(),
-                filesFind, filesArrangement, dirSynchronize,
+                textEncodingBatch, textLineBreakBatch, fileCut, filesMerge,
+                filesArchiveCompress, filesCompress,
+                filesDecompressUnarchive, filesDecompressUnarchiveBatch, new SeparatorMenuItem(),
+                filesFind, filesCompare, filesRedundancy,
                 filesRename, filesDelete, filesCopy, filesMove,
-                textEncodingBatch, textLineBreakBatch, new SeparatorMenuItem(),
-                fileCut, filesMerge);
+                new SeparatorMenuItem(),
+                filesArrangement, dirSynchronize
+        );
 
         showMenu(fileBox, event);
 
@@ -934,6 +999,45 @@ public class MyBoxController extends BaseController {
         disableHidpi.setSelected(AppVariables.disableHiDPI);
         isSettingValues = false;
 
+        CheckMenuItem derbyServer = new CheckMenuItem(message("DerbyServerMode"));
+        derbyServer.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if (isSettingValues) {
+                    return;
+                }
+                derbyServer.setDisable(true);
+                DerbyBase.mode = derbyServer.isSelected() ? "client" : "embedded";
+                ConfigTools.writeConfigValue("DerbyMode", DerbyBase.mode);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            String ret = DerbyBase.startDerby();
+                            popInformation(ret, 6000);
+                        } catch (Exception e) {
+                            logger.debug(e.toString());
+                        }
+                        isSettingValues = true;
+                        derbyServer.setSelected("client".equals(DerbyBase.mode));
+                        isSettingValues = false;
+                        derbyServer.setDisable(false);
+                    }
+                });
+            }
+        });
+        isSettingValues = true;
+        derbyServer.setSelected("client".equals(DerbyBase.mode));
+        isSettingValues = false;
+
+        MenuItem mybox = new MenuItem(AppVariables.message("MyBoxProperties"));
+        mybox.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                openStage(CommonValues.MyBoxPropertiesFxml);
+            }
+        });
+
         MenuItem settings = new MenuItem(AppVariables.message("SettingsDot"));
         settings.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -944,8 +1048,10 @@ public class MyBoxController extends BaseController {
 
         popMenu = new ContextMenu();
         popMenu.setAutoHide(true);
-        popMenu.getItems().addAll(English, Chinese, new SeparatorMenuItem(), disableHidpi,
-                new SeparatorMenuItem(), settings);
+        popMenu.getItems().addAll(English, Chinese, new SeparatorMenuItem(),
+                disableHidpi, derbyServer, new SeparatorMenuItem(),
+                mybox, new SeparatorMenuItem(),
+                settings);
 
         showMenu(settingsBox, event);
 
@@ -974,11 +1080,11 @@ public class MyBoxController extends BaseController {
 
         Menu csMenu = makeColorSpaceMenu();
 
-        MenuItem imageData = new MenuItem(AppVariables.message("ImageData"));
+        MenuItem imageData = new MenuItem(AppVariables.message("ImageAnalyse"));
         imageData.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                loadScene(CommonValues.ImageDataFxml);
+                loadScene(CommonValues.ImageAnalyseFxml);
             }
         });
 
@@ -1006,12 +1112,21 @@ public class MyBoxController extends BaseController {
             }
         });
 
+        MenuItem messageDigest = new MenuItem(AppVariables.message("MessageDigest"));
+        messageDigest.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.MessageDigestFxml);
+            }
+        });
+
         popMenu = new ContextMenu();
         popMenu.setAutoHide(true);
         popMenu.getItems().addAll(
                 MatricesCalculation, new SeparatorMenuItem(),
                 imageData, csMenu, new SeparatorMenuItem(),
-                barcodeCreator, barcodeDecoder);
+                barcodeCreator, barcodeDecoder, new SeparatorMenuItem(),
+                messageDigest);
 
         showMenu(dataBox, event);
 
@@ -1057,7 +1172,7 @@ public class MyBoxController extends BaseController {
     private void showAboutImage(MouseEvent event) {
         hideMenu(event);
 
-        view.setImage(new Image("img/About57.png"));
+        view.setImage(new Image("img/About58.png"));
         text.setText(message("AboutImageTips"));
         locateImage(aboutBox, false);
     }

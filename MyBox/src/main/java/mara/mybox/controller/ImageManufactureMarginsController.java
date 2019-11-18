@@ -209,7 +209,7 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
     }
 
     private void initDragging() {
-        imageController.operating();
+        imageController.operatingNeedNotScope();
         imageController.maskRectangleData = new DoubleRectangle(0, 0,
                 imageView.getImage().getWidth() - 1,
                 imageView.getImage().getHeight() - 1);

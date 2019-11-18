@@ -61,7 +61,8 @@ public class FilesRenameController extends FilesBatchController {
     protected ToggleGroup sortGroup, renameGroup;
 
     public static enum RenameType {
-        ReplaceSubString, AppendSuffix, AppendPrefix, AddSequenceNumber, ChangeExtension
+        ReplaceSubString, AppendSuffix, AppendPrefix, AddSequenceNumber,
+        ChangeExtension
     }
 
     public FilesRenameController() {
@@ -84,6 +85,7 @@ public class FilesRenameController extends FilesBatchController {
     @Override
     public void initTargetSection() {
         try {
+            super.initTargetSection();
 
             renameGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -102,6 +104,7 @@ public class FilesRenameController extends FilesBatchController {
             });
             fillZeroCheck.setSelected(AppVariables.getUserConfigBoolean("FileRenameFillZero", true));
 
+            startButton.disableProperty().unbind();
             startButton.disableProperty().bind(
                     Bindings.isEmpty(tableData)
                             .or(tableController.getAddFilesButton().disableProperty())
@@ -242,13 +245,14 @@ public class FilesRenameController extends FilesBatchController {
 
     @Override
     public String handleFile(File srcFile, File targetPath) {
+        showHandling(srcFile);
         FileInformation d = tableController.data(currentParameters.currentIndex);
         String newName = renameFile(srcFile);
         if (newName != null) {
-            d.setNewName(new File(newName).getAbsolutePath());
+            d.setData(new File(newName).getAbsolutePath());
             return AppVariables.message("Successful");
         } else {
-            d.setNewName("");
+            d.setData("");
             return AppVariables.message("Failed");
         }
     }
@@ -258,6 +262,12 @@ public class FilesRenameController extends FilesBatchController {
         try {
             if (newName != null) {
                 File newFile = new File(newName);
+                if (newFile.exists()) {
+                    if (targetExistType != TargetExistType.Replace) {
+                        return null;
+                    }
+                    newFile.delete();
+                }
                 if (file.renameTo(newFile)) {
                     newName = newFile.getAbsolutePath();
                     currentParameters.finalTargetName = newName;
@@ -284,9 +294,9 @@ public class FilesRenameController extends FilesBatchController {
     }
 
     @Override
-    protected void handleDirectory(File sourcePath, File targetPath) {
+    protected boolean handleDirectory(File sourcePath, File targetPath) {
         if (sourcePath == null || !sourcePath.exists() || !sourcePath.isDirectory()) {
-            return;
+            return false;
         }
         try {
             if (recountCheck.isSelected()) {
@@ -303,7 +313,7 @@ public class FilesRenameController extends FilesBatchController {
             }
             for (File file : files) {
                 if (task == null || task.isCancelled()) {
-                    return;
+                    return false;
                 }
                 if (file.isFile()) {
                     dirFilesNumber++;
@@ -320,8 +330,10 @@ public class FilesRenameController extends FilesBatchController {
                     handleDirectory(file, null);
                 }
             }
+            return true;
         } catch (Exception e) {
             logger.error(e.toString());
+            return false;
         }
     }
 
@@ -393,20 +405,29 @@ public class FilesRenameController extends FilesBatchController {
         for (FileInformation f : tableData) {
             String originalName = f.getFileName();
             if (message("File").equals(f.getFileType())) {
-                String newName = f.getNewName();
+                String newName = f.getData();
                 if (newName == null || newName.trim().isEmpty()) {
                     continue;
                 }
                 File newFile = new File(newName);
                 if (newFile.exists()) {
-                    if (newFile.renameTo(new File(originalName))) {
+                    File oldFile = new File(originalName);
+                    if (oldFile.exists()) {
+                        if (targetExistType != TargetExistType.Replace) {
+                            f.setHandled(AppVariables.message("FailRecovered"));
+                            continue;
+                        } else {
+                            oldFile.delete();
+                        }
+                    }
+                    if (newFile.renameTo(oldFile)) {
                         f.setHandled(AppVariables.message("Recovered"));
                         f.setFileName(originalName);
                     } else {
                         f.setHandled(AppVariables.message("FailRecovered"));
                     }
                 }
-                f.setNewName("");
+                f.setData("");
             } else if (message("Directory").equals(f.getFileType())) {
                 currentNewNames = newNames.get(originalName);
                 if (currentNewNames == null) {
@@ -419,7 +440,9 @@ public class FilesRenameController extends FilesBatchController {
                     if (!file.exists()) {
                         continue;
                     }
-                    if (file.renameTo(new File(originalFileName))) {
+                    File oldFile = new File(originalFileName);
+
+                    if (file.renameTo(oldFile)) {
                         recovered++;
                     }
                 }
@@ -439,20 +462,29 @@ public class FilesRenameController extends FilesBatchController {
         for (FileInformation f : selected) {
             String originalName = f.getFileName();
             if (message("File").equals(f.getFileType())) {
-                String newName = f.getNewName();
+                String newName = f.getData();
                 if (newName == null || newName.trim().isEmpty()) {
                     continue;
                 }
                 File newFile = new File(newName);
                 if (newFile.exists()) {
-                    if (newFile.renameTo(new File(originalName))) {
+                    File oldFile = new File(originalName);
+                    if (oldFile.exists()) {
+                        if (targetExistType != TargetExistType.Replace) {
+                            f.setHandled(AppVariables.message("FailRecovered"));
+                            continue;
+                        } else {
+                            oldFile.delete();
+                        }
+                    }
+                    if (newFile.renameTo(oldFile)) {
                         f.setHandled(AppVariables.message("Recovered"));
                         f.setFileName(originalName);
                     } else {
                         f.setHandled(AppVariables.message("FailRecovered"));
                     }
                 }
-                f.setNewName("");
+                f.setData("");
             } else if (message("Directory").equals(f.getFileType())) {
                 currentNewNames = newNames.get(originalName);
                 if (currentNewNames == null) {
@@ -465,7 +497,16 @@ public class FilesRenameController extends FilesBatchController {
                     if (!file.exists()) {
                         continue;
                     }
-                    if (file.renameTo(new File(originalFileName))) {
+                    File oldFile = new File(originalFileName);
+                    if (oldFile.exists()) {
+                        if (targetExistType != TargetExistType.Replace) {
+                            f.setHandled(AppVariables.message("FailRecovered"));
+                            continue;
+                        } else {
+                            oldFile.delete();
+                        }
+                    }
+                    if (file.renameTo(oldFile)) {
                         recovered++;
                     }
                 }
@@ -475,6 +516,25 @@ public class FilesRenameController extends FilesBatchController {
             }
         }
 
+    }
+
+    @Override
+    public void okAction() {
+        if (tableData == null || tableData.isEmpty()) {
+            return;
+        }
+        if (newNames != null) {
+            newNames.clear();
+        }
+        for (FileInformation f : tableData) {
+            f.setHandled("");
+            String newName = f.getData();
+            if (newName != null && !newName.isEmpty()) {
+                f.setFileName(newName);
+                f.setFile(new File(newName));
+                f.setData("");
+            }
+        }
     }
 
     @Override

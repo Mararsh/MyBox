@@ -725,7 +725,7 @@ public class MainMenuController extends BaseController {
 
     @FXML
     private void openImageData(ActionEvent event) {
-        loadScene(CommonValues.ImageDataFxml);
+        loadScene(CommonValues.ImageAnalyseFxml);
     }
 
     @FXML
@@ -999,6 +999,16 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
+    private void openMarkdownToHtml(ActionEvent event) {
+        loadScene(CommonValues.MarkdownToHtmlFxml);
+    }
+
+    @FXML
+    private void openHtmlToMarkdown(ActionEvent event) {
+        loadScene(CommonValues.HtmlToMarkdownFxml);
+    }
+
+    @FXML
     private void openRecordImages(ActionEvent event) {
         loadScene(CommonValues.RecordImagesInSystemClipboardFxml);
     }
@@ -1017,6 +1027,41 @@ public class MainMenuController extends BaseController {
     @FXML
     private void openBarcodeDecoder(ActionEvent event) {
         loadScene(CommonValues.BarcodeDecoderFxml);
+    }
+
+    @FXML
+    private void openMessageDigest(ActionEvent event) {
+        loadScene(CommonValues.MessageDigestFxml);
+    }
+
+    @FXML
+    private void openFilesCompare(ActionEvent event) {
+        loadScene(CommonValues.FilesCompareFxml);
+    }
+
+    @FXML
+    private void openFilesArchiveCompress(ActionEvent event) {
+        loadScene(CommonValues.FilesArchiveCompressFxml);
+    }
+
+    @FXML
+    private void openFilesCompressBatch(ActionEvent event) {
+        loadScene(CommonValues.FilesCompressBatchFxml);
+    }
+
+    @FXML
+    private void openFileDecompressUnarchive(ActionEvent event) {
+        loadScene(CommonValues.FileDecompressUnarchiveFxml);
+    }
+
+    @FXML
+    private void openFilesDecompressUnarchiveBatch(ActionEvent event) {
+        loadScene(CommonValues.FilesDecompressUnarchiveBatchFxml);
+    }
+
+    @FXML
+    private void openFilesRedundancy(ActionEvent event) {
+        loadScene(CommonValues.FilesRedundancyFxml);
     }
 
     @FXML
@@ -1044,7 +1089,7 @@ public class MainMenuController extends BaseController {
     @FXML
     public void developerGuide(ActionEvent event) {
         try {
-            String link = "https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-UserGuide-1.0"
+            String link = "https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-UserGuide-2.0"
                     + "-" + AppVariables.getLanguage() + ".pdf";
             browseURI(new URI(link));
         } catch (Exception e) {

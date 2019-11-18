@@ -2,12 +2,12 @@ package mara.mybox.controller;
 
 import com.sun.management.OperatingSystemMXBean;
 import java.awt.image.BufferedImage;
+import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.lang.management.ManagementFactory;
 import java.net.URL;
 import java.net.URLConnection;
@@ -50,7 +50,6 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.FloatTools;
 import mara.mybox.tools.NetworkTools;
-import static mara.mybox.tools.NetworkTools.checkWeiboPassport;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
@@ -78,7 +77,7 @@ public class WeiboSnapRunController extends BaseController {
     private int savedHtmlCount, savedMonthPdfCount, savedPagePdfCount, completedMonthsCount, totalMonthsCount, savedPixCount;
     private Timer loadTimer, snapTimer;
     private long loadStartTime, snapStartTime, startTime;
-    private boolean loadFailed, loadCompleted, snapFailed, snapCompleted, mainCompleted, isLoadingWeiboPassport,
+    private boolean certificatesInstalled, loadFailed, loadCompleted, snapFailed, snapCompleted, mainCompleted, passportPageLoaded,
             commentsLoaded, picturedsLoaded, startPageChecked, skipPage, parentOpened;
     private WeiboSnapingInfoController loadingController;
     private String pdfFilename, htmlFilename, pixFilePrefix;
@@ -96,6 +95,7 @@ public class WeiboSnapRunController extends BaseController {
     private File tempdir;
     private MemoryUsageSetting memSettings;
     private ChangeListener webEngineStateListener;
+    private String passportAddress;
 
     @FXML
     private WebView webView;
@@ -223,6 +223,12 @@ public class WeiboSnapRunController extends BaseController {
         webView.setCache(false);
         webEngine = webView.getEngine();
         webEngine.setJavaScriptEnabled(true);
+        webEngine.setUserAgent("Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
+
+//        passportAddress = "https://www.weibo.com/wow";
+        passportAddress = AppVariables.getUserConfigValue("WeiboPassportAddress",
+                "https://passport.weibo.com/visitor/visitor?entry=miniblog");
+
         r = Runtime.getRuntime();
 
     }
@@ -243,7 +249,12 @@ public class WeiboSnapRunController extends BaseController {
                 return;
             }
 
-            if (checkWeiboPassport()) {
+//            NetworkTools.installCertificate("www.sina.com");
+//            NetworkTools.installCertificate("www.sina.com.cn");
+//            NetworkTools.installCertificate("www.weibo.cn");
+//            NetworkTools.installCertificate("www.weibo.com");
+            certificatesInstalled = NetworkTools.checkWeiboPassport();
+            if (certificatesInstalled) {
                 startLoading();
             } else {
                 loadPassport();
@@ -256,69 +267,44 @@ public class WeiboSnapRunController extends BaseController {
 
     }
 
-    private void loadPassport() {
+    protected void loadPassport() {
         try {
             if (!openLoadingStage()) {
                 return;
             }
-            isLoadingWeiboPassport = true;
+            passportPageLoaded = false;
             loadingController.setInfo(AppVariables.message("LoadingWeiboCertificate"));
             showMemInfo();
+            webView.setVisible(false);
 
+            long maxCheckTime = 10000;
             webEngineStateListener = new ChangeListener<Worker.State>() {
                 @Override
                 public void changed(ObservableValue ov, Worker.State oldState, Worker.State newState) {
                     switch (newState) {
                         case SUCCEEDED:
-                            if (isLoadingWeiboPassport) {
-                                isLoadingWeiboPassport = false;
-                                loadTimer = new Timer();
-                                if (NetworkTools.isOtherPlatforms()) {
-                                    loadTimer.schedule(new TimerTask() {
-                                        private boolean done = false;
-
-                                        @Override
-                                        public void run() {
-                                            AppVariables.setUserConfigValue("WeiboPassportChecked", true);
-                                            if (done) {
-                                                this.cancel();
-                                            } else {
-                                                Platform.runLater(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        if (checkWeiboPassport()) {
-                                                            done = true;
-                                                            startLoading();
-                                                        }
-                                                    }
-                                                });
-                                            }
-                                        }
-                                    }, 15000);
-
-                                } else {
-                                    loadTimer.schedule(new TimerTask() {
-                                        private boolean done = false;
-
-                                        @Override
-                                        public void run() {
-                                            if (done) {
-                                                this.cancel();
-                                            } else {
-                                                Platform.runLater(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        if (checkWeiboPassport()) {
-                                                            done = true;
-                                                            startLoading();
-                                                        }
-                                                    }
-                                                });
-                                            }
-                                        }
-                                    }, 2000, 2000);
-                                }
+                            if (passportPageLoaded) {
+                                break;
                             }
+                            passportPageLoaded = true;
+                            loadTimer = new Timer();
+//                            logger.debug("Waiting for " + maxCheckTime + "ms for passport...");
+                            loadTimer.schedule(new TimerTask() {
+                                @Override
+                                public void run() {
+                                    this.cancel();
+//                                    logger.debug("Assume passport created now.");
+                                    AppVariables.setUserConfigValue("WeiboPassportChecked", true);
+                                    Platform.runLater(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            certificatesInstalled = true;
+                                            startLoading();
+                                        }
+                                    });
+                                }
+                            }, maxCheckTime);
+
                             break;
                         case RUNNING:
                             break;
@@ -330,7 +316,8 @@ public class WeiboSnapRunController extends BaseController {
             };
             webEngine.getLoadWorker().stateProperty().addListener(webEngineStateListener);
 
-            webEngine.load("https://passport.weibo.com/visitor/visitor?entry=miniblog");
+//            logger.debug(passportAddress);
+            webEngine.load(passportAddress);
 
         } catch (Exception e) {
             alertError(e.toString());
@@ -338,11 +325,23 @@ public class WeiboSnapRunController extends BaseController {
         }
     }
 
+    protected void rebootSnapshot() {
+        parent.startSnap();
+        closeStage();
+    }
+
     public void startLoading() {
         try {
             if (webEngineStateListener != null) {
                 webEngine.getLoadWorker().stateProperty().removeListener(webEngineStateListener);
+                webEngineStateListener = null;
             }
+            if (loadTimer != null) {
+                loadTimer.cancel();
+                loadTimer = null;
+            }
+            webView.setVisible(true);
+
             lastPictureLoad = new Date();
             webEngine.setOnAlert(new EventHandler<WebEvent<String>>() {
                 @Override
@@ -438,15 +437,20 @@ public class WeiboSnapRunController extends BaseController {
 
     private void loadMain() {
         try {
-            webEngine.load(parameters.getWebAddress());
-//            logger.debug(parameters.getWebAddress());
-//            Thread.sleep(loadLoopInterval);
-//            NetworkTools.readCookie(webEngine);
-
             if (!openLoadingStage()) {
                 return;
             }
-            loadingController.setInfo(AppVariables.message("CheckingWeiBoMain"));
+            if (certificatesInstalled) {
+                loadingController.setInfo(AppVariables.message("CheckingWeiBoMain"));
+            } else {
+                loadingController.setInfo(AppVariables.message("LoadingWeiboCertificate"));
+            }
+            showMemInfo();
+
+            webEngine.load(parameters.getWebAddress());
+//            logger.debug(parameters.getWebAddress());
+            Thread.sleep(loadLoopInterval);
+//            NetworkTools.readCookie(webEngine);
 
             loadFailed = loadCompleted = mainCompleted = false;
             accountName = null;
@@ -457,9 +461,15 @@ public class WeiboSnapRunController extends BaseController {
             }
             loadTimer = new Timer();
             loadStartTime = new Date().getTime();
+            final long maxDelay;
+            if (certificatesInstalled) {
+                maxDelay = loadLoopInterval * 30;
+            } else {
+                maxDelay = 10000;
+            }
             TimerTask mainTask = new TimerTask() {
                 int lastHeight = 0, newHeight = -1;
-                long maxDelay = loadLoopInterval * 30;
+
                 private String contents;
 
                 @Override
@@ -467,7 +477,9 @@ public class WeiboSnapRunController extends BaseController {
                     try {
                         if (new Date().getTime() - loadStartTime >= maxDelay) {
                             loadFailed = loadCompleted = true;
-                            errorString = AppVariables.message("TimeOver");
+                            if (certificatesInstalled) {
+                                errorString = AppVariables.message("TimeOver");
+                            }
                         }
                         if (loadFailed || loadCompleted) {
                             quit();
@@ -552,9 +564,6 @@ public class WeiboSnapRunController extends BaseController {
 
                 private void quit() {
                     this.cancel();
-//                    loadTimer.purge();
-//                    System.gc();
-//                    loadTimer.cancel();
                     loadCompleted = true;
                     Platform.runLater(new Runnable() {
                         @Override
@@ -567,6 +576,10 @@ public class WeiboSnapRunController extends BaseController {
                                 loadFailed = true;
                             }
                             if (loadFailed) {
+                                if (!certificatesInstalled) {
+                                    rebootSnapshot();
+                                    return;
+                                }
                                 alertError(errorString);
                                 if (parent == null && !parentOpened) {
                                     openStage(CommonValues.WeiboSnapFxml);
@@ -584,8 +597,12 @@ public class WeiboSnapRunController extends BaseController {
             loadTimer.schedule(mainTask, loadLoopInterval * 3, loadLoopInterval);
 
         } catch (Exception e) {
-            alertError(e.toString());
-            endSnap();
+            if (!certificatesInstalled) {
+                rebootSnapshot();
+            } else {
+                alertError(e.toString());
+                endSnap();
+            }
         }
 
     }
@@ -808,13 +825,14 @@ public class WeiboSnapRunController extends BaseController {
 
     private void loadPage(final String address) {
         try {
-            logger.debug(address);
+//            logger.debug(address);
             webEngine.load(address);
 //            webEngine.executeScript("window.location.href='" + address + "';");
 //            NetworkTools.readCookie(webEngine);
 
             if (loadTimer != null) {
                 loadTimer.cancel();
+                loadTimer = null;
             }
             if (!openLoadingStage()) {
                 return;
@@ -890,7 +908,7 @@ public class WeiboSnapRunController extends BaseController {
                                                 return;
                                             } else if (contents.contains("查看更早微博")) {
                                                 mainCompleted();
-                                            } else if (contents.contains("还没有发过微博")) {
+                                            } else if (contents.contains("还没有发过微博") || contents.contains("这里还没有内容")) {
                                                 currentPage = 0;
                                                 currentMonthPageCount = 0;
                                                 emptyPage = true;
@@ -1009,7 +1027,7 @@ public class WeiboSnapRunController extends BaseController {
                             webEngine.executeScript(clearScripts);
                             if (!loadFailed) {
                                 retried = 0;
-                                if (parameters.isCreateHtml()) {
+                                if (!emptyPage && parameters.isCreateHtml()) {
                                     contents = (String) webEngine.executeScript("document.documentElement.outerHTML");
                                     saveHtml(htmlFilename, contents);
                                 }
@@ -1100,10 +1118,10 @@ public class WeiboSnapRunController extends BaseController {
                             URLConnection con = url.openConnection();
                             con.setConnectTimeout(30000);
                             try (InputStream is = con.getInputStream()) {
-                                byte[] bs = new byte[1024];
+                                byte[] bs = new byte[CommonValues.IOBufferLength];
                                 int len;
                                 saveName = prefix + (i + 1) + "." + suffix;
-                                try (OutputStream os = new FileOutputStream(saveName)) {
+                                try (BufferedOutputStream os = new BufferedOutputStream(new FileOutputStream(saveName))) {
                                     while ((len = is.read(bs)) != -1) {
                                         os.write(bs, 0, len);
                                     }
@@ -1202,14 +1220,12 @@ public class WeiboSnapRunController extends BaseController {
 
             // http://news.kynosarges.org/2017/02/01/javafx-snapshot-scaling/
             final Bounds bounds = webView.getLayoutBounds();
-            Screen screen = Screen.getPrimary();
-            double scaleX = screen.getOutputScaleX();
-            double scaleY = screen.getOutputScaleY();
-            int imageWidth = (int) Math.round(bounds.getWidth() * scaleX);
-            int imageHeight = (int) Math.round(bounds.getHeight() * scaleY);
+            double scale = FxmlControl.dpiScale();
+            int imageWidth = (int) Math.round(bounds.getWidth() * scale);
+            int imageHeight = (int) Math.round(bounds.getHeight() * scale);
             final SnapshotParameters snapPara = new SnapshotParameters();
             snapPara.setFill(Color.TRANSPARENT);
-            snapPara.setTransform(javafx.scene.transform.Transform.scale(scaleX, scaleY));
+            snapPara.setTransform(javafx.scene.transform.Transform.scale(scale, scale));
 
             final int snapStep = screenHeight - 100; // Offset due to the pop bar in the page.
             snapFailed = snapCompleted = false;
@@ -1267,7 +1283,7 @@ public class WeiboSnapRunController extends BaseController {
                                         if (lastSnap != null && snapHeight > pageHeight) {
                                             int y1 = snapHeight - pageHeight + 100;
 //                                            logger.debug(pageHeight + " " + snapHeight + " " + screenHeight + " " + y1);
-                                            lastSnap = FxmlImageManufacture.cropOutsideFx(lastSnap, 0, y1 * scaleY,
+                                            lastSnap = FxmlImageManufacture.cropOutsideFx(lastSnap, 0, y1 * scale,
                                                     (int) lastSnap.getWidth() - 1, (int) lastSnap.getHeight() - 1);
                                             BufferedImage bufferedImage = SwingFXUtils.fromFXImage(lastSnap, null);
                                             ImageFileWriters.writeImageFile(bufferedImage, "png", imageFiles.get(imageFiles.size() - 1));
@@ -1453,20 +1469,27 @@ public class WeiboSnapRunController extends BaseController {
 
     @Override
     public boolean leavingScene() {
-        if (loadTimer != null) {
-            loadTimer.cancel();
-        }
-        if (snapTimer != null) {
-            snapTimer.cancel();
-        }
-        if (loadingController != null) {
-            loadingController.closeStage();
-        }
+        try {
+            if (loadTimer != null) {
+                loadTimer.cancel();
+            }
+            if (snapTimer != null) {
+                snapTimer.cancel();
+            }
+            if (loadingController != null) {
+                loadingController.closeStage();
+            }
 
-        webEngine.getLoadWorker().cancel();
-        webEngine = null;
+            if (webEngine != null) {
+                webEngine.getLoadWorker().cancel();
+                webEngine = null;
+            }
+        } catch (Exception e) {
+
+        }
 
         return super.leavingScene();
+
     }
 
     public void openPath() {

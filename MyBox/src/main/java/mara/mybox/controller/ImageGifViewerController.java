@@ -17,10 +17,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import mara.mybox.data.VisitHistory;
+import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageFileInformation;
@@ -29,6 +31,7 @@ import mara.mybox.image.file.ImageGifFile;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonImageValues;
 import mara.mybox.value.CommonValues;
 
@@ -147,6 +150,9 @@ public class ImageGifViewerController extends ImageViewerController {
             frameBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    if (isSettingValues) {
+                        return;
+                    }
                     try {
                         int v = Integer.valueOf(newValue);
                         if (v >= 0) {
@@ -156,6 +162,8 @@ public class ImageGifViewerController extends ImageViewerController {
                     }
                 }
             });
+
+            setPauseButton(false);
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -245,23 +253,33 @@ public class ImageGifViewerController extends ImageViewerController {
         }
     }
 
+    protected void setPauseButton(boolean setAsPaused) {
+        if (setAsPaused) {
+            ControlStyle.setIcon(pauseButton, ControlStyle.getIcon("iconPlay.png"));
+            FxmlControl.setTooltip(pauseButton, new Tooltip(message("Continue")));
+            previousButton.setDisable(false);
+            nextButton.setDisable(false);
+            pauseButton.setUserData("Paused");
+        } else {
+            ControlStyle.setIcon(pauseButton, ControlStyle.getIcon("iconPause.png"));
+            FxmlControl.setTooltip(pauseButton, new Tooltip(message("Pause")));
+            previousButton.setDisable(true);
+            nextButton.setDisable(true);
+            pauseButton.setUserData("Playing");
+        }
+        pauseButton.applyCss();
+    }
+
     @FXML
     public void pauseAction() {
         try {
-            if (pauseButton.getText().equals(AppVariables.message("Pause"))) {
-                logger.debug("here");
-                if (timer != null) {
-                    logger.debug("here");
-                    timer.cancel();
-                }
-                previousButton.setDisable(false);
-                nextButton.setDisable(false);
-                pauseButton.setText(AppVariables.message("Continue"));
-            } else if (pauseButton.getText().equals(AppVariables.message("Continue"))) {
+
+            if (pauseButton.getUserData().equals("Playing")) {
+                showGifFrame(currentIndex);
+
+            } else if (pauseButton.getUserData().equals("Paused")) {
                 showGifImage(currentIndex);
-                previousButton.setDisable(true);
-                nextButton.setDisable(true);
-                pauseButton.setText(AppVariables.message("Pause"));
+
             }
 
         } catch (Exception e) {
@@ -355,8 +373,7 @@ public class ImageGifViewerController extends ImageViewerController {
             if (images == null || images.length == 0) {
                 return;
             }
-            previousButton.setDisable(true);
-            nextButton.setDisable(true);
+            setPauseButton(false);
             currentIndex = start;
             if (timer != null) {
                 timer.cancel();
@@ -388,9 +405,8 @@ public class ImageGifViewerController extends ImageViewerController {
             }
             currentIndex = frame;
             setCurrentFrame();
-            previousButton.setDisable(false);
-            nextButton.setDisable(false);
-            pauseButton.setText(AppVariables.message("Continue"));
+            setPauseButton(true);
+
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -408,7 +424,23 @@ public class ImageGifViewerController extends ImageViewerController {
                 + AppVariables.message("CurrentFrame") + ": " + currentIndex + "  "
                 + AppVariables.message("Size") + ": " + (int) images[currentIndex].getWidth()
                 + "*" + (int) images[currentIndex].getHeight());
+        isSettingValues = true;
+        frameBox.getSelectionModel().select(currentIndex + "");
+        isSettingValues = false;
+
         currentIndex++;
+    }
+
+    @Override
+    public ImageGifViewerController refresh() {
+        File oldfile = sourceFile;
+
+        ImageGifViewerController c = (ImageGifViewerController) refreshBase();
+        if (c == null) {
+            return null;
+        }
+        c.loadImage(sourceFile);
+        return c;
     }
 
 }

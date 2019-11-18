@@ -55,17 +55,19 @@ public class TableUserConf extends DerbyBase {
                             break;
                         default:
                             try {
-                                int intv = Integer.valueOf(value);
-                                statement.executeUpdate("INSERT INTO User_Conf(key_Name, int_Value) VALUES('" + key + "', " + intv + " )");
-                            } catch (Exception e) {
-                                statement.executeUpdate("INSERT INTO User_Conf(key_Name, string_Value) VALUES('" + key + "', '" + value + "' )");
-                            }
-                            break;
+                            int intv = Integer.valueOf(value);
+                            statement.executeUpdate("INSERT INTO User_Conf(key_Name, int_Value) VALUES('" + key + "', " + intv + " )");
+                        } catch (Exception e) {
+                            failed(e);
+                            statement.executeUpdate("INSERT INTO User_Conf(key_Name, string_Value) VALUES('" + key + "', '" + value + "' )");
+                        }
+                        break;
                     }
                 }
             }
             return true;
         } catch (Exception e) {
+            failed(e);
 //            // logger.debug(e.toString());
             return false;
         }
@@ -94,6 +96,7 @@ public class TableUserConf extends DerbyBase {
                 return statement.executeUpdate(sql);
             }
         } catch (Exception e) {
+            failed(e);
 //            // logger.debug(e.toString());
             return -1;
         }
@@ -118,6 +121,7 @@ public class TableUserConf extends DerbyBase {
                 return statement.executeUpdate(sql);
             }
         } catch (Exception e) {
+            failed(e);
             logger.debug(e.toString());
             return -1;
         }
@@ -142,6 +146,7 @@ public class TableUserConf extends DerbyBase {
                 return defaultValue;
             }
         } catch (Exception e) {
+            failed(e);
 //            // logger.debug(e.toString());
             return defaultValue;
         }
@@ -160,6 +165,7 @@ public class TableUserConf extends DerbyBase {
                 return defaultValue;
             }
         } catch (Exception e) {
+            failed(e);
 //            // logger.debug(e.toString());
             return defaultValue;
         }
@@ -180,6 +186,7 @@ public class TableUserConf extends DerbyBase {
             statement.executeUpdate(sql);
             return true;
         } catch (Exception e) {
+            failed(e);
 //            // logger.debug(e.toString());
             return false;
         }
@@ -195,6 +202,7 @@ public class TableUserConf extends DerbyBase {
             statement.executeUpdate(sql);
             return true;
         } catch (Exception e) {
+            failed(e);
 //            // logger.debug(e.toString());
             return false;
         }
@@ -210,6 +218,7 @@ public class TableUserConf extends DerbyBase {
             statement.executeUpdate(sql);
             return true;
         } catch (Exception e) {
+            failed(e);
 //            // logger.debug(e.toString());
             return false;
         }
@@ -225,6 +234,7 @@ public class TableUserConf extends DerbyBase {
             statement.executeUpdate(sql);
             return true;
         } catch (Exception e) {
+            failed(e);
 //            // logger.debug(e.toString());
             return false;
         }

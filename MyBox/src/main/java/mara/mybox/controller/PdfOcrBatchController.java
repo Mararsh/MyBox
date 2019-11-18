@@ -25,6 +25,7 @@ import javafx.scene.layout.HBox;
 import mara.mybox.data.ConvolutionKernel;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
+import mara.mybox.image.ImageBinary;
 import mara.mybox.image.ImageContrast;
 import mara.mybox.image.ImageConvolution;
 import mara.mybox.image.ImageManufacture;
@@ -142,6 +143,7 @@ public class PdfOcrBatchController extends PdfBatchController {
                 public void changed(ObservableValue<? extends String> v, String oldV, String newV) {
                     try {
                         if (newV == null || newV.isEmpty()) {
+                            scale = 1;
                             return;
                         }
                         float f = Float.valueOf(newV);
@@ -167,6 +169,7 @@ public class PdfOcrBatchController extends PdfBatchController {
                 public void changed(ObservableValue<? extends String> v, String oldV, String newV) {
                     try {
                         if (newV == null || newV.isEmpty()) {
+                            threshold = 0;
                             return;
                         }
                         int i = Integer.valueOf(newV);
@@ -199,6 +202,7 @@ public class PdfOcrBatchController extends PdfBatchController {
                 public void changed(ObservableValue<? extends String> v, String oldV, String newV) {
                     try {
                         if (newV == null || newV.isEmpty()) {
+                            rotate = 0;
                             return;
                         }
                         rotate = Integer.valueOf(newV);
@@ -498,7 +502,12 @@ public class PdfOcrBatchController extends PdfBatchController {
         try {
             lastImage = bufferedImage;
 
-            if (rotate > 0) {
+            if (threshold > 0) {
+                ImageBinary bin = new ImageBinary(lastImage, threshold);
+                lastImage = bin.operateImage();
+            }
+
+            if (rotate != 0) {
                 lastImage = ImageManufacture.rotateImage(lastImage, rotate);
             }
             if (scale > 0 && scale != 1) {
@@ -506,7 +515,7 @@ public class PdfOcrBatchController extends PdfBatchController {
             }
 
             String enhance = enhancementSelector.getValue();
-            if (enhance == null) {
+            if (enhance == null || enhance.trim().isEmpty()) {
             } else if (message("GrayHistogramEqualization").equals(enhance)) {
                 ImageContrast imageContrast = new ImageContrast(lastImage,
                         ImageContrast.ContrastAlgorithm.Gray_Histogram_Equalization);
@@ -532,32 +541,32 @@ public class PdfOcrBatchController extends PdfBatchController {
 
             } else if (message("UnsharpMasking").equals(enhance)) {
                 ConvolutionKernel kernel = ConvolutionKernel.makeUnsharpMasking(3);
-                ImageConvolution imageConvolution
-                        = new ImageConvolution(lastImage, null, kernel);
+                ImageConvolution imageConvolution = ImageConvolution.create().
+                        setImage(lastImage).setKernel(kernel);
                 lastImage = imageConvolution.operateImage();
 
             } else if (message("FourNeighborLaplace").equals(enhance)) {
                 ConvolutionKernel kernel = ConvolutionKernel.MakeSharpenFourNeighborLaplace();
-                ImageConvolution imageConvolution
-                        = new ImageConvolution(lastImage, null, kernel);
+                ImageConvolution imageConvolution = ImageConvolution.create().
+                        setImage(lastImage).setKernel(kernel);
                 lastImage = imageConvolution.operateImage();
 
             } else if (message("EightNeighborLaplace").equals(enhance)) {
                 ConvolutionKernel kernel = ConvolutionKernel.MakeSharpenEightNeighborLaplace();
-                ImageConvolution imageConvolution
-                        = new ImageConvolution(lastImage, null, kernel);
+                ImageConvolution imageConvolution = ImageConvolution.create().
+                        setImage(lastImage).setKernel(kernel);
                 lastImage = imageConvolution.operateImage();
 
             } else if (message("GaussianBlur").equals(enhance)) {
                 ConvolutionKernel kernel = ConvolutionKernel.makeGaussBlur(3);
-                ImageConvolution imageConvolution
-                        = new ImageConvolution(lastImage, null, kernel);
+                ImageConvolution imageConvolution = ImageConvolution.create().
+                        setImage(lastImage).setKernel(kernel);
                 lastImage = imageConvolution.operateImage();
 
             } else if (message("AverageBlur").equals(enhance)) {
                 ConvolutionKernel kernel = ConvolutionKernel.makeAverageBlur(1);
-                ImageConvolution imageConvolution
-                        = new ImageConvolution(lastImage, null, kernel);
+                ImageConvolution imageConvolution = ImageConvolution.create().
+                        setImage(lastImage).setKernel(kernel);
                 lastImage = imageConvolution.operateImage();
 
             }

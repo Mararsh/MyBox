@@ -19,7 +19,7 @@ public class FilesRenameTableController extends FilesTableController {
     @FXML
     protected TableColumn<FileInformation, String> newColumn;
     @FXML
-    protected Button recoveryAllButton, recoverySelectedButton;
+    protected Button recoveryAllButton, recoverySelectedButton, ok2Button;
 
     public FilesRenameTableController() {
     }
@@ -29,7 +29,8 @@ public class FilesRenameTableController extends FilesTableController {
         try {
             super.initTable();
 
-            newColumn.setCellValueFactory(new PropertyValueFactory<>("newName"));
+            newColumn.setCellValueFactory(new PropertyValueFactory<>("data"));
+            ok2Button.disableProperty().bind(tableView.itemsProperty().isNull());
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -98,6 +99,26 @@ public class FilesRenameTableController extends FilesTableController {
         insertFilesButton.setDisable(true);
         insertDirectoryButton.setDisable(true);
         deleteFilesButton.setDisable(true);
+    }
+
+    @FXML
+    protected void okAction(ActionEvent event) {
+        if (parentController == null) {
+            return;
+        }
+        FilesRenameController p = (FilesRenameController) parentController;
+        p.okAction();
+        tableView.refresh();
+        addFilesButton.setDisable(false);
+        addDirectoryButton.setDisable(false);
+        insertFilesButton.setDisable(false);
+        insertDirectoryButton.setDisable(false);
+        deleteFilesButton.setDisable(false);
+        upFilesButton.setDisable(false);
+        downFilesButton.setDisable(false);
+        recoverySelectedButton.setDisable(true);
+        recoveryAllButton.setDisable(true);
+
     }
 
 }

@@ -138,15 +138,16 @@ public class ImageQuantization extends PixelsOperation {
                 return null;
             }
             List<String> names = new ArrayList<>();
-            names.addAll(Arrays.asList(message("ID"), message("PixelsNumber"), message("Percentage"),
-                    "RGBA", "RGB", message("Red"), message("Green"), message("Blue"), message("Opacity"),
+            names.addAll(Arrays.asList(message("ID"), message("PixelsNumber"),
+                    message("Percentage"), message("Color"),
+                    message("Red"), message("Green"), message("Blue"), message("Opacity"),
                     message("Hue"), message("Brightness"), message("Saturation")
             ));
-            String title = message("ImageQuantization") + "-" + message(algorithm.name());
+            String title = message(algorithm.name());
             if (name != null) {
                 title += "_" + name;
             }
-            StringTable table = new StringTable(names, title, 4);
+            StringTable table = new StringTable(names, title, 3);
             int id = 1;
             for (ColorCount count : sortedCounts) {
                 List<String> row = new ArrayList<>();
@@ -154,11 +155,9 @@ public class ImageQuantization extends PixelsOperation {
                 int red = (int) Math.round(color.getRed() * 255);
                 int green = (int) Math.round(color.getGreen() * 255);
                 int blue = (int) Math.round(color.getBlue() * 255);
-                String cString = "#" + color.toString().substring(2, 8);
                 row.addAll(Arrays.asList((id++) + "", count.count + "",
                         (int) (count.count * 100 / totalCount) + "%",
-                        color.toString(), cString,
-                        red + " ", green + " ", blue + " ",
+                        color.toString(), red + " ", green + " ", blue + " ",
                         (int) Math.round(color.getOpacity() * 100) + "%",
                         Math.round(color.getHue()) + " ",
                         Math.round(color.getSaturation() * 100) + "%",

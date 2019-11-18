@@ -38,14 +38,14 @@ public class TableStringValues extends DerbyBase {
         if (name == null || name.trim().isEmpty()) {
             return records;
         }
-        try (Connection conn = DriverManager.getConnection(protocol + dbName() + login);
-                Statement statement = conn.createStatement()) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbName() + login);
+                 Statement statement = conn.createStatement()) {
             String sql = " SELECT * FROM String_Values WHERE key_name='" + name + "' ORDER BY create_time DESC";
             ResultSet results = statement.executeQuery(sql);
             while (results.next()) {
                 records.add(results.getString("string_value"));
             }
-        } catch (Exception e) {
+        } catch (Exception e) {  failed(e);
 //            // logger.debug(e.toString());
         }
         return records;
@@ -56,15 +56,15 @@ public class TableStringValues extends DerbyBase {
             return null;
         }
         String value = null;
-        try (Connection conn = DriverManager.getConnection(protocol + dbName() + login);
-                Statement statement = conn.createStatement()) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbName() + login);
+                 Statement statement = conn.createStatement()) {
             statement.setMaxRows(1);
             String sql = " SELECT * FROM String_Values WHERE key_name='" + name + "' ORDER BY create_time DESC";
             ResultSet results = statement.executeQuery(sql);
             if (results.next()) {
                 value = results.getString("string_value");
             }
-        } catch (Exception e) {
+        } catch (Exception e) {  failed(e);
 //            // logger.debug(e.toString());
         }
         return value;
@@ -86,14 +86,14 @@ public class TableStringValues extends DerbyBase {
                 || value == null || value.trim().isEmpty()) {
             return read(name);
         }
-        try (Connection conn = DriverManager.getConnection(protocol + dbName() + login);
-                Statement statement = conn.createStatement()) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbName() + login);
+                 Statement statement = conn.createStatement()) {
             String sql = "INSERT INTO String_Values(key_name, string_value , create_time) VALUES('"
                     + name + "', '" + value + "', '"
                     + DateTools.datetimeToString(new Date()) + "')";
             statement.executeUpdate(sql);
             return read(name);
-        } catch (Exception e) {
+        } catch (Exception e) {  failed(e);
 //            // logger.debug(e.toString());
             return read(name);
         }
@@ -103,21 +103,23 @@ public class TableStringValues extends DerbyBase {
         if (values == null || values.isEmpty()) {
             return read(name);
         }
-        try (Connection conn = DriverManager.getConnection(protocol + dbName() + login);
-                Statement statement = conn.createStatement()) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbName() + login);
+                 Statement statement = conn.createStatement()) {
             String sql;
+            conn.setAutoCommit(false);
             for (String value : values) {
                 try {
                     sql = "INSERT INTO String_Values(key_name, string_value , create_time) VALUES('"
                             + name + "', '" + value + "', '"
                             + DateTools.datetimeToString(new Date()) + "')";
                     statement.executeUpdate(sql);
-                } catch (Exception e) {
+                } catch (Exception e) {  failed(e);
 //                    // logger.debug(e.toString());
                 }
             }
+            conn.commit();
             return read(name);
-        } catch (Exception e) {
+        } catch (Exception e) {  failed(e);
 //            // logger.debug(e.toString());
             return read(name);
         }
@@ -128,8 +130,8 @@ public class TableStringValues extends DerbyBase {
                 || value == null || value.trim().isEmpty()) {
             return null;
         }
-        try (Connection conn = DriverManager.getConnection(protocol + dbName() + login);
-                Statement statement = conn.createStatement()) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbName() + login);
+                 Statement statement = conn.createStatement()) {
             String sql = " SELECT * FROM String_Values WHERE key_name='" + name
                     + "' AND string_value='" + value + "'";
             ResultSet results = statement.executeQuery(sql);
@@ -138,7 +140,7 @@ public class TableStringValues extends DerbyBase {
             } else {
                 return null;
             }
-        } catch (Exception e) {
+        } catch (Exception e) {  failed(e);
 //            // logger.debug(e.toString());
             return null;
         }
@@ -149,25 +151,25 @@ public class TableStringValues extends DerbyBase {
                 || value == null || value.trim().isEmpty()) {
             return false;
         }
-        try (Connection conn = DriverManager.getConnection(protocol + dbName() + login);
-                Statement statement = conn.createStatement()) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbName() + login);
+                 Statement statement = conn.createStatement()) {
             String sql = "DELETE FROM String_Values WHERE key_name='" + name
                     + "' AND string_value='" + value + "'";
             statement.executeUpdate(sql);
             return true;
-        } catch (Exception e) {
+        } catch (Exception e) {  failed(e);
 //            // logger.debug(e.toString());
             return false;
         }
     }
 
     public static boolean clear(String name) {
-        try (Connection conn = DriverManager.getConnection(protocol + dbName() + login);
-                Statement statement = conn.createStatement()) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbName() + login);
+                 Statement statement = conn.createStatement()) {
             String sql = "DELETE FROM String_Values WHERE key_name='" + name + "'";
             statement.executeUpdate(sql);
             return true;
-        } catch (Exception e) {
+        } catch (Exception e) {  failed(e);
 //            // logger.debug(e.toString());
             return false;
         }

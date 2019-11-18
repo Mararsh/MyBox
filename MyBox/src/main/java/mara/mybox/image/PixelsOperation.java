@@ -23,7 +23,7 @@ import mara.mybox.value.CommonImageValues;
 public class PixelsOperation {
 
     protected BufferedImage image;
-    protected boolean isDithering, boolPara;
+    protected boolean isDithering, boolPara, skipTransparent = true;
     protected int intPara1, intPara2, intPara3;
     protected float floatPara1, floatPara2;
     protected Color colorPara1, colorPara2, bkColor;
@@ -36,9 +36,12 @@ public class PixelsOperation {
     protected int imageWidth, imageHeight;
 
     public enum OperationType {
-        Smooth, Denoise, Blur, Sharpen, Clarity, Emboss, EdgeDetect, Thresholding, Quantization, Gray, BlackOrWhite, Sepia,
-        ReplaceColor, Invert, Red, Green, Blue, Yellow, Cyan, Magenta, Mosaic, FrostedGlass,
-        Brightness, Saturation, Hue, Opacity, PreOpacity, RGB, Color, ShowScope, Convolution, Contrast
+        Smooth, Denoise, Blur, Sharpen, Clarity, Emboss, EdgeDetect,
+        Thresholding, Quantization, Gray, BlackOrWhite, Sepia,
+        ReplaceColor, Invert, Red, Green, Blue, Yellow, Cyan, Magenta, Mosaic,
+        FrostedGlass,
+        Brightness, Saturation, Hue, Opacity, PreOpacity, RGB, Color, ShowScope,
+        Convolution, Contrast
     }
 
     public enum ColorActionType {
@@ -255,6 +258,9 @@ public class PixelsOperation {
             isDithering = false;
         }
         scope = ImageScope.fineImageScope(scope);
+        skipTransparent = operationType != OperationType.ReplaceColor
+                || colorPara1.getRGB() != 0;
+
         if (scope != null && scope.getScopeType() == ImageScope.ScopeType.Matting) {
             isDithering = false;
             return operateMatting();
@@ -296,12 +302,13 @@ public class PixelsOperation {
                 for (int x = 0; x < image.getWidth(); x++) {
                     pixel = image.getRGB(x, y);
                     Color color = new Color(pixel, true);
-                    if (pixel == 0) {  // pass transparency
+                    if (pixel == 0 && skipTransparent) {  // pass transparency
                         newColor = color;
 
                     } else {
 
                         inScope = isWhole || scope.inScope(x, y, color);
+
                         if (isDithering && y == thisLineY) {
                             color = thisLine[x];
                         }
@@ -315,6 +322,7 @@ public class PixelsOperation {
                         } else {
                             if (inScope) {
                                 newColor = operatePixel(target, color, x, y);
+
                             } else {
                                 newColor = color;
                                 target.setRGB(x, y, color.getRGB());
@@ -398,7 +406,7 @@ public class PixelsOperation {
                     int pixel = image.getRGB(x, y);
                     Color color = new Color(pixel, true);
                     if (scope.inColorMatch(startColor, color)) {
-                        if (pixel == 0) {
+                        if (pixel == 0 && skipTransparent) {
                             target.setRGB(x, y, pixel);
                         } else if (isShowScope) {
                             if (excluded) {
@@ -438,7 +446,7 @@ public class PixelsOperation {
     protected Color operatePixel(BufferedImage target, int x, int y) {
         int pixel = image.getRGB(x, y);
         Color color = new Color(pixel, true);
-        if (pixel == 0) {
+        if (pixel == 0 && skipTransparent) {
             return color;
         } else {
             return operatePixel(target, color, x, y);
@@ -553,17 +561,14 @@ public class PixelsOperation {
 
         public ReplaceColor(BufferedImage image, ImageScope scope) {
             this.operationType = OperationType.ReplaceColor;
+            this.colorActionType = ColorActionType.Set;
             this.image = image;
             this.scope = scope;
         }
 
         @Override
         protected Color operateColor(Color color) {
-            if (scope.inColorMatch(color, colorPara1)) {
-                return colorPara2;
-            } else {
-                return color;
-            }
+            return colorPara2;
         }
     }
 

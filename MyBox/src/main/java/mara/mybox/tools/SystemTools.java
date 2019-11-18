@@ -3,13 +3,18 @@ package mara.mybox.tools;
 import java.awt.Desktop;
 import java.awt.MouseInfo;
 import java.awt.Point;
+import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.net.URI;
 import java.security.MessageDigest;
 import java.util.Map;
 import javafx.scene.image.Image;
 import javafx.scene.input.Clipboard;
+import mara.mybox.image.ImageManufacture;
 import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -202,14 +207,74 @@ public class SystemTools {
     }
 
     public static byte[] MD5(byte[] bytes) {
+        return messageDigest(bytes, "MD5");
+    }
+
+    public static byte[] SHA1(byte[] bytes) {
+        return messageDigest(bytes, "SHA1");
+    }
+
+    public static byte[] SHA256(byte[] bytes) {
+        return messageDigest(bytes, "SHA256");
+    }
+
+    public static byte[] MD5(File file) {
+        return messageDigest(file, "MD5");
+    }
+
+    public static byte[] SHA1(File file) {
+        return messageDigest(file, "SHA1");
+    }
+
+    public static byte[] SHA256(File file) {
+        return messageDigest(file, "SHA256");
+    }
+
+    public static byte[] MD5(BufferedImage image) {
+        return messageDigest(ImageManufacture.bytes(image), "MD5");
+    }
+
+    public static byte[] SHA1(BufferedImage image) {
+        return messageDigest(ImageManufacture.bytes(image), "SHA1");
+    }
+
+    public static byte[] SHA256(BufferedImage image) {
+        return messageDigest(ImageManufacture.bytes(image), "SHA256");
+    }
+
+    public static byte[] messageDigest(byte[] bytes, String algorithm) {
         try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
+            MessageDigest md = MessageDigest.getInstance(algorithm);
             byte[] digest = md.digest(bytes);
             return digest;
         } catch (Exception e) {
             logger.debug(e.toString());
             return null;
         }
+    }
+
+    public static byte[] messageDigest(File file, String algorithm) {
+        try {
+            MessageDigest md = MessageDigest.getInstance(algorithm);
+            try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
+                byte[] buf = new byte[CommonValues.IOBufferLength];
+                int len;
+                while ((len = in.read(buf)) != -1) {
+                    md.update(buf, 0, len);
+                }
+            }
+            byte[] digest = md.digest();
+            return digest;
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return null;
+        }
+
+    }
+
+    public static boolean isOtherPlatforms() {
+        String p = System.getProperty("os.name").toLowerCase();
+        return !p.contains("windows") && !p.contains("linux");
     }
 
 }

@@ -203,11 +203,11 @@ public class PdfSplitBatchController extends PdfBatchController {
 
     @Override
     public String handleFile(File srcFile, File targetPath) {
-
         doc = null;
         targetFiles = new ArrayList<>();
         if (PdfTools.isPDF(srcFile)) {
             try {
+                showHandling(srcFile);
                 currentParameters.currentSourceFile = srcFile;
                 if (!isPreview) {
                     PdfInformation info = tableData.get(currentParameters.currentIndex);
@@ -219,7 +219,7 @@ public class PdfSplitBatchController extends PdfBatchController {
                     actualParameters.password = info.getUserPassword();
                 }
 
-                try (PDDocument pd = PDDocument.load(currentParameters.currentSourceFile,
+                try ( PDDocument pd = PDDocument.load(currentParameters.currentSourceFile,
                         currentParameters.password, AppVariables.pdfMemUsage)) {
                     doc = pd;
                     if (currentParameters.toPage <= 0 || currentParameters.toPage > doc.getNumberOfPages()) {

@@ -111,7 +111,7 @@ public class ColorBase {
             case ColorSpace.CS_GRAY:
                 return "GRAY";
             default:
-                return "UNKOWN";
+                return "Unknown";
 
         }
 
@@ -134,7 +134,7 @@ public class ColorBase {
             case ICC_Profile.CLASS_NAMEDCOLOR:
                 return "NamedColorProfile";
             default:
-                return "UNKOWN";
+                return "Unknown";
         }
     }
 
@@ -155,7 +155,7 @@ public class ColorBase {
             case ICC_Profile.icSigNamedColorClass:
                 return "NamedColorProfile";
             default:
-                return "UNKOWN";
+                return "Unknown";
         }
     }
 

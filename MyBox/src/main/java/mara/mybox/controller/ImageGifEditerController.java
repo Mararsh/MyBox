@@ -193,7 +193,8 @@ public class ImageGifEditerController extends ImagesListController {
                     popSuccessul();
                     if (outFile.equals(sourceFile)) {
                         setImageChanged(false);
-                    } else if (viewCheck.isSelected()) {
+                    }
+                    if (viewCheck.isSelected()) {
                         try {
                             final ImageGifViewerController controller
                                     = (ImageGifViewerController) openStage(CommonValues.ImageGifViewerFxml);

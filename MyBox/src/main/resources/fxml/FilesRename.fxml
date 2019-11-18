@@ -38,7 +38,7 @@ License:    Apache License Version 2.0
                      <content>
                               <VBox fx:id="paraBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                   <children>
-                                      <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%TargetFiles" VBox.vgrow="ALWAYS">
+                                      <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Rename" VBox.vgrow="ALWAYS">
                                           <content>
                                               <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
                                                   <children>
@@ -103,12 +103,12 @@ License:    Apache License Version 2.0
                                                                           <children>
                                                                               <Label text="%Start" />
                                                                               <TextField fx:id="acumFromInput" prefWidth="60.0" text="0" />
-                                                                              <CheckBox fx:id="fillZeroCheck" mnemonicParsing="false" selected="true" text="%FillZero" />
                                                                           </children>
                                                          <VBox.margin>
                                                             <Insets top="5.0" />
                                                          </VBox.margin>
                                                                       </FlowPane>
+                                                                        <CheckBox fx:id="fillZeroCheck" mnemonicParsing="false" selected="true" text="%FillZero" />
                                                                       <FlowPane hgap="5.0" layoutX="10.0" layoutY="110.0" vgap="5.0">
                                                                           <children>
                                                                               <Label text="%Digit" />
@@ -155,6 +155,20 @@ License:    Apache License Version 2.0
                                                 <Insets top="10.0" />
                                              </VBox.margin>
                                                       </VBox>
+                                          <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                             <children>
+                                                <Label text="%ExistedFiles" />
+                                                <RadioButton fx:id="targetReplaceRadio" mnemonicParsing="false" selected="true" text="%Replace">
+                                                   <toggleGroup>
+                                                      <ToggleGroup fx:id="targetExistGroup" />
+                                                   </toggleGroup>
+                                                </RadioButton>
+                                                <RadioButton fx:id="targetSkipRadio" mnemonicParsing="false" text="%Skip" toggleGroup="$targetExistGroup" />
+                                             </children>
+                                             <VBox.margin>
+                                                <Insets top="10.0" />
+                                             </VBox.margin>
+                                          </HBox>
                                                   </children>
                                               </VBox>
                                           </content>

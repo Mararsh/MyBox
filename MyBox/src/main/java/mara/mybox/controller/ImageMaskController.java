@@ -45,7 +45,7 @@ import static mara.mybox.value.AppVariables.logger;
  */
 public class ImageMaskController extends ImageBaseController {
 
-    public static final String DefaultStrokeColor = "#c94d58", DefaultAnchorColor = "#dff0fe";
+    public static final String DefaultStrokeColor = "#c94d58", DefaultAnchorColor = "#0066cc";
 
     protected boolean needNotRulers, needNotCoordinates, changed;
     protected DoubleRectangle maskRectangleData;
@@ -364,7 +364,7 @@ public class ImageMaskController extends ImageBaseController {
             return;
         }
         clearMaskRulerX();
-        if (AppVariables.getUserConfigBoolean("ImageRulerXKey", true)) {
+        if (AppVariables.getUserConfigBoolean("ImageRulerXKey", false)) {
             Color strokeColor = Color.web(AppVariables.getUserConfigValue("StrokeColor", "#FF0000"));
             double imageWidth = getImageWidth();
             double ratio = imageView.getBoundsInParent().getWidth() / imageWidth;
@@ -421,7 +421,7 @@ public class ImageMaskController extends ImageBaseController {
             return;
         }
         clearMaskRulerY();
-        if (AppVariables.getUserConfigBoolean("ImageRulerYKey", true)) {
+        if (AppVariables.getUserConfigBoolean("ImageRulerYKey", false)) {
             Color strokeColor = Color.web(AppVariables.getUserConfigValue("StrokeColor", "#FF0000"));
             double imageHeight = getImageHeight();
             double ratio = imageView.getBoundsInParent().getHeight() / imageHeight;
@@ -653,11 +653,19 @@ public class ImageMaskController extends ImageBaseController {
     }
 
     public void initMaskCircleLine(boolean show) {
+        initMaskCircleLine(show, null);
+    }
+
+    public void initMaskCircleLine(boolean show, DoubleCircle circle) {
         if (imageView == null || maskPane == null || maskCircleLine == null) {
             return;
         }
         if (show && imageView.getImage() != null) {
-            setDafultMaskCircleValues();
+            if (circle == null) {
+                setDafultMaskCircleValues();
+            } else {
+                maskCircleData = circle;
+            }
             maskCircleLine.setVisible(true);
             if (!maskPane.getChildren().contains(maskCircleLine)) {
                 maskPane.getChildren().addAll(maskCircleLine,

@@ -43,7 +43,7 @@ import mara.mybox.value.CommonImageValues;
  */
 public class RecordImagesInSystemClipboardController extends BaseController {
 
-    private int recordedNumber;
+    private int recordedNumber, checkInterval;
     private ImageType imageType;
     private int jpegQuality, threshold;
     private String filePrefix;
@@ -87,6 +87,8 @@ public class RecordImagesInSystemClipboardController extends BaseController {
     @Override
     public void initializeNext() {
         try {
+            checkInterval = 1000;
+
             recordTypeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue<? extends Toggle> ov,
@@ -272,7 +274,7 @@ public class RecordImagesInSystemClipboardController extends BaseController {
                                     return;
                                 }
                                 isHandling = true;
-                                if (lastImage != null && FxmlImageManufacture.isImageSame(lastImage, image)) {
+                                if (lastImage != null && FxmlImageManufacture.sameImage(lastImage, image)) {
                                     isHandling = false;
                                     return;
                                 }
@@ -292,7 +294,7 @@ public class RecordImagesInSystemClipboardController extends BaseController {
                         });
 
                     }
-                }, 0, 2000);
+                }, 0, checkInterval);
             } else {
                 targetPane.setDisable(false);
                 optionsPane.setDisable(false);

@@ -77,7 +77,7 @@ public class TableImageScope extends DerbyBase {
                     records.add(scope);
                 }
             }
-        } catch (Exception e) {
+        } catch (Exception e) {  failed(e);
             // logger.debug(e.toString());
         }
         return records;
@@ -102,7 +102,7 @@ public class TableImageScope extends DerbyBase {
             if (results.next()) {
                 return decode(results);
             }
-        } catch (Exception e) {
+        } catch (Exception e) {  failed(e);
             // logger.debug(e.toString());
         }
         return null;
@@ -131,7 +131,7 @@ public class TableImageScope extends DerbyBase {
             } else {
                 scope = null;
             }
-        } catch (Exception e) {
+        } catch (Exception e) {  failed(e);
             // logger.debug(e.toString());
             scope = null;
         }
@@ -212,7 +212,7 @@ public class TableImageScope extends DerbyBase {
 
             }
             return true;
-        } catch (Exception e) {
+        } catch (Exception e) {  failed(e);
             // logger.debug(e.toString());
             return false;
         }
@@ -235,14 +235,14 @@ public class TableImageScope extends DerbyBase {
                     for (String item : items) {
                         try {
                             colors.add(new Color((int) Double.parseDouble(item)));
-                        } catch (Exception e) {
+                        } catch (Exception e) {  failed(e);
                         }
                     }
                     scope.setColors(colors);
                 }
             }
             return true;
-        } catch (Exception e) {
+        } catch (Exception e) {  failed(e);
             // logger.debug(e.toString());
             return false;
         }
@@ -263,7 +263,7 @@ public class TableImageScope extends DerbyBase {
             BufferedImage image = ImageFileReaders.readImage(new File(outline));
             scope.setOutlineSource(image);
             return image != null;
-        } catch (Exception e) {
+        } catch (Exception e) {  failed(e);
 //            logger.debug(e.toString());
             return false;
         }
@@ -311,7 +311,7 @@ public class TableImageScope extends DerbyBase {
             }
 //            logger.debug(sql);
             statement.executeUpdate(sql);
-        } catch (Exception e) {
+        } catch (Exception e) {  failed(e);
             // logger.debug(e.toString());
         }
         return read(scope.getFile());
@@ -379,7 +379,7 @@ public class TableImageScope extends DerbyBase {
                     break;
             }
 
-        } catch (Exception e) {
+        } catch (Exception e) {  failed(e);
             // logger.debug(e.toString());
             s = "";
         }
@@ -408,7 +408,7 @@ public class TableImageScope extends DerbyBase {
                         }
                     }
             }
-        } catch (Exception e) {
+        } catch (Exception e) {  failed(e);
             // logger.debug(e.toString());
             s = "";
         }
@@ -433,7 +433,7 @@ public class TableImageScope extends DerbyBase {
                 s = filename;
             }
 
-        } catch (Exception e) {
+        } catch (Exception e) {  failed(e);
             // logger.debug(e.toString());
             s = "";
         }
@@ -446,7 +446,7 @@ public class TableImageScope extends DerbyBase {
             String sql = "DELETE FROM image_scope WHERE image_location='" + imageLocation + "'";
             statement.executeUpdate(sql);
             return true;
-        } catch (Exception e) {
+        } catch (Exception e) {  failed(e);
             // logger.debug(e.toString());
             return false;
         }
@@ -459,7 +459,7 @@ public class TableImageScope extends DerbyBase {
                     + "' AND name='" + name + "'";
             statement.executeUpdate(sql);
             return true;
-        } catch (Exception e) {
+        } catch (Exception e) {  failed(e);
             // logger.debug(e.toString());
             return false;
         }

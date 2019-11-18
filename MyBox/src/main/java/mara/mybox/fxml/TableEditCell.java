@@ -25,7 +25,7 @@ public class TableEditCell<T, P> extends TableCell<T, P>
 
             @Override
             public void startEdit() {
-                logger.debug("here");
+           
                 super.startEdit();
                 if (isEditing()) {
                     logger.debug("Inside is editing  ");
@@ -34,9 +34,9 @@ public class TableEditCell<T, P> extends TableCell<T, P>
                         @Override
                         public void changed(ObservableValue arg0,
                                 Boolean oldv, Boolean newv) {
-                            logger.debug("here");
+                       
                             if (newv) {
-                                logger.debug("here");
+                           
                                 commitEdit(setString(textField.getText()));
                             }
                         }
@@ -47,7 +47,7 @@ public class TableEditCell<T, P> extends TableCell<T, P>
 
 //            @Override
 //            public void cancelEdit() {
-//                logger.debug("here");
+//           
 //                super.cancelEdit();
 //                setText(getString());
 //                setGraphic(null);
@@ -55,7 +55,7 @@ public class TableEditCell<T, P> extends TableCell<T, P>
 //            @Override
 //            public void updateItem(P item, boolean empty) {
 //                super.updateItem(item, empty);
-//                logger.debug("here");
+//           
 //                if (empty) {
 //                    setText(null);
 //                    setGraphic(null);
@@ -80,9 +80,9 @@ public class TableEditCell<T, P> extends TableCell<T, P>
 //                    @Override
 //                    public void changed(ObservableValue arg0,
 //                            Boolean oldv, Boolean newv) {
-//                        logger.debug("here");
+//                   
 //                        if (newv) {
-//                            logger.debug("here");
+//                       
 //                            commitEdit(setString(textField.getText()));
 //                        }
 //                    }

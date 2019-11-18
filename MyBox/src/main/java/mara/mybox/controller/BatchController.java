@@ -17,13 +17,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Toggle;
-import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
+import mara.mybox.data.FileInformation;
 import mara.mybox.data.FileInformation.FileSelectorType;
 import mara.mybox.data.ProcessParameters;
 import mara.mybox.fxml.FxmlControl;
@@ -34,10 +32,8 @@ import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.getUserConfigValue;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
-import static mara.mybox.value.AppVariables.setUserConfigValue;
 import mara.mybox.value.CommonImageValues;
 
 /**
@@ -48,19 +44,18 @@ import mara.mybox.value.CommonImageValues;
  */
 public abstract class BatchController<T> extends BaseController {
 
-    protected String targetSubdirKey, previewKey, targetExistKey, targetAppendKey;
+    protected String targetSubdirKey, previewKey;
 
     protected ObservableList<T> tableData;
     protected TableView<T> tableView;
 
     protected List<File> sourceFiles, targetFiles;
-    protected TargetExistType targetExistType;
-    protected List<Integer> sourcesIndice;
+
     protected List<String> filesPassword;
 
-    protected boolean sourceCheckSubdir, allowPaused, browseTargets, createDirectories;
+    protected boolean sourceCheckSubdir, allowPaused, browseTargets, viewTargetPath,
+            createDirectories;
     protected boolean isPreview, paused;
-    protected String targetFileType, targetNameAppend;
     protected int dirFilesNumber, dirFilesHandled;
     protected long fileSelectorSize, fileSelectorTime;
     protected String[] sourceFilesSelector;
@@ -68,20 +63,12 @@ public abstract class BatchController<T> extends BaseController {
 
     protected ProcessParameters actualParameters, previewParameters, currentParameters;
 
-    public static enum TargetExistType {
-        Rename, Replace, Skip
-    }
-
     @FXML
     protected TableController<T> tableController;
     @FXML
     protected VBox tableBox;
     @FXML
-    protected ToggleGroup targetExistGroup, fileTypeGroup;
-    @FXML
-    protected RadioButton targetReplaceRadio, targetRenameRadio, targetSkipRadio;
-    @FXML
-    protected TextField targetAppendInput, previewInput, acumFromInput, digitInput;
+    protected TextField previewInput, acumFromInput, digitInput;
     @FXML
     protected CheckBox targetSubdirCheck, miaoCheck, openCheck;
     @FXML
@@ -94,10 +81,8 @@ public abstract class BatchController<T> extends BaseController {
     public BatchController() {
         targetSubdirKey = "targetSubdirKey";
         previewKey = "previewKey";
-        targetExistKey = "targetExistKey";
-        targetAppendKey = "targetAppendKey";
 
-        browseTargets = false;
+        browseTargets = viewTargetPath = false;
 
         sourcePathKey = "sourcePath";
         sourceExtensionFilter = CommonImageValues.AllExtensionFilter;
@@ -111,6 +96,7 @@ public abstract class BatchController<T> extends BaseController {
 
     // "targetFiles" and "actualParameters.finalTargetName" should be written by this method
     public String handleFile(File srcFile, File targetPath) {
+        showHandling(srcFile);
         File target = makeTargetFile(srcFile, targetPath);
         if (target == null) {
             return AppVariables.message("Skip");
@@ -128,7 +114,9 @@ public abstract class BatchController<T> extends BaseController {
         if (!isPreview && openCheck != null && !openCheck.isSelected()) {
             return;
         }
-        if (targetFiles == null || targetFiles.size() == 1) {
+        if (targetFiles != null && viewTargetPath) {
+            openTarget(null);
+        } else if (targetFiles == null || targetFiles.size() == 1) {
             if (actualParameters.finalTargetName == null
                     || !new File(actualParameters.finalTargetName).exists()) {
                 alertInformation(AppVariables.message("NoDataNotSupported"));
@@ -285,27 +273,6 @@ public abstract class BatchController<T> extends BaseController {
     public void initTargetSection() {
         try {
 
-            if (targetExistGroup != null) {
-                targetExistGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                    @Override
-                    public void changed(ObservableValue<? extends Toggle> ov,
-                            Toggle old_toggle, Toggle new_toggle) {
-                        checkTargetExistType();
-                    }
-                });
-                targetAppendInput.textProperty().addListener(new ChangeListener<String>() {
-                    @Override
-                    public void changed(ObservableValue<? extends String> ov, String oldv, String newv) {
-                        checkTargetExistType();
-                    }
-                });
-                isSettingValues = true;
-                FxmlControl.setRadioSelected(targetExistGroup, getUserConfigValue(targetExistKey, message("Replace")));
-                targetAppendInput.setText(getUserConfigValue(targetAppendKey, "_m"));
-                isSettingValues = false;
-                checkTargetExistType();
-            }
-
             if (startButton != null) {
                 if (targetPathInput != null) {
                     if (tableView != null) {
@@ -318,6 +285,12 @@ public abstract class BatchController<T> extends BaseController {
                         startButton.disableProperty().bind(
                                 Bindings.isEmpty(targetPathInput.textProperty())
                                         .or(targetPathInput.styleProperty().isEqualTo(badStyle))
+                        );
+                    }
+                } else {
+                    if (tableView != null) {
+                        startButton.disableProperty().bind(
+                                Bindings.isEmpty(tableView.getItems())
                         );
                     }
                 }
@@ -354,29 +327,6 @@ public abstract class BatchController<T> extends BaseController {
             logger.error(e.toString());
         }
 
-    }
-
-    public void checkTargetExistType() {
-        if (isSettingValues) {
-            return;
-        }
-        targetAppendInput.setStyle(null);
-        RadioButton selected = (RadioButton) targetExistGroup.getSelectedToggle();
-        if (selected.equals(targetReplaceRadio)) {
-            targetExistType = TargetExistType.Replace;
-
-        } else if (selected.equals(targetRenameRadio)) {
-            targetExistType = TargetExistType.Rename;
-            if (targetAppendInput.getText() == null || targetAppendInput.getText().trim().isEmpty()) {
-                targetAppendInput.setStyle(badStyle);
-            } else {
-                setUserConfigValue(targetAppendKey, targetAppendInput.getText().trim());
-            }
-
-        } else if (selected.equals(targetSkipRadio)) {
-            targetExistType = TargetExistType.Skip;
-        }
-        setUserConfigValue(targetExistKey, selected.getText());
     }
 
     @Override
@@ -468,7 +418,6 @@ public abstract class BatchController<T> extends BaseController {
         actualParameters.acumStart = 1;
         actualParameters.acumDigit = 0;
 
-        sourcesIndice = new ArrayList<>();
         sourceFiles = new ArrayList<>();
         targetFiles = new ArrayList<>();
 
@@ -481,12 +430,20 @@ public abstract class BatchController<T> extends BaseController {
     }
 
     public boolean makeBatchParameters() {
-
         if (tableData == null || tableData.isEmpty()) {
             actualParameters = null;
             return false;
         }
-
+        for (int i = 0; i < tableData.size(); i++) {
+            FileInformation d = tableController.fileInformation(i);
+            if (d == null) {
+                continue;
+            }
+            d.setHandled("");
+            if (!isPreview && !sourceFiles.contains(d.getFile())) {
+                sourceFiles.add(d.getFile());
+            }
+        }
         if (isPreview) {
             int index = 0;
             ObservableList<Integer> selected = tableView.getSelectionModel().getSelectedIndices();
@@ -494,12 +451,6 @@ public abstract class BatchController<T> extends BaseController {
                 index = selected.get(0);
             }
             sourceFiles.add(tableController.file(index));
-            sourcesIndice.add(index);
-        } else {
-            for (int i = 0; i < tableData.size(); i++) {
-                sourcesIndice.add(i);
-                sourceFiles.add(tableController.file(i));
-            }
         }
         return true;
     }
@@ -560,29 +511,28 @@ public abstract class BatchController<T> extends BaseController {
 
                     @Override
                     public Void call() {
+                        if (!beforeHandleFiles()) {
+                            ok = false;
+                            return null;
+                        }
                         updateTaskProgress(currentParameters.currentIndex, sourceFiles.size());
-                        for (; currentParameters.currentIndex < sourceFiles.size(); currentParameters.currentIndex++) {
+                        int len = sourceFiles.size();
+                        for (; currentParameters.currentIndex < len; currentParameters.currentIndex++) {
                             if (isCancelled()) {
                                 break;
                             }
                             currentParameters.currentSourceFile = sourceFiles.get(currentParameters.currentIndex);
-                            if (statusLabel != null) {
-                                statusLabel.setText(currentParameters.currentSourceFile.getName() + " "
-                                        + message("Handling...") + " "
-                                        + message("StartTime")
-                                        + ": " + DateTools.datetimeToString(new Date()));
-                            }
 
                             handleCurrentFile();
 
-                            updateTaskProgress(currentParameters.currentIndex + 1, sourceFiles.size());
+                            updateTaskProgress(currentParameters.currentIndex + 1, len);
 
                             if (isCancelled() || isPreview) {
                                 break;
                             }
-
                         }
-                        updateTaskProgress(currentParameters.currentIndex, sourceFiles.size());
+                        afterHandleFiles();
+                        updateTaskProgress(currentParameters.currentIndex, len);
                         ok = true;
 
                         return null;
@@ -624,6 +574,14 @@ public abstract class BatchController<T> extends BaseController {
         }
     }
 
+    public boolean beforeHandleFiles() {
+        return true;
+    }
+
+    public void afterHandleFiles() {
+
+    }
+
     public void updateTaskProgress(long number, long total) {
         Platform.runLater(new Runnable() {
             @Override
@@ -656,65 +614,22 @@ public abstract class BatchController<T> extends BaseController {
     }
 
     public void handleCurrentFile() {
-        currentParameters.currentSourceFile = getCurrentFile();
-        String result;
-        if (!currentParameters.currentSourceFile.exists()) {
-            result = AppVariables.message("NotFound");
-        } else if (currentParameters.currentSourceFile.isFile()) {
-            result = handleFile(currentParameters.currentSourceFile);
-        } else if (currentParameters.currentSourceFile.isDirectory()) {
-            result = handleDirectory(currentParameters.currentSourceFile);
-        } else {
-            return;
-        }
-        currentParameters.currentTotalHandled++;
-        tableController.markFileHandled(currentParameters.currentIndex, result);
-    }
-
-    public File makeTargetFile(File sourceFile, File targetPath) {
         try {
-            String namePrefix = FileTools.getFilePrefix(sourceFile.getName());
-            String nameSuffix = "";
-            if (sourceFile.isFile()) {
-                if (targetFileType != null) {
-                    nameSuffix = "." + targetFileType;
-                } else {
-                    nameSuffix = "." + FileTools.getFileSuffix(sourceFile.getName());
-                }
+            currentParameters.currentSourceFile = getCurrentFile();
+            String result;
+            if (!currentParameters.currentSourceFile.exists()) {
+                result = AppVariables.message("NotFound");
+            } else if (currentParameters.currentSourceFile.isFile()) {
+                result = handleFile(currentParameters.currentSourceFile);
+            } else if (currentParameters.currentSourceFile.isDirectory()) {
+                result = handleDirectory(currentParameters.currentSourceFile);
+            } else {
+                return;
             }
-            return makeTargetFile(namePrefix, nameSuffix, targetPath);
+            currentParameters.currentTotalHandled++;
+            tableController.markFileHandled(currentParameters.currentIndex, result);
         } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public File makeTargetFile(String namePrefix, String nameSuffix, File targetPath) {
-        try {
-
-            String targetPrefix = targetPath.getAbsolutePath() + File.separator + namePrefix;
-            File target = new File(targetPrefix + nameSuffix);
-            if (target.exists()) {
-                if (targetExistType == TargetExistType.Skip) {
-                    target = null;
-                } else if (targetExistType == TargetExistType.Rename) {
-                    if (targetAppendInput != null) {
-                        targetNameAppend = targetAppendInput.getText().trim();
-                    }
-                    if (targetNameAppend == null || targetNameAppend.isEmpty()) {
-                        targetNameAppend = "-m";
-                    }
-                    while (true) {
-                        targetPrefix = targetPrefix + targetNameAppend;
-                        target = new File(targetPrefix + nameSuffix);
-                        if (!target.exists()) {
-                            break;
-                        }
-                    }
-                }
-            }
-            return target;
-        } catch (Exception e) {
-            return null;
+            logger.debug(e.toString());
         }
     }
 
@@ -733,10 +648,15 @@ public abstract class BatchController<T> extends BaseController {
         }
     }
 
+    public boolean matchType(File file) {
+        return true;
+    }
+
     public boolean match(File file) {
-        if (file == null || !file.isFile()) {
+        if (file == null || !file.isFile() || !matchType(file)) {
             return false;
         }
+
         if (fileSelectorType == FileSelectorType.All) {
             return true;
         }
@@ -855,21 +775,21 @@ public abstract class BatchController<T> extends BaseController {
         }
     }
 
-    protected void handleDirectory(File sourcePath, File targetPath) {
+    protected boolean handleDirectory(File sourcePath, File targetPath) {
         if (sourcePath == null || !sourcePath.exists() || !sourcePath.isDirectory()
                 || (isPreview && dirFilesHandled > 0)) {
-            return;
+            return false;
         }
         try {
             File[] files = sourcePath.listFiles();
             for (File srcFile : files) {
                 if (task == null || task.isCancelled()) {
-                    return;
+                    return false;
                 }
                 if (srcFile.isFile()) {
                     dirFilesNumber++;
                     if (isPreview && dirFilesHandled > 0) {
-                        return;
+                        return false;
                     }
                     if (!match(srcFile)) {
                         continue;
@@ -891,8 +811,10 @@ public abstract class BatchController<T> extends BaseController {
                     }
                 }
             }
+            return true;
         } catch (Exception e) {
             logger.error(e.toString());
+            return false;
         }
     }
 
@@ -921,7 +843,34 @@ public abstract class BatchController<T> extends BaseController {
         if (tableBox != null) {
             tableBox.setDisable(disable);
         }
-        paraBox.setDisable(disable);
+        if (paraBox != null) {
+            paraBox.setDisable(disable);
+        }
+    }
+
+    public void showHandling(File file) {
+        if (statusLabel == null || file == null) {
+            return;
+        }
+        final String name = file.getAbsolutePath();
+        showStatus(MessageFormat.format(message("HandlingObject"), name) + "    "
+                + message("StartTime") + ": " + DateTools.nowString());
+    }
+
+    public void showStatus(String info) {
+        if (statusLabel == null || info == null) {
+            return;
+        }
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    statusLabel.setText(info);
+                } catch (Exception e) {
+                    logger.debug(e.toString());
+                }
+            }
+        });
     }
 
     public void updateInterface(final String newStatus) {

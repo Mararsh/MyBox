@@ -21,7 +21,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageDataController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageAnalyseController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -191,10 +191,10 @@ License:    Apache License Version 2.0
                                     <children>
                                         <ImageView fx:id="leftPaneControl" fitHeight="20.0" fitWidth="20.0" onMouseClicked="#controlLeftPane" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                                <Image url="@../buttons/iconsDoubleLeft.png" />
+                                                <Image url="@../buttons/iconDoubleLeft.png" />
                                             </image>
                                         </ImageView>
-                                        <Button fx:id="selectSourceButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile">
+                                        <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile">
                                             <graphic>
                                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -206,33 +206,33 @@ License:    Apache License Version 2.0
                                         <Label fx:id="sampledTips" maxWidth="1.7976931348623157E308" styleClass="darkRed-label" stylesheets="@../styles/MyBox.css" visible="false" HBox.hgrow="ALWAYS" />
                                         <HBox fx:id="dataOpBox" alignment="CENTER_LEFT" spacing="5.0">
                                             <children>
-                                              <CheckBox fx:id="topCheck" mnemonicParsing="false">
-                                                  <graphic>
-                                                      <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                          <image>
-                                                              <Image url="@../buttons/iconTop.png" />
-                                                          </image>
-                                                      </ImageView>
-                                                  </graphic>
-                                              </CheckBox>
-                                              <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshData">
-                                                  <graphic>
-                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                          <image>
-                                                              <Image url="@../buttons/iconRefresh.png" />
-                                                          </image>
-                                                      </ImageView>
-                                                  </graphic>
-                                              </Button>
-                                    <Button fx:id="saveAsButton" mnemonicParsing="false" onAction="#saveAsAction" onMouseEntered="#popSaveAs">
-                                       <graphic>
-                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../buttons/iconSaveAs.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                    </Button>
+                                                <CheckBox fx:id="topCheck" mnemonicParsing="false">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconTop.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </CheckBox>
+                                                <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshData">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconRefresh.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="saveAsButton" mnemonicParsing="false" onAction="#saveAsAction" onMouseEntered="#popSaveAs">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconSaveAs.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
                                             </children>
                                         </HBox>
                                     </children>
@@ -243,28 +243,17 @@ License:    Apache License Version 2.0
                                             <content>
                                                 <SplitPane dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" VBox.vgrow="ALWAYS">
                                                     <items>
-                                                        <TableView fx:id="colorsTable" style="-fx-font-size: 14;" tableMenuButtonVisible="true">
-                                                            <columns>
-                                                                <TableColumn fx:id="colorColumn" prefWidth="120.0" text="%Color" />
-                                                                <TableColumn fx:id="meanColumn" text="%Mean" />
-                                                                <TableColumn fx:id="varianceColumn" text="%Variance" />
-                                                                <TableColumn fx:id="skewnessColumn" prefWidth="85.0" text="%Skewness" />
-                                                                <TableColumn fx:id="medianColumn" text="%Median" />
-                                                                <TableColumn fx:id="modeColumn" text="%Mode" />
-                                                                <TableColumn fx:id="maximumColumn" prefWidth="85.0" text="%Maximum" />
-                                                                <TableColumn fx:id="minimumColumn" prefWidth="85.0" text="%Minimum" />
-                                                            </columns>
-                                                        </TableView>
+                                          <WebView fx:id="colorsView" prefHeight="-1.0" prefWidth="-1.0" />
                                                         <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                                             <children>
                                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
                                                                     <children>
                                                                         <BarChart fx:id="colorsBarchart" alternativeRowFillVisible="false" barGap="1.0" categoryGap="1.0" horizontalGridLinesVisible="false" horizontalZeroLineVisible="false" legendSide="TOP" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" verticalGridLinesVisible="false" verticalZeroLineVisible="false" VBox.vgrow="ALWAYS">
                                                                             <xAxis>
-                                                                                <CategoryAxis fx:id="grayX" animated="false" side="BOTTOM" tickLabelGap="1.0" tickLabelRotation="45.0" tickMarkVisible="false" />
+                                                                                <CategoryAxis fx:id="grayX" animated="false" tickLabelGap="1.0" tickLabelRotation="45.0" tickMarkVisible="false" />
                                                                             </xAxis>
                                                                             <yAxis>
-                                                                                <NumberAxis fx:id="grayY" side="LEFT" tickLabelGap="1.0" tickLength="10.0" />
+                                                                                <NumberAxis fx:id="grayY" label="%PixelsNumber" side="LEFT" tickLabelGap="1.0" tickLength="10.0" />
                                                                             </yAxis>
                                                                         </BarChart>
                                                                     </children>
@@ -317,13 +306,17 @@ License:    Apache License Version 2.0
                                                             <items>
                                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                                     <children>
-                                                                        <Label styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%DominantKMeansComments" wrapText="true" VBox.vgrow="NEVER" />
                                                                         <FlowPane hgap="5.0" maxWidth="1.7976931348623157E308" prefWrapLength="800.0" vgap="5.0" VBox.vgrow="NEVER">
                                                                             <children>
                                                                                 <Label fx:id="intBoxLabel" text="%ColorsNumber" />
                                                                                 <ComboBox fx:id="colorsNumberSelectors1" editable="true" prefWidth="100.0" />
                                                                                 <Label fx:id="depthLabel" text="%RegionsBitDepth" />
                                                                                 <ComboBox fx:id="regionsDepthSelector1" prefWidth="80.0" />
+                                                            <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                               <image>
+                                                                  <Image url="@../buttons/iconTips.png" />
+                                                               </image>
+                                                            </ImageView>
                                                                             </children>
                                                                         </FlowPane>
                                                                         <SplitPane dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" VBox.vgrow="ALWAYS">
@@ -336,7 +329,6 @@ License:    Apache License Version 2.0
                                                                 </VBox>
                                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                                     <children>
-                                                                        <Label styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%DominantPopularityComments" wrapText="true" VBox.vgrow="NEVER" />
                                                                         <FlowPane hgap="5.0" maxWidth="1.7976931348623157E308" prefWrapLength="800.0" vgap="5.0" VBox.vgrow="NEVER">
                                                                             <children>
                                                                                 <Label fx:id="intBoxLabel1" text="%ColorsNumber" />
@@ -359,27 +351,27 @@ License:    Apache License Version 2.0
                                                 </VBox>
                                             </content>
                                         </Tab>
-                              <Tab fx:id="grayTab" closable="false" text="%Gray">
-                                 <content>
-                                    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                       <children>
-                                          <SplitPane dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" VBox.vgrow="ALWAYS">
-                                             <items>
-                                                <WebView fx:id="grayView" prefHeight="-1.0" prefWidth="-1.0" />
-                                                <BarChart fx:id="grayBarchart" alternativeRowFillVisible="false" barGap="1.0" categoryGap="1.0" horizontalGridLinesVisible="false" horizontalZeroLineVisible="false" legendSide="TOP" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" verticalGridLinesVisible="false" verticalZeroLineVisible="false">
-                                                   <xAxis>
-                                                      <CategoryAxis fx:id="grayX12" animated="false" side="BOTTOM" tickLabelGap="1.0" tickLabelRotation="45.0" tickMarkVisible="false" />
-                                                   </xAxis>
-                                                   <yAxis>
-                                                      <NumberAxis fx:id="grayY12" side="LEFT" tickLabelGap="1.0" tickLength="10.0" />
-                                                   </yAxis>
-                                                </BarChart>
-                                             </items>
-                                          </SplitPane>
-                                       </children>
-                                    </VBox>
-                                 </content>
-                              </Tab>
+                                        <Tab fx:id="grayTab" closable="false" text="%Gray">
+                                            <content>
+                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                    <children>
+                                                        <SplitPane dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" VBox.vgrow="ALWAYS">
+                                                            <items>
+                                                                <WebView fx:id="grayView" prefHeight="-1.0" prefWidth="-1.0" />
+                                                                <BarChart fx:id="grayBarchart" alternativeRowFillVisible="false" barGap="1.0" categoryGap="1.0" horizontalGridLinesVisible="false" horizontalZeroLineVisible="false" legendSide="TOP" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" verticalGridLinesVisible="false" verticalZeroLineVisible="false">
+                                                                    <xAxis>
+                                                                        <CategoryAxis fx:id="grayX12" animated="false" side="BOTTOM" tickLabelGap="1.0" tickLabelRotation="45.0" tickMarkVisible="false" />
+                                                                    </xAxis>
+                                                                    <yAxis>
+                                                                        <NumberAxis fx:id="grayY12" label="%PixelsNumber" side="LEFT" tickLabelGap="1.0" tickLength="10.0" />
+                                                                    </yAxis>
+                                                                </BarChart>
+                                                            </items>
+                                                        </SplitPane>
+                                                    </children>
+                                                </VBox>
+                                            </content>
+                                        </Tab>
                                         <Tab fx:id="redTab" closable="false" text="%RedChannel">
                                             <content>
                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
@@ -392,7 +384,7 @@ License:    Apache License Version 2.0
                                                                         <CategoryAxis fx:id="grayX1" animated="false" side="BOTTOM" tickLabelGap="1.0" tickLabelRotation="45.0" tickMarkVisible="false" />
                                                                     </xAxis>
                                                                     <yAxis>
-                                                                        <NumberAxis fx:id="grayY1" side="LEFT" tickLabelGap="1.0" tickLength="10.0" />
+                                                                        <NumberAxis fx:id="grayY1" label="%PixelsNumber" side="LEFT" tickLabelGap="1.0" tickLength="10.0" />
                                                                     </yAxis>
                                                                 </BarChart>
                                                             </items>
@@ -401,132 +393,132 @@ License:    Apache License Version 2.0
                                                 </VBox>
                                             </content>
                                         </Tab>
-                              <Tab fx:id="greenTab" closable="false" text="%GreenChannel">
-                                 <content>
-                                    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                       <children>
-                                          <SplitPane dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" VBox.vgrow="ALWAYS">
-                                             <items>
-                                                <WebView fx:id="greenView" prefHeight="-1.0" prefWidth="-1.0" />
-                                                <BarChart fx:id="greenBarchart" alternativeRowFillVisible="false" barGap="1.0" categoryGap="1.0" horizontalGridLinesVisible="false" horizontalZeroLineVisible="false" legendSide="TOP" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" verticalGridLinesVisible="false" verticalZeroLineVisible="false">
-                                                   <xAxis>
-                                                      <CategoryAxis fx:id="grayX11" animated="false" side="BOTTOM" tickLabelGap="1.0" tickLabelRotation="45.0" tickMarkVisible="false" />
-                                                   </xAxis>
-                                                   <yAxis>
-                                                      <NumberAxis fx:id="grayY11" side="LEFT" tickLabelGap="1.0" tickLength="10.0" />
-                                                   </yAxis>
-                                                </BarChart>
-                                             </items>
-                                          </SplitPane>
-                                       </children>
-                                    </VBox>
-                                 </content>
-                              </Tab>
-                              <Tab fx:id="blueTab" closable="false" text="%BlueChannel">
-                                 <content>
-                                    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                       <children>
-                                          <SplitPane dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" VBox.vgrow="ALWAYS">
-                                             <items>
-                                                <WebView fx:id="blueView" prefHeight="-1.0" prefWidth="-1.0" />
-                                                <BarChart fx:id="blueBarchart" alternativeRowFillVisible="false" barGap="1.0" categoryGap="1.0" horizontalGridLinesVisible="false" horizontalZeroLineVisible="false" legendSide="TOP" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" verticalGridLinesVisible="false" verticalZeroLineVisible="false">
-                                                   <xAxis>
-                                                      <CategoryAxis fx:id="grayX111" animated="false" side="BOTTOM" tickLabelGap="1.0" tickLabelRotation="45.0" tickMarkVisible="false" />
-                                                   </xAxis>
-                                                   <yAxis>
-                                                      <NumberAxis fx:id="grayY111" side="LEFT" tickLabelGap="1.0" tickLength="10.0" />
-                                                   </yAxis>
-                                                </BarChart>
-                                             </items>
-                                          </SplitPane>
-                                       </children>
-                                    </VBox>
-                                 </content>
-                              </Tab>
-                              <Tab fx:id="hueTab" closable="false" text="%Hue">
-                                 <content>
-                                    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                       <children>
-                                          <SplitPane dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" VBox.vgrow="ALWAYS">
-                                             <items>
-                                                <WebView fx:id="hueView" prefHeight="-1.0" prefWidth="-1.0" />
-                                                <BarChart fx:id="hueBarchart" alternativeRowFillVisible="false" barGap="1.0" categoryGap="1.0" horizontalGridLinesVisible="false" horizontalZeroLineVisible="false" legendSide="TOP" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" verticalGridLinesVisible="false" verticalZeroLineVisible="false">
-                                                   <xAxis>
-                                                      <CategoryAxis fx:id="grayX1111" animated="false" side="BOTTOM" tickLabelGap="1.0" tickLabelRotation="45.0" tickMarkVisible="false" />
-                                                   </xAxis>
-                                                   <yAxis>
-                                                      <NumberAxis fx:id="grayY1111" side="LEFT" tickLabelGap="1.0" tickLength="10.0" />
-                                                   </yAxis>
-                                                </BarChart>
-                                             </items>
-                                          </SplitPane>
-                                       </children>
-                                    </VBox>
-                                 </content>
-                              </Tab>
-                              <Tab fx:id="saturationTab" closable="false" text="%Saturation">
-                                 <content>
-                                    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                       <children>
-                                          <SplitPane dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" VBox.vgrow="ALWAYS">
-                                             <items>
-                                                <WebView fx:id="saturationView" prefHeight="-1.0" prefWidth="-1.0" />
-                                                <BarChart fx:id="saturationBarchart" alternativeRowFillVisible="false" barGap="1.0" categoryGap="1.0" horizontalGridLinesVisible="false" horizontalZeroLineVisible="false" legendSide="TOP" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" verticalGridLinesVisible="false" verticalZeroLineVisible="false">
-                                                   <xAxis>
-                                                      <CategoryAxis fx:id="grayX11111" animated="false" side="BOTTOM" tickLabelGap="1.0" tickLabelRotation="45.0" tickMarkVisible="false" />
-                                                   </xAxis>
-                                                   <yAxis>
-                                                      <NumberAxis fx:id="grayY11111" side="LEFT" tickLabelGap="1.0" tickLength="10.0" />
-                                                   </yAxis>
-                                                </BarChart>
-                                             </items>
-                                          </SplitPane>
-                                       </children>
-                                    </VBox>
-                                 </content>
-                              </Tab>
-                              <Tab fx:id="brightnessTab" closable="false" text="%Brightness">
-                                 <content>
-                                    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                       <children>
-                                          <SplitPane dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" VBox.vgrow="ALWAYS">
-                                             <items>
-                                                <WebView fx:id="brightnessView" prefHeight="-1.0" prefWidth="-1.0" />
-                                                <BarChart fx:id="brightnessBarchart" alternativeRowFillVisible="false" barGap="1.0" categoryGap="1.0" horizontalGridLinesVisible="false" horizontalZeroLineVisible="false" legendSide="TOP" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" verticalGridLinesVisible="false" verticalZeroLineVisible="false">
-                                                   <xAxis>
-                                                      <CategoryAxis fx:id="grayX11112" animated="false" side="BOTTOM" tickLabelGap="1.0" tickLabelRotation="45.0" tickMarkVisible="false" />
-                                                   </xAxis>
-                                                   <yAxis>
-                                                      <NumberAxis fx:id="grayY11112" side="LEFT" tickLabelGap="1.0" tickLength="10.0" />
-                                                   </yAxis>
-                                                </BarChart>
-                                             </items>
-                                          </SplitPane>
-                                       </children>
-                                    </VBox>
-                                 </content>
-                              </Tab>
-                              <Tab fx:id="alphaTab" closable="false" text="%Alpha">
-                                 <content>
-                                    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                       <children>
-                                          <SplitPane dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" VBox.vgrow="ALWAYS">
-                                             <items>
-                                                <WebView fx:id="alphaView" prefHeight="-1.0" prefWidth="-1.0" />
-                                                <BarChart fx:id="alphaBarchart" alternativeRowFillVisible="false" barGap="1.0" categoryGap="1.0" horizontalGridLinesVisible="false" horizontalZeroLineVisible="false" legendSide="TOP" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" verticalGridLinesVisible="false" verticalZeroLineVisible="false">
-                                                   <xAxis>
-                                                      <CategoryAxis fx:id="grayX111121" animated="false" side="BOTTOM" tickLabelGap="1.0" tickLabelRotation="45.0" tickMarkVisible="false" />
-                                                   </xAxis>
-                                                   <yAxis>
-                                                      <NumberAxis fx:id="grayY111121" side="LEFT" tickLabelGap="1.0" tickLength="10.0" />
-                                                   </yAxis>
-                                                </BarChart>
-                                             </items>
-                                          </SplitPane>
-                                       </children>
-                                    </VBox>
-                                 </content>
-                              </Tab>
+                                        <Tab fx:id="greenTab" closable="false" text="%GreenChannel">
+                                            <content>
+                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                    <children>
+                                                        <SplitPane dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" VBox.vgrow="ALWAYS">
+                                                            <items>
+                                                                <WebView fx:id="greenView" prefHeight="-1.0" prefWidth="-1.0" />
+                                                                <BarChart fx:id="greenBarchart" alternativeRowFillVisible="false" barGap="1.0" categoryGap="1.0" horizontalGridLinesVisible="false" horizontalZeroLineVisible="false" legendSide="TOP" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" verticalGridLinesVisible="false" verticalZeroLineVisible="false">
+                                                                    <xAxis>
+                                                                        <CategoryAxis fx:id="grayX11" animated="false" side="BOTTOM" tickLabelGap="1.0" tickLabelRotation="45.0" tickMarkVisible="false" />
+                                                                    </xAxis>
+                                                                    <yAxis>
+                                                                        <NumberAxis fx:id="grayY11" label="%PixelsNumber" side="LEFT" tickLabelGap="1.0" tickLength="10.0" />
+                                                                    </yAxis>
+                                                                </BarChart>
+                                                            </items>
+                                                        </SplitPane>
+                                                    </children>
+                                                </VBox>
+                                            </content>
+                                        </Tab>
+                                        <Tab fx:id="blueTab" closable="false" text="%BlueChannel">
+                                            <content>
+                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                    <children>
+                                                        <SplitPane dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" VBox.vgrow="ALWAYS">
+                                                            <items>
+                                                                <WebView fx:id="blueView" prefHeight="-1.0" prefWidth="-1.0" />
+                                                                <BarChart fx:id="blueBarchart" alternativeRowFillVisible="false" barGap="1.0" categoryGap="1.0" horizontalGridLinesVisible="false" horizontalZeroLineVisible="false" legendSide="TOP" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" verticalGridLinesVisible="false" verticalZeroLineVisible="false">
+                                                                    <xAxis>
+                                                                        <CategoryAxis fx:id="grayX111" animated="false" side="BOTTOM" tickLabelGap="1.0" tickLabelRotation="45.0" tickMarkVisible="false" />
+                                                                    </xAxis>
+                                                                    <yAxis>
+                                                                        <NumberAxis fx:id="grayY111" label="%PixelsNumber" side="LEFT" tickLabelGap="1.0" tickLength="10.0" />
+                                                                    </yAxis>
+                                                                </BarChart>
+                                                            </items>
+                                                        </SplitPane>
+                                                    </children>
+                                                </VBox>
+                                            </content>
+                                        </Tab>
+                                        <Tab fx:id="hueTab" closable="false" text="%Hue">
+                                            <content>
+                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                    <children>
+                                                        <SplitPane dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" VBox.vgrow="ALWAYS">
+                                                            <items>
+                                                                <WebView fx:id="hueView" prefHeight="-1.0" prefWidth="-1.0" />
+                                                                <BarChart fx:id="hueBarchart" alternativeRowFillVisible="false" barGap="1.0" categoryGap="1.0" horizontalGridLinesVisible="false" horizontalZeroLineVisible="false" legendSide="TOP" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" verticalGridLinesVisible="false" verticalZeroLineVisible="false">
+                                                                    <xAxis>
+                                                                        <CategoryAxis fx:id="grayX1111" animated="false" side="BOTTOM" tickLabelGap="1.0" tickLabelRotation="45.0" tickMarkVisible="false" />
+                                                                    </xAxis>
+                                                                    <yAxis>
+                                                                        <NumberAxis fx:id="grayY1111" label="%PixelsNumber" side="LEFT" tickLabelGap="1.0" tickLength="10.0" />
+                                                                    </yAxis>
+                                                                </BarChart>
+                                                            </items>
+                                                        </SplitPane>
+                                                    </children>
+                                                </VBox>
+                                            </content>
+                                        </Tab>
+                                        <Tab fx:id="saturationTab" closable="false" text="%Saturation">
+                                            <content>
+                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                    <children>
+                                                        <SplitPane dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" VBox.vgrow="ALWAYS">
+                                                            <items>
+                                                                <WebView fx:id="saturationView" prefHeight="-1.0" prefWidth="-1.0" />
+                                                                <BarChart fx:id="saturationBarchart" alternativeRowFillVisible="false" barGap="1.0" categoryGap="1.0" horizontalGridLinesVisible="false" horizontalZeroLineVisible="false" legendSide="TOP" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" verticalGridLinesVisible="false" verticalZeroLineVisible="false">
+                                                                    <xAxis>
+                                                                        <CategoryAxis fx:id="grayX11111" animated="false" side="BOTTOM" tickLabelGap="1.0" tickLabelRotation="45.0" tickMarkVisible="false" />
+                                                                    </xAxis>
+                                                                    <yAxis>
+                                                                        <NumberAxis fx:id="grayY11111" label="%PixelsNumber" side="LEFT" tickLabelGap="1.0" tickLength="10.0" />
+                                                                    </yAxis>
+                                                                </BarChart>
+                                                            </items>
+                                                        </SplitPane>
+                                                    </children>
+                                                </VBox>
+                                            </content>
+                                        </Tab>
+                                        <Tab fx:id="brightnessTab" closable="false" text="%Brightness">
+                                            <content>
+                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                    <children>
+                                                        <SplitPane dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" VBox.vgrow="ALWAYS">
+                                                            <items>
+                                                                <WebView fx:id="brightnessView" prefHeight="-1.0" prefWidth="-1.0" />
+                                                                <BarChart fx:id="brightnessBarchart" alternativeRowFillVisible="false" barGap="1.0" categoryGap="1.0" horizontalGridLinesVisible="false" horizontalZeroLineVisible="false" legendSide="TOP" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" verticalGridLinesVisible="false" verticalZeroLineVisible="false">
+                                                                    <xAxis>
+                                                                        <CategoryAxis fx:id="grayX11112" animated="false" side="BOTTOM" tickLabelGap="1.0" tickLabelRotation="45.0" tickMarkVisible="false" />
+                                                                    </xAxis>
+                                                                    <yAxis>
+                                                                        <NumberAxis fx:id="grayY11112" label="%PixelsNumber" side="LEFT" tickLabelGap="1.0" tickLength="10.0" />
+                                                                    </yAxis>
+                                                                </BarChart>
+                                                            </items>
+                                                        </SplitPane>
+                                                    </children>
+                                                </VBox>
+                                            </content>
+                                        </Tab>
+                                        <Tab fx:id="alphaTab" closable="false" text="%Alpha">
+                                            <content>
+                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                    <children>
+                                                        <SplitPane dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" VBox.vgrow="ALWAYS">
+                                                            <items>
+                                                                <WebView fx:id="alphaView" prefHeight="-1.0" prefWidth="-1.0" />
+                                                                <BarChart fx:id="alphaBarchart" alternativeRowFillVisible="false" barGap="1.0" categoryGap="1.0" horizontalGridLinesVisible="false" horizontalZeroLineVisible="false" legendSide="TOP" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" verticalGridLinesVisible="false" verticalZeroLineVisible="false">
+                                                                    <xAxis>
+                                                                        <CategoryAxis fx:id="grayX111121" animated="false" side="BOTTOM" tickLabelGap="1.0" tickLabelRotation="45.0" tickMarkVisible="false" />
+                                                                    </xAxis>
+                                                                    <yAxis>
+                                                                        <NumberAxis fx:id="grayY111121" label="%PixelsNumber" side="LEFT" tickLabelGap="1.0" tickLength="10.0" />
+                                                                    </yAxis>
+                                                                </BarChart>
+                                                            </items>
+                                                        </SplitPane>
+                                                    </children>
+                                                </VBox>
+                                            </content>
+                                        </Tab>
                                     </tabs>
                                 </TabPane>
                             </children>

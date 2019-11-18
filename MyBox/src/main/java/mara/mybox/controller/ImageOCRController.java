@@ -210,7 +210,7 @@ public class ImageOCRController extends ImageViewerController {
         super.afterImageLoaded();
 
         originalView.setImage(image);
-        originalViewLabel.setText(image.getWidth() + " x " + image.getHeight());
+        originalViewLabel.setText((int) image.getWidth() + " x " + (int) image.getHeight());
         paneSizeOriginal();
 
         regionsTableController.baseTitle = FileTools.getFilePrefix(sourceFile.getName()) + "_regions";
@@ -351,7 +351,7 @@ public class ImageOCRController extends ImageViewerController {
     protected void setPreprocessImage(Image image) {
         imageView.setImage(image);
         FxmlControl.paneSize(originalScrollPane, imageView);
-        String s = image.getWidth() + " x " + image.getHeight();
+        String s = (int) image.getWidth() + " x " + (int) image.getHeight();
         if (maskRectangleLine != null && maskRectangleLine.isVisible() && maskRectangleData != null) {
             s += "  " + message("SelectedSize") + ": "
                     + (int) maskRectangleData.getWidth() + "x" + (int) maskRectangleData.getHeight();
@@ -495,32 +495,32 @@ public class ImageOCRController extends ImageViewerController {
 
                         } else if (message("UnsharpMasking").equals(enhance)) {
                             ConvolutionKernel kernel = ConvolutionKernel.makeUnsharpMasking(3);
-                            ImageConvolution imageConvolution
-                                    = new ImageConvolution(imageView.getImage(), null, kernel);
+                            ImageConvolution imageConvolution = ImageConvolution.create().
+                                    setImage(imageView.getImage()).setKernel(kernel);
                             ocrImage = imageConvolution.operateFxImage();
 
                         } else if (message("FourNeighborLaplace").equals(enhance)) {
                             ConvolutionKernel kernel = ConvolutionKernel.MakeSharpenFourNeighborLaplace();
-                            ImageConvolution imageConvolution
-                                    = new ImageConvolution(imageView.getImage(), null, kernel);
+                            ImageConvolution imageConvolution = ImageConvolution.create().
+                                    setImage(imageView.getImage()).setKernel(kernel);
                             ocrImage = imageConvolution.operateFxImage();
 
                         } else if (message("EightNeighborLaplace").equals(enhance)) {
                             ConvolutionKernel kernel = ConvolutionKernel.MakeSharpenEightNeighborLaplace();
-                            ImageConvolution imageConvolution
-                                    = new ImageConvolution(imageView.getImage(), null, kernel);
+                            ImageConvolution imageConvolution = ImageConvolution.create().
+                                    setImage(imageView.getImage()).setKernel(kernel);
                             ocrImage = imageConvolution.operateFxImage();
 
                         } else if (message("GaussianBlur").equals(enhance)) {
                             ConvolutionKernel kernel = ConvolutionKernel.makeGaussBlur(2);
-                            ImageConvolution imageConvolution
-                                    = new ImageConvolution(imageView.getImage(), null, kernel);
+                            ImageConvolution imageConvolution = ImageConvolution.create().
+                                    setImage(imageView.getImage()).setKernel(kernel);
                             ocrImage = imageConvolution.operateFxImage();
 
                         } else if (message("AverageBlur").equals(enhance)) {
                             ConvolutionKernel kernel = ConvolutionKernel.makeAverageBlur(1);
-                            ImageConvolution imageConvolution
-                                    = new ImageConvolution(imageView.getImage(), null, kernel);
+                            ImageConvolution imageConvolution = ImageConvolution.create().
+                                    setImage(imageView.getImage()).setKernel(kernel);
                             ocrImage = imageConvolution.operateFxImage();
 
                         }
@@ -604,8 +604,8 @@ public class ImageOCRController extends ImageViewerController {
                     }
 
                     ConvolutionKernel kernel = ConvolutionKernel.makeUnsharpMasking(3);
-                    ImageConvolution imageConvolution
-                            = new ImageConvolution(image, null, kernel);
+                    ImageConvolution imageConvolution = ImageConvolution.create().
+                            setImage(image).setKernel(kernel);
                     bufferedImage = imageConvolution.operateImage();
                     tmpFile = AppVariables.MyBoxTempPath + File.separator
                             + message("UnsharpMasking") + ".png";
@@ -614,8 +614,8 @@ public class ImageOCRController extends ImageViewerController {
                     }
 
                     kernel = ConvolutionKernel.MakeSharpenFourNeighborLaplace();
-                    imageConvolution
-                            = new ImageConvolution(image, null, kernel);
+                    imageConvolution = ImageConvolution.create().
+                            setImage(image).setKernel(kernel);
                     bufferedImage = imageConvolution.operateImage();
                     tmpFile = AppVariables.MyBoxTempPath + File.separator
                             + message("FourNeighborLaplace") + ".png";
@@ -624,8 +624,8 @@ public class ImageOCRController extends ImageViewerController {
                     }
 
                     kernel = ConvolutionKernel.MakeSharpenEightNeighborLaplace();
-                    imageConvolution
-                            = new ImageConvolution(image, null, kernel);
+                    imageConvolution = ImageConvolution.create().
+                            setImage(image).setKernel(kernel);
                     bufferedImage = imageConvolution.operateImage();
                     tmpFile = AppVariables.MyBoxTempPath + File.separator
                             + message("EightNeighborLaplace") + ".png";
@@ -634,8 +634,8 @@ public class ImageOCRController extends ImageViewerController {
                     }
 
                     kernel = ConvolutionKernel.makeGaussBlur(3);
-                    imageConvolution
-                            = new ImageConvolution(image, null, kernel);
+                    imageConvolution = ImageConvolution.create().
+                            setImage(image).setKernel(kernel);
                     bufferedImage = imageConvolution.operateImage();
                     tmpFile = AppVariables.MyBoxTempPath + File.separator
                             + message("GaussianBlur") + ".png";
@@ -644,8 +644,8 @@ public class ImageOCRController extends ImageViewerController {
                     }
 
                     kernel = ConvolutionKernel.makeAverageBlur(2);
-                    imageConvolution
-                            = new ImageConvolution(image, null, kernel);
+                    imageConvolution = ImageConvolution.create().
+                            setImage(image).setKernel(kernel);
                     bufferedImage = imageConvolution.operateImage();
                     tmpFile = AppVariables.MyBoxTempPath + File.separator
                             + message("AverageBlur") + ".png";

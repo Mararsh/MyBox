@@ -36,8 +36,11 @@ import javafx.scene.control.Control;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -54,6 +57,7 @@ import javafx.stage.Modality;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
 import mara.mybox.data.VisitHistory;
+import mara.mybox.data.VisitHistory.FileType;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
@@ -64,8 +68,10 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.MyboxDataPath;
+import static mara.mybox.value.AppVariables.getUserConfigValue;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
+import static mara.mybox.value.AppVariables.setUserConfigValue;
 import mara.mybox.value.CommonImageValues;
 import mara.mybox.value.CommonValues;
 
@@ -92,16 +98,22 @@ public class BaseController implements Initializable {
     protected ContextMenu popMenu;
     protected MaximizedListener maximizedListener;
     protected FullscreenListener fullscreenListener;
+    protected String targetFileType, targetNameAppend;
 
     protected boolean isSettingValues;
     protected File sourceFile, sourcePath, targetPath, targetFile;
     protected SaveAsType saveAsType;
+    protected TargetExistType targetExistType;
 
     protected ColorPaletteController paletteController;
     protected SimpleBooleanProperty isPickingColor;
 
     protected enum SaveAsType {
         Load, Open, None
+    }
+
+    public static enum TargetExistType {
+        Rename, Replace, Skip
     }
 
     @FXML
@@ -116,7 +128,7 @@ public class BaseController implements Initializable {
     @FXML
     protected ToggleButton moreButton;
     @FXML
-    protected Button allButton, clearButton, selectSourceButton, createButton, copyButton, pasteButton, cancelButton,
+    protected Button allButton, clearButton, selectFileButton, createButton, copyButton, pasteButton, cancelButton,
             deleteButton, saveButton, infoButton, metaButton, selectAllButton, setButton,
             okButton, startButton, firstButton, lastButton, previousButton, nextButton, goButton, previewButton,
             cropButton, saveAsButton, recoverButton, renameButton, tipsButton, viewButton, popButton, refButton,
@@ -133,17 +145,23 @@ public class BaseController implements Initializable {
     protected Hyperlink regexLink;
     @FXML
     protected CheckBox topCheck;
+    @FXML
+    protected ToggleGroup targetExistGroup, fileTypeGroup;
+    @FXML
+    protected RadioButton targetReplaceRadio, targetRenameRadio, targetSkipRadio;
+    @FXML
+    protected TextField targetAppendInput;
 
     public BaseController() {
         baseTitle = AppVariables.message("AppTitle");
 
-        SourceFileType = 0;
-        SourcePathType = 0;
-        TargetPathType = 0;
-        TargetFileType = 0;
-        AddFileType = 0;
-        AddPathType = 0;
-        operationType = 0;
+        SourceFileType = FileType.All;
+        SourcePathType = FileType.All;
+        TargetPathType = FileType.All;
+        TargetFileType = FileType.All;
+        AddFileType = FileType.All;
+        AddPathType = FileType.All;
+        operationType = FileType.All;
 
         LastPathKey = "LastPathKey";
         targetPathKey = "targetPath";
@@ -344,6 +362,29 @@ public class BaseController implements Initializable {
                         AppVariables.setUserConfigValue(baseName + "Top", newValue);
                     }
                 });
+            }
+
+            if (targetExistGroup != null) {
+                targetExistGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Toggle> ov,
+                            Toggle old_toggle, Toggle new_toggle) {
+                        checkTargetExistType();
+                    }
+                });
+                isSettingValues = true;
+                FxmlControl.setRadioSelected(targetExistGroup, getUserConfigValue("TargetExistType", message("Replace")));
+                if (targetAppendInput != null) {
+                    targetAppendInput.textProperty().addListener(new ChangeListener<String>() {
+                        @Override
+                        public void changed(ObservableValue<? extends String> ov, String oldv, String newv) {
+                            checkTargetExistType();
+                        }
+                    });
+                    targetAppendInput.setText(getUserConfigValue("TargetExistAppend", "_m"));
+                }
+                isSettingValues = false;
+                checkTargetExistType();
             }
 
         } catch (Exception e) {
@@ -569,6 +610,33 @@ public class BaseController implements Initializable {
             targetFile = null;
             targetFileInput.setStyle(badStyle);
         }
+    }
+
+    public void checkTargetExistType() {
+        if (isSettingValues) {
+            return;
+        }
+        if (targetAppendInput != null) {
+            targetAppendInput.setStyle(null);
+        }
+        RadioButton selected = (RadioButton) targetExistGroup.getSelectedToggle();
+        if (selected.equals(targetReplaceRadio)) {
+            targetExistType = TargetExistType.Replace;
+
+        } else if (selected.equals(targetRenameRadio)) {
+            targetExistType = TargetExistType.Rename;
+            if (targetAppendInput != null) {
+                if (targetAppendInput.getText() == null || targetAppendInput.getText().trim().isEmpty()) {
+                    targetAppendInput.setStyle(badStyle);
+                } else {
+                    setUserConfigValue("TargetExistAppend", targetAppendInput.getText().trim());
+                }
+            }
+
+        } else if (selected.equals(targetSkipRadio)) {
+            targetExistType = TargetExistType.Skip;
+        }
+        setUserConfigValue("TargetExistType", selected.getText());
     }
 
     public void keyEventsHandler(KeyEvent event) {
@@ -1624,6 +1692,59 @@ public class BaseController implements Initializable {
         }.pop();
     }
 
+    public File makeTargetFile(File sourceFile, File targetPath) {
+        if (sourceFile.isFile()) {
+            return makeTargetFile(sourceFile.getName(), targetPath);
+        } else {
+            return makeTargetFile(sourceFile.getName(), "", targetPath);
+        }
+    }
+
+    public File makeTargetFile(String sourceFile, File targetPath) {
+        try {
+            String namePrefix = FileTools.getFilePrefix(sourceFile);
+            String nameSuffix = FileTools.getFileSuffix(sourceFile);
+            if (targetFileType != null) {
+                nameSuffix = "." + targetFileType;
+            } else if (!nameSuffix.isEmpty()) {
+                nameSuffix = "." + nameSuffix;
+            }
+            return makeTargetFile(namePrefix, nameSuffix, targetPath);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public File makeTargetFile(String namePrefix, String nameSuffix, File targetPath) {
+        try {
+            String targetPrefix = targetPath.getAbsolutePath() + File.separator + namePrefix;
+            File target = new File(targetPrefix + nameSuffix);
+            if (target.exists()) {
+                if (targetExistType == TargetExistType.Skip) {
+                    target = null;
+                } else if (targetExistType == TargetExistType.Rename) {
+                    if (targetAppendInput != null) {
+                        targetNameAppend = targetAppendInput.getText().trim();
+                    }
+                    if (targetNameAppend == null || targetNameAppend.isEmpty()) {
+                        targetNameAppend = "-m";
+                    }
+                    while (true) {
+                        targetPrefix = targetPrefix + targetNameAppend;
+                        target = new File(targetPrefix + nameSuffix);
+                        if (!target.exists()) {
+                            break;
+                        }
+                    }
+                }
+            }
+            return target;
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return null;
+        }
+    }
+
     @FXML
     public void link(ActionEvent event) {
         try {
@@ -1820,7 +1941,8 @@ public class BaseController implements Initializable {
             // Below workaround for Linux because "Desktop.getDesktop().browse()" doesn't work on some Linux implementations
             try {
                 if (Runtime.getRuntime().exec(new String[]{"which", "xdg-open"}).getInputStream().read() != -1) {
-                    Runtime.getRuntime().exec(new String[]{"xdg-open", uri.toString()});
+                    Runtime.getRuntime().exec(new String[]{"xdg-open",
+                        uri.toString()});
                     return true;
                 } else {
                 }
@@ -1980,6 +2102,7 @@ public class BaseController implements Initializable {
             String suffix = null;
             if (filters != null) {
                 suffix = FileTools.getFileSuffix(filters.get(0).getExtensions().get(0));
+                fileChooser.getExtensionFilters().addAll(filters);
             }
             if (suffix != null) {
                 if (name == null) {
@@ -1993,15 +2116,11 @@ public class BaseController implements Initializable {
             if (name != null) {
                 fileChooser.setInitialFileName(name);
             }
-            if (filters != null) {
-                fileChooser.getExtensionFilters().addAll(filters);
-            }
 
             File file = fileChooser.showSaveDialog(getMyStage());
             if (file == null) {
                 return null;
             }
-            String s = FileTools.getFileSuffix(fileChooser.getSelectedExtensionFilter().getExtensions().get(0));
             // https://stackoverflow.com/questions/20637865/javafx-2-2-get-selected-file-extension
             // This is a pretty annoying thing in JavaFX - they will automatically append the extension on Windows, but not on Linux or Mac.
             if (mustHaveExtension && FileTools.getFileSuffix(file.getName()).isEmpty()) {
@@ -2810,12 +2929,12 @@ public class BaseController implements Initializable {
         this.operationBarController = operationBarController;
     }
 
-    public Button getSelectSourceButton() {
-        return selectSourceButton;
+    public Button getselectFileButton() {
+        return selectFileButton;
     }
 
-    public void setSelectSourceButton(Button selectSourceButton) {
-        this.selectSourceButton = selectSourceButton;
+    public void setselectFileButton(Button selectFileButton) {
+        this.selectFileButton = selectFileButton;
     }
 
     public Button getCreateButton() {

@@ -8,6 +8,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import mara.mybox.data.FileInformation;
 import mara.mybox.tools.DateTools;
+import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara
@@ -16,6 +17,8 @@ import mara.mybox.tools.DateTools;
  * @License Apache License Version 2.0
  */
 public class FilesBatchController extends BatchController<FileInformation> {
+
+    protected int totalHandled = 0;
 
     protected StringBuffer newLogs;
     protected int newlines, maxLines, totalLines, cacheLines = 200;
@@ -35,6 +38,7 @@ public class FilesBatchController extends BatchController<FileInformation> {
     @Override
     public boolean makeBatchParameters() {
         initLogs();
+        totalHandled = 0;
         startTime = new Date();
         return super.makeBatchParameters();
     }
@@ -95,6 +99,17 @@ public class FilesBatchController extends BatchController<FileInformation> {
     @FXML
     protected void clearLogs() {
         logsTextArea.setText("");
+    }
+
+    @Override
+    public void donePost() {
+        super.donePost();
+
+        if (logsTextArea != null) {
+            updateLogs(message("StartTime") + ": " + DateTools.datetimeToString(startTime) + "   "
+                    + message("Cost") + ": " + DateTools.showTime(new Date().getTime() - startTime.getTime()), false, true);
+            updateLogs(message("TotalFilesHandled") + ": " + totalHandled);
+        }
     }
 
 }

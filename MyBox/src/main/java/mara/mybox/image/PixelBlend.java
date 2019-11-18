@@ -172,6 +172,9 @@ public abstract class PixelBlend {
         if (forePixel == 0) {                       // Pass transparency
             return backPixel;
         }
+        if (backPixel == 0) {                       // Pass transparency
+            return forePixel;
+        }
         foreColor = new Color(forePixel);
         backColor = new Color(backPixel);
         makeRGB();
@@ -640,6 +643,9 @@ public abstract class PixelBlend {
             if (forePixel == 0) {                       // Pass transparency
                 return backPixel;
             }
+            if (backPixel == 0) {                       // Pass transparency
+                return forePixel;
+            }
             float[] hA = ImageColor.pixel2HSB(forePixel);
             float[] hB = ImageColor.pixel2HSB(backPixel);
             Color hColor = Color.getHSBColor(hA[0], hB[1], hB[2]);
@@ -658,6 +664,9 @@ public abstract class PixelBlend {
         protected int blend(int forePixel, int backPixel) {
             if (forePixel == 0) {                       // Pass transparency
                 return backPixel;
+            }
+            if (backPixel == 0) {                       // Pass transparency
+                return forePixel;
             }
             float[] sA = ImageColor.pixel2HSB(forePixel);
             float[] sB = ImageColor.pixel2HSB(backPixel);
@@ -678,6 +687,9 @@ public abstract class PixelBlend {
             if (forePixel == 0) {                       // Pass transparency
                 return backPixel;
             }
+            if (backPixel == 0) {                       // Pass transparency
+                return forePixel;
+            }
             float[] bA = ImageColor.pixel2HSB(forePixel);
             float[] bB = ImageColor.pixel2HSB(backPixel);
             Color newColor = Color.getHSBColor(bB[0], bB[1], bA[2]);
@@ -696,6 +708,9 @@ public abstract class PixelBlend {
         protected int blend(int forePixel, int backPixel) {
             if (forePixel == 0) {                       // Pass transparency
                 return backPixel;
+            }
+            if (backPixel == 0) {                       // Pass transparency
+                return forePixel;
             }
             float[] cA = ImageColor.pixel2HSB(forePixel);
             float[] cB = ImageColor.pixel2HSB(backPixel);

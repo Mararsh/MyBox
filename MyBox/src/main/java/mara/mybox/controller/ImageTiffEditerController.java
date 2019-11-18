@@ -70,7 +70,8 @@ public class ImageTiffEditerController extends ImagesListController {
                     popSuccessul();
                     if (outFile.equals(sourceFile)) {
                         setImageChanged(false);
-                    } else if (viewCheck.isSelected()) {
+                    }
+                    if (viewCheck.isSelected()) {
                         final ImageFramesViewerController controller
                                 = (ImageFramesViewerController) openStage(CommonValues.ImageFramesViewerFxml);
                         controller.selectSourceFile(outFile);

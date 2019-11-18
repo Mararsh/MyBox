@@ -132,6 +132,15 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
+            <Button fx:id="ok2Button" layoutX="742.0" layoutY="10.0" mnemonicParsing="false" onAction="#okAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/iconOK2.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
                 <CheckBox fx:id="tableSubdirCheck" mnemonicParsing="false" selected="true">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -182,6 +191,7 @@ License:    Apache License Version 2.0
                 <TableColumn fx:id="createTimeColumn" editable="false" prefWidth="160.0" text="%CreateTime" />
             </columns>
         </TableView>
+        <Label fx:id="tableLabel" styleClass="blue-label" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER" />
         <FlowPane fx:id="selectPane" hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
             <children>
                 <Label text="%FilesSelector" />
@@ -190,6 +200,5 @@ License:    Apache License Version 2.0
                 <Hyperlink fx:id="regexLink" onAction="#regexHelp" text="%RegularExpression" />
             </children>
         </FlowPane>
-        <Label fx:id="tableLabel" styleClass="blue-label" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER" />
     </children>
 </VBox>

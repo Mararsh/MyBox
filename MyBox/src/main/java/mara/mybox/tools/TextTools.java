@@ -1,5 +1,7 @@
 package mara.mybox.tools;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -8,11 +10,8 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javafx.scene.control.IndexRange;
 import mara.mybox.data.FileEditInformation;
 import mara.mybox.data.FileEditInformation.Line_Break;
@@ -101,7 +100,7 @@ public class TextTools {
             }
             String setName;
             info.setWithBom(false);
-            try (FileInputStream inputStream = new FileInputStream(info.getFile())) {
+            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(info.getFile()))) {
                 byte[] header = new byte[4];
                 if ((inputStream.read(header, 0, 4) != -1)) {
                     setName = checkCharsetByBom(header);
@@ -116,7 +115,7 @@ public class TextTools {
             info.setCharset(Charset.forName(setName));
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+//            logger.debug(e.toString());
             return false;
         }
     }
@@ -168,9 +167,11 @@ public class TextTools {
                 return new byte[]{(byte) 0xEF, (byte) 0xBB, (byte) 0xBF};
             case "UTF-32":
             case "UTF-32BE":
-                return new byte[]{(byte) 0x00, (byte) 0x00, (byte) 0xFE, (byte) 0xFF};
+                return new byte[]{(byte) 0x00, (byte) 0x00, (byte) 0xFE,
+                    (byte) 0xFF};
             case "UTF-32LE":
-                return new byte[]{(byte) 0xFF, (byte) 0xFE, (byte) 0x00, (byte) 0x00};
+                return new byte[]{(byte) 0xFF, (byte) 0xFE, (byte) 0x00,
+                    (byte) 0x00};
         }
         return null;
     }
@@ -181,8 +182,8 @@ public class TextTools {
                 return null;
             }
             StringBuilder text = new StringBuilder();
-            try (FileInputStream inputStream = new FileInputStream(info.getFile());
-                    InputStreamReader reader = new InputStreamReader(inputStream, info.getCharset())) {
+            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(info.getFile()));
+                     InputStreamReader reader = new InputStreamReader(inputStream, info.getCharset())) {
                 if (info.isWithBom()) {
                     inputStream.skip(bomSize(info.getCharset().name()));
                 }
@@ -201,8 +202,8 @@ public class TextTools {
 
     public static boolean writeText(FileEditInformation info, String text) {
         try {
-            try (FileOutputStream outputStream = new FileOutputStream(info.getFile());
-                    OutputStreamWriter writer = new OutputStreamWriter(outputStream, info.getCharset())) {
+            try ( BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(info.getFile()));
+                     OutputStreamWriter writer = new OutputStreamWriter(outputStream, info.getCharset())) {
                 if (info.isWithBom()) {
                     byte[] bytes = bomBytes(info.getCharset().name());
                     outputStream.write(bytes);
@@ -224,10 +225,10 @@ public class TextTools {
                     || target.getCharset() == null) {
                 return false;
             }
-            try (FileInputStream inputStream = new FileInputStream(source.getFile());
-                    InputStreamReader reader = new InputStreamReader(inputStream, source.getCharset());
-                    FileOutputStream outputStream = new FileOutputStream(target.getFile());
-                    OutputStreamWriter writer = new OutputStreamWriter(outputStream, target.getCharset())) {
+            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(source.getFile()));
+                     InputStreamReader reader = new InputStreamReader(inputStream, source.getCharset());
+                     BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(target.getFile()));
+                     OutputStreamWriter writer = new OutputStreamWriter(outputStream, target.getCharset())) {
                 if (source.isWithBom()) {
                     inputStream.skip(bomSize(source.getCharset().name()));
                 }
@@ -265,10 +266,10 @@ public class TextTools {
             if (source.getLineBreak() == target.getLineBreak()) {
                 return FileTools.copyFile(source.getFile(), target.getFile(), true, true);
             }
-            try (FileInputStream inputStream = new FileInputStream(source.getFile());
-                    InputStreamReader reader = new InputStreamReader(inputStream, source.getCharset());
-                    FileOutputStream outputStream = new FileOutputStream(target.getFile());
-                    OutputStreamWriter writer = new OutputStreamWriter(outputStream, target.getCharset())) {
+            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(source.getFile()));
+                     InputStreamReader reader = new InputStreamReader(inputStream, source.getCharset());
+                     BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(target.getFile()));
+                     OutputStreamWriter writer = new OutputStreamWriter(outputStream, target.getCharset())) {
                 char[] buf = new char[4096];
                 int count;
                 while ((count = reader.read(buf)) != -1) {
@@ -318,14 +319,13 @@ public class TextTools {
         return new IndexRange(hBegin, hEnd);
     }
 
-
-
     public static Line_Break checkLineBreak(File file) {
         try {
             if (file == null) {
                 return Line_Break.LF;
             }
-            try (InputStreamReader reader = new InputStreamReader(new FileInputStream(file))) {
+            try ( InputStreamReader reader = new InputStreamReader(
+                    new BufferedInputStream(new FileInputStream(file)))) {
                 int c;
                 boolean cr = false;
                 while ((c = reader.read()) != -1) {
@@ -382,8 +382,5 @@ public class TextTools {
     public static String lineBreakHexFormat(Line_Break lb, Charset charset) {
         return ByteTools.bytesToHexFormat(lineBreakBytes(lb, charset));
     }
-
-
-
 
 }

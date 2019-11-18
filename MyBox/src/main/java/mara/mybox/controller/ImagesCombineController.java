@@ -12,9 +12,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
+import javafx.scene.control.Control;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -24,8 +23,10 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.ToolBar;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Modality;
 import static mara.mybox.controller.BaseController.openImageViewer;
+import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlImageManufacture;
@@ -38,6 +39,7 @@ import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonImageValues;
 
 /**
@@ -50,7 +52,7 @@ public class ImagesCombineController extends ImagesListController {
 
     protected String ImageCombineArrayTypeKey, ImageCombineCombineSizeTypeKey, ImageCombineColumnsKey,
             ImageCombineIntervalKey, ImageCombineMarginsKey, ImageCombineEachWidthKey, ImageCombineEachHeightKey,
-            ImageCombineTotalWidthKey, ImageCombineTotalHeightKey, ImageCombineBgColorKey;
+            ImageCombineTotalWidthKey, ImageCombineTotalHeightKey;
     private ImageCombine imageCombine;
 
     @FXML
@@ -67,9 +69,9 @@ public class ImagesCombineController extends ImagesListController {
     @FXML
     private ComboBox<String> columnsBox, intervalBox, MarginsBox;
     @FXML
-    private ColorPicker bgPicker;
+    protected Rectangle bgRect;
     @FXML
-    private Label imageLabel;
+    protected Button paletteButton;
     @FXML
     protected Button newWindowButton;
     @FXML
@@ -89,7 +91,6 @@ public class ImagesCombineController extends ImagesListController {
         ImageCombineColumnsKey = "ImageCombineColumnsKey";
         ImageCombineIntervalKey = "ImageCombineIntervalKey";
         ImageCombineMarginsKey = "ImageCombineMarginsKey";
-        ImageCombineBgColorKey = "ImageCombineBgColorKey";
         sourceExtensionFilter = CommonImageValues.ImageExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
     }
@@ -180,16 +181,15 @@ public class ImagesCombineController extends ImagesListController {
             });
             MarginsBox.getSelectionModel().select(AppVariables.getUserConfigValue(ImageCombineMarginsKey, "5"));
 
-            bgPicker.valueProperty().addListener(new ChangeListener<Color>() {
-                @Override
-                public void changed(ObservableValue<? extends Color> ov,
-                        Color oldValue, Color newValue) {
-                    imageCombine.setBgColor(newValue);
-                    AppVariables.setUserConfigValue(ImageCombineBgColorKey, newValue.toString());
-                    combineImages();
-                }
-            });
-            bgPicker.setValue(Color.web(AppVariables.getUserConfigValue(ImageCombineBgColorKey, Color.WHITE.toString())));
+            try {
+                String c = AppVariables.getUserConfigValue("ImagesCombineBackgroundColor",
+                        Color.TRANSPARENT.toString());
+                bgRect.setFill(Color.web(c));
+            } catch (Exception e) {
+                bgRect.setFill(Color.TRANSPARENT);
+                AppVariables.setUserConfigValue("ImagesCombineBackgroundColor", Color.TRANSPARENT.toString());
+            }
+            FxmlControl.setTooltip(bgRect, FxmlColor.colorNameDisplay((Color) bgRect.getFill()));
 
             arrayGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -444,19 +444,26 @@ public class ImagesCombineController extends ImagesListController {
         openImageViewer(image);
     }
 
-    @FXML
-    private void bgTransparent(ActionEvent event) {
-        bgPicker.setValue(Color.TRANSPARENT);
+    @Override
+    public boolean setColor(Control control, Color color) {
+        if (control == null || color == null) {
+            return false;
+        }
+        if (paletteButton.equals(control)) {
+            bgRect.setFill(color);
+            FxmlControl.setTooltip(bgRect, FxmlColor.colorNameDisplay(color));
+            AppVariables.setUserConfigValue("ImagesCombineBackgroundColor", color.toString());
+
+            imageCombine.setBgColor(color);
+            combineImages();
+        }
+        return true;
     }
 
     @FXML
-    private void bgWhite(ActionEvent event) {
-        bgPicker.setValue(Color.WHITE);
-    }
-
-    @FXML
-    private void bgBlack(ActionEvent event) {
-        bgPicker.setValue(Color.BLACK);
+    @Override
+    public void showPalette(ActionEvent event) {
+        showPalette(paletteButton, message("BackgroundColor"), false);
     }
 
     private void combineImages() {

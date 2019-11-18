@@ -57,6 +57,7 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
             if (parent == null) {
                 return;
             }
+            imageController.operatingNeedNotScope();
 
             List<String> shears = Arrays.asList(
                     "0.5", "-0.5", "0.4", "-0.4", "0.2", "-0.2", "0.1", "-0.1",

@@ -19,7 +19,7 @@ import javax.sound.sampled.Port;
 import javax.sound.sampled.SourceDataLine;
 import javazoom.jl.player.Player;
 import static mara.mybox.value.AppVariables.logger;
-
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -28,8 +28,6 @@ import static mara.mybox.value.AppVariables.logger;
  * @License Apache License Version 2.0
  */
 public class SoundTools {
-
-   
 
     public static synchronized Clip playback(String name, float addVolume) {
         File file = new File(name);
@@ -47,7 +45,7 @@ public class SoundTools {
 
     public static synchronized Clip playback(File file, float addVolume) {
         try {
-            try (AudioInputStream in = AudioSystem.getAudioInputStream(file)) {
+            try ( AudioInputStream in = AudioSystem.getAudioInputStream(file)) {
                 return playback(in, addVolume);
             }
         } catch (Exception e) {
@@ -58,7 +56,7 @@ public class SoundTools {
 
     public static synchronized Clip playback(URL url, float addVolume) {
         try {
-            try (AudioInputStream in = AudioSystem.getAudioInputStream(url)) {
+            try ( AudioInputStream in = AudioSystem.getAudioInputStream(url)) {
                 return playback(in, addVolume);
             }
         } catch (Exception e) {
@@ -99,7 +97,7 @@ public class SoundTools {
 
     public static FloatControl getControl(File file) {
         try {
-            try (AudioInputStream in = AudioSystem.getAudioInputStream(file)) {
+            try ( AudioInputStream in = AudioSystem.getAudioInputStream(file)) {
                 return getControl(in);
             }
         } catch (Exception e) {
@@ -110,7 +108,7 @@ public class SoundTools {
 
     public static FloatControl getControl(URL url) {
         try {
-            try (AudioInputStream in = AudioSystem.getAudioInputStream(url)) {
+            try ( AudioInputStream in = AudioSystem.getAudioInputStream(url)) {
                 return getControl(in);
             }
         } catch (Exception e) {
@@ -132,7 +130,7 @@ public class SoundTools {
                     false);
             AudioInputStream ain = AudioSystem.getAudioInputStream(decodedFormat, in);
             DataLine.Info info = new DataLine.Info(Clip.class, decodedFormat);
-            try (Clip clip = (Clip) AudioSystem.getLine(info)) {
+            try ( Clip clip = (Clip) AudioSystem.getLine(info)) {
                 clip.open(ain);
                 FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
                 return gainControl;
@@ -167,11 +165,9 @@ public class SoundTools {
             float dB = (float) (Math.log(value == 0.0 ? 0.0001 : value) / Math.log(10.0) * 20.0);
             fc.setValue(dB);
             int nByte = 0;
-            int writeByte = 0;
-            final int SIZE = 1024 * 64;
-            byte[] buffer = new byte[SIZE];
+            byte[] buffer = new byte[CommonValues.IOBufferLength];
             while (nByte != -1) {
-                nByte = audioInputStream.read(buffer, 0, SIZE);
+                nByte = audioInputStream.read(buffer, 0, CommonValues.IOBufferLength);
                 sdl.write(buffer, 0, nByte);
             }
             sdl.stop();
@@ -188,7 +184,7 @@ public class SoundTools {
             AudioFormat aif = audioInputStream.getFormat();
             //System.out.println(aif);
             DataLine.Info info = new DataLine.Info(Clip.class, aif);
-            try (Clip clip = (Clip) AudioSystem.getLine(info)) {
+            try ( Clip clip = (Clip) AudioSystem.getLine(info)) {
                 clip.addLineListener(new LineListener() {
                     @Override
                     public void update(LineEvent e) {
@@ -252,8 +248,9 @@ public class SoundTools {
         }
     }
 
-    public static void rawplay(AudioFormat targetFormat, AudioInputStream din) throws IOException, LineUnavailableException {
-        byte[] data = new byte[4096];
+    public static void rawplay(AudioFormat targetFormat, AudioInputStream din)
+            throws IOException, LineUnavailableException {
+        byte[] data = new byte[CommonValues.IOBufferLength];
         DataLine.Info info = new DataLine.Info(SourceDataLine.class, targetFormat);
         SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
         line.open(targetFormat);
@@ -278,7 +275,8 @@ public class SoundTools {
         }
     }
 
-    public static SourceDataLine getLine(AudioFormat audioFormat) throws LineUnavailableException {
+    public static SourceDataLine getLine(AudioFormat audioFormat) throws
+            LineUnavailableException {
         DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
         SourceDataLine res = (SourceDataLine) AudioSystem.getLine(info);
         res.open(audioFormat);
@@ -291,7 +289,7 @@ public class SoundTools {
             for (Mixer.Info info : infos) {
                 Mixer mixer = AudioSystem.getMixer(info);
                 if (mixer.isLineSupported(Port.Info.SPEAKER)) {
-                    try (Port port = (Port) mixer.getLine(Port.Info.SPEAKER)) {
+                    try ( Port port = (Port) mixer.getLine(Port.Info.SPEAKER)) {
                         port.open();
                         if (port.isControlSupported(FloatControl.Type.VOLUME)) {
                             FloatControl volume = (FloatControl) port.getControl(FloatControl.Type.VOLUME);

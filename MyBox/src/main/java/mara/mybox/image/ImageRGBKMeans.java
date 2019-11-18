@@ -20,7 +20,7 @@ public class ImageRGBKMeans extends ListKMeans<Color> {
     // Each channel is 4 bit depth and reigons size = 64 *64 * 64 = 262,144
     // When ditDepth is larger than 4, the results are worse due to
     // similiar selected colors  by too small regions.
-    protected int bitDepth = 6;
+    protected int bitDepth = 4;
     protected KMeansRegionQuantization regionQuantization;
     protected BufferedImage image;
     protected int equalDistance = 16;
@@ -53,6 +53,13 @@ public class ImageRGBKMeans extends ListKMeans<Color> {
             if (data.size() < k) {
                 centers.addAll(data);
                 return;
+            }
+            int mod = data.size() / k;
+            for (int i = 0; i < data.size(); i = i + mod) {
+                centers.add(data.get(i));
+                if (centers.size() == k) {
+                    return;
+                }
             }
             while (centers.size() < k) {
                 int index = new Random().nextInt(data.size());

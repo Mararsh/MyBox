@@ -1,10 +1,7 @@
 package mara.mybox.data;
 
-import mara.mybox.value.AppVariables;
-import mara.mybox.value.CommonValues;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -17,11 +14,11 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import mara.mybox.db.TableAlarmClock;
-import static mara.mybox.value.AppVariables.executorService;
-import static mara.mybox.value.AppVariables.scheduledTasks;
 import mara.mybox.tools.DateTools;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.executorService;
 import static mara.mybox.value.AppVariables.logger;
-
+import static mara.mybox.value.AppVariables.scheduledTasks;
 
 /**
  * @Author Mara
@@ -31,7 +28,6 @@ import static mara.mybox.value.AppVariables.logger;
  */
 public final class AlarmClock {
 
-   
     public static final String AlarmValueSeprator = "_FG-FG_";
     public static final int offset = 1;
 
@@ -76,7 +72,7 @@ public final class AlarmClock {
     public static List<AlarmClock> readAlarmClocksFromFile() {
         try {
             List<AlarmClock> alarms = new ArrayList<>();
-            try (InputStream in = new BufferedInputStream(new FileInputStream(AppVariables.AlarmClocksFile))) {
+            try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(AppVariables.AlarmClocksFile))) {
                 Properties values = new Properties();
                 values.load(in);
                 for (Object key : values.keySet()) {

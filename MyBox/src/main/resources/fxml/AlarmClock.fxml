@@ -107,7 +107,7 @@ License:    Apache License Version 2.0
                                                 </RadioButton>
                                                 <RadioButton fx:id="wavButton" mnemonicParsing="false" text="%SystemSounds" toggleGroup="$soundGroup" />
                                                 <TextField fx:id="wavInput" HBox.hgrow="ALWAYS" />
-                                                <Button fx:id="selectSoundButton" mnemonicParsing="false" onAction="#selectSound">
+                                                <Button fx:id="selectFileSoundButton" mnemonicParsing="false" onAction="#selectSound">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
@@ -123,7 +123,7 @@ License:    Apache License Version 2.0
                                                 <Label text="%Sound" visible="false" />
                                                 <RadioButton fx:id="mp3Button" mnemonicParsing="false" text="%LocalMusic" toggleGroup="$soundGroup" />
                                                 <TextField fx:id="mp3Input" promptText="" HBox.hgrow="ALWAYS" />
-                                                <Button fx:id="selectMusicButton" mnemonicParsing="false" onAction="#selectMusic">
+                                                <Button fx:id="selectFileMusicButton" mnemonicParsing="false" onAction="#selectMusic">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>

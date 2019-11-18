@@ -16,6 +16,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -23,6 +24,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -30,6 +32,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
@@ -41,6 +44,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -48,7 +52,9 @@ import javafx.util.Callback;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.db.TableImageHistory;
 import mara.mybox.fxml.ControlStyle;
+import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
+import static mara.mybox.fxml.FxmlControl.badStyle;
 import static mara.mybox.fxml.FxmlControl.darkRedText;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.fxml.FxmlStage;
@@ -81,15 +87,17 @@ public class ImageManufactureController extends ImageViewerController {
     protected String imageHistoriesPath;
     protected boolean pickingColor, sychronizeZoom;
     protected ChangeListener<Number> leftDividerListener, rightDividerListener;
-    protected int zoomStep;
+    protected int zoomStep, newWidth, newHeight;
 
     protected File refFile;
     protected ImageInformation refInformation;
     protected SimpleBooleanProperty editable;
 
     public static enum ImageOperation {
-        Load, History, Saved, Recover, Clipboard, Paste, Arc, Color, Crop, Copy, Text, RichText,
-        Effects, Enhancement, Shadow, Scale, Picture, Transform, Pen, Margins, Mosaic, Convolution
+        Load, History, Saved, Recover, Clipboard, Paste, Arc, Color, Crop, Copy,
+        Text, RichText,
+        Effects, Enhancement, Shadow, Scale, Picture, Transform, Pen, Margins,
+        Mosaic, Convolution
     }
 
     @FXML
@@ -97,7 +105,7 @@ public class ImageManufactureController extends ImageViewerController {
     @FXML
     protected VBox fileBox, rightPaneBox;
     @FXML
-    protected TitledPane filePane, saveAsPane, browsePane, tipsPane;
+    protected TitledPane filePane, newPane, saveAsPane, browsePane, tipsPane;
     @FXML
     protected VBox displayBox;
     @FXML
@@ -110,6 +118,12 @@ public class ImageManufactureController extends ImageViewerController {
     protected ToggleGroup fileTypeGroup, saveAsGroup, sortGroup;
     @FXML
     protected RadioButton saveLoadRadio, saveOpenRadio, saveJustRadio;
+    @FXML
+    protected Rectangle bgRect;
+    @FXML
+    protected Button paletteButton;
+    @FXML
+    protected TextField newWidthInput, newHeightInput;
     @FXML
     protected ImageManufactureOperationController operationController;
     @FXML
@@ -271,16 +285,59 @@ public class ImageManufactureController extends ImageViewerController {
      */
     protected void initLeftPane() {
         try {
-            fileBox.disableProperty().bind(
-                    imageLoaded.not()
-            );
-            saveAsPane.disableProperty().bind(
-                    imageLoaded.not()
-            );
-            browsePane.disableProperty().bind(
-                    imageLoaded.not()
-            );
+            fileBox.disableProperty().bind(imageLoaded.not());
+            saveAsPane.disableProperty().bind(imageLoaded.not());
+            browsePane.disableProperty().bind(imageLoaded.not());
+
             saveButton.disableProperty().bind(imageUpdated.not());
+
+            newWidthInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    try {
+                        int v = Integer.parseInt(newValue);
+                        if (v > 0) {
+                            newWidth = v;
+                            newWidthInput.setStyle(null);
+                        } else {
+                            newWidthInput.setStyle(badStyle);
+                        }
+                    } catch (Exception e) {
+                        newWidthInput.setStyle(badStyle);
+                    }
+                }
+            });
+            newHeightInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    try {
+                        int v = Integer.parseInt(newValue);
+                        if (v > 0) {
+                            newHeight = v;
+                            newHeightInput.setStyle(null);
+                        } else {
+                            newHeightInput.setStyle(badStyle);
+                        }
+                    } catch (Exception e) {
+                        newHeightInput.setStyle(badStyle);
+                    }
+                }
+            });
+            try {
+                String c = AppVariables.getUserConfigValue("NewBackgroundColor", Color.TRANSPARENT.toString());
+                bgRect.setFill(Color.web(c));
+            } catch (Exception e) {
+                bgRect.setFill(Color.TRANSPARENT);
+                AppVariables.setUserConfigValue("NewBackgroundColor", Color.TRANSPARENT.toString());
+            }
+            FxmlControl.setTooltip(bgRect, FxmlColor.colorNameDisplay((Color) bgRect.getFill()));
+            newWidthInput.setText("500");
+            newHeightInput.setText("500");
+
+            createButton.disableProperty().bind(
+                    newWidthInput.styleProperty().isEqualTo(badStyle)
+                            .or(newHeightInput.styleProperty().isEqualTo(badStyle))
+            );
 
             if (null != saveAsType) {
                 switch (saveAsType) {
@@ -343,19 +400,19 @@ public class ImageManufactureController extends ImageViewerController {
         if (splitPane.getItems().contains(leftPane)) {
             double[] positions = splitPane.getDividerPositions();
             splitPane.getItems().remove(leftPane);
-            leftPaneControl.setImage(new Image(ControlStyle.getIcon("iconsDoubleRight.png")));
+            ControlStyle.setIcon(leftPaneControl, ControlStyle.getIcon("iconDoubleRight.png"));
             if (positions.length == 2) {
                 splitPane.setDividerPosition(0, positions[1]);
             }
         } else {
             splitPane.getItems().add(0, leftPane);
-            leftPaneControl.setImage(new Image(ControlStyle.getIcon("iconsDoubleLeft.png")));
             try {
                 String v = AppVariables.getUserConfigValue("ImageManufactureLeftPanePosition", "0.15");
                 splitPane.setDividerPosition(0, Double.parseDouble(v));
             } catch (Exception e) {
                 splitPane.setDividerPosition(0, 0.15);
             }
+            ControlStyle.setIcon(leftPaneControl, ControlStyle.getIcon("iconDoubleLeft.png"));
         }
         splitPane.applyCss();
         if (splitPane.getDividers().size() == 1) {
@@ -370,13 +427,32 @@ public class ImageManufactureController extends ImageViewerController {
         isSettingValues = false;
     }
 
+    @Override
+    public boolean setColor(Control control, Color color) {
+        if (control == null || color == null) {
+            return false;
+        }
+        if (paletteButton.equals(control)) {
+            bgRect.setFill(color);
+            FxmlControl.setTooltip(bgRect, FxmlColor.colorNameDisplay(color));
+            AppVariables.setUserConfigValue("NewBackgroundColor", color.toString());
+        }
+        return true;
+    }
+
+    @FXML
+    @Override
+    public void showPalette(ActionEvent event) {
+        showPalette(paletteButton, message("BackgroundColor"), false);
+    }
+
     @FXML
     @Override
     public void createAction() {
         if (!checkBeforeNextAction()) {
             return;
         }
-        Image newImage = FxmlImageManufacture.createImage(500, 500, Color.WHITE);
+        Image newImage = FxmlImageManufacture.createImage(newWidth, newHeight, (Color) bgRect.getFill());
         loadImage(newImage);
 
         if (operationController.myPane != operationController.marginsPane) {
@@ -407,19 +483,19 @@ public class ImageManufactureController extends ImageViewerController {
         if (splitPane.getItems().contains(rightPane)) {
             double[] positions = splitPane.getDividerPositions();
             splitPane.getItems().remove(rightPane);
-            rightPaneControl.setImage(new Image(ControlStyle.getIcon("iconsDoubleLeft.png")));
+            ControlStyle.setIcon(rightPaneControl, ControlStyle.getIcon("iconDoubleLeft.png"));
             if (positions.length == 2) {
                 splitPane.setDividerPosition(0, positions[0]);
             }
         } else {
             splitPane.getItems().add(rightPane);
-            rightPaneControl.setImage(new Image(ControlStyle.getIcon("iconsDoubleRight.png")));
             try {
                 String v = AppVariables.getUserConfigValue("ImageManufactureRightPanePosition", "0.85");
                 splitPane.setDividerPosition(splitPane.getItems().size() - 2, Double.parseDouble(v));
             } catch (Exception e) {
                 splitPane.setDividerPosition(splitPane.getItems().size() - 2, 0.85);
             }
+            ControlStyle.setIcon(rightPaneControl, ControlStyle.getIcon("iconDoubleRight.png"));
         }
         splitPane.applyCss();
         if (splitPane.getDividers().size() == 1) {
@@ -830,8 +906,8 @@ public class ImageManufactureController extends ImageViewerController {
 
     @FXML
     public void popAction() {
-        ImageViewerController controller
-                = (ImageViewerController) openStage(CommonValues.ImageFxml);
+        ImageController controller
+                = (ImageController) openStage(CommonValues.ImageFxml);
         if (currentImageTab.isSelected()) {
             controller.loadImage(currentImageController.imageView.getImage());
         } else if (refImageTab.isSelected()) {
@@ -1847,8 +1923,8 @@ public class ImageManufactureController extends ImageViewerController {
         if (view == null || view.getImage() == null) {
             return;
         }
-        ImageDataController controller
-                = (ImageDataController) FxmlStage.openStage(CommonValues.ImageDataFxml);
+        ImageAnalyseController controller
+                = (ImageAnalyseController) FxmlStage.openStage(CommonValues.ImageAnalyseFxml);
         controller.init(file, view.getImage());
         controller.setParentView(view);
         controller.loadData();

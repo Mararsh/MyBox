@@ -14,6 +14,7 @@ import java.text.MessageFormat;
 import java.util.Properties;
 import javafx.geometry.Rectangle2D;
 import javafx.stage.Screen;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
 
@@ -40,6 +41,8 @@ public class MyBoxPropertiesController extends StringTableController {
             addData(message("UserHome"), System.getProperty("user.home"));
             addData(message("UserDir"), System.getProperty("user.dir"));
             addData(message("MyBoxDataPath"), AppVariables.MyboxDataPath);
+            addData(message("MyBoxDatabase"),
+                    DerbyBase.protocol + "<BR>" + DerbyBase.dbName() + "<BR>" + DerbyBase.login);
             addData(message("JvmName"), System.getProperty("java.version"));
             addData(message("JavaVendor"), System.getProperty("java.vendor"));
             addData(message("JvmName"), System.getProperty("java.vm.name"));

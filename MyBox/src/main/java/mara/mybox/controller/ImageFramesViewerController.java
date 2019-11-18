@@ -84,12 +84,10 @@ public class ImageFramesViewerController extends ImagesListController {
             task = new SingletonTask<Void>() {
 
                 private List<ImageInformation> infos;
-                private boolean hasSampled;
 
                 @Override
                 protected boolean handle() {
                     infos = new ArrayList<>();
-                    hasSampled = false;
                     final String fileName = file.getPath();
                     ImageFileInformation finfo = ImageFileReaders.readImageFileMetaData(fileName);
                     imageInformation = finfo.getImageInformation();
@@ -107,9 +105,6 @@ public class ImageFramesViewerController extends ImagesListController {
                             return false;
                         }
                         ImageInformation minfo = finfo.getImagesInformation().get(i);
-                        if (minfo.isIsSampled()) {
-                            hasSampled = true;
-                        }
                         Image image = SwingFXUtils.toFXImage(bufferImages.get(i), null);
                         minfo.setImage(image);
                         infos.add(minfo);
@@ -119,12 +114,10 @@ public class ImageFramesViewerController extends ImagesListController {
 
                 @Override
                 protected void whenSucceeded() {
-                    if (hasSampled) {
-                        alertWarning(AppVariables.message("ImageSampled"));
-                        bottomLabel.setText(AppVariables.message("ImageSampled"));
-                    }
+                    isSettingValues = true;
                     tableData.addAll(infos);
                     tableView.refresh();
+                    isSettingValues = false;
                 }
 
             };
@@ -133,6 +126,11 @@ public class ImageFramesViewerController extends ImagesListController {
             thread.setDaemon(true);
             thread.start();
         }
+    }
+
+    @Override
+    public void dataChanged() {
+        setImageChanged(false);
     }
 
     @FXML

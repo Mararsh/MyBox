@@ -1,5 +1,7 @@
 package mara.mybox.tools;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,12 +15,14 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import mara.mybox.data.FileInformation;
 import mara.mybox.data.FileSynchronizeAttributes;
+import mara.mybox.data.TextEditInformation;
 import static mara.mybox.value.AppVariables.MyBoxTempPath;
 import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonValues;
@@ -31,7 +35,8 @@ import mara.mybox.value.CommonValues;
 public class FileTools {
 
     public static enum FileSortMode {
-        ModifyTimeDesc, ModifyTimeAsc, CreateTimeDesc, CreateTimeAsc, SizeDesc, SizeAsc,
+        ModifyTimeDesc, ModifyTimeAsc, CreateTimeDesc, CreateTimeAsc, SizeDesc,
+        SizeAsc,
         NameDesc, NameAsc, FormatDesc, FormatAsc
     }
 
@@ -641,7 +646,7 @@ public class FileTools {
             }
             long bytesNumber = file.length() / filesNumber;
             List<File> splittedFiles = new ArrayList<>();
-            try (FileInputStream inputStream = new FileInputStream(file)) {
+            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
                 String newFilename;
                 int digit = (filesNumber + "").length();
                 byte[] buf = new byte[(int) bytesNumber];
@@ -651,7 +656,7 @@ public class FileTools {
                     endIndex += bufLen;
                     newFilename = filename + "-cut-f" + StringTools.fillLeftZero(fileIndex, digit)
                             + "-b" + (startIndex + 1) + "-b" + endIndex;
-                    try (FileOutputStream outputStream = new FileOutputStream(newFilename)) {
+                    try ( BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(newFilename))) {
                         if (bytesNumber > bufLen) {
                             buf = ByteTools.subBytes(buf, 0, bufLen);
                         }
@@ -667,7 +672,7 @@ public class FileTools {
                     endIndex += bufLen;
                     newFilename = filename + "-cut-f" + StringTools.fillLeftZero(fileIndex, digit)
                             + "-b" + (startIndex + 1) + "-b" + endIndex;
-                    try (FileOutputStream outputStream = new FileOutputStream(newFilename)) {
+                    try ( BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(newFilename))) {
                         outputStream.write(buf);
                     }
                     splittedFiles.add(new File(newFilename));
@@ -687,7 +692,7 @@ public class FileTools {
                 return null;
             }
             List<File> splittedFiles = new ArrayList<>();
-            try (FileInputStream inputStream = new FileInputStream(file)) {
+            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
                 String newFilename;
                 long fnumber = file.length() / bytesNumber;
                 if (file.length() % bytesNumber > 0) {
@@ -700,7 +705,7 @@ public class FileTools {
                     endIndex += bufLen;
                     newFilename = filename + "-cut-f" + StringTools.fillLeftZero(fileIndex, digit)
                             + "-b" + (startIndex + 1) + "-b" + endIndex;
-                    try (FileOutputStream outputStream = new FileOutputStream(newFilename)) {
+                    try ( BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(newFilename))) {
                         if (bytesNumber > bufLen) {
                             buf = ByteTools.subBytes(buf, 0, bufLen);
                         }
@@ -748,7 +753,7 @@ public class FileTools {
             }
             File tempFile = FileTools.getTempFile();
             String newFilename = filename + "-cut-b" + startIndex + "-b" + endIndex;
-            try (FileInputStream inputStream = new FileInputStream(file)) {
+            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
                 if (startIndex > 1) {
                     inputStream.skip(startIndex - 1);
                 }
@@ -759,7 +764,7 @@ public class FileTools {
                 if (bufLen == -1) {
                     return null;
                 }
-                try (FileOutputStream outputStream = new FileOutputStream(tempFile)) {
+                try ( BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tempFile))) {
                     if (cutLength > bufLen) {
                         buf = ByteTools.subBytes(buf, 0, bufLen);
                         newFilename = filename + "-cut-b" + startIndex + "-b" + bufLen;
@@ -768,6 +773,9 @@ public class FileTools {
                 }
             }
             File actualFile = new File(newFilename);
+            if (actualFile.exists()) {
+                actualFile.delete();
+            }
             tempFile.renameTo(actualFile);
             return actualFile;
         } catch (Exception e) {
@@ -781,16 +789,13 @@ public class FileTools {
             if (files == null || files.isEmpty() || targetFile == null) {
                 return false;
             }
-            int bufSize = 4096;
-            try (FileOutputStream outputStream = new FileOutputStream(targetFile)) {
-                byte[] buf = new byte[bufSize];
+            try ( BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(targetFile))) {
+                byte[] buf = new byte[CommonValues.IOBufferLength];
                 int bufLen;
                 for (File file : files) {
-                    try (FileInputStream inputStream = new FileInputStream(file)) {
+                    try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
                         while ((bufLen = inputStream.read(buf)) != -1) {
-                            if (bufSize > bufLen) {
-                                buf = ByteTools.subBytes(buf, 0, bufLen);
-                            }
+                            buf = ByteTools.subBytes(buf, 0, bufLen);
                             outputStream.write(buf);
                         }
                     }
@@ -806,7 +811,8 @@ public class FileTools {
     public static byte[] readBytes(File file) {
         byte[] data = null;
         try {
-            try (FileInputStream inputStream = new FileInputStream(file)) {
+            try ( BufferedInputStream inputStream
+                    = new BufferedInputStream(new FileInputStream(file))) {
                 data = new byte[(int) file.length()];
                 inputStream.read(data);
             }
@@ -822,7 +828,7 @@ public class FileTools {
         }
         try {
             byte[] data;
-            try (FileInputStream inputStream = new FileInputStream(file)) {
+            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
                 data = new byte[length];
                 inputStream.skip(offset);
                 inputStream.read(data);
@@ -835,14 +841,28 @@ public class FileTools {
 
     }
 
+    public static Charset charset(File file) {
+        try {
+            TextEditInformation info = new TextEditInformation(file);
+            if (TextTools.checkCharset(info)) {
+                return info.getCharset();
+            } else {
+                return Charset.forName("utf-8");
+            }
+        } catch (Exception e) {
+            return Charset.forName("utf-8");
+        }
+    }
+
     public static String readTexts(File file) {
         try {
             StringBuilder s = new StringBuilder();
-            try (BufferedReader reader = new BufferedReader(
-                    new FileReader(file, Charset.forName("utf-8")))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
+            try ( BufferedReader reader = new BufferedReader(
+                    new FileReader(file, charset(file)))) {
+                String line = reader.readLine();
+                while (line != null) {
                     s.append(line).append(System.lineSeparator());
+                    line = reader.readLine();
                 }
             }
             return s.toString();
@@ -852,14 +872,27 @@ public class FileTools {
     }
 
     public static File writeFile(File file, String data) {
+        if (file.exists()) {
+            return writeFile(file, data, charset(file));
+        } else {
+            return writeFile(file, data, Charset.forName("utf-8"));
+        }
+    }
+
+    public static File writeFile(File file, String data, Charset charset) {
         try {
             if (file == null || data == null) {
                 return null;
             }
-            try (FileWriter writer = new FileWriter(file, Charset.forName("UTF-8"))) {
-                writer.write(data);
-                writer.flush();
+            FileWriter writer;
+            if (charset == null) {
+                writer = new FileWriter(file, Charset.forName("utf-8"));
+            } else {
+                writer = new FileWriter(file, charset);
             }
+            writer.write(data);
+            writer.flush();
+            writer.close();
             return file;
         } catch (Exception e) {
             logger.error(e.toString());
@@ -876,7 +909,7 @@ public class FileTools {
             if (file == null || data == null) {
                 return false;
             }
-            try (FileOutputStream outputStream = new FileOutputStream(file)) {
+            try ( BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file))) {
                 outputStream.write(data);
                 outputStream.flush();
             }
@@ -885,6 +918,11 @@ public class FileTools {
             logger.error(e.toString());
             return false;
         }
+    }
+
+    public static boolean same(File file1, File file2) {
+        return Arrays.equals(SystemTools.SHA1(file1), SystemTools.SHA1(file2));
+
     }
 
 }

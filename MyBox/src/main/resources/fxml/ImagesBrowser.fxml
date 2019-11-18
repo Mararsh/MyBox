@@ -29,7 +29,7 @@ License:    Apache License Version 2.0
             <children>
                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
                     <children>
-                          <Button fx:id="selectSourceButton" mnemonicParsing="false" onAction="#selectImages" onMouseEntered="#popSourcePath">
+                          <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#selectImages" onMouseEntered="#popSourcePath">
                               <graphic>
                                   <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                       <image>

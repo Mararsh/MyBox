@@ -57,7 +57,7 @@ public class TableSystemConf extends DerbyBase {
                             try {
                                 int intv = Integer.valueOf(value);
                                 statement.executeUpdate("INSERT INTO System_Conf(key_Name, int_Value) VALUES('" + key + "', " + intv + " )");
-                            } catch (Exception e) {
+                            } catch (Exception e) {  failed(e);
                                 statement.executeUpdate("INSERT INTO System_Conf(key_Name, string_Value) VALUES('" + key + "', '" + value + "' )");
                             }
                             break;
@@ -65,7 +65,7 @@ public class TableSystemConf extends DerbyBase {
                 }
             }
             return true;
-        } catch (Exception e) {
+        } catch (Exception e) {  failed(e);
 //            // logger.debug(e.toString());
             return false;
         }
@@ -93,7 +93,7 @@ public class TableSystemConf extends DerbyBase {
 //                logger.debug(sql);
                 return statement.executeUpdate(sql);
             }
-        } catch (Exception e) {
+        } catch (Exception e) {  failed(e);
 //            // logger.debug(e.toString());
             return -1;
         }
@@ -117,7 +117,7 @@ public class TableSystemConf extends DerbyBase {
 //                logger.debug(sql);
                 return statement.executeUpdate(sql);
             }
-        } catch (Exception e) {
+        } catch (Exception e) {  failed(e);
             // logger.debug(e.toString());
             return -1;
         }
@@ -141,7 +141,7 @@ public class TableSystemConf extends DerbyBase {
                 }
                 return defaultValue;
             }
-        } catch (Exception e) {
+        } catch (Exception e) {  failed(e);
 //            // logger.debug(e.toString());
             return defaultValue;
         }
@@ -159,7 +159,7 @@ public class TableSystemConf extends DerbyBase {
                 statement.executeUpdate(sql);
                 return defaultValue;
             }
-        } catch (Exception e) {
+        } catch (Exception e) {  failed(e);
 //            // logger.debug(e.toString());
             return defaultValue;
         }
@@ -179,7 +179,7 @@ public class TableSystemConf extends DerbyBase {
             String sql = "DELETE FROM System_Conf WHERE key_Name='" + keyName + "'";
             statement.executeUpdate(sql);
             return true;
-        } catch (Exception e) {
+        } catch (Exception e) {  failed(e);
 //            // logger.debug(e.toString());
             return false;
         }

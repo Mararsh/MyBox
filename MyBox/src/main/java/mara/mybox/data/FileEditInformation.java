@@ -1,5 +1,7 @@
 package mara.mybox.data;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -12,6 +14,7 @@ import static mara.mybox.tools.TextTools.bomSize;
 import static mara.mybox.tools.TextTools.checkCharsetByBom;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
+import mara.mybox.value.CommonValues;
 import thridparty.EncodingDetect;
 
 /**
@@ -68,7 +71,7 @@ public abstract class FileEditInformation extends FileInformation {
     protected final void initValues() {
         filterType = StringFilterType.IncludeOne;
         withBom = totalNumberRead = false;
-        charset = Charset.defaultCharset();
+        charset = defaultCharset();
         objectsNumber = linesNumber = -1;
         currentPage = pagesNumber = 1;
         pageSize = 100000;
@@ -90,6 +93,11 @@ public abstract class FileEditInformation extends FileInformation {
                 break;
         }
         lineBreakWidth = 30;
+    }
+
+    public static Charset defaultCharset() {
+        //       return Charset.defaultCharset();
+        return Charset.forName("UTF-8");
     }
 
     public static FileEditInformation newEditInformation(Edit_Type type) {
@@ -168,7 +176,7 @@ public abstract class FileEditInformation extends FileInformation {
             }
             String setName;
             withBom = false;
-            try (FileInputStream inputStream = new FileInputStream(file)) {
+            try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
                 byte[] header = new byte[4];
                 if ((inputStream.read(header, 0, 4) != -1)) {
                     setName = checkCharsetByBom(header);
@@ -194,9 +202,9 @@ public abstract class FileEditInformation extends FileInformation {
                     || targetInfo == null || targetInfo.getFile() == null || targetInfo.getCharset() == null) {
                 return false;
             }
-            try (FileInputStream inputStream = new FileInputStream(file);
+            try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
                     InputStreamReader reader = new InputStreamReader(inputStream, charset);
-                    FileOutputStream outputStream = new FileOutputStream(targetInfo.getFile());
+                    BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(targetInfo.getFile()));
                     OutputStreamWriter writer = new OutputStreamWriter(outputStream, targetInfo.getCharset())) {
                 if (withBom) {
                     inputStream.skip(bomSize(charset.name()));
@@ -205,7 +213,7 @@ public abstract class FileEditInformation extends FileInformation {
                     byte[] bytes = bomBytes(targetInfo.getCharset().name());
                     outputStream.write(bytes);
                 }
-                char[] buf = new char[IO_BUF_LENGTH];
+                char[] buf = new char[CommonValues.IOBufferLength];
                 int count;
                 while ((count = reader.read(buf)) != -1) {
                     String text = new String(buf, 0, count);

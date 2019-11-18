@@ -557,12 +557,14 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
                 switch (effectType) {
                     case EdgeDetect:
                         kernel = ConvolutionKernel.makeEdgeDetectionEightNeighborLaplace();
-                        imageConvolution = new ImageConvolution(source, kernel);
+                        imageConvolution = ImageConvolution.create().
+                                setImage(source).setKernel(kernel);
                         target = imageConvolution.operate();
                         break;
                     case Emboss:
                         kernel = ConvolutionKernel.makeEmbossKernel(intPara1, intPara2, valueCheck.isSelected());
-                        imageConvolution = new ImageConvolution(source, kernel);
+                        imageConvolution = ImageConvolution.create().
+                                setImage(source).setKernel(kernel);
                         target = imageConvolution.operate();
                         break;
                     case Thresholding:

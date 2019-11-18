@@ -5,46 +5,46 @@ This is GUI program based on JavaFx to provide simple and easy functions. It's f
 
 ## Download and Execution
 Packages of each version have been uploaded at [Releases](https://github.com/Mararsh/MyBox/releases?) directory now. You can find them by clicking `releases` tab in main page of this project.    
-Download from cloud storage: https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F   
-Download from sourceforge: https://sourceforge.net/projects/mara-mybox/files/   
 
 ### Self-contain packages 
 Self-contain packages include all files and need not java env and installation.   (Please unpack it under path with pure-English name.)   
  
 | Platform | Link | Size | Launcher |    
 | --- | --- | ---  | ---  |    
-| win | [MyBox-5.7-win.zip](https://github.com/Mararsh/MyBox/releases/download/v5.7/MyBox-5.7-win-exe.zip)  | 234MB | MyBox.exe |       
-| linux | [MyBox-5.7-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v5.7/MyBox-5.7-linux.tar.gz)  | 188MB  | bin/MyBox  |     
-| mac | [MyBox-5.7-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v5.7/MyBox-5.7-mac.dmg)  | 189MB  |  MyBox-5.7.app   |  
+| win | [MyBox-5.8-win.zip](https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-5.8-win-exe.zip)  | 183MB | MyBox.exe |       
+| linux | [MyBox-5.8-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-5.8-linux.tar.gz)  | 190MB  | bin/MyBox  |     
+| mac | [MyBox-5.8-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-5.8-mac.dmg)  | 193MB  |  MyBox-5.8.app   |  
 
 User can double click the launcher to start MyBox or run it by command line. The default "Open Method" of image/text/PDF files can be associated to MyBox and a file can be opened directly by MyBox by double clicking the file's name.
-(File with name including non-ascii can be opened by double clicking currently)
+(File with name including non-ascii can not be opened by double clicking currently)
 
 ### Jar 
 When JRE or JDK 12 or higher(`Oracle jdk` or `open jdk`) is installed, jar can run:    
   
 | Platform | Link | Size | Requirements |   
 | --- | --- | ---  | ---  |    
-| win | [MyBox-5.7-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.7/MyBox-5.7-win-jar.zip)  | 117MB | Java 12 or higher |    
-| linux | [MyBox-5.7-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.7/MyBox-5.7-linux-jar.zip)  | 121MB  | Java 12 or higher |    
-| mac | [MyBox-5.7-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.7/MyBox-5.7-mac-jar.zip)  |  118MB  | Java 12 or higher |    
+| win | [MyBox-5.8-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-5.8-win-jar.zip)  | 118MB | Java 13.0.1 or higher |    
+| linux | [MyBox-5.8-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-5.8-linux-jar.zip)  | 125MB  | Java 13.0.1 or higher |    
+| mac | [MyBox-5.8-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-5.8-mac-jar.zip)  |  121MB  | Java 13.0.1 or higher |    
  
     
 Run following command to launch this program with Jar package: 
-<PRE><CODE>     java   -jar   MyBox-5.7.jar</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-5.8.jar</CODE></PRE>
 	
 A file path can follow the command as argument to be opened directly by MyBox. Example, following command will open the image:    
-<PRE><CODE>     java   -jar   MyBox-5.7.jar   /tmp/a1.jpg</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-5.8.jar   /tmp/a1.jpg</CODE></PRE>   
 
+### Other addresses to download   
+Download from cloud storage: https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F   
+Download from sourceforge: https://sourceforge.net/projects/mara-mybox/files/   
 
 ## Limitation   
 Self-contain packages can not be lanuched under path including non-English characters.  And file with name including non-ascii can not be opened by double clicking.
 A bug has been reported to jpackage dev team:
-[JDK-8232936](http://bugs.java.com/bugdatabase/view_bug.do?bug_id=JDK-8232936)
+[JDK-8232936](http://bugs.java.com/bugdatabase/view_bug.do?bug_id=JDK-8232936)   
 
-### About OCR on Linux/Mac   
 Current version still does not support OCR on Linux/Mac. The reason is that the based tesseract libraries are different on different platforms and there are not out of box packages available.   
-This requirement is delayed due to limited development time. 
+This requirement is delayed due to limited development time.    
 
 
 # Resource Addresses
@@ -69,7 +69,7 @@ sourceforge: https://sourceforge.net/projects/mara-mybox/files/
 | User Guide - PDF Tools | 5.0 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-PdfTools-en.pdf) |
 | User Guide - Desktop Tools | 5.0 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-DesktopTools-en.pdf) |
 | User Guide - Network Tools | 5.0 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-NetworkTools-en.pdf) |
-| Development Guide | 1.0 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-DevGuide-1.0-en.pdf) |
+| Development Guide | 2.0 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-DevGuide-2.0-en.pdf) |
 | Shortcuts | 1.0 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts_en.html) |
 | Development Logs |  | [html](#devLog) |
 
@@ -81,9 +81,9 @@ MyBox is based on following open sources softwares:
 | --- | --- | --- |    
 | JDK | Java | http://jdk.java.net/13/    
 |   |   | https://www.oracle.com/technetwork/java/javase/downloads/index.html /    
-| JavaFx | GUI| https://docs.oracle.com/javafx/2/  |     
-|   |   |   https://gluonhq.com/products/javafx/ |     
-|   |   |   https://www.oracle.com/technetwork/java/javafxscenebuilder-1x-archive-2199384.html  |     
+|  JavaFx | GUI |  https://gluonhq.com/products/javafx/ |     
+|   |   |  https://docs.oracle.com/javafx/2/  |     
+|   |   |  https://www.oracle.com/technetwork/java/javafxscenebuilder-1x-archive-2199384.html  |     
 | NetBeans | IDE| https://netbeans.org/ |     
 | jpackage | self-contain package| http://jdk.java.net/jpackage/ |     
 | jai-imageio | Image manufacture | https://github.com/jai-imageio/jai-imageio-core |   
@@ -101,10 +101,12 @@ MyBox is based on following open sources softwares:
 | barcode4j | Create barcodes | http://barcode4j.sourceforge.net |  
 | zxing | Create/Decode barcodes | https://github.com/zxing/zxing |   
 | flexmark-java | Convert Markdown | https://github.com/vsch/flexmark-java |   
+| commons-compress | archive/compress | https://commons.apache.org/proper/commons-compress |   
+| XZ for Java | archive/compress | https://tukaani.org/xz/java.html |   
  
  
 # Current Version
-Current version is 5.7. Its features are mentioned below in summary:   
+Current version is 5.8. Its features are mentioned below in summary:   
  
 * [Cross platforms](#Cross-platform)
 * [Internationalized](#Internationalized)
@@ -127,15 +129,19 @@ Current version is 5.7. Its features are mentioned below in summary:
     - [Color Spaces](#colorSpaces)
     - [Create Barcodes](#createBarcodes)
     - [Decode Barcodes](#decodeBarcodes)
-* [File Tools](#fileTools)
+    - [Message Digest](#messageDigest)
+ * [File Tools](#fileTools)
     - [Edit Text](#editText)
     - [Edit Bytes](#editBytes)
     - [Manage Files/Directories](#directoriesArrange)
+    - [Archive/Compress/Decompress/Unarchive](#archiveCompress)
+    - [Check Redundant Files](#filesRedundancy)
     - [Others](#fileOthers)
 * [Media Tools](#MediaTools)
 * [Network Tools](#netTools)
     - [Edit Html](#htmlEditor)
     - [Edit Markdown](#markdownEditor)
+    - [Conversion between html and Markdown](#htmlMarkdownConversion)
     - [Snap WeiBo](#weiboSnap)
 * [Settings](#settings)
 * [Window](#windows)
@@ -146,7 +152,7 @@ Current version is 5.7. Its features are mentioned below in summary:
   
 ## Cross platforms <a id="Cross-platform"></a>       
 
-MyBox is implemented in pure Java and based on open source codes, so it can run any platform which supports Java 12.
+MyBox is implemented in pure Java and based on open source codes, so it can run any platform which supports Java 13.
 Previous versions are based on Java 8.
 
 Recognizing texts in image/PDF(OCR) works only on Windows currently.    
@@ -255,7 +261,7 @@ Currently MyBox supports Chinese and English. To support a new language is just 
 
 ### Color Palette <a id="ColorPalette"></a>     
 
-1. Thousands of colors can be saved. 139 named colors can be added automatically.
+1. Any colors can be saved. 139 named colors can be added automatically.
 2. Color is shown in a small rectangle and its name(if has), hexidecimal value, rgb values, opacity, cmyk values, and cie values are popped when mouse is moved upon it.
 3. Name colors
 4. Export colors to html table.
@@ -401,7 +407,12 @@ Currently MyBox supports Chinese and English. To support a new language is just 
 3. Display contents of barcodes and its meta data including barcode type and error correction level if any.
 
 
-## Desktop Tools <a id="desktopTools"></a>     
+### Message Digest<a id="messageDigest" />
+1. Create digest for files or inputted texts.     
+2. Support MD5/SHA1/SHA256.    
+
+
+## File Tools <a id="fileTools"></a>     
 
 ### Edit Texts <a id="editText"></a>     
 1. File charset can be either detected automatically or set manually. Target file charset can be selected to implement encoding conversion. BOM setting is supported.
@@ -443,12 +454,31 @@ Currently MyBox supports Chinese and English. To support a new language is just 
 2. Sychronize directories, with options like whether copy sub-directories or new files, whether only copy modified files after specific date time, whether keep attributes of original files, or whther delete non-existed files/directories under original directory.
 3. Arrange files and reorganize them under new directories by modifed time. This tool can be used to handle lots of files which need be archived according to time, like photoes, screenshots of games, or system logs.
 
+
+### Archive/Compress/Decompress/Unarchive<a id="archiveCompress" />  
+1. Archiving is the process to collect multiple files/directories as single file. Some archive formats like zip and 7z implement compression too. Unarchiving is the inverse process of archiving.    
+2. Compressing is the process to reduce size of single file. Generally it happens after archiving. Decompressing is the invert process of compressing.    
+3. Supported archive formats include zip, tar, 7z, ar, cpio.    
+4. Supported unarchive formats include zip, tar, 7z, ar, cpio, arj, dump.    
+5. Supported compress formats include gzip, bzip2, xz, lzma, Pack200, DEFLATE, snappy-framed, lz4-block, lz4-framed.    
+6. Supported decompress formats include gzip, bzip2, xz, lzma, Pack200, DEFLATE, snappy-framed, lz4-block, lz4-framed, DEFLATE64,  Z.    
+7. When unarchive/decompress, the formats can be defected automatically meanwhile user can choice the formats since some formats can not be defected.    
+8. When unarchive, files tree is displayed to help user select which to be extracted.     
+
+### Check Redundant Files<a id="filesRedundancy" />  
+1. Find duplicated files according to MD5.     
+2. Files tree is displayed to help user delete redundant files.     
+3. Deletion can be done while checking is running.       
+
+
+
 ### Others <a id="fileOthers"></a>     
 1. Convert files' charset in batch.
 2. Convert files' line break in batch.
 3. Split file, by files number, by bytes number, or by start-end list.
 4. Merge files.
-5. When operate in batch, select files by extension, file name, file size, or modified time. Regular expression is supported.
+5. Compare files(bytes).   
+6. When operate in batch, select files by extension, file name, file size, or modified time. Regular expression is supported.
 
 ## Media Tools <a id="MediaTools"></a>     
 1. Monitor images in system clipboard and have user save/view them. Lossless or compression type can be selected.
@@ -469,6 +499,10 @@ Currently MyBox supports Chinese and English. To support a new language is just 
 3. Convert to text synchronously.
 4. Find and replace. Support regular expression.
 5. Locate. Go to position of specified character or specified line.
+
+### Conversion between html and Markdown<a id="htmlMarkdownConversion" />
+1. Conversion from html to Markdown in batch.    
+2. Conversion from Markdown to html in batch.   
 
 ### Weibo Snaping Tool <a id="weiboSnap"></a>     
 1. Save Weibo pages of any months of any Weibo accounts automatically.
@@ -491,7 +525,8 @@ Currently MyBox supports Chinese and English. To support a new language is just 
 7. Maximum main memory of PDF handling.
 8. Whether close alarm clocks when exit program.
 9. Base parameters including maximum JVM memory usage, whether close dpi-aware, data root path. MyBox will reboot itself automatically when user changes these parameters.
-10. Clear personal settings. Open user's directory.
+10. Derby driver mode. Notice:  Starting/Stopping Derby network mode under some env is very slow.
+11. Clear personal settings. Open user's directory.
 
 ## Window <a id="windows"></a>     
 1. Open/Close monitor bar of Memory.
@@ -522,8 +557,10 @@ Configuration file includes following parameters:
 <PRE><CODE>     JVMmemory=-Xms3026m </CODE></PRE>
 3. Whether close "HiDPI", like:   
 <PRE><CODE>     DisableHidpi=false </CODE></PRE>
+4. Derby driver mode, like:  
+<PRE><CODE>     DerbyMode=embedded </CODE></PRE>  
 
-Modify these parameters in time will cause MyBox restarts itself automatically.    
+Modify these parameters, except for DerbyMode, in time will cause MyBox restarts itself automatically.    
 
 
 ## Supporting HiDPI<a id="Hidpi" /> 
@@ -535,6 +572,17 @@ Developers need notice: JavaFx screen is not same as physical screen and has dif
 
 # Development Logs <a id="devLog"></a>     
 
+2019-11-18 v5.8  Upgrade to jdk13+javafx13+derby15.    
+Derby database can be switched between network mode and embedded mode. Notice:  Starting/Stopping Derby network mode under some env is very slow.    
+Create message digest for files or inputted texts. Support  MD5/SHA1/SHA256.    
+FIles archive/compress/unarchive/decompress. Support formats include zip, tar, 7z, ar, cpio, gzip, bzip2, xz, lzma, Pack200, DEFLATE, snappy-framed, lz4-block, lz4-framed, etc.    
+Check redundant files accoding to their MD5. Files tree is displayed to help user delete duplicated files. Deletion can be done as checking is running.    
+Conversion between html and Markdown in batch.    
+Solved problems: Some controls in interfaces do not work. Empty pages block WeiBo snap tool. 
+Transparent pixels of background should be considerred too when blending. "Replace Color" of image does not work.     
+Developer Guide v2.0.        
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.8)    
+
 2019-10-26 v5.7  Edit Markdown. Conversion between html and Markdown.     
 Improve algorithms of image quantization and apply to analysing image. K-Means Clustering is to calculate mostly different colors 
 while Popularity Quantization is to calculate mostly occurred colors. Image data can be saved as html file.    
@@ -542,6 +590,7 @@ Operations to manage files/directories like Find, Delete, Copy, Move. Rename is 
 More selection mode  for batch operations like by extension, by name, by size, or by modified time. Regular expression is supported.    
 Many interfaces are refined to balance layout of controls.   
 WeiBo Snap Tools is fixed. Snapshots of HiDPI screen are in right resolution now.  Images are saved as temporary files to avoid out of memory.   
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.7)    
 
 2019-10-01 v5.6 Configuration file is back to "User Home" and always there except for parameter in jar.    
 For OCR, options of image preprocessing include nine enhancement algorithms, scale ratio, binary threashold, rotation angle, whether deskew, whether invert colors. 
@@ -553,12 +602,14 @@ Options for OCR in batch include whether generate html or PDF, whether merge rec
 One clicking to show examples of image manufacture.        
 Color Palette: Colors can be named; Display more data like cmyk values and cie values.    
 Happy Birthday, China!    
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.6)    
 
 
 2019-9-19 v5.5  Recognize texts in image and PDF(OCR) based on tess4j. Rectangle can be set for single image's OCR. Color space and density can be set when do OCR for PDF files in batch. Currently only Windows is supported and users need download data files by themselves.    
 Make self-contain packages for each platform(Window/Linux/Mac).      
 Improve codes: Build with maven without Java 8; make self-contain packages with latest jpackage tool.    
 Fix bugs: WeiBo Snap tool failed to work in last version; and it never worked again on Mac after it ran first time; clicking links caused MyBox dead on Linux; normalization is unnecessary when calculate CIELuv and CIELab.     
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.5)    
 
 2019-9-15 v5.4 Use "Execution Path" instead of "User Path" as default "Data Path". Record base parameters in configuration file.   
 User can modify base parameters on line, including maximum JVM memory usage, whether close dpi-aware, data root path, which will cause MyBox reboot itself.   
@@ -571,6 +622,7 @@ Scopes can be saved and managed.
 Uniform shortcuts whose help page is provided.    
 Improve codes: use public APIs instead of interval classes; make sure singleton task enters exclusively and quits cleanly; write temporary file to avoid destorying original file in case of exception.   
 Fix bugs: 3 tools fail to work in v5.3 due to modification; shadow and 3 blend modes miss special handling of transparent pixels.   
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.4)    
 
 2019-8-8 v5.3  Migrated on Netbeans 11 + Java 12.    
 Improve batch interface: add directories, extend directories, filter file names, handle duplicated file names.     
@@ -581,6 +633,7 @@ First version of "Development Guide".
 Fix issues: Algorithm for "Image Manufacture-Color-Opacity-premultiply" is incorrect; Fail to save image when file extension is missed on Linux;     
 Links do not work on Linux; Version of ICC profile is decoded/encodes incorrectly; Interface may be froozen when ICC holds too much data;     
 Not-decoded data in ICC prevents generation of XML.    
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.3)    
     
 2019-6-30 v5.2 Improve image decoding. Adobe YCCK/CMYK jpg file can be viewed.     
 Attributes and meta data of all images in multi-frames image file are read and displayed.    
@@ -592,13 +645,15 @@ Unary matrix calculation: Transpose, Row Echelon Form, Reduced Row Echelon Form,
 Binary matrices calculation: Plus, Minus, Hadamard Product, Kronecker Product, Horizontally Merge, Vertically Merge.     
 Tools of Color Space: draw Chromaticity Diagram, edit ICC profile, adapt primaries of RGB Color Space, transform matrices between Linear RGB and XYZ, transform matrices between Linear RGB and Linear RGB，chromatic adaptation, standard illuminants, chromatic adaptation matrices.    
 Fix bugs: “414 Request-URI Too Large” is returned in WeiBo snap tool constantly; tooltip blinks at edge of screen; some links do not work.    
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.2)    
     
 2019-5-1 v5.1 Interface: Controls are displayed in pictures which can be selected in 5 colors and whether display texts.    
 Shorter tips to fit for 14 inches screen of laptop.    
 Image tools: Extract/Add Alpha channel.    
 Fix several problems, including error condition to filter transparent pixels in Image Manufacture.    
 Happay Labor Day!    
-    
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.1)    
+   
 2019-4-21 v5.0 Select scope or area by dragging anchors.    
 Doodle: Paste picture, draw shape(rectangle/circle/ellipse/polygon) line or fill color in shape, draw lines by    
 dragging mouse, in image. Stroke width and color, line dotted can be set.    
@@ -614,24 +669,28 @@ interfaces. Pop recent visited files/directories. Recent visited tools.
 Codes refactoring: Implement selection logic by subclass instead of switch statement, to move judgement    
 outside loop. Avoid float calculation in loop. Rationalize inheritance and reduce duplication. Central    
 management of stages' opening/closing to avoid threads residual.    
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.0)    
     
 2019-2-20 v4.9 Change image's contrast. Multiple algorithms are supported. Dithering can be selected when    
 handle color quantization.    
 Statistic data of image's color channels, including mean, variance, skewness, mode, midean, etc. Histograms.    
 Recorder of images in system clipboard. Change font size any time.    
 View images: copy/crop/save the selected area.    
-    
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av4.9)    
+   
 2019-1-29 v4.8 View PDF file in image mode. Density can be set. Pages can be cropped and saved as images.    
 Locate function in Text/Bytes Editer: Go to the position of specified character/byte/line.    
 Cut file, by files number, by bytes number, or by start-end list.    
 Merge multiple files' bytes as a new file.    
 A file path can follow program as argument to be opened directly by MyBox.     
 On windows, the default Open Method of image/text/PDF files can be associated with MyBox.exe, to open a file by MyBox by double clicking the file name.    
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av4.8)    
     
 2019-1-15 v4.7 Edit Bytes. Input boxes of general ASCII characters. Break lines by bytes number or by some defined bytes. Find and replace in current page or in whole file, and count. Filter lines by "Include One", "Not Include All", "Include All", or "Not Include Any". Cumulative filter. Filtered results can be saved. Select whether include lines number. Select charset to decode bytes which can be viewed, scrolled, and selected synchronously. Paginate. Fit for viewing or editing very large file, such as binary file in size of several GBs. Page Size can be set. Make sure correction of finding, replacing, and filtering of bytes that are across pages.    
 Convert line breaks of files in batching way.    
 Merge "Rename Files" and "Rename Files under Directories".    
 Image Blurring uses "Average Algorithm" which is good enough and quicker.    
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av4.7)    
     
     
 2018-12-31 v4.6 Edit Text: Detect line break automatically. Convert line break. Support LF(Unix/Linux), CR(iOS), CRLF(Windows).    
@@ -640,6 +699,7 @@ Filter lines. By "Include one of strings" or "Not include all of strings". Cumul
 Paginate. Fit for viewing or editing very large file, such as logs in size of several GBs. Page Size can be set. Make sure correction of finding, replacing, and filtering of strings that are across pages.    
 Load and display first page, and scan the file in background to count characters number and lines number. Part of functions are unavaliable while counting. Interface will be refreshed automatically after counting process is complete.    
 In progress interface, buttons "MyBox" and "Cancel" are added to have user use other functions or cancel current process.    
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av4.6)    
     
     
 2018-12-15 v4.5 Text Encoding. File charset can be either detected automatically or set manually. Target file charset can be selected to implement encoding conversion. BOM setting is supported. Hexadecimal codes can be viewed and selected synchronously. Line numbers are shown.    
@@ -647,6 +707,7 @@ Text Encoding conversion in batch way.
 Split image by size.    
 Copy image or selected part of image in system clipboard(Ctrl-c).    
 Crop and save part of image in interface of Image Viewer.    
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av4.5)    
     
     
 2018-12-03 v4.4 View/Extract/Create/Edit multiple frames image file. Support multiple frames Tiff file.    
@@ -655,6 +716,7 @@ For all operations which use image as input, handle situation of big image which
 step.     
 Support splitting big image by only reading required part of data and writing while reading. Splitted results can be saved as multiple image files, multiple frames Tiff file, or PDF file.     
 Support subsampling big image with options of sample region and sample ratio.    
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av4.4)    
     
     
 2018-11-22 v4.3 Support animated Gif. View: set interval, pause/continue, go special frame, next/previous frame. Extract: set from/to frames, target files' type. Create/Edit: add/delete images, adjust orders, set interval, whether loop, keep images' size or set images' size, save as, what you see is what you get.    
@@ -662,6 +724,7 @@ Easier and better Scope for Image Manufacture. Type:All, Matting, Rectangle, Cir
 added/deleted easily. All type of scope can be set as Excluded.     
 Merge functions of "Color", "Filter", "Effect", and "Replace Color", to reduce interface elements and user inputs.    
 Multiple Images Viewer: Number of files in each screen can be set; pictures are shown in balanced sizes.    
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av4.3)    
     
 2018-11-13 v4.2 Scope for Image Manufacture: All, Matting, Rectangle, Circle, Color Matching, Hue Matching, Rectrangle/Circle plus Color/Hue Matching. "Matting" is like Magic Wand of PhotoShop or "Bucket Fill" of Paint on Windows.    
 Scope can be applied for Color Increasing/Deceasing, Filtering, Effects, Replacing Color, and Convolution. The scope can be determined by clicking image.    
@@ -762,6 +825,8 @@ This tool might fail to work when weibo would change the accessing channel of pa
     
 2018-06-12 v1.0  Convert each page of PDF file to an image with options of format, density, color,  compression, and quality. And user can pause/continue the conversion.    
     
+
+[Closed requirements/bugs not in any version](https://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+no%3Amilestone)    
 
 # Main Interface
 

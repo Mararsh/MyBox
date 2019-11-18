@@ -31,76 +31,7 @@ License:    Apache License Version 2.0
                     <items>
                         <VBox fx:id="tableBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                             <children>
-                                <TitledPane text="%Conditions" VBox.vgrow="NEVER">
-                                    <content>
-                                        <VBox fx:id="conditionsBox" spacing="10.0">
-                                            <children>
-                                                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="NEVER">
-                                                    <children>
-                                                        <Label text="%Path" />
-                                                        <TextField fx:id="sourcePathInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                        <Button fx:id="selectSourcePathButton" mnemonicParsing="false" onAction="#selectSourcePath" onMouseEntered="#popSourcePath">
-                                                            <graphic>
-                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/iconFolder.png" />
-                                                                    </image>
-                                                                </ImageView>
-                                                            </graphic>
-                                                        </Button>
-                                                    </children>
-                                                </HBox>
-                                                <FlowPane fx:id="filterTypesPane" hgap="5.0" maxWidth="1.7976931348623157E308" vgap="5.0" VBox.vgrow="NEVER">
-                                                    <children>
-                                                        <RadioButton fx:id="filterIncludeRadio" mnemonicParsing="false" selected="true" text="%NameIncludeAny" wrapText="true">
-                                                            <toggleGroup>
-                                                                <ToggleGroup fx:id="filterGroup" />
-                                                            </toggleGroup>
-                                                        </RadioButton>
-                                                        <RadioButton mnemonicParsing="false" text="%NameIncludeAll" toggleGroup="$filterGroup" wrapText="true" />
-                                                        <RadioButton mnemonicParsing="false" text="%NameNotIncludeAny" toggleGroup="$filterGroup" wrapText="true" />
-                                                        <RadioButton mnemonicParsing="false" text="%NameNotIncludeAll" toggleGroup="$filterGroup" wrapText="true" />
-                                                        <RadioButton mnemonicParsing="false" text="%NameMatchAnyRegularExpression" toggleGroup="$filterGroup" wrapText="true" />
-                                                        <RadioButton mnemonicParsing="false" text="%NameNotMatchAnyRegularExpression" toggleGroup="$filterGroup" wrapText="true" />
-                                                        <RadioButton layoutX="576.0" layoutY="10.0" mnemonicParsing="false" text="%ExtensionEuqalAny" toggleGroup="$filterGroup" wrapText="true" />
-                                                        <RadioButton layoutX="576.0" layoutY="10.0" mnemonicParsing="false" text="%ExtensionNotEqualAny" toggleGroup="$filterGroup" wrapText="true" />
-                                          <RadioButton layoutX="10.0" layoutY="139.0" mnemonicParsing="false" text="%FileSizeLargerThan" toggleGroup="$filterGroup" wrapText="true" />
-                                          <RadioButton layoutX="664.0" layoutY="139.0" mnemonicParsing="false" text="%FileSizeSmallerThan" toggleGroup="$filterGroup" wrapText="true" />
-                                          <RadioButton layoutX="10.0" layoutY="185.0" mnemonicParsing="false" text="%ModifiedTimeEarlierThan" toggleGroup="$filterGroup" wrapText="true" />
-                                          <RadioButton layoutX="382.0" layoutY="185.0" mnemonicParsing="false" text="%ModifiedTimeLaterThan" toggleGroup="$filterGroup" wrapText="true" />
-                                                      <Hyperlink fx:id="regexLink" onAction="#regexHelp" text="%RegularExpression" />
-                                                    </children>
-                                                </FlowPane>
-                                                <TextField fx:id="filterInput" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER" />
-                                            </children>
-                                        </VBox>
-                                    </content>
-                                </TitledPane>
-                                <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Logs" VBox.vgrow="ALWAYS">
-                                    <content>
-                                        <VBox fx:id="logsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                            <children>
-                                                <TextArea fx:id="logsTextArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" wrapText="true" VBox.vgrow="ALWAYS" />
-                                                <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="NEVER">
-                                                    <children>
-                                                        <Label text="%MaxLines" />
-                                                        <TextField fx:id="maxLinesinput" prefWidth="80.0" text="5000" />
-                                                        <CheckBox fx:id="verboseCheck" mnemonicParsing="false" text="%VerboseLogs" />
-                                                        <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearLogs">
-                                                            <graphic>
-                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/iconClear.png" />
-                                                                    </image>
-                                                                </ImageView>
-                                                            </graphic>
-                                                        </Button>
-                                                    </children>
-                                                </HBox>
-                                            </children>
-                                        </VBox>
-                                    </content>
-                                </TitledPane>
+                        <fx:include fx:id="table" source="FilesTable.fxml" />
                             </children>
                         </VBox>
                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
@@ -109,6 +40,7 @@ License:    Apache License Version 2.0
                            <columns>
                               <TableColumn fx:id="fileColumn" editable="false" maxWidth="1.7976931348623157E308" prefWidth="300.0" text="%File" />
                               <TableColumn fx:id="sizeColumn" editable="false" prefWidth="160.0" text="%Size" />
+                              <TableColumn fx:id="typeColumn" editable="false" minWidth="0.0" prefWidth="100.0" text="%Type" />
                               <TableColumn fx:id="modifyTimeColumn" editable="false" prefWidth="160.0" text="%ModifyTime" />
                               <TableColumn fx:id="createTimeColumn" editable="false" prefWidth="160.0" text="%CreateTime" />
                            </columns>

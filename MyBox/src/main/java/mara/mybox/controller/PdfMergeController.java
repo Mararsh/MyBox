@@ -71,6 +71,7 @@ public class PdfMergeController extends PdfBatchController {
         doc = null;
         if (PdfTools.isPDF(srcFile)) {
             try {
+                showHandling(srcFile);
                 currentParameters.currentSourceFile = srcFile;
                 PdfInformation info = tableData.get(currentParameters.currentIndex);
                 actualParameters.fromPage = info.getFromPage();
@@ -79,7 +80,7 @@ public class PdfMergeController extends PdfBatchController {
                 }
                 actualParameters.toPage = info.getToPage();
                 actualParameters.password = info.getUserPassword();
-                try (PDDocument pd = PDDocument.load(currentParameters.currentSourceFile,
+                try ( PDDocument pd = PDDocument.load(currentParameters.currentSourceFile,
                         currentParameters.password, AppVariables.pdfMemUsage)) {
                     doc = pd;
                     if (currentParameters.toPage <= 0 || currentParameters.toPage > doc.getNumberOfPages()) {

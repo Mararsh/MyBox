@@ -159,7 +159,7 @@ public class DoubleStatistic {
         for (int i = 0; i < values.length; i++) {
             skewness += Math.pow(values[i] - mean, 3);
         }
-        skewness = (double) Math.pow(skewness / values.length, 1.0 / 3);
+        skewness = Math.pow(skewness / values.length, 1.0 / 3);
         return skewness;
     }
 

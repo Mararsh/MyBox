@@ -858,9 +858,8 @@ public class ImageManufacturePaneController extends ImageMaskController {
                 @Override
                 protected boolean handle() {
                     try {
-                        PixelsOperation pixelsOperation
-                                = PixelsOperation.create(image,
-                                        scope, PixelsOperation.OperationType.ShowScope);
+                        PixelsOperation pixelsOperation = PixelsOperation.create(image,
+                                scope, PixelsOperation.OperationType.ShowScope);
                         scopedImage = pixelsOperation.operateFxImage();
                         if (task == null || isCancelled()) {
                             return false;
@@ -1866,9 +1865,9 @@ public class ImageManufacturePaneController extends ImageMaskController {
     /*
        Operate
      */
-    public void operating() {
+    public void operatingNeedNotScope() {
         if (scopeSetCheck.isSelected()) {
-            typeGroup.selectToggle(null);
+            scopeSetCheck.setSelected(false);
             scopePane.setDisable(true);
         }
         maskView.setOpacity(1.0f);

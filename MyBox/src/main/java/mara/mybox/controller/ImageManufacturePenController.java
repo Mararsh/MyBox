@@ -48,9 +48,10 @@ import static mara.mybox.value.AppVariables.message;
 public class ImageManufacturePenController extends ImageManufactureOperationController {
 
     protected PenType opType;
-    protected int strokeWidth, arcWidth, intensity;
+    protected int strokeWidth, arcWidth, intensity, defaultStrokeWidth;
     protected double lastX, lastY;
     protected float opacity;
+    protected String strokeWidthKey;
 
     @FXML
     protected ToggleGroup typeGroup, eraserGroup;
@@ -75,7 +76,8 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
     protected Rectangle strokeRect, fillRect;
 
     public enum PenType {
-        Polyline, DrawLines, Erase, Rectangle, Circle, Ellipse, Polygon, Frosted, Mosaic
+        Polyline, DrawLines, Erase, Rectangle, Circle, Ellipse, Polygon, Frosted,
+        Mosaic
     }
 
     public ImageManufacturePenController() {
@@ -118,6 +120,8 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                 }
             });
 
+            strokeWidthKey = "ImagePenLineWidth";
+            defaultStrokeWidth = 5;
             int imageWidth = (int) imageView.getImage().getWidth();
             strokeWidthBox.getItems().clear();
             List<String> ws = new ArrayList<>();
@@ -137,7 +141,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                         int v = Integer.valueOf(newValue);
                         if (v >= 0) {
                             strokeWidth = v;
-                            AppVariables.setUserConfigInt("ImagePenStrokerWidth", strokeWidth);
+                            AppVariables.setUserConfigInt(strokeWidthKey, strokeWidth);
                             updateMask();
                             FxmlControl.setEditorNormal(strokeWidthBox);
                         } else {
@@ -148,7 +152,8 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                     }
                 }
             });
-            strokeWidthBox.getSelectionModel().select(AppVariables.getUserConfigInt("ImagePenStrokerWidth", 5) + "");
+            strokeWidthBox.getSelectionModel().select(
+                    AppVariables.getUserConfigInt(strokeWidthKey, defaultStrokeWidth) + "");
 
             arcBox.getItems().clear();
             List<String> as = new ArrayList<>();
@@ -263,7 +268,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
 
     private void checkPenType() {
         try {
-            imageController.operating();
+            imageController.operatingNeedNotScope();
 
             setBox.getChildren().clear();
             imageController.initMaskControls(false);
@@ -291,6 +296,8 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                 setBox.getChildren().addAll(strokeWidthPane, strokeColorPane, dottedCheck, fillPane, rectArcPane, opacityPane, okPane);
                 imageController.imageLabel.setText(message("PenShapeTips"));
                 commentLabel.setText(message("PenShapeTips"));
+                strokeWidthKey = "ImagePenLineWidth";
+                defaultStrokeWidth = 5;
 
             } else if (circleRadio.equals(selected)) {
                 opType = PenType.Circle;
@@ -299,6 +306,8 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                 setBox.getChildren().addAll(strokeWidthPane, strokeColorPane, dottedCheck, fillPane, opacityPane, okPane);
                 imageController.imageLabel.setText(message("PenShapeTips"));
                 commentLabel.setText(message("PenShapeTips"));
+                strokeWidthKey = "ImagePenLineWidth";
+                defaultStrokeWidth = 5;
 
             } else if (ellipseRadio.equals(selected)) {
                 opType = PenType.Ellipse;
@@ -307,6 +316,8 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                 setBox.getChildren().addAll(strokeWidthPane, strokeColorPane, dottedCheck, fillPane, opacityPane, okPane);
                 imageController.imageLabel.setText(message("PenShapeTips"));
                 commentLabel.setText(message("PenShapeTips"));
+                strokeWidthKey = "ImagePenLineWidth";
+                defaultStrokeWidth = 5;
 
             } else if (polygonRadio.equals(selected)) {
                 opType = PenType.Polygon;
@@ -315,38 +326,53 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                 setBox.getChildren().addAll(strokeWidthPane, strokeColorPane, dottedCheck, fillPane, opacityPane, withdrawButton, okPane);
                 imageController.imageLabel.setText(message("PolygonTips"));
                 commentLabel.setText(message("PolygonTips"));
+                strokeWidthKey = "ImagePenLineWidth";
+                defaultStrokeWidth = 5;
 
             } else if (polylineRadio.equals(selected)) {
                 opType = PenType.Polyline;
                 setBox.getChildren().addAll(strokeWidthPane, strokeColorPane, dottedCheck, opacityPane, withdrawButton, okPane);
                 imageController.imageLabel.setText(message("PolylineTips"));
                 commentLabel.setText(message("PolylineTips"));
+                strokeWidthKey = "ImagePenLineWidth";
+                defaultStrokeWidth = 5;
 
             } else if (linesRadio.equals(selected)) {
                 opType = PenType.DrawLines;
                 setBox.getChildren().addAll(strokeWidthPane, strokeColorPane, dottedCheck, opacityPane, withdrawButton, okPane);
                 imageController.imageLabel.setText(message("PenLinesTips"));
                 commentLabel.setText(message("PenLinesTips"));
+                strokeWidthKey = "ImagePenLineWidth";
+                defaultStrokeWidth = 5;
 
             } else if (eraserRadio.equals(selected)) {
                 opType = PenType.Erase;
                 setBox.getChildren().addAll(strokeWidthPane, withdrawButton, okPane);
                 imageController.imageLabel.setText(message("PenLinesTips"));
                 commentLabel.setText(message("PenLinesTips"));
+                strokeWidthKey = "ImagePenEraserWidth";
+                defaultStrokeWidth = 50;
 
             } else if (frostedRadio.equals(selected)) {
                 opType = PenType.Frosted;
                 setBox.getChildren().addAll(strokeWidthPane, intensityPane, shapePane, okPane);
                 imageController.imageLabel.setText(message("PenMosaicTips"));
                 commentLabel.setText(message("PenMosaicTips"));
+                strokeWidthKey = "ImagePenMosaicWidth";
+                defaultStrokeWidth = 80;
 
             } else if (mosaicRadio.equals(selected)) {
                 opType = PenType.Mosaic;
                 setBox.getChildren().addAll(strokeWidthPane, intensityPane, shapePane, okPane);
                 imageController.imageLabel.setText(message("PenMosaicTips"));
                 commentLabel.setText(message("PenMosaicTips"));
+                strokeWidthKey = "ImagePenMosaicWidth";
+                defaultStrokeWidth = 80;
 
             }
+            strokeWidthBox.getSelectionModel().select(
+                    AppVariables.getUserConfigInt(strokeWidthKey, defaultStrokeWidth) + "");
+
             FxmlControl.refreshStyle(setBox);
             updateMask();
 

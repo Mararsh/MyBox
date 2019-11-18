@@ -13,6 +13,7 @@ import javafx.scene.control.TextArea;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -38,6 +39,7 @@ public class LoadingController extends BaseController {
 
     public void init(final Task<?> task) {
         try {
+            infoLabel.setText(message("Handling..."));
             loadingTask = task;
             if (task != null) {
                 progressIndicator.setProgress(-1F);

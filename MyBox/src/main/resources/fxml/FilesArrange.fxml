@@ -37,7 +37,7 @@ License:    Apache License Version 2.0
                                             <children>
                                                 <Label text="%SourcePath" />
                                                 <TextField fx:id="sourcePathInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                <Button fx:id="selectSourcePathButton" mnemonicParsing="false" onAction="#selectSourcePath" onMouseEntered="#popSourcePath">
+                                                <Button fx:id="selectPathSourceButton" mnemonicParsing="false" onAction="#selectSourcePath" onMouseEntered="#popSourcePath">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
@@ -52,7 +52,7 @@ License:    Apache License Version 2.0
                                             <children>
                                                 <Label text="%TargetPath" />
                                                 <TextField fx:id="targetPathInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                <Button fx:id="selectTargetPathButton" mnemonicParsing="false" onAction="#selectTargetPath" onMouseEntered="#popTargetPath">
+                                                <Button fx:id="selectPathTargetButton" mnemonicParsing="false" onAction="#selectTargetPath" onMouseEntered="#popTargetPath">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>

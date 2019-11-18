@@ -218,14 +218,14 @@ public class ImageViewerController extends ImageMaskController {
 
         loadWidth = defaultLoadWidth;
         if (loadWidthBox != null) {
-            List<String> values = Arrays.asList(AppVariables.message("OrignalSize"),
+            List<String> values = Arrays.asList(AppVariables.message("OriginalSize"),
                     "512", "1024", "256", "128", "2048", "100", "80", "4096");
             loadWidthBox.getItems().addAll(values);
             loadWidthBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
 //                    logger.debug(oldValue + " " + newValue + " " + (String) loadWidthBox.getSelectionModel().getSelectedItem());
-                    if (AppVariables.message("OrignalSize").equals(newValue)) {
+                    if (AppVariables.message("OriginalSize").equals(newValue)) {
                         loadWidth = -1;
                     } else {
                         try {
@@ -422,7 +422,7 @@ public class ImageViewerController extends ImageMaskController {
             if (loadWidthBox != null) {
                 isSettingValues = true;
                 if (loadWidth == -1) {
-                    loadWidthBox.getSelectionModel().select(AppVariables.message("OrignalSize"));
+                    loadWidthBox.getSelectionModel().select(AppVariables.message("OriginalSize"));
                 } else {
                     loadWidthBox.getSelectionModel().select(loadWidth + "");
                 }
@@ -571,8 +571,12 @@ public class ImageViewerController extends ImageMaskController {
     @Override
     public void updateLabelTitle() {
         try {
+            if (getMyStage() == null) {
+                return;
+            }
+            String title;
             if (sourceFile != null) {
-                String title = getBaseTitle() + " " + sourceFile.getAbsolutePath();
+                title = getBaseTitle() + " " + sourceFile.getAbsolutePath();
                 if (imageInformation != null) {
                     if (imageInformation.getImageFileInformation().getNumberOfImages() > 1) {
                         title += " - " + message("Image") + " " + imageInformation.getIndex();
@@ -581,14 +585,16 @@ public class ImageViewerController extends ImageMaskController {
                         title += " - " + message("Sampled");
                     }
                 }
-                if (imageChanged) {
-                    title += "  " + "*";
-                }
-                getMyStage().setTitle(title);
+            } else {
+                title = getBaseTitle();
             }
+            if (imageChanged) {
+                title += "  " + "*";
+            }
+            getMyStage().setTitle(title);
 
-            if (imageView != null && imageView.getImage() != null) {
-                if (bottomLabel != null) {
+            if (bottomLabel != null) {
+                if (imageView != null && imageView.getImage() != null) {
                     String bottom = "";
                     if (imageInformation != null) {
                         bottom += AppVariables.message("Format") + ":" + imageInformation.getImageFormat() + "  ";
@@ -608,6 +614,9 @@ public class ImageViewerController extends ImageMaskController {
                                 + AppVariables.message("ModifyTime") + ":" + DateTools.datetimeToString(sourceFile.lastModified()) + "  ";
                     }
                     bottomLabel.setText(bottom);
+
+                } else {
+                    bottomLabel.setText("");
                 }
             }
 
@@ -1143,7 +1152,6 @@ public class ImageViewerController extends ImageMaskController {
                     popFailed();
                 }
             }
-
             if (sfile.renameTo(file)) {
                 popSuccessul();
                 return file;
@@ -1257,8 +1265,8 @@ public class ImageViewerController extends ImageMaskController {
         if (image == null) {
             return;
         }
-        ImageDataController controller
-                = (ImageDataController) FxmlStage.openStage(CommonValues.ImageDataFxml);
+        ImageAnalyseController controller
+                = (ImageAnalyseController) FxmlStage.openStage(CommonValues.ImageAnalyseFxml);
         controller.init(sourceFile, imageView.getImage());
         controller.setParentView(imageView);
         controller.loadData();

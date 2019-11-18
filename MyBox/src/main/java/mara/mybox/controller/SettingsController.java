@@ -38,6 +38,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import mara.mybox.MyBox;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.TableImageHistory;
 import mara.mybox.db.TableVisitHistory;
 import mara.mybox.fxml.ControlStyle;
@@ -72,9 +73,8 @@ public class SettingsController extends BaseController {
     protected ToggleGroup langGroup, pdfMemGroup, controlColorGroup;
     @FXML
     protected CheckBox stopAlarmCheck, newWindowCheck, restoreStagesSizeCheck,
-            copyToSystemClipboardCheck,
-            anchorSolidCheck, controlsTextCheck, recordLoadCheck, clearCurrentRootCheck,
-            hidpiCheck;
+            copyToSystemClipboardCheck, anchorSolidCheck, controlsTextCheck, recordLoadCheck,
+            clearCurrentRootCheck, hidpiCheck, derbyServerCheck;
     @FXML
     protected TextField jvmInput, imageMaxHisInput, dataDirInput, fileRecentInput, thumbnailWidthInput,
             ocrDirInput;
@@ -98,7 +98,7 @@ public class SettingsController extends BaseController {
     protected ListView languageList;
     @FXML
     protected Label alphaLabel, currentJvmLabel, currentDataPathLabel, currentTempPathLabel,
-            currentOCRFilesLabel;
+            currentOCRFilesLabel, derbyStatus;
 
     public SettingsController() {
         baseTitle = AppVariables.message("Settings");
@@ -492,6 +492,47 @@ public class SettingsController extends BaseController {
             AppVariables.disableHiDPI = "true".equals(ConfigTools.readConfigValue("DisableHidpi"));
             hidpiCheck.setSelected(AppVariables.disableHiDPI);
             isSettingValues = false;
+
+            derbyServerCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+                    if (isSettingValues) {
+                        return;
+                    }
+                    derbyServerCheck.setDisable(true);
+                    DerbyBase.mode = derbyServerCheck.isSelected() ? "client" : "embedded";
+                    ConfigTools.writeConfigValue("DerbyMode", DerbyBase.mode);
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                String ret = DerbyBase.startDerby();
+                                popInformation(ret, 6000);
+                                isSettingValues = true;
+                                derbyServerCheck.setSelected("client".equals(DerbyBase.mode));
+                                isSettingValues = false;
+                            } catch (Exception e) {
+                                logger.debug(e.toString());
+                            }
+                            derbyServerCheck.setDisable(false);
+                            if ("client".equals(DerbyBase.mode)) {
+                                derbyStatus.setText(MessageFormat.format(message("DerbyServerListening"), DerbyBase.port + ""));
+                            } else {
+                                derbyStatus.setText(message("DerbyEmbeddedMode"));
+                            }
+                        }
+                    });
+                }
+            });
+            isSettingValues = true;
+            derbyServerCheck.setSelected("client".equals(DerbyBase.mode));
+            isSettingValues = false;
+
+            if ("client".equals(DerbyBase.mode)) {
+                derbyStatus.setText(MessageFormat.format(message("DerbyServerListening"), DerbyBase.port + ""));
+            } else {
+                derbyStatus.setText(message("DerbyEmbeddedMode"));
+            }
 
         } catch (Exception e) {
             logger.debug(e.toString());

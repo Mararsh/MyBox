@@ -1,5 +1,6 @@
 package mara.mybox.tools;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.LinkedHashMap;
@@ -31,7 +32,7 @@ public class XmlTools {
             transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
             transformer.setOutputProperty(OutputKeys.ENCODING, "utf-8");
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            Result result = new StreamResult(new FileOutputStream(file));
+            Result result = new StreamResult(new BufferedOutputStream(new FileOutputStream(file)));
             handler.setResult(result);
             handler.startDocument();
             AttributesImpl attr = new AttributesImpl();

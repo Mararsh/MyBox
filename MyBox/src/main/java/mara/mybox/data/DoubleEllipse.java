@@ -72,7 +72,7 @@ public class DoubleEllipse implements DoubleShape {
     }
 
     private void makeEllipse(DoubleRectangle rect) {
-        if (!rect.isValid()) {
+        if (rect == null || !rect.isValid()) {
             return;
         }
         rectangle = rect;

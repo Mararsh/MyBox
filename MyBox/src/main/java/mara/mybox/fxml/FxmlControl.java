@@ -713,17 +713,24 @@ public class FxmlControl {
         return null;
     }
 
+    public static double dpiScale() {
+        try {
+            double scale = Toolkit.getDefaultToolkit().getScreenResolution() / Screen.getPrimary().getDpi();
+            return scale > 1 ? scale : 1;
+        } catch (Exception e) {
+            return 1;
+        }
+    }
+
     public static Image snap(Node node) {
         try {
             final Bounds bounds = node.getLayoutBounds();
-            Screen screen = Screen.getPrimary();
-            double scaleX = screen.getOutputScaleX();
-            double scaleY = screen.getOutputScaleY();
-            int imageWidth = (int) Math.round(bounds.getWidth() * scaleX);
-            int imageHeight = (int) Math.round(bounds.getHeight() * scaleY);
+            double scale = dpiScale();
+            int imageWidth = (int) Math.round(bounds.getWidth() * scale);
+            int imageHeight = (int) Math.round(bounds.getHeight() * scale);
             final SnapshotParameters snapPara = new SnapshotParameters();
             snapPara.setFill(Color.TRANSPARENT);
-            snapPara.setTransform(javafx.scene.transform.Transform.scale(scaleX, scaleY));
+            snapPara.setTransform(javafx.scene.transform.Transform.scale(scale, scale));
             WritableImage snapshot = new WritableImage(imageWidth, imageHeight);
             snapshot = node.snapshot(snapPara, snapshot);
             return snapshot;

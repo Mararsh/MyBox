@@ -1,6 +1,8 @@
 package mara.mybox.data;
 
 import java.io.File;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.value.AppVariables.message;
 
@@ -15,18 +17,19 @@ public class FileInformation {
 
     protected File file;
     protected long fileSize = 0, createTime, modifyTime, filesNumber = 1;
-    protected String fileName, newName, fileSuffix, handled, fileType;
-    protected final int IO_BUF_LENGTH = 4096;
+    protected String fileName, data, fileSuffix, handled, fileType;
+    protected BooleanProperty selectedProperty;
 
     public enum FileSelectorType {
         All, ExtensionEuqalAny, ExtensionNotEqualAny,
         NameIncludeAny, NameIncludeAll, NameNotIncludeAny, NameNotIncludeAll,
         NameMatchAnyRegularExpression, NameNotMatchAnyRegularExpression,
-        FileSizeLargerThan, FileSizeSmallerThan, ModifiedTimeEarlierThan, ModifiedTimeLaterThan
+        FileSizeLargerThan, FileSizeSmallerThan, ModifiedTimeEarlierThan,
+        ModifiedTimeLaterThan
     }
 
     public FileInformation() {
-
+        this.selectedProperty = new SimpleBooleanProperty(false);
     }
 
     public FileInformation(File file) {
@@ -35,29 +38,42 @@ public class FileInformation {
 
     private void setFileAttributes(File file) {
         this.file = file;
+        this.selectedProperty = new SimpleBooleanProperty(false);
         if (file == null) {
             return;
         }
         this.handled = "";
         this.fileName = file.getAbsolutePath();
-        this.newName = "";
+        this.data = "";
         this.fileSuffix = "";
         if (!file.exists()) {
             this.fileType = message("NotExist");
+            this.fileSuffix = this.fileType;
             return;
         }
         if (file.isFile()) {
-            this.fileSuffix = FileTools.getFileSuffix(fileName);
+            this.filesNumber = 1;
+            this.fileSize = file.length();
             this.fileType = message("File");
+            this.fileSuffix = FileTools.getFileSuffix(fileName);
+            if (this.fileSuffix == null || this.fileSuffix.isEmpty()) {
+                this.fileSuffix = message("Unknown");
+            }
         } else if (file.isDirectory()) {
+//            long[] size = FileTools.countDirectorySize(file);
+//            this.filesNumber = size[0];
+//            this.fileSize = size[1];
             this.fileType = message("Directory");
+            this.fileSuffix = this.fileType;
+        } else {
+            this.fileSuffix = message("Others");
         }
         this.createTime = FileTools.getFileCreateTime(fileName);
         this.modifyTime = file.lastModified();
-        if (file.isFile()) {
-            this.filesNumber = 1;
-            this.fileSize = file.length();
-        } else if (file.isDirectory()) {
+    }
+
+    public void countDirectorySize() {
+        if (file != null && file.isDirectory()) {
             long[] size = FileTools.countDirectorySize(file);
             this.filesNumber = size[0];
             this.fileSize = size[1];
@@ -76,12 +92,12 @@ public class FileInformation {
         this.fileName = fileName;
     }
 
-    public String getNewName() {
-        return newName;
+    public String getData() {
+        return data;
     }
 
-    public void setNewName(String newName) {
-        this.newName = newName;
+    public void setData(String data) {
+        this.data = data;
     }
 
     public String getFileSuffix() {
@@ -146,6 +162,29 @@ public class FileInformation {
 
     public void setFilesNumber(long filesNumber) {
         this.filesNumber = filesNumber;
+    }
+
+    public BooleanProperty getSelectedProperty() {
+        if (selectedProperty == null) {
+            selectedProperty = new SimpleBooleanProperty(false);
+        }
+        return selectedProperty;
+    }
+
+    public void setSelectedProperty(BooleanProperty selectedProperty) {
+        if (selectedProperty == null) {
+            this.selectedProperty = new SimpleBooleanProperty(false);
+        } else {
+            this.selectedProperty = selectedProperty;
+        }
+    }
+
+    public boolean isSelected() {
+        return selectedProperty.get();
+    }
+
+    public void setSelected(boolean selected) {
+        selectedProperty.set(selected);
     }
 
 }

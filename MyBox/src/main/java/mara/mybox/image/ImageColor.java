@@ -49,7 +49,8 @@ public class ImageColor {
         Static Data/Methods
      */
     public static enum ColorComponent {
-        Gray, RedChannel, GreenChannel, BlueChannel, Hue, Saturation, Brightness, AlphaChannel
+        Gray, RedChannel, GreenChannel, BlueChannel, Hue, Saturation, Brightness,
+        AlphaChannel
     }
 
     public static Map<ColorComponent, Color> ComponentColor;
@@ -220,9 +221,9 @@ public class ImageColor {
 //    }
     // distance2 = Math.pow(distance, 2)
     public static boolean isColorMatch2(Color color1, Color color2, int distance2) {
-        if (color1.equals(color2)) {
+        if (color1.getRGB() == color2.getRGB()) {
             return true;
-        } else if (distance2 == 0) {
+        } else if (distance2 == 0 || color1.getRGB() == 0 || color2.getRGB() == 0) {
             return false;
         }
         return calculateColorDistance2(color1, color2) <= distance2;

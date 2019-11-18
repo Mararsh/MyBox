@@ -14,8 +14,8 @@ import java.util.TimeZone;
  */
 public class CommonValues {
 
-    public static final String AppVersion = "5.7";
-    public static final String AppVersionDate = "2019-10-26";
+    public static final String AppVersion = "5.8";
+    public static final String AppVersionDate = "2019-11-18";
     public static final String AppDocVersion = "5.0";
 
     public static final String AppDerbyUser = "mara";
@@ -50,14 +50,13 @@ public class CommonValues {
     public static final String ImagesCombinePdfFxml = "/fxml/ImagesCombinePdf.fxml";
     public static final String PdfMergeFxml = "/fxml/PdfMerge.fxml";
     public static final String PdfSplitBatchFxml = "/fxml/PdfSplitBatch.fxml";
-    public static final String FileFxml = "/fxml/PdfConvertImages.fxml";
     public static final String AboutFxml = "/fxml/About.fxml";
     public static final String SettingsFxml = "/fxml/Settings.fxml";
     public static final String LoadingFxml = "/fxml/Loading.fxml";
     public static final String ImageInformationFxml = "/fxml/ImageInformation.fxml";
     public static final String ImageViewerFxml = "/fxml/ImageViewer.fxml";
     public static final String ImageFxml = "/fxml/Image.fxml";
-    public static final String ImageDataFxml = "/fxml/ImageData.fxml";
+    public static final String ImageAnalyseFxml = "/fxml/ImageAnalyse.fxml";
     public static final String ImagesBrowserFxml = "/fxml/ImagesBrowser.fxml";
     public static final String ImageConverterBatchFxml = "/fxml/ImageConverterBatch.fxml";
     public static final String ImageManufactureFxml = "/fxml/ImageManufacture.fxml";
@@ -137,11 +136,25 @@ public class CommonValues {
     public static final String FilesCopyFxml = "/fxml/FilesCopy.fxml";
     public static final String FilesMoveFxml = "/fxml/FilesMove.fxml";
     public static final String FilesFindFxml = "/fxml/FilesFind.fxml";
+    public static final String FilesFindBatchFxml = "/fxml/FilesFindBatch.fxml";
     public static final String RecordImagesInSystemClipboardFxml = "/fxml/RecordImagesInSystemClipboard.fxml";
     public static final String BarcodeCreatorFxml = "/fxml/BarcodeCreator.fxml";
     public static final String BarcodeDecoderFxml = "/fxml/BarcodeDecoder.fxml";
     public static final String MarkdownEditorFxml = "/fxml/MarkdownEditor.fxml";
+    public static final String MarkdownToHtmlFxml = "/fxml/MarkdownToHtml.fxml";
+    public static final String HtmlToMarkdownFxml = "/fxml/HtmlToMarkdown.fxml";
     public static final String StringTableFxml = "/fxml/StringTable.fxml";
+    public static final String MessageDigestFxml = "/fxml/MessageDigest.fxml";
+    public static final String FilesCompareFxml = "/fxml/FilesCompare.fxml";
+    public static final String FilesRedundancyFxml = "/fxml/FilesRedundancy.fxml";
+    public static final String FilesRedundancyResultsFxml = "/fxml/FilesRedundancyResults.fxml";
+    public static final String InformationFxml = "/fxml/Information.fxml";
+    public static final String FilesArchiveCompressFxml = "/fxml/FilesArchiveCompress.fxml";
+    public static final String FilesCompressBatchFxml = "/fxml/FilesCompressBatch.fxml";
+    public static final String FileDecompressUnarchiveFxml = "/fxml/FileDecompressUnarchive.fxml";
+    public static final String FileDecompressFxml = "/fxml/FileDecompress.fxml";
+    public static final String FileUnarchiveFxml = "/fxml/FileUnarchive.fxml";
+    public static final String FilesDecompressUnarchiveBatchFxml = "/fxml/FilesDecompressUnarchiveBatch.fxml";
 
     public static final Locale LocaleZhCN = new Locale("zh", "CN");
     public static final Locale LocaleEnUS = new Locale("en", "US");
@@ -161,6 +174,8 @@ public class CommonValues {
     public static final String DatetimeFormat = "yyyy-MM-dd HH:mm:ss";
     public static final String DatetimeFormat2 = "yyyy-MM-dd HH:mm:ss.SSS";
     public static final String DatetimeFormat3 = "yyyy-MM-dd-HH-mm-ss-SSS";
+
+    public static final int IOBufferLength = 8192;
 
     public static List<String> SupportedImages = new ArrayList<String>() {
         {
@@ -231,7 +246,8 @@ public class CommonValues {
         }
     };
 
-    public static String[] TextFileSuffix = {"txt", "java", "fxml", "xml", "json", "log", "js", "css",
+    public static String[] TextFileSuffix = {"txt", "java", "fxml", "xml",
+        "json", "log", "js", "css",
         "c", "cpp", "cxx", "cc", "c++", "h", "php", "py", "perl", "iml",
         "sh", "bat", "tcl", "mf", "md", "properties", "env", "cfg", "conf"};
 

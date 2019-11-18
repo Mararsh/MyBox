@@ -1,5 +1,7 @@
 package mara.mybox.data;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -38,7 +40,7 @@ public class TextEditInformation extends FileEditInformation {
             if (file == null || pageSize <= 0 || lineBreakValue == null) {
                 return false;
             }
-            try (FileInputStream inputStream = new FileInputStream(file);
+            try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
                     InputStreamReader reader = new InputStreamReader(inputStream, charset)) {
                 if (withBom) {
                     inputStream.skip(bomSize(charset.name()));
@@ -75,7 +77,7 @@ public class TextEditInformation extends FileEditInformation {
             }
             long lineEnd = 1, lineStart = 1, pageIndex = 1;
             String pageText = null;
-            try (FileInputStream inputStream = new FileInputStream(file);
+            try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
                     InputStreamReader reader = new InputStreamReader(inputStream, charset)) {
                 if (withBom) {
                     inputStream.skip(bomSize(charset.name()));
@@ -123,7 +125,7 @@ public class TextEditInformation extends FileEditInformation {
             if (file == null || charset == null || text == null || text.isEmpty()) {
                 return false;
             }
-            try (FileOutputStream outputStream = new FileOutputStream(file);
+            try (BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file));
                     OutputStreamWriter writer = new OutputStreamWriter(outputStream, charset)) {
                 if (withBom) {
                     byte[] bytes = bomBytes(charset.name());
@@ -160,9 +162,9 @@ public class TextEditInformation extends FileEditInformation {
             if (sourceInfo.getFile().equals(file)) {
                 targetFile = FileTools.getTempFile();
             }
-            try (FileInputStream inputStream = new FileInputStream(sourceInfo.getFile());
+            try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(sourceInfo.getFile()));
                     InputStreamReader reader = new InputStreamReader(inputStream, sourceInfo.getCharset());
-                    FileOutputStream outputStream = new FileOutputStream(targetFile);
+                    BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(targetFile));
                     OutputStreamWriter writer = new OutputStreamWriter(outputStream, charset)) {
                 if (sourceInfo.isWithBom()) {
                     inputStream.skip(bomSize(sourceInfo.getCharset().name()));
@@ -228,7 +230,7 @@ public class TextEditInformation extends FileEditInformation {
                 previousPos = -1;
             }
             String pageText = null, preText;
-            try (FileInputStream inputStream = new FileInputStream(file);
+            try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
                     InputStreamReader reader = new InputStreamReader(inputStream, charset)) {
                 if (withBom) {
                     inputStream.skip(bomSize(charset.name()));
@@ -323,7 +325,7 @@ public class TextEditInformation extends FileEditInformation {
             String pageText = null, preText;
             long maxIndex = -1;
             int maxLineStart = -1, maxLineEnd = -1, maxPage = 1;
-            try (FileInputStream inputStream = new FileInputStream(file);
+            try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
                     InputStreamReader reader = new InputStreamReader(inputStream, charset)) {
                 if (withBom) {
                     inputStream.skip(bomSize(charset.name()));
@@ -411,7 +413,7 @@ public class TextEditInformation extends FileEditInformation {
             String pageText = null, preText;
             long maxIndex = -1;
             int maxLineStart = -1, maxLineEnd = -1, maxPage = 1;
-            try (FileInputStream inputStream = new FileInputStream(file);
+            try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
                     InputStreamReader reader = new InputStreamReader(inputStream, charset)) {
                 if (withBom) {
                     inputStream.skip(bomSize(charset.name()));
@@ -480,7 +482,7 @@ public class TextEditInformation extends FileEditInformation {
             }
             int lineEnd = 1, lineStart = 1, pageIndex = 1;
             String pageText = null;
-            try (FileInputStream inputStream = new FileInputStream(file);
+            try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
                     InputStreamReader reader = new InputStreamReader(inputStream, charset)) {
                 if (withBom) {
                     inputStream.skip(bomSize(charset.name()));
@@ -527,9 +529,9 @@ public class TextEditInformation extends FileEditInformation {
         int replaceAllNumber = 0;
         try {
             File targetFile = FileTools.getTempFile();
-            try (FileInputStream inputStream = new FileInputStream(file);
+            try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
                     InputStreamReader reader = new InputStreamReader(inputStream, charset);
-                    FileOutputStream outputStream = new FileOutputStream(targetFile);
+                    BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(targetFile));
                     OutputStreamWriter writer = new OutputStreamWriter(outputStream, charset)) {
                 if (withBom) {
                     byte[] bytes = bomBytes(charset.name());
@@ -594,7 +596,7 @@ public class TextEditInformation extends FileEditInformation {
         }
         int count = 0;
         try {
-            try (FileInputStream inputStream = new FileInputStream(file);
+            try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
                     InputStreamReader reader = new InputStreamReader(inputStream, charset)) {
                 if (withBom) {
                     byte[] bytes = bomBytes(charset.name());
@@ -645,9 +647,9 @@ public class TextEditInformation extends FileEditInformation {
             }
             File targetFile = FileTools.getTempFile();
             int lineEnd = 1, lineStart = 1;
-            try (FileInputStream inputStream = new FileInputStream(file);
+            try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
                     InputStreamReader reader = new InputStreamReader(inputStream, charset);
-                    FileOutputStream outputStream = new FileOutputStream(targetFile);
+                    BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(targetFile));
                     OutputStreamWriter writer = new OutputStreamWriter(outputStream, charset)) {
                 if (withBom) {
                     byte[] bytes = bomBytes(charset.name());
