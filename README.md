@@ -542,7 +542,7 @@ Derby数据库可以在网络模式和嵌入模式之间切换。提醒：在一
 检查文件冗余：根据MD5查找重复的文件，提供树状结构方便用户删除冗余文件，可边查边删。  
 html与Markdown之间批量互换。   
 解决问题：多个界面上有失效控件；无内容页面会阻塞微博截图工具；图像混合时还要考虑背景透明的情形；图像“换色”功能失效。   
-《开发者指南》v2.0。
+《开发者指南》v2.0。  
 [此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.8)    
 
 
@@ -565,7 +565,7 @@ html与Markdown之间批量互换。
 二维码QR_Code可以在中心显示一个图片。根据纠错级别自动调整图片大小。   
 解码9种一维码和3种二维码，显示条码内容和元数据（条码类型、纠错级别等）。   
 调色盘：可命名颜色；增加显示cmyk值和cie值。        
-生日快乐，中国！
+生日快乐，中国！  
 [此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.6)    
 
 
