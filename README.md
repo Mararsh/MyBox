@@ -461,11 +461,11 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 3. 设置：音量、速度（0~8倍）
 4. 按键：播放/暂停/停止/上一个/下一个/媒体信息/静音/全屏
 5. 全屏时：触屏短暂显示控件、ESC退出全屏
-6. 支持的容器格式：aiff, mp3, mp4, wav, hls(m3u8)，支持的视频编码：h.264/avc，支持的音频编码：aac, mp3, pcm。
-    如果视频没有声音，这是因为播放器不支持它的音频编码器。
-    已知问题：播放一些流媒体时MyBox可能崩溃退出。
+6. 支持的容器格式：aiff, mp3, mp4, wav, hls(m3u8)，支持的视频编码：h.264/avc，支持的音频编码：aac, mp3, pcm。   
+    如果视频没有声音，这是因为播放器不支持它的音频编码器。    
+    已知问题：播放一些流媒体时MyBox可能崩溃退出。   
 7. 乖乖和笨笨的声音
-8. 此工具无需ffmpeg。但是在Linux上需要安装libavcodec和libavformat， 参见：   
+8. 此工具无需ffmpeg。但是在Linux上需要安装libavcodec和libavformat， 参见：      
 https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations-1506746.html
 
 ### 管理播放列表<a id="mediaList" />
@@ -482,7 +482,7 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 6. 合成图片视频时，可以单独设置每个图片的时长，也可对全部图片设置时长，可选择是否”音频流结束时结束视频“。
 7. 合成图片视频时，图片被自动适应为屏幕大小且保持宽高比。
 8. 利用ffprobe读取媒体的信息：格式、音频流、视频流、帧、包、支持的像素格式。
-9. 读取ffmpeg的信息：版本、格式、支持的编码解码器、支持的滤镜，以及自定义查询参数。
+9. 读取ffmpeg的信息：版本、格式、支持的编码解码器、支持的滤镜，以及自定义查询参数。    
 注：这一组功能依赖于ffmpeg，需要用户自己下载ffmpeg（建议使用静态版本）。
 
 ### 其它<a id="mediaOthers" />
@@ -530,7 +530,7 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 6. 将页面包含的所有图片的原图全部单独保存下来。
 7. 实时显示处理进度。
 8. 可以随时中断处理。程序自动保存上次中断的月份并填入作本次的开始月份。
-9. 可以设置错误时重试次数。若超时错误则自动加倍最大延迟时间。
+9. 可以设置错误时重试次数。若超时错误则自动加倍最大延迟时间。    
 注：现在连接微博服务器总是被阻。
 
 ## 设置<a id="settings" />

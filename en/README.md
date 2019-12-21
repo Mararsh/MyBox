@@ -497,9 +497,9 @@ Currently MyBox supports Chinese and English. To support a new language is just 
 3. Set: volumn, speed(0~8 times)
 4. Buttons: Play, Pause, Stop, Next, Previous, Media-info, Mute, Full-screen
 5. When full screen, display controls in short duration by clicking screen, and quit full-screen by ESC
-6. Support muxer format: aiff, mp3, mp4, wav, hls(m3u8), video codec: h.264/avc, audio codec: aac, mp3, pcm
-    If video does not sound, this is due to unsupported audio codec.
-    Known issue: MyBox may quit when play some media stream.
+6. Support muxer format: aiff, mp3, mp4, wav, hls(m3u8), video codec: h.264/avc, audio codec: aac, mp3, pcm.    
+    If video does not sound, this is due to unsupported audio codec.    
+    Known issue: MyBox may quit when play some media stream.    
 7. Sounds of GuaiGuai and BenBen
 8. This tool need not ffmpeg.  But libavcodec and libavformat are required on Linux, and refer to:       
 https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations-1506746.html
@@ -518,7 +518,7 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 6. When merge images as video, duration can be set for each image, or set to all images. Option "End video when audios finish".
 7. When merge images as video, images are adjusted automatically to fit for screen size meanwhile keep width-height ratio.
 8. Read media information like format, audio stream, video stream, frames, packets,  pixel formats by ffprobe.
-9. Read information of ffmpeg, like version, supported formats/codecs/filters, and query with customized parameters.
+9. Read information of ffmpeg, like version, supported formats/codecs/filters, and query with customized parameters.    
 Notice: This set of functions is based on ffmpeg, and user need download ffmpeg by yourself. (Suggest to use static version)
 
 ### Others<a id="mediaOthers" />
@@ -567,7 +567,7 @@ Notice: This set of functions is based on ffmpeg, and user need download ffmpeg 
 6. Save all original size pictures in the pages.
 7. Display progress information in time.
 8. Stop the progress at any time. The interrupted month will be record and input as start month for next execution.
-9. Set the retry times of failure.
+9. Set the retry times of failure.      
 Notice: Connections to Weibo servers are always blocked recently.
 
 ## Settings <a id="settings"></a>     
