@@ -19,7 +19,10 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.SplitPane;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.TitledPane;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
@@ -30,6 +33,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import static mara.mybox.controller.BaseController.openImageViewer;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlImageManufacture;
@@ -45,7 +49,7 @@ import mara.mybox.tools.FileTools.FileSortMode;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonImageValues;
+import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -56,56 +60,45 @@ import mara.mybox.value.CommonValues;
  */
 public class ImageViewerController extends ImageMaskController {
 
-    final protected String ImageConfirmDeleteKey, ImageOpenSaveKey, ModifyImageKey;
-    protected String ImageSelectKey, ImageDataShowKey, ImageLoadWidthKey;
-
     protected ImageScope scope;
     protected int currentAngle = 0, rotateAngle = 90;
     protected File nextFile, previousFile;
-
     protected FileSortMode sortMode;
 
     @FXML
-    protected HBox operation1Box, operation2Box, navBox;
+    protected TitledPane filePane, viewPane, saveAsPane, browsePane, tipsPane;
     @FXML
-    protected SplitPane splitPane;
+    protected VBox contentBox, fileBox;
     @FXML
-    protected VBox contentBox, imageBox;
+    protected HBox operationBox;
     @FXML
     public Button moveUpButton, moveDownButton, manufactureButton, statisticButton, splitButton,
             sampleButton, browseButton;
     @FXML
-    protected CheckBox selectAreaCheck, deleteConfirmCheck, openSaveCheck;
-
+    protected CheckBox selectAreaCheck, deleteConfirmCheck;
     @FXML
-    protected ComboBox<String> loadWidthBox, sortBox;
+    protected ToggleGroup saveAsGroup, sortGroup;
+    @FXML
+    protected RadioButton saveLoadRadio, saveOpenRadio, saveJustRadio;
+    @FXML
+    protected ComboBox<String> loadWidthBox;
 
     public ImageViewerController() {
         baseTitle = AppVariables.message("ImageViewer");
-
-        ImageConfirmDeleteKey = "ImageConfirmDeleteKey";
-        ImageOpenSaveKey = "ImageOpenSaveKey";
-        ModifyImageKey = "ModifyImageKey";
-        TipsLabelKey = "ImageViewerTips";
-        ImageDataShowKey = "ImageDataShowKey";
-        ImageLoadWidthKey = "ImageViewerLoadWidthKey";
-        ImageSelectKey = "ImageSelectKey";
 
     }
 
     @Override
     public void initializeNext() {
         try {
-            initOperation1Box();
-            initOperation2Box();
-            initOperation3Box();
+            initFilePane();
+            initViewPane();
+            initSaveAsPane();
+            initBrowsePane();
+            initOperationBox();
             initImageView();
             initMaskPane();
             initRulersCheck();
-
-            initSortBox();
-
-            moreAction();
 
             initializeNext2();
         } catch (Exception e) {
@@ -113,21 +106,212 @@ public class ImageViewerController extends ImageMaskController {
         }
     }
 
-    @Override
-    public void moreAction() {
-        if (moreButton == null || contentBox == null) {
-            return;
-        }
-        if (moreButton.isSelected()) {
-            if (!contentBox.getChildren().contains(operation2Box)) {
-                contentBox.getChildren().add(1, operation2Box);
+    protected void initFilePane() {
+        try {
+            if (fileBox != null && imageView != null) {
+                fileBox.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
             }
-        } else {
-            if (contentBox.getChildren().contains(operation2Box)) {
-                contentBox.getChildren().remove(operation2Box);
+            if (saveButton != null && imageView != null) {
+                saveButton.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
+            }
+
+            loadWidth = defaultLoadWidth;
+            if (loadWidthBox != null) {
+                List<String> values = Arrays.asList(AppVariables.message("OriginalSize"),
+                        "512", "1024", "256", "128", "2048", "100", "80", "4096");
+                loadWidthBox.getItems().addAll(values);
+                loadWidthBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue ov, String oldValue, String newValue) {
+//                    logger.debug(oldValue + " " + newValue + " " + (String) loadWidthBox.getSelectionModel().getSelectedItem());
+                        if (AppVariables.message("OriginalSize").equals(newValue)) {
+                            loadWidth = -1;
+                        } else {
+                            try {
+                                loadWidth = Integer.valueOf(newValue);
+                                FxmlControl.setEditorNormal(loadWidthBox);
+                            } catch (Exception e) {
+                                FxmlControl.setEditorBadStyle(loadWidthBox);
+                                return;
+                            }
+                        }
+                        if (isSettingValues) {
+                            return;
+                        }
+                        AppVariables.setUserConfigInt(baseName + "LoadWidth", loadWidth);
+                        if (!isSettingValues) {
+                            setLoadWidth();
+                        }
+                    }
+                });
+
+                isSettingValues = true;
+                int v = AppVariables.getUserConfigInt(baseName + "LoadWidth", defaultLoadWidth);
+                if (v <= 0) {
+                    loadWidthBox.getSelectionModel().select(0);
+                } else {
+                    loadWidthBox.getSelectionModel().select(v + "");
+                }
+                isSettingValues = false;
+                FxmlControl.setTooltip(loadWidthBox, new Tooltip(AppVariables.message("ImageLoadWidthCommnets")));
+            }
+
+            if (deleteConfirmCheck != null) {
+                deleteConfirmCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        AppVariables.setUserConfigValue("ImageConfirmDelete", deleteConfirmCheck.isSelected());
+                    }
+                });
+                deleteConfirmCheck.setSelected(AppVariables.getUserConfigBoolean("ImageConfirmDelete", true));
+            }
+
+            if (manufactureButton != null) {
+                manufactureButton.setDisable(true);
+            }
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    protected void initViewPane() {
+        try {
+            if (viewPane != null && imageView != null) {
+                viewPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
+            }
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    protected void initSaveAsPane() {
+        try {
+            if (saveAsPane != null && imageView != null) {
+                saveAsPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
+            }
+
+            if (saveAsGroup != null) {
+                String v = AppVariables.getUserConfigValue("ImageSaveAsType", SaveAsType.Open.name());
+                for (SaveAsType s : SaveAsType.values()) {
+                    if (v.equals(s.name())) {
+                        saveAsType = s;
+                        break;
+                    }
+                }
+                if (saveAsType == null
+                        || (saveLoadRadio == null && saveAsType == SaveAsType.Load)) {
+                    saveAsType = SaveAsType.Open;
+                }
+                switch (saveAsType) {
+                    case Load:
+                        saveLoadRadio.setSelected(true);
+                        break;
+                    case Open:
+                        saveOpenRadio.setSelected(true);
+                        break;
+                    case None:
+                        saveJustRadio.setSelected(true);
+                        break;
+                    default:
+                        break;
+                }
+                saveAsGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                    @Override
+                    public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
+                        if (saveOpenRadio.isSelected()) {
+                            saveAsType = SaveAsType.Open;
+                        } else if (saveJustRadio.isSelected()) {
+                            saveAsType = SaveAsType.None;
+                        } else if (saveLoadRadio != null && saveLoadRadio.isSelected()) {
+                            saveAsType = SaveAsType.Load;
+                        } else {
+                            saveAsType = SaveAsType.Open;
+                        }
+                        AppVariables.setUserConfigValue("ImageSaveAsType", saveAsType.name());
+                    }
+                });
+            }
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    protected void initBrowsePane() {
+        try {
+            if (browsePane != null && imageView != null) {
+                browsePane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
+            }
+
+            if (previousButton != null) {
+                previousButton.setDisable(sourceFile == null);
+            }
+            if (nextButton != null) {
+                nextButton.setDisable(sourceFile == null);
+            }
+
+            sortMode = FileTools.FileSortMode.ModifyTimeDesc;
+            if (sortGroup != null) {
+                sortGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                    @Override
+                    public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
+                        if (newValue == null) {
+                            return;
+                        }
+                        String selected = ((RadioButton) newValue).getText();
+                        for (FileSortMode mode : FileSortMode.values()) {
+                            if (message(mode.name()).equals(selected)) {
+                                sortMode = mode;
+                                break;
+                            }
+                        }
+                        if (!isSettingValues) {
+                            makeImageNevigator();
+                        }
+                    }
+                });
+            }
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    protected void initOperationBox() {
+        if (imageView != null) {
+            if (operationBox != null) {
+                operationBox.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
+            }
+            if (leftPaneControl != null) {
+                leftPaneControl.visibleProperty().bind(Bindings.isNotNull(imageView.imageProperty()));
+            }
+            if (rightPaneControl != null) {
+                rightPaneControl.visibleProperty().bind(Bindings.isNotNull(imageView.imageProperty()));
             }
         }
-        FxmlControl.refreshStyle(contentBox);
+
+        if (selectAreaCheck != null) {
+            selectAreaCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    AppVariables.setUserConfigValue("ImageSelect", selectAreaCheck.isSelected());
+                    checkSelect();
+                }
+            });
+            selectAreaCheck.setSelected(AppVariables.getUserConfigBoolean("ImageSelect", false));
+            checkSelect();
+            Tooltip tips = new Tooltip("CTRL+t");
+            FxmlControl.setTooltip(selectAreaCheck, tips);
+        }
+
+    }
+
+    protected void setAsPopped() {
+        controlLeftPane();
+        myStage.sizeToScene();
+        myStage.centerOnScreen();
     }
 
     @Override
@@ -151,46 +335,7 @@ public class ImageViewerController extends ImageMaskController {
         }
     }
 
-    protected void initOperation1Box() {
-        if (operation1Box != null) {
-            operation1Box.disableProperty().bind(
-                    Bindings.isNull(imageView.imageProperty())
-            );
-        }
-
-        if (selectAreaCheck != null) {
-            selectAreaCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    AppVariables.setUserConfigValue(ImageSelectKey, selectAreaCheck.isSelected());
-                    checkSelect();
-                }
-            });
-            selectAreaCheck.setSelected(AppVariables.getUserConfigBoolean(ImageSelectKey, false));
-            checkSelect();
-            Tooltip tips = new Tooltip("CTRL+t");
-            FxmlControl.setTooltip(selectAreaCheck, tips);
-        }
-
-        if (deleteConfirmCheck != null) {
-            deleteConfirmCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    AppVariables.setUserConfigValue(ImageConfirmDeleteKey, deleteConfirmCheck.isSelected());
-                }
-            });
-            deleteConfirmCheck.setSelected(AppVariables.getUserConfigBoolean(ImageConfirmDeleteKey, true));
-        }
-
-        if (openSaveCheck != null) {
-            openSaveCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    AppVariables.setUserConfigValue(ImageOpenSaveKey, openSaveCheck.isSelected());
-                }
-            });
-            openSaveCheck.setSelected(AppVariables.getUserConfigBoolean(ImageOpenSaveKey, true));
-        }
+    protected void checkSaveAs() {
 
     }
 
@@ -208,57 +353,6 @@ public class ImageViewerController extends ImageMaskController {
         updateLabelTitle();
     }
 
-    protected void initOperation2Box() {
-
-        if (operation2Box != null) {
-            operation2Box.disableProperty().bind(
-                    Bindings.isNull(imageView.imageProperty())
-            );
-        }
-
-        loadWidth = defaultLoadWidth;
-        if (loadWidthBox != null) {
-            List<String> values = Arrays.asList(AppVariables.message("OriginalSize"),
-                    "512", "1024", "256", "128", "2048", "100", "80", "4096");
-            loadWidthBox.getItems().addAll(values);
-            loadWidthBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-//                    logger.debug(oldValue + " " + newValue + " " + (String) loadWidthBox.getSelectionModel().getSelectedItem());
-                    if (AppVariables.message("OriginalSize").equals(newValue)) {
-                        loadWidth = -1;
-                    } else {
-                        try {
-                            loadWidth = Integer.valueOf(newValue);
-                            FxmlControl.setEditorNormal(loadWidthBox);
-                        } catch (Exception e) {
-                            FxmlControl.setEditorBadStyle(loadWidthBox);
-                            return;
-                        }
-                    }
-                    if (isSettingValues) {
-                        return;
-                    }
-                    AppVariables.setUserConfigInt(ImageLoadWidthKey, loadWidth);
-                    if (!isSettingValues) {
-                        setLoadWidth();
-                    }
-                }
-            });
-
-            isSettingValues = true;
-            int v = AppVariables.getUserConfigInt(ImageLoadWidthKey, defaultLoadWidth);
-            if (v <= 0) {
-                loadWidthBox.getSelectionModel().select(0);
-            } else {
-                loadWidthBox.getSelectionModel().select(v + "");
-            }
-            isSettingValues = false;
-            FxmlControl.setTooltip(loadWidthBox, new Tooltip(AppVariables.message("ImageLoadWidthCommnets")));
-        }
-
-    }
-
     protected void setLoadWidth() {
         careFrames = false;
         if (sourceFile != null) {
@@ -273,64 +367,6 @@ public class ImageViewerController extends ImageMaskController {
         } else {
             setImageChanged(false);
         }
-    }
-
-    protected void initOperation3Box() {
-
-        if (navBox != null) {
-            navBox.setDisable(true);
-        }
-
-        if (manufactureButton != null) {
-            manufactureButton.setDisable(true);
-        }
-
-    }
-
-    protected void adjustSplitPane() {
-        try {
-
-            int size = splitPane.getItems().size();
-            float p = 1.0f / size;
-            if (size == 1) {
-                splitPane.setDividerPositions(1);
-            } else {
-                for (int i = 0; i < size - 1; i++) {
-                    splitPane.getDividers().get(i).setPosition(p);
-                }
-            }
-            splitPane.layout();
-            fitSize();
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    protected void initSortBox() {
-        if (sortBox == null) {
-            return;
-        }
-
-        sortMode = FileTools.FileSortMode.ModifyTimeDesc;
-        sortBox.getItems().clear();
-        for (FileSortMode mode : FileSortMode.values()) {
-            sortBox.getItems().add(message(mode.name()));
-        }
-        sortBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue ov, String oldValue, String newValue) {
-                for (FileSortMode mode : FileSortMode.values()) {
-                    if (message(mode.name()).equals(newValue)) {
-                        sortMode = mode;
-                        break;
-                    }
-                }
-                if (!isSettingValues) {
-                    makeImageNevigator();
-                }
-            }
-        });
-//            sortBox.getSelectionModel().select(0);
     }
 
     @Override
@@ -362,8 +398,11 @@ public class ImageViewerController extends ImageMaskController {
         if (deleteConfirmCheck != null) {
             deleteConfirmCheck.setDisable(sourceFile == null);
         }
-        if (navBox != null) {
-            navBox.setDisable(sourceFile == null);
+        if (previousButton != null) {
+            previousButton.setDisable(sourceFile == null);
+        }
+        if (nextButton != null) {
+            nextButton.setDisable(sourceFile == null);
         }
         if (manufactureButton != null) {
             manufactureButton.setDisable(imageInformation == null && image == null);
@@ -375,21 +414,19 @@ public class ImageViewerController extends ImageMaskController {
     public void afterImageLoaded() {
         try {
             super.afterImageLoaded();
-
             afterInfoLoaded();
-
             if (image == null || imageView == null) {
                 return;
             }
-            imageView.setPreserveRatio(true);
 
+            imageView.setPreserveRatio(true);
             imageView.setImage(image);
             imageChanged = isCroppped = false;
             xZoomStep = (int) image.getWidth() / 10;
             yZoomStep = (int) image.getHeight() / 10;
             careFrames = true;
 
-            if (sourceFile != null && navBox != null) {
+            if (sourceFile != null && nextButton != null) {
                 makeImageNevigator();
             }
             fitSize();
@@ -703,13 +740,14 @@ public class ImageViewerController extends ImageMaskController {
 
     @FXML
     public void rotateRight() {
-        rotateModify(90);
+        rotate(90);
     }
 
-    public void rotateModify(final int rotateAngle) {
+    public void rotate(final int rotateAngle) {
         if (imageView.getImage() == null) {
             return;
         }
+        currentAngle = rotateAngle;
         synchronized (this) {
             if (task != null) {
                 return;
@@ -742,18 +780,12 @@ public class ImageViewerController extends ImageMaskController {
 
     @FXML
     public void rotateLeft() {
-        rotateModify(270);
+        rotate(270);
     }
 
     @FXML
     public void turnOver() {
-        rotateModify(180);
-    }
-
-    @FXML
-    public void straighten() {
-        currentAngle = 0;
-        imageView.setRotate(currentAngle);
+        rotate(180);
     }
 
     @FXML
@@ -954,7 +986,11 @@ public class ImageViewerController extends ImageMaskController {
                         if (!ok || task == null || isCancelled()) {
                             return false;
                         }
-                        imageInformation = ImageFileReaders.readImageFileMetaData(filename).getImageInformation();
+                        ImageFileInformation finfo = ImageFileReaders.readImageFileMetaData(filename);
+                        if (finfo == null || finfo.getImageInformation() == null) {
+                            return false;
+                        }
+                        imageInformation = finfo.getImageInformation();
                         return true;
                     }
 
@@ -978,11 +1014,14 @@ public class ImageViewerController extends ImageMaskController {
     }
 
     public String saveAsPrefix() {
+        String name = "";
         if (sourceFile != null) {
-            return FileTools.getFilePrefix(sourceFile.getName());
-        } else {
-            return "";
+            name = FileTools.getFilePrefix(sourceFile.getName());
         }
+        if (fileTypeGroup != null) {
+            name += "." + ((RadioButton) fileTypeGroup.getSelectedToggle()).getText();
+        }
+        return name;
     }
 
     @FXML
@@ -993,7 +1032,7 @@ public class ImageViewerController extends ImageMaskController {
         }
         try {
             final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
-                    saveAsPrefix(), CommonImageValues.ImageExtensionFilter, true);
+                    saveAsPrefix(), CommonFxValues.ImageExtensionFilter, true);
             if (file == null) {
                 return;
             }
@@ -1024,10 +1063,11 @@ public class ImageViewerController extends ImageMaskController {
                     @Override
                     protected void whenSucceeded() {
                         popInformation(AppVariables.message("Saved"));
-                        if (sourceFile == null) {
+                        if (sourceFile == null
+                                || saveAsType == SaveAsType.Load) {
                             loadImage(file);
-                        }
-                        if (openSaveCheck != null && openSaveCheck.isSelected()) {
+
+                        } else if (saveAsType == SaveAsType.Open) {
                             openImageViewer(file);
                         }
                     }
@@ -1056,7 +1096,12 @@ public class ImageViewerController extends ImageMaskController {
             } else if (previousFile != null) {
                 previousAction();
             } else {
-                navBox.setDisable(true);
+                if (previousButton != null) {
+                    previousButton.setDisable(true);
+                }
+                if (nextButton != null) {
+                    nextButton.setDisable(true);
+                }
             }
         }
     }
@@ -1141,7 +1186,7 @@ public class ImageViewerController extends ImageMaskController {
         }
         try {
             final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
-                    null, CommonImageValues.ImageExtensionFilter, true);
+                    null, CommonFxValues.ImageExtensionFilter, true);
             if (file == null) {
                 return null;
             }

@@ -24,7 +24,7 @@ import mara.mybox.value.CommonValues;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImageInformationController extends StringTableController {
+public class ImageInformationController extends HtmlViewerController {
 
     protected ImageInformation imageInfo;
 
@@ -49,7 +49,7 @@ public class ImageInformationController extends StringTableController {
     }
 
     @Override
-    public void loadInformation() {
+    public void displayHtml() {
         loadImageFileInformation(imageInfo);
     }
 

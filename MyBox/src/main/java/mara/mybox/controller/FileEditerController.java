@@ -21,7 +21,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.IndexRange;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -29,7 +28,6 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
@@ -46,7 +44,6 @@ import mara.mybox.data.FileEditInformation.Line_Break;
 import mara.mybox.data.FileEditInformation.StringFilterType;
 import static mara.mybox.data.FileEditInformation.defaultCharset;
 import mara.mybox.data.VisitHistory;
-import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.FileTools;
@@ -55,7 +52,7 @@ import mara.mybox.tools.TextTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonImageValues;
+import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -83,7 +80,6 @@ public abstract class FileEditerController extends BaseController {
     protected IndexRange currentSelection;
     protected String lineBreakValue;
     protected String[] filterStrings;
-    protected ChangeListener<Number> leftDividerListener;
 
     protected enum Action {
         None, FindFirst, FindNext, FindPrevious, FindLast, Replace, ReplaceAll,
@@ -91,11 +87,7 @@ public abstract class FileEditerController extends BaseController {
     }
 
     @FXML
-    protected ScrollPane leftPane;
-    @FXML
     protected VBox editBox;
-    @FXML
-    protected ImageView leftPaneControl;
     @FXML
     protected TitledPane filePane, bytesPane, findPane, filterPane, locatePane,
             encodePane, breakLinePane, paginatePane, inputPane;
@@ -111,7 +103,7 @@ public abstract class FileEditerController extends BaseController {
     protected CheckBox displayCheck, targetBomCheck, confirmCheck, scrollCheck,
             regexCheck, filterLineNumberCheck, replaceJumpCheck;
     @FXML
-    protected SplitPane editorSplitPane, contentSplitPane;
+    protected SplitPane contentSplitPane;
     @FXML
     protected Label editLabel, bomLabel, pageLabel, charsetLabel, selectionLabel;
     @FXML
@@ -160,7 +152,7 @@ public abstract class FileEditerController extends BaseController {
         DisplayKey = "TextEditerDisplayHex";
         PageSizeKey = "TextPageSize";
 
-        sourceExtensionFilter = CommonImageValues.TextExtensionFilter;
+        sourceExtensionFilter = CommonFxValues.TextExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
 
     }
@@ -184,7 +176,7 @@ public abstract class FileEditerController extends BaseController {
         LineBreakValueKey = "LineBreakValueKey";
         BytesCharsetKey = "BytesCharsetKey";
 
-        sourceExtensionFilter = CommonImageValues.AllExtensionFilter;
+        sourceExtensionFilter = CommonFxValues.AllExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
     }
 
@@ -214,22 +206,6 @@ public abstract class FileEditerController extends BaseController {
         super.afterSceneLoaded();
         if (okButton != null) {
             FxmlControl.setTooltip(okButton, new Tooltip(message("OK") + "\nF1 / CTRL+g"));
-        }
-
-        if (editorSplitPane != null) {
-            try {
-                String lv = AppVariables.getUserConfigValue("FileEditorLeftPanePosition", "0.3");
-                editorSplitPane.setDividerPositions(Double.parseDouble(lv));
-            } catch (Exception e) {
-                editorSplitPane.setDividerPositions(0.3);
-            }
-            leftDividerListener = new ChangeListener<Number>() {
-                @Override
-                public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                    AppVariables.setUserConfigValue("FileEditorLeftPanePosition", newValue.doubleValue() + "");
-                }
-            };
-            editorSplitPane.getDividers().get(0).positionProperty().addListener(leftDividerListener);
         }
 
     }
@@ -306,34 +282,8 @@ public abstract class FileEditerController extends BaseController {
 
     }
 
-    @FXML
-    public void controlLeftPane() {
-        isSettingValues = true;
-        if (editorSplitPane.getItems().contains(leftPane)) {
-            editorSplitPane.getDividers().get(0).positionProperty().removeListener(leftDividerListener);
-            editorSplitPane.getItems().remove(leftPane);
-            ControlStyle.setIcon(leftPaneControl, ControlStyle.getIcon("iconDoubleRight.png"));
-
-        } else {
-            editorSplitPane.getItems().add(0, leftPane);
-            try {
-                String v = AppVariables.getUserConfigValue("FileEditorLeftPanePosition", "0.3");
-                editorSplitPane.setDividerPosition(0, Double.parseDouble(v));
-            } catch (Exception e) {
-                editorSplitPane.setDividerPosition(0, 0.3);
-            }
-            editorSplitPane.applyCss();
-            editorSplitPane.getDividers().get(0).positionProperty().addListener(leftDividerListener);
-            ControlStyle.setIcon(leftPaneControl, ControlStyle.getIcon("iconDoubleLeft.png"));
-        }
-        editorSplitPane.applyCss();
-
-        isSettingValues = false;
-    }
-
     protected void initPage(File file) {
         try {
-
             if (task != null && task.isRunning()) {
                 task.cancel();
                 task = null;

@@ -28,7 +28,7 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonImageValues;
+import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 import org.krysalis.barcode4j.ChecksumMode;
 import org.krysalis.barcode4j.HumanReadablePlacement;
@@ -812,7 +812,7 @@ public class BarcodeCreatorController extends ImageViewerController {
     public void saveAsAction() {
         try {
             final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
-                    null, CommonImageValues.ImageExtensionFilter, true);
+                    null, CommonFxValues.ImageExtensionFilter, true);
             if (file == null) {
                 return;
             }

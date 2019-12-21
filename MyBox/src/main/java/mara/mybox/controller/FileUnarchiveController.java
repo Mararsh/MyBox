@@ -19,7 +19,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
-import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.CheckBoxTreeTableCell;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.scene.layout.HBox;
@@ -36,6 +35,7 @@ import mara.mybox.tools.TextTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
+import mara.mybox.value.CommonValues;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
@@ -49,24 +49,17 @@ import org.apache.commons.compress.utils.IOUtils;
  * @License Apache License Version 2.0
  */
 // http://commons.apache.org/proper/commons-compress/examples.html
-public class FileUnarchiveController extends FilesBatchController {
+public class FileUnarchiveController extends FilesTreeController {
 
     protected String archiver, error;
     protected List<FileInformation> entries;
-    protected int archiveSuccess, archiveFail;
     protected List<String> selected;
+    protected int archiveSuccess, archiveFail;
     protected boolean charsetIncorrect;
+    long totalFiles, totalSize;
 
     @FXML
     protected ComboBox<String> encodeSelector;
-    @FXML
-    protected TreeTableView<FileInformation> filesView;
-    @FXML
-    protected TreeTableColumn<FileInformation, String> digestColumn, fileColumn, typeColumn;
-    @FXML
-    protected TreeTableColumn<FileInformation, Long> sizeColumn, modifyTimeColumn, createTimeColumn;
-    @FXML
-    protected TreeTableColumn<FileInformation, Boolean> selectedColumn;
     @FXML
     protected Label sourceLabel;
     @FXML
@@ -74,7 +67,6 @@ public class FileUnarchiveController extends FilesBatchController {
 
     public FileUnarchiveController() {
         baseTitle = AppVariables.message("FileUnarchive");
-        viewTargetPath = true;
     }
 
     @Override
@@ -124,7 +116,7 @@ public class FileUnarchiveController extends FilesBatchController {
             createTimeColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("createTime"));
             createTimeColumn.setCellFactory(new TreeTableTimeCell());
 
-            filesView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+            filesTreeView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
             List<String> setNames = TextTools.getCharsetNames();
             encodeSelector.getItems().addAll(setNames);
@@ -149,6 +141,7 @@ public class FileUnarchiveController extends FilesBatchController {
         try {
             sourceFile = file;
             this.archiver = archiver;
+            totalFiles = totalSize = 0;
             if (sourceFile == null || !sourceFile.exists()) {
                 closeStage();
                 return;
@@ -164,9 +157,10 @@ public class FileUnarchiveController extends FilesBatchController {
     }
 
     public void readEntries() {
-        filesView.setRoot(null);
+        filesTreeView.setRoot(null);
         entries = null;
         startButton.setDisable(true);
+        filesTreeView.setRoot(null);
         if (sourceFile == null) {
             return;
         }
@@ -175,6 +169,8 @@ public class FileUnarchiveController extends FilesBatchController {
                 return;
             }
             task = new SingletonTask<Void>() {
+
+                private TreeItem<FileInformation> root;
 
                 @Override
                 protected boolean handle() {
@@ -186,6 +182,7 @@ public class FileUnarchiveController extends FilesBatchController {
                         }
                         archiver = (String) archive.get("archiver");
                         entries = (List<FileInformation>) archive.get("entries");
+                        root = makeFilesTree();
                         return true;
                     } catch (Exception e) {
                         error = e.toString();
@@ -197,16 +194,19 @@ public class FileUnarchiveController extends FilesBatchController {
                 protected void whenSucceeded() {
                     try {
                         if (entries.isEmpty()) {
+                            bottomLabel.setText("");
                             startButton.setDisable(true);
                             popError(AppVariables.message("InvalidFormatTryOther"));
                         } else {
-                            displayEntries();
+                            filesTreeView.setRoot(root);
                             startButton.setDisable(false);
                             startButton.setText(AppVariables.message("Extract"));
                             sourceLabel.setText(message("ArchiverFormat") + ": " + archiver + "    "
                                     + sourceFile.getAbsolutePath() + "    "
                                     + FileTools.showFileSize(sourceFile.length()));
                             encodingHBox.setVisible(!ArchiveStreamFactory.SEVEN_Z.equals(archiver));
+                            bottomLabel.setText(MessageFormat.format(message("FilesValues"),
+                                    totalFiles, FileTools.showFileSize(totalSize)));
                         }
 
                     } catch (Exception e) {
@@ -223,13 +223,8 @@ public class FileUnarchiveController extends FilesBatchController {
 
     }
 
-    protected void displayEntries() {
+    protected TreeItem<FileInformation> makeFilesTree() {
         try {
-            bottomLabel.setText("");
-            if (entries == null || entries.isEmpty()) {
-                startButton.setDisable(true);
-                return;
-            }
             isSettingValues = true;
             FileInformation rootInfo = new FileInformation();
             rootInfo.setFileName("");
@@ -240,15 +235,13 @@ public class FileUnarchiveController extends FilesBatchController {
                 public void changed(ObservableValue<? extends Boolean> ov,
                         Boolean oldItem, Boolean newItem) {
                     if (!isSettingValues) {
-                        selectChildren(rootItem, newItem);
-//                        checkSelection();
+                        treeItemSelected(rootItem, newItem);
                     }
                 }
             });
-            filesView.setRoot(rootItem);
 
             TreeItem<FileInformation> parent;
-            long totalFiles = 0, totalSize = 0;
+
             for (FileInformation entry : entries) {
                 String[] nodes = entry.getFileName().split("/");
                 parent = rootItem;
@@ -268,71 +261,22 @@ public class FileUnarchiveController extends FilesBatchController {
                     totalFiles++;
                     nodeInfo.setFileName(entry.getFileName());
                     nodeInfo.setFileSuffix(FileTools.getFileSuffix(entry.getFileName()));
-                    nodeInfo.setFileSize(entry.getFileSize());
                     nodeInfo.setModifyTime(entry.getModifyTime());
-                    totalSize += entry.getFileSize();
+                    long size = entry.getFileSize();
+                    if (size < 0) {
+                        size = 0;
+                    }
+                    totalSize += size;
+                    nodeInfo.setFileSize(size);
                 }
 
             }
-            bottomLabel.setText(MessageFormat.format(message("FilesValues"),
-                    totalFiles, FileTools.showFileSize(totalSize)));
             isSettingValues = false;
+            return rootItem;
         } catch (Exception e) {
             logger.debug(e.toString());
-        }
-    }
-
-    protected TreeItem<FileInformation> getChild(TreeItem<FileInformation> item, String name) {
-        if (item == null) {
             return null;
         }
-        for (TreeItem<FileInformation> child : item.getChildren()) {
-            if (name.equals(child.getValue().getFileName())) {
-                return child;
-            }
-        }
-        FileInformation childInfo = new FileInformation();
-        childInfo.setFileName(name);
-        final TreeItem<FileInformation> childItem = new TreeItem(childInfo);
-        childItem.setExpanded(true);
-        childInfo.getSelectedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> ov,
-                    Boolean oldItem, Boolean newItem) {
-                if (!isSettingValues) {
-                    selectChildren(childItem, newItem);
-//                    checkSelection();
-                }
-            }
-        });
-        item.getChildren().add(childItem);
-        return childItem;
-    }
-
-    protected void selectChildren(TreeItem<FileInformation> item, boolean select) {
-        if (item == null || item.getChildren() == null) {
-            return;
-        }
-        for (TreeItem<FileInformation> child : item.getChildren()) {
-            child.getValue().setSelected(select);
-            selectChildren(child, select);
-        }
-    }
-
-    protected TreeItem<FileInformation> find(TreeItem<FileInformation> item, String name) {
-        if (item == null || name == null || item.getValue() == null) {
-            return null;
-        }
-        if (name.equals(item.getValue().getFileName())) {
-            return item;
-        }
-        for (TreeItem<FileInformation> child : item.getChildren()) {
-            TreeItem<FileInformation> find = find(child, name);
-            if (find != null) {
-                return find;
-            }
-        }
-        return null;
     }
 
     public void checkSelection(TreeItem<FileInformation> item) {
@@ -364,7 +308,7 @@ public class FileUnarchiveController extends FilesBatchController {
             return;
         }
         selected = new ArrayList();
-        checkSelection(filesView.getRoot());
+        checkSelection(filesTreeView.getRoot());
         if (selected.isEmpty()) {
             popError(message("NoSelection"));
             return;
@@ -488,7 +432,7 @@ public class FileUnarchiveController extends FilesBatchController {
                     }
                     try ( FileOutputStream out = new FileOutputStream(file)) {
                         int length;
-                        byte[] buf = new byte[4096];
+                        byte[] buf = new byte[CommonValues.IOBufferLength];
                         while ((length = sevenZFile.read(buf)) != -1) {
                             out.write(buf, 0, length);
                         }

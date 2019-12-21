@@ -42,6 +42,7 @@ import org.apache.commons.compress.archivers.sevenz.SevenZMethod;
 import org.apache.commons.compress.archivers.sevenz.SevenZOutputFile;
 import org.apache.commons.compress.compressors.CompressorOutputStream;
 import org.apache.commons.compress.compressors.CompressorStreamFactory;
+import org.apache.commons.compress.utils.IOUtils;
 
 /**
  * @Author Mara
@@ -292,7 +293,7 @@ public class FilesArchiveCompressController extends FilesBatchController {
                 ArchiveStreamFactory f = new ArchiveStreamFactory(
                         encodeBox.getSelectionModel().getSelectedItem());
                 archiveOut = f.createArchiveOutputStream(
-                        archiver, new BufferedOutputStream(new FileOutputStream(archiveFile)));
+                        archiver, new FileOutputStream(archiveFile));
             }
             if (resultCheck.isSelected()) {
                 archive = new ArrayList();
@@ -358,11 +359,7 @@ public class FilesArchiveCompressController extends FilesBatchController {
                 if (file.isFile()) {
                     try ( BufferedInputStream inputStream
                             = new BufferedInputStream(new FileInputStream(file))) {
-                        int len;
-                        byte[] buf = new byte[CommonValues.IOBufferLength];
-                        while ((len = inputStream.read(buf)) >= 0) {
-                            archiveOut.write(buf, 0, len);
-                        }
+                        IOUtils.copy(inputStream, archiveOut);
                     }
                     totalSize += file.length();
                 }
@@ -452,11 +449,7 @@ public class FilesArchiveCompressController extends FilesBatchController {
                          BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(tmpFile));
                          CompressorOutputStream compressOut = new CompressorStreamFactory().
                                 createCompressorOutputStream(compressor, out)) {
-                    int len;
-                    byte[] buf = new byte[CommonValues.IOBufferLength];
-                    while ((len = inputStream.read(buf)) >= 0) {
-                        compressOut.write(buf, 0, len);
-                    }
+                    IOUtils.copy(inputStream, compressOut);
                 }
                 tmpFile.renameTo(targetFile);
             } else {
@@ -534,7 +527,7 @@ public class FilesArchiveCompressController extends FilesBatchController {
         }
         s.append(StringTable.tableDiv(table));
 
-        HtmlTools.displayHtml(message("ArchiveContents"), s.toString());
+        HtmlTools.editHtml(message("ArchiveContents"), s.toString());
     }
 
 }

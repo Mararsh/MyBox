@@ -103,6 +103,10 @@ Red increase 151 -> pink                #de88c7         #ffdcfe
 }
 
 
+.transparentDisable:disabled, .transparentDisable:disabled > * {
+    -fx-opacity: 0.8;
+}
+
 .table-row-cell:empty, .table-cell {
     -fx-border-width: 0px;
 }

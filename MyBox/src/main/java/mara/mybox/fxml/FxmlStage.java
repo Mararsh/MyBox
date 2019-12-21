@@ -22,25 +22,28 @@ import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.BytesEditerController;
+import mara.mybox.controller.FileDecompressUnarchiveController;
 import mara.mybox.controller.HtmlEditorController;
+import mara.mybox.controller.HtmlViewerController;
 import mara.mybox.controller.ImageInformationController;
 import mara.mybox.controller.ImageManufactureController;
 import mara.mybox.controller.ImageMetaDataController;
-import mara.mybox.controller.ImageStatisticController;
 import mara.mybox.controller.ImageViewerController;
 import mara.mybox.controller.ImagesBrowserController;
-import mara.mybox.controller.InformationController;
 import mara.mybox.controller.LoadingController;
 import mara.mybox.controller.MarkdownEditerController;
+import mara.mybox.controller.MediaPlayerController;
+import mara.mybox.controller.MyBoxLoadingController;
 import mara.mybox.controller.PdfViewController;
 import mara.mybox.controller.TextEditerController;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.image.ImageInformation;
+import mara.mybox.tools.CompressTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
-import mara.mybox.value.CommonImageValues;
+import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -72,7 +75,7 @@ public class FxmlStage {
             controller.setLoadFxml(newFxml);
 
 //            stage.setUserData(controller);
-            stage.getIcons().add(CommonImageValues.AppIcon);
+            stage.getIcons().add(CommonFxValues.AppIcon);
             stage.setTitle(controller.getBaseTitle());
             if (stageStyle != null) {
                 stage.initStyle(stageStyle);
@@ -271,6 +274,18 @@ public class FxmlStage {
         }
     }
 
+    public static HtmlViewerController openHtmlViewer(Stage stage, String body) {
+        try {
+            final HtmlViewerController controller
+                    = (HtmlViewerController) openScene(stage, CommonValues.HtmlViewerFxml);
+            controller.loadBody(body);
+            return controller;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
     public static ImageManufactureController openImageManufacture(Stage stage, File file) {
         try {
             final ImageManufactureController controller
@@ -420,11 +435,11 @@ public class FxmlStage {
         }
     }
 
-    public static ImageStatisticController openImageStatistic(Stage stage, ImageInformation info) {
+    public static FileDecompressUnarchiveController openDecompressUnarchive(Stage stage, File file) {
         try {
-            final ImageStatisticController controller = (ImageStatisticController) openScene(stage,
-                    CommonValues.ImageStatisticFxml);
-            controller.loadImage(info);
+            final FileDecompressUnarchiveController controller = (FileDecompressUnarchiveController) openScene(stage,
+                    CommonValues.FileDecompressUnarchiveFxml);
+            controller.sourceFileChanged(file);
             return controller;
         } catch (Exception e) {
             logger.error(e.toString());
@@ -432,11 +447,11 @@ public class FxmlStage {
         }
     }
 
-    public static ImageStatisticController openImageStatistic(Stage stage, Image image) {
+    public static MediaPlayerController openMediaPlayer(Stage stage, File file) {
         try {
-            final ImageStatisticController controller = (ImageStatisticController) openScene(stage,
-                    CommonValues.ImageStatisticFxml);
-            controller.loadImage(image);
+            final MediaPlayerController controller
+                    = (MediaPlayerController) openScene(stage, CommonValues.MediaPlayerFxml);
+            controller.loadFile(file);
             return controller;
         } catch (Exception e) {
             logger.error(e.toString());
@@ -504,6 +519,13 @@ public class FxmlStage {
         } else if ("pdf".equals(suffix)) {
             controller = openPdfViewer(stage, file);
 
+        } else if (CompressTools.compressFormats().contains(suffix)
+                || CompressTools.archiveFormats().contains(suffix)) {
+            controller = openDecompressUnarchive(stage, file);
+
+        } else if (Arrays.asList(CommonValues.MediaPlayerSupports).contains(suffix)) {
+            controller = openMediaPlayer(stage, file);
+
         } else if (mustOpen) {
             controller = openBytesEditer(stage, file);
             //            try {
@@ -567,20 +589,20 @@ public class FxmlStage {
         }
     }
 
-    public static InformationController showInformation(String information) {
+    public static MyBoxLoadingController showInformation(String information) {
         try {
             Stage stage = new Stage();
             stage.initModality(Modality.NONE);
             stage.initStyle(StageStyle.DECORATED);
-            stage.getIcons().add(CommonImageValues.AppIcon);
+            stage.getIcons().add(CommonFxValues.AppIcon);
             FXMLLoader fxmlLoader = new FXMLLoader(
-                    FxmlStage.class.getResource(CommonValues.InformationFxml));
+                    FxmlStage.class.getResource(CommonValues.MyBoxLoadingFxml));
             Pane pane = fxmlLoader.load();
             Scene scene = new Scene(pane);
             stage.setScene(scene);
             stage.show();
 
-            InformationController c = (InformationController) fxmlLoader.getController();
+            MyBoxLoadingController c = (MyBoxLoadingController) fxmlLoader.getController();
             c.setInfo(information);
             c.setStage(stage);
             return c;

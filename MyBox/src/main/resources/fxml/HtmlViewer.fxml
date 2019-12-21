@@ -13,16 +13,27 @@ License:    Apache License Version 2.0
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox fx:id="thisPane" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="800.0" spacing="5.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.HtmlViewerController">
+<VBox fx:id="thisPane" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="800.0" spacing="5.0"
+      xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.HtmlViewerController">
     <children>
         <HBox alignment="CENTER_LEFT" spacing="5.0">
             <children>
+                <CheckBox fx:id="consoleCheck" mnemonicParsing="false" text="%ConsoleStyle" />
                 <Label maxWidth="1.7976931348623157E308" visible="false" HBox.hgrow="ALWAYS" />
                 <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" onMouseEntered="#popSaveAs">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
                                 <Image url="@../buttons/iconSave.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="editHtmlButton" mnemonicParsing="false" onAction="#editHtml">
+                    <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconEdit.png" />
                             </image>
                         </ImageView>
                     </graphic>

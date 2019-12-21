@@ -29,6 +29,7 @@ import org.apache.commons.compress.archivers.sevenz.SevenZMethod;
 import org.apache.commons.compress.archivers.sevenz.SevenZOutputFile;
 import org.apache.commons.compress.compressors.CompressorOutputStream;
 import org.apache.commons.compress.compressors.CompressorStreamFactory;
+import org.apache.commons.compress.utils.IOUtils;
 
 /**
  * @Author Mara
@@ -134,11 +135,11 @@ public class FilesCompressBatchController extends FilesBatchController {
             long s = new Date().getTime();
             File tmpFile = FileTools.getTempFile();
             if (compressor.equalsIgnoreCase(ArchiveStreamFactory.SEVEN_Z)) {
-                try (SevenZOutputFile sevenZOutput = new SevenZOutputFile(tmpFile)) {
+                try ( SevenZOutputFile sevenZOutput = new SevenZOutputFile(tmpFile)) {
                     sevenZOutput.setContentCompression(sevenCompress);
                     SevenZArchiveEntry entry = sevenZOutput.createArchiveEntry(srcFile, srcFile.getName());
                     sevenZOutput.putArchiveEntry(entry);
-                    try (BufferedInputStream inputStream
+                    try ( BufferedInputStream inputStream
                             = new BufferedInputStream(new FileInputStream(srcFile))) {
                         int len;
                         byte[] buf = new byte[CommonValues.IOBufferLength];
@@ -153,32 +154,24 @@ public class FilesCompressBatchController extends FilesBatchController {
             } else if ("zip".equals(compressor) || "jar".equals(compressor)
                     || "7z".equals(compressor)) {
                 ArchiveStreamFactory f = new ArchiveStreamFactory("UTF-8");
-                try (ArchiveOutputStream archiveOut = new ArchiveStreamFactory("UTF-8").
+                try ( ArchiveOutputStream archiveOut = new ArchiveStreamFactory("UTF-8").
                         createArchiveOutputStream(compressor, new BufferedOutputStream(new FileOutputStream(tmpFile)))) {
                     ArchiveEntry entry = archiveOut.createArchiveEntry(srcFile, srcFile.getName());
                     archiveOut.putArchiveEntry(entry);
-                    try (BufferedInputStream inputStream
+                    try ( BufferedInputStream inputStream
                             = new BufferedInputStream(new FileInputStream(srcFile))) {
-                        int len;
-                        byte[] buf = new byte[CommonValues.IOBufferLength];
-                        while ((len = inputStream.read(buf)) >= 0) {
-                            archiveOut.write(buf, 0, len);
-                        }
+                        IOUtils.copy(inputStream, archiveOut);
                     }
                     archiveOut.closeArchiveEntry();
                     archiveOut.finish();
                 }
 
             } else {
-                try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(srcFile));
-                        BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(tmpFile));
-                        CompressorOutputStream compressOut = new CompressorStreamFactory().
+                try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(srcFile));
+                         BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(tmpFile));
+                         CompressorOutputStream compressOut = new CompressorStreamFactory().
                                 createCompressorOutputStream(compressor, out)) {
-                    int len;
-                    byte[] buf = new byte[CommonValues.IOBufferLength];
-                    while ((len = inputStream.read(buf)) >= 0) {
-                        compressOut.write(buf, 0, len);
-                    }
+                    IOUtils.copy(inputStream, compressOut);
                 }
             }
             if (targetFile.exists()) {

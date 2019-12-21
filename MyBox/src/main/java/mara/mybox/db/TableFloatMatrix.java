@@ -39,7 +39,7 @@ public class TableFloatMatrix extends DerbyBase {
 
     public static float[][] read(String name, int width, int height) {
         float[][] matrix = new float[height][width];
-        try ( Connection conn = DriverManager.getConnection(protocol + dbName() + login);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
             for (int j = 0; j < height; j++) {
                 for (int i = 0; i < width; i++) {
@@ -61,7 +61,7 @@ public class TableFloatMatrix extends DerbyBase {
         if (name == null || values == null) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbName() + login);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
             String sql = "DELETE FROM Float_Matrix WHERE name='" + name + "'";
             statement.executeUpdate(sql);
@@ -84,7 +84,7 @@ public class TableFloatMatrix extends DerbyBase {
         if (name == null || row < 0 || col < 0) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbName() + login);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
             String sql = " SELECT * FROM Float_Matrix WHERE name='" + name
                     + "' AND row=" + row + " AND col=" + col;
@@ -108,7 +108,7 @@ public class TableFloatMatrix extends DerbyBase {
         if (name == null || row < 0 || col < 0) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbName() + login);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
             String sql = "DELETE FROM Float_Matrix WHERE name='" + name
                     + "' AND row=" + row + " AND col=" + col;
@@ -124,7 +124,7 @@ public class TableFloatMatrix extends DerbyBase {
         if (name == null) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbName() + login);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
             String sql = "DELETE FROM Float_Matrix WHERE name='" + name + "'";
             statement.executeUpdate(sql);
@@ -139,7 +139,7 @@ public class TableFloatMatrix extends DerbyBase {
         if (names == null || names.isEmpty()) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbName() + login);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
             conn.setAutoCommit(false);
             for (String name : names) {
@@ -156,7 +156,7 @@ public class TableFloatMatrix extends DerbyBase {
 
     public static boolean writeExamples() {
         ConvolutionKernel.makeExample();
-        try ( Connection conn = DriverManager.getConnection(protocol + dbName() + login);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
             String sql;
             for (ConvolutionKernel k : ConvolutionKernel.ExampleKernels) {

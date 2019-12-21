@@ -13,7 +13,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.util.Callback;
@@ -26,7 +25,8 @@ import mara.mybox.tools.PdfTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonImageValues;
+import mara.mybox.value.CommonFxValues;
+import thridparty.TableAutoCommitCell;
 
 /**
  * @Author Mara
@@ -34,7 +34,7 @@ import mara.mybox.value.CommonImageValues;
  * @Description
  * @License Apache License Version 2.0
  */
-public class PDFsTableController extends TableController<PdfInformation> {
+public class PDFsTableController extends BatchTableController<PdfInformation> {
 
     @FXML
     protected TableColumn<PdfInformation, String> userPasswordColumn, ownerPasswordColumn;
@@ -61,7 +61,7 @@ public class PDFsTableController extends TableController<PdfInformation> {
 
         targetPathKey = "PdfFilePath";
         sourcePathKey = "PdfFilePath";
-        sourceExtensionFilter = CommonImageValues.PdfExtensionFilter;
+        sourceExtensionFilter = CommonFxValues.PdfExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
     }
 
@@ -124,7 +124,7 @@ public class PDFsTableController extends TableController<PdfInformation> {
             super.initColumns();
 
             userPasswordColumn.setCellValueFactory(new PropertyValueFactory<>("userPassword"));
-            userPasswordColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+            userPasswordColumn.setCellFactory(TableAutoCommitCell.forTableColumn());
             userPasswordColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<PdfInformation, String>>() {
                 @Override
                 public void handle(TableColumn.CellEditEvent<PdfInformation, String> t) {
@@ -137,7 +137,7 @@ public class PDFsTableController extends TableController<PdfInformation> {
             });
 
             ownerPasswordColumn.setCellValueFactory(new PropertyValueFactory<>("ownerPassword"));
-            ownerPasswordColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+            ownerPasswordColumn.setCellFactory(TableAutoCommitCell.forTableColumn());
             ownerPasswordColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<PdfInformation, String>>() {
                 @Override
                 public void handle(TableColumn.CellEditEvent<PdfInformation, String> t) {
@@ -153,8 +153,8 @@ public class PDFsTableController extends TableController<PdfInformation> {
             fromColumn.setCellFactory(new Callback<TableColumn<PdfInformation, Integer>, TableCell<PdfInformation, Integer>>() {
                 @Override
                 public TableCell<PdfInformation, Integer> call(TableColumn<PdfInformation, Integer> param) {
-                    TextFieldTableCell<PdfInformation, Integer> cell
-                            = new TextFieldTableCell<PdfInformation, Integer>(new IntegerStringConverter()) {
+                    TableAutoCommitCell<PdfInformation, Integer> cell
+                            = new TableAutoCommitCell<PdfInformation, Integer>(new IntegerStringConverter()) {
                         @Override
                         public void commitEdit(Integer val) {
                             if (val <= 0) {
@@ -181,7 +181,7 @@ public class PDFsTableController extends TableController<PdfInformation> {
             });
 
             toColumn.setCellValueFactory(new PropertyValueFactory<>("toPage"));
-            toColumn.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+            toColumn.setCellFactory(TableAutoCommitCell.forTableColumn(new IntegerStringConverter()));
             toColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<PdfInformation, Integer>>() {
                 @Override
                 public void handle(TableColumn.CellEditEvent<PdfInformation, Integer> t) {

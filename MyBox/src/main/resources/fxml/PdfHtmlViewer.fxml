@@ -151,7 +151,7 @@ License:    Apache License Version 2.0
                         </HBox>
                     </children>
                 </HBox>
-                <SplitPane fx:id="viewPane" dividerPositions="0.18218623481781376, 0.37044534412955465" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                <SplitPane fx:id="mainPane" dividerPositions="0.18218623481781376, 0.37044534412955465" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                     <items>
                         <ScrollPane fx:id="thumbScrollPane" fitToHeight="true" fitToWidth="true" pannable="true" prefHeight="200.0" prefWidth="200.0">
                             <content>

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.scene.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.web.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.effect.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MediaTableController">
+    <children>
+        <FlowPane hgap="5.0" maxWidth="1.7976931348623157E308" prefWrapLength="500.0" vgap="5.0" VBox.vgrow="NEVER">
+            <children>
+                <Button fx:id="addFilesButton" mnemonicParsing="false" onAction="#addFilesAction" onMouseEntered="#popFileAdd">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconAddFile.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="streamMediaButton" mnemonicParsing="false" onAction="#addLinkAction" onMouseEntered="#popMediasLink">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconLink.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="deleteFilesButton" mnemonicParsing="false" onAction="#deleteFilesAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconDeleteFile.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" onDragDetected="#refreshAction" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconRefresh.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="downFilesButton" mnemonicParsing="false" onAction="#downFilesAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconDown.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="upFilesButton" mnemonicParsing="false" onAction="#upFilesAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconUp.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="selectAllFilesButton" mnemonicParsing="false" onAction="#selectAllFilesAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconSelectAll.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="unselectAllFilesButton" mnemonicParsing="false" onAction="#unselectAllFilesAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconSelectNone.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconInfo.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="clearFilesButton" mnemonicParsing="false" onAction="#clearFilesAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconClear.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="saveButton" disable="true" layoutX="132.0" layoutY="10.0" mnemonicParsing="false" onAction="#saveAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" onDragDetected="#saveAction" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconSave.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            <Button fx:id="newButton" mnemonicParsing="false" onAction="#newAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/iconPlus.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            </children>
+        </FlowPane>
+        <TableView fx:id="tableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="tableIndexColumn" editable="false" maxWidth="1.7976931348623157E308" prefWidth="60.0" text="%Item" />
+                <TableColumn fx:id="addressColumn" editable="false" prefWidth="160.0" text="%Address" />
+                <TableColumn fx:id="durationColumn" editable="false" prefWidth="160.0" text="%Duration" />
+                <TableColumn fx:id="audioColumn" editable="false" prefWidth="160.0" text="%AudioEncoding" />
+                <TableColumn fx:id="videoColumn" editable="false" prefWidth="160.0" text="%VideoEncoding" />
+                <TableColumn fx:id="resolutionColumn" editable="false" prefWidth="120.0" text="%Resolution" />
+            <TableColumn fx:id="sizeColumn" editable="false" prefWidth="120.0" text="%Size" />
+            </columns>
+        </TableView>
+        <Label fx:id="tableLabel" />
+    </children>
+</VBox>

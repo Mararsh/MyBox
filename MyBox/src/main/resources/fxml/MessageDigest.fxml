@@ -58,19 +58,40 @@ License:    Apache License Version 2.0
                      <children>
                             <HBox fx:id="imageParaBox" alignment="CENTER_LEFT" nodeOrientation="RIGHT_TO_LEFT" spacing="5.0">
                                 <children>
-                                    <Button fx:id="startButton" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#startAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Create" />
-                                    <RadioButton mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="SHA256">
+                              <RadioButton layoutX="466.0" layoutY="21.0" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="SHA-512/256">
                                         <toggleGroup>
                                             <ToggleGroup fx:id="algorithmGroup" />
                                         </toggleGroup>
-                                    </RadioButton>
-                                    <RadioButton layoutX="129.0" layoutY="21.0" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="SHA1" toggleGroup="$algorithmGroup" />
-                                    <RadioButton mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="MD5" toggleGroup="$algorithmGroup" />
-                              <Hyperlink fx:id="dmLink" onAction="#dmHelp" text="%MessageDigest" />
+                              </RadioButton>
+                              <RadioButton layoutX="310.0" layoutY="21.0" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="SHA-512/224" toggleGroup="$algorithmGroup" />
+                                    <RadioButton mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="SHA-224" toggleGroup="$algorithmGroup" />
+                                    <RadioButton layoutX="129.0" layoutY="21.0" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="SHA-384" toggleGroup="$algorithmGroup" />
+                                    <RadioButton mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="MD2" toggleGroup="$algorithmGroup" />
+                              <RadioButton layoutX="310.0" layoutY="21.0" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="SHA-1" toggleGroup="$algorithmGroup" />
+                              <RadioButton layoutX="435.0" layoutY="21.0" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="MD5" toggleGroup="$algorithmGroup" />
+                              <RadioButton layoutX="154.0" layoutY="21.0" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="SHA-256" toggleGroup="$algorithmGroup" />
                                 </children>
                             </HBox>
+                        <HBox fx:id="imageParaBox11" alignment="CENTER_LEFT" layoutX="10.0" layoutY="51.0" nodeOrientation="RIGHT_TO_LEFT" spacing="5.0">
+                           <children>
+                              <RadioButton mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="SHA3-512" toggleGroup="$algorithmGroup" />
+                              <RadioButton layoutX="10.0" layoutY="10.0" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="SHA3-384" toggleGroup="$algorithmGroup" />
+                              <RadioButton layoutX="194.0" layoutY="10.0" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="SHA3-256" toggleGroup="$algorithmGroup" />
+                              <RadioButton layoutX="378.0" layoutY="10.0" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="SHA3-224" toggleGroup="$algorithmGroup" />
+                           </children>
+                        </HBox>
+                        <HBox fx:id="imageParaBox1" alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" nodeOrientation="RIGHT_TO_LEFT" spacing="5.0">
+                           <children>
+                                    <Button fx:id="startButton" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#startAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Create" />
+                              <Hyperlink fx:id="dmLink" alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" onAction="#dmHelp" text="%MessageDigest" HBox.hgrow="ALWAYS" />
+                           </children>
+                        </HBox>
                             <TextArea fx:id="resultArea" editable="false" maxWidth="1.7976931348623157E308" prefHeight="100.0" wrapText="true" VBox.vgrow="NEVER" />
-                        <CheckBox fx:id="formatCheck" mnemonicParsing="false" text="%Format" />
+                        <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                           <children>
+                              <CheckBox fx:id="formatCheck" mnemonicParsing="false" text="%Format" />
+                           </children>
+                        </HBox>
                      </children>
                   </VBox>
                     </children>

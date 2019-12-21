@@ -66,8 +66,8 @@ License:    Apache License Version 2.0
                                                                 </Button>
                                                             </children>
                                                         </HBox>
-                                          <FlowPane hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
-                                             <children>
+                                                        <FlowPane hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
+                                                            <children>
                                                                 <Label text="%ExistedFiles" />
                                                                 <RadioButton fx:id="targetReplaceRadio" mnemonicParsing="false" text="%Replace">
                                                                     <toggleGroup>
@@ -77,8 +77,8 @@ License:    Apache License Version 2.0
                                                                 <RadioButton fx:id="targetSkipRadio" mnemonicParsing="false" text="%Skip" toggleGroup="$targetExistGroup" />
                                                                 <RadioButton fx:id="targetRenameRadio" mnemonicParsing="false" selected="true" text="%TargetNameAppend" toggleGroup="$targetExistGroup" />
                                                                 <TextField fx:id="targetAppendInput" prefWidth="120.0" text="-m" />
-                                             </children>
-                                          </FlowPane>
+                                                            </children>
+                                                        </FlowPane>
                                                     </children>
                                                 </VBox>
                                             </content>

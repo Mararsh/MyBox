@@ -32,7 +32,7 @@ public class AboutController extends BaseController {
                 + CommonValues.AppDocVersion + "/MyBox-UserGuide-" + CommonValues.AppDocVersion
                 + "-Overview-" + AppVariables.getLanguage() + ".pdf");
 
-        FxmlControl.miao8();
+        FxmlControl.miao5();
 
     }
 

@@ -53,7 +53,7 @@ import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonImageValues;
+import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 import static mara.mybox.value.CommonValues.Indent;
 
@@ -129,7 +129,7 @@ public class IccProfileEditorController extends BaseController {
 
         defaultPathKey = SystemTools.IccProfilePath();
 
-        sourceExtensionFilter = CommonImageValues.IccProfileExtensionFilter;
+        sourceExtensionFilter = CommonFxValues.IccProfileExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
     }
 
@@ -1866,7 +1866,7 @@ public class IccProfileEditorController extends BaseController {
             name = embedICCName;
         }
         final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
-                name, CommonImageValues.XmlExtensionFilter, true);
+                name, CommonFxValues.XmlExtensionFilter, true);
         if (file == null) {
             return;
         }

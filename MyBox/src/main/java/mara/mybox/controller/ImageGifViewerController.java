@@ -32,7 +32,7 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonImageValues;
+import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -71,7 +71,7 @@ public class ImageGifViewerController extends ImageViewerController {
         needNotRulers = true;
         needNotCoordinates = true;
 
-        sourceExtensionFilter = CommonImageValues.GifExtensionFilter;
+        sourceExtensionFilter = CommonFxValues.GifExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
     }
 
@@ -188,6 +188,9 @@ public class ImageGifViewerController extends ImageViewerController {
                     @Override
                     protected boolean handle() {
                         ImageFileInformation imageFileInformation = ImageFileReaders.readImageFileMetaData(fileName);
+                        if (imageFileInformation == null || imageFileInformation.getImageInformation() == null) {
+                            return true;
+                        }
                         imageInformation = imageFileInformation.getImageInformation();
                         if (onlyInformation) {
                             return true;
@@ -322,7 +325,7 @@ public class ImageGifViewerController extends ImageViewerController {
             }
             final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
                     FileTools.getFilePrefix(sourceFile.getName()),
-                    CommonImageValues.ImageExtensionFilter, true);
+                    CommonFxValues.ImageExtensionFilter, true);
             if (file == null) {
                 return;
             }

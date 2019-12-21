@@ -30,7 +30,7 @@ License:    Apache License Version 2.0
             <children>
                 <SplitPane fx:id="splitPane" dividerPositions="0.33, 0.7" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                     <items>
-                        <ScrollPane fx:id="leftPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefViewportHeight="538.0" prefViewportWidth="345.0">
+                        <ScrollPane fx:id="leftPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="538.0" prefViewportWidth="345.0">
                             <content>
                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                     <children>
@@ -220,14 +220,14 @@ License:    Apache License Version 2.0
                                                                 </Button>
                                                             </children>
                                                         </HBox>
-                                                        <Label text="%OCRPreprocessComment" wrapText="true"     styleClass="bottom-label" stylesheets="@../styles/MyBox.css" />
+                                                        <Label styleClass="bottom-label" stylesheets="@../styles/MyBox.css" text="%OCRPreprocessComment" wrapText="true" />
                                                     </children>
                                                 </VBox>
                                             </content>
                                         </TitledPane>
                                         <TitledPane fx:id="ocrOptionsPane" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%OCROptions">
                                             <content>
-                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="5.0">
+                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                     <children>
                                                         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
                                                             <children>
@@ -256,7 +256,7 @@ License:    Apache License Version 2.0
                                                                 <ComboBox fx:id="wordSelector" editable="true" prefWidth="200.0" />
                                                             </children>
                                                         </HBox>
-                                                        <Label fx:id="currentOCRFilesLabel" />
+                                                        <Label fx:id="currentOCRFilesLabel"  styleClass="blue-label" stylesheets="@../styles/MyBox.css"/>
                                                         <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                                                             <children>
                                                                 <Button fx:id="moveDownButton" mnemonicParsing="false" onAction="#downAction">
@@ -289,7 +289,7 @@ License:    Apache License Version 2.0
                                                             </children>
                                                         </HBox>
                                                         <Label text="%OCRSelection" />
-                                                        <ListView fx:id="languageList" prefHeight="200.0" prefWidth="200.0" />
+                                                        <ListView fx:id="languageList" prefHeight="200.0" prefWidth="185.0" />
                                                     </children>
                                                 </VBox>
                                             </content>
@@ -303,8 +303,7 @@ License:    Apache License Version 2.0
                                 <HBox>
                                     <children>
                                         <Label maxWidth="1.7976931348623157E308" text="%ImagePreprocessed" />
-                                        <Label fx:id="imageLabel" alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
-                                               styleClass="bottom-label" stylesheets="@../styles/MyBox.css" textAlignment="RIGHT" wrapText="true" HBox.hgrow="ALWAYS">
+                                        <Label fx:id="imageLabel" alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="bottom-label" stylesheets="@../styles/MyBox.css" textAlignment="RIGHT" wrapText="true" HBox.hgrow="ALWAYS">
                                         </Label>
                                     </children>
                                 </HBox>
@@ -520,12 +519,12 @@ License:    Apache License Version 2.0
                                         </Tab>
                                         <Tab closable="false" text="%Regions">
                                             <content>
-                                                <fx:include fx:id="regionsTable" source="StringTable.fxml" />
+                                                <fx:include fx:id="regionsTable" source="HtmlViewer.fxml" />
                                             </content>
                                         </Tab>
                                         <Tab closable="false" text="%Words">
                                             <content>
-                                                <fx:include fx:id="wordsTable" source="StringTable.fxml" />
+                                                <fx:include fx:id="wordsTable" source="HtmlViewer.fxml" />
                                             </content>
                                         </Tab>
                                     </tabs>

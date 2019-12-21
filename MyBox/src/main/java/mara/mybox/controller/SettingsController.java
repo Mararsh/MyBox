@@ -36,9 +36,11 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mara.mybox.MyBox;
 import mara.mybox.db.DerbyBase;
+import mara.mybox.db.DerbyBase.DerbyStatus;
 import mara.mybox.db.TableImageHistory;
 import mara.mybox.db.TableVisitHistory;
 import mara.mybox.fxml.ControlStyle;
@@ -74,7 +76,7 @@ public class SettingsController extends BaseController {
     @FXML
     protected CheckBox stopAlarmCheck, newWindowCheck, restoreStagesSizeCheck,
             copyToSystemClipboardCheck, anchorSolidCheck, controlsTextCheck, recordLoadCheck,
-            clearCurrentRootCheck, hidpiCheck, derbyServerCheck;
+            clearCurrentRootCheck, hidpiCheck;
     @FXML
     protected TextField jvmInput, imageMaxHisInput, dataDirInput, fileRecentInput, thumbnailWidthInput,
             ocrDirInput;
@@ -99,6 +101,12 @@ public class SettingsController extends BaseController {
     @FXML
     protected Label alphaLabel, currentJvmLabel, currentDataPathLabel, currentTempPathLabel,
             currentOCRFilesLabel, derbyStatus;
+    @FXML
+    protected ToggleGroup derbyGroup;
+    @FXML
+    protected RadioButton embeddedRadio, networkRadio;
+    @FXML
+    protected HBox derbyBox;
 
     public SettingsController() {
         baseTitle = AppVariables.message("Settings");
@@ -493,49 +501,70 @@ public class SettingsController extends BaseController {
             hidpiCheck.setSelected(AppVariables.disableHiDPI);
             isSettingValues = false;
 
-            derbyServerCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            setDerbyMode();
+            derbyGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    derbyServerCheck.setDisable(true);
-                    DerbyBase.mode = derbyServerCheck.isSelected() ? "client" : "embedded";
-                    ConfigTools.writeConfigValue("DerbyMode", DerbyBase.mode);
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                String ret = DerbyBase.startDerby();
-                                popInformation(ret, 6000);
-                                isSettingValues = true;
-                                derbyServerCheck.setSelected("client".equals(DerbyBase.mode));
-                                isSettingValues = false;
-                            } catch (Exception e) {
-                                logger.debug(e.toString());
-                            }
-                            derbyServerCheck.setDisable(false);
-                            if ("client".equals(DerbyBase.mode)) {
-                                derbyStatus.setText(MessageFormat.format(message("DerbyServerListening"), DerbyBase.port + ""));
-                            } else {
-                                derbyStatus.setText(message("DerbyEmbeddedMode"));
-                            }
-                        }
-                    });
+                public void changed(ObservableValue ov, Toggle old_val, Toggle new_val) {
+                    checkDerbyMode();
                 }
             });
-            isSettingValues = true;
-            derbyServerCheck.setSelected("client".equals(DerbyBase.mode));
-            isSettingValues = false;
-
-            if ("client".equals(DerbyBase.mode)) {
-                derbyStatus.setText(MessageFormat.format(message("DerbyServerListening"), DerbyBase.port + ""));
-            } else {
-                derbyStatus.setText(message("DerbyEmbeddedMode"));
-            }
 
         } catch (Exception e) {
             logger.debug(e.toString());
+        }
+    }
+
+    public void setDerbyMode() {
+        isSettingValues = true;
+        if (DerbyStatus.Nerwork == DerbyBase.status) {
+            networkRadio.setSelected(true);
+            derbyStatus.setText(MessageFormat.format(message("DerbyServerListening"), DerbyBase.port + ""));
+        } else if (DerbyStatus.Embedded == DerbyBase.status) {
+            embeddedRadio.setSelected(true);
+            derbyStatus.setText(message("DerbyEmbeddedMode"));
+        } else {
+            networkRadio.setSelected(false);
+            embeddedRadio.setSelected(false);
+            derbyStatus.setText(MessageFormat.format(message("DerbyNotAvalibale"), AppVariables.MyBoxDerbyPath));
+        }
+        isSettingValues = false;
+    }
+
+    public void checkDerbyMode() {
+        if (isSettingValues) {
+            return;
+        }
+        DerbyBase.mode = networkRadio.isSelected() ? "client" : "embedded";
+        ConfigTools.writeConfigValue("DerbyMode", DerbyBase.mode);
+        derbyBox.setDisable(true);
+        synchronized (this) {
+            if (task != null) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+                private String ret;
+
+                @Override
+                protected boolean handle() {
+                    ret = DerbyBase.startDerby();
+                    return ret != null;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    popInformation(ret, 6000);
+                    setDerbyMode();
+                }
+
+                protected void finalAction() {
+                    derbyBox.setDisable(false);
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
         }
     }
 

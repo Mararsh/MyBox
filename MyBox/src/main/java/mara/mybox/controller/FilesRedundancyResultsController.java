@@ -8,22 +8,11 @@ import java.util.List;
 import java.util.Map;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeTableColumn;
-import javafx.scene.control.TreeTableColumn.CellDataFeatures;
-import javafx.scene.control.TreeTableView;
-import javafx.scene.control.cell.CheckBoxTreeTableCell;
-import javafx.scene.control.cell.TreeItemPropertyValueFactory;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
-import javafx.util.Callback;
 import mara.mybox.data.FileInformation;
-import mara.mybox.fxml.TreeTableFileSizeCell;
-import mara.mybox.fxml.TreeTableTimeCell;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
@@ -34,18 +23,10 @@ import static mara.mybox.value.AppVariables.message;
  * @CreateDate 2019-11-13
  * @License Apache License Version 2.0
  */
-public class FilesRedundancyResultsController extends BaseController {
+public class FilesRedundancyResultsController extends FilesTreeController {
 
     protected Map<String, List<FileInformation>> redundancy;
 
-    @FXML
-    protected TreeTableView<FileInformation> resultsView;
-    @FXML
-    protected TreeTableColumn<FileInformation, String> digestColumn, fileColumn, typeColumn;
-    @FXML
-    protected TreeTableColumn<FileInformation, Long> sizeColumn, modifyTimeColumn, createTimeColumn;
-    @FXML
-    protected TreeTableColumn<FileInformation, Boolean> selectedColumn;
     @FXML
     protected RadioButton deleteRadio, trashRadio;
 
@@ -53,213 +34,219 @@ public class FilesRedundancyResultsController extends BaseController {
         baseTitle = AppVariables.message("HandleFilesRedundancy");
     }
 
-    @Override
-    public void initializeNext() {
-        try {
-            super.initializeNext();
-            initFilesTab();
-        } catch (Exception e) {
-            logger.debug(e.toString());
-        }
-
-    }
-
-    private void initFilesTab() {
-        try {
-
-            fileColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("fileName"));
-            fileColumn.setPrefWidth(400);
-
-            selectedColumn.setCellValueFactory(
-                    new Callback<CellDataFeatures<FileInformation, Boolean>, ObservableValue<Boolean>>() {
-                @Override
-                public ObservableValue<Boolean> call(CellDataFeatures<FileInformation, Boolean> param) {
-                    if (param.getValue() != null) {
-                        return param.getValue().getValue().getSelectedProperty();
-                    }
-                    return null;
-                }
-            });
-            selectedColumn.setCellFactory(CheckBoxTreeTableCell.forTreeTableColumn(selectedColumn));
-
-            typeColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("fileSuffix"));
-
-            sizeColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("fileSize"));
-            sizeColumn.setCellFactory(new TreeTableFileSizeCell());
-
-            modifyTimeColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("modifyTime"));
-            modifyTimeColumn.setCellFactory(new TreeTableTimeCell());
-
-            createTimeColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("createTime"));
-            createTimeColumn.setCellFactory(new TreeTableTimeCell());
-
-            resultsView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-            resultsView.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    if (event.getClickCount() > 1) {
-                        TreeItem<FileInformation> item = resultsView.getSelectionModel().getSelectedItem();
-                        if (item == null) {
-                            return;
-                        }
-                        File file = item.getValue().getFile();
-                        if (file == null || !file.exists() || !file.isFile()) {
-                            return;
-                        }
-                        view(file);
-                    }
-                }
-            });
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-
-    }
-
-    public void selectChildren(TreeItem<FileInformation> item) {
-        try {
-            if (item == null) {
+    public void checkSelection() {
+        synchronized (this) {
+            if (task != null) {
                 return;
             }
-            for (TreeItem<FileInformation> child : item.getChildren()) {
-                resultsView.getSelectionModel().select(child);
-                selectChildren(child);
-            }
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
+            task = new SingletonTask<Void>() {
 
-    public void checkSelection() {
-        try {
+                private int filesSelected = 0, filesTotal = 0, filesRundancy = 0;
+                private long sizeSelected = 0, sizeTotal = 0, sizeRedundant = 0, fileSize = 0;
 
-            int filesSelected = 0, filesTotal = 0, filesRundancy = 0;
-            long sizeSelected = 0, sizeTotal = 0, sizeRedundant = 0, fileSize = 0;
-            TreeItem rootItem = resultsView.getRoot();
-            List<TreeItem> digests = new ArrayList();
-            digests.addAll(rootItem.getChildren());
-            for (TreeItem digest : digests) {
-                List<TreeItem<FileInformation>> files = new ArrayList();
-                files.addAll(digest.getChildren());
-                filesTotal += files.size();
-                filesRundancy += files.size() - 1;
-                for (TreeItem<FileInformation> item : files) {
-                    FileInformation info = item.getValue();
-                    fileSize = info.getFileSize();
-                    sizeTotal += fileSize;
-                    if (info.isSelected()) {
-                        filesSelected++;
-                        sizeSelected += fileSize;
+                @Override
+                protected boolean handle() {
+                    try {
+                        TreeItem rootItem = filesTreeView.getRoot();
+                        List<TreeItem> digests = new ArrayList();
+                        digests.addAll(rootItem.getChildren());
+                        for (TreeItem digest : digests) {
+                            List<TreeItem<FileInformation>> files = new ArrayList();
+                            files.addAll(digest.getChildren());
+                            filesTotal += files.size();
+                            filesRundancy += files.size() - 1;
+                            for (TreeItem<FileInformation> item : files) {
+                                FileInformation info = item.getValue();
+                                fileSize = info.getFileSize();
+                                if (fileSize > 0) {
+                                    sizeTotal += fileSize;
+                                }
+                                if (info.isSelected()) {
+                                    filesSelected++;
+                                    if (fileSize > 0) {
+                                        sizeSelected += fileSize;
+                                    }
+                                }
+                            }
+                            sizeRedundant += (files.size() - 1) * fileSize;
+                        }
+
+                        return true;
+                    } catch (Exception e) {
+                        error = e.toString();
+                        return false;
                     }
                 }
-                sizeRedundant += (files.size() - 1) * fileSize;
-            }
-            bottomLabel.setText(MessageFormat.format(
-                    message("RedundancyCheckValues"), filesTotal, FileTools.showFileSize(sizeTotal),
-                    filesRundancy, FileTools.showFileSize(sizeRedundant),
-                    filesSelected, FileTools.showFileSize(sizeSelected)));
-            deleteButton.setDisable(filesSelected == 0);
-        } catch (Exception e) {
-            logger.error(e.toString());
+
+                @Override
+                protected void whenSucceeded() {
+                    bottomLabel.setText(MessageFormat.format(message("RedundancyCheckValues"),
+                            filesTotal, FileTools.showFileSize(sizeTotal),
+                            filesRundancy, FileTools.showFileSize(sizeRedundant),
+                            filesSelected, FileTools.showFileSize(sizeSelected)));
+                    deleteButton.setDisable(filesSelected == 0);
+                }
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
         }
     }
 
     // https://stackoverflow.com/questions/29989892/checkboxtreetablecell-select-all-children-under-parent-event
-    public void loadRedundancy(Map<String, List<FileInformation>> redundancy) {
-        this.redundancy = redundancy;
-        if (redundancy == null || redundancy.isEmpty()) {
+    public void loadRedundancy(Map<String, List<FileInformation>> data) {
+        filesTreeView.setRoot(null);
+        if (data == null || data.isEmpty()) {
             popInformation(message("NoRedundancy"));
-        } else {
-            FileInformation rootInfo = new FileInformation();
-            rootInfo.setFileName(message("HandleFilesRedundancy"));
-            rootInfo.setFileType("root");
-            TreeItem<FileInformation> rootItem = new TreeItem(rootInfo);
-            rootItem.setExpanded(true);
-            rootInfo.getSelectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov,
-                        Boolean oldItem, Boolean newItem) {
-                    if (!isSettingValues) {
-                        selectChildren(rootItem, newItem);
-                        checkSelection();
-                    }
-                }
-            });
-            resultsView.setRoot(rootItem);
-
-            for (String digest : redundancy.keySet()) {
-                FileInformation digestInfo = new FileInformation();
-                digestInfo.setFileName(digest);
-                digestInfo.setFileType("digest");
-                TreeItem<FileInformation> digestItem = new TreeItem(digestInfo);
-                digestItem.setExpanded(true);
-
-                List<FileInformation> files = redundancy.get(digest);
-                digestInfo.setFileSize(files.get(0).getFileSize());
-                digestInfo.getSelectedProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue<? extends Boolean> ov,
-                            Boolean oldItem, Boolean newItem) {
-                        if (!isSettingValues) {
-                            selectChildren(digestItem, newItem);
-                            checkSelection();
-                        }
-                    }
-                });
-
-                for (FileInformation file : files) {
-                    File f = file.getFile();
-                    if (f == null || !f.exists() || !f.isFile()) {
-                        continue;
-                    }
-                    digestItem.getChildren().add(new TreeItem(file));
-                    file.getSelectedProperty().addListener(new ChangeListener<Boolean>() {
-                        @Override
-                        public void changed(ObservableValue<? extends Boolean> ov,
-                                Boolean oldItem, Boolean newItem) {
-                            if (!isSettingValues) {
-                                checkSelection();
-                            }
-                        }
-                    });
-                }
-
-                if (digestItem.getChildren().size() > 1) {
-                    rootItem.getChildren().add(digestItem);
-                }
-            }
-
-            checkSelection();
-        }
-
-    }
-
-    protected void selectChildren(TreeItem<FileInformation> item, boolean select) {
-        if (item == null || item.getChildren() == null) {
             return;
         }
-        for (TreeItem<FileInformation> child : item.getChildren()) {
-            child.getValue().setSelected(select);
-            selectChildren(child, select);
+        synchronized (this) {
+            if (task != null) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+
+                private TreeItem<FileInformation> rootItem;
+
+                @Override
+                protected boolean handle() {
+                    try {
+                        redundancy = data;
+                        FileInformation rootInfo = new FileInformation();
+                        rootInfo.setFileName(message("HandleFilesRedundancy"));
+                        rootInfo.setFileType("root");
+                        rootItem = new TreeItem(rootInfo);
+                        rootItem.setExpanded(true);
+
+                        rootInfo.getSelectedProperty().addListener(new ChangeListener<Boolean>() {
+                            @Override
+                            public void changed(ObservableValue<? extends Boolean> ov,
+                                    Boolean oldItem, Boolean newItem) {
+                                if (!isSettingValues) {
+                                    treeItemSelected(rootItem, newItem);
+                                }
+                            }
+                        });
+
+                        for (String digest : redundancy.keySet()) {
+                            FileInformation digestInfo = new FileInformation();
+                            digestInfo.setFileName(digest);
+                            digestInfo.setFileType("digest");
+                            TreeItem<FileInformation> digestItem = new TreeItem(digestInfo);
+                            digestItem.setExpanded(true);
+
+                            List<FileInformation> files = redundancy.get(digest);
+                            digestInfo.setFileSize(files.get(0).getFileSize());
+                            digestInfo.getSelectedProperty().addListener(new ChangeListener<Boolean>() {
+                                @Override
+                                public void changed(ObservableValue<? extends Boolean> ov,
+                                        Boolean oldItem, Boolean newItem) {
+                                    if (!isSettingValues) {
+                                        treeItemSelected(digestItem, newItem);
+                                    }
+                                }
+                            });
+
+                            for (FileInformation file : files) {
+                                File f = file.getFile();
+                                if (f == null || !f.exists() || !f.isFile()) {
+                                    continue;
+                                }
+                                digestItem.getChildren().add(new TreeItem(file));
+                                file.getSelectedProperty().addListener(new ChangeListener<Boolean>() {
+                                    @Override
+                                    public void changed(ObservableValue<? extends Boolean> ov,
+                                            Boolean oldItem, Boolean newItem) {
+                                        if (!isSettingValues) {
+                                            checkSelection();
+                                        }
+                                    }
+                                });
+                            }
+
+                            if (digestItem.getChildren().size() > 1) {
+                                rootItem.getChildren().add(digestItem);
+                            }
+                        }
+
+                        return true;
+                    } catch (Exception e) {
+
+                        error = e.toString();
+                        logger.debug(error);
+                        return false;
+                    }
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    try {
+                        filesTreeView.setRoot(rootItem);
+                        checkSelection();
+                    } catch (Exception e) {
+                        error = e.toString();
+                    }
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
         }
+
     }
 
+    @FXML
     public void exceptFirstAction() {
         isSettingValues = true;
-        TreeItem<FileInformation> rootItem = resultsView.getRoot();
+        TreeItem<FileInformation> rootItem = filesTreeView.getRoot();
         List<TreeItem<FileInformation>> digests = rootItem.getChildren();
         if (digests == null || digests.isEmpty()) {
-            resultsView.setRoot(null);
+            filesTreeView.setRoot(null);
             return;
         }
         rootItem.getValue().setSelected(false);
         for (TreeItem<FileInformation> digest : digests) {
             digest.getValue().setSelected(false);
             List<TreeItem<FileInformation>> files = digest.getChildren();
-            for (int i = 0; i < files.size(); i++) {
-                files.get(i).getValue().setSelected(i > 0);
+            if (files == null || files.isEmpty()) {
+                continue;
+            }
+            files.get(0).getValue().setSelected(false);
+            for (int i = 1; i < files.size(); i++) {
+                files.get(i).getValue().setSelected(true);
             }
         }
+        filesTreeView.refresh();
+        isSettingValues = false;
+        checkSelection();
+
+    }
+
+    @FXML
+    public void exceptLastAction() {
+        isSettingValues = true;
+        TreeItem<FileInformation> rootItem = filesTreeView.getRoot();
+        List<TreeItem<FileInformation>> digests = rootItem.getChildren();
+        if (digests == null || digests.isEmpty()) {
+            filesTreeView.setRoot(null);
+            return;
+        }
+        rootItem.getValue().setSelected(false);
+        for (TreeItem<FileInformation> digest : digests) {
+            digest.getValue().setSelected(false);
+            List<TreeItem<FileInformation>> files = digest.getChildren();
+            if (files == null || files.isEmpty()) {
+                continue;
+            }
+            for (int i = 0; i < files.size() - 1; i++) {
+                files.get(i).getValue().setSelected(true);
+            }
+            files.get(files.size() - 1).getValue().setSelected(false);
+        }
+        filesTreeView.refresh();
         isSettingValues = false;
         checkSelection();
 
@@ -278,7 +265,7 @@ public class FilesRedundancyResultsController extends BaseController {
                 protected boolean handle() {
                     try {
                         deleted = 0;
-                        TreeItem rootItem = resultsView.getRoot();
+                        TreeItem rootItem = filesTreeView.getRoot();
                         List<TreeItem> digests = new ArrayList();
                         digests.addAll(rootItem.getChildren());
                         for (TreeItem digest : digests) {
@@ -308,13 +295,12 @@ public class FilesRedundancyResultsController extends BaseController {
 
                 @Override
                 protected void taskQuit() {
-                    super.taskQuit();
                     bottomLabel.setText(message("TotalDeletedFiles") + ": " + deleted);
-                    TreeItem rootItem = resultsView.getRoot();
+                    TreeItem rootItem = filesTreeView.getRoot();
                     List<TreeItem> digests = new ArrayList();
                     digests.addAll(rootItem.getChildren());
                     if (digests.isEmpty()) {
-                        resultsView.setRoot(null);
+                        filesTreeView.setRoot(null);
                         return;
                     }
                     for (TreeItem digest : digests) {
@@ -331,9 +317,9 @@ public class FilesRedundancyResultsController extends BaseController {
                         }
                     }
                     if (digests.isEmpty()) {
-                        resultsView.setRoot(null);
+                        filesTreeView.setRoot(null);
                     }
-
+                    task = null;
                 }
 
             };

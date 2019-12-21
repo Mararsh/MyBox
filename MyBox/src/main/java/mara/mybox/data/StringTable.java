@@ -65,8 +65,8 @@ public class StringTable {
         return tableHtml(this);
     }
 
-    public void display() {
-        display(this);
+    public void editHtml() {
+        HtmlTools.editHtml(tableHtml(this));
     }
 
     /*
@@ -139,9 +139,6 @@ public class StringTable {
         return s.toString();
     }
 
-    public static void display(StringTable table) {
-        HtmlTools.displayHtml(tableHtml(table));
-    }
 
     /*
         get/set

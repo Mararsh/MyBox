@@ -61,7 +61,7 @@ import mara.mybox.tools.FloatTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonImageValues;
+import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -147,7 +147,7 @@ public class ChromaticityDiagramController extends BaseController {
         AddFileType = VisitHistory.FileType.Text;
         AddPathType = VisitHistory.FileType.Text;
 
-        sourceExtensionFilter = CommonImageValues.TxtExtensionFilter;
+        sourceExtensionFilter = CommonFxValues.TxtExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
     }
 
@@ -490,7 +490,7 @@ public class ChromaticityDiagramController extends BaseController {
     @FXML
     @Override
     public void showPalette(ActionEvent event) {
-        showPalette(paletteButton, message("DrawChromaticityDiagram"), true);
+        showPalette(paletteButton, message("DrawChromaticityDiagram"));
     }
 
     @Override
@@ -1203,7 +1203,8 @@ public class ChromaticityDiagramController extends BaseController {
             double[] LCHuv = CIEColorSpace.LuvtoLCHuv(cieLuv);
             values.add(new ColorValue("LCH(uv)", "D50", LCHuv));
 
-            double[] hsb = {pColor.getHue(), pColor.getSaturation(), pColor.getBrightness()};
+            double[] hsb = {pColor.getHue(), pColor.getSaturation(),
+                pColor.getBrightness()};
             values.add(new ColorValue("HSB", "D65", hsb));
 
             values.add(new ColorValue("sRGB", "D65 sRGB_Gamma", srgb, 255));
@@ -1255,7 +1256,7 @@ public class ChromaticityDiagramController extends BaseController {
     @Override
     public void saveAction() {
         final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
-                "ChromaticityDiagram", CommonImageValues.ImageExtensionFilter, true);
+                "ChromaticityDiagram", CommonFxValues.ImageExtensionFilter, true);
         if (file == null) {
             return;
         }
@@ -1293,7 +1294,7 @@ public class ChromaticityDiagramController extends BaseController {
 
     public void exportAction(String filename, TextArea textArea) {
         final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
-                filename, CommonImageValues.TxtExtensionFilter, true);
+                filename, CommonFxValues.TxtExtensionFilter, true);
         if (file == null) {
             return;
         }

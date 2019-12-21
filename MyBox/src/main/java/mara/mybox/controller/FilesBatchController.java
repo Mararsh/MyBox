@@ -8,6 +8,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import mara.mybox.data.FileInformation;
 import mara.mybox.tools.DateTools;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -92,7 +93,7 @@ public class FilesBatchController extends BatchController<FileInformation> {
                 });
             }
         } catch (Exception e) {
-
+            logger.debug(e.toString());
         }
     }
 

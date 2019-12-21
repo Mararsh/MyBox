@@ -37,7 +37,7 @@ License:    Apache License Version 2.0
                         </ToolBar>
                         <ToolBar fx:id="imageBar" HBox.hgrow="NEVER">
                             <items>
-                                <Button fx:id="newWindowButton" mnemonicParsing="false" onAction="#newWindow">
+                                <Button fx:id="openWindowButton" mnemonicParsing="false" onAction="#newWindow">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -116,16 +116,16 @@ License:    Apache License Version 2.0
                                                 <HBox alignment="CENTER_LEFT" spacing="5.0">
                                                     <children>
                                                         <Label text="%Background" />
-                                          <Rectangle fx:id="bgRect" fill="#ffffff00" height="15.0" stroke="BLACK" strokeMiterLimit="0.0" strokeType="INSIDE" width="15.0" />
-                                          <Button fx:id="paletteButton" mnemonicParsing="false" onAction="#showPalette">
-                                             <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../buttons/iconPalette.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </graphic>
-                                          </Button>
+                                                        <Rectangle fx:id="bgRect" fill="#ffffff00" height="15.0" stroke="BLACK" strokeMiterLimit="0.0" strokeType="INSIDE" width="15.0" />
+                                                        <Button fx:id="paletteButton" mnemonicParsing="false" onAction="#showPalette">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/iconPalette.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
                                                     </children>
                                                 </HBox>
                                                 <HBox alignment="CENTER_LEFT" spacing="10.0">

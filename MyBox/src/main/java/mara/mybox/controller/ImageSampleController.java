@@ -23,7 +23,6 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -225,11 +224,11 @@ public class ImageSampleController extends ImageViewerController {
                 @Override
                 protected void whenSucceeded() {
                     popSuccessul();
-                    if (openSaveCheck.isSelected()) {
-                        final ImageViewerController controller
-                                = (ImageViewerController) openStage(CommonValues.ImageViewerFxml);
-                        controller.loadImage(filename);
-                    }
+//                    if (openSaveCheck.isSelected()) {
+//                        final ImageViewerController controller
+//                                = (ImageViewerController) openStage(CommonValues.ImageViewerFxml);
+//                        controller.loadImage(filename);
+//                    }
                 }
 
             };

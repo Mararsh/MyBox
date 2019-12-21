@@ -38,7 +38,7 @@ public class TableSRGB extends DerbyBase {
         if (value == null || value.trim().isEmpty()) {
             return null;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbName() + login);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
             String sql = " SELECT * FROM SRGB WHERE color_value='" + value + "'";
             statement.setMaxRows(1);
@@ -59,7 +59,7 @@ public class TableSRGB extends DerbyBase {
 
     public static List<SRGB> readPalette() {
         List<SRGB> palette = new ArrayList();
-        try ( Connection conn = DriverManager.getConnection(protocol + dbName() + login);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
             String sql = " SELECT * FROM SRGB WHERE palette_index >= 0 ORDER BY palette_index";
             ResultSet results = statement.executeQuery(sql);
@@ -90,7 +90,7 @@ public class TableSRGB extends DerbyBase {
     }
 
     public static boolean updatePalette(List<String> colors) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbName() + login);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
             conn.setAutoCommit(false);
             String sql = "UPDATE SRGB SET palette_index= -1";
@@ -129,7 +129,7 @@ public class TableSRGB extends DerbyBase {
         if (display == null) {
             return setName(value, name);
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbName() + login);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
             String sql = " SELECT * FROM SRGB WHERE color_value='" + value + "'";
             statement.setMaxRows(1);
@@ -156,7 +156,7 @@ public class TableSRGB extends DerbyBase {
                 || name == null || name.trim().isEmpty()) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbName() + login);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
             String sql = " SELECT * FROM SRGB WHERE color_value='" + value + "'";
             statement.setMaxRows(1);
@@ -181,7 +181,7 @@ public class TableSRGB extends DerbyBase {
                 || display == null || display.trim().isEmpty()) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbName() + login);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
             String sql = " SELECT * FROM SRGB WHERE color_value='" + value + "'";
             statement.setMaxRows(1);
@@ -206,7 +206,7 @@ public class TableSRGB extends DerbyBase {
             return false;
         }
         value = value.trim();
-        try ( Connection conn = DriverManager.getConnection(protocol + dbName() + login);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
             String sql = " SELECT * FROM SRGB WHERE color_value='" + value + "'";
             statement.setMaxRows(1);
@@ -225,7 +225,7 @@ public class TableSRGB extends DerbyBase {
     }
 
     public static boolean clearPalette() {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbName() + login);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
             String sql = "UPDATE SRGB SET palette_index= -1";
             statement.executeUpdate(sql);
@@ -237,7 +237,7 @@ public class TableSRGB extends DerbyBase {
     }
 
     public static boolean delete(String value) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbName() + login);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
             String sql = "DELETE FROM SRGB WHERE color_value='" + value + "'";
             statement.executeUpdate(sql);

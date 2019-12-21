@@ -137,6 +137,7 @@ public class FileTools {
         return file;
     }
 
+    // Notice to avoid this situation: filename itself does not include "." while its path include "."
     public static String appendName(String filename, String inStr) {
         if (filename == null) {
             return null;
@@ -563,7 +564,7 @@ public class FileTools {
         return dir.delete();
     }
 
-    public static long[] countDirectorySize(File dir) {
+    public static long[] countDirectorySize(File dir, boolean countSubdir) {
         long[] size = new long[2];
         try {
             if (dir == null) {
@@ -579,9 +580,16 @@ public class FileTools {
                 size[1] = 0;
                 if (files != null) {
                     for (File file : files) {
-                        long[] fsize = countDirectorySize(file);
-                        size[0] += fsize[0];
-                        size[1] += fsize[1];
+                        if (file.isFile()) {
+                            size[0]++;
+                            size[1] += file.length();
+                        } else if (file.isDirectory()) {
+                            if (countSubdir) {
+                                long[] fsize = countDirectorySize(file, countSubdir);
+                                size[0] += fsize[0];
+                                size[1] += fsize[1];
+                            }
+                        }
                     }
                 }
             }

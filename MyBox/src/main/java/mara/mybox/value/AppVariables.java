@@ -7,9 +7,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.TimeZone;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import javafx.scene.paint.Color;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSocketFactory;
 import mara.mybox.controller.AlarmClockController;
 import mara.mybox.db.TableSystemConf;
 import mara.mybox.db.TableUserConf;
@@ -50,6 +54,8 @@ public class AppVariables {
             ImagePopCooridnate, disableHiDPI;
     public static ControlStyle.ColorStyle ControlColor;
     public static String lastError;
+    public static SSLSocketFactory defaultSSLSocketFactory;
+    public static HostnameVerifier defaultHostnameVerifier;
 
     public AppVariables() {
     }
@@ -70,6 +76,10 @@ public class AppVariables {
             ImagePopCooridnate = AppVariables.getUserConfigBoolean("ImagePopCooridnate", false);
             disableHiDPI = false;
             lastError = null;
+            if (defaultSSLSocketFactory == null) {
+                defaultSSLSocketFactory = HttpsURLConnection.getDefaultSSLSocketFactory();
+                defaultHostnameVerifier = HttpsURLConnection.getDefaultHostnameVerifier();
+            }
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -149,6 +159,18 @@ public class AppVariables {
 //            logger.debug(e.toString());
             return thestr;
         }
+    }
+
+    public static TimeZone getTimeZone() {
+        return TimeZone.getDefault();
+//        String lang = getLanguage();
+//        switch (lang.toLowerCase()) {
+//            case "zh":
+//                return CommonValues.zoneZhCN;
+//            case "en":
+//            default:
+//                return CommonValues.zoneUTC;
+//        }
     }
 
     public static boolean setOpenStageInNewWindow(boolean value) {

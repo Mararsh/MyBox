@@ -3,7 +3,6 @@ package mara.mybox.controller;
 import java.io.File;
 import java.util.Iterator;
 import mara.mybox.image.file.ImageFileWriters;
-import mara.mybox.image.file.ImageJpeg2000File;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
@@ -46,9 +45,6 @@ public class PdfExtractImagesBatchController extends PdfBatchController {
                     String namePrefix = FileTools.getFilePrefix(currentParameters.currentSourceFile.getName())
                             + "_page" + currentParameters.currentPage + "_index" + index;
                     String suffix = pdxObject.getSuffix();
-                    if (ImageJpeg2000File.isJpeg2000(suffix)) {
-                        suffix = "jpg";
-                    }
                     File tFile = makeTargetFile(namePrefix, "." + suffix, currentParameters.currentTargetPath);
                     ImageFileWriters.writeImageFile(pdxObject.getImage(), suffix, tFile.getAbsolutePath());
                     actualParameters.finalTargetName = tFile.getAbsolutePath();

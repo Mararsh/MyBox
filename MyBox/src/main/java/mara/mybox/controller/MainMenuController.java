@@ -1065,6 +1065,56 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
+    private void openWebBrowser(ActionEvent event) {
+        loadScene(CommonValues.WebBrowserFxml);
+    }
+
+    @FXML
+    private void openMediaPlayer(ActionEvent event) {
+        loadScene(CommonValues.MediaPlayerFxml);
+    }
+
+    @FXML
+    private void openMediaList(ActionEvent event) {
+        loadScene(CommonValues.MediaListFxml);
+    }
+
+    @FXML
+    private void openFFmpegMergeImages(ActionEvent event) {
+        loadScene(CommonValues.FFmpegMergeImagesFxml);
+    }
+
+    @FXML
+    private void openFFmpegMergeImageFiles(ActionEvent event) {
+        loadScene(CommonValues.FFmpegMergeImageFilesFxml);
+    }
+
+    @FXML
+    private void openFFmpegInformation(ActionEvent event) {
+        loadScene(CommonValues.FFmpegInformationFxml);
+    }
+
+    @FXML
+    private void openFFmpegProbeMediaInformation(ActionEvent event) {
+        loadScene(CommonValues.FFmpegProbeMediaInformationFxml);
+    }
+
+    @FXML
+    private void openFFmpegConvertMediaFiles(ActionEvent event) {
+        loadScene(CommonValues.FFmpegConvertMediaFilesFxml);
+    }
+
+    @FXML
+    private void openFFmpegConvertMediaStreams(ActionEvent event) {
+        loadScene(CommonValues.FFmpegConvertMediaStreamsFxml);
+    }
+
+    @FXML
+    private void openSecurityCertificates(ActionEvent event) {
+        loadScene(CommonValues.SecurityCertificatesFxml);
+    }
+
+    @FXML
     private void showAbout(ActionEvent event) {
         openStage(CommonValues.AboutFxml);
     }
@@ -1089,7 +1139,7 @@ public class MainMenuController extends BaseController {
     @FXML
     public void developerGuide(ActionEvent event) {
         try {
-            String link = "https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-UserGuide-2.0"
+            String link = "https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-DevGuide-2.0"
                     + "-" + AppVariables.getLanguage() + ".pdf";
             browseURI(new URI(link));
         } catch (Exception e) {

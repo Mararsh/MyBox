@@ -31,7 +31,7 @@ License:    Apache License Version 2.0
                     <tabs>
                         <Tab fx:id="markdownTab" closable="false" text="Markdown">
                             <content>
-                                <SplitPane fx:id="editorSplitPane" dividerPositions="0.3" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                <SplitPane fx:id="splitPane" dividerPositions="0.3" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                     <items>
                                         <ScrollPane fx:id="leftPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefViewportHeight="1646.0" prefViewportWidth="527.0">
                                             <content>

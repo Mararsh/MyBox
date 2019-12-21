@@ -320,7 +320,7 @@ public class ImagesBlendController extends ImageViewerController {
                         }
                         foreImage = SwingFXUtils.toFXImage(bufferImage, null);
                         foreInfo = ImageFileReaders.readImageFileMetaData(fileName).getImageInformation();
-                        if (task == null || isCancelled()) {
+                        if (foreInfo == null || task == null || isCancelled()) {
                             return false;
                         }
                         foreInfo.setImage(foreImage);
@@ -457,7 +457,7 @@ public class ImagesBlendController extends ImageViewerController {
                         }
                         backImage = SwingFXUtils.toFXImage(bufferImage, null);
                         backInfo = ImageFileReaders.readImageFileMetaData(fileName).getImageInformation();
-                        if (task == null || isCancelled()) {
+                        if (backInfo == null || task == null || isCancelled()) {
                             return false;
                         }
                         backInfo.setImage(backImage);

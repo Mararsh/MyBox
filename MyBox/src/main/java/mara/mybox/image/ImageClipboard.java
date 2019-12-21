@@ -35,7 +35,7 @@ public class ImageClipboard {
     protected ImageFileInformation info;
 
     public String size() {
-        if (info == null) {
+        if (info == null || info.getImageInformation() == null) {
             return "";
         }
         return info.getImageInformation().getPixelsString();

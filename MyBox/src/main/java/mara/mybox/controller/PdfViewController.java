@@ -21,6 +21,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
@@ -38,6 +39,7 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
+import javafx.stage.Stage;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.data.VisitHistory;
@@ -51,7 +53,7 @@ import mara.mybox.tools.PdfTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonImageValues;
+import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.Tesseract;
@@ -90,7 +92,7 @@ public class PdfViewController extends ImageViewerController {
     @FXML
     protected CheckBox transparentBackgroundCheck, bookmarksCheck, thumbCheck;
     @FXML
-    protected SplitPane viewPane;
+    protected SplitPane mainPane;
     @FXML
     protected ScrollPane thumbScrollPane, outlineScrollPane;
     @FXML
@@ -119,8 +121,8 @@ public class PdfViewController extends ImageViewerController {
         sourcePathKey = "PdfFilePath";
         TipsLabelKey = "PdfViewTips";
 
-        sourceExtensionFilter = CommonImageValues.PdfExtensionFilter;
-        targetExtensionFilter = sourceExtensionFilter;
+        sourceExtensionFilter = CommonFxValues.PdfExtensionFilter;
+        targetExtensionFilter = CommonFxValues.ImageExtensionFilter;
     }
 
     @Override
@@ -207,49 +209,83 @@ public class PdfViewController extends ImageViewerController {
     }
 
     @Override
-    public void initializeNext2() {
+    public void initializeNext() {
         try {
-            operation1Box.disableProperty().bind(Bindings.not(infoLoaded));
+            initFilePane();
+            initViewPane();
+            initSaveAsPane();
+            initOperationBox();
+            initMainPane();
+            initImageView();
+            initMaskPane();
+            initRulersCheck();
 
-            transparentBackgroundCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    isTransparent = transparentBackgroundCheck.isSelected();
-                    loadPage();
-                }
-            });
-            FxmlControl.setTooltip(transparentBackgroundCheck, new Tooltip(AppVariables.message("OnlyForTexts")));
+            initializeNext2();
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
 
-            dpiBox.getItems().addAll(Arrays.asList("96", "72", "120", "160", "240", "300", "400", "600"));
-            dpiBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    if (isSettingValues) {
-                        return;
+    @Override
+    protected void initViewPane() {
+        try {
+            if (viewPane != null && imageView != null) {
+                viewPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
+            }
+            if (transparentBackgroundCheck != null) {
+                transparentBackgroundCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        isTransparent = transparentBackgroundCheck.isSelected();
+                        loadPage();
                     }
-                    try {
-                        int v = Integer.valueOf(newValue);
-                        if (v > 0) {
-                            dpi = v;
-                            loadPage();
-                            FxmlControl.setEditorNormal(dpiBox);
-                        } else {
+                });
+                FxmlControl.setTooltip(transparentBackgroundCheck, new Tooltip(AppVariables.message("OnlyForTexts")));
+            }
+
+            if (dpiBox != null) {
+                dpiBox.getItems().addAll(Arrays.asList("96", "72", "120", "160", "240", "300", "400", "600"));
+                dpiBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue ov, String oldValue, String newValue) {
+                        if (isSettingValues) {
+                            return;
+                        }
+                        try {
+                            int v = Integer.valueOf(newValue);
+                            if (v > 0) {
+                                dpi = v;
+                                loadPage();
+                                FxmlControl.setEditorNormal(dpiBox);
+                            } else {
+                                FxmlControl.setEditorBadStyle(dpiBox);
+                            }
+
+                        } catch (Exception e) {
                             FxmlControl.setEditorBadStyle(dpiBox);
                         }
-
-                    } catch (Exception e) {
-                        FxmlControl.setEditorBadStyle(dpiBox);
                     }
-                }
-            });
-            dpiBox.getSelectionModel().select(0);
+                });
+                dpiBox.getSelectionModel().select(0);
+            }
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    protected void initMainPane() {
+        try {
+            if (imageView != null) {
+                mainPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
+            }
 
             scrollPane.addEventHandler(ScrollEvent.SCROLL, new EventHandler<ScrollEvent>() {
                 @Override
                 public void handle(ScrollEvent event) {
                     double deltaY = event.getDeltaY();
                     if (event.isControlDown()) {
-//                        event.consume();                      
+//                        event.consume();
 //                        logger.debug(event.isConsumed());
 //                        if (deltaY > 0) {
 //                            zoomIn();
@@ -274,10 +310,6 @@ public class PdfViewController extends ImageViewerController {
 
                 }
             });
-
-            viewPane.disableProperty().bind(
-                    Bindings.isNull(imageView.imageProperty())
-            );
 
             tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
                 @Override
@@ -380,38 +412,19 @@ public class PdfViewController extends ImageViewerController {
         controller.tabPane.getSelectionModel().select(controller.ocrTab);
     }
 
-    @Override
-    public void moreAction() {
-        if (moreButton == null || contentBox == null) {
-            return;
-        }
-        if (moreButton.isSelected()) {
-            if (!contentBox.getChildren().contains(operation2Box)) {
-                contentBox.getChildren().add(1, operation2Box);
-            }
-
-        } else {
-            if (contentBox.getChildren().contains(operation2Box)) {
-                contentBox.getChildren().remove(operation2Box);
-            }
-
-        }
-        FxmlControl.refreshStyle(contentBox);
-    }
-
     protected void checkOutline() {
         if (!infoLoaded.get()) {
             return;
         }
         if (bookmarksCheck.isSelected()) {
-            if (!viewPane.getItems().contains(outlineScrollPane)) {
-                viewPane.getItems().add(viewPane.getItems().size() - 1, outlineScrollPane);
+            if (!mainPane.getItems().contains(outlineScrollPane)) {
+                mainPane.getItems().add(mainPane.getItems().size() - 1, outlineScrollPane);
             }
             loadOutline();
 
         } else {
-            if (viewPane.getItems().contains(outlineScrollPane)) {
-                viewPane.getItems().remove(outlineScrollPane);
+            if (mainPane.getItems().contains(outlineScrollPane)) {
+                mainPane.getItems().remove(outlineScrollPane);
             }
         }
         adjustSplitPane();
@@ -423,37 +436,36 @@ public class PdfViewController extends ImageViewerController {
             return;
         }
         if (thumbCheck.isSelected()) {
-            if (!viewPane.getItems().contains(thumbScrollPane)) {
-                viewPane.getItems().add(0, thumbScrollPane);
+            if (!mainPane.getItems().contains(thumbScrollPane)) {
+                mainPane.getItems().add(0, thumbScrollPane);
             }
             loadThumbs();
 
         } else {
-            if (viewPane.getItems().contains(thumbScrollPane)) {
-                viewPane.getItems().remove(thumbScrollPane);
+            if (mainPane.getItems().contains(thumbScrollPane)) {
+                mainPane.getItems().remove(thumbScrollPane);
             }
         }
         adjustSplitPane();
 
     }
 
-    @Override
     protected void adjustSplitPane() {
         try {
-            int size = viewPane.getItems().size();
+            int size = mainPane.getItems().size();
             switch (size) {
                 case 1:
-                    viewPane.setDividerPositions(1);
+                    mainPane.setDividerPositions(1);
                     break;
                 case 2:
-                    viewPane.setDividerPosition(0, 0.3);
+                    mainPane.setDividerPosition(0, 0.3);
                     break;
                 case 3:
-                    viewPane.setDividerPosition(0, 0.2);
-                    viewPane.setDividerPosition(1, 0.5);
+                    mainPane.setDividerPosition(0, 0.2);
+                    mainPane.setDividerPosition(1, 0.5);
                     break;
             }
-            viewPane.layout();
+            mainPane.layout();
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -541,6 +553,9 @@ public class PdfViewController extends ImageViewerController {
                             public void run() {
                                 TextInputDialog dialog = new TextInputDialog();
                                 dialog.setContentText(AppVariables.message("Password"));
+                                Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
+                                stage.setAlwaysOnTop(true);
+                                stage.toFront();
                                 Optional<String> result = dialog.showAndWait();
                                 if (result.isPresent()) {
                                     loadInformation(result.get());
@@ -979,19 +994,17 @@ public class PdfViewController extends ImageViewerController {
         setSizeBox();
     }
 
-    @FXML
-    @Override
-    public void saveAction() {
-        saveAsAction();
-    }
-
     @Override
     public String saveAsPrefix() {
+        String name = "";
         if (sourceFile != null) {
-            return FileTools.getFilePrefix(sourceFile.getName()) + "_p" + (currentPage + 1);
-        } else {
-            return "";
+            name = FileTools.getFilePrefix(sourceFile.getName()) + "_p" + (currentPage + 1);
         }
+        if (fileTypeGroup != null) {
+            name += "." + ((RadioButton) fileTypeGroup.getSelectedToggle()).getText();
+        }
+        return name;
+
     }
 
     @FXML
@@ -1045,7 +1058,7 @@ public class PdfViewController extends ImageViewerController {
             }
             String name = saveAsPrefix();
             final File file = chooseSaveFile(AppVariables.getUserConfigPath("TextFilePath"),
-                    name, CommonImageValues.TextExtensionFilter, true);
+                    name, CommonFxValues.TextExtensionFilter, true);
             if (file == null) {
                 return;
             }

@@ -40,7 +40,7 @@ License:    Apache License Version 2.0
                                                         <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
                                                             <children>
                                                                 <Label text="%WeiboAddress" />
-                                                <ComboBox fx:id="addressBox" editable="true" maxWidth="1.7976931348623157E308" visibleRowCount="15" HBox.hgrow="ALWAYS" />
+                                                                <ComboBox fx:id="addressBox" editable="true" maxWidth="1.7976931348623157E308" visibleRowCount="15" HBox.hgrow="ALWAYS" />
                                                                 <ImageView fx:id="weiboTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                     <image>
                                                                         <Image url="@../buttons/iconTips.png" />
@@ -93,6 +93,11 @@ License:    Apache License Version 2.0
                                                                 </CheckBox>
                                                             </children>
                                                         </HBox>
+                                          <CheckBox fx:id="bypassSSLCheck" mnemonicParsing="false" text="%WeiboBypassSSL" VBox.vgrow="NEVER">
+                                             <VBox.margin>
+                                                <Insets top="10.0" />
+                                             </VBox.margin>
+                                          </CheckBox>
                                                     </children>
                                                     <padding>
                                                         <Insets top="10.0" />
@@ -153,16 +158,16 @@ License:    Apache License Version 2.0
                                                                 <CheckBox fx:id="ditherCheck" mnemonicParsing="false" text="%Dithering" />
                                                             </children>
                                                         </HBox>
-                                          <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                             <children>
-                                                <Label text="%SnapInterval">
-                                                   <HBox.margin>
-                                                      <Insets />
-                                                   </HBox.margin>
-                                                </Label>
-                                                <TextField fx:id="snapIntervalInput" prefWidth="80.0" />
-                                             </children>
-                                          </HBox>
+                                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                                            <children>
+                                                                <Label text="%SnapInterval">
+                                                                    <HBox.margin>
+                                                                        <Insets />
+                                                                    </HBox.margin>
+                                                                </Label>
+                                                                <TextField fx:id="snapIntervalInput" prefWidth="80.0" />
+                                                            </children>
+                                                        </HBox>
                                                     </children>
                                                     <padding>
                                                         <Insets top="10.0" />
@@ -262,13 +267,13 @@ License:    Apache License Version 2.0
                                                 </VBox>
                                             </content>
                                         </Tab>
-                              <Tab text="%NetworkOptions">
-                                 <content>
-                                    <VBox spacing="10.0">
-                                       <padding>
-                                          <Insets top="10.0" />
-                                       </padding>
-                                       <children>
+                                        <Tab text="%NetworkOptions">
+                                            <content>
+                                                <VBox spacing="10.0">
+                                                    <padding>
+                                                        <Insets top="10.0" />
+                                                    </padding>
+                                                    <children>
                                                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                                                             <children>
                                                                 <Label text="%FailedRetryTimes">
@@ -277,35 +282,23 @@ License:    Apache License Version 2.0
                                                                     </HBox.margin>
                                                                 </Label>
                                                                 <ComboBox fx:id="retryBox" prefWidth="80.0" />
-                                                <Label text="%MinAccessInterval">
-                                                   <HBox.margin>
-                                                      <Insets left="30.0" />
-                                                   </HBox.margin>
-                                                </Label>
-                                                <TextField fx:id="accessIntervalInput" prefWidth="80.0" />
-                                                <Label text="%MinAccessIntervalComments" />
                                                             </children>
                                                         </HBox>
-                                          <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="20.0" spacing="10.0">
+                                                        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="20.0" spacing="10.0">
                                              <children>
-                                                <Label text="%PassportAddress" />
-                                                <TextField fx:id="passportInput" maxWidth="1.7976931348623157E308" text="https://passport.weibo.com/visitor/visitor?entry=miniblog" HBox.hgrow="ALWAYS" />
-                                                <Button fx:id="recoverPassportButton" mnemonicParsing="false" onAction="#recoverPassport" onMouseEntered="#popTargetPath">
-                                                   <graphic>
-                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../buttons/iconRecover.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                   </graphic>
-                                                </Button>
+                                                                <Label text="%MinAccessInterval">
+                                                                    <HBox.margin>
+                                                                        <Insets />
+                                                                    </HBox.margin>
+                                                                </Label>
+                                                                <TextField fx:id="accessIntervalInput" prefWidth="80.0" />
+                                                                <Label text="%MinAccessIntervalComments" />
                                              </children>
-                                          </HBox>
-                                          <Label text="%WeiboPassportComments" />
-                                       </children>
-                                    </VBox>
-                                 </content>
-                              </Tab>
+                                                        </HBox>
+                                                    </children>
+                                                </VBox>
+                                            </content>
+                                        </Tab>
                                     </tabs>
                                     <VBox.margin>
                                         <Insets />

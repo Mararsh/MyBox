@@ -37,6 +37,8 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
@@ -59,6 +61,7 @@ import javafx.stage.Stage;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.data.VisitHistory.FileType;
 import mara.mybox.db.DerbyBase;
+import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlStage;
@@ -72,7 +75,7 @@ import static mara.mybox.value.AppVariables.getUserConfigValue;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import static mara.mybox.value.AppVariables.setUserConfigValue;
-import mara.mybox.value.CommonImageValues;
+import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -99,6 +102,7 @@ public class BaseController implements Initializable {
     protected MaximizedListener maximizedListener;
     protected FullscreenListener fullscreenListener;
     protected String targetFileType, targetNameAppend;
+    protected ChangeListener<Number> leftDividerListener, rightDividerListener;
 
     protected boolean isSettingValues;
     protected File sourceFile, sourcePath, targetPath, targetFile;
@@ -132,7 +136,7 @@ public class BaseController implements Initializable {
             deleteButton, saveButton, infoButton, metaButton, selectAllButton, setButton,
             okButton, startButton, firstButton, lastButton, previousButton, nextButton, goButton, previewButton,
             cropButton, saveAsButton, recoverButton, renameButton, tipsButton, viewButton, popButton, refButton,
-            undoButton, redoButton, transparentButton, whiteButton, blackButton;
+            undoButton, redoButton, transparentButton, whiteButton, blackButton, playButton, stopButton;
     @FXML
     protected VBox paraBox;
     @FXML
@@ -144,13 +148,19 @@ public class BaseController implements Initializable {
     @FXML
     protected Hyperlink regexLink;
     @FXML
-    protected CheckBox topCheck;
+    protected CheckBox topCheck, saveCloseCheck;
     @FXML
     protected ToggleGroup targetExistGroup, fileTypeGroup;
     @FXML
     protected RadioButton targetReplaceRadio, targetRenameRadio, targetSkipRadio;
     @FXML
     protected TextField targetAppendInput;
+    @FXML
+    protected SplitPane splitPane;
+    @FXML
+    protected ScrollPane leftPane, rightPane;
+    @FXML
+    protected ImageView leftPaneControl, rightPaneControl;
 
     public BaseController() {
         baseTitle = AppVariables.message("AppTitle");
@@ -169,7 +179,7 @@ public class BaseController implements Initializable {
         defaultPathKey = null;
         SaveAsOptionsKey = "SaveAsOptionsKey";
 
-        sourceExtensionFilter = CommonImageValues.AllExtensionFilter;
+        sourceExtensionFilter = CommonFxValues.AllExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
     }
 
@@ -356,12 +366,22 @@ public class BaseController implements Initializable {
                 topCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        if (myStage != null) {
+                        if (getMyStage() != null) {
                             myStage.setAlwaysOnTop(topCheck.isSelected());
                         }
                         AppVariables.setUserConfigValue(baseName + "Top", newValue);
                     }
                 });
+            }
+
+            if (saveCloseCheck != null) {
+                saveCloseCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
+                        AppVariables.setUserConfigValue(baseName + "SaveClose", saveCloseCheck.isSelected());
+                    }
+                });
+                saveCloseCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "SaveClose", false));
             }
 
             if (targetExistGroup != null) {
@@ -461,6 +481,9 @@ public class BaseController implements Initializable {
             if (myStage.getY() < 0) {
                 myStage.setY(0);
             }
+
+            initSplitPanes();
+
             refreshStyle();
 
             toFront();
@@ -486,7 +509,7 @@ public class BaseController implements Initializable {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
-                        myStage.toFront();
+                        getMyStage().toFront();
                         if (topCheck != null) {
                             topCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "Top", true));
                             myStage.setAlwaysOnTop(topCheck.isSelected());
@@ -496,6 +519,162 @@ public class BaseController implements Initializable {
                 });
             }
         }, 1000);
+    }
+
+    public void initSplitPanes() {
+        try {
+            if (splitPane == null) {
+                return;
+            }
+            if (leftPane != null && rightPane == null) {
+                try {
+                    String lv = AppVariables.getUserConfigValue(baseName + "LeftPanePosition", "0.35");
+                    splitPane.setDividerPositions(Double.parseDouble(lv));
+                } catch (Exception e) {
+                    splitPane.setDividerPositions(0.35);
+                }
+                leftDividerListener = new ChangeListener<Number>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                        if (!isSettingValues) {
+                            if (splitPane.getItems().contains(leftPane)) {
+                                AppVariables.setUserConfigValue(baseName + "LeftPanePosition", newValue.doubleValue() + "");
+                            }
+                        }
+                    }
+                };
+                splitPane.getDividers().get(0).positionProperty().addListener(leftDividerListener);
+
+            } else if (leftPane == null && rightPane != null) {
+                try {
+                    String rv = AppVariables.getUserConfigValue(baseName + "RightPanePosition", "0.65");
+                    splitPane.setDividerPositions(Double.parseDouble(rv));
+                } catch (Exception e) {
+                    splitPane.setDividerPositions(0.65);
+                }
+                rightDividerListener = new ChangeListener<Number>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                        if (!isSettingValues) {
+                            AppVariables.setUserConfigValue(baseName + "RightPanePosition", newValue.doubleValue() + "");
+                        }
+                    }
+                };
+                splitPane.getDividers().get(0).positionProperty().addListener(rightDividerListener);
+
+            } else if (leftPane != null && rightPane != null) {
+                try {
+                    String lv = AppVariables.getUserConfigValue(baseName + "LeftPanePosition", "0.15");
+                    String rv = AppVariables.getUserConfigValue(baseName + "RightPanePosition", "0.85");
+                    splitPane.setDividerPositions(Double.parseDouble(lv), Double.parseDouble(rv));
+                } catch (Exception e) {
+                    splitPane.setDividerPositions(0.15, 0.85);
+                }
+                leftDividerListener = new ChangeListener<Number>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                        if (!isSettingValues) {
+                            if (splitPane.getItems().contains(leftPane)) {
+                                AppVariables.setUserConfigValue(baseName + "LeftPanePosition", newValue.doubleValue() + "");
+                            } else {
+                                AppVariables.setUserConfigValue(baseName + "RightPanePosition", newValue.doubleValue() + "");
+                            }
+                        }
+                    }
+                };
+                rightDividerListener = new ChangeListener<Number>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                        if (!isSettingValues) {
+                            AppVariables.setUserConfigValue(baseName + "RightPanePosition", newValue.doubleValue() + "");
+                        }
+                    }
+                };
+                splitPane.getDividers().get(0).positionProperty().addListener(leftDividerListener);
+                splitPane.getDividers().get(1).positionProperty().addListener(rightDividerListener);
+            }
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    @FXML
+    public void controlLeftPane() {
+        if (splitPane == null || leftPane == null || leftPaneControl == null) {
+            return;
+        }
+        isSettingValues = true;
+        if (splitPane.getItems().contains(leftPane)) {
+            double[] positions = splitPane.getDividerPositions();
+            splitPane.getItems().remove(leftPane);
+            ControlStyle.setIcon(leftPaneControl, ControlStyle.getIcon("iconDoubleRight.png"));
+            if (positions.length == 2) {
+                splitPane.setDividerPosition(0, positions[1]);
+            }
+        } else {
+            splitPane.getItems().add(0, leftPane);
+            try {
+                String v = AppVariables.getUserConfigValue(baseName + "LeftPanePosition", "0.15");
+                splitPane.setDividerPosition(0, Double.parseDouble(v));
+            } catch (Exception e) {
+                splitPane.setDividerPosition(0, 0.15);
+            }
+            ControlStyle.setIcon(leftPaneControl, ControlStyle.getIcon("iconDoubleLeft.png"));
+        }
+        splitPane.applyCss();
+        if (splitPane.getDividers().size() == 1) {
+            splitPane.getDividers().get(0).positionProperty().removeListener(leftDividerListener);
+            splitPane.getDividers().get(0).positionProperty().addListener(leftDividerListener);
+
+        } else if (splitPane.getDividers().size() == 2) {
+            splitPane.getDividers().get(0).positionProperty().removeListener(leftDividerListener);
+            splitPane.getDividers().get(0).positionProperty().addListener(leftDividerListener);
+            splitPane.getDividers().get(1).positionProperty().removeListener(rightDividerListener);
+            splitPane.getDividers().get(1).positionProperty().addListener(rightDividerListener);
+        }
+        isSettingValues = false;
+    }
+
+    @FXML
+    public void controlRightPane() {
+        if (splitPane == null || rightPane == null || rightPaneControl == null) {
+            return;
+        }
+        isSettingValues = true;
+        if (splitPane.getItems().contains(rightPane)) {
+            double[] positions = splitPane.getDividerPositions();
+            splitPane.getItems().remove(rightPane);
+            ControlStyle.setIcon(rightPaneControl, ControlStyle.getIcon("iconDoubleLeft.png"));
+            if (positions.length == 2) {
+                splitPane.setDividerPosition(0, positions[0]);
+            }
+        } else {
+            splitPane.getItems().add(rightPane);
+            try {
+                String v = AppVariables.getUserConfigValue(baseName + "RightPanePosition", "0.85");
+                splitPane.setDividerPosition(splitPane.getItems().size() - 2, Double.parseDouble(v));
+            } catch (Exception e) {
+                splitPane.setDividerPosition(splitPane.getItems().size() - 2, 0.85);
+            }
+            ControlStyle.setIcon(rightPaneControl, ControlStyle.getIcon("iconDoubleRight.png"));
+        }
+        splitPane.applyCss();
+        if (splitPane.getDividers().size() == 1) {
+            if (leftDividerListener != null) {
+                splitPane.getDividers().get(0).positionProperty().removeListener(leftDividerListener);
+                splitPane.getDividers().get(0).positionProperty().addListener(leftDividerListener);
+            } else if (rightDividerListener != null) {
+                splitPane.getDividers().get(0).positionProperty().removeListener(rightDividerListener);
+                splitPane.getDividers().get(0).positionProperty().addListener(rightDividerListener);
+            }
+        } else if (splitPane.getDividers().size() == 2) {
+            splitPane.getDividers().get(0).positionProperty().removeListener(leftDividerListener);
+            splitPane.getDividers().get(0).positionProperty().addListener(leftDividerListener);
+            splitPane.getDividers().get(1).positionProperty().removeListener(rightDividerListener);
+            splitPane.getDividers().get(1).positionProperty().addListener(rightDividerListener);
+        }
+        isSettingValues = false;
     }
 
     public class FullscreenListener implements ChangeListener<Boolean> {
@@ -508,7 +687,7 @@ public class BaseController implements Initializable {
 
         @Override
         public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
-            AppVariables.setUserConfigValue(prefix + "FullScreen", myStage.isFullScreen());
+            AppVariables.setUserConfigValue(prefix + "FullScreen", getMyStage().isFullScreen());
         }
     }
 
@@ -522,7 +701,7 @@ public class BaseController implements Initializable {
 
         @Override
         public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
-            AppVariables.setUserConfigValue(prefix + "Maximized", myStage.isMaximized());
+            AppVariables.setUserConfigValue(prefix + "Maximized", getMyStage().isMaximized());
         }
     }
 
@@ -645,7 +824,6 @@ public class BaseController implements Initializable {
     }
 
     public void keyEventsHandlerDo(KeyEvent event) {
-//        logger.debug(event.getCode() + " " + event.getText());
         if (event.isControlDown()) {
             controlHandler(event);
 
@@ -653,7 +831,8 @@ public class BaseController implements Initializable {
             altHandler(event);
 
         } else if (event.getCode() != null) {
-            keyHandler(event.getCode());
+            keyHandler(event);
+
         }
     }
 
@@ -876,7 +1055,11 @@ public class BaseController implements Initializable {
 
     }
 
-    public void keyHandler(KeyCode code) {
+    public void keyHandler(KeyEvent event) {
+        KeyCode code = event.getCode();
+        if (code == null) {
+            return;
+        }
         switch (code) {
             case DELETE:
                 if (deleteButton != null && !deleteButton.isDisabled()) {
@@ -901,6 +1084,8 @@ public class BaseController implements Initializable {
                     okAction();
                 } else if (setButton != null && !setButton.isDisabled()) {
                     setAction();
+                } else if (playButton != null && !playButton.isDisabled()) {
+                    playAction();
                 }
                 break;
             case F2:
@@ -912,7 +1097,6 @@ public class BaseController implements Initializable {
                 if (recoverButton != null && !recoverButton.isDisabled()) {
                     recoverAction();
                 }
-
                 break;
             case F4:
                 closeStage();
@@ -934,8 +1118,21 @@ public class BaseController implements Initializable {
                 if (cancelButton != null && !cancelButton.isDisabled()) {
                     cancelAction();
                 }
+//                else if (stopButton != null && !stopButton.isDisabled()) {
+//                    stopAction();
+//                }
                 break;
         }
+
+//        String text = event.getText();
+//        if (text == null || text.isEmpty()) {
+//            return;
+//        }
+//        switch (text) {
+//            case "e":
+//            case "E":
+//
+//        }
     }
 
     public void initializeNext() {
@@ -1058,7 +1255,7 @@ public class BaseController implements Initializable {
                 fileChooser.setInitialDirectory(path);
             }
             fileChooser.getExtensionFilters().addAll(sourceExtensionFilter);
-            File file = fileChooser.showOpenDialog(myStage);
+            File file = fileChooser.showOpenDialog(getMyStage());
             if (file == null || !file.exists()) {
                 return;
             }
@@ -1201,7 +1398,7 @@ public class BaseController implements Initializable {
             if (path != null) {
                 chooser.setInitialDirectory(path);
             }
-            File directory = chooser.showDialog(myStage);
+            File directory = chooser.showDialog(getMyStage());
             if (directory == null) {
                 return;
             }
@@ -1785,6 +1982,16 @@ public class BaseController implements Initializable {
     }
 
     @FXML
+    public void playAction() {
+
+    }
+
+    @FXML
+    public void stopAction() {
+
+    }
+
+    @FXML
     public void createAction() {
 
     }
@@ -1847,6 +2054,11 @@ public class BaseController implements Initializable {
     @FXML
     public void cancelAction() {
 
+    }
+
+    @FXML
+    public void closeAction() {
+        closeStage();
     }
 
     @FXML
@@ -1995,7 +2207,7 @@ public class BaseController implements Initializable {
             if (!leavingScene()) {
                 return null;
             }
-            return FxmlStage.openScene(myStage, newFxml);
+            return FxmlStage.openScene(getMyStage(), newFxml);
         } catch (Exception e) {
             logger.error(e.toString());
             return null;
@@ -2031,10 +2243,10 @@ public class BaseController implements Initializable {
             }
 
             if (maximizedListener != null) {
-                myStage.maximizedProperty().removeListener(maximizedListener);
+                getMyStage().maximizedProperty().removeListener(maximizedListener);
             }
             if (fullscreenListener != null) {
-                myStage.fullScreenProperty().removeListener(fullscreenListener);
+                getMyStage().fullScreenProperty().removeListener(fullscreenListener);
             }
 
             hidePopup();
@@ -2044,7 +2256,7 @@ public class BaseController implements Initializable {
             }
             if (task != null && task.isRunning()) {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle(myStage.getTitle());
+                alert.setTitle(getMyStage().getTitle());
                 alert.setContentText(AppVariables.message("TaskRunning"));
                 alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
                 Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
@@ -2139,15 +2351,15 @@ public class BaseController implements Initializable {
     }
 
     public void alertError(String information) {
-        FxmlStage.alertError(myStage, information);
+        FxmlStage.alertError(getMyStage(), information);
     }
 
     public void alertWarning(String information) {
-        FxmlStage.alertError(myStage, information);
+        FxmlStage.alertError(getMyStage(), information);
     }
 
     public void alertInformation(String information) {
-        FxmlStage.alertInformation(myStage, information);
+        FxmlStage.alertInformation(getMyStage(), information);
     }
 
     public Popup getPopup() {
@@ -2199,7 +2411,7 @@ public class BaseController implements Initializable {
             if (attach != null) {
                 FxmlControl.locateUp(attach, popup);
             } else {
-                popup.show(myStage);
+                popup.show(getMyStage());
             }
         } catch (Exception e) {
 
@@ -2276,7 +2488,7 @@ public class BaseController implements Initializable {
     public LoadingController openHandlingStage(Modality block, String info) {
         try {
             final LoadingController controller
-                    = FxmlStage.openLoadingStage(myStage, block, info);
+                    = FxmlStage.openLoadingStage(getMyStage(), block, info);
             return controller;
         } catch (Exception e) {
             logger.error(e.toString());
@@ -2291,7 +2503,7 @@ public class BaseController implements Initializable {
     public LoadingController openHandlingStage(final Task<?> task, Modality block, String info) {
         try {
             final LoadingController controller
-                    = FxmlStage.openLoadingStage(myStage, block, task, info);
+                    = FxmlStage.openLoadingStage(getMyStage(), block, task, info);
 
             controller.parentController = myController;
 
@@ -2480,16 +2692,18 @@ public class BaseController implements Initializable {
         @Override
         protected void succeeded() {
             super.succeeded();
-            taskQuit();
+            taskQuit();  // Must run this here, to release task in case that later actions will start new task
             cost = new Date().getTime() - startTime;
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
                     if (ok) {
                         whenSucceeded();
+
                     } else {
                         whenFailed();
                     }
+                    finalAction();
                 }
             });
 
@@ -2511,16 +2725,22 @@ public class BaseController implements Initializable {
         protected void failed() {
             super.failed();
             taskQuit();
+            finalAction();
         }
 
         @Override
         protected void cancelled() {
             super.cancelled();
             taskQuit();
+            finalAction();
         }
 
         protected void taskQuit() {
-            task = null;
+            task = null;    // Notice: This must be done in each task!!
+        }
+
+        protected void finalAction() {
+
         }
 
     };
@@ -2574,20 +2794,6 @@ public class BaseController implements Initializable {
             return;
         }
         FxmlStage.openImageMetaData(null, info);
-    }
-
-    public static void showImageStatistic(ImageInformation info) {
-        if (info == null) {
-            return;
-        }
-        FxmlStage.openImageStatistic(null, info);
-    }
-
-    public static void showImageStatistic(Image image) {
-        if (image == null) {
-            return;
-        }
-        FxmlStage.openImageStatistic(null, image);
     }
 
     /*

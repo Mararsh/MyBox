@@ -123,7 +123,7 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-                <CheckBox fx:id="tableThumbCheck" selected="true" mnemonicParsing="false" >
+                <CheckBox fx:id="tableThumbCheck" mnemonicParsing="false" selected="true">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
@@ -136,6 +136,7 @@ License:    Apache License Version 2.0
         </ToolBar>
         <TableView fx:id="tableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
             <columns>
+            <TableColumn fx:id="tableIndexColumn" editable="false" maxWidth="1.7976931348623157E308" prefWidth="60.0" text="%Item" />
                 <TableColumn fx:id="imageColumn" editable="false" prefWidth="120.0" text="%SourceImage" />
                 <TableColumn fx:id="pixelsColumn" editable="false" prefWidth="120.0" text="%Pixels" />
                 <TableColumn fx:id="colorSpaceColumn" editable="false" prefWidth="100.0" text="%ColorSpace" />

@@ -138,16 +138,22 @@ public class MyBox {
 //            System.setProperty("sun.java2d.uiScale", "1.0");
             System.setProperty("prism.allowhidpi", "true".equals(ConfigTools.readConfigValue("DisableHidpi")) ? "false" : "true");
 
-//            System.setProperty("jdk.tls.client.protocols", "TLSv1");
             // https://blog.csdn.net/iteye_3493/article/details/82060349
             // https://stackoverflow.com/questions/1004327/getting-rid-of-derby-log/1933310#1933310
             System.setProperty("derby.stream.error.file", AppVariables.MyboxDataPath
                     + File.separator + "mybox_derby" + File.separator + "derby.log");
 
-//            System.setProperty("javax.net.debug", "all");
-//            System.setProperty("javax.net.ssl.trustStore", "D:\\Programs\\Java\\jdk12.0.1\\lib\\security\\cacerts");
-//            System.setProperty("java.net.ssl.trustStorePassword", "changeit");
-//            System.setProperty("com.sun.security.enableAIAcaIssuers", "true");
+            System.setProperty("javax.net.ssl.trustStore", SystemTools.keystore());
+            System.setProperty("javax.net.ssl.trustStorePassword", SystemTools.keystorePassword());
+            System.setProperty("javax.net.ssl.keyStore", SystemTools.keystore());
+            System.setProperty("javax.net.ssl.keyStorePassword", SystemTools.keystorePassword());
+//            System.setProperty("jdk.tls.client.protocols", "TLSv1.2");
+//            System.setProperty("https.protocols", "TLSv1.2");
+            System.setProperty("com.sun.security.enableAIAcaIssuers", "true");
+            System.setProperty("sun.net.http.allowRestrictedHeaders", "true");
+//            System.setProperty("javax.net.debug", "ssl,record, plaintext, handshake,session,trustmanager,sslctx");
+//            System.setProperty("javax.net.debug", "ssl,handshake,session,trustmanager,sslctx");
+
         } catch (Exception e) {
             logger.error(e.toString());
         }

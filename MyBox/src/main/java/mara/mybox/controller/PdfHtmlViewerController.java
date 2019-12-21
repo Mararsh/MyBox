@@ -22,14 +22,14 @@ import mara.mybox.data.PdfInformation;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.tools.FileTools;
-import thridparty.PDFResourceToDirHandler;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonImageValues;
+import mara.mybox.value.CommonFxValues;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.fit.pdfdom.PDFDomTreeConfig;
 import org.fit.pdfdom.PDFDomTree;
+import org.fit.pdfdom.PDFDomTreeConfig;
+import thridparty.PDFResourceToDirHandler;
 
 /**
  * @Author Mara
@@ -66,8 +66,8 @@ public class PdfHtmlViewerController extends PdfViewController {
         sourcePathKey = "PdfFilePath";
         targetPathKey = "HtmlFilePath";
 
-        sourceExtensionFilter = CommonImageValues.PdfExtensionFilter;
-        targetExtensionFilter = CommonImageValues.HtmlExtensionFilter;
+        sourceExtensionFilter = CommonFxValues.PdfExtensionFilter;
+        targetExtensionFilter = CommonFxValues.HtmlExtensionFilter;
 
         checkBottomScript
                 = " function checkBottom() { "
@@ -92,13 +92,33 @@ public class PdfHtmlViewerController extends PdfViewController {
     }
 
     @Override
-    public void initializeNext2() {
+    public void initializeNext() {
         try {
+            initOperationBox();
+            initMainPane();
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    @Override
+    public void initOperationBox() {
+        try {
+            operationBox.disableProperty().bind(Bindings.not(infoLoaded));
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    @Override
+    public void initMainPane() {
+        try {
+            mainPane.disableProperty().bind(Bindings.not(infoLoaded));
+
             domConfig = PDFDomTreeConfig.createDefaultConfig();
             zoomScale = 1.0f;
-
-            operationBox.disableProperty().bind(Bindings.not(infoLoaded));
-            viewPane.disableProperty().bind(Bindings.not(infoLoaded));
 
             webView.setContextMenuEnabled(true);
             // https://stackoverflow.com/questions/51048312/javafx-webview-scrollevent-listener-zooms-in-and-scrolls-only-want-it-to-zoom-i?r=SearchResults
@@ -239,14 +259,14 @@ public class PdfHtmlViewerController extends PdfViewController {
                     subPath.mkdirs();
                     domConfig.setFontHandler(new PDFResourceToDirHandler(subPath));
                     domConfig.setImageHandler(new PDFResourceToDirHandler(subPath));
-                    try (PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage)) {
+                    try ( PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage)) {
                         PDFDomTree parser = new PDFDomTree(domConfig);
                         parser.setStartPage(currentPage + 1);
                         parser.setEndPage(currentPage + 1);
                         parser.setPageStart(title);
 //                    logger.debug(parser.getSpacingTolerance());
 //                    parser.setSpacingTolerance(0f);
-                        try (Writer output = new PrintWriter(htmlFile, "utf-8")) {
+                        try ( Writer output = new PrintWriter(htmlFile, "utf-8")) {
                             try {
                                 parser.writeText(doc, output);
                             } catch (Exception e) {

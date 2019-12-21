@@ -13,7 +13,6 @@ import javafx.fxml.FXML;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
@@ -75,8 +74,6 @@ public class ColorPaletteController extends BaseController {
     @FXML
     protected Label sizeLabel, promptLabel, titleLabel;
     @FXML
-    protected CheckBox saveCloseCheck;
-    @FXML
     protected Button htmlButton;
     @FXML
     protected TextField nameInput;
@@ -88,15 +85,9 @@ public class ColorPaletteController extends BaseController {
     @Override
     public void initControls() {
         try {
-            shadowEffect = new DropShadow();
+            super.initControls();
 
-            saveCloseCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                    AppVariables.setUserConfigValue("ColorPaletteSaveClose", saveCloseCheck.isSelected());
-                }
-            });
-            saveCloseCheck.setSelected(AppVariables.getUserConfigBoolean("ColorPaletteSaveClose", false));
+            shadowEffect = new DropShadow();
 
             colorsBox.getChildren().addListener(new ListChangeListener<Node>() {
                 @Override
@@ -458,7 +449,7 @@ public class ColorPaletteController extends BaseController {
                 ));
                 table.add(row);
             }
-            table.display();
+            table.editHtml();
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -473,11 +464,6 @@ public class ColorPaletteController extends BaseController {
             enteredRect.setHeight(15);
             enteredRect = null;
         }
-    }
-
-    @FXML
-    public void closeAction() {
-        this.closeStage();
     }
 
     @Override

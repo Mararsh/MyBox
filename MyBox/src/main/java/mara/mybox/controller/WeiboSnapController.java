@@ -23,6 +23,7 @@ import mara.mybox.db.TableStringValues;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DateTools;
+import mara.mybox.tools.NetworkTools;
 import mara.mybox.tools.PdfTools.PdfImageFormat;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.getUserConfigValue;
@@ -61,12 +62,13 @@ public class WeiboSnapController extends BaseController {
     @FXML
     private TextField startMonthInput, endMonthInput, startPageInput, accessIntervalInput,
             snapIntervalInput, customWidthInput, customHeightInput, authorInput, thresholdInput,
-            headerInput, passportInput;
+            headerInput;
     @FXML
     private Button wowButton, recoverPassportButton;
     @FXML
     private CheckBox pdfCheck, htmlCheck, pixCheck, keepPageCheck, miaoCheck, ditherCheck,
-            expandCommentsCheck, expandPicturesCheck, openPathCheck, closeWindowCheck;
+            expandCommentsCheck, expandPicturesCheck, openPathCheck, closeWindowCheck,
+            bypassSSLCheck;
     @FXML
     private RadioButton imageSizeRadio, monthsPathsRadio, pngRadio,
             pdfMem500MRadio, pdfMem1GRadio, pdfMem2GRadio, pdfMemUnlimitRadio;
@@ -219,6 +221,24 @@ public class WeiboSnapController extends BaseController {
             }
         });
         expandPicturesCheck.setSelected(AppVariables.getUserConfigBoolean(WeiboExpandPicturesKey));
+
+        bypassSSLCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue ov, Boolean oldv, Boolean newv) {
+                AppVariables.setUserConfigValue("SSLBypassAll", newv);
+                if (newv) {
+                    NetworkTools.trustAll();
+                } else {
+                    NetworkTools.myBoxSSL();
+                }
+            }
+        });
+        bypassSSLCheck.setSelected(AppVariables.getUserConfigBoolean("SSLBypassAll", false));
+        if (bypassSSLCheck.isSelected()) {
+            NetworkTools.trustAll();
+        } else {
+            NetworkTools.myBoxSSL();
+        }
 
     }
 
@@ -737,26 +757,6 @@ public class WeiboSnapController extends BaseController {
         });
         accessIntervalInput.setText(AppVariables.getUserConfigInt("WeiBoAccessInterval", 2000) + "");
 
-        passportInput.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable,
-                    String oldValue, String newValue) {
-                if (newValue == null || !newValue.startsWith("https://")) {
-                    passportInput.setStyle(badStyle);
-                    return;
-                }
-                passportInput.setStyle(null);
-                AppVariables.setUserConfigValue("WeiboPassportAddress", newValue);
-            }
-        });
-        passportInput.setText(AppVariables.getUserConfigValue("WeiboPassportAddress",
-                "https://passport.weibo.com/visitor/visitor?entry=miniblog"));
-
-    }
-
-    @FXML
-    protected void recoverPassport() {
-        passportInput.setText("https://passport.weibo.com/visitor/visitor?entry=miniblog");
     }
 
     private void checkTargetFiles() {
@@ -856,6 +856,7 @@ public class WeiboSnapController extends BaseController {
                 .or(addressBox.getSelectionModel().selectedItemProperty().isNull())
                 .or(widthBox.getEditor().styleProperty().isEqualTo(badStyle))
                 .or(pdfCheck.styleProperty().isEqualTo(badStyle))
+        //                .or(bypassSSLCheck.selectedProperty().not())
         );
 
 //        wowButton.disableProperty().bind(startButton.disableProperty());
@@ -1011,6 +1012,7 @@ public class WeiboSnapController extends BaseController {
             parameters.setDithering(ditherCheck.isSelected());
             parameters.setUseTempFiles(true);
             parameters.setSnapInterval(snapInterval);
+            parameters.setBypassSSL(bypassSSLCheck.isSelected());
             return parameters;
         } catch (Exception e) {
             parameters = null;

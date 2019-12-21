@@ -27,7 +27,7 @@ License:    Apache License Version 2.0
     <center>
         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" BorderPane.alignment="CENTER">
             <children>
-                <TreeTableView fx:id="resultsView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                <TreeTableView fx:id="filesTreeView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                     <columns>
                         <TreeTableColumn fx:id="fileColumn" editable="false" prefWidth="300.0" text="%File" />
                         <TreeTableColumn fx:id="selectedColumn" minWidth="-1.0" prefWidth="100.0" text="%Select" />
@@ -48,7 +48,8 @@ License:    Apache License Version 2.0
                      </HBox.margin>
                         </RadioButton>
                         <RadioButton fx:id="deleteRadio" mnemonicParsing="false" text="%DeleteDirectly" toggleGroup="$deleteType" />
-                        <Button fx:id="exceptButton" mnemonicParsing="false" onAction="#exceptFirstAction" text="%SelectAllExceptFirst" />
+                  <Button fx:id="exceptLastButton" layoutX="1004.0" layoutY="13.0" mnemonicParsing="false" onAction="#exceptLastAction" text="%ExceptLast" />
+                        <Button fx:id="exceptFirstButton" mnemonicParsing="false" onAction="#exceptFirstAction" text="%ExceptFirst" />
                         <Button fx:id="deleteButton" disable="true" mnemonicParsing="false" onAction="#deleteAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Delete" HBox.hgrow="NEVER" />
                     </children>
                 </HBox>

@@ -11,28 +11,28 @@ Self-contain packages include all files and need not java env and installation. 
  
 | Platform | Link | Size | Launcher |    
 | --- | --- | ---  | ---  |    
-| win | [MyBox-5.8-win.zip](https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-5.8-win-exe.zip)  | 183MB | MyBox.exe |       
-| linux | [MyBox-5.8-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-5.8-linux.tar.gz)  | 190MB  | bin/MyBox  |     
-| mac | [MyBox-5.8-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-5.8-mac.dmg)  | 193MB  |  MyBox-5.8.app   |  
+| win | [MyBox-5.9-win.zip](https://github.com/Mararsh/MyBox/releases/download/v5.9/MyBox-5.9-win-exe.zip)  | 241MB | MyBox.exe |       
+| linux | [MyBox-5.9-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v5.9/MyBox-5.9-linux.tar.gz)  | 200MB  | bin/MyBox  |     
+| mac | [MyBox-5.9-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v5.9/MyBox-5.9-mac.dmg)  | 202MB  |  MyBox-5.9.app   |   
 
 User can double click the launcher to start MyBox or run it by command line. The default "Open Method" of image/text/PDF files can be associated to MyBox and a file can be opened directly by MyBox by double clicking the file's name.
 (File with name including non-ascii can not be opened by double clicking currently)
 
 ### Jar 
-When JRE or JDK 12 or higher(`Oracle jdk` or `open jdk`) is installed, jar can run:    
+When JRE or JDK 13 or higher(`Oracle jdk` or `open jdk`) is installed, jar can run:    
   
 | Platform | Link | Size | Requirements |   
 | --- | --- | ---  | ---  |    
-| win | [MyBox-5.8-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-5.8-win-jar.zip)  | 118MB | Java 13.0.1 or higher |    
-| linux | [MyBox-5.8-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-5.8-linux-jar.zip)  | 125MB  | Java 13.0.1 or higher |    
-| mac | [MyBox-5.8-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-5.8-mac-jar.zip)  |  121MB  | Java 13.0.1 or higher |    
+| win | [MyBox-5.9-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.9/MyBox-5.9-win-jar.zip)  | 128MB | Java 13.0.1 or higher |    
+| linux | [MyBox-5.9-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.9/MyBox-5.9-linux-jar.zip)  | 134MB  | Java 13.0.1 or higher |    
+| mac | [MyBox-5.9-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.9/MyBox-5.9-mac-jar.zip)  |  131MB  | Java 13.0.1 or higher |    
  
     
 Run following command to launch this program with Jar package: 
-<PRE><CODE>     java   -jar   MyBox-5.8.jar</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-5.9.jar</CODE></PRE>
 	
 A file path can follow the command as argument to be opened directly by MyBox. Example, following command will open the image:    
-<PRE><CODE>     java   -jar   MyBox-5.8.jar   /tmp/a1.jpg</CODE></PRE>   
+<PRE><CODE>     java   -jar   MyBox-5.9.jar   /tmp/a1.jpg</CODE></PRE>   
 
 ### Other addresses to download   
 Download from cloud storage: https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F   
@@ -62,16 +62,16 @@ sourceforge: https://sourceforge.net/projects/mara-mybox/files/
 
 
 # Documents
-| Name | Version | Link |
-| --- | --- | --- |   
-| User Guide - Overview |  5.0 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-Overview-en.pdf) |
-| User Guide - Image Tools | 5.0 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-ImageTools-en.pdf) |
-| User Guide - PDF Tools | 5.0 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-PdfTools-en.pdf) |
-| User Guide - Desktop Tools | 5.0 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-DesktopTools-en.pdf) |
-| User Guide - Network Tools | 5.0 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-NetworkTools-en.pdf) |
-| Development Guide | 2.0 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-DevGuide-2.0-en.pdf) |
-| Shortcuts | 1.0 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts_en.html) |
-| Development Logs |  | [html](#devLog) |
+| Name | Version | Time | Link |
+| --- | --- | --- |  --- |  
+| User Guide - Overview | 5.0 | 2019-4-19 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-Overview-en.pdf) |
+| User Guide - Image Tools | 5.0 | 2019-4-18 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-ImageTools-en.pdf) |
+| User Guide - PDF Tools | 5.0 | 2019-4-20 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-PdfTools-en.pdf) |
+| User Guide - Desktop Tools | 5.0 | 2019-4-16 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-DesktopTools-en.pdf) |
+| User Guide - Network Tools | 5.0 | 2019-4-16 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-NetworkTools-en.pdf) |
+| Development Guide | 2.0 | 2019-11-18 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-DevGuide-2.0-en.pdf) |
+| Shortcuts | 5.9 | 2019-12-21 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts_en.html) |
+| Development Logs | 5.9 | 2019-12-21 | [html](#devLog) |
 
 # Implementation
 
@@ -103,10 +103,13 @@ MyBox is based on following open sources softwares:
 | flexmark-java | Convert Markdown | https://github.com/vsch/flexmark-java |   
 | commons-compress | archive/compress | https://commons.apache.org/proper/commons-compress |   
 | XZ for Java | archive/compress | https://tukaani.org/xz/java.html |   
- 
+| jaffree | warp ffmpeg | https://github.com/kokorin/Jaffree |   
+| ffmpeg| convert/create medias | http://ffmpeg.org |   
+| image4j | decode ico format | https://github.com/imcdonagh/image4j |   
+
  
 # Current Version
-Current version is 5.8. Its features are mentioned below in summary:   
+Current version is 5.9. Its features are mentioned below in summary:   
  
 * [Cross platforms](#Cross-platform)
 * [Internationalized](#Internationalized)
@@ -138,8 +141,14 @@ Current version is 5.8. Its features are mentioned below in summary:
     - [Check Redundant Files](#filesRedundancy)
     - [Others](#fileOthers)
 * [Media Tools](#MediaTools)
+    - [Play Videos/Audios](#mediaPlayer)
+    - [Manage Playlists](#mediaList)
+    - [Warp ffmpeg functions](#ffmpeg)
+    - [Others](#mediaOthers)
 * [Network Tools](#netTools)
     - [Edit Html](#htmlEditor)
+    - [Web Browser](#webBrowser)
+    - [Security Certificates](#securityCerificates)
     - [Edit Markdown](#markdownEditor)
     - [Conversion between html and Markdown](#htmlMarkdownConversion)
     - [Snap WeiBo](#weiboSnap)
@@ -409,7 +418,7 @@ Currently MyBox supports Chinese and English. To support a new language is just 
 
 ### Message Digest<a id="messageDigest" />
 1. Create digest for files or inputted texts.     
-2. Support MD5/SHA1/SHA256.    
+2. Support MD2, MD5, SHA-1, SHA-224, SHA-256, SHA-384, SHA-512/224, SHA-512/256, SHA3-224, SHA3-256, SHA3-384, SHA3-512.    
 
 
 ## File Tools <a id="fileTools"></a>     
@@ -481,6 +490,38 @@ Currently MyBox supports Chinese and English. To support a new language is just 
 6. When operate in batch, select files by extension, file name, file size, or modified time. Regular expression is supported.
 
 ## Media Tools <a id="MediaTools"></a>     
+
+### Play Videos/Audios<a id="mediaPlayer" />
+1. Create/load playlist
+2. Options:  auto-play,  display milliseconds, loop number, random order
+3. Set: volumn, speed(0~8 times)
+4. Buttons: Play, Pause, Stop, Next, Previous, Media-info, Mute, Full-screen
+5. When full screen, display controls in short duration by clicking screen, and quit full-screen by ESC
+6. Support muxer format: aiff, mp3, mp4, wav, hls(m3u8), video codec: h.264/avc, audio codec: aac, mp3, pcm
+    If video does not sound, this is due to unsupported audio codec.
+    Known issue: MyBox may quit when play some media stream.
+7. Sounds of GuaiGuai and BenBen
+8. This tool need not ffmpeg.  But libavcodec and libavformat are required on Linux, and refer to:       
+https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations-1506746.html
+
+### Manage Playlist <a id="mediaList" />
+1. Create/Delete/Update playlists.
+2. Add/Delete items in playlists.
+3. Read medias information, including duration, audio encoding, and video encoding.   
+
+### Wrap Functions of ffmpeg<a id="ffmpeg" />
+1. Convert videos/audios in batch - Files/DIrectories
+2. Convert videos/audios in batch - Streams and medias information
+3. Merge images and audios as video - Files/DIrectories
+4. Merge images and audios as video - images information
+5. When convert/merge medias, all parameters can be selected/set, including format, codec, subtitle, frame rate, sample rate, change volumn, etc.
+6. When merge images as video, duration can be set for each image, or set to all images. Option "End video when audios finish".
+7. When merge images as video, images are adjusted automatically to fit for screen size meanwhile keep width-height ratio.
+8. Read media information like format, audio stream, video stream, frames, packets,  pixel formats by ffprobe.
+9. Read information of ffmpeg, like version, supported formats/codecs/filters, and query with customized parameters.
+Notice: This set of functions is based on ffmpeg, and user need download ffmpeg by yourself. (Suggest to use static version)
+
+### Others<a id="mediaOthers" />
 1. Monitor images in system clipboard and have user save/view them. Lossless or compression type can be selected.
 2. Alarm clocks, including options of time and music. Support rings of “Meow”, wav files, and mp3. Can run in background.
 
@@ -492,6 +533,19 @@ Currently MyBox supports Chinese and English. To support a new language is just 
 2. Edit Html codes directly. (Support FrameSet)
 3. Web browser to view contents of Editors or load the online page. Support history browsing, font zooming 、and snapshoting of the whole page as an image or a PDF file.
 4. Convert to Markdown synchronously。
+
+### Web Browser<a id="webBrowser" />
+1. Display pages in multiple tabs
+2. Manage visiting histories
+3. Install SSL certificates of websites online
+4. Ignore SSL verification of websites which meet troubles, or of all websites. (Can cause security risks)
+
+### Manage Security Cerificates <a id="securityCerificates" />
+1. Read certificates in any keystore/truststore, and export as html file.
+2. Add/Read cerificates in any CA files.
+3. Download and install cerificates of any websites.
+4. Delete certifcates in keystore/truststore.
+5. Backup keystore/truststore automatically when update.   
 
 ### Edit Markdown<a id="markdownEditor" />
 1. Provide buttons to help inputting formats.
@@ -514,6 +568,7 @@ Currently MyBox supports Chinese and English. To support a new language is just 
 7. Display progress information in time.
 8. Stop the progress at any time. The interrupted month will be record and input as start month for next execution.
 9. Set the retry times of failure.
+Notice: Connections to Weibo servers are always blocked recently.
 
 ## Settings <a id="settings"></a>     
 1. Whether restore last size of each scene. Whether open new stage to display scene. Whether pop recent visited files/directories.
@@ -571,6 +626,15 @@ Developers need notice: JavaFx screen is not same as physical screen and has dif
 
 
 # Development Logs <a id="devLog"></a>     
+2019-12-21 v5.9  Web browser which supports multiple tabs. Its histories can be manages and SSL certifcates of websites can be installed online.      
+Read certificates in any keystore/truststore and export as html file.  Add certificates from CA files or by download directly from websites.     
+Play videos/audios with options like auto-play, displaying millionseconds, loop number, random order, volumn, speed,  mute, full-screen, etc. Sounds from GuaiGuai and BenBen. Manage playlists.     
+Wrap functions of ffmpeg, like convert videos/audios in batch, merge images and audios as video,  read media/ffmpeg information.     
+Message Digest has 12 algorithms now.     
+Solved problems:  Updates should be submitted automatically when table cell loses focus; Concurrent exception popped when check files redanduncy;  Interface is frozen when add folder which holds lots of 
+files; Fail to unarchive 7z in batch; Unknown files' size in zip.   
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.9)      
+
 
 2019-11-18 v5.8  Upgrade to jdk13+javafx13+derby15.    
 Derby database can be switched between network mode and embedded mode. Notice:  Starting/Stopping Derby network mode under some env is very slow.    
@@ -830,23 +894,23 @@ This tool might fail to work when weibo would change the accessing channel of pa
 
 # Main Interface
 
-![About](https://mararsh.github.io/MyBox/1-en.jpg)
+![Snapshot 1](https://mararsh.github.io/MyBox/1-en.jpg)
 
-![About](https://mararsh.github.io/MyBox/2-en.jpg)
+![Snapshot 2](https://mararsh.github.io/MyBox/2-en.jpg)
 
-![About](https://mararsh.github.io/MyBox/3-en.jpg)
+![Snapshot 3](https://mararsh.github.io/MyBox/3-en.jpg)
 
-![About](https://mararsh.github.io/MyBox/4-en.jpg)
+![Snapshot 4](https://mararsh.github.io/MyBox/4-en.jpg)
 
-![About](https://mararsh.github.io/MyBox/5-en.jpg)
+![Snapshot 5](https://mararsh.github.io/MyBox/5-en.jpg)
 
-![About](https://mararsh.github.io/MyBox/6-en.jpg)
+![Snapshot 6](https://mararsh.github.io/MyBox/6-en.jpg)
 
-![About](https://mararsh.github.io/MyBox/7-en.jpg)
+![Snapshot 7](https://mararsh.github.io/MyBox/7-en.jpg)
 
-![About](https://mararsh.github.io/MyBox/8-en.jpg)
+![Snapshot 8](https://mararsh.github.io/MyBox/8-en.jpg)
 
-![About](https://mararsh.github.io/MyBox/9-en.jpg)
+![Snapshot 9](https://mararsh.github.io/MyBox/9-en.jpg)
 
 
 

@@ -751,6 +751,14 @@ public class MyBoxController extends BaseController {
             }
         });
 
+        MenuItem webBrowserHtml = new MenuItem(AppVariables.message("WebBrowser"));
+        webBrowserHtml.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.WebBrowserFxml);
+            }
+        });
+
         MenuItem htmlToMarkdown = new MenuItem(AppVariables.message("HtmlToMarkdown"));
         htmlToMarkdown.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -758,11 +766,20 @@ public class MyBoxController extends BaseController {
                 loadScene(CommonValues.HtmlToMarkdownFxml);
             }
         });
+
+        MenuItem SecurityCertificates = new MenuItem(AppVariables.message("SecurityCertificates"));
+        SecurityCertificates.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.SecurityCertificatesFxml);
+            }
+        });
+
         popMenu = new ContextMenu();
         popMenu.setAutoHide(true);
         popMenu.getItems().addAll(
-                htmlEditor, markdownEditor,
-                htmlToMarkdown, markdownToHtml, new SeparatorMenuItem(),
+                htmlEditor, webBrowserHtml, SecurityCertificates, new SeparatorMenuItem(),
+                markdownEditor, htmlToMarkdown, markdownToHtml, new SeparatorMenuItem(),
                 weiboSnap
         );
         showMenu(networkBox, event);
@@ -1014,13 +1031,17 @@ public class MyBoxController extends BaseController {
                     public void run() {
                         try {
                             String ret = DerbyBase.startDerby();
-                            popInformation(ret, 6000);
+                            if (ret != null) {
+                                popInformation(ret, 6000);
+                                isSettingValues = true;
+                                derbyServer.setSelected("client".equals(DerbyBase.mode));
+                                isSettingValues = false;
+                            } else {
+                                popFailed();
+                            }
                         } catch (Exception e) {
                             logger.debug(e.toString());
                         }
-                        isSettingValues = true;
-                        derbyServer.setSelected("client".equals(DerbyBase.mode));
-                        isSettingValues = false;
                         derbyServer.setDisable(false);
                     }
                 });
@@ -1139,6 +1160,70 @@ public class MyBoxController extends BaseController {
     void showMediaMenu(MouseEvent event) {
         hideMenu(event);
 
+        MenuItem mediaPlayer = new MenuItem(AppVariables.message("MediaPlayer"));
+        mediaPlayer.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.MediaPlayerFxml);
+            }
+        });
+
+        MenuItem mediaLists = new MenuItem(AppVariables.message("ManageMediaLists"));
+        mediaLists.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.MediaListFxml);
+            }
+        });
+
+        MenuItem FFmpegInformation = new MenuItem(AppVariables.message("FFmpegInformation"));
+        FFmpegInformation.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.FFmpegInformationFxml);
+            }
+        });
+
+        MenuItem FFprobe = new MenuItem(AppVariables.message("FFmpegProbeMediaInformation"));
+        FFprobe.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.FFmpegProbeMediaInformationFxml);
+            }
+        });
+
+        MenuItem FFmpegConversionFiles = new MenuItem(AppVariables.message("FFmpegConvertMediaFiles"));
+        FFmpegConversionFiles.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.FFmpegConvertMediaFilesFxml);
+            }
+        });
+
+        MenuItem FFmpegConversionStreams = new MenuItem(AppVariables.message("FFmpegConvertMediaStreams"));
+        FFmpegConversionStreams.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.FFmpegConvertMediaStreamsFxml);
+            }
+        });
+
+        MenuItem FFmpegMergeImages = new MenuItem(AppVariables.message("FFmpegMergeImages"));
+        FFmpegMergeImages.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.FFmpegMergeImagesFxml);
+            }
+        });
+
+        MenuItem FFmpegMergeImageFiles = new MenuItem(AppVariables.message("FFmpegMergeImageFiles"));
+        FFmpegMergeImageFiles.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.FFmpegMergeImageFilesFxml);
+            }
+        });
+
         MenuItem recordImages = new MenuItem(AppVariables.message("RecordImagesInSystemClipBoard"));
         recordImages.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -1158,6 +1243,9 @@ public class MyBoxController extends BaseController {
         popMenu = new ContextMenu();
         popMenu.setAutoHide(true);
         popMenu.getItems().addAll(
+                mediaPlayer, mediaLists, new SeparatorMenuItem(),
+                FFmpegConversionStreams, FFmpegConversionFiles, FFmpegMergeImages, FFmpegMergeImageFiles,
+                FFprobe, FFmpegInformation, new SeparatorMenuItem(),
                 recordImages, new SeparatorMenuItem(),
                 alarmClock);
 
@@ -1172,7 +1260,7 @@ public class MyBoxController extends BaseController {
     private void showAboutImage(MouseEvent event) {
         hideMenu(event);
 
-        view.setImage(new Image("img/About58.png"));
+        view.setImage(new Image("img/About59.png"));
         text.setText(message("AboutImageTips"));
         locateImage(aboutBox, false);
     }

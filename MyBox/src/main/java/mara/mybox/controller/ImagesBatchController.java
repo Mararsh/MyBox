@@ -6,7 +6,7 @@ import mara.mybox.data.VisitHistory;
 import mara.mybox.image.ImageFileInformation;
 import mara.mybox.image.ImageInformation;
 import mara.mybox.tools.FileTools;
-import mara.mybox.value.CommonImageValues;
+import mara.mybox.value.CommonFxValues;
 
 /**
  * @Author Mara
@@ -33,7 +33,7 @@ public abstract class ImagesBatchController extends FilesBatchController {
 
         browseTargets = true;
 
-        sourceExtensionFilter = CommonImageValues.ImageExtensionFilter;
+        sourceExtensionFilter = CommonFxValues.ImageExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
 
     }
@@ -52,7 +52,7 @@ public abstract class ImagesBatchController extends FilesBatchController {
                     ImageFileInformation imageFileInformation
                             = ImageInformation.loadImageFileInformation(file);
                     if (imageFileInformation == null
-                            || imageFileInformation.getImagesInformation() == null) {
+                            || imageFileInformation.getImageInformation() == null) {
                         return null;
                     }
                     imageInformation = imageFileInformation.getImageInformation();

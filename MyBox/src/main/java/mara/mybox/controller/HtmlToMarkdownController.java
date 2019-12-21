@@ -9,7 +9,7 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonImageValues;
+import mara.mybox.value.CommonFxValues;
 
 /**
  * @Author Mara
@@ -33,8 +33,8 @@ public class HtmlToMarkdownController extends FilesBatchController {
         sourcePathKey = "HtmlFilePath";
         targetPathKey = "MarkdownFilePath";
 
-        sourceExtensionFilter = CommonImageValues.HtmlExtensionFilter;
-        targetExtensionFilter = CommonImageValues.MarkdownExtensionFilter;
+        sourceExtensionFilter = CommonFxValues.HtmlExtensionFilter;
+        targetExtensionFilter = CommonFxValues.MarkdownExtensionFilter;
     }
 
     @Override

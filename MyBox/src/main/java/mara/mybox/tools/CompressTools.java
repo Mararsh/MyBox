@@ -10,9 +10,11 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import mara.mybox.data.FileInformation;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
@@ -22,6 +24,8 @@ import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
 import org.apache.commons.compress.archivers.sevenz.SevenZFile;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.commons.compress.compressors.CompressorInputStream;
 import org.apache.commons.compress.compressors.CompressorStreamFactory;
 import org.apache.commons.compress.compressors.lz4.BlockLZ4CompressorInputStream;
@@ -32,40 +36,93 @@ import org.apache.commons.compress.compressors.lz4.BlockLZ4CompressorInputStream
  */
 public class CompressTools {
 
-    public static String compressorByExtension(String ext) {
-        switch (ext) {
-            case "bz2":
-                return "bzip2";
+    public static Map<String, String> CompressExtension;
+    public static Map<String, String> ExtensionCompress;
+    public static Map<String, String> ArchiveExtension;
+    public static Map<String, String> ExtensionArchive;
 
-            case "pack":
-                return "pack200";
-
-            case "sz":
-                return "snappy-framed";
-
-            default:
-                return ext;
+    public static Map<String, String> compressExtension() {
+        if (CompressExtension != null) {
+            return CompressExtension;
         }
+        CompressExtension = new HashMap<>();
+        CompressExtension.put("gzip", "gz");
+        CompressExtension.put("bzip2", "bz2");
+        CompressExtension.put("pack200", "pack");
+        CompressExtension.put("xz", "xz");
+        CompressExtension.put("lzma", "lzma");
+        CompressExtension.put("snappy-framed", "sz");
+        CompressExtension.put("snappy-raw", "sz");
+        CompressExtension.put("z", "z");
+        CompressExtension.put("deflate", "deflate");
+        CompressExtension.put("deflate64", "deflate");
+        CompressExtension.put("lz4-block", "lz4");
+        CompressExtension.put("lz4-framed", "lz4");
+//        CompressExtension.put("zstandard", "zstd");
+//        CompressExtension.put("brotli", "br");
+        return CompressExtension;
+    }
+
+    public static Map<String, String> extensionCompress() {
+        if (ExtensionCompress != null) {
+            return ExtensionCompress;
+        }
+        Map<String, String> formats = compressExtension();
+        ExtensionCompress = new HashMap<>();
+        for (String format : formats.keySet()) {
+            ExtensionCompress.put(formats.get(format), format);
+        }
+        return ExtensionCompress;
+    }
+
+    public static Map<String, String> archiveExtension() {
+        if (ArchiveExtension != null) {
+            return ArchiveExtension;
+        }
+        ArchiveExtension = new HashMap<>();
+        ArchiveExtension.put("zip", "zip");
+        ArchiveExtension.put("7z", "7z");
+        ArchiveExtension.put("jar", "jar");
+        ArchiveExtension.put("tar", "tar");
+        ArchiveExtension.put("ar", "ar");
+        ArchiveExtension.put("arj", "arj");
+        ArchiveExtension.put("cpio", "cpio");
+        ArchiveExtension.put("dump", "dump");
+        return ArchiveExtension;
+    }
+
+    public static Map<String, String> extensionArchive() {
+        if (ExtensionArchive != null) {
+            return ExtensionArchive;
+        }
+        Map<String, String> formats = archiveExtension();
+        ExtensionArchive = new HashMap<>();
+        for (String format : formats.keySet()) {
+            ExtensionArchive.put(formats.get(format), format);
+        }
+        return ExtensionArchive;
     }
 
     public static String extensionByCompressor(String compressor) {
-        switch (compressor) {
-            case "bzip2":
-                return "bz2";
-
-            case "pack200":
-                return "pack";
-
-            case "snappy-framed":
-                return "sz";
-
-            default:
-                if (compressor.startsWith("lz4")) {
-                    return "lz4";
-                } else {
-                    return compressor;
-                }
+        if (compressor == null) {
+            return null;
         }
+        return compressExtension().get(compressor.toLowerCase());
+    }
+
+    public static String compressorByExtension(String ext) {
+        if (ext == null) {
+            return null;
+        }
+        return extensionCompress().get(ext.toLowerCase());
+    }
+
+    public static Set<String> compressFormats() {
+        return compressExtension().keySet();
+    }
+
+    public static Set<String> archiveFormats() {
+        return archiveExtension().keySet();
     }
 
     public static String detectCompressor(File srcFile) {
@@ -78,7 +135,6 @@ public class CompressTools {
 
     public static String detectCompressor(File srcFile, String name) {
         try {
-//            logger.debug("uncompress: " + compressorChoice);
             if (srcFile == null || "none".equals(name)) {
                 return null;
             }
@@ -125,7 +181,6 @@ public class CompressTools {
 
     public static Map<String, Object> decompress(File srcFile, String nameIn, File targetFile) {
         try {
-            logger.debug("uncompress: " + nameIn);
             File decompressedFile = null;
             String compressor = null;
             boolean detect = false;
@@ -220,7 +275,6 @@ public class CompressTools {
 
     public static String detectArchiver(File srcFile, String nameIn) {
         try {
-//            logger.debug("archiveExt: " + name);
             if (srcFile == null || "none".equals(nameIn)) {
                 return null;
             }
@@ -270,6 +324,8 @@ public class CompressTools {
             String name = (nameIn != null) ? nameIn.toLowerCase() : null;
             if (ArchiveStreamFactory.SEVEN_Z.equals(name)) {
                 return readEntries7z(srcFile);
+            } else if (ArchiveStreamFactory.ZIP.equals(name)) {
+                return readEntriesZip(srcFile);
             }
             String encoding = (encodingIn != null) ? encodingIn
                     : AppVariables.getUserConfigValue("FilesUnarchiveEncoding", Charset.defaultCharset().name());
@@ -309,6 +365,8 @@ public class CompressTools {
             String detected = ArchiveStreamFactory.detect(fileIn);
             if (ArchiveStreamFactory.SEVEN_Z.equals(detected)) {
                 unarchive = readEntries7z(srcFile);
+            } else if (ArchiveStreamFactory.ZIP.equals(detected)) {
+                unarchive = readEntriesZip(srcFile);
             } else {
                 try ( ArchiveInputStream in = aFactory.createArchiveInputStream(detected, fileIn, encoding)) {
                     List<FileInformation> entires = readEntries(in);
@@ -355,6 +413,37 @@ public class CompressTools {
             logger.debug(e.toString());
         }
         return entries;
+    }
+
+    public static Map<String, Object> readEntriesZip(File srcFile) {
+        try {
+            if (srcFile == null) {
+                return null;
+            }
+
+            Map<String, Object> unarchive;
+            try ( ZipFile zipFile = new ZipFile(srcFile)) {
+
+                List<FileInformation> fileEntries = new ArrayList();
+                Enumeration<ZipArchiveEntry> entries = zipFile.getEntries();
+                while (entries.hasMoreElements()) {
+                    ZipArchiveEntry entry = entries.nextElement();
+                    FileInformation file = new FileInformation();
+                    file.setFileName(entry.getName());
+                    file.setModifyTime(entry.getLastModifiedDate().getTime());
+                    file.setFileSize(entry.getSize());
+                    file.setFileType(entry.isDirectory() ? "dir" : "file");
+                    fileEntries.add(file);
+                }
+                unarchive = new HashMap<>();
+                unarchive.put("archiver", ArchiveStreamFactory.ZIP);
+                unarchive.put("entries", fileEntries);
+            }
+            return unarchive;
+        } catch (Exception e) {
+//            logger.debug(e.toString());
+            return null;
+        }
     }
 
     public static Map<String, Object> readEntries7z(File srcFile) {

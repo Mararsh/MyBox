@@ -41,7 +41,6 @@ import javafx.stage.Modality;
 import mara.mybox.data.IntStatistic;
 import mara.mybox.data.StringTable;
 import mara.mybox.data.VisitHistory;
-import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.image.ImageColor;
@@ -58,7 +57,7 @@ import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonImageValues;
+import mara.mybox.value.CommonFxValues;
 
 /**
  * @Author Mara
@@ -70,13 +69,10 @@ public class ImageAnalyseController extends ImageViewerController {
 
     protected ImageStatistic data;
     protected ImageView parentView;
-    protected ChangeListener<Number> leftDividerListener;
     protected int colorNumber1, bitDepth1, bitDepth2, colorNumber2;
 
     @FXML
-    protected VBox leftBox, rightBox;
-    @FXML
-    protected ImageView leftPaneControl;
+    protected VBox imageBox, dataBox;
     @FXML
     protected HBox dataOpBox;
     @FXML
@@ -114,8 +110,8 @@ public class ImageAnalyseController extends ImageViewerController {
         targetPathKey = "HtmlFilePath";
         sourcePathKey = "ImageFilePath";
 
-        sourceExtensionFilter = CommonImageValues.ImageExtensionFilter;
-        targetExtensionFilter = CommonImageValues.HtmlExtensionFilter;
+        sourceExtensionFilter = CommonFxValues.ImageExtensionFilter;
+        targetExtensionFilter = CommonFxValues.HtmlExtensionFilter;
 
     }
 
@@ -124,18 +120,18 @@ public class ImageAnalyseController extends ImageViewerController {
         try {
             super.initializeNext();
 
-            initLeftBox();
-            initRightBox();
+            initImageBox();
+            initDataBox();
 
         } catch (Exception e) {
             logger.error(e.toString());
         }
     }
 
-    public void initLeftBox() {
+    public void initImageBox() {
         try {
 
-            leftBox.disableProperty().bind(imageView.imageProperty().isNull());
+            imageBox.disableProperty().bind(imageView.imageProperty().isNull());
 
             selectAreaCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -150,33 +146,13 @@ public class ImageAnalyseController extends ImageViewerController {
         }
     }
 
-    protected void initRightBox() {
+    protected void initDataBox() {
 
         dataOpBox.disableProperty().bind(imageView.imageProperty().isNull());
         dataPane.disableProperty().bind(imageView.imageProperty().isNull());
 
         initComponentsTab();
         initDominantTab();
-    }
-
-    @Override
-    public void afterSceneLoaded() {
-        super.afterSceneLoaded();
-
-        try {
-            String lv = AppVariables.getUserConfigValue("ImageDataLeftPanePosition", "0.4");
-            splitPane.setDividerPositions(Double.parseDouble(lv));
-        } catch (Exception e) {
-            splitPane.setDividerPositions(0.4);
-        }
-        leftDividerListener = new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                AppVariables.setUserConfigValue("ImageDataLeftPanePosition", newValue.doubleValue() + "");
-            }
-        };
-        splitPane.getDividers().get(0).positionProperty().addListener(leftDividerListener);
-
     }
 
     protected void loadData() {
@@ -256,30 +232,6 @@ public class ImageAnalyseController extends ImageViewerController {
     /*
         Image VIew
      */
-    @FXML
-    public void controlLeftPane() {
-        isSettingValues = true;
-        if (splitPane.getItems().contains(leftBox)) {
-            splitPane.getDividers().get(0).positionProperty().removeListener(leftDividerListener);
-            splitPane.getItems().remove(leftBox);
-            ControlStyle.setIcon(leftPaneControl, ControlStyle.getIcon("iconDoubleRight.png"));
-
-        } else {
-            splitPane.getItems().add(0, leftBox);
-            try {
-                String v = AppVariables.getUserConfigValue("ImageDataLeftPanePosition", "0.4");
-                splitPane.setDividerPosition(0, Double.parseDouble(v));
-            } catch (Exception e) {
-                splitPane.setDividerPosition(0, 0.3);
-            }
-            splitPane.getDividers().get(0).positionProperty().addListener(leftDividerListener);
-            ControlStyle.setIcon(leftPaneControl, ControlStyle.getIcon("iconDoubleLeft.png"));
-        }
-        splitPane.applyCss();
-
-        isSettingValues = false;
-    }
-
     @Override
     public void afterImageLoaded() {
         try {

@@ -26,6 +26,7 @@ public abstract class RecentVisitMenu {
 
     protected final BaseController controller;
     protected final MouseEvent event;
+    protected List<String> examples;
 
     public RecentVisitMenu(BaseController controller, MouseEvent event) {
         this.controller = controller;
@@ -71,8 +72,25 @@ public abstract class RecentVisitMenu {
             }
         }
 
+        if (examples != null && !examples.isEmpty()) {
+            popMenu.getItems().add(new SeparatorMenuItem());
+            menu = new MenuItem(message("Examples"));
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            popMenu.getItems().add(menu);
+            for (String example : examples) {
+                menu = new MenuItem(example);
+                menu.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        handleFile(example);
+                    }
+                });
+                popMenu.getItems().add(menu);
+            }
+        }
+
         List<String> paths = paths();
-        if (!paths.isEmpty()) {
+        if (paths != null && !paths.isEmpty()) {
             popMenu.getItems().add(new SeparatorMenuItem());
             menu = new MenuItem(message("RecentAccessedDirectories"));
             menu.setStyle("-fx-text-fill: #2e598a;");
@@ -187,6 +205,17 @@ public abstract class RecentVisitMenu {
         }
         AppVariables.setUserConfigValue(controller.getTargetPathKey(), fname);
         handleSelect();
+    }
+
+    /*
+        get/set
+     */
+    public List<String> getExamples() {
+        return examples;
+    }
+
+    public void setExamples(List<String> examples) {
+        this.examples = examples;
     }
 
 }

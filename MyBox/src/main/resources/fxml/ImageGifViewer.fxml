@@ -44,7 +44,7 @@ License:    Apache License Version 2.0
                               </image>
                           </ImageView>
                           <Label maxWidth="1.7976931348623157E308" text=" " visible="false" HBox.hgrow="ALWAYS" />
-                  <HBox fx:id="operation1Box" alignment="CENTER_LEFT" spacing="5.0">
+                  <HBox fx:id="operationBox" alignment="CENTER_LEFT" spacing="5.0">
                      <children>
                                 <Button fx:id="imageSizeButton" mnemonicParsing="false" onAction="#loadedSize">
                                     <graphic>
@@ -142,15 +142,6 @@ License:    Apache License Version 2.0
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
                                                 <Image url="@../buttons/iconTurnOver.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                                <Button fx:id="strightButton" mnemonicParsing="false" onAction="#straighten">
-                                    <graphic>
-                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/iconRecover.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>

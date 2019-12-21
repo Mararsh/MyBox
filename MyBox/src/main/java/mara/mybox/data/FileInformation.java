@@ -3,6 +3,7 @@ package mara.mybox.data;
 import java.io.File;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.concurrent.Task;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.value.AppVariables.message;
 
@@ -16,9 +17,13 @@ import static mara.mybox.value.AppVariables.message;
 public class FileInformation {
 
     protected File file;
-    protected long fileSize = 0, createTime, modifyTime, filesNumber = 1;
+    protected long tableIndex, fileSize = -1, createTime, modifyTime, filesNumber = 0;
     protected String fileName, data, fileSuffix, handled, fileType;
     protected BooleanProperty selectedProperty;
+    protected boolean selected;
+    protected long sizeWithSubdir = -1, sizeWithoutSubdir = -1,
+            filesWithSubdir = -1, filesWithoutSubdir = -1;
+    protected long duration = -1;  // milliseconds
 
     public enum FileSelectorType {
         All, ExtensionEuqalAny, ExtensionNotEqualAny,
@@ -36,9 +41,12 @@ public class FileInformation {
         setFileAttributes(file);
     }
 
-    private void setFileAttributes(File file) {
+    public final void setFileAttributes(File file) {
         this.file = file;
         this.selectedProperty = new SimpleBooleanProperty(false);
+        if (duration < 0) {
+            duration = 3000;
+        }
         if (file == null) {
             return;
         }
@@ -63,6 +71,10 @@ public class FileInformation {
 //            long[] size = FileTools.countDirectorySize(file);
 //            this.filesNumber = size[0];
 //            this.fileSize = size[1];
+            this.filesNumber = -1;
+            this.fileSize = -1;
+            sizeWithSubdir = sizeWithoutSubdir = -1;
+            filesWithSubdir = filesWithoutSubdir = -1;
             this.fileType = message("Directory");
             this.fileSuffix = this.fileType;
         } else {
@@ -72,11 +84,45 @@ public class FileInformation {
         this.modifyTime = file.lastModified();
     }
 
-    public void countDirectorySize() {
-        if (file != null && file.isDirectory()) {
-            long[] size = FileTools.countDirectorySize(file);
-            this.filesNumber = size[0];
-            this.fileSize = size[1];
+    public void setDirectorySize(boolean countSubdir) {
+        if (file == null || !file.isDirectory()) {
+            return;
+        }
+        if (countSubdir) {
+            fileSize = sizeWithSubdir;
+            filesNumber = filesWithSubdir;
+        } else {
+            fileSize = sizeWithoutSubdir;
+            filesNumber = filesWithoutSubdir;
+        }
+    }
+
+    public void countDirectorySize(Task task, boolean countSubdir) {
+        if (file == null || !file.isDirectory()) {
+            return;
+        }
+        if (countSubdir) {
+            if (sizeWithSubdir < 0 || filesWithSubdir < 0) {
+                long[] size = FileTools.countDirectorySize(file, countSubdir);
+                if (task == null || task.isCancelled()) {
+                    return;
+                }
+                filesWithSubdir = size[0];
+                sizeWithSubdir = size[1];
+            }
+            fileSize = sizeWithSubdir;
+            filesNumber = filesWithSubdir;
+        } else {
+            if (sizeWithoutSubdir < 0 || filesWithoutSubdir < 0) {
+                long[] size = FileTools.countDirectorySize(file, countSubdir);
+                if (task == null || task.isCancelled()) {
+                    return;
+                }
+                filesWithoutSubdir = size[0];
+                sizeWithoutSubdir = size[1];
+            }
+            fileSize = sizeWithoutSubdir;
+            filesNumber = filesWithoutSubdir;
         }
     }
 
@@ -185,6 +231,22 @@ public class FileInformation {
 
     public void setSelected(boolean selected) {
         selectedProperty.set(selected);
+    }
+
+    public long getTableIndex() {
+        return tableIndex;
+    }
+
+    public void setTableIndex(long tableIndex) {
+        this.tableIndex = tableIndex;
+    }
+
+    public long getDuration() {
+        return duration;
+    }
+
+    public void setDuration(long duration) {
+        this.duration = duration;
     }
 
 }

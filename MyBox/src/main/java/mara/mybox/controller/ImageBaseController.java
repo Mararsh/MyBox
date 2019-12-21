@@ -25,7 +25,7 @@ import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
-import mara.mybox.value.CommonImageValues;
+import mara.mybox.value.CommonFxValues;
 
 /**
  * @Author Mara
@@ -73,7 +73,7 @@ public abstract class ImageBaseController extends BaseController {
 
         SaveAsOptionsKey = "ImageSaveAsKey";
 
-        sourceExtensionFilter = CommonImageValues.ImageExtensionFilter;
+        sourceExtensionFilter = CommonFxValues.ImageExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
         careFrames = true;
         handleLoadedSize = true;
@@ -369,6 +369,8 @@ public abstract class ImageBaseController extends BaseController {
                                 afterImageLoaded();
                             } else if (multiplied) {
                                 loadMultipleFramesImage(file);
+                            } else {
+                                popError(AppVariables.message("FailOpenImage"));
                             }
                         }
                     });

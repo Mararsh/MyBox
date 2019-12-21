@@ -3,9 +3,12 @@ package mara.mybox.controller;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 import mara.mybox.data.FileInformation;
+import mara.mybox.fxml.FxmlControl;
+import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 
 /**
@@ -20,6 +23,8 @@ public class FilesRenameTableController extends FilesTableController {
     protected TableColumn<FileInformation, String> newColumn;
     @FXML
     protected Button recoveryAllButton, recoverySelectedButton, ok2Button;
+    @FXML
+    protected Label commentsLabel;
 
     public FilesRenameTableController() {
     }
@@ -35,6 +40,25 @@ public class FilesRenameTableController extends FilesTableController {
         } catch (Exception e) {
             logger.error(e.toString());
         }
+    }
+
+    @Override
+    public void moreAction() {
+        if (moreButton.isSelected()) {
+            if (!thisPane.getChildren().contains(commentsLabel)) {
+                thisPane.getChildren().add(1, commentsLabel);
+            }
+            if (!thisPane.getChildren().contains(tableLabel)) {
+                thisPane.getChildren().add(3, tableLabel);
+            }
+            if (!thisPane.getChildren().contains(selectPane)) {
+                thisPane.getChildren().add(4, selectPane);
+            }
+        } else {
+            thisPane.getChildren().removeAll(commentsLabel, selectPane, tableLabel);
+        }
+        FxmlControl.refreshStyle(thisPane);
+        AppVariables.setUserConfigValue("FileTableMore", moreButton.isSelected());
     }
 
     @Override

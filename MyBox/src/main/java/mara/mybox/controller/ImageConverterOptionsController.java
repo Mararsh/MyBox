@@ -33,7 +33,7 @@ import static mara.mybox.value.AppVariables.getUserConfigValue;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import static mara.mybox.value.AppVariables.setUserConfigValue;
-import mara.mybox.value.CommonImageValues;
+import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -573,7 +573,7 @@ public class ImageConverterOptionsController extends BaseController {
             if (path != null && path.exists()) {
                 fileChooser.setInitialDirectory(path);
             }
-            fileChooser.getExtensionFilters().addAll(CommonImageValues.IccProfileExtensionFilter);
+            fileChooser.getExtensionFilters().addAll(CommonFxValues.IccProfileExtensionFilter);
             File file = fileChooser.showOpenDialog(myStage);
             if (file == null || !file.exists()) {
                 return;

@@ -26,7 +26,7 @@ import mara.mybox.tools.PdfTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonImageValues;
+import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
@@ -66,7 +66,7 @@ public class PdfAttributesController extends BaseController {
         targetPathKey = "PdfFilePath";
         sourcePathKey = "PdfFilePath";
 
-        sourceExtensionFilter = CommonImageValues.PdfExtensionFilter;
+        sourceExtensionFilter = CommonFxValues.PdfExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
 
     }
@@ -249,7 +249,7 @@ public class PdfAttributesController extends BaseController {
                     ok = false;
                     pop = false;
                     try {
-                        try (PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage)) {
+                        try ( PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage)) {
                             pdfInfo.setOwnerPassword(password);
                             pdfInfo.readInfo(doc);
                             doc.close();
@@ -266,6 +266,10 @@ public class PdfAttributesController extends BaseController {
                                 TextInputDialog dialog = new TextInputDialog();
                                 dialog.setHeaderText(AppVariables.message("OwnerPasswordComments"));
                                 dialog.setContentText(AppVariables.message("OwnerPassword"));
+                                Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
+                                stage.setAlwaysOnTop(true);
+                                stage.toFront();
+
                                 Optional<String> result = dialog.showAndWait();
                                 if (result.isPresent()) {
                                     loadPdfInformation(result.get());

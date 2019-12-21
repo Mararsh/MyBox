@@ -13,6 +13,7 @@ import java.lang.management.ManagementFactory;
 import java.text.MessageFormat;
 import java.util.Properties;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.web.WebView;
 import javafx.stage.Screen;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.value.AppVariables;
@@ -24,7 +25,7 @@ import static mara.mybox.value.AppVariables.message;
  * @Description
  * @License Apache License Version 2.0
  */
-public class MyBoxPropertiesController extends StringTableController {
+public class MyBoxPropertiesController extends HtmlViewerController {
 
     public MyBoxPropertiesController() {
         baseTitle = AppVariables.message("JvmProperties");
@@ -42,7 +43,7 @@ public class MyBoxPropertiesController extends StringTableController {
             addData(message("UserDir"), System.getProperty("user.dir"));
             addData(message("MyBoxDataPath"), AppVariables.MyboxDataPath);
             addData(message("MyBoxDatabase"),
-                    DerbyBase.protocol + "<BR>" + DerbyBase.dbName() + "<BR>" + DerbyBase.login);
+                    DerbyBase.protocol + "<BR>" + DerbyBase.dbHome() + "<BR>" + DerbyBase.login);
             addData(message("JvmName"), System.getProperty("java.version"));
             addData(message("JavaVendor"), System.getProperty("java.vendor"));
             addData(message("JvmName"), System.getProperty("java.vm.name"));
@@ -78,6 +79,8 @@ public class MyBoxPropertiesController extends StringTableController {
 
             addData(message("HiDPIDisabled"), AppVariables.disableHiDPI + "");
 
+            addData("WebView", new WebView().getEngine().getUserAgent());
+
             addData(message("FileEncoding"), System.getProperty("file.encoding"));
             addData(message("FileSeparator"), System.getProperty("file.separator"));
             addData(message("UserCountry"), System.getProperty("user.country"));
@@ -86,7 +89,7 @@ public class MyBoxPropertiesController extends StringTableController {
             addData(message("OSVersion"), System.getProperty("os.version"));
             addData(message("OSArch"), System.getProperty("os.arch"));
 
-            loadInformation();
+            displayHtml();
 
         } catch (Exception e) {
 

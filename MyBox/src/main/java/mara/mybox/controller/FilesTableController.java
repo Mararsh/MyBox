@@ -20,7 +20,7 @@ import static mara.mybox.value.AppVariables.logger;
 /*
     T must be subClass of FileInformation
  */
-public class FilesTableController extends TableController<FileInformation> {
+public class FilesTableController extends BatchTableController<FileInformation> {
 
     @FXML
     protected FlowPane selectPane;
@@ -33,13 +33,15 @@ public class FilesTableController extends TableController<FileInformation> {
         try {
             super.initTable();
 
-            tableSubdirCheck.setSelected(AppVariables.getUserConfigBoolean("FileTableSubDir", true));
-            tableSubdirCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                    AppVariables.setUserConfigValue("FileTableSubDir", tableSubdirCheck.isSelected());
-                }
-            });
+            if (tableSubdirCheck != null) {
+                tableSubdirCheck.setSelected(AppVariables.getUserConfigBoolean("FileTableSubDir", true));
+                tableSubdirCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                        AppVariables.setUserConfigValue("FileTableSubDir", tableSubdirCheck.isSelected());
+                    }
+                });
+            }
 
             if (moreButton != null) {
                 moreButton.setSelected(AppVariables.getUserConfigBoolean("FileTableMore", true));
@@ -53,11 +55,11 @@ public class FilesTableController extends TableController<FileInformation> {
     @Override
     public void moreAction() {
         if (moreButton.isSelected()) {
-            if (!thisPane.getChildren().contains(selectPane)) {
-                thisPane.getChildren().add(2, selectPane);
-            }
             if (!thisPane.getChildren().contains(tableLabel)) {
-                thisPane.getChildren().add(3, tableLabel);
+                thisPane.getChildren().add(2, tableLabel);
+            }
+            if (!thisPane.getChildren().contains(selectPane)) {
+                thisPane.getChildren().add(3, selectPane);
             }
         } else {
             thisPane.getChildren().removeAll(selectPane, tableLabel);

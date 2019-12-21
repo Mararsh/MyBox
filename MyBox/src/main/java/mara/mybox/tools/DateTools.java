@@ -10,6 +10,7 @@ import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
+import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -27,7 +28,14 @@ public class DateTools {
 
     public static String nowString3() {
         SimpleDateFormat formatter = new SimpleDateFormat(CommonValues.DatetimeFormat3);
-        formatter.setTimeZone(CommonValues.zoneZhCN);
+        formatter.setTimeZone(AppVariables.getTimeZone());
+        String dateString = formatter.format(new Date());
+        return dateString;
+    }
+
+    public static String nowString4() {
+        SimpleDateFormat formatter = new SimpleDateFormat(CommonValues.DatetimeFormat4);
+        formatter.setTimeZone(AppVariables.getTimeZone());
         String dateString = formatter.format(new Date());
         return dateString;
     }
@@ -37,7 +45,7 @@ public class DateTools {
     }
 
     public static String datetimeToString(Date theDate) {
-        return datetimeToString(theDate, CommonValues.zoneZhCN);
+        return datetimeToString(theDate, AppVariables.getTimeZone());
     }
 
     public static String datetimeToString(Date theDate, TimeZone theZone) {
@@ -126,9 +134,9 @@ public class DateTools {
 
     }
 
-    public static String showTime(long v) {
-        long ms = v;
-        if (v < 1000) {
+    public static String showTime(long milliseconds) {
+        long ms = milliseconds;
+        if (milliseconds < 1000) {
             return MessageFormat.format(message("MillisecondsNumber"), ms);
         }
         long seconds = ms / 1000;
@@ -154,6 +162,41 @@ public class DateTools {
         long years = days / 365;
         days = days % 365;
         return MessageFormat.format(message("YearsNumber"), years, days, hours, minutes, seconds, ms);
+    }
+
+    public static String showDuration(long milliseconds) {
+        long ms = milliseconds;
+        if (milliseconds < 1000) {
+            return String.format("00:00:0.%03d", ms);
+        }
+        long seconds = ms / 1000;
+        ms = ms % 1000;
+        if (seconds < 60) {
+            return String.format("00:%02d.%03d", seconds, ms);
+        }
+        long minutes = seconds / 60;
+        seconds = seconds % 60;
+        if (minutes < 60) {
+            return String.format("%02d:%02d.%03d", minutes, seconds, ms);
+        }
+        long hours = minutes / 60;
+        minutes = minutes % 60;
+        return String.format("%02d:%02d:%02d.%03d", hours, minutes, seconds, ms);
+    }
+
+    public static String showSeconds(long seconds) {
+        if (seconds < 60) {
+            return String.format("00:%02d", seconds);
+        }
+        long minutes = seconds / 60;
+        seconds = seconds % 60;
+        if (minutes < 60) {
+            return String.format("%02d:%02d", minutes, seconds);
+        }
+        long hours = minutes / 60;
+        minutes = minutes % 60;
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+
     }
 
 }

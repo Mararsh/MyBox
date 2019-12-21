@@ -67,7 +67,7 @@ public class TableImageScope extends DerbyBase {
         if (imageLocation == null || imageLocation.trim().isEmpty()) {
             return records;
         }
-        try (Connection conn = DriverManager.getConnection(protocol + dbName() + login);
+        try (Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                 Statement statement = conn.createStatement()) {
             String sql = " SELECT * FROM image_scope WHERE image_location='" + imageLocation + "' ORDER BY modify_time DESC";
             ResultSet results = statement.executeQuery(sql);
@@ -94,7 +94,7 @@ public class TableImageScope extends DerbyBase {
         if (imageLocation == null || name == null) {
             return null;
         }
-        try (Connection conn = DriverManager.getConnection(protocol + dbName() + login);
+        try (Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                 Statement statement = conn.createStatement()) {
             String sql = " SELECT * FROM image_scope WHERE image_location='" + imageLocation
                     + "' AND name='" + name + "'";
@@ -274,7 +274,7 @@ public class TableImageScope extends DerbyBase {
             return new ArrayList<>();
         }
 
-        try (Connection conn = DriverManager.getConnection(protocol + dbName() + login);
+        try (Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                 Statement statement = conn.createStatement()) {
             String areaData = encodeAreaData(scope);
             String colorData = encodeColorData(scope);
@@ -441,7 +441,7 @@ public class TableImageScope extends DerbyBase {
     }
 
     public static boolean clearScopes(String imageLocation) {
-        try (Connection conn = DriverManager.getConnection(protocol + dbName() + login);
+        try (Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                 Statement statement = conn.createStatement()) {
             String sql = "DELETE FROM image_scope WHERE image_location='" + imageLocation + "'";
             statement.executeUpdate(sql);
@@ -453,7 +453,7 @@ public class TableImageScope extends DerbyBase {
     }
 
     public static boolean removeScope(String imageLocation, String name) {
-        try (Connection conn = DriverManager.getConnection(protocol + dbName() + login);
+        try (Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                 Statement statement = conn.createStatement()) {
             String sql = "DELETE FROM image_scope WHERE image_location='" + imageLocation
                     + "' AND name='" + name + "'";

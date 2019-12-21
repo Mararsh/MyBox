@@ -220,7 +220,7 @@ License:    Apache License Version 2.0
                                         <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                         <HBox alignment="CENTER_RIGHT" spacing="10.0" HBox.hgrow="NEVER">
                                             <children>
-                                                <Button fx:id="newWindowButton" mnemonicParsing="false" onAction="#newWindow">
+                                                <Button fx:id="openWindowButton" mnemonicParsing="false" onAction="#newWindow">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>

@@ -30,7 +30,7 @@ import mara.mybox.tools.PdfTools.PdfImageFormat;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonImageValues;
+import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
@@ -65,8 +65,8 @@ public class ImagesCombinePdfController extends ImagesListController {
 
         ImageCombineMarginsKey = "ImageCombineMarginsKey";
         AuthorKey = "AuthorKey";
-        sourceExtensionFilter = CommonImageValues.ImageExtensionFilter;
-        targetExtensionFilter = CommonImageValues.PdfExtensionFilter;
+        sourceExtensionFilter = CommonFxValues.ImageExtensionFilter;
+        targetExtensionFilter = CommonFxValues.PdfExtensionFilter;
     }
 
     @Override

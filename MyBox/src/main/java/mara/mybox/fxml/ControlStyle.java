@@ -414,6 +414,9 @@ public class ControlStyle {
             case "tableCreateDirCheck":
                 return new ControlStyle("tableCreateDirCheck", "", message("CreateDirectories"), "", "iconAddFoloder.png");
 
+            case "countDirCheck":
+                return new ControlStyle("countDirCheck", "", message("CountFilesUnderFolders"), "", "iconFolderBrowse.png");
+
             case "tableThumbCheck":
                 return new ControlStyle("tableThumbCheck", "", message("Thumbnail"), "", "iconThumbsList.png");
 
@@ -487,54 +490,54 @@ public class ControlStyle {
         if (id == null || id.isEmpty()) {
             return null;
         }
+        if (id.toLowerCase().endsWith("tipsview")) {
+            switch (id) {
+                case "refTipsView":
+                    return new ControlStyle(id, "", message("ImageRefTips"), "", "iconTips.png");
+
+                case "weiboTipsView":
+                    return new ControlStyle(id, "", message("WeiboAddressComments"), "", "iconTips.png");
+
+                case "fontTipsView":
+                    return new ControlStyle(id, "", message("FontFileComments"), "", "iconTips.png");
+
+                case "distanceTipsView":
+                    return new ControlStyle(id, "", message("ColorMatchComments"), "", "iconTips.png");
+
+                case "weiboSnapTipsView":
+                    return new ControlStyle(id, "", message("htmlSnapComments"), "", "iconTips.png");
+
+                case "ditherTipsView":
+                    return new ControlStyle(id, "", message("DitherComments"), "", "iconTips.png");
+
+                case "BWThresholdTipsView":
+                    return new ControlStyle(id, "", message("BWThresholdComments"), "", "iconTips.png");
+
+                case "pdfMemTipsView":
+                    return new ControlStyle(id, "", message("PdfMemComments"), "", "iconTips.png");
+
+                case "pdfPageSizeTipsView":
+                    return new ControlStyle(id, "", message("PdfPageSizeComments"), "", "iconTips.png");
+
+                case "preAlphaTipsView":
+                    return new ControlStyle(id, "", message("PremultipliedAlphaTips"), "", "iconTips.png");
+
+                case "thresholdingTipsView":
+                    return new ControlStyle(id, "", message("ThresholdingComments"), "", "iconTips.png");
+
+                case "quantizationTipsView":
+                    return new ControlStyle(id, "", message("QuantizationComments"), "", "iconTips.png");
+
+                default:
+                    return new ControlStyle(id, "", "", "iconTips.png");
+            }
+
+        }
+
         switch (id) {
-            case "tipsView":
-                return new ControlStyle("tipsView", "", "", "", "iconTips.png");
 
             case "linksView":
                 return new ControlStyle("linksView", "", message("Links"), "", "iconLink.png");
-
-            case "refTipsView":
-                return new ControlStyle("refTipsView", "", message("ImageRefTips"), "", "iconTips.png");
-
-            case "textTipsView":
-                return new ControlStyle("textTipsView", "", "", "iconTips.png");
-
-            case "preAlphaTipsView":
-                return new ControlStyle("preAlphaTipsView", "", message("PremultipliedAlphaTips"), "", "iconTips.png");
-
-            case "weiboTipsView":
-                return new ControlStyle("weiboTipsView", "", message("WeiboAddressComments"), "", "iconTips.png");
-
-            case "thresholdingTipsView":
-                return new ControlStyle("thresholdingTipsView", "", message("ThresholdingComments"), "", "iconTips.png");
-
-            case "quantizationTipsView":
-                return new ControlStyle("quantizationTipsView", "", message("QuantizationComments"), "", "iconTips.png");
-
-            case "BWThresholdTipsView":
-                return new ControlStyle("BWThresholdTipsView", "", message("BWThresholdComments"), "", "iconTips.png");
-
-            case "distanceTipsView":
-                return new ControlStyle("distanceTipsView", "", message("ColorMatchComments"), "", "iconTips.png");
-
-            case "weiboSnapTipsView":
-                return new ControlStyle("weiboSnapTipsView", "", message("htmlSnapComments"), "", "iconTips.png");
-
-            case "fontTipsView":
-                return new ControlStyle("fontTipsView", "", message("FontFileComments"), "", "iconTips.png");
-
-            case "pdfPageSizeTipsView":
-                return new ControlStyle("pdfPageSizeTipsView", "", message("PdfPageSizeComments"), "", "iconTips.png");
-
-            case "pdfMemTipsView":
-                return new ControlStyle("pdfMemTipsView", "", message("PdfMemComments"), "", "iconTips.png");
-
-            case "ditherTipsView":
-                return new ControlStyle("ditherTipsView", "", message("DitherComments"), "", "iconTips.png");
-
-            case "effectTipsView":
-                return new ControlStyle("effectTipsView", "", "", "", "iconTips.png");
 
             case "leftPaneControl":
                 return new ControlStyle("leftPaneControl", "", "", "", "iconDoubleLeft.png");
@@ -560,6 +563,12 @@ public class ControlStyle {
             case "pickFillColorButton":
                 return new ControlStyle("pickFillColorButton", message("PickColor"), message("ColorPickerComments"), "", "iconPickColor.png");
 
+            case "fullScreenButton":
+                return new ControlStyle(id, message("FullScreen"), "", "iconExpand.png");
+
+            case "soundButton":
+                return new ControlStyle(id, message("Mute"), "", "iconMute.png");
+
             default:
                 return getOtherControlStyle(id);
         }
@@ -582,6 +591,21 @@ public class ControlStyle {
         if (id.startsWith("clear")) {
             return new ControlStyle(id, message("Clear"), "", "iconClear.png");
         }
+        if (id.startsWith("new")) {
+            return new ControlStyle(id, message("Create"), "", "iconPlus.png");
+        }
+        if (id.startsWith("ok")) {
+            switch (id) {
+                case "okButton":
+                    return new ControlStyle("okButton", message("OK"), "F1 / CTRL+e / ALT+e", "iconOK.png");
+
+                case "ok2Button":
+                    return new ControlStyle("ok2Button", message("OK"), "", "iconOK2.png");
+
+                default:
+                    return new ControlStyle(id, message("OK"), "", "iconOK.png");
+            }
+        }
         if (id.startsWith("recover")) {
             switch (id) {
                 case "recoverButton":
@@ -597,8 +621,58 @@ public class ControlStyle {
                     return new ControlStyle(id, message("Recover"), "", "iconRecover.png");
             }
         }
+        if (id.startsWith("zoomIn")) {
+            switch (id) {
+                case "zoomInButton":
+                    return new ControlStyle(id, message("ZoomIn"), "CTRL+3", "iconZoomIn.png");
+
+                default:
+                    return new ControlStyle(id, message("ZoomIn"), "", "iconZoomIn.png");
+            }
+        }
+
+        if (id.startsWith("zoomOut")) {
+            switch (id) {
+                case "zoomOutButton":
+                    return new ControlStyle(id, message("ZoomOut"), "CTRL+4", "iconZoomOut.png");
+
+                default:
+                    return new ControlStyle(id, message("ZoomIn"), "", "iconZoomIn.png");
+            }
+        }
+
+        if (id.startsWith("next")) {
+            switch (id) {
+                case "nextButton":
+                    return new ControlStyle(id, message("Next"), "PAGE DOWN", "iconNext.png");
+
+                default:
+                    return new ControlStyle(id, message("Next"), "", "iconNext.png");
+            }
+        }
+
+        if (id.startsWith("previous")) {
+            switch (id) {
+                case "previousButton":
+                    return new ControlStyle(id, message("Previous"), "PAGE UP", "iconPrevious.png");
+
+                default:
+                    return new ControlStyle(id, message("Previous"), "", "iconPrevious.png");
+            }
+        }
+
+        if (id.startsWith("backward")) {
+            return new ControlStyle(id, message("Backward"), "", "iconPrevious.png");
+        }
+
+        if (id.startsWith("forward")) {
+            return new ControlStyle(id, message("Forward"), "", "iconNext.png");
+        }
 
         switch (id) {
+
+            case "selectButton":
+                return new ControlStyle(id, message("Select"), "", "iconSelect.png");
 
             case "selectAllButton":
                 return new ControlStyle("selectAllButton", message("SelectAll"), "CTRL+a / ALT+a", "iconSelectAll.png");
@@ -608,12 +682,6 @@ public class ControlStyle {
 
             case "unselectAllFilesButton":
                 return new ControlStyle("unselectAllFilesButton", message("UnselectAll"), "", "iconSelectNone.png");
-
-            case "okButton":
-                return new ControlStyle("okButton", message("OK"), "F1 / CTRL+e / ALT+e", "iconOK.png");
-
-            case "ok2Button":
-                return new ControlStyle("ok2Button", message("OK"), "", "iconOK2.png");
 
             case "listButton":
                 return new ControlStyle(id, message("List"), "", "iconList.png");
@@ -657,12 +725,6 @@ public class ControlStyle {
             case "setButton":
                 return new ControlStyle("setButton", message("Set"), "F1 / ALT+1", "iconEqual.png");
 
-            case "nextButton":
-                return new ControlStyle("nextButton", message("Next"), "PAGE DOWN", "iconNext.png");
-
-            case "previousButton":
-                return new ControlStyle("previousButton", message("Previous"), "PAGE UP", "iconPrevious.png");
-
             case "firstButton":
                 return new ControlStyle("firstButton", message("First"), "ALT+HOME", "iconFirst.png");
 
@@ -698,12 +760,6 @@ public class ControlStyle {
 
             case "paneSizeButton":
                 return new ControlStyle("paneSizeButton", message("PaneSize"), "CTRL+2", "iconPicBig.png");
-
-            case "zoomInButton":
-                return new ControlStyle("zoomInButton", message("ZoomIn"), "CTRL+3", "iconZoomIn.png");
-
-            case "zoomOutButton":
-                return new ControlStyle("zoomOutButton", message("ZoomOut"), "CTRL+4", "iconZoomOut.png");
 
             case "rotateLeftButton":
                 return new ControlStyle("rotateLeftButton", message("RotateLeft"), "", "iconRotateLeft.png");
@@ -853,8 +909,11 @@ public class ControlStyle {
             case "backImageImageSizeButton":
                 return new ControlStyle("backImageImageSizeButton", message("ImageSize"), "", "iconPicSmall.png");
 
-            case "newWindowButton":
-                return new ControlStyle("newWindowButton", message("OpenInNewWindow"), "", "iconView.png");
+            case "openWindowButton":
+                return new ControlStyle("newWindowButton", message("OpenInNewWindow"), "", "iconWindow.png");
+
+            case "newTabButton":
+                return new ControlStyle(id, message("NewTab"), "", "iconPlus.png");
 
             case "strightButton":
                 return new ControlStyle("strightButton", message("Straighten"), "", "iconRefresh.png");
@@ -896,7 +955,7 @@ public class ControlStyle {
                 return new ControlStyle("locateObjectButton", message("Go"), "", "iconGo.png");
 
             case "playButton":
-                return new ControlStyle("playButton", message("Play"), "", "iconPlay.png");
+                return new ControlStyle("playButton", message("Play"), "F1", "iconPlay.png");
 
             case "pauseButton":
                 return new ControlStyle("pauseButton", message("Pause"), "", "iconPause.png");
@@ -1137,6 +1196,27 @@ public class ControlStyle {
 
             case "refreshMarkdownButton":
                 return new ControlStyle("refreshMarkdownButton", message("Refresh"), "", "iconRefresh.png");
+
+            case "stopButton":
+                return new ControlStyle(id, message("Stop"), "", "iconStop.png");
+
+            case "linkButton":
+                return new ControlStyle(id, message("Link"), "", "iconLink.png");
+
+            case "dataButton":
+                return new ControlStyle(id, message("Data"), "", "iconData.png");
+
+            case "catButton":
+                return new ControlStyle(id, message("Meow"), "", "iconCat.png");
+
+            case "streamMediaButton":
+                return new ControlStyle(id, message("StreamMedia"), "", "iconLink.png");
+
+            case "setDurationAllButton":
+                return new ControlStyle(id, message("Set"), "", "iconEqual.png");
+
+            case "openButton":
+                return new ControlStyle(id, message("Open"), "", "iconOpen.png");
 
             default:
                 return null;

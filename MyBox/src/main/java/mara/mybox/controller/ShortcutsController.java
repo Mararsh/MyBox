@@ -17,7 +17,7 @@ import static mara.mybox.value.AppVariables.message;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ShortcutsController extends StringTableController {
+public class ShortcutsController extends HtmlViewerController {
 
     @FXML
     protected HBox iccBox;
@@ -32,7 +32,7 @@ public class ShortcutsController extends StringTableController {
     @Override
     public void initializeNext() {
         try {
-            loadInformation();
+            displayHtml();
         } catch (Exception e) {
 
         }
@@ -45,7 +45,7 @@ public class ShortcutsController extends StringTableController {
     }
 
     @Override
-    public void loadInformation() {
+    public void displayHtml() {
         try {
             if (table == null) {
                 table();
@@ -110,6 +110,11 @@ public class ShortcutsController extends StringTableController {
             key("ALT", "PAGE_DOWN", message("Next"), "PAGE_DOWN");
             key("ALT", "HOME", message("First"), "");
             key("ALT", "END", message("Last"), "");
+
+            key("s / S", "", message("Play") + "/" + message("Pause"), "");
+            key("q / Q", "", message("Stop"), "");
+            key("m / M", "", message("Mute") + "/" + message("Sound"), "");
+            key("f / F", "", message("FullScreen"), "");
 
         } catch (Exception e) {
             logger.error(e.toString());

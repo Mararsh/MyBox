@@ -6,9 +6,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import javafx.application.Platform;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
@@ -64,7 +64,7 @@ public class FilesRedundancyController extends FilesBatchController {
             openCheck.setVisible(false);
 
             filesList = FXCollections.observableArrayList();
-            redundancy = new HashMap();
+            redundancy = new ConcurrentHashMap();
 
             currentBox.setVisible(false);
 
@@ -104,10 +104,10 @@ public class FilesRedundancyController extends FilesBatchController {
     @Override
     public String handleDirectory(File directory) {
         try {
-            showHandling(directory);
             if (directory == null || !directory.isDirectory()) {
                 return AppVariables.message("Done");
             }
+            showHandling(directory);
             File[] files = directory.listFiles();
             for (File srcFile : files) {
                 if (task == null || task.isCancelled()) {
@@ -121,7 +121,7 @@ public class FilesRedundancyController extends FilesBatchController {
             }
             return AppVariables.message("Done");
         } catch (Exception e) {
-            logger.error(e.toString());
+//            logger.error(e.toString());
             return AppVariables.message("Done");
         }
     }

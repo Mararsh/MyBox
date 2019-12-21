@@ -38,10 +38,6 @@ public class MessageDigestController extends BaseController {
         File, Input
     }
 
-    protected enum Algorithm {
-        MD5, SHA1, SHA256
-    }
-
     @FXML
     protected ToggleGroup inputGroup, algorithmGroup;
     @FXML
@@ -114,21 +110,11 @@ public class MessageDigestController extends BaseController {
         }
     }
 
+    // https://docs.oracle.com/javase/10/docs/specs/security/standard-names.html#messagedigest-algorithms
     private void checkAlgorithm() {
         try {
             clear();
-            String selected = ((RadioButton) algorithmGroup.getSelectedToggle()).getText();
-            switch (selected) {
-                case "SHA1":
-                    algorithm = "SHA-1";
-                    break;
-                case "SHA256":
-                    algorithm = "SHA-256";
-                    break;
-                default:
-                    algorithm = "MD5";
-                    break;
-            }
+            algorithm = ((RadioButton) algorithmGroup.getSelectedToggle()).getText();
 
         } catch (Exception e) {
             logger.error(e.toString());

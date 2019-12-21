@@ -21,7 +21,7 @@ import mara.mybox.image.file.ImageGifFile;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonImageValues;
+import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -54,7 +54,7 @@ public class ImageGifEditerController extends ImagesListController {
         AddFileType = VisitHistory.FileType.Image;
         AddPathType = VisitHistory.FileType.Image;
 
-        sourceExtensionFilter = CommonImageValues.GifExtensionFilter;
+        sourceExtensionFilter = CommonFxValues.GifExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
     }
 

@@ -334,8 +334,8 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
 
                 @Override
                 protected void taskQuit() {
-                    task = null;
                     clipboardBox.setDisable(false);
+                    task = null;
                 }
 
             };

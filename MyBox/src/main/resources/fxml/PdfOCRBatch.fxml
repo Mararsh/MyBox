@@ -99,7 +99,7 @@ License:    Apache License Version 2.0
                                                                         </CheckBox>
                                                                     </children>
                                                                 </HBox>
-                                                <Label styleClass="bottom-label" stylesheets="@../styles/MyBox.css" text="%OCRPreprocessComment" wrapText="true" />
+                                                                <Label styleClass="bottom-label" stylesheets="@../styles/MyBox.css" text="%OCRPreprocessComment" wrapText="true" />
                                                             </children>
                                                         </VBox>
                                                     </content>
@@ -108,7 +108,7 @@ License:    Apache License Version 2.0
                                                     <content>
                                                         <VBox maxHeight="1.7976931348623157E308" spacing="5.0">
                                                             <children>
-                                                                <Label fx:id="currentOCRFilesLabel" maxWidth="1.7976931348623157E308" />
+                                                                <Label fx:id="currentOCRFilesLabel" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" />
                                                                 <HBox alignment="CENTER_LEFT" spacing="5.0">
                                                                     <children>
                                                                         <Button fx:id="moveDownButton" mnemonicParsing="false" onAction="#downAction">

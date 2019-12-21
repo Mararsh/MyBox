@@ -21,6 +21,14 @@ public class VisitHistory {
     private Date lastVisitTime;
     private int visitCount;
 
+    public VisitHistory() {
+
+    }
+
+    public VisitHistory(String value) {
+        resourceValue = value;
+    }
+
     public static class ResourceType {
 
         public static int Path = 1;
@@ -42,12 +50,15 @@ public class VisitHistory {
         public static int Gif = 6;
         public static int Tif = 7;
         public static int MultipleFrames = 8;
-        public static int Sound = 9;
+        public static int Audio = 9;
         public static int Video = 10;
         public static int Html = 11;
         public static int Icc = 12;
         public static int Xml = 13;
         public static int Markdown = 14;
+        public static int Media = 15;
+        public static int Certificate = 16;
+        public static int StreamMedia = 17;
 
         public static int None = 100;
     }
@@ -76,7 +87,11 @@ public class VisitHistory {
             int[] types = {FileType.Gif, FileType.Tif, FileType.MultipleFrames};
             return TableVisitHistory.find(ResourceType.Path, types, 0);
         } else if (fileType == FileType.Image) {
-            int[] types = {FileType.Image, FileType.Gif, FileType.Tif, FileType.MultipleFrames};
+            int[] types = {FileType.Image, FileType.Gif, FileType.Tif,
+                FileType.MultipleFrames};
+            return TableVisitHistory.find(ResourceType.Path, types, 0);
+        } else if (fileType == FileType.Media) {
+            int[] types = {FileType.Media, FileType.Video, FileType.Audio};
             return TableVisitHistory.find(ResourceType.Path, types, 0);
         } else {
             return TableVisitHistory.find(ResourceType.Path, fileType, 0);
@@ -104,7 +119,11 @@ public class VisitHistory {
             int[] types = {FileType.Gif, FileType.Tif, FileType.MultipleFrames};
             records = TableVisitHistory.find(ResourceType.Path, types, number);
         } else if (fileType == FileType.Image) {
-            int[] types = {FileType.Image, FileType.Gif, FileType.Tif, FileType.MultipleFrames};
+            int[] types = {FileType.Image, FileType.Gif, FileType.Tif,
+                FileType.MultipleFrames};
+            records = TableVisitHistory.find(ResourceType.Path, types, number);
+        } else if (fileType == FileType.Media) {
+            int[] types = {FileType.Media, FileType.Video, FileType.Audio};
             records = TableVisitHistory.find(ResourceType.Path, types, number);
         } else {
             records = TableVisitHistory.find(ResourceType.Path, fileType, number);
@@ -131,7 +150,11 @@ public class VisitHistory {
             int[] types = {FileType.Gif, FileType.Tif, FileType.MultipleFrames};
             return TableVisitHistory.find(ResourceType.Path, types, 1);
         } else if (fileType == FileType.Image) {
-            int[] types = {FileType.Image, FileType.Gif, FileType.Tif, FileType.MultipleFrames};
+            int[] types = {FileType.Image, FileType.Gif, FileType.Tif,
+                FileType.MultipleFrames};
+            return TableVisitHistory.find(ResourceType.Path, types, 1);
+        } else if (fileType == FileType.Media) {
+            int[] types = {FileType.Media, FileType.Video, FileType.Audio};
             return TableVisitHistory.find(ResourceType.Path, types, 1);
         } else {
             return TableVisitHistory.find(ResourceType.Path, fileType, 1);
@@ -151,7 +174,11 @@ public class VisitHistory {
             int[] types = {FileType.Gif, FileType.Tif, FileType.MultipleFrames};
             return TableVisitHistory.find(ResourceType.File, types, 0);
         } else if (fileType == FileType.Image) {
-            int[] types = {FileType.Image, FileType.Gif, FileType.Tif, FileType.MultipleFrames};
+            int[] types = {FileType.Image, FileType.Gif, FileType.Tif,
+                FileType.MultipleFrames};
+            return TableVisitHistory.find(ResourceType.File, types, 0);
+        } else if (fileType == FileType.Media) {
+            int[] types = {FileType.Media, FileType.Video, FileType.Audio};
             return TableVisitHistory.find(ResourceType.File, types, 0);
         } else {
             return TableVisitHistory.find(ResourceType.File, fileType, 0);
@@ -182,7 +209,11 @@ public class VisitHistory {
             int[] types = {FileType.Gif, FileType.Tif, FileType.MultipleFrames};
             records = TableVisitHistory.find(ResourceType.File, types, number);
         } else if (fileType == FileType.Image) {
-            int[] types = {FileType.Image, FileType.Gif, FileType.Tif, FileType.MultipleFrames};
+            int[] types = {FileType.Image, FileType.Gif, FileType.Tif,
+                FileType.MultipleFrames};
+            records = TableVisitHistory.find(ResourceType.File, types, number);
+        } else if (fileType == FileType.Media) {
+            int[] types = {FileType.Media, FileType.Video, FileType.Audio};
             records = TableVisitHistory.find(ResourceType.File, types, number);
         } else {
             records = TableVisitHistory.find(ResourceType.File, fileType, number);
@@ -229,7 +260,11 @@ public class VisitHistory {
             int[] types = {FileType.Gif, FileType.Tif, FileType.MultipleFrames};
             return TableVisitHistory.find(ResourceType.File, types, 1);
         } else if (fileType == FileType.Image) {
-            int[] types = {FileType.Image, FileType.Gif, FileType.Tif, FileType.MultipleFrames};
+            int[] types = {FileType.Image, FileType.Gif, FileType.Tif,
+                FileType.MultipleFrames};
+            return TableVisitHistory.find(ResourceType.File, types, 1);
+        } else if (fileType == FileType.Media) {
+            int[] types = {FileType.Media, FileType.Video, FileType.Audio};
             return TableVisitHistory.find(ResourceType.File, types, 1);
         } else {
             return TableVisitHistory.find(ResourceType.File, fileType, 1);
@@ -322,6 +357,17 @@ public class VisitHistory {
             return TableVisitHistory.update(ResourceType.File, fileType, OperationType.Write, value);
         }
     }
+
+    public static boolean visitStreamMedia(String address) {
+        return TableVisitHistory.update(ResourceType.URI, FileType.StreamMedia,
+                OperationType.Access, address);
+    }
+
+    public static List<VisitHistory> getRecentStreamMedia() {
+        return TableVisitHistory.find(ResourceType.URI, FileType.StreamMedia,
+                AppVariables.fileRecentNumber);
+    }
+
 
     /*
         get/set

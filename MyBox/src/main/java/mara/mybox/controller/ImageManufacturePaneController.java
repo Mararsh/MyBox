@@ -63,7 +63,7 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonImageValues;
+import mara.mybox.value.CommonFxValues;
 
 /**
  * @Author Mara
@@ -1643,7 +1643,7 @@ public class ImageManufacturePaneController extends ImageMaskController {
             if (path.exists()) {
                 fileChooser.setInitialDirectory(path);
             }
-            fileChooser.getExtensionFilters().addAll(CommonImageValues.AlphaImageExtensionFilter);
+            fileChooser.getExtensionFilters().addAll(CommonFxValues.AlphaImageExtensionFilter);
             final File file = fileChooser.showOpenDialog(getMyStage());
             if (file == null) {
                 return;

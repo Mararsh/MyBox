@@ -1,7 +1,13 @@
 package mara.mybox;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.security.KeyStore;
+import java.security.SecureRandom;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,9 +21,15 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javax.imageio.ImageIO;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
 import mara.mybox.controller.BaseController;
-import mara.mybox.controller.InformationController;
+import mara.mybox.controller.MyBoxLoadingController;
 import mara.mybox.db.DerbyBase;
+import mara.mybox.db.DerbyBase.DerbyStatus;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.image.ImageScope;
 import mara.mybox.image.ImageValue;
@@ -27,10 +39,11 @@ import mara.mybox.image.PixelsOperation.OperationType;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.ConfigTools;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonImageValues;
+import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -41,7 +54,7 @@ import mara.mybox.value.CommonValues;
  */
 public class MainApp extends Application {
 
-    private InformationController infoController;
+    private MyBoxLoadingController loadController;
     private String lang;
 
     @Override
@@ -51,16 +64,17 @@ public class MainApp extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         try {
+
+            tmp();
             FXMLLoader fxmlLoader = new FXMLLoader(
-                    FxmlStage.class.getResource(CommonValues.InformationFxml));
+                    FxmlStage.class.getResource(CommonValues.MyBoxLoadingFxml));
             Pane pane = fxmlLoader.load();
             Scene scene = new Scene(pane);
-            stage.getIcons().add(CommonImageValues.AppIcon);
+            stage.getIcons().add(CommonFxValues.AppIcon);
             stage.setScene(scene);
             stage.show();
-            infoController = (InformationController) fxmlLoader.getController();
+            loadController = (MyBoxLoadingController) fxmlLoader.getController();
             lang = Locale.getDefault().getLanguage().toLowerCase();
-            infoController.setInfo(message(lang, "Initializing..."));
 
             Task task = new Task<Void>() {
                 @Override
@@ -69,7 +83,7 @@ public class MainApp extends Application {
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
-                                infoController.setInfo(MessageFormat.format(message(lang,
+                                loadController.setInfo(MessageFormat.format(message(lang,
                                         "InitializeDataUnder"), AppVariables.MyboxDataPath));
                             }
                         });
@@ -77,28 +91,34 @@ public class MainApp extends Application {
                             return null;
                         }
 
-                        // Uncomment this line to generate Icons automatically in different color styles
-//                        makeIcons();
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
-                                infoController.setInfo(MessageFormat.format(message(lang,
+                                loadController.pathReady();
+                                loadController.setInfo(MessageFormat.format(message(lang,
                                         "LoadingDatabase"), AppVariables.MyBoxDerbyPath));
                             }
                         });
-                        String initDB = DerbyBase.initDatabase();
-                        if (initDB == null) {
-                            FxmlStage.alertWarning(stage,
-                                    MessageFormat.format(message(lang,
-                                            "DerbyNotAvalibale"), AppVariables.MyBoxDerbyPath));
+                        DerbyBase.status = DerbyStatus.NotConnected;
+                        String initDB = DerbyBase.startDerby();
+                        if (DerbyBase.status != DerbyStatus.Embedded
+                                && DerbyBase.status != DerbyStatus.Nerwork) {
+                            Platform.runLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    FxmlStage.alertWarning(stage, initDB);
+                                }
+                            });
+                            AppVariables.initAppVaribles();
                         } else {
                             Platform.runLater(new Runnable() {
                                 @Override
                                 public void run() {
-                                    infoController.setInfo(initDB);
+                                    loadController.setInfo(initDB);
                                 }
                             });
                             // The following statements should be done in this order
+                            DerbyBase.initTables();
                             AppVariables.initAppVaribles();
                             DerbyBase.checkUpdates();
                         }
@@ -120,7 +140,7 @@ public class MainApp extends Application {
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
-                            infoController.setInfo(message(lang, "LoadingInterface"));
+                            loadController.setInfo(message(lang, "LoadingInterface"));
 
                             String inFile = null;
                             if (AppVariables.appArgs != null) {
@@ -131,6 +151,9 @@ public class MainApp extends Application {
                                     if (new File(arg).exists()) {
                                         inFile = arg;
                                         break;
+                                    } else {
+                                        FxmlStage.alertError(stage, MessageFormat.format(
+                                                message("FilepathNonAscii"), arg));
                                     }
                                 }
                             }
@@ -229,7 +252,7 @@ public class MainApp extends Application {
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
-                            infoController.setInfo(MessageFormat.format(
+                            loadController.setInfo(MessageFormat.format(
                                     AppVariables.message(lang, "CopyingAppData"),
                                     defaultPath, AppVariables.MyboxDataPath));
                         }
@@ -273,6 +296,13 @@ public class MainApp extends Application {
      */
     public static void main(String[] args) {
         Application.launch(args);
+    }
+
+    public void tmp() {
+        // Uncomment this line to generate Icons automatically in different color styles
+//        makeIcons();
+//        testSSL();
+
     }
 
     // This is for developement to generate Icons automatically in different color style
@@ -337,6 +367,35 @@ public class MainApp extends Application {
 
         } catch (Exception e) {
             logger.error(e.toString());
+        }
+    }
+
+    public void testSSL() {
+        try {
+            SSLContext ctx = SSLContext.getInstance(CommonValues.HttpsProtocal);
+            KeyManager[] keyManagers;
+            KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+            FileInputStream keyStoreFile = new FileInputStream(new File(SystemTools.keystore()));
+            String keyStorePassword = SystemTools.keystorePassword();
+            keyStore.load(keyStoreFile, keyStorePassword.toCharArray());
+            KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+            kmf.init(keyStore, keyStorePassword.toCharArray());
+            keyManagers = kmf.getKeyManagers();
+            ctx.init(keyManagers, null, new SecureRandom());
+
+            SSLSocketFactory sslSocketFactory = ctx.getSocketFactory();
+            URL url = new URL("https://www.weibo.com");
+            HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
+            urlConnection.setSSLSocketFactory(sslSocketFactory);
+            try ( BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()))) {
+                String inputLine;
+                while ((inputLine = in.readLine()) != null) {
+                    logger.debug(inputLine);
+                }
+            }
+
+        } catch (Exception e) {
+            logger.debug(e.toString());
         }
     }
 

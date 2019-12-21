@@ -49,7 +49,7 @@ import mara.mybox.tools.OCRTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonImageValues;
+import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 import net.sourceforge.tess4j.ITessAPI.TessPageIteratorLevel;
 import net.sourceforge.tess4j.ITesseract;
@@ -73,7 +73,6 @@ TIFF has the advantage of the ability to contain multiple images (pages) in a fi
  */
 public class ImageOCRController extends ImageViewerController {
 
-    protected ChangeListener<Number> leftDividerListener;
     protected String selectedLanguages;
     protected float scale;
     protected int threshold, rotate, regionLevel, wordLevel;
@@ -86,7 +85,7 @@ public class ImageOCRController extends ImageViewerController {
     @FXML
     protected TitledPane preprocessPane, ocrOptionsPane;
     @FXML
-    protected ScrollPane leftPane, originalScrollPane;
+    protected ScrollPane originalScrollPane;
     @FXML
     protected TextArea textArea;
     @FXML
@@ -101,7 +100,7 @@ public class ImageOCRController extends ImageViewerController {
     @FXML
     protected ImageView originalView;
     @FXML
-    protected StringTableController regionsTableController, wordsTableController;
+    protected HtmlViewerController regionsTableController, wordsTableController;
     @FXML
     protected HtmlViewerController htmlController;
     @FXML
@@ -114,7 +113,7 @@ public class ImageOCRController extends ImageViewerController {
         TargetFileType = VisitHistory.FileType.Text;
 
         targetPathKey = "TextFilePath";
-        targetExtensionFilter = CommonImageValues.TextExtensionFilter;
+        targetExtensionFilter = CommonFxValues.TextExtensionFilter;
 
         needNotRulers = true;
         needNotCoordinates = true;
@@ -864,7 +863,7 @@ public class ImageOCRController extends ImageViewerController {
                 name = FileTools.getFilePrefix(sourceFile.getName()) + "_preprocessed";
             }
             final File file = chooseSaveFile(AppVariables.getUserConfigPath("ImageFilePath"),
-                    name, CommonImageValues.ImageExtensionFilter, true);
+                    name, CommonFxValues.ImageExtensionFilter, true);
             if (file == null) {
                 return;
             }
@@ -1189,7 +1188,7 @@ public class ImageOCRController extends ImageViewerController {
                     resultLabel.setText(MessageFormat.format(message("OCRresults"),
                             texts.length(), DateTools.showTime(cost)));
 
-                    htmlController.load(html);
+                    htmlController.loadHtml(html);
 
                     if (rectangles != null) {
                         List<String> names = new ArrayList<>();
@@ -1205,7 +1204,7 @@ public class ImageOCRController extends ImageViewerController {
                                     i + "", rect.x + "", rect.y + "", rect.width + "", rect.height + ""
                             ));
                             regionsTableController.addData(data);
-                            regionsTableController.loadInformation();
+                            regionsTableController.displayHtml();
                         }
                     } else {
                         regionsTableController.clear();
@@ -1228,7 +1227,7 @@ public class ImageOCRController extends ImageViewerController {
                                     rect.x + "", rect.y + "", rect.width + "", rect.height + ""
                             ));
                             wordsTableController.addData(data);
-                            wordsTableController.loadInformation();
+                            wordsTableController.displayHtml();
                         }
                     } else {
                         wordsTableController.clear();

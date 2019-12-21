@@ -37,6 +37,11 @@ public class DerbyBase {
             + CommonValues.AppDerbyPassword + ";create=true";
     public static final String login = ";user=" + CommonValues.AppDerbyUser + ";password="
             + CommonValues.AppDerbyPassword + ";create=false";
+    public static DerbyStatus status;
+
+    public enum DerbyStatus {
+        Embedded, Nerwork, Starting, NotConnected, EmbeddedFailed, NerworkFailed
+    }
 
     protected String Table_Name, Create_Table_Statement;
     protected List<String> Keys;
@@ -51,13 +56,13 @@ public class DerbyBase {
             return true;
         } catch (Exception e) {
             failed(e);
-//            // logger.debug(e.toString());
+            logger.debug(e.toString());
             return false;
         }
     }
 
     public boolean init() {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbName() + login);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
             statement.executeUpdate(Create_Table_Statement);
             return true;
@@ -85,7 +90,7 @@ public class DerbyBase {
     }
 
     public boolean drop() {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbName() + login);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
             String sql = "DROP TABLE " + Table_Name;
             statement.executeUpdate(sql);
@@ -114,7 +119,7 @@ public class DerbyBase {
     }
 
     public boolean clear() {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbName() + login);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
             String sql = "DELETE FROM " + Table_Name;
             statement.executeUpdate(sql);
@@ -129,7 +134,7 @@ public class DerbyBase {
     public ResultSet query(String sql) {
         try {
             ResultSet resultSet;
-            try ( Connection conn = DriverManager.getConnection(protocol + dbName() + login);
+            try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                      Statement statement = conn.createStatement()) {
                 resultSet = statement.executeQuery(sql);
             }
@@ -144,7 +149,7 @@ public class DerbyBase {
     public int update(String sql) {
         try {
             int ret;
-            try ( Connection conn = DriverManager.getConnection(protocol + dbName() + login);
+            try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                      Statement statement = conn.createStatement()) {
                 ret = statement.executeUpdate(sql);
             }
@@ -174,52 +179,58 @@ public class DerbyBase {
     /*
         Static methods
      */
-    public static String dbName() {
+    public static String dbHome() {
         return AppVariables.MyBoxDerbyPath.getAbsolutePath();
     }
 
-    public static String initDatabase() {
-        try {
-            String ret = startDerby();
-            initTables();
-            return ret;
-        } catch (Exception e) {
-            logger.debug(e.toString());
-            return null;
+    public static String readMode() {
+        String value = ConfigTools.readConfigValue("DerbyMode");
+        String modeValue;
+        if (value != null) {
+            modeValue = "client".equals(value.toLowerCase()) ? "client" : "embedded";
+        } else {
+            modeValue = "embedded";
         }
+        return modeValue;
     }
 
     public static String startDerby() {
-        String m = ConfigTools.readConfigValue("DerbyMode");
-        if (m != null) {
-            mode = "client".equals(m) ? "client" : "embedded";
-        } else {
-            mode = "embedded";
-        }
-        ConfigTools.writeConfigValue("DerbyMode", mode);
-
-        if ("client".equals(mode)) {
-            return networkMode();
-        } else {
-            return embeddedMode();
+        try {
+            Class.forName(embeddedDriver).getDeclaredConstructors()[0].newInstance();
+            Class.forName(clientDriver).getDeclaredConstructors()[0].newInstance();
+            if ("client".equals(readMode())) {
+                return networkMode();
+            } else {
+                return embeddedMode();
+            }
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return e.toString();
         }
     }
 
     public static String embeddedMode() {
         try {
+            String lang = Locale.getDefault().getLanguage().toLowerCase();
+            if (!canEmbeded()) {
+                status = DerbyStatus.NotConnected;
+                return MessageFormat.format(
+                        message(lang, "DerbyNotAvalibale"), AppVariables.MyBoxDerbyPath);
+            }
             if (isServerStarted(port)) {
                 shutdownDerbyServer();
             }
             driver = embeddedDriver;
             protocol = "jdbc:derby:";
-            Class.forName(driver).getDeclaredConstructors()[0].newInstance();
             logger.debug("Driver: " + driver);
-
-            String lang = Locale.getDefault().getLanguage().toLowerCase();
+            mode = "embedded";
+            ConfigTools.writeConfigValue("DerbyMode", mode);
+            status = DerbyStatus.Embedded;
             return message(lang, "DerbyEmbeddedMode");
         } catch (Exception e) {
             logger.debug(e.toString());
-            return null;
+            status = DerbyStatus.EmbeddedFailed;
+            return e.toString();
         }
     }
 
@@ -227,23 +238,32 @@ public class DerbyBase {
     // To avoid to let user have to configure security and network for it.
     public static String networkMode() {
         try {
-            String ret;
+            if (status == DerbyStatus.Starting) {
+                String lang = Locale.getDefault().getLanguage().toLowerCase();
+                return message(lang, "BeingStartingDerby");
+            }
             String lang = Locale.getDefault().getLanguage().toLowerCase();
             if (startDerbyServer()) {
                 driver = clientDriver;
                 protocol = "jdbc:derby://" + host + ":" + port + "/";
-                ret = MessageFormat.format(message(lang, "DerbyServerListening"), port + "");
+                mode = "client";
+                status = DerbyStatus.Nerwork;
+                ConfigTools.writeConfigValue("DerbyMode", mode);
+                logger.debug("Driver: " + driver);
+                return MessageFormat.format(message(lang, "DerbyServerListening"), port + "");
+
+            } else if (canEmbeded() && status != DerbyStatus.EmbeddedFailed) {
+                return embeddedMode();
+
             } else {
-                driver = embeddedDriver;
-                protocol = "jdbc:derby:";
-                ret = message(lang, "DerbyFailStartServer");
+                status = DerbyStatus.NotConnected;
+                return MessageFormat.format(
+                        message(lang, "DerbyNotAvalibale"), AppVariables.MyBoxDerbyPath);
             }
-            Class.forName(driver).getDeclaredConstructors()[0].newInstance();
-            logger.debug("Driver: " + driver);
-            return ret;
         } catch (Exception e) {
+            status = DerbyStatus.NerworkFailed;
             logger.debug(e.toString());
-            return null;
+            return e.toString();
         }
     }
 
@@ -261,18 +281,22 @@ public class DerbyBase {
             }
             NetworkServerControl server = new NetworkServerControl(InetAddress.getByName(host),
                     uPort, CommonValues.AppDerbyUser, CommonValues.AppDerbyPassword);
+            status = DerbyStatus.Starting;
             server.start(null);
 //            server.setTraceDirectory("d:/tmp");
             server.trace(false);
             if (isServerStarted(server)) {
                 port = uPort;
                 logger.debug("Derby server is listening in port " + port + ".");
+                status = DerbyStatus.Nerwork;
                 return true;
             } else {
+                status = DerbyStatus.NerworkFailed;
                 return false;
             }
         } catch (Exception e) {
             logger.debug(e.toString());
+            status = DerbyStatus.NerworkFailed;
             return false;
         }
     }
@@ -286,6 +310,7 @@ public class DerbyBase {
             NetworkServerControl server = new NetworkServerControl(InetAddress.getByName(host),
                     port, CommonValues.AppDerbyUser, CommonValues.AppDerbyPassword);
             server.shutdown();
+            status = DerbyStatus.NotConnected;
             return true;
         } catch (Exception e) {
             logger.debug(e.toString());
@@ -295,11 +320,23 @@ public class DerbyBase {
 
     public static boolean isServerStarted(int uPort) {
         try ( Connection conn = DriverManager.getConnection(
-                "jdbc:derby://" + host + ":" + uPort + "/" + dbName() + login)) {
+                "jdbc:derby://" + host + ":" + uPort + "/" + dbHome() + login)) {
             port = uPort;
+            status = DerbyStatus.Nerwork;
             return true;
         } catch (Exception e) {
 //            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean canEmbeded() {
+        try ( Connection conn = DriverManager.getConnection(
+                "jdbc:derby:" + dbHome() + create)) {
+            return true;
+        } catch (Exception e) {
+//            logger.debug(e.toString());
+            status = DerbyStatus.EmbeddedFailed;
             return false;
         }
     }
@@ -325,10 +362,11 @@ public class DerbyBase {
     }
 
     public static boolean initTables() {
-        logger.debug("Protocol: " + protocol);
-        try ( Connection conn = DriverManager.getConnection(protocol + dbName() + create);
+        logger.debug("Protocol: " + protocol + dbHome());
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + create);
                  Statement statement = conn.createStatement()) {
             List<String> tables = new DerbyBase().tables(statement);
+//            logger.debug(tables);
             if (!tables.contains("SRGB")) {
                 new TableSRGB().init(statement);
             }
@@ -347,9 +385,6 @@ public class DerbyBase {
             if (!tables.contains("Alarm_Clock".toUpperCase())) {
                 new TableAlarmClock().init(statement);
             }
-            if (!tables.contains("Browser_URLs".toUpperCase())) {
-                new TableBrowserUrls().init(statement);
-            }
             if (!tables.contains("image_history".toUpperCase())) {
                 new TableImageHistory().init(statement);
             }
@@ -362,20 +397,31 @@ public class DerbyBase {
             if (!tables.contains("visit_history".toUpperCase())) {
                 new TableVisitHistory().init(statement);
             }
+            if (!tables.contains("media_list".toUpperCase())) {
+                new TableMediaList().init(statement);
+            }
+            if (!tables.contains("media".toUpperCase())) {
+                new TableMedia().init(statement);
+            }
+            if (!tables.contains("Browser_History".toUpperCase())) {
+                new TableBrowserHistory().init(statement);
+            }
+            if (!tables.contains("Browser_Bypass_SSL".toUpperCase())) {
+                new TableBrowserBypassSSL().init(statement);
+            }
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+//            logger.debug(e.toString());
             return false;
         }
     }
 
     public static boolean dropTables() {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbName() + login);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
             new TableSystemConf().drop(statement);
             new TableUserConf().drop(statement);
             new TableAlarmClock().drop(statement);
-            new TableBrowserUrls().drop(statement);
             new TableImageHistory().drop(statement);
             new TableConvolutionKernel().drop(statement);
             new TableFloatMatrix().drop(statement);
@@ -383,6 +429,10 @@ public class DerbyBase {
             new TableImageScope().drop(statement);
             new TableStringValues().drop(statement);
             new TableSRGB().drop(statement);
+            new TableMediaList().drop(statement);
+            new TableMedia().drop(statement);
+            new TableBrowserHistory().drop(statement);
+            new TableBrowserBypassSSL().drop(statement);
             return true;
         } catch (Exception e) {
 //            // logger.debug(e.toString());
@@ -391,11 +441,10 @@ public class DerbyBase {
     }
 
     public static boolean clearData() {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbName() + login);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
             new TableUserConf().clear(statement);
             new TableAlarmClock().clear(statement);
-            new TableBrowserUrls().clear(statement);
             new TableImageHistory().clear(statement);
             new TableConvolutionKernel().clear(statement);
             new TableFloatMatrix().clear(statement);
@@ -403,6 +452,10 @@ public class DerbyBase {
             new TableImageScope().clear(statement);
             new TableStringValues().clear(statement);
             new TableSRGB().clear(statement);
+            new TableMediaList().clear(statement);
+            new TableMedia().clear(statement);
+            new TableBrowserHistory().clear(statement);
+            new TableBrowserBypassSSL().clear(statement);
             return true;
         } catch (Exception e) {
 //            // logger.debug(e.toString());
@@ -473,6 +526,14 @@ public class DerbyBase {
                 AppVariables.setSystemConfigValue("UpdatedTables5.9", true);
             }
 
+            if (!AppVariables.getSystemConfigBoolean("UpdatedTables5.9a", false)) {
+                logger.info("Updating tables in 5.9...");
+                DerbyBase t = new DerbyBase();
+                String sql = "DROP TABLE Browser_URLs";
+                t.update(sql);
+                AppVariables.setSystemConfigValue("UpdatedTables5.9a", true);
+            }
+
             TableStringValues.add("InstalledVersions", CommonValues.AppVersion);
 
             return true;
@@ -488,6 +549,7 @@ public class DerbyBase {
                 return;
             }
             if (exception.toString().contains("java.sql.SQLNonTransientConnectionException")) {
+                status = DerbyStatus.NotConnected;
                 startDerby();
             }
         } catch (Exception e) {

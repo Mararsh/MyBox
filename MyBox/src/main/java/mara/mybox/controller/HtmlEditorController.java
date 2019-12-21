@@ -7,7 +7,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.StringWriter;
-import java.net.URL;
+import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,7 +45,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.InputEvent;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
@@ -64,8 +63,10 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import mara.mybox.data.BrowserHistory;
 import mara.mybox.data.VisitHistory;
-import mara.mybox.db.TableBrowserUrls;
+import mara.mybox.db.TableBrowserBypassSSL;
+import mara.mybox.db.TableBrowserHistory;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlImageManufacture;
@@ -73,13 +74,14 @@ import mara.mybox.fxml.FxmlStage;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.FileTools;
-import static mara.mybox.tools.NetworkTools.checkWeiboPassport;
+import mara.mybox.tools.HtmlTools;
+import mara.mybox.tools.NetworkTools;
 import mara.mybox.tools.PdfTools;
-import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.MyboxDataPath;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonImageValues;
+import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -91,14 +93,12 @@ import mara.mybox.value.CommonValues;
 public class HtmlEditorController extends BaseController {
 
     private final String HtmlImagePathKey, HtmlSnapDelayKey, HtmlLastUrlsKey, HtmlPdfPathKey;
-    private final String WeiBoPassportChecked;
     private WebEngine webEngine;
     private int delay, fontSize, orginalStageHeight, orginalStageY, orginalStageWidth;
     protected int lastHtmlLen, lastCodesLen, snapHeight, snapCount;
-    private boolean isOneImage, isLoadingWeiboPassport;
-    private URL url;
+    private boolean isOneImage;
+    private URI uri;
     private List<Image> images;
-    private List<String> urls;
     private LoadingController loadingController;
     private float zoomScale;
     protected boolean loadSynchronously, isFrameSet, notChangedAfterLoad;
@@ -107,7 +107,7 @@ public class HtmlEditorController extends BaseController {
     protected int lastTextLen;
 
     @FXML
-    private Button loadButton, snapshotButton;
+    private Button snapshotButton;
     @FXML
     private HTMLEditor htmlEditor;
     @FXML
@@ -146,21 +146,15 @@ public class HtmlEditorController extends BaseController {
         HtmlSnapDelayKey = "HtmlSnapDelay";
         HtmlLastUrlsKey = "HtmllastUrl";
         HtmlPdfPathKey = "PdfFilePath";
-        WeiBoPassportChecked = "WeiBoPassportChecked";
 
-        sourceExtensionFilter = CommonImageValues.HtmlExtensionFilter;
+        sourceExtensionFilter = CommonFxValues.HtmlExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
 
-    }
-
-    private boolean isPasteEvent(KeyEvent event) {
-        return event.isShortcutDown() && event.getCode() == KeyCode.V;
     }
 
     @Override
     public void initializeNext() {
         try {
-
             lastCodesLen = lastHtmlLen = 0;
             isSettingValues = false;
             fontSize = 14;
@@ -213,18 +207,18 @@ public class HtmlEditorController extends BaseController {
                             }
 
                         } else if (browserTab.equals(oldValue)) {
-                            object = webEngine.executeScript("document.documentElement.outerHTML");
-                            if (object != null) {
-                                contents = (String) object;
-                                isFrameSet = contents.toUpperCase().contains("</FRAMESET>");
-                                codesArea.setText(contents);
-                                if (isFrameSet) {
-                                    htmlEditor.setHtmlText("<p>" + AppVariables.message("NotSupportFrameSet") + "</p>");
-                                } else {
-                                    htmlEditor.setHtmlText(contents);
-                                }
-                                html2markdown(contents);
-                            }
+//                            object = webEngine.executeScript("document.documentElement.outerHTML");
+//                            if (object != null) {
+//                                contents = (String) object;
+//                                isFrameSet = contents.toUpperCase().contains("</FRAMESET>");
+//                                codesArea.setText(contents);
+//                                if (isFrameSet) {
+//                                    htmlEditor.setHtmlText("<p>" + AppVariables.message("NotSupportFrameSet") + "</p>");
+//                                } else {
+//                                    htmlEditor.setHtmlText(contents);
+//                                }
+//                                html2markdown(contents);
+//                            }
 
                         } else if (markdownTab.equals(oldValue)) {
 
@@ -328,46 +322,20 @@ public class HtmlEditorController extends BaseController {
 
     protected void initBroswer() {
         try {
+            if (AppVariables.getUserConfigBoolean("SSLBypassAll", false)) {
+                NetworkTools.trustAll();
+            } else {
+                NetworkTools.myBoxSSL();
+            }
 
             urlBox.valueProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> ov,
                         String oldValue, String newv) {
-                    if (isSettingValues || newv == null || newv.trim().isEmpty()) {
-                        return;
-                    }
-                    final String newValue = newv;
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                url = new URL(newValue);
-                                if (url.getProtocol().toLowerCase().startsWith("http")) {
-                                    urlBox.getEditor().setStyle(null);
-                                    isSettingValues = true;
-                                    urls = TableBrowserUrls.write(newValue);
-                                    try {
-                                        urlBox.getItems().clear();
-                                        urlBox.getItems().addAll(urls);
-                                        urlBox.getSelectionModel().select(0);
-                                    } catch (Exception e) {
-                                        logger.error(e.toString());
-                                    }
-                                    isSettingValues = false;
-                                } else {
-                                    urlBox.getEditor().setStyle(badStyle);
-                                }
-                            } catch (Exception e) {
-//                                    loadFailed = loadCompleted = true;
-//                                    errorString = e.toString();
-//                                logger.error(e.toString());
-                                urlBox.getEditor().setStyle(badStyle);
-                            }
-                        }
-                    });
+                    checkAddress();
                 }
             });
-            urls = TableBrowserUrls.read();
+            List<String> urls = TableBrowserHistory.recentBrowse();
             if (!urls.isEmpty()) {
                 isSettingValues = true;
                 urlBox.getItems().addAll(urls);
@@ -410,18 +378,6 @@ public class HtmlEditorController extends BaseController {
             webEngine = webView.getEngine();
             webEngine.setJavaScriptEnabled(true);
 
-            //handle popup windows
-//            webEngine.setCreatePopupHandler(new Callback<PopupFeatures, WebEngine>() {
-//                @Override
-//                public WebEngine call(PopupFeatures config) {
-////                    smallView.setFontScale(0.8);
-////                    if (!toolBar.getChildren().contains(smallView)) {
-////                        toolBar.getChildren().add(smallView);
-////                    }
-////                    return smallView.getEngine();
-//                }
-//            }
-//            );
             webEngine.getLoadWorker().stateProperty().addListener(new ChangeListener<State>() {
                 @Override
                 public void changed(ObservableValue ov, State oldState, State newState) {
@@ -431,129 +387,18 @@ public class HtmlEditorController extends BaseController {
                         switch (newState) {
                             case READY:
                                 bottomText.setText("");
-                                loadButton.setText(message("Load"));
                                 break;
                             case SCHEDULED:
                                 bottomText.setText("");
-                                loadButton.setText(message("Stop"));
                                 break;
                             case RUNNING:
                                 bottomText.setText(AppVariables.message("Loading..."));
-                                loadButton.setText(message("Stop"));
                                 break;
                             case SUCCEEDED:
-//                            logger.debug((String) webEngine.executeScript("document.cookie;"));
-//                            logger.debug((String) webEngine.executeScript("document.referrer;"));
-                                if (isLoadingWeiboPassport) {
-
-                                    isLoadingWeiboPassport = false;
-                                    if (timer != null) {
-                                        timer.cancel();
-                                    }
-                                    timer = new Timer();
-                                    if (SystemTools.isOtherPlatforms()) {
-                                        timer.schedule(new TimerTask() {
-                                            @Override
-                                            public void run() {
-                                                AppVariables.setUserConfigValue("WeiboPassportChecked", true);
-                                                Platform.runLater(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        if (checkWeiboPassport()) {
-                                                            webEngine.load(url.toString());
-                                                            if (loadingController != null) {
-                                                                loadingController.closeStage();
-                                                                loadingController = null;
-                                                            }
-                                                        }
-                                                    }
-                                                });
-                                            }
-                                        }, 10000);
-
-                                    } else {
-                                        timer.schedule(new TimerTask() {
-                                            private boolean done = false;
-
-                                            @Override
-                                            public void run() {
-                                                if (done) {
-                                                    this.cancel();
-                                                } else {
-                                                    Platform.runLater(new Runnable() {
-                                                        @Override
-                                                        public void run() {
-                                                            if (checkWeiboPassport()) {
-                                                                webEngine.load(url.toString());
-                                                                done = true;
-                                                                if (loadingController != null) {
-                                                                    loadingController.closeStage();
-                                                                    loadingController = null;
-                                                                }
-                                                            }
-                                                        }
-                                                    });
-                                                }
-                                            }
-                                        }, 1000, 1000);
-                                    }
-                                } else {
-
-                                    try {
-                                        Object c = webEngine.executeScript("getComputedStyle(document.body).fontSize");
-                                        if (c != null) {
-                                            String s = (String) c;
-                                            fontSize = Integer.valueOf(s.substring(0, s.length() - 2));
-                                        } else {
-                                            fontSize = 14;
-                                        }
-                                    } catch (Exception e) {
-
-                                        fontSize = 14;
-                                    }
-                                    bottomText.setText(AppVariables.message("Loaded"));
-                                    if (loadingController != null) {
-
-                                        loadingController.closeStage();
-                                        loadingController = null;
-                                    }
-                                    loadButton.setText(message("Load"));
-                                    snapBar.setDisable(false);
-
-                                }
-                                if (loadSynchronously) {
-                                    try {
-                                        String contents;
-                                        Object c = webEngine.executeScript("document.documentElement.outerHTML");
-                                        if (c == null) {
-                                            contents = "";
-                                        } else {
-                                            contents = (String) c;
-                                        }
-                                        isFrameSet = contents.toUpperCase().contains("</FRAMESET>");
-                                        if (isFrameSet) {
-//                                        popError(AppVariables.getMessage("NotSupportFrameSet"));
-                                            htmlEditor.setHtmlText("<p>" + AppVariables.message("NotSupportFrameSet") + "</p>");
-                                        } else {
-                                            htmlEditor.setHtmlText(contents);
-                                        }
-                                        codesArea.setText(contents);
-                                    } catch (Exception e) {
-                                        logger.debug(e.toString());
-                                    }
-                                    loadSynchronously = false;
-                                }
-
-                                if (notChangedAfterLoad) {
-                                    fileChanged.set(false);
-                                    getMyStage().setTitle(getBaseTitle());
-                                    notChangedAfterLoad = false;
-                                }
-
+                                afterPageLoaded();
                                 break;
                             case CANCELLED:
                                 bottomText.setText(message("Canceled"));
-                                loadButton.setText(message("Load"));
                                 if (loadingController != null) {
                                     loadingController.closeStage();
                                     loadingController = null;
@@ -561,7 +406,6 @@ public class HtmlEditorController extends BaseController {
                                 break;
                             case FAILED:
                                 bottomText.setText(message("Failed"));
-                                loadButton.setText(message("Load"));
                                 if (loadingController != null) {
                                     loadingController.closeStage();
                                     loadingController = null;
@@ -569,7 +413,6 @@ public class HtmlEditorController extends BaseController {
                                 break;
                             default:
                                 bottomText.setText("");
-                                loadButton.setText(message("Load"));
                                 break;
                         }
 
@@ -597,7 +440,8 @@ public class HtmlEditorController extends BaseController {
 
                 @Override
                 public void handle(WebErrorEvent event) {
-                    logger.debug("onError " + event.getMessage());
+                    popError(event.getMessage());
+                    logger.debug(event.getMessage());
                 }
             });
 
@@ -612,12 +456,55 @@ public class HtmlEditorController extends BaseController {
 
             webEngine.getLoadWorker().exceptionProperty().addListener(new ChangeListener<Throwable>() {
                 @Override
-                public void changed(ObservableValue<? extends Throwable> ov, Throwable t, Throwable t1) {
-                    if (t != null) {
-                        logger.debug("Received exception: " + t.getMessage());
+                public void changed(ObservableValue<? extends Throwable> ov, Throwable ot, Throwable nt) {
+                    if (nt == null) {
+                        return;
                     }
-                    if (t1 != null) {
-                        logger.debug("Received exception: " + t1.getMessage());
+                    try {
+                        bottomText.setText(nt.getMessage());
+                        if (nt.getMessage().contains("SSL handshake failed")) {
+                            String host = new URI(webEngine.getLocation()).getHost();
+                            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                            alert.setTitle(getBaseTitle());
+                            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+                            stage.setAlwaysOnTop(true);
+                            stage.toFront();
+                            if (NetworkTools.isHostCertificateInstalled(host)) {
+                                alert.setContentText(host + "\n" + message("SSLInstalledButFailed"));
+                                ButtonType buttonBypass = new ButtonType(AppVariables.message("SSLVerificationByPass"));
+                                ButtonType buttonCancel = new ButtonType(AppVariables.message("ISee"));
+                                alert.getButtonTypes().setAll(buttonBypass, buttonCancel);
+                                Optional<ButtonType> result = alert.showAndWait();
+                                if (result.get() == buttonCancel) {
+                                    return;
+                                }
+                                TableBrowserBypassSSL.write(host);
+                                load();
+
+                            } else {
+                                alert.setContentText(host + "\n" + message("SSLCertificatesAskInstall"));
+                                ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
+                                ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
+                                alert.getButtonTypes().setAll(buttonSure, buttonCancel);
+                                Optional<ButtonType> result = alert.showAndWait();
+                                if (result.get() == buttonCancel) {
+                                    return;
+                                }
+                                String msg = NetworkTools.installCertificateByHost(host, host);
+                                if (msg == null) {
+                                    msg = host + "\n" + message("SSLCertificateInstalled");
+                                }
+                                alert.setContentText(msg);
+                                ButtonType buttonISee = new ButtonType(AppVariables.message("ISee"));
+                                alert.getButtonTypes().setAll(buttonISee);
+                                alert.showAndWait();
+                            }
+
+                        }
+                    } catch (Exception e) {
+                        popError(e.toString());
+                        logger.debug(e.toString());
                     }
                 }
             });
@@ -626,6 +513,149 @@ public class HtmlEditorController extends BaseController {
             logger.error(e.toString());
         }
 
+    }
+
+    protected void checkAddress() {
+        try {
+            String address = urlBox.getValue();
+            if (isSettingValues || address == null || address.trim().isEmpty()) {
+                return;
+            }
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        if (address.startsWith("file:")) {
+                            uri = new URI(address);
+                        } else if (!address.startsWith("http")) {
+                            uri = new URI("http://" + address);
+                        } else {
+                            uri = new URI(address);
+                        }
+                        if (uri != null) {
+                            load();
+                        } else {
+                            urlBox.getEditor().setStyle(badStyle);
+                        }
+                    } catch (Exception e) {
+                        logger.error(e.toString());
+                        urlBox.getEditor().setStyle(badStyle);
+                    }
+                }
+            });
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    protected void afterPageLoaded() {
+        try {
+            if (loadingController != null) {
+                loadingController.closeStage();
+                loadingController = null;
+            }
+            if (uri == null) {
+                return;
+            }
+            bottomText.setText(AppVariables.message("Loaded"));
+            snapBar.setDisable(false);
+
+            if (loadSynchronously) {
+                try {
+                    String contents;
+                    Object c = webEngine.executeScript("document.documentElement.outerHTML");
+                    if (c == null) {
+                        contents = "";
+                    } else {
+                        contents = (String) c;
+                    }
+                    isFrameSet = contents.toUpperCase().contains("</FRAMESET>");
+                    if (isFrameSet) {
+//                                        popError(AppVariables.getMessage("NotSupportFrameSet"));
+                        htmlEditor.setHtmlText("<p>" + AppVariables.message("NotSupportFrameSet") + "</p>");
+                    } else {
+                        htmlEditor.setHtmlText(contents);
+                    }
+                    codesArea.setText(contents);
+                    html2markdown(contents);
+                } catch (Exception e) {
+                    logger.debug(e.toString());
+                }
+                loadSynchronously = false;
+            }
+
+            if (notChangedAfterLoad) {
+                fileChanged.set(false);
+                getMyStage().setTitle(getBaseTitle());
+                notChangedAfterLoad = false;
+            }
+
+            try {
+                Object c = webEngine.executeScript("getComputedStyle(document.body).fontSize");
+                if (c != null) {
+                    String s = (String) c;
+                    fontSize = Integer.valueOf(s.substring(0, s.length() - 2));
+                } else {
+                    fontSize = 14;
+                }
+            } catch (Exception e) {
+                fontSize = 14;
+            }
+
+            String address = uri.toString().toLowerCase();
+            BrowserHistory his = new BrowserHistory();
+            his.setAddress(address);
+            his.setVisitTime(new Date().getTime());
+            his.setTitle(webEngine.getTitle());
+            File path = new File(MyboxDataPath + File.separator + "icons");
+            if (!path.exists()) {
+                path.mkdirs();
+            }
+
+            if (uri.getScheme().startsWith("http")) {
+                File file = new File(MyboxDataPath + File.separator + "icons" + File.separator + uri.getHost() + ".png");
+                if (!file.exists()) {
+                    HtmlTools.readIcon(address, file);
+                }
+                if (file.exists()) {
+                    his.setIcon(file.getAbsolutePath());
+                } else {
+                    his.setIcon("");
+                }
+            } else {
+                his.setIcon("");
+            }
+            TableBrowserHistory.write(his);
+
+            isSettingValues = true;
+            urlBox.getItems().clear();
+            List<String> urls = TableBrowserHistory.recentBrowse();
+            if (!urls.isEmpty()) {
+                urlBox.getItems().addAll(urls);
+                urlBox.getEditor().setText(address);
+            }
+            isSettingValues = false;
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    protected void load() {
+        try {
+            isFrameSet = false;
+            loadSynchronously = true;
+            notChangedAfterLoad = true;
+            webEngine.getLoadWorker().cancel();
+            if (uri == null) {
+                return;
+            }
+            bottomText.setText(AppVariables.message("Loading..."));
+            webEngine.load(uri.toString());
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
     }
 
     private void checkOneImage() {
@@ -647,67 +677,12 @@ public class HtmlEditorController extends BaseController {
     }
 
     public void loadLink(String link) {
-        isFrameSet = false;
-        loadSynchronously = true;
-        notChangedAfterLoad = true;
-        webEngine.load(link);
-        urlBox.getEditor().setText(link);
+        urlBox.setValue(link);
     }
 
     public void loadLink(File file) {
         sourceFile = file;
         loadLink(file.toURI().toString());
-    }
-
-    @FXML
-    private void loadAction(ActionEvent event) {
-        isFrameSet = false;
-
-        if (loadButton.getText().equals(message("Stop"))) {
-            webEngine.getLoadWorker().cancel();
-            return;
-        }
-        isLoadingWeiboPassport = false;
-
-        if (loadingController != null) {
-            loadingController.closeStage();
-            loadingController = null;
-        }
-        loadingController = openHandlingStage(Modality.NONE, AppVariables.message("Loading..."));
-        bottomText.setText(AppVariables.message("Loading..."));
-        try {
-            final String urlString = url.toString().toLowerCase();
-//            logger.debug(urlString);
-
-            if (urlString.contains("weibo.com/") && !checkWeiboPassport()) {
-                isLoadingWeiboPassport = true;
-                bottomText.setText(AppVariables.message("LoadingWeiboCertificate"));
-                loadingController.setInfo(AppVariables.message("LoadingWeiboCertificate"));
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        webEngine.load("https://passport.weibo.com/visitor/visitor?entry=miniblog");
-                    }
-                });
-
-            } else {
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        webEngine.load(urlString);
-                    }
-                });
-
-            }
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-            if (loadingController != null) {
-                loadingController.closeStage();
-                loadingController = null;
-            }
-        }
-
     }
 
     private String getBrowserContents() {
@@ -749,7 +724,7 @@ public class HtmlEditorController extends BaseController {
             } else {
                 contents = htmlEditor.getHtmlText();
             }
-            try (BufferedWriter out = new BufferedWriter(new FileWriter(sourceFile, Charset.forName("utf-8"), false))) {
+            try ( BufferedWriter out = new BufferedWriter(new FileWriter(sourceFile, Charset.forName("utf-8"), false))) {
                 out.write(contents);
                 out.flush();
             }
@@ -785,7 +760,7 @@ public class HtmlEditorController extends BaseController {
             } else {
                 contents = codesArea.getText();
             }
-            try (BufferedWriter out = new BufferedWriter(new FileWriter(sourceFile, Charset.forName("utf-8"), false))) {
+            try ( BufferedWriter out = new BufferedWriter(new FileWriter(sourceFile, Charset.forName("utf-8"), false))) {
                 out.write(contents);
                 out.flush();
             }
@@ -822,10 +797,10 @@ public class HtmlEditorController extends BaseController {
         File file;
         if (isOneImage) {
             file = chooseSaveFile(AppVariables.getUserConfigPath(HtmlImagePathKey),
-                    null, CommonImageValues.ImageExtensionFilter, true);
+                    null, CommonFxValues.ImageExtensionFilter, true);
         } else {
             file = chooseSaveFile(AppVariables.getUserConfigPath(HtmlPdfPathKey),
-                    null, CommonImageValues.PdfExtensionFilter, true);
+                    null, CommonFxValues.PdfExtensionFilter, true);
         }
         if (file == null) {
             return;
@@ -1155,7 +1130,7 @@ public class HtmlEditorController extends BaseController {
                 name = FileTools.getFilePrefix(sourceFile.getName());
             }
             final File file = chooseSaveFile(AppVariables.getUserConfigPath("MarkdownFilePath"),
-                    name, CommonImageValues.MarkdownExtensionFilter, true);
+                    name, CommonFxValues.MarkdownExtensionFilter, true);
             if (file == null) {
                 return;
             }

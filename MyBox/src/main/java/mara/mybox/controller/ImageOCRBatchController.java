@@ -46,7 +46,6 @@ import net.sourceforge.tess4j.util.ImageHelper;
  */
 public class ImageOCRBatchController extends ImagesBatchController {
 
-    protected ChangeListener<Number> leftDividerListener;
     protected String selectedLanguages;
     protected float scale;
     protected int threshold, rotate, regionLevel, wordLevel;

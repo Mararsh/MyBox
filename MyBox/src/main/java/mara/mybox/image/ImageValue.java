@@ -6,8 +6,6 @@ import com.github.jaiimageio.impl.plugins.pnm.PNMImageReaderSpi;
 import com.github.jaiimageio.impl.plugins.pnm.PNMImageWriterSpi;
 import com.github.jaiimageio.impl.plugins.raw.RawImageReaderSpi;
 import com.github.jaiimageio.impl.plugins.raw.RawImageWriterSpi;
-import com.github.jaiimageio.jpeg2000.impl.J2KImageReaderSpi;
-import com.github.jaiimageio.jpeg2000.impl.J2KImageWriterSpi;
 import java.awt.color.ColorSpace;
 import java.awt.color.ICC_ColorSpace;
 import java.awt.color.ICC_Profile;
@@ -79,8 +77,8 @@ public class ImageValue {
         registry.registerServiceProvider(new PCXImageReaderSpi());
         registry.registerServiceProvider(new PNMImageWriterSpi());
         registry.registerServiceProvider(new PNMImageReaderSpi());
-        registry.registerServiceProvider(new J2KImageWriterSpi());
-        registry.registerServiceProvider(new J2KImageReaderSpi());
+//        registry.registerServiceProvider(new J2KImageWriterSpi());
+//        registry.registerServiceProvider(new J2KImageReaderSpi());
 
 //        String readFormats[] = ImageIO.getReaderFormatNames();
 //        String writeFormats[] = ImageIO.getWriterFormatNames();
@@ -106,19 +104,23 @@ public class ImageValue {
             case "tif":
             case "tiff": // Summarized based on API of class "com.github.jaiimageio.plugins.tiff.TIFFImageWriteParam" and debugging
                 if (message("BlackOrWhite").equals(colorSpace)) {
-                    compressionTypes = new String[]{"CCITT T.6", "CCITT RLE", "CCITT T.4", "ZLib", "Deflate", "LZW", "PackBits"};
+                    compressionTypes = new String[]{"CCITT T.6", "CCITT RLE",
+                        "CCITT T.4", "ZLib", "Deflate", "LZW", "PackBits"};
                 } else {
                     if (hasAlpha || ImageValue.CMYKColorSpaces.contains(colorSpace)) {
-                        compressionTypes = new String[]{"LZW", "ZLib", "Deflate", "PackBits"};
+                        compressionTypes = new String[]{"LZW", "ZLib", "Deflate",
+                            "PackBits"};
                     } else {
-                        compressionTypes = new String[]{"LZW", "ZLib", "Deflate", "JPEG", "PackBits"};
+                        compressionTypes = new String[]{"LZW", "ZLib", "Deflate",
+                            "JPEG", "PackBits"};
                     }
                 }
 //                compressionTypes = ImageTools.getTiffCompressionTypes();
                 break;
             case "bmp":  // Summarized based on API of class "com.github.jaiimageio.plugins.bmp.BMPImageWriteParam" and debugging
                 if (message("Gray").equals(colorSpace)) {
-                    compressionTypes = new String[]{"BI_RGB", "BI_RLE8", "BI_BITFIELDS"};
+                    compressionTypes = new String[]{"BI_RGB", "BI_RLE8",
+                        "BI_BITFIELDS"};
                 } else if (message("BlackOrWhite").equals(colorSpace)) {
                     compressionTypes = new String[]{"BI_RGB", "BI_BITFIELDS"};
                 } else {
@@ -148,15 +150,18 @@ public class ImageValue {
             case "tiff":  // Summarized based on API of class "com.github.jaiimageio.plugins.tiff.TIFFImageWriteParam" and debugging
                 switch (imageColor) {
                     case BINARY: {
-                        String[] types = {"CCITT T.6", "CCITT RLE", "CCITT T.4", "ZLib", "Deflate", "LZW", "PackBits"};
+                        String[] types = {"CCITT T.6", "CCITT RLE", "CCITT T.4",
+                            "ZLib", "Deflate", "LZW", "PackBits"};
                         return types;
                     }
                     case GRAY: {
-                        String[] types = {"LZW", "ZLib", "Deflate", "JPEG", "PackBits"};
+                        String[] types = {"LZW", "ZLib", "Deflate", "JPEG",
+                            "PackBits"};
                         return types;
                     }
                     case RGB: {
-                        String[] types = {"LZW", "ZLib", "Deflate", "JPEG", "PackBits"};
+                        String[] types = {"LZW", "ZLib", "Deflate", "JPEG",
+                            "PackBits"};
                         return types;
                     }
                     case ARGB: {

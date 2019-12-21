@@ -62,6 +62,7 @@ public class ImageInformation extends ImageFileInformation {
         standardAttributes = new LinkedHashMap();
         nativeAttributes = new LinkedHashMap();
         index = 0;
+
     }
 
     public ImageInformation as() {
@@ -83,6 +84,9 @@ public class ImageInformation extends ImageFileInformation {
     }
 
     public static ImageFileInformation loadImageFileInformation(File file) {
+        if (file == null) {
+            return null;
+        }
         String fileName = file.getAbsolutePath();
         String format = FileTools.getFileSuffix(fileName).toLowerCase();
         if ("raw".equals(format) || !file.exists()) {
@@ -92,11 +96,17 @@ public class ImageInformation extends ImageFileInformation {
     }
 
     public static ImageInformation loadImage(File file) {
+        if (file == null) {
+            return null;
+        }
         ImageFileInformation imageFileInformation = ImageInformation.loadImageFileInformation(file);
         return ImageInformation.loadImage(file, imageFileInformation);
     }
 
     public static ImageInformation loadImage(File file, ImageFileInformation imageFileInformation) {
+        if (file == null || imageFileInformation == null || imageFileInformation.imageInformation == null) {
+            return null;
+        }
         return ImageInformation.loadImage(file, imageFileInformation.imageInformation.width, 0, imageFileInformation);
     }
 
@@ -110,13 +120,16 @@ public class ImageInformation extends ImageFileInformation {
 
     public static ImageInformation loadImage(File file, int loadWidth, int frameIndex,
             ImageFileInformation imageFileInformation) {
+        if (imageFileInformation == null || imageFileInformation.getImageInformation() == null) {
+            return null;
+        }
         boolean needSampled = ImageFileReaders.needSampled(imageFileInformation.getImageInformation(), 1);
         return ImageInformation.loadImage(file, loadWidth, frameIndex, imageFileInformation, needSampled);
     }
 
     public static ImageInformation loadImage(File file, int loadWidth, int frameIndex,
             ImageFileInformation imageFileInformation, boolean needSampled) {
-        if (imageFileInformation == null) {
+        if (imageFileInformation == null || imageFileInformation.getImageInformation() == null) {
             return null;
         }
         String fileName = file.getAbsolutePath();

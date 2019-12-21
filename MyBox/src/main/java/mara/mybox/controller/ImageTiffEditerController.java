@@ -7,7 +7,7 @@ import mara.mybox.data.VisitHistory;
 import mara.mybox.image.file.ImageTiffFile;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
-import mara.mybox.value.CommonImageValues;
+import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -28,7 +28,7 @@ public class ImageTiffEditerController extends ImagesListController {
         AddFileType = VisitHistory.FileType.Image;
         AddPathType = VisitHistory.FileType.Image;
 
-        sourceExtensionFilter = CommonImageValues.TiffExtensionFilter;
+        sourceExtensionFilter = CommonFxValues.TiffExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
     }
 

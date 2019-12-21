@@ -767,8 +767,8 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
                         }
                         StringTable table = quantization.countTable(name);
                         if (table != null) {
-                            StringTableController controller
-                                    = (StringTableController) FxmlStage.openStage(CommonValues.StringTableFxml);
+                            HtmlViewerController controller
+                                    = (HtmlViewerController) FxmlStage.openStage(CommonValues.HtmlViewerFxml);
                             controller.loadTable(table);
                         }
                     }

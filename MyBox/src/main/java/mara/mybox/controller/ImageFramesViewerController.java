@@ -21,7 +21,7 @@ import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonImageValues;
+import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -90,7 +90,11 @@ public class ImageFramesViewerController extends ImagesListController {
                     infos = new ArrayList<>();
                     final String fileName = file.getPath();
                     ImageFileInformation finfo = ImageFileReaders.readImageFileMetaData(fileName);
+                    if (finfo == null || finfo.getImageInformation() == null) {
+                        return false;
+                    }
                     imageInformation = finfo.getImageInformation();
+
                     String format = finfo.getImageFormat();
                     if ("raw".equals(format)) {
                         return false;
@@ -173,7 +177,7 @@ public class ImageFramesViewerController extends ImagesListController {
             final File tFile = chooseSaveFile(message("FilePrefixInput"),
                     AppVariables.getUserConfigPath(targetPathKey),
                     FileTools.getFilePrefix(sourceFile.getName()),
-                    CommonImageValues.ImageExtensionFilter, true);
+                    CommonFxValues.ImageExtensionFilter, true);
             if (tFile == null) {
                 return;
             }

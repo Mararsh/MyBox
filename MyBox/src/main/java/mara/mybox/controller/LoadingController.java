@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -35,6 +37,24 @@ public class LoadingController extends BaseController {
 
     public LoadingController() {
         baseTitle = AppVariables.message("LoadingPage");
+    }
+
+    @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            infoLabel.widthProperty().addListener(new ChangeListener<Number>() {
+                @Override
+                public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                    if (getMyStage() != null) {
+                        getMyStage().setWidth(Math.max(infoLabel.getWidth(), timeLabel.getWidth()) + 20);
+                    }
+                }
+            });
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
     }
 
     public void init(final Task<?> task) {
@@ -110,6 +130,7 @@ public class LoadingController extends BaseController {
 //            return;
 //        }
         infoLabel.setText(info);
+
     }
 
     public void setProgress(float value) {

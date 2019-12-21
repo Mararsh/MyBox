@@ -11,26 +11,26 @@
   
 | 平台 | 链接 | 大小 | 启动文件 |    
 | --- | --- | --- |  --- |   
-| win | [MyBox-5.8-win.zip](https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-5.8-win-exe.zip)  | 183MB | MyBox.exe |       
-| linux | [MyBox-5.8-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-5.8-linux.tar.gz)  | 190MB  | bin/MyBox  |     
-| mac | [MyBox-5.8-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-5.8-mac.dmg)  | 193MB  |  MyBox-5.8.app   |   
+| win | [MyBox-5.9-win.zip](https://github.com/Mararsh/MyBox/releases/download/v5.9/MyBox-5.9-win-exe.zip)  | 241MB | MyBox.exe |       
+| linux | [MyBox-5.9-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v5.9/MyBox-5.9-linux.tar.gz)  | 200MB  | bin/MyBox  |     
+| mac | [MyBox-5.9-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v5.9/MyBox-5.9-mac.dmg)  | 202MB  |  MyBox-5.9.app   |   
 
 双击或者用命令行执行包内的启动文件即可运行程序。可以把图片/文本/PDF文件的打开方式关联到MyBox，这样双击文件名就直接是用MyBox打开了。
 （目前无法双击打开路径包含汉字的文件） 
     
 ### Jar包   
-在已安装JRE或者JDK 12或更高版本（`Oracle java`或`Open jdk`均可）的环境下，可以下载jar包。   
+在已安装JRE或者JDK 13或更高版本（`Oracle java`或`Open jdk`均可）的环境下，可以下载jar包。   
  
 | 平台 | 链接 | 大小 | 运行需要 |    
 | --- | --- | --- |  --- |   
-| win | [MyBox-5.8-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-5.8-win-jar.zip)  | 118MB | Java 13.0.1或更高版本 |    
-| linux | [MyBox-5.8-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-5.8-linux-jar.zip)  | 125MB  | Java 13.0.1或更高版本 |    
-| mac | [MyBox-5.8-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-5.8-mac-jar.zip)  |  121MB  | Java 13.0.1或更高版本 |    
+| win | [MyBox-5.9-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.9/MyBox-5.9-win-jar.zip)  | 128MB | Java 13.0.1或更高版本 |    
+| linux | [MyBox-5.9-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.9/MyBox-5.9-linux-jar.zip)  | 134MB  | Java 13.0.1或更高版本 |    
+| mac | [MyBox-5.9-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.9/MyBox-5.9-mac-jar.zip)  |  131MB  | Java 13.0.1或更高版本 |    
     
 执行以下命令来启动程序：
-<PRE><CODE>     java   -jar   MyBox-5.8.jar</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-5.9.jar</CODE></PRE>
 程序可以跟一个文件名作为参数、以用MyBox直接打开此文件。例如以下命令是打开此图片：
-<PRE><CODE>     java   -jar   MyBox-5.8.jar   /tmp/a1.jpg</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-5.9.jar   /tmp/a1.jpg</CODE></PRE>
 
 ### 其它下载地址  
 从云盘下载：  https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F     
@@ -60,16 +60,16 @@ sourceforge:  https://sourceforge.net/projects/mara-mybox/files/
 
 # 文档    
 
-| 文档名 | 版本 | 链接 |
-| --- | --- | --- | 
-| 用户手册-综述 |  5.0 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-Overview-zh.pdf) |
-| 用户手册-图像工具 | 5.0 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-ImageTools-zh.pdf) |
-| 用户手册-PDF工具 | 5.0 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-PdfTools-zh.pdf) |
-| 用户手册-桌面工具 | 5.0 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-DesktopTools-zh.pdf) |
-| 用户手册-网络工具 | 5.0 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-NetworkTools-zh.pdf) |
-| 开发指南 | 2.0 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-DevGuide-2.0-zh.pdf) |
-| 快捷键 | 1.0 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts.html) |
-| 开发日志 |  | [html](#devLog) |
+| 文档名 | 版本 | 修改时间  | 链接 |
+| --- | --- | --- | --- |
+| 用户手册-综述 |  5.0 |  2019-4-19 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-Overview-zh.pdf) |
+| 用户手册-图像工具 | 5.0 |  2019-4-18 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-ImageTools-zh.pdf) |
+| 用户手册-PDF工具 | 5.0 |  2019-4-20 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-PdfTools-zh.pdf) |
+| 用户手册-桌面工具 | 5.0 |  2019-4-16 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-DesktopTools-zh.pdf) |
+| 用户手册-网络工具 | 5.0 |  2019-4-16 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-NetworkTools-zh.pdf) |
+| 开发指南 | 2.0 |  2019-11-18 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-DevGuide-2.0-zh.pdf) |
+| 快捷键 | 5.9 |  2019-12-21 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts.html) |
+| 开发日志 | 5.9 |  2019-12-21 | [html](#devLog) |
 
 
 # 实现基础
@@ -78,7 +78,7 @@ MyBox基于以下开源软件：
 | 软件 | 角色 | 链接 |  
 | --- | --- | --- | 
 | JDK | Java语言 | http://jdk.java.net/13/    
-|   |   | https://www.oracle.com/technetwork/java/javase/downloads/index.html /    
+|   |   | https://www.oracle.com/technetwork/java/javase/downloads/index.html  |   
 | JavaFx | 图形化界面 | https://gluonhq.com/products/javafx/  |     
 |   |   |  https://docs.oracle.com/javafx/2/  |     
 |   |   |  https://www.oracle.com/technetwork/java/javafxscenebuilder-1x-archive-2199384.html |     
@@ -87,7 +87,7 @@ MyBox基于以下开源软件：
 | jai-imageio | 图像处理 | https://github.com/jai-imageio/jai-imageio-core |   
 | PDFBox | PDF处理 | https://pdfbox.apache.org/ |   
 | PDF2DOM | PDF转换html | http://cssbox.sourceforge.net/pdf2dom/ |   
-| javazoom | MP3处理 | http://www.javazoom.net/index.shtml | 
+| javazoom | MP3解码 | http://www.javazoom.net/index.shtml |      
 | log4j | 日志处理 | https://logging.apache.org/log4j/2.x/ |      
 | Derby | 数据库 | http://db.apache.org/derby/ |   
 | GifDecoder | 解码不规范的Gif | https://github.com/DhyanB/Open-Imaging/ |   
@@ -101,10 +101,13 @@ MyBox基于以下开源软件：
 | flexmark-java | 转换Markdown | https://github.com/vsch/flexmark-java |   
 | commons-compress | 归档/压缩 | https://commons.apache.org/proper/commons-compress |   
 | XZ for Java | 归档/压缩 | https://tukaani.org/xz/java.html |   
+| jaffree | 封装ffmpeg | https://github.com/kokorin/Jaffree |   
+| ffmpeg| 媒体转换/生成 | http://ffmpeg.org |   
+| image4j | 读ico格式 | https://github.com/imcdonagh/image4j |   
 
 
 # 当前版本
-当前是版本5.8，已实现的特点概述如下:
+当前是版本5.9，已实现的特点概述如下:
 * [跨平台](#cross-platform)
 * [国际化](#international)
 * [PDF工具](#pdfTools)
@@ -135,8 +138,14 @@ MyBox基于以下开源软件：
     - [检查冗余文件](#filesRedundancy)
     - [其它](#fileOthers)  
 * [媒体工具](#MediaTools)
+    - [播放视频/音频](#mediaPlayer)
+    - [管理播放列表](#mediaList)
+    - [封装ffmpeg的功能](#ffmpeg)
+    - [其它](#mediaOthers)
 * [网络工具](#netTools)
     - [编辑网页](#htmlEditor)
+    - [浏览器](#webBrowser)
+    - [管理安全证书](#securityCerificates)
     - [编辑Markdown](#markdownEditor)
     - [html与Markdown互换](#htmlMarkdownConversion)
     - [微博截图工具](#weiboSnap)
@@ -382,7 +391,7 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 
 ### 消息摘要<a id="messageDigest" />
 1. 生成文件或者输入文本的消息摘要   
-2. 支持MD5/SHA1/SHA256   
+2. 支持MD2, MD5, SHA-1, SHA-224, SHA-256, SHA-384, SHA-512/224, SHA-512/256, SHA3-224, SHA3-256, SHA3-384, SHA3-512   
 
 ## 文件工具<a id="fileTools" />
 ### 编辑文本<a id="editText" />
@@ -445,6 +454,38 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 6. 批量处理时，选择文件的方式：扩展名、文件名、文件大小、文件修改时间，支持正则表达式。
 
 ## 媒体工具<a id="MediaTools" />
+
+### 播放视频/音频<a id="mediaPlayer" />
+1. 创建/加载播放列表
+2. 选项：自动播放、显示毫秒、循环次数、随机顺序
+3. 设置：音量、速度（0~8倍）
+4. 按键：播放/暂停/停止/上一个/下一个/媒体信息/静音/全屏
+5. 全屏时：触屏短暂显示控件、ESC退出全屏
+6. 支持的容器格式：aiff, mp3, mp4, wav, hls(m3u8)，支持的视频编码：h.264/avc，支持的音频编码：aac, mp3, pcm。
+    如果视频没有声音，这是因为播放器不支持它的音频编码器。
+    已知问题：播放一些流媒体时MyBox可能崩溃退出。
+7. 乖乖和笨笨的声音
+8. 此工具无需ffmpeg。但是在Linux上需要安装libavcodec和libavformat， 参见：   
+https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations-1506746.html
+
+### 管理播放列表<a id="mediaList" />
+1. 增删改播放列表
+2. 增删改播放列表的内容。
+3. 读取所支持媒体格式的信息：时长、音频编码、视频编码
+
+### 封装ffmpeg的功能<a id="ffmpeg" />
+1. 批量转换音频/视频-文件/目录表
+2. 批量转换音频/视频-流和媒体信息表
+3. 把图片和音频合成为视频-文件/目录
+4. 把图片和音频合成为视频-图片信息
+5. 转换/合成媒体时，可选择/设置所有的参数，包括格式、视频编码、音频编码、字幕、视频帧率、宽高比、音频采样率、改变音量等。
+6. 合成图片视频时，可以单独设置每个图片的时长，也可对全部图片设置时长，可选择是否”音频流结束时结束视频“。
+7. 合成图片视频时，图片被自动适应为屏幕大小且保持宽高比。
+8. 利用ffprobe读取媒体的信息：格式、音频流、视频流、帧、包、支持的像素格式。
+9. 读取ffmpeg的信息：版本、格式、支持的编码解码器、支持的滤镜，以及自定义查询参数。
+注：这一组功能依赖于ffmpeg，需要用户自己下载ffmpeg（建议使用静态版本）。
+
+### 其它<a id="mediaOthers" />
 1. 记录系统粘贴板中的图像：保存或查看粘贴板中的图像，可选无损图像或压缩类型。
 2. 闹钟，包括时间选项和音乐选项，支持铃音“喵”、wav铃音、和MP3铃音，可以在后端运行。
 
@@ -456,6 +497,19 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 3. 网页浏览器显示编辑器内容、或在线网页。支持前后导览、缩放字体、截图页面为整图或者PDF文件。
 4. 同步转换为Markdown。
 
+### 浏览器<a id="webBrowser" />
+1. 多页签显示网页
+2. 管理浏览历史
+3. 在线安装网站SSL证书。
+4. 可选忽略指定网站或全部网站的SSL证书的验证（可用于证书有问题的网页，但是可能导致安全风险）。
+
+### 管理安全证书<a id="securityCerificates" />
+1. 读取任意密钥库文件中的证书内容，可导出为html文件
+2. 添加/读取任意证书文件的内容
+3. 下载并安装任意网址的证书。
+4. 删除密钥库中的证书。
+5. 修改密钥库时自动备份
+
 ### 编辑Markdown<a id="markdownEditor" />
 1. 提供输入格式的按钮。
 2. 同步转换为html，提供转换选项。
@@ -464,8 +518,8 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 5. 定位。跳转到指定的字符位置或行号
 
 ### html与Markdown互换<a id="htmlMarkdownConversion" />
-1. html到Markdown的批量互换。
-2. Markdown到html的批量互换。
+1. html到Markdown的批量转换。
+2. Markdown到html的批量转换。
 
 ### 微博截图工具<a id="weiboSnap" />
 1. 自动保存任意微博账户的任意月份的微博内容
@@ -477,6 +531,7 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 7. 实时显示处理进度。
 8. 可以随时中断处理。程序自动保存上次中断的月份并填入作本次的开始月份。
 9. 可以设置错误时重试次数。若超时错误则自动加倍最大延迟时间。
+注：现在连接微博服务器总是被阻。
 
 ## 设置<a id="settings" />
 1. 是否恢复界面上次尺寸、是否在新窗口中打开界面、是否弹出最近访问的文件/目录
@@ -534,6 +589,14 @@ Java 9以后已支持HiDPI，控件和字体都会适应当前清晰度配置。
 
 
 # 开发日志<a id="devLog" />    
+2019-12-21 版本5.9 支持多页签的浏览器。 可管理浏览历史、在线安装网站SSL证书。   
+读取任意密钥库文件中的证书内容，可导出为html文件。在密钥库中添加证书文件的内容、或下载安装网址的证书。   
+视频/音频播放器，可设置自动播放、显示毫秒、循环次数、随机顺序、音量、速度、静音、全屏等。乖乖和笨笨的声音。管理播放列表。   
+封装ffmpeg的功能：批量转换音频/视频、把图片和音频合成为视频、读取媒体的信息、读取ffmpeg的信息。   
+消息摘要扩展为12种算法。   
+解决问题：表单元失焦时应自动提交修改；检查文件冗余时抛出并发异常；添加包含大量文件的目录会使界面僵住；批处理解包7z格式失败；zip包中文件大小未知。     
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.9)    
+
 
 2019-11-18 版本5.8  升级至jdk13+javafx13+derby15。  
 Derby数据库可以在网络模式和嵌入模式之间切换。提醒：在一些机器上启动和关闭Derby网络模式都非常慢。   
@@ -817,23 +880,23 @@ PDF工具：标签（目录）和缩略图；可修改PDF文件的属性，如�
 
 # 主界面
 
-![About](https://mararsh.github.io/MyBox/1.jpg)
+![截屏1](https://mararsh.github.io/MyBox/1.jpg)
 
-![About](https://mararsh.github.io/MyBox/2.jpg)
+![截屏2](https://mararsh.github.io/MyBox/2.jpg)
 
-![About](https://mararsh.github.io/MyBox/3.jpg)
+![截屏3](https://mararsh.github.io/MyBox/3.jpg)
 
-![About](https://mararsh.github.io/MyBox/4.jpg)
+![截屏4](https://mararsh.github.io/MyBox/4.jpg)
 
-![About](https://mararsh.github.io/MyBox/5.jpg)
+![截屏5](https://mararsh.github.io/MyBox/5.jpg)
 
-![About](https://mararsh.github.io/MyBox/6.jpg)
+![截屏6](https://mararsh.github.io/MyBox/6.jpg)
 
-![About](https://mararsh.github.io/MyBox/7.jpg)
+![截屏7](https://mararsh.github.io/MyBox/7.jpg)
 
-![About](https://mararsh.github.io/MyBox/8.jpg)
+![截屏8](https://mararsh.github.io/MyBox/8.jpg)
 
-![About](https://mararsh.github.io/MyBox/9.jpg)
+![截屏9](https://mararsh.github.io/MyBox/9.jpg)
 
 
 

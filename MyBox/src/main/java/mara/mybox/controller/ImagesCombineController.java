@@ -40,7 +40,7 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonImageValues;
+import mara.mybox.value.CommonFxValues;
 
 /**
  * @Author Mara
@@ -91,7 +91,7 @@ public class ImagesCombineController extends ImagesListController {
         ImageCombineColumnsKey = "ImageCombineColumnsKey";
         ImageCombineIntervalKey = "ImageCombineIntervalKey";
         ImageCombineMarginsKey = "ImageCombineMarginsKey";
-        sourceExtensionFilter = CommonImageValues.ImageExtensionFilter;
+        sourceExtensionFilter = CommonFxValues.ImageExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
     }
 

@@ -141,6 +141,15 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </CheckBox>
+            <CheckBox fx:id="countDirCheck" mnemonicParsing="false" selected="true">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/iconFolderBrowse.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </CheckBox>
                 <CheckBox fx:id="tableExpandDirCheck" mnemonicParsing="false">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -165,6 +174,7 @@ License:    Apache License Version 2.0
         <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
             <columns>
                 <TableColumn fx:id="handledColumn" editable="false" prefWidth="180.0" text="%Handled" />
+            <TableColumn fx:id="tableIndexColumn" editable="false" maxWidth="1.7976931348623157E308" prefWidth="60.0" text="%Item" />
                 <TableColumn fx:id="fileColumn" editable="false" maxWidth="1.7976931348623157E308" prefWidth="240.0" text="%File" />
                 <TableColumn fx:id="typeColumn" editable="false" minWidth="0.0" prefWidth="100.0" text="%Type" />
                 <TableColumn fx:id="userPasswordColumn" prefWidth="150.0" text="%UserPassword" />
@@ -198,7 +208,7 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-                <Label fx:id="setLabel" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%PdfTableInputComments" />
+                <Label fx:id="setLabel" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%SetForAllRows" />
             </children>
         </FlowPane>
         <Label fx:id="tableLabel" styleClass="blue-label" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER" />

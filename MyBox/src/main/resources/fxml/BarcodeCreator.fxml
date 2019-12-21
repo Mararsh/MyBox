@@ -178,22 +178,51 @@ License:    Apache License Version 2.0
                            </children>
                         </VBox>
                      </children>
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
                   </VBox>
-                  <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                  <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                      <children>
                         <HBox fx:id="actionBox" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                            <children>
-                              <Label maxWidth="1.7976931348623157E308" visible="false" HBox.hgrow="ALWAYS" />
-                                      <Button fx:id="startButton" mnemonicParsing="false" onAction="#startAction" onMouseEntered="#popSaveAs" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Create" />
-                              <Button fx:id="validateButton" mnemonicParsing="false" onAction="#validateAction" onMouseEntered="#popSaveAs">
+                              <Button fx:id="imageSizeButton" mnemonicParsing="false" onAction="#loadedSize">
                                  <graphic>
                                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
-                                          <Image url="@../buttons/iconView.png" />
+                                          <Image url="@../buttons/iconPicSmall.png" />
                                        </image>
                                     </ImageView>
                                  </graphic>
                               </Button>
+                              <Button fx:id="paneSizeButton" mnemonicParsing="false" onAction="#paneSize">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/iconPicBig.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#zoomIn">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/iconZoomIn.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/iconZoomOut.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Label maxWidth="1.7976931348623157E308" visible="false" HBox.hgrow="ALWAYS" />
                               <Button fx:id="saveButton1" mnemonicParsing="false" onAction="#saveAsAction" onMouseEntered="#popSaveAs">
                                  <graphic>
                                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -203,6 +232,16 @@ License:    Apache License Version 2.0
                                     </ImageView>
                                  </graphic>
                               </Button>
+                              <Button fx:id="validateButton" mnemonicParsing="false" onAction="#validateAction" onMouseEntered="#popSaveAs">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/iconView.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                                      <Button fx:id="startButton" mnemonicParsing="false" onAction="#startAction" onMouseEntered="#popSaveAs" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Create" />
                            </children>
                         </HBox>
                                 <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
@@ -216,6 +255,9 @@ License:    Apache License Version 2.0
                                     </content>
                                 </ScrollPane>
                      </children>
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
                   </VBox>
                </items>
             </SplitPane>

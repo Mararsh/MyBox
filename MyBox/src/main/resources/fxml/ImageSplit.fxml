@@ -173,7 +173,7 @@ License:    Apache License Version 2.0
                                 </ScrollPane>
                             </children>
                         </VBox>
-                  <ScrollPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefViewportHeight="536.0" prefViewportWidth="580.0">
+                  <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="536.0" prefViewportWidth="580.0">
                      <content>
                         <VBox fx:id="optionsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                            <children>

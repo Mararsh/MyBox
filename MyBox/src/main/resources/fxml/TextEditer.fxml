@@ -27,7 +27,7 @@ License:    Apache License Version 2.0
     <center>
         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
             <children>
-                <SplitPane fx:id="editorSplitPane" dividerPositions="0.3" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                <SplitPane fx:id="splitPane" dividerPositions="0.3" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                     <items>
                         <ScrollPane fx:id="leftPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefViewportHeight="1646.0" prefViewportWidth="527.0">
                             <content>
@@ -52,7 +52,7 @@ License:    Apache License Version 2.0
                                                                     <graphic>
                                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                             <image>
-                                                                                <Image url="@../buttons/iconAddFile.png" />
+                                                                                <Image url="@../buttons/iconEdit.png" />
                                                                             </image>
                                                                         </ImageView>
                                                                     </graphic>

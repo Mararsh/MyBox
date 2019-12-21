@@ -39,7 +39,7 @@ import mara.mybox.image.ImageCombine.CombineSizeType;
 import mara.mybox.image.ImageMosaic.MosaicType;
 import mara.mybox.tools.SystemTools;
 import static mara.mybox.value.AppVariables.logger;
-import mara.mybox.value.CommonImageValues;
+import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -212,7 +212,7 @@ public class ImageManufacture {
         Graphics2D g = target.createGraphics();
         g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g.setBackground(CommonImageValues.TRANSPARENT);
+        g.setBackground(CommonFxValues.TRANSPARENT);
         g.drawImage(source, 0, 0, width, height, null);
         g.dispose();
         return target;
@@ -286,12 +286,33 @@ public class ImageManufacture {
         int finalW = targetW;
         int finalH = targetH;
         if (keepRatio) {
+            logger.debug(source.getWidth() + " " + source.getHeight() + " "
+                    + targetW + " " + targetH);
             int[] wh = ImageManufacture.scale(source.getWidth(), source.getHeight(),
                     targetW, targetH, keepType);
             finalW = wh[0];
             finalH = wh[1];
         }
         return scaleImage(source, finalW, finalH);
+    }
+
+    public static BufferedImage fitSize(BufferedImage source, int targetW, int targetH) {
+        int[] wh = ImageManufacture.scale(source.getWidth(), source.getHeight(),
+                targetW, targetH, KeepRatioType.BaseOnSmaller);
+        int finalW = wh[0];
+        int finalH = wh[1];
+        int imageType = source.getType();
+        if (imageType == BufferedImage.TYPE_CUSTOM) {
+            imageType = BufferedImage.TYPE_INT_ARGB;
+        }
+        BufferedImage target = new BufferedImage(targetW, targetH, imageType);
+        Graphics2D g = target.createGraphics();
+        g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setBackground(CommonFxValues.TRANSPARENT);
+        g.drawImage(source, (targetW - finalW) / 2, (targetH - finalH) / 2, finalW, finalH, null);
+        g.dispose();
+        return target;
     }
 
     public static BufferedImage addText(BufferedImage source, String text,
@@ -438,7 +459,7 @@ public class ImageManufacture {
         if (imageType == BufferedImage.TYPE_CUSTOM) {
             imageType = BufferedImage.TYPE_INT_ARGB;
         }
-        if (bgColor.getRGB() == CommonImageValues.TRANSPARENT.getRGB()) {
+        if (bgColor.getRGB() == CommonFxValues.TRANSPARENT.getRGB()) {
             imageType = BufferedImage.TYPE_INT_ARGB;
         }
         BufferedImage target = new BufferedImage(width, height, imageType);
@@ -506,7 +527,7 @@ public class ImageManufacture {
 
             BufferedImage target = new BufferedImage(width + shadowWidth, height + shadowWidth, imageType);
             Graphics2D g = target.createGraphics();
-            Color bgColor = CommonImageValues.TRANSPARENT;
+            Color bgColor = CommonFxValues.TRANSPARENT;
             g.setColor(bgColor);
             g.fillRect(0, 0, width + shadowWidth, height + shadowWidth);
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -583,7 +604,7 @@ public class ImageManufacture {
     public static BufferedImage cutMargins(BufferedImage source, Color cutColor,
             boolean cutTop, boolean cutBottom, boolean cutLeft, boolean cutRight) {
         try {
-            if (cutColor.getRGB() == CommonImageValues.TRANSPARENT.getRGB()
+            if (cutColor.getRGB() == CommonFxValues.TRANSPARENT.getRGB()
                     && !hasAlpha(source)) {
                 return source;
             }
@@ -729,7 +750,7 @@ public class ImageManufacture {
                 totalHegiht += MarginWidth;
             }
             int imageType = source.getType();
-            if (addColor.getRGB() == CommonImageValues.TRANSPARENT.getRGB()) {
+            if (addColor.getRGB() == CommonFxValues.TRANSPARENT.getRGB()) {
                 imageType = BufferedImage.TYPE_INT_ARGB;
             }
             BufferedImage target = new BufferedImage(totalWidth, totalHegiht, imageType);
@@ -878,7 +899,7 @@ public class ImageManufacture {
         int imageType = BufferedImage.TYPE_INT_ARGB;
         BufferedImage target = new BufferedImage(newWidth, newHeight, imageType);
         Graphics2D g = target.createGraphics();
-        Color bgColor = CommonImageValues.TRANSPARENT;
+        Color bgColor = CommonFxValues.TRANSPARENT;
         g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
         g.setBackground(bgColor);
         if (!isSkew) {
@@ -962,7 +983,7 @@ public class ImageManufacture {
             int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(width, height, imageType);
             Graphics2D g = target.createGraphics();
-            Color bgColor = CommonImageValues.TRANSPARENT;
+            Color bgColor = CommonFxValues.TRANSPARENT;
             g.setBackground(bgColor);
             if (shearX < 0) {
                 g.translate(width / 2, 0);
@@ -1931,7 +1952,7 @@ public class ImageManufacture {
             if (!exclude) {
                 g.setColor(bgColor);
             } else {
-                g.setColor(CommonImageValues.TRANSPARENT);
+                g.setColor(CommonFxValues.TRANSPARENT);
             }
             g.fillRect(0, 0, width, height);
             int pixel, bgPixel = bgColor.getRGB();
@@ -2101,7 +2122,7 @@ public class ImageManufacture {
             int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(width, height, imageType);
             Graphics2D g = target.createGraphics();
-            g.setBackground(CommonImageValues.TRANSPARENT);
+            g.setBackground(CommonFxValues.TRANSPARENT);
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 
@@ -2116,7 +2137,7 @@ public class ImageManufacture {
                     (int) bkRect.getWidth(), (int) bkRect.getHeight(), bkarc, bkarc);
 
             g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
-            g.setColor(CommonImageValues.TRANSPARENT);
+            g.setColor(CommonFxValues.TRANSPARENT);
             g.drawImage(html, (int) bkRect.getSmallX() + margin, (int) bkRect.getSmallY() + margin,
                     (int) bkRect.getWidth() - 2 * margin, (int) bkRect.getHeight() - 2 * margin,
                     null);
@@ -2142,7 +2163,7 @@ public class ImageManufacture {
             int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(width, height, imageType);
             Graphics2D g = target.createGraphics();
-            g.setBackground(CommonImageValues.TRANSPARENT);
+            g.setBackground(CommonFxValues.TRANSPARENT);
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 
@@ -2157,7 +2178,7 @@ public class ImageManufacture {
 //                    (int) bkRect.getWidth(), (int) bkRect.getHeight(), bkarc, bkarc);
 //
 //            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
-            g.setColor(CommonImageValues.TRANSPARENT);
+            g.setColor(CommonFxValues.TRANSPARENT);
 //            g.drawImage(html, (int) bkRect.getSmallX() + margin, (int) bkRect.getSmallY() + margin,
 //                    (int) bkRect.getWidth() - 2 * margin, (int) bkRect.getHeight() - 2 * margin,
 //                    null);
@@ -2186,7 +2207,7 @@ public class ImageManufacture {
             int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(width, height, imageType);
             Graphics2D g = target.createGraphics();
-            g.setBackground(CommonImageValues.TRANSPARENT);
+            g.setBackground(CommonFxValues.TRANSPARENT);
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 
@@ -2201,7 +2222,7 @@ public class ImageManufacture {
 //                    (int) bkRect.getWidth(), (int) bkRect.getHeight(), bkarc, bkarc);
 //
 //            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
-            g.setColor(CommonImageValues.TRANSPARENT);
+            g.setColor(CommonFxValues.TRANSPARENT);
 //            g.drawImage(html, (int) bkRect.getSmallX() + margin, (int) bkRect.getSmallY() + margin,
 //                    (int) bkRect.getWidth() - 2 * margin, (int) bkRect.getHeight() - 2 * margin,
 //                    null);

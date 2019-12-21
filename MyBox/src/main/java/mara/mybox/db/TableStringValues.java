@@ -38,14 +38,15 @@ public class TableStringValues extends DerbyBase {
         if (name == null || name.trim().isEmpty()) {
             return records;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbName() + login);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
             String sql = " SELECT * FROM String_Values WHERE key_name='" + name + "' ORDER BY create_time DESC";
             ResultSet results = statement.executeQuery(sql);
             while (results.next()) {
                 records.add(results.getString("string_value"));
             }
-        } catch (Exception e) {  failed(e);
+        } catch (Exception e) {
+            failed(e);
 //            // logger.debug(e.toString());
         }
         return records;
@@ -56,7 +57,7 @@ public class TableStringValues extends DerbyBase {
             return null;
         }
         String value = null;
-        try ( Connection conn = DriverManager.getConnection(protocol + dbName() + login);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
             statement.setMaxRows(1);
             String sql = " SELECT * FROM String_Values WHERE key_name='" + name + "' ORDER BY create_time DESC";
@@ -64,7 +65,8 @@ public class TableStringValues extends DerbyBase {
             if (results.next()) {
                 value = results.getString("string_value");
             }
-        } catch (Exception e) {  failed(e);
+        } catch (Exception e) {
+            failed(e);
 //            // logger.debug(e.toString());
         }
         return value;
@@ -86,14 +88,15 @@ public class TableStringValues extends DerbyBase {
                 || value == null || value.trim().isEmpty()) {
             return read(name);
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbName() + login);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
             String sql = "INSERT INTO String_Values(key_name, string_value , create_time) VALUES('"
                     + name + "', '" + value + "', '"
                     + DateTools.datetimeToString(new Date()) + "')";
             statement.executeUpdate(sql);
             return read(name);
-        } catch (Exception e) {  failed(e);
+        } catch (Exception e) {
+            failed(e);
 //            // logger.debug(e.toString());
             return read(name);
         }
@@ -103,7 +106,7 @@ public class TableStringValues extends DerbyBase {
         if (values == null || values.isEmpty()) {
             return read(name);
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbName() + login);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
             String sql;
             conn.setAutoCommit(false);
@@ -113,13 +116,15 @@ public class TableStringValues extends DerbyBase {
                             + name + "', '" + value + "', '"
                             + DateTools.datetimeToString(new Date()) + "')";
                     statement.executeUpdate(sql);
-                } catch (Exception e) {  failed(e);
+                } catch (Exception e) {
+                    failed(e);
 //                    // logger.debug(e.toString());
                 }
             }
             conn.commit();
             return read(name);
-        } catch (Exception e) {  failed(e);
+        } catch (Exception e) {
+            failed(e);
 //            // logger.debug(e.toString());
             return read(name);
         }
@@ -130,7 +135,7 @@ public class TableStringValues extends DerbyBase {
                 || value == null || value.trim().isEmpty()) {
             return null;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbName() + login);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
             String sql = " SELECT * FROM String_Values WHERE key_name='" + name
                     + "' AND string_value='" + value + "'";
@@ -140,7 +145,8 @@ public class TableStringValues extends DerbyBase {
             } else {
                 return null;
             }
-        } catch (Exception e) {  failed(e);
+        } catch (Exception e) {
+            failed(e);
 //            // logger.debug(e.toString());
             return null;
         }
@@ -151,25 +157,64 @@ public class TableStringValues extends DerbyBase {
                 || value == null || value.trim().isEmpty()) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbName() + login);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
             String sql = "DELETE FROM String_Values WHERE key_name='" + name
                     + "' AND string_value='" + value + "'";
             statement.executeUpdate(sql);
             return true;
-        } catch (Exception e) {  failed(e);
+        } catch (Exception e) {
+            failed(e);
 //            // logger.debug(e.toString());
             return false;
         }
     }
 
     public static boolean clear(String name) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbName() + login);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
             String sql = "DELETE FROM String_Values WHERE key_name='" + name + "'";
             statement.executeUpdate(sql);
             return true;
-        } catch (Exception e) {  failed(e);
+        } catch (Exception e) {
+            failed(e);
+//            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static List<String> prefixNames(String prefix) {
+        List<String> names = new ArrayList<>();
+        if (prefix == null || prefix.trim().isEmpty()) {
+            return names;
+        }
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                 Statement statement = conn.createStatement()) {
+            String sql = " SELECT DISTINCT key_name  FROM String_Values WHERE key_name like '"
+                    + prefix + "%' ORDER BY key_name";
+            ResultSet results = statement.executeQuery(sql);
+            while (results.next()) {
+                names.add(results.getString("key_name"));
+            }
+        } catch (Exception e) {
+            failed(e);
+//            logger.debug(e.toString());
+        }
+        return names;
+    }
+
+    public static boolean clearPrefix(String prefix) {
+        if (prefix == null || prefix.trim().isEmpty()) {
+            return false;
+        }
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                 Statement statement = conn.createStatement()) {
+            String sql = "DELETE FROM String_Values WHERE  key_name like '"
+                    + prefix + "%' ";
+            statement.executeUpdate(sql);
+            return true;
+        } catch (Exception e) {
+            failed(e);
 //            // logger.debug(e.toString());
             return false;
         }

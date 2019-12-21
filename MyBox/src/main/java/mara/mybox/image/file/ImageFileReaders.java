@@ -43,9 +43,6 @@ import org.w3c.dom.Node;
 public class ImageFileReaders {
 
     public static ImageReader getReader(String format) {
-        if (ImageJpeg2000File.isJpeg2000(format)) {
-            return ImageJpeg2000File.getReader();
-        }
         return ImageIO.getImageReadersByFormatName(format).next();
     }
 
@@ -143,7 +140,6 @@ public class ImageFileReaders {
         BufferedImage bufferedImage;
         try {
             ImageReader reader = getReader(format);
-            logger.debug(reader != null);
             try ( ImageInputStream in = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
 
                 reader.setInput(in, false);
@@ -155,7 +151,6 @@ public class ImageFileReaders {
                 bufferedImage = reader.read(0);
 //                bufferedImage = reader.read(0, param);
 
-                logger.debug(bufferedImage.getWidth() + " " + bufferedImage.getHeight());
                 reader.dispose();
             }
         } catch (Exception e) {
@@ -270,7 +265,7 @@ public class ImageFileReaders {
     }
 
     public static boolean needSampled(ImageInformation imageInfo, int framesNumber) {
-        if (framesNumber < 1) {
+        if (imageInfo == null || framesNumber < 1) {
             return false;
         }
         long availableMem, pixelsSize, requiredMem, totalRequiredMem;
@@ -530,6 +525,9 @@ public class ImageFileReaders {
         BufferedImage image = null;
         try {
             ImageFileInformation finfo = readImageFileMetaData(file.getAbsolutePath());
+            if (finfo == null) {
+                return null;
+            }
             image = readBrokenImage(e, file, finfo.getImageInformation(), index, xscale, yscale);
         } catch (Exception ex) {
             logger.error(ex.toString());
@@ -543,6 +541,9 @@ public class ImageFileReaders {
 
     public static BufferedImage readBrokenImage(Exception e, File file, ImageInformation imageInfo,
             int index, int xscale, int yscale) {
+        if (imageInfo == null) {
+            return null;
+        }
         BufferedImage image = null;
         String format = imageInfo.getImageFormat();
         switch (format) {
@@ -577,7 +578,6 @@ public class ImageFileReaders {
             return null;
         }
         ImageFileInformation fileInfo = new ImageFileInformation(file);
-
         try {
             try ( ImageInputStream iis = ImageIO.createImageInputStream(file)) {
                 Iterator<ImageReader> readers = ImageIO.getImageReaders(iis);
@@ -656,7 +656,6 @@ public class ImageFileReaders {
             }
         } catch (Exception e) {
             logger.error(e.toString());
-
         }
         return fileInfo;
     }

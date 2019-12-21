@@ -37,7 +37,7 @@ import mara.mybox.tools.HtmlTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonImageValues;
+import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -86,7 +86,7 @@ public class MarkdownEditerController extends TextEditerController {
         sourcePathKey = "MarkdownFilePath";
         PageSizeKey = "MarkdownPageSize";
 
-        sourceExtensionFilter = CommonImageValues.MarkdownExtensionFilter;
+        sourceExtensionFilter = CommonFxValues.MarkdownExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
 
         AppVariables.setUserConfigInt(PageSizeKey, Integer.MAX_VALUE); // All in one page
@@ -629,7 +629,7 @@ public class MarkdownEditerController extends TextEditerController {
                 name = FileTools.getFilePrefix(sourceFile.getName());
             }
             final File file = chooseSaveFile(AppVariables.getUserConfigPath("HtmlFilePath"),
-                    name, CommonImageValues.HtmlExtensionFilter, true);
+                    name, CommonFxValues.HtmlExtensionFilter, true);
             if (file == null) {
                 return;
             }
@@ -696,7 +696,7 @@ public class MarkdownEditerController extends TextEditerController {
         if (htmlArea.getText().isEmpty()) {
             return;
         }
-        HtmlTools.displayHtml(htmlArea.getText());
+        HtmlTools.editHtml(htmlArea.getText());
     }
 
     @FXML
@@ -719,7 +719,7 @@ public class MarkdownEditerController extends TextEditerController {
                 name = FileTools.getFilePrefix(sourceFile.getName());
             }
             final File file = chooseSaveFile(AppVariables.getUserConfigPath("TextFilePath"),
-                    name, CommonImageValues.TextExtensionFilter, true);
+                    name, CommonFxValues.TextExtensionFilter, true);
             if (file == null) {
                 return;
             }

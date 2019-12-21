@@ -1,92 +1,87 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
 <!--
 Author:     Mara
 License:    Apache License Version 2.0
             http://www.apache.org/licenses/LICENSE-2.0
 -->
 
-
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.image.*?>
 
-<HBox fx:id="alarmClocksPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.AlarmClockTableController">
-    <children>
-        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
-            <children>
-                <ToolBar maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
-                    <items>
-                        <Button fx:id="editButton" disable="true" mnemonicParsing="false" onAction="#editAction" >
-                            <graphic>
-                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../buttons/iconEdit.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                        </Button>
-                        <Button fx:id="activeButton" disable="true" mnemonicParsing="false" onAction="#activeAction" >
-                            <graphic>
-                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../buttons/iconActive.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                        </Button>
-                        <Button fx:id="inactiveButton" disable="true" mnemonicParsing="false" onAction="#inactiveAction" >
-                            <graphic>
-                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../buttons/iconInactive.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                        </Button>
-                        <Button fx:id="deleteButton" disable="true" mnemonicParsing="false" onAction="#deleteAction">
-                            <graphic>
-                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../buttons/iconDeleteFile.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                        </Button>
-                        <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction" >
-                            <graphic>
-                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../buttons/iconClear.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                        </Button>
-                        <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction" >
-                            <graphic>
-                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../buttons/iconRefresh.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                        </Button>
-                    </items>
-                </ToolBar>
-                <TableView fx:id="alarmClocksView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="200.0" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
-                    <columns>
-                        <TableColumn fx:id="statusColumn" text="%Status" />
-                        <TableColumn fx:id="descriptionColumn" maxWidth="1.7976931348623157E308" prefWidth="150.0" text="%Description" />
-                        <TableColumn fx:id="repeatColumn" prefWidth="150.0" text="%Repeat" />
-                        <TableColumn fx:id="nextTimeColumn" prefWidth="180.0" text="%NextTime" />
-                        <TableColumn fx:id="lastTimeColumn" prefWidth="180.0" text="%LastTime" />
-                        <TableColumn fx:id="startTimeColumn" maxWidth="1.7976931348623157E308" prefWidth="180.0" text="%StartTime" />
-                        <TableColumn fx:id="soundColumn" prefWidth="300.0" text="%Sound" />
-                    </columns>
-                </TableView>
-            </children>
-        </VBox>
-    </children>
-</HBox>
+
+  <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.AlarmClockTableController">
+      <children>
+          <ToolBar maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
+              <items>
+                  <Button fx:id="editButton" disable="true" mnemonicParsing="false" onAction="#editAction">
+                      <graphic>
+                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                              <image>
+                                  <Image url="@../buttons/iconEdit.png" />
+                              </image>
+                          </ImageView>
+                      </graphic>
+                  </Button>
+                  <Button fx:id="activeButton" disable="true" mnemonicParsing="false" onAction="#activeAction">
+                      <graphic>
+                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                              <image>
+                                  <Image url="@../buttons/iconActive.png" />
+                              </image>
+                          </ImageView>
+                      </graphic>
+                  </Button>
+                  <Button fx:id="inactiveButton" disable="true" mnemonicParsing="false" onAction="#inactiveAction">
+                      <graphic>
+                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                              <image>
+                                  <Image url="@../buttons/iconInactive.png" />
+                              </image>
+                          </ImageView>
+                      </graphic>
+                  </Button>
+                  <Button fx:id="deleteButton" disable="true" mnemonicParsing="false" onAction="#deleteAction">
+                      <graphic>
+                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                              <image>
+                                  <Image url="@../buttons/iconDeleteFile.png" />
+                              </image>
+                          </ImageView>
+                      </graphic>
+                  </Button>
+                  <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
+                      <graphic>
+                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                              <image>
+                                  <Image url="@../buttons/iconClear.png" />
+                              </image>
+                          </ImageView>
+                      </graphic>
+                  </Button>
+                  <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
+                      <graphic>
+                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                              <image>
+                                  <Image url="@../buttons/iconRefresh.png" />
+                              </image>
+                          </ImageView>
+                      </graphic>
+                  </Button>
+              </items>
+          </ToolBar>
+          <TableView fx:id="alarmClocksView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="200.0" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+              <columns>
+                  <TableColumn fx:id="statusColumn" text="%Status" />
+                  <TableColumn fx:id="descriptionColumn" maxWidth="1.7976931348623157E308" prefWidth="150.0" text="%Description" />
+                  <TableColumn fx:id="repeatColumn" prefWidth="150.0" text="%Repeat" />
+                  <TableColumn fx:id="nextTimeColumn" prefWidth="180.0" text="%NextTime" />
+                  <TableColumn fx:id="lastTimeColumn" prefWidth="180.0" text="%LastTime" />
+                  <TableColumn fx:id="startTimeColumn" maxWidth="1.7976931348623157E308" prefWidth="180.0" text="%StartTime" />
+                  <TableColumn fx:id="soundColumn" prefWidth="300.0" text="%Sound" />
+              </columns>
+          </TableView>
+      </children>
+  </VBox>

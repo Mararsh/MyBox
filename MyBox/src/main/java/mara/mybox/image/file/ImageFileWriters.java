@@ -28,6 +28,24 @@ import mara.mybox.value.CommonValues;
 // https://docs.oracle.com/javase/10/docs/api/javax/imageio/metadata/doc-files/standard_metadata.html
 public class ImageFileWriters {
 
+    public static boolean saveAs(File srcFile, String targetFile) {
+        try {
+            BufferedImage image = ImageFileReaders.readImage(srcFile);
+            return writeImageFile(image, targetFile);
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean saveAs(File srcFile, File targetFile) {
+        try {
+            return saveAs(srcFile, targetFile.getAbsolutePath());
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     public static boolean writeImageFile(BufferedImage image, File outFile) {
         try {
             return writeImageFile(image, outFile.getAbsolutePath());
@@ -110,7 +128,7 @@ public class ImageFileWriters {
             ImageWriteParam param = getWriterParam(attributes, writer);
             IIOMetadata metaData = ImageFileWriters.getWriterMetaData(targetFormat, attributes, checked, writer, param);
             File tmpFile = FileTools.getTempFile();
-            try (ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
+            try ( ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                 writer.setOutput(out);
                 writer.write(metaData, new IIOImage(checked, null, metaData), param);
                 out.flush();
@@ -150,13 +168,6 @@ public class ImageFileWriters {
                 case "jpeg":
                     writer = ImageJpgFile.getWriter();
                     break;
-                case "jpx":
-                case "jpeg2000":
-                case "jpeg 2000":
-                case "jp2":
-                case "jpm":
-                    writer = ImageJpeg2000File.getWriter();
-                    break;
                 case "tif":
                 case "tiff":
                     writer = ImageTiffFile.getWriter();
@@ -179,9 +190,6 @@ public class ImageFileWriters {
 
     public static ImageWriteParam getWriterParam(ImageAttributes attributes, ImageWriter writer) {
         try {
-            if (attributes != null && ImageJpeg2000File.isJpeg2000(attributes.getImageFormat())) {
-                return ImageJpeg2000File.getWriterParam(attributes);
-            }
             ImageWriteParam param = writer.getDefaultWriteParam();
             if (param.canWriteCompressed()) {
                 param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);

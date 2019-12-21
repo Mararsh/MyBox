@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -34,7 +35,7 @@ import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonImageValues;
+import mara.mybox.value.CommonFxValues;
 
 /**
  * @Author Mara
@@ -60,11 +61,12 @@ public abstract class BatchController<T> extends BaseController {
     protected long fileSelectorSize, fileSelectorTime;
     protected String[] sourceFilesSelector;
     protected FileSelectorType fileSelectorType;
+    protected SimpleBooleanProperty optionsValid;
 
     protected ProcessParameters actualParameters, previewParameters, currentParameters;
 
     @FXML
-    protected TableController<T> tableController;
+    protected BatchTableController<T> tableController;
     @FXML
     protected VBox tableBox;
     @FXML
@@ -85,7 +87,7 @@ public abstract class BatchController<T> extends BaseController {
         browseTargets = viewTargetPath = false;
 
         sourcePathKey = "sourcePath";
-        sourceExtensionFilter = CommonImageValues.AllExtensionFilter;
+        sourceExtensionFilter = CommonFxValues.AllExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
     }
 
@@ -195,6 +197,17 @@ public abstract class BatchController<T> extends BaseController {
 
     /* ------Method need not override commonly ----------------------------------------------- */
     @Override
+    public void initValues() {
+        try {
+            super.initValues();
+            optionsValid = new SimpleBooleanProperty(true);
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    @Override
     public void initControls() {
         try {
             super.initControls();
@@ -280,17 +293,20 @@ public abstract class BatchController<T> extends BaseController {
                                 Bindings.isEmpty(tableView.getItems())
                                         .or(Bindings.isEmpty(targetPathInput.textProperty()))
                                         .or(targetPathInput.styleProperty().isEqualTo(badStyle))
+                                        .or(optionsValid.not())
                         );
                     } else {
                         startButton.disableProperty().bind(
                                 Bindings.isEmpty(targetPathInput.textProperty())
                                         .or(targetPathInput.styleProperty().isEqualTo(badStyle))
+                                        .or(optionsValid.not())
                         );
                     }
                 } else {
                     if (tableView != null) {
                         startButton.disableProperty().bind(
                                 Bindings.isEmpty(tableView.getItems())
+                                        .or(optionsValid.not())
                         );
                     }
                 }
@@ -558,8 +574,8 @@ public abstract class BatchController<T> extends BaseController {
 
                     @Override
                     protected void taskQuit() {
-                        task = null;
                         quitProcess();
+                        task = null;
                     }
 
                 };
@@ -615,6 +631,7 @@ public abstract class BatchController<T> extends BaseController {
 
     public void handleCurrentFile() {
         try {
+            tableController.markFileHandling(currentParameters.currentIndex);
             currentParameters.currentSourceFile = getCurrentFile();
             String result;
             if (!currentParameters.currentSourceFile.exists()) {
@@ -852,7 +869,13 @@ public abstract class BatchController<T> extends BaseController {
         if (statusLabel == null || file == null) {
             return;
         }
-        final String name = file.getAbsolutePath();
+        showHandling(file.getAbsolutePath());
+    }
+
+    public void showHandling(String name) {
+        if (statusLabel == null || name == null) {
+            return;
+        }
         showStatus(MessageFormat.format(message("HandlingObject"), name) + "    "
                 + message("StartTime") + ": " + DateTools.nowString());
     }
@@ -978,7 +1001,7 @@ public abstract class BatchController<T> extends BaseController {
         }
         s += MessageFormat.format(AppVariables.message("FilesGenerated"), count) + space;
         s += message("Cost") + ": " + DateTools.showTime(cost) + "." + space
-                + message("Average") + ":" + avg + " " + message("SecondsPerItem") + "." + space
+                + message("Average") + ":" + DateTools.showTime(Math.round(avg)) + " "
                 + message("StartTime") + ":" + DateTools.datetimeToString(currentParameters.startTime) + space
                 + message("EndTime") + ":" + DateTools.datetimeToString(new Date());
         statusLabel.setText(s);
@@ -986,6 +1009,16 @@ public abstract class BatchController<T> extends BaseController {
 
     public void quitProcess() {
 
+    }
+
+    @Override
+    public boolean leavingScene() {
+        if (tableController != null) {
+            if (!tableController.leavingScene()) {
+                return false;
+            }
+        }
+        return super.leavingScene();
     }
 
 }

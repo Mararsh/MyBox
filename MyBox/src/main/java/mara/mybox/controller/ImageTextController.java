@@ -1,11 +1,8 @@
 package mara.mybox.controller;
 
 import java.util.List;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import javafx.scene.image.Image;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.InputEvent;
@@ -35,8 +32,6 @@ public class ImageTextController extends BaseController {
 
     @FXML
     protected HBox barBox, closeBox;
-    @FXML
-    protected CheckBox saveCloseCheck;
 
     public ImageTextController() {
         baseTitle = AppVariables.message("Texts");
@@ -45,6 +40,7 @@ public class ImageTextController extends BaseController {
     @Override
     public void initControls() {
         try {
+            super.initControls();
 
             htmlEditor.addEventHandler(DragEvent.DRAG_EXITED, new EventHandler<InputEvent>() { // work
                 @Override
@@ -75,14 +71,6 @@ public class ImageTextController extends BaseController {
     public void init(ImageManufactureRichTextController parent) {
         this.parent = parent;
 
-        saveCloseCheck.setSelected(AppVariables.getUserConfigBoolean("ImageTextSaveClose", false));
-        saveCloseCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                AppVariables.setUserConfigValue("ImageTextSaveClose", newValue);
-            }
-        });
-
         Object contents = parent.webEngine.executeScript("document.documentElement.outerHTML");
         if (contents != null) {
             htmlEditor.setHtmlText((String) contents);
@@ -110,11 +98,6 @@ public class ImageTextController extends BaseController {
         if (saveCloseCheck.isSelected()) {
             this.closeStage();
         }
-    }
-
-    @FXML
-    public void closeAction() {
-        this.closeStage();
     }
 
 }

@@ -9,10 +9,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.net.URI;
 import java.security.MessageDigest;
+import java.security.Provider;
+import java.security.Security;
 import java.util.Map;
 import javafx.scene.image.Image;
 import javafx.scene.input.Clipboard;
+import javax.net.ssl.SSLServerSocket;
+import javax.net.ssl.SSLServerSocketFactory;
 import mara.mybox.image.ImageManufacture;
+import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonValues;
 
@@ -55,6 +60,31 @@ public class SystemTools {
 
     public static boolean isWindows() {
         return os().contains("win");
+    }
+
+    public static String keystore() {
+        String jvm_cacerts = System.getProperty("java.home") + File.separator + "lib"
+                + File.separator + "security" + File.separator + "cacerts";
+        try {
+            File path = new File(AppVariables.MyboxDataPath + File.separator + "security");
+            File file = new File(AppVariables.MyboxDataPath + File.separator + "security"
+                    + File.separator + "cacerts_mybox");
+            if (!file.exists()) {
+                path.mkdirs();
+                FileTools.copyFile(new File(jvm_cacerts), file);
+            }
+            if (file.exists()) {
+                return file.getAbsolutePath();
+            } else {
+                return jvm_cacerts;
+            }
+        } catch (Exception e) {
+            return jvm_cacerts;
+        }
+    }
+
+    public static String keystorePassword() {
+        return "changeit";
     }
 
     // https://blog.csdn.net/sdtvyyb_007/article/details/77160239
@@ -206,16 +236,30 @@ public class SystemTools {
         }
     }
 
+    public static void SignatureAlgorithms() {
+        try {
+            for (Provider provider : Security.getProviders()) {
+                for (Provider.Service service : provider.getServices()) {
+                    if (service.getType().equals("Signature")) {
+                        logger.debug(service.getAlgorithm());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
     public static byte[] MD5(byte[] bytes) {
         return messageDigest(bytes, "MD5");
     }
 
     public static byte[] SHA1(byte[] bytes) {
-        return messageDigest(bytes, "SHA1");
+        return messageDigest(bytes, "SHA-1");
     }
 
     public static byte[] SHA256(byte[] bytes) {
-        return messageDigest(bytes, "SHA256");
+        return messageDigest(bytes, "SHA-256");
     }
 
     public static byte[] MD5(File file) {
@@ -223,11 +267,11 @@ public class SystemTools {
     }
 
     public static byte[] SHA1(File file) {
-        return messageDigest(file, "SHA1");
+        return messageDigest(file, "SHA-1");
     }
 
     public static byte[] SHA256(File file) {
-        return messageDigest(file, "SHA256");
+        return messageDigest(file, "SHA-256");
     }
 
     public static byte[] MD5(BufferedImage image) {
@@ -235,13 +279,14 @@ public class SystemTools {
     }
 
     public static byte[] SHA1(BufferedImage image) {
-        return messageDigest(ImageManufacture.bytes(image), "SHA1");
+        return messageDigest(ImageManufacture.bytes(image), "SHA-1");
     }
 
     public static byte[] SHA256(BufferedImage image) {
-        return messageDigest(ImageManufacture.bytes(image), "SHA256");
+        return messageDigest(ImageManufacture.bytes(image), "SHA-256");
     }
 
+    // https://docs.oracle.com/javase/10/docs/specs/security/standard-names.html#messagedigest-algorithms
     public static byte[] messageDigest(byte[] bytes, String algorithm) {
         try {
             MessageDigest md = MessageDigest.getInstance(algorithm);
@@ -268,6 +313,37 @@ public class SystemTools {
         } catch (Exception e) {
             logger.debug(e.toString());
             return null;
+        }
+
+    }
+
+    public static SSLServerSocket defaultSSLServerSocket() {
+        try {
+            SSLServerSocketFactory ssl = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
+            return (SSLServerSocket) ssl.createServerSocket();
+        } catch (Exception e) {
+            return null;
+        }
+
+    }
+
+    public static void SSLServerSocketInfo() {
+        try {
+            SSLServerSocket sslServerSocket;
+            SSLServerSocketFactory ssl = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
+            sslServerSocket = (SSLServerSocket) ssl.createServerSocket();
+
+            String[] cipherSuites = sslServerSocket.getSupportedCipherSuites();
+            for (String suite : cipherSuites) {
+                logger.debug(suite);
+            }
+
+            String[] protocols = sslServerSocket.getSupportedProtocols();
+            for (String protocol : protocols) {
+                logger.debug(protocol);
+            }
+        } catch (Exception e) {
+
         }
 
     }

@@ -28,14 +28,9 @@ import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TitledPane;
-import javafx.scene.control.Toggle;
-import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
@@ -51,7 +46,6 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.db.TableImageHistory;
-import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
@@ -69,7 +63,6 @@ import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.FileTools.FileSortMode;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
@@ -86,7 +79,6 @@ public class ImageManufactureController extends ImageViewerController {
     protected SimpleIntegerProperty hisIndex;
     protected String imageHistoriesPath;
     protected boolean pickingColor, sychronizeZoom;
-    protected ChangeListener<Number> leftDividerListener, rightDividerListener;
     protected int zoomStep, newWidth, newHeight;
 
     protected File refFile;
@@ -101,23 +93,13 @@ public class ImageManufactureController extends ImageViewerController {
     }
 
     @FXML
-    protected ScrollPane leftPane, rightPane;
-    @FXML
-    protected VBox fileBox, rightPaneBox;
-    @FXML
-    protected TitledPane filePane, newPane, saveAsPane, browsePane, tipsPane;
-    @FXML
-    protected VBox displayBox;
+    protected VBox displayBox, imageBox, rightPaneBox;
     @FXML
     protected Label refLabel, imageTipsLabel;
     @FXML
     protected CheckBox saveConfirmCheck, saveCheck;
     @FXML
-    protected ImageView leftPaneControl, rightPaneControl, refView, scopeView;
-    @FXML
-    protected ToggleGroup fileTypeGroup, saveAsGroup, sortGroup;
-    @FXML
-    protected RadioButton saveLoadRadio, saveOpenRadio, saveJustRadio;
+    protected ImageView refView, scopeView;
     @FXML
     protected Rectangle bgRect;
     @FXML
@@ -227,45 +209,6 @@ public class ImageManufactureController extends ImageViewerController {
         }
     }
 
-    @Override
-    public void afterSceneLoaded() {
-        try {
-            super.afterSceneLoaded();
-            try {
-                String lv = AppVariables.getUserConfigValue("ImageManufactureLeftPanePosition", "0.15");
-                String rv = AppVariables.getUserConfigValue("ImageManufactureRightPanePosition", "0.85");
-                splitPane.setDividerPositions(Double.parseDouble(lv), Double.parseDouble(rv));
-            } catch (Exception e) {
-                splitPane.setDividerPositions(0.15, 0.85);
-            }
-            leftDividerListener = new ChangeListener<Number>() {
-                @Override
-                public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                    if (!isSettingValues) {
-                        if (splitPane.getItems().contains(leftPane)) {
-                            AppVariables.setUserConfigValue("ImageManufactureLeftPanePosition", newValue.doubleValue() + "");
-                        } else {
-                            AppVariables.setUserConfigValue("ImageManufactureRightPanePosition", newValue.doubleValue() + "");
-                        }
-                    }
-                }
-            };
-            rightDividerListener = new ChangeListener<Number>() {
-                @Override
-                public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                    if (!isSettingValues) {
-                        AppVariables.setUserConfigValue("ImageManufactureRightPanePosition", newValue.doubleValue() + "");
-                    }
-                }
-            };
-            splitPane.getDividers().get(0).positionProperty().addListener(leftDividerListener);
-            splitPane.getDividers().get(1).positionProperty().addListener(rightDividerListener);
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
     @FXML
     @Override
     public void okAction() {
@@ -339,92 +282,12 @@ public class ImageManufactureController extends ImageViewerController {
                             .or(newHeightInput.styleProperty().isEqualTo(badStyle))
             );
 
-            if (null != saveAsType) {
-                switch (saveAsType) {
-                    case Load:
-                        saveLoadRadio.setSelected(true);
-                        break;
-                    case Open:
-                        saveOpenRadio.setSelected(true);
-                        break;
-                    case None:
-                        saveJustRadio.setSelected(true);
-                        break;
-                    default:
-                        break;
-                }
-            } else {
-                saveAsType = SaveAsType.Load;
-            }
-            saveAsGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                @Override
-                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                    if (saveLoadRadio.isSelected()) {
-                        saveAsType = SaveAsType.Load;
-                    } else if (saveOpenRadio.isSelected()) {
-                        saveAsType = SaveAsType.Open;
-                    } else if (saveJustRadio.isSelected()) {
-                        saveAsType = SaveAsType.None;
-                    }
-                }
-            });
-
-            sortMode = FileTools.FileSortMode.ModifyTimeDesc;
-            sortGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                @Override
-                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                    if (newValue == null) {
-                        return;
-                    }
-                    String selected = ((RadioButton) newValue).getText();
-                    for (FileSortMode mode : FileSortMode.values()) {
-                        if (message(mode.name()).equals(selected)) {
-                            sortMode = mode;
-                            break;
-                        }
-                    }
-                    if (!isSettingValues) {
-                        makeImageNevigator();
-                    }
-                }
-            });
+            initSaveAsPane();
+            initBrowsePane();
 
         } catch (Exception e) {
             logger.error(e.toString());
         }
-    }
-
-    @FXML
-    public void controlLeftPane() {
-        isSettingValues = true;
-        if (splitPane.getItems().contains(leftPane)) {
-            double[] positions = splitPane.getDividerPositions();
-            splitPane.getItems().remove(leftPane);
-            ControlStyle.setIcon(leftPaneControl, ControlStyle.getIcon("iconDoubleRight.png"));
-            if (positions.length == 2) {
-                splitPane.setDividerPosition(0, positions[1]);
-            }
-        } else {
-            splitPane.getItems().add(0, leftPane);
-            try {
-                String v = AppVariables.getUserConfigValue("ImageManufactureLeftPanePosition", "0.15");
-                splitPane.setDividerPosition(0, Double.parseDouble(v));
-            } catch (Exception e) {
-                splitPane.setDividerPosition(0, 0.15);
-            }
-            ControlStyle.setIcon(leftPaneControl, ControlStyle.getIcon("iconDoubleLeft.png"));
-        }
-        splitPane.applyCss();
-        if (splitPane.getDividers().size() == 1) {
-            splitPane.getDividers().get(0).positionProperty().removeListener(leftDividerListener);
-            splitPane.getDividers().get(0).positionProperty().addListener(leftDividerListener);
-        } else if (splitPane.getDividers().size() == 2) {
-            splitPane.getDividers().get(0).positionProperty().removeListener(leftDividerListener);
-            splitPane.getDividers().get(0).positionProperty().addListener(leftDividerListener);
-            splitPane.getDividers().get(1).positionProperty().removeListener(rightDividerListener);
-            splitPane.getDividers().get(1).positionProperty().addListener(rightDividerListener);
-        }
-        isSettingValues = false;
     }
 
     @Override
@@ -467,47 +330,12 @@ public class ImageManufactureController extends ImageViewerController {
      */
     protected void initRightPane() {
         try {
-            rightPaneBox.disableProperty().bind(
-                    imageLoaded.not()
-            );
+            rightPaneBox.disableProperty().bind(imageLoaded.not());
             operationController.initPane(this);
 
         } catch (Exception e) {
             logger.error(e.toString());
         }
-    }
-
-    @FXML
-    public void controlRightPane() {
-        isSettingValues = true;
-        if (splitPane.getItems().contains(rightPane)) {
-            double[] positions = splitPane.getDividerPositions();
-            splitPane.getItems().remove(rightPane);
-            ControlStyle.setIcon(rightPaneControl, ControlStyle.getIcon("iconDoubleLeft.png"));
-            if (positions.length == 2) {
-                splitPane.setDividerPosition(0, positions[0]);
-            }
-        } else {
-            splitPane.getItems().add(rightPane);
-            try {
-                String v = AppVariables.getUserConfigValue("ImageManufactureRightPanePosition", "0.85");
-                splitPane.setDividerPosition(splitPane.getItems().size() - 2, Double.parseDouble(v));
-            } catch (Exception e) {
-                splitPane.setDividerPosition(splitPane.getItems().size() - 2, 0.85);
-            }
-            ControlStyle.setIcon(rightPaneControl, ControlStyle.getIcon("iconDoubleRight.png"));
-        }
-        splitPane.applyCss();
-        if (splitPane.getDividers().size() == 1) {
-            splitPane.getDividers().get(0).positionProperty().removeListener(leftDividerListener);
-            splitPane.getDividers().get(0).positionProperty().addListener(leftDividerListener);
-        } else if (splitPane.getDividers().size() == 2) {
-            splitPane.getDividers().get(0).positionProperty().removeListener(leftDividerListener);
-            splitPane.getDividers().get(0).positionProperty().addListener(leftDividerListener);
-            splitPane.getDividers().get(1).positionProperty().removeListener(rightDividerListener);
-            splitPane.getDividers().get(1).positionProperty().addListener(rightDividerListener);
-        }
-        isSettingValues = false;
     }
 
     public void operationChanged(ImageManufactureOperationController c) {
@@ -538,9 +366,10 @@ public class ImageManufactureController extends ImageViewerController {
      */
     protected void initImageBox() {
         try {
-            imageBox.disableProperty().bind(
-                    imageLoaded.isEqualTo(new SimpleBooleanProperty(false))
-            );
+            imageBox.disableProperty().bind(imageLoaded.not());
+            leftPaneControl.visibleProperty().bind(imageLoaded);
+            rightPaneControl.visibleProperty().bind(imageLoaded);
+
             editable.bind(imageTabs.getSelectionModel().selectedItemProperty().isEqualTo(currentImageTab));
             imageUpdated.addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -796,7 +625,6 @@ public class ImageManufactureController extends ImageViewerController {
             hisIndex.set(-1);
             loadImageHistories();
 
-            initSortBox();
             makeImageNevigator();
 
             updateBottom(ImageOperation.Load);
@@ -906,8 +734,8 @@ public class ImageManufactureController extends ImageViewerController {
 
     @FXML
     public void popAction() {
-        ImageController controller
-                = (ImageController) openStage(CommonValues.ImageFxml);
+        ImageViewerController controller
+                = (ImageViewerController) openStage(CommonValues.ImageViewerFxml);
         if (currentImageTab.isSelected()) {
             controller.loadImage(currentImageController.imageView.getImage());
         } else if (refImageTab.isSelected()) {
@@ -915,7 +743,7 @@ public class ImageManufactureController extends ImageViewerController {
         } else if (hisImageTab.isSelected()) {
             controller.loadImage(hisImageController.imageView.getImage());
         }
-
+        controller.setAsPopped();
     }
 
     public void updateBottom(ImageOperation operation) {
@@ -1457,7 +1285,7 @@ public class ImageManufactureController extends ImageViewerController {
                     @Override
                     protected boolean handle() {
                         finfo = ImageFileReaders.readImageFileMetaData(file);
-                        if (finfo == null) {
+                        if (finfo == null || finfo.getImageInformation() == null) {
                             return false;
                         }
                         BufferedImage bufferedImage = ImageFileReaders.readImage(file);
@@ -1630,7 +1458,11 @@ public class ImageManufactureController extends ImageViewerController {
                     if (!ok || task == null || isCancelled()) {
                         return false;
                     }
-                    imageInformation = ImageFileReaders.readImageFileMetaData(sourceFile.getAbsolutePath()).getImageInformation();
+                    ImageFileInformation finfo = ImageFileReaders.readImageFileMetaData(sourceFile.getAbsolutePath());
+                    if (finfo == null || finfo.getImageInformation() == null) {
+                        return false;
+                    }
+                    imageInformation = finfo.getImageInformation();
                     return true;
                 }
 
@@ -1655,13 +1487,8 @@ public class ImageManufactureController extends ImageViewerController {
             return;
         }
         try {
-            String name = "";
-            if (sourceFile != null) {
-                name = FileTools.getFilePrefix(sourceFile.getName());
-            }
-            name += "." + ((RadioButton) fileTypeGroup.getSelectedToggle()).getText();
             final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
-                    name, targetExtensionFilter, true);
+                    saveAsPrefix(), targetExtensionFilter, true);
             if (file == null) {
                 return;
             }

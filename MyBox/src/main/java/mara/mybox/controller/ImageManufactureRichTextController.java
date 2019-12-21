@@ -403,8 +403,9 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
 //                                    = (ImageViewerController) openStage(CommonValues.ImageFxml);
 //                            controller1.loadImage(transparent);
                             ImageViewerController controller
-                                    = (ImageViewerController) openStage(CommonValues.ImageFxml);
+                                    = (ImageViewerController) openStage(CommonValues.ImageViewerFxml);
                             controller.loadImage(blended);
+                            controller.setAsPopped();
                         } else {
                             parent.updateImage(ImageOperation.RichText, null, null, blended, cost);
                             webView = null;

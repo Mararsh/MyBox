@@ -63,7 +63,7 @@ import mara.mybox.tools.PdfTools.PdfImageFormat;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonImageValues;
+import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
@@ -1037,7 +1037,7 @@ public class ImageSplitController extends ImageViewerController {
             return;
         }
         final File tFile
-                = validationBeforeSave(CommonImageValues.ImageExtensionFilter, message("FilePrefixInput"));
+                = validationBeforeSave(CommonFxValues.ImageExtensionFilter, message("FilePrefixInput"));
         if (tFile == null) {
             return;
         }
@@ -1140,7 +1140,7 @@ public class ImageSplitController extends ImageViewerController {
                 || cols == null || cols.isEmpty()) {
             return;
         }
-        final File tFile = validationBeforeSave(CommonImageValues.PdfExtensionFilter, null);
+        final File tFile = validationBeforeSave(CommonFxValues.PdfExtensionFilter, null);
         if (tFile == null) {
             return;
         }
@@ -1267,7 +1267,7 @@ public class ImageSplitController extends ImageViewerController {
 
     @FXML
     protected void saveAsTiffAction(ActionEvent event) {
-        final File tFile = validationBeforeSave(CommonImageValues.TiffExtensionFilter, null);
+        final File tFile = validationBeforeSave(CommonFxValues.TiffExtensionFilter, null);
         if (tFile == null) {
             return;
         }

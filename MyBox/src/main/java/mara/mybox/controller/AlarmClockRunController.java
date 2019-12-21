@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.io.File;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -8,8 +7,6 @@ import javafx.scene.control.Label;
 import javax.sound.sampled.Clip;
 import mara.mybox.data.AlarmClock;
 import static mara.mybox.data.AlarmClock.getTypeString;
-import mara.mybox.fxml.FxmlControl;
-import mara.mybox.tools.SoundTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonValues;
@@ -80,21 +77,21 @@ public class AlarmClockRunController extends BaseController {
             @Override
             protected Void call() {
                 try {
-                    String sound = alarm.getSound();
-                    if (AppVariables.message("meow").equals(sound)) {
-                        File miao = FxmlControl.getInternalFile("/sound/miao4.mp3", "sound", "miao4.mp3");
-                        sound = miao.getAbsolutePath();
-                    }
-                    player = SoundTools.playback(sound, alarm.getVolume());
-                    if (alarm.isIsSoundLoop()) {
-                        if (alarm.isIsSoundContinully()) {
-                            player.loop(Clip.LOOP_CONTINUOUSLY);
-                        } else {
-                            player.loop(alarm.getSoundLoopTimes() - 1);
-                        }
-                    }
+//                    String sound = alarm.getSound();
+//                    if (AppVariables.message("Meow").equals(sound)) {
+//                        File miao = FxmlControl.getInternalFile("/sound/miao4.mp3", "sound", "miao4.mp3");
+//                        sound = miao.getAbsolutePath();
+//                    }
+//                    player = MediaTools.playback(sound, alarm.getVolume());
+//                    if (alarm.isIsSoundLoop()) {
+//                        if (alarm.isIsSoundContinully()) {
+//                            player.loop(Clip.LOOP_CONTINUOUSLY);
+//                        } else {
+//                            player.loop(alarm.getSoundLoopTimes() - 1);
+//                        }
+//                    }
 
-                    player.start();
+//                    player.start();
                 } catch (Exception e) {
                 }
                 return null;

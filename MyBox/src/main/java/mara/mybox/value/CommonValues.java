@@ -14,8 +14,8 @@ import java.util.TimeZone;
  */
 public class CommonValues {
 
-    public static final String AppVersion = "5.8";
-    public static final String AppVersionDate = "2019-11-18";
+    public static final String AppVersion = "5.9";
+    public static final String AppVersionDate = "2019-12-21";
     public static final String AppDocVersion = "5.0";
 
     public static final String AppDerbyUser = "mara";
@@ -55,7 +55,6 @@ public class CommonValues {
     public static final String LoadingFxml = "/fxml/Loading.fxml";
     public static final String ImageInformationFxml = "/fxml/ImageInformation.fxml";
     public static final String ImageViewerFxml = "/fxml/ImageViewer.fxml";
-    public static final String ImageFxml = "/fxml/Image.fxml";
     public static final String ImageAnalyseFxml = "/fxml/ImageAnalyse.fxml";
     public static final String ImagesBrowserFxml = "/fxml/ImagesBrowser.fxml";
     public static final String ImageConverterBatchFxml = "/fxml/ImageConverterBatch.fxml";
@@ -122,6 +121,7 @@ public class CommonValues {
     public static final String AlarmClockFxml = "/fxml/AlarmClock.fxml";
     public static final String AlarmClockRunFxml = "/fxml/AlarmClockRun.fxml";
     public static final String HtmlEditorFxml = "/fxml/HtmlEditor.fxml";
+    public static final String HtmlViewerFxml = "/fxml/HtmlViewer.fxml";
     public static final String WeiboSnapFxml = "/fxml/WeiboSnap.fxml";
     public static final String WeiboSnapRunFxml = "/fxml/WeiboSnapRun.fxml";
     public static final String WeiboSnapingInfoFxml = "/fxml/WeiboSnapingInfo.fxml";
@@ -143,18 +143,31 @@ public class CommonValues {
     public static final String MarkdownEditorFxml = "/fxml/MarkdownEditor.fxml";
     public static final String MarkdownToHtmlFxml = "/fxml/MarkdownToHtml.fxml";
     public static final String HtmlToMarkdownFxml = "/fxml/HtmlToMarkdown.fxml";
-    public static final String StringTableFxml = "/fxml/StringTable.fxml";
     public static final String MessageDigestFxml = "/fxml/MessageDigest.fxml";
     public static final String FilesCompareFxml = "/fxml/FilesCompare.fxml";
     public static final String FilesRedundancyFxml = "/fxml/FilesRedundancy.fxml";
     public static final String FilesRedundancyResultsFxml = "/fxml/FilesRedundancyResults.fxml";
-    public static final String InformationFxml = "/fxml/Information.fxml";
+    public static final String MyBoxLoadingFxml = "/fxml/MyboxLoading.fxml";
     public static final String FilesArchiveCompressFxml = "/fxml/FilesArchiveCompress.fxml";
     public static final String FilesCompressBatchFxml = "/fxml/FilesCompressBatch.fxml";
     public static final String FileDecompressUnarchiveFxml = "/fxml/FileDecompressUnarchive.fxml";
     public static final String FileDecompressFxml = "/fxml/FileDecompress.fxml";
     public static final String FileUnarchiveFxml = "/fxml/FileUnarchive.fxml";
     public static final String FilesDecompressUnarchiveBatchFxml = "/fxml/FilesDecompressUnarchiveBatch.fxml";
+    public static final String WebBrowserFxml = "/fxml/WebBrowser.fxml";
+    public static final String WebBrowserBoxFxml = "/fxml/WebBrowserBox.fxml";
+    public static final String WebBrowserHistoryFxml = "/fxml/WebBrowserHistory.fxml";
+    public static final String MediaPlayerFxml = "/fxml/MediaPlayer.fxml";
+    public static final String MediaListFxml = "/fxml/MediaList.fxml";
+    public static final String FFmpegInformationFxml = "/fxml/FFmpegInformation.fxml";
+    public static final String FFmpegProbeMediaInformationFxml = "/fxml/FFmpegProbeMediaInformation.fxml";
+    public static final String FFmpegConvertMediaFilesFxml = "/fxml/FFmpegConvertMediaFiles.fxml";
+    public static final String FFmpegConvertMediaStreamsFxml = "/fxml/FFmpegConvertMediaStreams.fxml";
+    public static final String FFmpegMergeImagesFxml = "/fxml/FFmpegMergeImages.fxml";
+    public static final String FFmpegMergeImageFilesFxml = "/fxml/FFmpegMergeImageFiles.fxml";
+    public static final String SecurityCertificatesFxml = "/fxml/SecurityCertificates.fxml";
+    public static final String SecurityCertificateAddFxml = "/fxml/SecurityCertificateAdd.fxml";
+    public static final String SecurityCertificatesBypassFxml = "/fxml/SecurityCertificatesBypass.fxml";
 
     public static final Locale LocaleZhCN = new Locale("zh", "CN");
     public static final Locale LocaleEnUS = new Locale("en", "US");
@@ -174,8 +187,13 @@ public class CommonValues {
     public static final String DatetimeFormat = "yyyy-MM-dd HH:mm:ss";
     public static final String DatetimeFormat2 = "yyyy-MM-dd HH:mm:ss.SSS";
     public static final String DatetimeFormat3 = "yyyy-MM-dd-HH-mm-ss-SSS";
+    public static final String DatetimeFormat4 = "yyyyMMddHHmmssSSS";
 
-    public static final int IOBufferLength = 8192;
+    public static String Indent = "    ";
+
+    public static final int IOBufferLength = 8024;
+
+    public static final String HttpsProtocal = "SSL";
 
     public static List<String> SupportedImages = new ArrayList<String>() {
         {
@@ -251,6 +269,7 @@ public class CommonValues {
         "c", "cpp", "cxx", "cc", "c++", "h", "php", "py", "perl", "iml",
         "sh", "bat", "tcl", "mf", "md", "properties", "env", "cfg", "conf"};
 
-    public static String Indent = "    ";
+    public static String[] MediaPlayerSupports = {"mp4", "m4a", "mp3", "wav",
+        "aif", "aiff", "m3u8"};
 
 }

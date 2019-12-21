@@ -11,7 +11,7 @@ import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
-import mara.mybox.value.CommonImageValues;
+import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -28,7 +28,7 @@ public class ImageAlphaExtractBatchController extends ImageManufactureBatchContr
         operationType = VisitHistory.OperationType.Alpha;
         TipsLabelKey = "ImageAlphaExtractTips";
 
-        sourceExtensionFilter = CommonImageValues.AlphaImageExtensionFilter;
+        sourceExtensionFilter = CommonFxValues.AlphaImageExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
 
     }

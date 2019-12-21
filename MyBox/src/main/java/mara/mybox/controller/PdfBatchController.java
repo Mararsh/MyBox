@@ -10,7 +10,7 @@ import mara.mybox.tools.PdfTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonImageValues;
+import mara.mybox.value.CommonFxValues;
 import org.apache.pdfbox.pdmodel.PDDocument;
 
 /**
@@ -44,7 +44,7 @@ public abstract class PdfBatchController extends BatchController<PdfInformation>
         targetSubdirKey = "PdfCreatSubdir";
         previewKey = "PdfPreview";
 
-        sourceExtensionFilter = CommonImageValues.PdfExtensionFilter;
+        sourceExtensionFilter = CommonFxValues.PdfExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
     }
 

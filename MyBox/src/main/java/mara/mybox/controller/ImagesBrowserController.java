@@ -36,6 +36,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -48,6 +49,7 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlStage;
+import mara.mybox.image.ImageFileInformation;
 import mara.mybox.image.ImageInformation;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.image.file.ImageFileReaders;
@@ -94,9 +96,11 @@ public class ImagesBrowserController extends ImageViewerController {
     }
 
     @FXML
-    protected VBox imagesPane;
+    protected VBox imagesPane, mainBox;
     @FXML
-    protected HBox mainBox, moreBox, fileOpBox, gridBox1, gridBox2;
+    protected HBox fileOpBox, zoomBox;
+    @FXML
+    protected FlowPane rotatePane;
     @FXML
     protected ComboBox<String> colsnumBox, filesBox, popTimeSelector;
     @FXML
@@ -111,7 +115,6 @@ public class ImagesBrowserController extends ImageViewerController {
 
         TipsLabelKey = "ImagesBrowserTips";
         defaultLoadWidth = 512;
-        ImageLoadWidthKey = "ImageBrowserLoadWidthKey";
     }
 
     @Override
@@ -217,15 +220,12 @@ public class ImagesBrowserController extends ImageViewerController {
             });
             popTimeSelector.getSelectionModel().select(AppVariables.getUserConfigInt("ImageBrowserPopTime", 500) + "");
 
-            mainBox.disableProperty().bind(
-                    Bindings.isEmpty(imageFileList)
-            );
-            moreBox.disableProperty().bind(
-                    Bindings.isEmpty(imageFileList)
-            );
-            imagesPane.disableProperty().bind(
-                    Bindings.isEmpty(imageFileList)
-            );
+            fileBox.disableProperty().bind(Bindings.isEmpty(imageFileList));
+            viewPane.disableProperty().bind(Bindings.isEmpty(imageFileList));
+            browsePane.disableProperty().bind(Bindings.isEmpty(imageFileList));
+            tipsPane.disableProperty().bind(Bindings.isEmpty(imageFileList));
+            mainBox.disableProperty().bind(Bindings.isEmpty(imageFileList));
+            leftPaneControl.visibleProperty().bind(Bindings.isEmpty(imageFileList).not());
 
             FxmlControl.setTooltip(filesListButton, new Tooltip(message("FilesList")));
 
@@ -234,18 +234,6 @@ public class ImagesBrowserController extends ImageViewerController {
         } catch (Exception e) {
             logger.error(e.toString());
         }
-    }
-
-    @Override
-    public void moreAction() {
-        if (moreButton.isSelected()) {
-            if (!contentBox.getChildren().contains(moreBox)) {
-                contentBox.getChildren().add(1, moreBox);
-            }
-        } else {
-            contentBox.getChildren().remove(moreBox);
-        }
-        FxmlControl.refreshStyle(contentBox);
     }
 
     @Override
@@ -322,18 +310,11 @@ public class ImagesBrowserController extends ImageViewerController {
         FxmlControl.setScrollPane(sPane, sPane.getHvalue(), -40);
     }
 
-    public void straighten(int index) {
-        ImageView iView = imageViewList.get(index);
-        if (iView == null || iView.getImage() == null) {
-            return;
-        }
-        iView.setRotate(0);
-    }
-
+    @Override
     public void rotate(final int rotateAngle) {
         currentAngle = rotateAngle;
         if (saveRotationCheck.isSelected()) {
-            rotateModify(rotateAngle);
+            saveRotation(rotateAngle);
             return;
         }
         switch (displayMode) {
@@ -357,8 +338,7 @@ public class ImagesBrowserController extends ImageViewerController {
 
     }
 
-    @Override
-    public void rotateModify(final int rotateAngle) {
+    public void saveRotation(final int rotateAngle) {
         if (!saveRotationCheck.isSelected()) {
             return;
         }
@@ -376,7 +356,7 @@ public class ImagesBrowserController extends ImageViewerController {
                     if (selectedIndexes == null || selectedIndexes.isEmpty()) {
                         for (int i = 0; i < tableData.size(); i++) {
                             ImageInformation info = tableData.get(i);
-                            ImageInformation newInfo = rotate(info, rotateAngle);
+                            ImageInformation newInfo = saveRotation(info, rotateAngle);
                             tableData.set(i, newInfo);
                         }
                     } else {
@@ -384,7 +364,7 @@ public class ImagesBrowserController extends ImageViewerController {
                         for (int i = 0; i < selectedIndexes.size(); i++) {
                             int index = selectedIndexes.get(i);
                             ImageInformation info = tableData.get(index);
-                            ImageInformation newInfo = rotate(info, rotateAngle);
+                            ImageInformation newInfo = saveRotation(info, rotateAngle);
                             tableData.set(index, newInfo);
                         }
                     }
@@ -414,7 +394,7 @@ public class ImagesBrowserController extends ImageViewerController {
         }
     }
 
-    private ImageInformation rotate(ImageInformation info, int rotateAngle) {
+    private ImageInformation saveRotation(ImageInformation info, int rotateAngle) {
         if (info == null || info.getImageFileInformation() == null || info.isIsMultipleFrames()) {
             return null;
         }
@@ -540,38 +520,6 @@ public class ImagesBrowserController extends ImageViewerController {
         } else {
             for (int i = 0; i < imageViewList.size(); i++) {
                 moveDown(i);
-            }
-        }
-    }
-
-    @FXML
-    @Override
-    public void rotateLeft() {
-        rotate(270);
-    }
-
-    @FXML
-    @Override
-    public void rotateRight() {
-        rotate(90);
-    }
-
-    @FXML
-    @Override
-    public void turnOver() {
-        rotate(180);
-    }
-
-    @FXML
-    @Override
-    public void straighten() {
-        if (selectedIndexes != null && !selectedIndexes.isEmpty()) {
-            for (int i : selectedIndexes) {
-                straighten(i);
-            }
-        } else {
-            for (int i = 0; i < imageViewList.size(); i++) {
-                straighten(i);
             }
         }
     }
@@ -712,14 +660,14 @@ public class ImagesBrowserController extends ImageViewerController {
             rowsNum = 0;
 
             if (displayMode == DisplayMode.ThumbnailsList || displayMode == DisplayMode.FilesList) {
-                gridBox1.setDisable(true);
-                gridBox2.setDisable(true);
+                zoomBox.setDisable(true);
+                rotatePane.setDisable(true);
                 loadWidthBox.setDisable(true);
                 makeListBox();
 
             } else if (colsNum > 0) {
-                gridBox1.setDisable(false);
-                gridBox2.setDisable(false);
+                zoomBox.setDisable(false);
+                rotatePane.setDisable(false);
                 loadWidthBox.setDisable(false);
                 makeImagesGrid();
             }
@@ -1201,33 +1149,45 @@ public class ImagesBrowserController extends ImageViewerController {
     }
 
     private void loadImageInfos() {
-        Map<String, ImageInformation> oldList = new HashMap<>();
-        for (ImageInformation info : tableData) {
-            oldList.put(info.getFileName(), info);
-        }
-        tableData.clear();
-        ImageInformation imageInfo;
-        int width;
-        if (displayMode == DisplayMode.ImagesGrid) {
-            width = loadWidth;
-        } else {
-            width = 100;
-        }
-        for (int i = 0; i < imageFileList.size(); i++) {
-            File file = imageFileList.get(i);
-            imageInfo = oldList.get(file.getAbsolutePath());
-            if (imageInfo == null || imageInfo.getImageFileInformation() == null) {
-                if (displayMode == DisplayMode.FilesList) {
-                    imageInfo = ImageInformation.loadImageFileInformation(file).getImageInformation();
-                } else {
-                    imageInfo = ImageInformation.loadImage(file, width, 0);
-                }
-            } else {
-                if (displayMode != DisplayMode.FilesList && imageInfo.getImage() == null) {
-                    imageInfo = ImageInformation.loadImage(file, width, 0);
-                }
+        try {
+            Map<String, ImageInformation> oldList = new HashMap<>();
+            for (ImageInformation info : tableData) {
+                oldList.put(info.getFileName(), info);
             }
-            tableData.add(imageInfo);
+            tableData.clear();
+            ImageInformation imageInfo;
+            int width;
+            if (displayMode == DisplayMode.ImagesGrid) {
+                width = loadWidth;
+            } else {
+                width = 100;
+            }
+            for (int i = 0; i < imageFileList.size(); i++) {
+                File file = imageFileList.get(i);
+                imageInfo = oldList.get(file.getAbsolutePath());
+                if (imageInfo == null || imageInfo.getImageFileInformation() == null) {
+                    if (displayMode == DisplayMode.FilesList) {
+                        ImageFileInformation finfo = ImageInformation.loadImageFileInformation(file);
+                        if (finfo == null) {
+                            continue;
+                        }
+                        imageInfo = finfo.getImageInformation();
+                    } else {
+                        imageInfo = ImageInformation.loadImage(file, width, 0);
+                    }
+                } else {
+                    if (displayMode != DisplayMode.FilesList && imageInfo.getImage() == null) {
+                        imageInfo = ImageInformation.loadImage(file, width, 0);
+                    }
+                }
+
+                if (imageInfo == null) {
+                    continue;
+                }
+                tableData.add(imageInfo);
+            }
+        } catch (Exception e) {
+            logger.debug(e.toString());
         }
     }
 
@@ -1240,7 +1200,11 @@ public class ImagesBrowserController extends ImageViewerController {
             width = 100;
         }
         if (displayMode == DisplayMode.FilesList) {
-            imageInfo = ImageInformation.loadImageFileInformation(file).getImageInformation();
+            ImageFileInformation finfo = ImageInformation.loadImageFileInformation(file);
+            if (finfo == null) {
+                return null;
+            }
+            imageInfo = finfo.getImageInformation();
         } else {
             imageInfo = ImageInformation.loadImage(file, width, 0);
         }

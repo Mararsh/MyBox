@@ -49,6 +49,7 @@ import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.tools.FileTools.getFileSuffix;
+import mara.mybox.tools.MediaTools;
 import mara.mybox.tools.SoundTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.MyboxDataPath;
@@ -71,11 +72,11 @@ public class FxmlControl {
     public static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
     public static void miao3() {
-        playSound("/sound/miao3.mp3", "miao3.mp3");
+        playClip("/sound/guaiMiao3.mp3", "guaiMiao3.mp3");
     }
 
-    public static void miao8() {
-        playSound("/sound/miao8.mp3", "miao8.mp3");
+    public static void miao5() {
+        playClip("/sound/guaiMiao5.mp3", "guaiMiao5.mp3");
     }
 
     public static Node findNode(Pane pane, String nodeId) {
@@ -131,15 +132,14 @@ public class FxmlControl {
         }
     }
 
-    public static void playSound(final String file, final String userFile) {
-
+    public static void playClip(final String file, final String userFile) {
         Task miaoTask = new Task<Void>() {
             @Override
             protected Void call() {
                 try {
-                    File miao = FxmlControl.getInternalFile(file, "sound", userFile);
-                    FloatControl control = SoundTools.getControl(miao);
-                    Clip player = SoundTools.playback(miao, control.getMaximum() * 0.6f);
+                    File sound = FxmlControl.getInternalFile(file, "sound", userFile);
+                    FloatControl control = SoundTools.getControl(sound);
+                    Clip player = SoundTools.playback(sound, control.getMaximum() * 0.6f);
                     player.start();
                 } catch (Exception e) {
                 }
@@ -149,7 +149,29 @@ public class FxmlControl {
         Thread thread = new Thread(miaoTask);
         thread.setDaemon(true);
         thread.start();
+    }
 
+    public static void playClip(final File file) {
+        Task miaoTask = new Task<Void>() {
+            @Override
+            protected Void call() {
+                try {
+                    FloatControl control = SoundTools.getControl(file);
+                    Clip player = SoundTools.playback(file, control.getMaximum() * 0.6f);
+                    player.start();
+                } catch (Exception e) {
+                }
+                return null;
+            }
+        };
+        Thread thread = new Thread(miaoTask);
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    public static void playSound(final String file, final String userFile) {
+        File miao = FxmlControl.getInternalFile(file, "sound", userFile);
+        MediaTools.play(miao, 1, 1);
     }
 
     public static void setScrollPane(ScrollPane scrollPane, double xOffset, double yOffset) {

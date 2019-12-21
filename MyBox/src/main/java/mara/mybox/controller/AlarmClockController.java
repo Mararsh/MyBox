@@ -1,18 +1,16 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import java.net.URL;
+import java.net.URI;
 import java.util.Date;
 import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
@@ -22,20 +20,17 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Pane;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.FileChooser;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.FloatControl;
-import javax.sound.sampled.LineEvent;
-import javax.sound.sampled.LineListener;
 import mara.mybox.data.AlarmClock;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DateTools;
-import mara.mybox.tools.SoundTools;
+import mara.mybox.tools.MediaTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonImageValues;
+import mara.mybox.value.CommonFxValues;
 
 /**
  * @Author Mara
@@ -45,18 +40,25 @@ import mara.mybox.value.CommonImageValues;
  */
 public class AlarmClockController extends BaseController {
 
-    private Task playTask;
+    protected List<AlarmClock> alarmClocks;
+    protected final String AlertClocksFileKey, SystemMediaPathKey, MusicPathKey;
+    protected int repeatType, everyValue, loopValue;
+    protected long currentKey, startTime;
+    protected AlarmClock currentAlarm;
+    protected boolean isEdit, isPaused;
+    protected float volumeValue;
+    protected URI currentSound;
+    protected File miao;
+    protected MediaPlayer mediaPlayer;
 
     @FXML
     private ScrollPane scrollPane;
     @FXML
-    private ToggleGroup typeGroup, soundGroup, unitGroup, loopGroup;
+    private ToggleGroup typeGroup, soundGroup, unitGroup;
     @FXML
-    private TextField descInput, startInput, everyInput, wavInput, mp3Input, loopInput, urlInput;
+    private TextField descInput, startInput, everyInput, sysInput, localInput, loopInput, urlInput;
     @FXML
     private CheckBox activeCheck, loopCheck;
-    @FXML
-    private Button playButton, pauseButton;
     @FXML
     protected Pane alertClockTable;
     @FXML
@@ -64,18 +66,7 @@ public class AlarmClockController extends BaseController {
     @FXML
     protected Slider volumeSlider;
     @FXML
-    protected RadioButton miaoButton, wavButton, mp3Button, internetButton, continuallyButton, loopButton;
-
-    protected List<AlarmClock> alarmClocks;
-    protected final String AlertClocksFileKey, SystemMediaPathKey, MusicPathKey;
-    protected Clip player;
-    protected int repeatType, everyValue, loopValue;
-    protected long currentKey, startTime;
-    protected AlarmClock currentAlarm;
-    protected boolean isEdit, isPaused, isContinully, isURL;
-    protected float volumeValue;
-    protected URL currentURL;
-    protected File currentSound, miao;
+    protected RadioButton miaoButton, sysButton, localButton, internetButton, continuallyButton, loopButton;
 
     public AlarmClockController() {
         baseTitle = AppVariables.message("AlarmClock");
@@ -84,7 +75,7 @@ public class AlarmClockController extends BaseController {
         SystemMediaPathKey = "SystemMediaPath";
         MusicPathKey = "MusicPath";
 
-        sourceExtensionFilter = CommonImageValues.SoundExtensionFilter;
+        sourceExtensionFilter = CommonFxValues.SoundExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
     }
 
@@ -92,7 +83,7 @@ public class AlarmClockController extends BaseController {
     public void initializeNext() {
         try {
             AppVariables.alarmClockController = this;
-            miao = FxmlControl.getInternalFile("/sound/miao4.mp3", "sound", "miao4.mp3");
+            miao = FxmlControl.getInternalFile("/sound/guaiMiao3.mp3", "sound", "guaiMiao3.mp3");
 
             alertClockTableController.setAlarmClockController(this);
 
@@ -119,14 +110,16 @@ public class AlarmClockController extends BaseController {
                     checkSound();
                 }
             });
-            mp3Input.textProperty().addListener(new ChangeListener<String>() {
+
+            localInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable,
                         String oldValue, String newValue) {
                     checkSound();
                 }
             });
-            wavInput.textProperty().addListener(new ChangeListener<String>() {
+
+            sysInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable,
                         String oldValue, String newValue) {
@@ -149,6 +142,7 @@ public class AlarmClockController extends BaseController {
                     checkType();
                 }
             });
+
             everyInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable,
@@ -156,6 +150,7 @@ public class AlarmClockController extends BaseController {
                     checkType();
                 }
             });
+
             unitGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue<? extends Toggle> ov,
@@ -165,13 +160,6 @@ public class AlarmClockController extends BaseController {
             });
             checkType();
 
-            loopGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                @Override
-                public void changed(ObservableValue<? extends Toggle> ov,
-                        Toggle old_toggle, Toggle new_toggle) {
-                    checkLoop();
-                }
-            });
             loopInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable,
@@ -182,8 +170,8 @@ public class AlarmClockController extends BaseController {
             checkLoop();
 
             saveButton.disableProperty().bind(
-                    wavInput.styleProperty().isEqualTo(badStyle)
-                            .or(mp3Input.styleProperty().isEqualTo(badStyle))
+                    sysInput.styleProperty().isEqualTo(badStyle)
+                            .or(localInput.styleProperty().isEqualTo(badStyle))
                             .or(everyInput.styleProperty().isEqualTo(badStyle))
                             .or(startInput.styleProperty().isEqualTo(badStyle))
                             .or(loopInput.styleProperty().isEqualTo(badStyle))
@@ -192,13 +180,20 @@ public class AlarmClockController extends BaseController {
 
             FxmlControl.setTooltip(saveButton, new Tooltip("F2 / CTRL+s"));
 
-            FloatControl control = SoundTools.getControl(miao);
-            volumeSlider.setMax(control.getMaximum());
-            volumeSlider.setMin(control.getMinimum());
+            volumeValue = 1.0f;
+            volumeSlider.setMax(100);
+            volumeSlider.setMin(0);
             volumeSlider.valueProperty().addListener(new ChangeListener<Number>() {
                 @Override
                 public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                    volumeValue = newValue.intValue();
+                    volumeValue = newValue.intValue() / 100f;
+                }
+            });
+
+            playButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    playSound();
                 }
             });
 
@@ -210,71 +205,39 @@ public class AlarmClockController extends BaseController {
 
     protected void checkSound() {
         RadioButton selected = (RadioButton) soundGroup.getSelectedToggle();
-        isURL = false;
-        mp3Input.setStyle(null);
-        wavInput.setStyle(null);
+        localInput.setStyle(null);
+        sysInput.setStyle(null);
         urlInput.setStyle(null);
-        currentURL = null;
         currentSound = null;
         if (message("LocalMusic").equals(selected.getText())) {
-            final File file = new File(mp3Input.getText());
-            if (!file.exists() || !file.isFile() || !file.getName().endsWith(".mp3")) {
-                mp3Input.setStyle(badStyle);
+            final File file = new File(localInput.getText());
+            if (!file.exists() || !file.isFile()) {
+                localInput.setStyle(badStyle);
             } else {
-                currentSound = file;
+                currentSound = file.toURI();
             }
 
         } else if (message("InternetMusic").equals(selected.getText())) {
             try {
-                currentURL = new URL(urlInput.getText());
-                isURL = true;
+                currentSound = new URI(urlInput.getText());
             } catch (Exception e) {
                 urlInput.setStyle(badStyle);
             }
 
         } else if (message("SystemSounds").equals(selected.getText())) {
-            final File file = new File(wavInput.getText());
-            if (!file.exists() || !file.isFile() || !file.getName().endsWith(".wav")) {
-                wavInput.setStyle(badStyle);
+            final File file = new File(sysInput.getText());
+            if (!file.exists() || !file.isFile()) {
+                sysInput.setStyle(badStyle);
             } else {
-                currentSound = file;
+                currentSound = file.toURI();
             }
 
         } else {
-            currentSound = miao;
+            currentSound = miao.toURI();
         }
 
-        if (currentSound == null && currentURL == null) {
-            playButton.setDisable(true);
-        } else {
-            playButton.setDisable(false);
-            FloatControl control = null;
-            if (currentSound != null) {
-                control = SoundTools.getControl(currentSound);
-            } else if (currentURL != null) {
-//                control = SoundTools.getControl(currentURL);
-            }
-            if (control != null) {
-                volumeSlider.setMax(control.getMaximum());
-                volumeSlider.setMin(control.getMinimum());
-                volumeSlider.setValue(0);
-            }
-        }
-        playButton.setText(message("Play"));
-        playButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                playSound(event);
-            }
-        });
-        pauseButton.setDisable(true);
-        pauseButton.setText(message("Pause"));
-        pauseButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                pauseSound(event);
-            }
-        });
+        playButton.setDisable(currentSound == null);
+        playSound();
     }
 
     protected void checkType() {
@@ -311,184 +274,42 @@ public class AlarmClockController extends BaseController {
     }
 
     protected void checkLoop() {
-        RadioButton selected = (RadioButton) loopGroup.getSelectedToggle();
-        if (message("Continually").equals(selected.getText())) {
-            isContinully = true;
+        try {
+            loopValue = Integer.valueOf(loopInput.getText());
             loopInput.setStyle(null);
+        } catch (Exception e) {
+            loopValue = 0;
+            loopInput.setStyle(badStyle);
+        }
+    }
+
+    @FXML
+    private void playSound() {
+        if (mediaPlayer != null) {
+            mediaPlayer.dispose();
+            mediaPlayer = null;
+        }
+        if (currentSound == null) {
+            return;
+        }
+        if (currentSound.getScheme().startsWith("file")) {
+            FxmlControl.playClip(new File(currentSound.getPath()));
         } else {
-            isContinully = false;
-            try {
-                loopValue = Integer.valueOf(loopInput.getText());
-                loopInput.setStyle(null);
-            } catch (Exception e) {
-                loopValue = 0;
-                loopInput.setStyle(badStyle);
-            }
-        }
-    }
-
-    @FXML
-    private void playSound(ActionEvent event) {
-        if (currentSound == null && currentURL == null) {
-            return;
-        }
-        play(currentSound, null);
-    }
-
-    protected void play(final File file, final URL url) {
-        if (file == null && url == null) {
-            return;
-        }
-        playTask = new Task<Void>() {
-            private boolean ok;
-
-            @Override
-            protected Void call() {
-                ok = false;
-                if (player != null) {
-                    player.close();
-                }
-                if (file != null) {
-                    player = SoundTools.playback(file, volumeValue);
-                } else {
-                    player = SoundTools.playback(url, volumeValue);
-                }
-                if (loopCheck.isSelected()) {
-                    if (isContinully) {
-                        player.loop(Clip.LOOP_CONTINUOUSLY);
-                    } else {
-                        player.loop(loopValue - 1);
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        mediaPlayer = MediaTools.play(currentSound.toString(), volumeValue, loopValue);
+                    } catch (Exception e) {
+                        logger.error(e.toString());
                     }
                 }
-                player.addLineListener(new LineListener() {
-                    @Override
-                    public void update(LineEvent e) {
-                        if (e.getType() == LineEvent.Type.STOP && !isPaused) {
-                            Platform.runLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    closeSound();
-                                }
-                            });
-                        }
-                    }
-                });
-                player.start();
-
-                ok = true;
-                return null;
-            }
-
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                if (ok) {
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            playButton.setText(AppVariables.message("Stop"));
-                            playButton.setOnAction(new EventHandler<ActionEvent>() {
-                                @Override
-                                public void handle(ActionEvent event) {
-                                    closeSound();
-                                }
-                            });
-                            pauseButton.setDisable(false);
-                            pauseButton.setText(AppVariables.message("Pause"));
-                            pauseButton.setOnAction(new EventHandler<ActionEvent>() {
-                                @Override
-                                public void handle(ActionEvent event) {
-                                    pauseSound(event);
-                                }
-                            });
-                        }
-                    });
-                }
-            }
-        };
-        Thread thread = new Thread(playTask);
-        thread.setDaemon(true);
-        thread.start();
-
-    }
-
-    @FXML
-    private void closeSound() {
-        playButton.setText(AppVariables.message("Play"));
-        playButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                playSound(event);
-            }
-        });
-        pauseButton.setDisable(true);
-        pauseButton.setText(AppVariables.message("Pause"));
-        pauseButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                pauseSound(event);
-            }
-        });
-        if (player != null) {
-            player.stop();
-            player.drain();
-            player.close();
-            player = null;
+            });
         }
     }
 
     @FXML
-    private void pauseSound(ActionEvent event) {
-        isPaused = true;
-        if (player == null) {
-            closeSound();
-            return;
-        }
-        playButton.setText(AppVariables.message("Stop"));
-        playButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                closeSound();
-            }
-        });
-        pauseButton.setDisable(false);
-        pauseButton.setText(AppVariables.message("Continue"));
-        pauseButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                continueSound(event);
-
-            }
-        });
-        player.stop();
-    }
-
-    private void continueSound(ActionEvent event) {
-        isPaused = false;
-        if (player == null) {
-            closeSound();
-            return;
-        }
-        playButton.setText(AppVariables.message("Stop"));
-        playButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                closeSound();
-            }
-        });
-        pauseButton.setDisable(false);
-        pauseButton.setText(AppVariables.message("Pause"));
-        pauseButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                pauseSound(event);
-            }
-        });
-        player.start();
-    }
-
-    @FXML
-    private void selectSound(ActionEvent event) {
+    private void selectSys() {
         try {
             final FileChooser fileChooser = new FileChooser();
             String defaultPath = AppVariables.MyboxDataPath;
@@ -507,8 +328,8 @@ public class AlarmClockController extends BaseController {
             recordFileOpened(file);
             AppVariables.setUserConfigValue(SystemMediaPathKey, file.getParent());
 
-            wavInput.setText(file.getAbsolutePath());
-            play(file, null);
+            sysInput.setText(file.getAbsolutePath());
+
         } catch (Exception e) {
 //            logger.error(e.toString());
         }
@@ -516,14 +337,14 @@ public class AlarmClockController extends BaseController {
     }
 
     @FXML
-    private void selectMusic(ActionEvent event) {
+    private void selectLocal(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
             File path = AppVariables.getUserConfigPath(MusicPathKey);
             if (path.exists()) {
                 fileChooser.setInitialDirectory(path);
             }
-            fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("mp3", "*.mp3"));
+            fileChooser.getExtensionFilters().addAll(CommonFxValues.SoundExtensionFilter);
             final File file = fileChooser.showOpenDialog(getMyStage());
             if (file == null) {
                 return;
@@ -531,8 +352,7 @@ public class AlarmClockController extends BaseController {
             recordFileOpened(file);
             AppVariables.setUserConfigValue(MusicPathKey, file.getParent());
 
-            mp3Input.setText(file.getAbsolutePath());
-            play(file, null);
+            localInput.setText(file.getAbsolutePath());
 
         } catch (Exception e) {
 //            logger.error(e.toString());
@@ -555,14 +375,14 @@ public class AlarmClockController extends BaseController {
         currentAlarm.setDescription(descInput.getText());
         currentAlarm.setStartTime(startTime);
         currentAlarm.setIsActive(activeCheck.isSelected());
-        if (miao.getAbsolutePath().equals(currentSound.getAbsolutePath())) {
+        if (currentSound.toString().contains(miao.getAbsolutePath())) {
             currentAlarm.setSound(message("meow"));
         } else {
-            currentAlarm.setSound(currentSound.getAbsolutePath());
+            currentAlarm.setSound(currentSound.toString());
         }
         currentAlarm.setEveryValue(everyValue);
         currentAlarm.setIsSoundLoop(loopCheck.isSelected());
-        currentAlarm.setIsSoundContinully(isContinully);
+        currentAlarm.setIsSoundContinully(loopValue < 0);
         currentAlarm.setSoundLoopTimes(loopValue);
         currentAlarm.setVolume(volumeValue);
 
@@ -577,7 +397,6 @@ public class AlarmClockController extends BaseController {
         saveButton.setText(message("Add"));
         isEdit = false;
         currentAlarm = null;
-        closeSound();
     }
 
     protected void edit(AlarmClock alarm) {
@@ -612,11 +431,11 @@ public class AlarmClockController extends BaseController {
             miaoButton.setSelected(true);
             sound = miao.getAbsolutePath();
         } else if (sound.endsWith(".mp3")) {
-            mp3Button.setSelected(true);
-            mp3Input.setText(sound);
+            localButton.setSelected(true);
+            localInput.setText(sound);
         } else if (sound.endsWith(".wav")) {
-            wavButton.setSelected(true);
-            wavInput.setText(sound);
+            sysButton.setSelected(true);
+            sysInput.setText(sound);
         }
         loopCheck.setSelected(alarm.isIsSoundLoop());
         if (alarm.isIsSoundContinully()) {
@@ -625,26 +444,9 @@ public class AlarmClockController extends BaseController {
             loopButton.setSelected(true);
         }
         loopInput.setText(alarm.getSoundLoopTimes() + "");
-        FloatControl control = SoundTools.getControl(new File(sound));
-        if (control != null) {
-            volumeSlider.setMax(control.getMaximum());
-            volumeSlider.setMin(control.getMinimum());
-        }
         volumeSlider.setValue(alarm.getVolume());
 
         saveButton.setText(message("Save"));
-    }
-
-    @Override
-    public boolean leavingScene() {
-//        logger.debug("stageClosing");
-        if (player != null) {
-            player.stop();
-            player.drain();
-            player.close();
-            player = null;
-        }
-        return super.leavingScene();
     }
 
     public boolean isIsEdit() {
@@ -653,14 +455,6 @@ public class AlarmClockController extends BaseController {
 
     public void setIsEdit(boolean isEdit) {
         this.isEdit = isEdit;
-    }
-
-    public Clip getPlayer() {
-        return player;
-    }
-
-    public void setPlayer(Clip player) {
-        this.player = player;
     }
 
     public Pane getAlertClockTable() {
@@ -681,9 +475,9 @@ public class AlarmClockController extends BaseController {
 
     @Override
     public boolean checkBeforeNextAction() {
-        if (playTask != null && playTask.isRunning()) {
-            playTask.cancel();
-            playTask = null;
+        if (mediaPlayer != null) {
+            mediaPlayer.dispose();
+            mediaPlayer = null;
         }
         return true;
     }

@@ -17,7 +17,7 @@ import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.value.CommonImageValues;
+import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -50,7 +50,7 @@ public class ChromaticityBaseController extends BaseController {
         AddFileType = VisitHistory.FileType.Text;
         AddPathType = VisitHistory.FileType.Text;
 
-        sourceExtensionFilter = CommonImageValues.TxtExtensionFilter;
+        sourceExtensionFilter = CommonFxValues.TxtExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
     }
 
@@ -171,7 +171,7 @@ public class ChromaticityBaseController extends BaseController {
     @FXML
     public void exportAction() {
         final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
-                exportName, CommonImageValues.TxtExtensionFilter, true);
+                exportName, CommonFxValues.TxtExtensionFilter, true);
         if (file == null) {
             return;
         }

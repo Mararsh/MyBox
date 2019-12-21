@@ -10,7 +10,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import mara.mybox.data.IntPoint;
 import static mara.mybox.value.AppVariables.logger;
-import mara.mybox.value.CommonImageValues;
+import mara.mybox.value.CommonFxValues;
 
 /**
  * @Author Mara
@@ -362,7 +362,7 @@ public class PixelsOperation {
             if (isShowScope) {
                 if (excluded) {
                     Graphics2D g2d = target.createGraphics();
-                    g2d.setColor(CommonImageValues.TRANSPARENT);
+                    g2d.setColor(CommonFxValues.TRANSPARENT);
                     g2d.fillRect(0, 0, imageWidth, imageHeight);
                     g2d.dispose();
                 } else {

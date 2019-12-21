@@ -30,7 +30,7 @@ import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonImageValues;
+import mara.mybox.value.CommonFxValues;
 
 /**
  * @Author Mara
@@ -38,7 +38,7 @@ import mara.mybox.value.CommonImageValues;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImagesTableController extends TableController<ImageInformation> {
+public class ImagesTableController extends BatchTableController<ImageInformation> {
 
     protected boolean isOpenning;
     protected SimpleBooleanProperty hasSampled;
@@ -63,7 +63,7 @@ public class ImagesTableController extends TableController<ImageInformation> {
 
         targetPathKey = "ImageFilePath";
         sourcePathKey = "ImageFilePath";
-        sourceExtensionFilter = CommonImageValues.ImageExtensionFilter;
+        sourceExtensionFilter = CommonFxValues.ImageExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
     }
 
@@ -147,17 +147,24 @@ public class ImagesTableController extends TableController<ImageInformation> {
     @Override
     public void tableChanged() {
         super.tableChanged();
+        hasSampled.set(hasSampled());
+    }
+
+    @Override
+    public void updateLabel() {
         if (tableLabel != null) {
             long pixels = 0;
             for (ImageInformation m : tableData) {
                 pixels += m.getWidth() * m.getHeight();
             }
-            tableLabel.setText(MessageFormat.format(message("TotalFilesNumberSize"),
-                    totalFilesNumber, FileTools.showFileSize(totalFilesSize)) + "  "
-                    + message("TotalPixels") + ": " + StringTools.formatData(pixels) + "    "
-                    + message("DoubleClickToView"));
+            String s = message("TotalPixels") + ": " + StringTools.formatData(pixels) + "  ";
+            s += MessageFormat.format(message("TotalFilesNumberSize"),
+                    totalFilesNumber, FileTools.showFileSize(totalFilesSize));
+            if (viewFileButton != null) {
+                s += "  " + message("DoubleClickToView");
+            }
+            tableLabel.setText(s);
         }
-        hasSampled.set(hasSampled());
     }
 
     public boolean hasSampled() {
@@ -282,6 +289,9 @@ public class ImagesTableController extends TableController<ImageInformation> {
     @FXML
     @Override
     public void infoAction() {
+        if (tableData.isEmpty()) {
+            return;
+        }
         ImageInformation info = tableView.getSelectionModel().getSelectedItem();
         if (info == null) {
             info = tableData.get(0);
@@ -291,6 +301,9 @@ public class ImagesTableController extends TableController<ImageInformation> {
 
     @FXML
     public void metaAction() {
+        if (tableData.isEmpty()) {
+            return;
+        }
         ImageInformation info = tableView.getSelectionModel().getSelectedItem();
         if (info == null) {
             info = tableData.get(0);

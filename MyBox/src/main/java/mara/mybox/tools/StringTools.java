@@ -15,6 +15,20 @@ import java.util.regex.Pattern;
  */
 public class StringTools {
 
+    public static String[] separatedBySpace(String string) {
+        String[] ss = new String[2];
+        String s = string.trim();
+        int pos1 = s.indexOf(' ');
+        if (pos1 < 0) {
+            ss[0] = s;
+            ss[1] = "";
+            return ss;
+        }
+        ss[0] = s.substring(0, pos1);
+        ss[1] = s.substring(pos1).trim();
+        return ss;
+    }
+
     public static String[] splitBySpace(String string) {
         String[] splitted = string.trim().split("\\s+");
         return splitted;

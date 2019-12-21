@@ -175,12 +175,12 @@ public class ImageManufactureBatchReplaceColorController extends ImageManufactur
 
     @FXML
     public void originalPalette(ActionEvent event) {
-        showPalette(originalPaletteButton, message("OriginalColor"), true);
+        showPalette(originalPaletteButton, message("OriginalColor"));
     }
 
     @FXML
     public void newPalette(ActionEvent event) {
-        showPalette(newPaletteButton, message("NewColor"), true);
+        showPalette(newPaletteButton, message("NewColor"));
     }
 
     @Override

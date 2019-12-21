@@ -18,7 +18,7 @@ import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonImageValues;
+import mara.mybox.value.CommonFxValues;
 
 /**
  * @Author Mara
@@ -49,7 +49,7 @@ public class ImageAlphaAddBatchController extends ImageManufactureBatchControlle
     public ImageAlphaAddBatchController() {
         baseTitle = AppVariables.message("ImageAlphaAdd");
 
-        sourceExtensionFilter = CommonImageValues.AlphaImageExtensionFilter;
+        sourceExtensionFilter = CommonFxValues.AlphaImageExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
 
     }
