@@ -23,6 +23,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
@@ -34,6 +35,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebErrorEvent;
 import javafx.scene.web.WebEvent;
 import javafx.scene.web.WebView;
 import javafx.stage.Modality;
@@ -71,7 +73,7 @@ public class WeiboSnapRunController extends BaseController {
 
     private WebEngine webEngine;
     private WeiboSnapParameters parameters;
-    private int snapHeight, pageHeight, screenHeight, screenWidth, startPage;
+    private int snapHeight, pageHeight, screenHeight, screenWidth, startPage, dpi;
     private int currentPage, currentPagePicturesNumber, currentMonthPageCount, retried, loadedPicturesNumber;
     private int savedHtmlCount, savedMonthPdfCount, savedPagePdfCount, completedMonthsCount, totalMonthsCount, savedPixCount;
     private Timer loadTimer, snapTimer;
@@ -218,75 +220,21 @@ public class WeiboSnapRunController extends BaseController {
 
     @Override
     public void initializeNext() {
-        webView.setCache(false);
-        webEngine = webView.getEngine();
-        webEngine.setJavaScriptEnabled(true);
 
         r = Runtime.getRuntime();
 
+        initWebView();
+
     }
 
-    public void start(final WeiboSnapParameters parameters) {
+    public void initWebView() {
         try {
-            this.parameters = parameters;
-            MinAccessInterval = parameters.getLoadInterval();  // To avoid 414
-            MaxAccessInterval = MinAccessInterval * 10;
-            loadLoopInterval = MinAccessInterval * 3;
-            pageAccessDelay = 30 * MinAccessInterval;
-            snapLoopInterval = parameters.getSnapInterval();
+            webView.setCache(false);
+            webEngine = webView.getEngine();
+            webEngine.setJavaScriptEnabled(true);
+            // To avoid 414
+            webEngine.setUserAgent("Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0) Gecko/20100101 Firefox/6.0");
 
-//            logger.debug(parameters.getWebAddress());
-            if (parameters.getWebAddress() == null || parameters.getWebAddress().isEmpty()) {
-                closeStage();
-                return;
-            }
-
-            if (AppVariables.getUserConfigBoolean("SSLBypassAll", false)) {
-                NetworkTools.trustAll();
-
-            } else {
-                NetworkTools.myBoxSSL();
-
-                NetworkTools.installCertificateByHost("www.sina.com", "sina");
-                NetworkTools.installCertificateByHost("www.sina.com.cn", "sina.cn");
-                NetworkTools.installCertificateByHost("www.weibo.cn", "weibo.cn");
-                NetworkTools.installCertificateByHost("www.weibo.com", "weibo.com");
-
-                // SSL handshake still fails even when above certficates imported!
-                // This is workaround
-                TableBrowserBypassSSL.write("weibo.com");
-
-                Thread.sleep(loadLoopInterval);
-            }
-
-            startLoading();
-
-        } catch (Exception e) {
-            alertError(e.toString());
-            closeStage();
-        }
-
-    }
-
-    protected void rebootSnapshot() {
-        parent.startSnap();
-        closeStage();
-    }
-
-    public void startLoading() {
-        try {
-            if (webEngineStateListener != null) {
-                webEngine.getLoadWorker().stateProperty().removeListener(webEngineStateListener);
-                webEngineStateListener = null;
-            }
-            if (loadTimer != null) {
-                loadTimer.cancel();
-                loadTimer = null;
-            }
-            webView.setVisible(true);
-            logger.debug("here");
-
-            lastPictureLoad = new Date();
             webEngine.setOnAlert(new EventHandler<WebEvent<String>>() {
                 @Override
                 public void handle(WebEvent<String> ev) {
@@ -324,6 +272,76 @@ public class WeiboSnapRunController extends BaseController {
                 }
             });
 //            NetworkTools.readCookie(webEngine);
+
+            webEngine.setOnError(new EventHandler<WebErrorEvent>() {
+
+                @Override
+                public void handle(WebErrorEvent event) {
+                    logger.debug(event.getMessage());
+                }
+            });
+
+            webEngine.setOnStatusChanged(new EventHandler<WebEvent<String>>() {
+                @Override
+                public void handle(WebEvent<String> ev) {
+                    logger.debug(ev.getData());
+                }
+            });
+
+            webEngine.getLoadWorker().exceptionProperty().addListener(new ChangeListener<Throwable>() {
+                @Override
+                public void changed(ObservableValue<? extends Throwable> ov, Throwable ot, Throwable nt) {
+                    if (nt == null) {
+                        return;
+                    }
+                    logger.debug(nt.getMessage());
+                }
+            });
+
+//            webEngine.locationProperty().addListener(new ChangeListener<String>() {
+//                @Override
+//                public void changed(ObservableValue ov, String oldv, String newv) {
+//                    logger.debug(newv);
+//                }
+//            });
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+
+    }
+
+    public void start(final WeiboSnapParameters parameters) {
+        try {
+            this.parameters = parameters;
+            MinAccessInterval = parameters.getLoadInterval();  // To avoid 414
+            MaxAccessInterval = MinAccessInterval * 10;
+            loadLoopInterval = MinAccessInterval * 3;
+            pageAccessDelay = 30 * MinAccessInterval;
+            snapLoopInterval = parameters.getSnapInterval();
+            dpi = parameters.getDpi();
+
+//            logger.debug(parameters.getWebAddress());
+            if (parameters.getWebAddress() == null || parameters.getWebAddress().isEmpty()) {
+                closeStage();
+                return;
+            }
+
+            if (AppVariables.getUserConfigBoolean("SSLBypassAll", false)) {
+                NetworkTools.trustAll();
+
+            } else {
+                NetworkTools.myBoxSSL();
+
+//                NetworkTools.installCertificateByHost("www.sina.com", "sina");
+//                NetworkTools.installCertificateByHost("www.sina.com.cn", "sina.cn");
+//                NetworkTools.installCertificateByHost("www.weibo.cn", "weibo.cn");
+//                NetworkTools.installCertificateByHost("www.weibo.com", "weibo.com");
+                // SSL handshake still fails even when above certficates imported!
+                // This is workaround
+                TableBrowserBypassSSL.write("weibo.com");
+
+                Thread.sleep(loadLoopInterval);
+            }
 
             Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
             if (parameters.getWebWidth() <= 0) {
@@ -389,10 +407,10 @@ public class WeiboSnapRunController extends BaseController {
             showMemInfo();
 
             webEngine.load(parameters.getWebAddress());
-            logger.debug(parameters.getWebAddress());
-            logger.debug("spleep: " + loadLoopInterval);
+//            logger.debug(parameters.getWebAddress());
+//            logger.debug("spleep: " + loadLoopInterval);
             Thread.sleep(loadLoopInterval);
-            NetworkTools.readCookie(webEngine);
+//            NetworkTools.readCookie(webEngine);
 
             loadFailed = loadCompleted = mainCompleted = false;
             accountName = null;
@@ -405,7 +423,7 @@ public class WeiboSnapRunController extends BaseController {
             loadStartTime = new Date().getTime();
             final long maxDelay;
             maxDelay = loadLoopInterval * 30;
-            logger.debug("loadLoopInterval:" + loadLoopInterval + "    maxDelay: " + maxDelay);
+//            logger.debug("loadLoopInterval:" + loadLoopInterval + "    maxDelay: " + maxDelay);
 
             TimerTask mainTask = new TimerTask() {
                 int lastHeight = 0, newHeight = -1;
@@ -435,8 +453,9 @@ public class WeiboSnapRunController extends BaseController {
                                     loadingController.addLine(AppVariables.message("SnapingStartTime") + ": " + DateTools.datetimeToString(loadStartTime)
                                             + " (" + AppVariables.message("ElapsedTime") + ": " + DateTools.showTime(new Date().getTime() - loadStartTime) + ")");
                                     showMemInfo();
-                                    logger.debug("newHeight: " + newHeight);
+//                                    logger.debug("newHeight: " + newHeight);
                                     if (contents.contains("Request-URI Too Large") || contents.contains("Request-URI Too Long")) {
+                                        logger.debug(AppVariables.message("WeiBo414"));
                                         loadingController.setInfo(AppVariables.message("WeiBo414"));
                                         loadFailed = loadCompleted = true;
                                         errorString = AppVariables.message("WeiBo414");
@@ -455,12 +474,12 @@ public class WeiboSnapRunController extends BaseController {
                                         int posfirst1 = contents.indexOf("&stat_date=");
                                         if (posfirst1 > 0) {
                                             String s = contents.substring(posfirst1 + "&stat_date=".length());
-                                            int posfirst2 = s.indexOf("\\");
+                                            int posfirst2 = s.indexOf('\\');
                                             if (posfirst2 > 0) {
                                                 try {
                                                     s = s.substring(0, posfirst2);
                                                     lastMonth = DateTools.parseMonth(s.substring(0, 4) + "-" + s.substring(4, 6));
-                                                    logger.debug(DateTools.datetimeToString(lastMonth));
+//                                                    logger.debug(DateTools.datetimeToString(lastMonth));
                                                     int posLast1 = contents.lastIndexOf("&stat_date=");
                                                     if (posLast1 > 0) {
                                                         s = contents.substring(posLast1 + "&stat_date=".length());
@@ -469,7 +488,7 @@ public class WeiboSnapRunController extends BaseController {
                                                             try {
                                                                 s = s.substring(0, posLast2);
                                                                 firstMonth = DateTools.parseMonth(s.substring(0, 4) + "-" + s.substring(4, 6));
-                                                                logger.debug(DateTools.datetimeToString(firstMonth));
+//                                                                logger.debug(DateTools.datetimeToString(firstMonth));
                                                                 loadCompleted = true;
                                                             } catch (Exception e) {
                                                                 logger.error(e.toString());
@@ -541,7 +560,7 @@ public class WeiboSnapRunController extends BaseController {
     private void loadPages() {
         try {
             rootPath = new File(parameters.getTargetPath().getAbsolutePath() + File.separator + accountName);
-            logger.debug("rootPath: " + rootPath);
+//            logger.debug("rootPath: " + rootPath);
             if (!rootPath.exists()) {
                 rootPath.mkdirs();
             }
@@ -582,7 +601,7 @@ public class WeiboSnapRunController extends BaseController {
         try {
             retried = 0;
             currentPage++;
-            logger.debug("currentPage: " + currentPage);
+//            logger.debug("currentPage: " + currentPage);
 
             if (!startPageChecked && currentMonthPageCount > 1) {
                 while (currentPage < startPage) {
@@ -758,10 +777,10 @@ public class WeiboSnapRunController extends BaseController {
 
     private void loadPage(final String address) {
         try {
-            logger.debug(address);
+//            logger.debug(address);
             webEngine.load(address);
 //            webEngine.executeScript("window.location.href='" + address + "';");
-            NetworkTools.readCookie(webEngine);
+//            NetworkTools.readCookie(webEngine);
 
             if (loadTimer != null) {
                 loadTimer.cancel();
@@ -834,7 +853,7 @@ public class WeiboSnapRunController extends BaseController {
                                         if (!mainCompleted) {
                                             contents = (String) webEngine.executeScript("document.documentElement.outerHTML");
                                             if (contents.contains("Request-URI Too Large") || contents.contains("Request-URI Too Long")) {
-                                                logger.debug("WeiBo414: " + currentPage);
+//                                                logger.debug("WeiBo414: " + currentPage);
                                                 loadingController.setInfo(AppVariables.message("WeiBo414"));
                                                 loadFailed = loadCompleted = true;
                                                 errorString = AppVariables.message("WeiBo414");
@@ -1154,7 +1173,9 @@ public class WeiboSnapRunController extends BaseController {
 
             // http://news.kynosarges.org/2017/02/01/javafx-snapshot-scaling/
             final Bounds bounds = webView.getLayoutBounds();
-            double scale = FxmlControl.dpiScale();
+            double scalev = dpi / Screen.getPrimary().getDpi();
+//            logger.debug(dpi + " " + Screen.getPrimary().getDpi() + " " + scalev);
+            double scale = scalev > 1 ? scalev : 1;
             int imageWidth = (int) Math.round(bounds.getWidth() * scale);
             int imageHeight = (int) Math.round(bounds.getHeight() * scale);
             final SnapshotParameters snapPara = new SnapshotParameters();
@@ -1201,6 +1222,8 @@ public class WeiboSnapRunController extends BaseController {
                                         loadingController.addLine(AppVariables.message("CurrentSnapshotNumber") + ": " + imageNumber);
 
                                         try {
+                                            // Save as png images temporarily. Quicker than jpg since no compression.
+                                            // Final format is determined when write PDF file.
                                             String filename = pdfFilename + "-Image" + imageNumber + ".png";
                                             BufferedImage bufferedImage = SwingFXUtils.fromFXImage(snapshot, null);
                                             ImageFileWriters.writeImageFile(bufferedImage, "png", filename);

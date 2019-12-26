@@ -123,9 +123,9 @@ public class MediaTableController extends BatchTableController<MediaInformation>
         try {
             MediaInformation info = TableMedia.read(address);
             if (info != null) {
-                logger.debug(address);
                 return info;
             }
+            parentController.popInformation(message("ReadingStreamMedia...") + "\n" + address, 6000);
             info = new MediaInformation(address);
             readMediaInfo(info);
             return info;
@@ -137,6 +137,7 @@ public class MediaTableController extends BatchTableController<MediaInformation>
     }
 
     protected void readMediaInfo(MediaInformation info) {
+
         synchronized (this) {
             try {
                 Task infoTask = new Task<Void>() {
@@ -455,7 +456,7 @@ public class MediaTableController extends BatchTableController<MediaInformation>
                 d += m.getDuration();
             }
         }
-        String s = message("TotalDuration") + ": " + DateTools.showDuration(d) + message("Seconds") + "  "
+        String s = message("TotalDuration") + ": " + DateTools.showDuration(d) + "  "
                 + MessageFormat.format(message("TotalFilesNumberSize"),
                         totalFilesNumber, FileTools.showFileSize(totalFilesSize));
         tableLabel.setText(s);

@@ -161,8 +161,7 @@ public class MarkdownToHtmlController extends FilesBatchController {
             FileTools.writeFile(target, html);
             updateLogs(MessageFormat.format(message("ConvertSuccessfully"),
                     srcFile.getAbsolutePath(), target.getAbsolutePath()));
-            currentParameters.finalTargetName = target.getAbsolutePath();
-            targetFiles.add(target);
+            targetFileGenerated(target);
             return AppVariables.message("Successful");
         } catch (Exception e) {
             logger.error(e.toString());

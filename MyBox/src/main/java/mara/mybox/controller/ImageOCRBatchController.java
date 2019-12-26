@@ -17,6 +17,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.layout.VBox;
 import mara.mybox.data.ConvolutionKernel;
 import mara.mybox.data.StringTable;
 import static mara.mybox.fxml.FxmlControl.badStyle;
@@ -54,6 +55,8 @@ public class ImageOCRBatchController extends ImagesBatchController {
     protected ITesseract OCRinstance;
     protected List<File> textFiles;
 
+    @FXML
+    protected VBox preprocessVBox, ocrOptionsVBox;
     @FXML
     protected ListView languageList;
     @FXML
@@ -419,6 +422,13 @@ public class ImageOCRBatchController extends ImagesBatchController {
     }
 
     @Override
+    public void disableControls(boolean disable) {
+        super.disableControls(disable);
+        preprocessVBox.setDisable(disable);
+        ocrOptionsVBox.setDisable(disable);
+    }
+
+    @Override
     public String handleFile(File srcFile, File targetPath) {
         try {
             showHandling(srcFile);
@@ -529,9 +539,8 @@ public class ImageOCRBatchController extends ImagesBatchController {
             OCRinstance.createDocumentsWithResults​(lastImage, null,
                     prefix, formats, TessPageIteratorLevel.RIL_SYMBOL);
             File textFile = new File(prefix + ".txt");
-            actualParameters.finalTargetName = textFile.getAbsolutePath();
-            targetFiles.add(textFile);
             textFiles.add(textFile);
+            targetFileGenerated(textFile);
 
             if (htmlCheck.isSelected()) {
                 File hocrFile = new File(prefix + ".hocr");
@@ -540,12 +549,12 @@ public class ImageOCRBatchController extends ImagesBatchController {
                     htmlFile.delete();
                 }
                 hocrFile.renameTo(htmlFile);
-                targetFiles.add(htmlFile);
+                targetFileGenerated(htmlFile);
             }
 
             if (pdfCheck.isSelected()) {
                 File pdfFile = new File(prefix + ".pdf");
-                targetFiles.add(pdfFile);
+                targetFileGenerated(pdfFile);
             }
 
             if (wordLevel >= 0) {
@@ -570,7 +579,7 @@ public class ImageOCRBatchController extends ImagesBatchController {
                 String html = StringTable.tableHtml(table);
                 File wordsFile = new File(prefix + "_words.html");
                 if (FileTools.writeFile(wordsFile, html) != null) {
-                    targetFiles.add(wordsFile);
+                    targetFileGenerated(wordsFile);
                 } else {
                 }
             }
@@ -594,7 +603,7 @@ public class ImageOCRBatchController extends ImagesBatchController {
                 String html = StringTable.tableHtml(table);
                 File regionsFile = new File(prefix + "_regions.html");
                 if (FileTools.writeFile(regionsFile, html) != null) {
-                    targetFiles.add(regionsFile);
+                    targetFileGenerated(regionsFile);
                 } else {
                 }
             }
@@ -619,22 +628,15 @@ public class ImageOCRBatchController extends ImagesBatchController {
 
     @Override
     public void donePost() {
-        if (textFiles != null && !textFiles.isEmpty()
-                && mergeCheck.isSelected()) {
+        if (textFiles != null && textFiles.size() > 1 && mergeCheck.isSelected()) {
             File mFile = new File(FileTools.appendName(textFiles.get(0).getAbsolutePath(), "_OCR_merged"));
             if (FileTools.mergeFiles(textFiles, mFile)) {
                 popInformation(MessageFormat.format(message("FilesGenerated"), mFile.getAbsolutePath()));
+                targetFileGenerated(mFile);
             }
         }
         super.donePost();
 
-    }
-
-    @Override
-    public void view(File file) {
-        String s = FileTools.readTexts(file);
-        ImageOCRController controller = (ImageOCRController) openStage(CommonValues.ImageOCRFxml);
-        controller.displayResult(lastImage, s);
     }
 
     @Override

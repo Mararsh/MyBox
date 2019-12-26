@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.awt.Desktop;
 import java.io.File;
 import java.net.URI;
 import java.net.URL;
@@ -24,6 +23,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -68,7 +68,6 @@ import mara.mybox.fxml.FxmlStage;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.image.ImageInformation;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.MyboxDataPath;
 import static mara.mybox.value.AppVariables.getUserConfigValue;
@@ -475,6 +474,13 @@ public class BaseController implements Initializable {
                 myStage.centerOnScreen();
             }
 
+            Rectangle2D screen = FxmlControl.getScreen();
+            if (myStage.getHeight() > screen.getHeight()) {
+                myStage.setHeight(screen.getHeight());
+            }
+            if (myStage.getWidth() > screen.getWidth()) {
+                myStage.setWidth(screen.getWidth());
+            }
             if (myStage.getX() < 0) {
                 myStage.setX(0);
             }
@@ -2142,54 +2148,7 @@ public class BaseController implements Initializable {
     }
 
     public boolean browseURI(URI uri) {
-        if (uri == null) {
-            return false;
-        }
-
-        if (SystemTools.isLinux()) {
-            // On my CentOS 7, system hangs when both Desktop.isDesktopSupported() and
-            // desktop.isSupported(Desktop.Action.BROWSE) are true.
-            // https://stackoverflow.com/questions/27879854/desktop-getdesktop-browse-hangs
-            // Below workaround for Linux because "Desktop.getDesktop().browse()" doesn't work on some Linux implementations
-            try {
-                if (Runtime.getRuntime().exec(new String[]{"which", "xdg-open"}).getInputStream().read() != -1) {
-                    Runtime.getRuntime().exec(new String[]{"xdg-open",
-                        uri.toString()});
-                    return true;
-                } else {
-                }
-            } catch (Exception e) {
-            }
-            popError(message("DesktopNotSupportBrowse"), 6000);
-
-        } else if (SystemTools.isMac()) {
-            // https://stackoverflow.com/questions/5226212/how-to-open-the-default-webbrowser-using-java/28807079#28807079
-            try {
-                Runtime rt = Runtime.getRuntime();
-                rt.exec("open " + uri.toString());
-            } catch (Exception e) {
-            }
-            popError(message("DesktopNotSupportBrowse"), 6000);
-
-        } else if (Desktop.isDesktopSupported()) {
-            Desktop desktop = Desktop.getDesktop();
-            if (desktop.isSupported(Desktop.Action.BROWSE)) {
-                try {
-                    desktop.browse(uri);
-                    return true;
-                } catch (Exception e) {
-                    logger.error(e.toString());
-                }
-            } else {
-                popError(message("DesktopNotSupportBrowse"), 6000);
-            }
-
-        } else {
-            popError(message("DesktopNotSupportBrowse"), 6000);
-        }
-
-        view(uri.toString());
-        return true;
+        return FxmlStage.browseURI(getMyStage(), uri);
     }
 
     @FXML

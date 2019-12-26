@@ -14,11 +14,11 @@ import javafx.stage.Modality;
 import mara.mybox.color.ChromaticAdaptation;
 import mara.mybox.data.VisitHistory;
 import static mara.mybox.fxml.FxmlControl.badStyle;
+import mara.mybox.fxml.FxmlStage;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.CommonFxValues;
-import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -125,8 +125,8 @@ public class ChromaticityBaseController extends BaseController {
     }
 
     @FXML
-    public void openLinks() {
-        openStage(CommonValues.ChromaticLinksFxml);
+    public void aboutColor() {
+        FxmlStage.openResourcesAboutColor(getMyStage());
     }
 
     @FXML

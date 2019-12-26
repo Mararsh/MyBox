@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -168,6 +169,11 @@ public class WebBrowserController extends BaseController {
             logger.error(e.toString());
             return null;
         }
+    }
+
+    public void loadFile(File file) {
+        WebBrowserBoxController c = newTabAction(null, true);
+        c.loadFile(file);
     }
 
     @FXML

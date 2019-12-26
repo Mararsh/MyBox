@@ -93,7 +93,6 @@ public class ImageManufactureScaleController extends ImageManufactureOperationCo
             if (parent == null) {
                 return;
             }
-
             widthInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable,
@@ -230,8 +229,9 @@ public class ImageManufactureScaleController extends ImageManufactureOperationCo
             scaleBox.getEditor().setStyle(null);
             parent.currentImageController.imageLabel.setText("");
 
+            imageController.clearValues();
+
             if (pixelsGroup.getSelectedToggle() == null) {
-                imageController.clearOperating();
                 return;
             }
 
@@ -243,8 +243,6 @@ public class ImageManufactureScaleController extends ImageManufactureOperationCo
                 initDrag(message("DragSizeComments"));
 
             } else {
-
-                imageController.clearOperating();
 
                 if (message("Pixels").equals(selected.getText())) {
                     sizeType = SizeType.Pixels;
@@ -269,7 +267,7 @@ public class ImageManufactureScaleController extends ImageManufactureOperationCo
     }
 
     private void initDrag(String info) {
-        imageController.operatingNeedNotScope();
+
         imageController.setMaskRectangleLineVisible(true);
         imageController.maskRectangleData = new DoubleRectangle(0, 0,
                 imageView.getImage().getWidth() - 1,

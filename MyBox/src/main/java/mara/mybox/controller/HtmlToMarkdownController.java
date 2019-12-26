@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import com.ibm.icu.text.MessageFormat;
 import com.vladsch.flexmark.html2md.converter.FlexmarkHtmlConverter;
 import com.vladsch.flexmark.util.data.MutableDataSet;
 import java.io.File;
@@ -8,7 +7,6 @@ import mara.mybox.data.VisitHistory;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 
 /**
@@ -72,10 +70,7 @@ public class HtmlToMarkdownController extends FilesBatchController {
             String md = FlexmarkHtmlConverter.builder(parserOptions).build().
                     convert(html);
             FileTools.writeFile(target, md);
-            updateLogs(MessageFormat.format(message("ConvertSuccessfully"),
-                    srcFile.getAbsolutePath(), target.getAbsolutePath()));
-            currentParameters.finalTargetName = target.getAbsolutePath();
-            targetFiles.add(target);
+            targetFileGenerated(target);
             return AppVariables.message("Successful");
         } catch (Exception e) {
             logger.error(e.toString());

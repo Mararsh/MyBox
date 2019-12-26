@@ -62,7 +62,6 @@ import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
-import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -70,7 +69,7 @@ import mara.mybox.value.CommonValues;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ChromaticityDiagramController extends BaseController {
+public class ChromaticityDiagramController extends ChromaticityBaseController {
 
     private boolean isLine, inputInit = true;
     private int dotSize, fontSize;
@@ -1140,11 +1139,6 @@ public class ChromaticityDiagramController extends BaseController {
         isSettingValues = false;
 
         displayChromaticityDiagram();
-    }
-
-    @FXML
-    public void openLinks() {
-        openStage(CommonValues.ChromaticLinksFxml);
     }
 
     protected void calculateColor() {

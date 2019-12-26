@@ -21,6 +21,7 @@ import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import mara.mybox.data.ConvolutionKernel;
 import mara.mybox.fxml.FxmlControl;
@@ -77,7 +78,9 @@ public class PdfOcrBatchController extends PdfBatchController {
     @FXML
     protected RadioButton convertRadio, extractRadio;
     @FXML
-    protected HBox imageOptionsBox, densityBox, scaleBox;
+    protected HBox scaleBox, dpiBox;
+    @FXML
+    protected FlowPane imageOptionsPane;
     @FXML
     protected ListView languageList;
     @FXML
@@ -227,20 +230,20 @@ public class PdfOcrBatchController extends PdfBatchController {
 
     protected void checkGetImageType() {
         if (convertRadio.isSelected()) {
-            if (imageOptionsBox.getChildren().contains(scaleBox)) {
-                imageOptionsBox.getChildren().remove(scaleBox);
+            if (imageOptionsPane.getChildren().contains(scaleBox)) {
+                imageOptionsPane.getChildren().remove(scaleBox);
             }
-            if (!imageOptionsBox.getChildren().contains(densityBox)) {
-                imageOptionsBox.getChildren().add(densityBox);
+            if (!imageOptionsPane.getChildren().contains(dpiBox)) {
+                imageOptionsPane.getChildren().add(dpiBox);
             }
             scale = 1.0f;
         } else if (extractRadio.isSelected()) {
 
-            if (imageOptionsBox.getChildren().contains(densityBox)) {
-                imageOptionsBox.getChildren().remove(densityBox);
+            if (imageOptionsPane.getChildren().contains(dpiBox)) {
+                imageOptionsPane.getChildren().remove(dpiBox);
             }
-            if (!imageOptionsBox.getChildren().contains(scaleBox)) {
-                imageOptionsBox.getChildren().add(scaleBox);
+            if (!imageOptionsPane.getChildren().contains(scaleBox)) {
+                imageOptionsPane.getChildren().add(scaleBox);
             }
             scale = Float.valueOf(scaleSelector.getValue());
         }
@@ -439,11 +442,18 @@ public class PdfOcrBatchController extends PdfBatchController {
 
     @Override
     public int handleCurrentPage() {
+        int num;
         if (convertRadio.isSelected()) {
-            return convertPage();
+            num = convertPage();
         } else {
-            return extractPage();
+            num = extractPage();
         }
+        if (num > 0 && separatorCheck.isSelected()) {
+            String s = separator.replace("<Page Number>", currentParameters.currentPage + " ");
+            s = s.replace("<Total Number>", doc.getNumberOfPages() + "");
+            ocrTexts += s + System.getProperty("line.separator");
+        }
+        return num;
     }
 
     protected int convertPage() {
@@ -597,12 +607,7 @@ public class PdfOcrBatchController extends PdfBatchController {
 
             String result = OCRinstance.doOCR(bufferedImage);
             if (result != null) {
-                ocrTexts += result;
-                if (separatorCheck.isSelected()) {
-                    String s = separator.replace("<Page Number>", currentParameters.currentPage + " ");
-                    s = s.replace("<Total Number>", doc.getNumberOfPages() + "");
-                    ocrTexts += s + System.getProperty("line.separator");
-                }
+                ocrTexts += result + System.getProperty("line.separator");
                 return true;
             } else {
                 return false;
@@ -621,19 +626,11 @@ public class PdfOcrBatchController extends PdfBatchController {
                     ".txt", currentParameters.currentTargetPath);
             currentTargetFile = tFile.getAbsolutePath();
             if (FileTools.writeFile(tFile, ocrTexts) != null) {
-                currentParameters.finalTargetName = tFile.getAbsolutePath();
-                targetFiles.add(tFile);
+                targetFileGenerated(tFile);
             }
         } catch (Exception e) {
             logger.error(e.toString());
         }
-    }
-
-    @Override
-    public void view(File file) {
-        String s = FileTools.readTexts(file);
-        ImageOCRController controller = (ImageOCRController) openStage(CommonValues.ImageOCRFxml);
-        controller.displayResult(lastImage, s);
     }
 
     @Override

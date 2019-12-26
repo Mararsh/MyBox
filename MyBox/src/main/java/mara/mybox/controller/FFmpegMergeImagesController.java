@@ -8,17 +8,20 @@ import com.github.kokorin.jaffree.ffmpeg.UrlOutput;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.charset.Charset;
-import java.text.MessageFormat;
 import java.util.Date;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import mara.mybox.data.MediaInformation;
 import mara.mybox.data.VisitHistory;
+import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageInformation;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.image.file.ImageFileReaders;
@@ -40,6 +43,10 @@ public class FFmpegMergeImagesController extends FFmpegConvertMediaStreamsContro
 
     protected ObservableList<MediaInformation> audiosData;
 
+    @FXML
+    protected TabPane tabPane;
+    @FXML
+    protected Tab imagesTab, audiosTab;
     @FXML
     protected FFmpegAudiosTableController audiosTableController;
     @FXML
@@ -87,6 +94,13 @@ public class FFmpegMergeImagesController extends FFmpegConvertMediaStreamsContro
             });
             audioBitrateInput.setText(AppVariables.getUserConfigValue("ffmpegDefaultAudioBitrate", "192k"));
 
+            startButton.disableProperty().bind(
+                    Bindings.isEmpty(tableView.getItems())
+                            .or(Bindings.isEmpty(targetFileInput.textProperty()))
+                            .or(targetFileInput.styleProperty().isEqualTo(badStyle))
+                            .or(optionsValid.not())
+            );
+
         } catch (Exception e) {
             logger.debug(e.toString());
         }
@@ -132,8 +146,8 @@ public class FFmpegMergeImagesController extends FFmpegConvertMediaStreamsContro
                 if (task != null) {
                     return;
                 }
-                currentParameters.startTime = new Date();
-                currentParameters.currentTotalHandled = 0;
+                processStartTime = new Date();
+                totalFilesHandled = 0;
                 updateInterface("Started");
                 task = new SingletonTask<Void>() {
 
@@ -190,6 +204,12 @@ public class FFmpegMergeImagesController extends FFmpegConvertMediaStreamsContro
         }
     }
 
+    @Override
+    public void disableControls(boolean disable) {
+        super.disableControls(disable);
+        audiosTableController.thisPane.setDisable(disable);
+    }
+
     //  https://trac.ffmpeg.org/wiki/Slideshow
     protected File handleImages() {
         try {
@@ -205,6 +225,7 @@ public class FFmpegMergeImagesController extends FFmpegConvertMediaStreamsContro
                 if (file == null) {
                     continue;
                 }
+                totalFilesHandled++;
                 updateLogs(message("Handling") + ": " + file, true);
                 try {
                     BufferedImage image = ImageFileReaders.readImage(file);
@@ -249,6 +270,7 @@ public class FFmpegMergeImagesController extends FFmpegConvertMediaStreamsContro
                 if (file == null) {
                     continue;
                 }
+                totalFilesHandled++;
                 updateLogs(message("Handling") + ": " + file, true);
                 s.append("file '").append(file.getAbsolutePath()).append("'\n");
             }
@@ -347,10 +369,7 @@ public class FFmpegMergeImagesController extends FFmpegConvertMediaStreamsContro
         updateLogs(message("ConvertingMedia") + "  " + message("TargetFile") + ":" + videoFile, true);
         FFmpegResult result = ffmpeg.execute();
 
-        totalHandled++;
-        actualParameters.finalTargetName = videoFile.getAbsolutePath();
-        targetFiles.add(videoFile);
-        updateLogs(MessageFormat.format(message("FilesGenerated"), videoFile), true);
+        targetFileGenerated(videoFile);
         updateLogs(message("Size") + ": " + FileTools.showFileSize(result.getVideoSize()), true);
     }
 

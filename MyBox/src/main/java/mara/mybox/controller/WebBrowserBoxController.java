@@ -363,9 +363,10 @@ public class WebBrowserBoxController extends BaseController {
         urlBox.setValue(link);
     }
 
-    public void loadLink(File file) {
+    public void loadFile(File file) {
         sourceFile = file;
         loadLink(file.toURI().toString());
+
     }
 
     @FXML

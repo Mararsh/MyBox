@@ -16,7 +16,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.FlowPane;
 import mara.mybox.data.ConvolutionKernel;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
@@ -54,7 +54,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
     @FXML
     protected ToggleGroup effectsGroup;
     @FXML
-    protected HBox setBox;
+    protected FlowPane setPane;
     @FXML
     protected RadioButton thresholdingRadio, posterizingRadio, bwRadio;
     @FXML
@@ -117,7 +117,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
 
     private void checkEffetcsOperationType() {
         try {
-            setBox.getChildren().clear();
+            setPane.getChildren().clear();
             startButton.disableProperty().unbind();
             removeTmpControls();
             stringBox = null;
@@ -230,7 +230,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
             intBox.getSelectionModel().select(0);
             valueCheck = new CheckBox(message("Gray"));
             valueCheck.setSelected(true);
-            setBox.getChildren().addAll(stringLabel, stringBox, intLabel, intBox, valueCheck);
+            setPane.getChildren().addAll(stringLabel, stringBox, intLabel, intBox, valueCheck);
             startButton.disableProperty().bind(
                     intBox.getEditor().styleProperty().isEqualTo(badStyle)
                             .or(Bindings.isEmpty(targetPathInput.textProperty()))
@@ -261,13 +261,13 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
                     }
                     if (quantizationAlgorithm == QuantizationAlgorithm.HSBUniformQuantization
                             || quantizationAlgorithm == QuantizationAlgorithm.RGBUniformQuantization) {
-                        if (setBox.getChildren().contains(depthBox)) {
-                            setBox.getChildren().removeAll(depthBox, depthLabel);
+                        if (setPane.getChildren().contains(depthBox)) {
+                            setPane.getChildren().removeAll(depthBox, depthLabel);
                         }
                     } else {
-                        if (!setBox.getChildren().contains(depthBox)) {
-                            setBox.getChildren().add(5, depthLabel);
-                            setBox.getChildren().add(6, depthBox);
+                        if (!setPane.getChildren().contains(depthBox)) {
+                            setPane.getChildren().add(5, depthLabel);
+                            setPane.getChildren().add(6, depthBox);
                         }
                     }
                 }
@@ -323,7 +323,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
                     "4", "5", "6", "7", "8", "3", "2", "1"));
             depthBox.getSelectionModel().select(0);
 
-            setBox.getChildren().addAll(effectTipsView, stringLabel, stringBox, intLabel, intBox, valueCheck);
+            setPane.getChildren().addAll(effectTipsView, stringLabel, stringBox, intLabel, intBox, valueCheck);
             startButton.disableProperty().bind(
                     intBox.getEditor().styleProperty().isEqualTo(badStyle)
                             .or(Bindings.isEmpty(targetPathInput.textProperty()))
@@ -419,7 +419,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
             thresholdingMaxInput.setText("255");
             FxmlControl.setTooltip(thresholdingMaxInput, new Tooltip("0~255"));
 
-            setBox.getChildren().addAll(effectTipsView, intLabel, intInput,
+            setPane.getChildren().addAll(effectTipsView, intLabel, intInput,
                     bigValueLabel, thresholdingMaxInput,
                     smallValueLabel, thresholdingMinInput);
             startButton.disableProperty().bind(
@@ -496,7 +496,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
             valueCheck = new CheckBox(message("Dithering"));
             valueCheck.setSelected(true);
 
-            setBox.getChildren().addAll(effectTipsView, radio1, radio2, radio3, intInput, ditherTipsView, valueCheck);
+            setPane.getChildren().addAll(effectTipsView, radio1, radio2, radio3, intInput, ditherTipsView, valueCheck);
             startButton.disableProperty().bind(
                     intInput.styleProperty().isEqualTo(badStyle)
             );
@@ -534,7 +534,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
             intInput.setText("80");
             FxmlControl.setTooltip(intInput, new Tooltip("0~255"));
 
-            setBox.getChildren().addAll(intLabel, intInput);
+            setPane.getChildren().addAll(intLabel, intInput);
             startButton.disableProperty().bind(
                     intInput.styleProperty().isEqualTo(badStyle)
                             .or(Bindings.isEmpty(targetPathInput.textProperty()))

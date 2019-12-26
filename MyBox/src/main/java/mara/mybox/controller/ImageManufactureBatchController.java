@@ -25,7 +25,7 @@ import static mara.mybox.value.AppVariables.message;
  */
 public class ImageManufactureBatchController extends ImagesBatchController {
 
-    protected String fileType, errorString, targetFormat;
+    protected String errorString, targetFormat;
 
     @FXML
     protected RadioButton pcxRadio;
@@ -58,9 +58,9 @@ public class ImageManufactureBatchController extends ImagesBatchController {
     protected void checkFileType() {
         RadioButton selected = (RadioButton) fileTypeGroup.getSelectedToggle();
         if (message("OriginalType").equals(selected.getText())) {
-            fileType = null;
+            targetFileType = null;
         } else {
-            fileType = selected.getText();
+            targetFileType = selected.getText();
         }
     }
 
@@ -76,7 +76,7 @@ public class ImageManufactureBatchController extends ImagesBatchController {
             }
             String targetName = target.getAbsolutePath();
             BufferedImage sourceImage = ImageFileReaders.readImage(srcFile);
-            targetFormat = fileType;
+            targetFormat = targetFileType;
             if (targetFormat == null) {
                 targetFormat = FileTools.getFileSuffix(srcFile.getName());
             }
@@ -90,8 +90,7 @@ public class ImageManufactureBatchController extends ImagesBatchController {
             }
             ImageFileWriters.writeImageFile(targetImage, targetFormat, targetName);
 
-            actualParameters.finalTargetName = targetName;
-            targetFiles.add(target);
+            targetFileGenerated(target);
             browseButton.setDisable(false);
             return AppVariables.message("Successful");
         } catch (Exception e) {

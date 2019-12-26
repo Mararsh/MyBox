@@ -43,7 +43,7 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </children>
                                         </HBox>
-                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="NEVER">
+                                        <HBox fx:id="typeBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="NEVER">
                                             <children>
                                                 <RadioButton fx:id="saveRadio" mnemonicParsing="false" selected="true" text="%Save">
                                                     <toggleGroup>
@@ -54,7 +54,6 @@ License:    Apache License Version 2.0
                                                 <RadioButton fx:id="saveAndViewRadio" mnemonicParsing="false" text="%SaveAndView" toggleGroup="$recordTypeGroup" />
                                             </children>
                                         </HBox>
-                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="NEVER" />
                                     </children>
                                 </VBox>
                             </content>
@@ -67,7 +66,7 @@ License:    Apache License Version 2.0
                                             <children>
                                                 <Label text="%TargetPath" />
                                                 <TextField fx:id="targetPathInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                <Button  fx:id="selectPathTargetButton" mnemonicParsing="false" onAction="#selectTargetPath"  onMouseEntered="#popTargetPath" >
+                                                <Button fx:id="selectPathTargetButton" mnemonicParsing="false" onAction="#selectTargetPath" onMouseEntered="#popTargetPath">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
@@ -131,7 +130,7 @@ License:    Apache License Version 2.0
                         </TitledPane>
                         <HBox alignment="CENTER_RIGHT" spacing="5.0">
                             <children>
-                                <Button fx:id="openTargetButton" mnemonicParsing="false" onAction="#openTargetPath" >
+                                <Button fx:id="openTargetButton" mnemonicParsing="false" onAction="#openTargetPath">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>

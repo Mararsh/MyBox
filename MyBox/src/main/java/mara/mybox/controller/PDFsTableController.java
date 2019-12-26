@@ -43,13 +43,13 @@ public class PDFsTableController extends BatchTableController<PdfInformation> {
     @FXML
     protected TextField passwordInput, fromInput, toInput;
     @FXML
-    protected Button pdfSetButton;
+    protected Button setAllButton;
     @FXML
     protected FlowPane selectPane, setPDFPane;
     @FXML
     protected HBox fromToBox;
     @FXML
-    protected Label tableCommentsLabel, setLabel;
+    protected Label tableCommentsLabel;
 
     public PDFsTableController() {
         SourceFileType = VisitHistory.FileType.PDF;
@@ -102,7 +102,7 @@ public class PDFsTableController extends BatchTableController<PdfInformation> {
         });
         FxmlControl.setTooltip(toInput, new Tooltip(message("ToPageComments")));
 
-        pdfSetButton.disableProperty().bind(fromInput.styleProperty().isEqualTo(badStyle)
+        setAllButton.disableProperty().bind(fromInput.styleProperty().isEqualTo(badStyle)
                 .or(toInput.styleProperty().isEqualTo(badStyle))
         );
 
@@ -308,12 +308,12 @@ public class PDFsTableController extends BatchTableController<PdfInformation> {
         this.ownerPasswordColumn = ownerPasswordColumn;
     }
 
-    public Button getPdfSetButton() {
-        return pdfSetButton;
+    public Button getSetAllButton() {
+        return setAllButton;
     }
 
-    public void setPdfSetButton(Button pdfSetButton) {
-        this.pdfSetButton = pdfSetButton;
+    public void setSetAllButton(Button setAllButton) {
+        this.setAllButton = setAllButton;
     }
 
     public FlowPane getSelectPane() {
@@ -346,14 +346,6 @@ public class PDFsTableController extends BatchTableController<PdfInformation> {
 
     public void setTableCommentsLabel(Label tableCommentsLabel) {
         this.tableCommentsLabel = tableCommentsLabel;
-    }
-
-    public Label getSetLabel() {
-        return setLabel;
-    }
-
-    public void setSetLabel(Label setLabel) {
-        this.setLabel = setLabel;
     }
 
     public TableColumn<PdfInformation, Integer> getFromColumn() {

@@ -31,15 +31,15 @@ License:    Apache License Version 2.0
                 <SplitPane fx:id="splitPane" dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                     <items>
                         <fx:include fx:id="alertClockTable" source="AlarmClockTable.fxml" HBox.hgrow="ALWAYS" />
-                        <ScrollPane fx:id="rightPane" prefHeight="200.0" prefWidth="200.0">
+                        <ScrollPane fx:id="rightPane" fitToHeight="true" fitToWidth="true" pannable="true" prefHeight="200.0" prefWidth="200.0">
                             <content>
-                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
+                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                     <children>
                                         <CheckBox fx:id="activeCheck" mnemonicParsing="false" selected="true" text="%Active" />
                                         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="10.0">
                                             <children>
                                                 <Label text="%Description" />
-                                                <TextField fx:id="descInput" prefWidth="347.0" />
+                                                <TextField fx:id="descInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                             </children>
                                         </HBox>
                                         <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" spacing="10.0">
@@ -136,32 +136,27 @@ License:    Apache License Version 2.0
                                                 <TextField fx:id="urlInput" maxWidth="1.7976931348623157E308" />
                                             </children>
                                         </FlowPane>
-                              <Button fx:id="playButton" mnemonicParsing="false" onAction="#playAction">
-                                 <graphic>
-                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/iconPlay.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </Button>
                               <FlowPane hgap="5.0" prefWidth="300.0" prefWrapLength="300.0" vgap="5.0">
                                  <children>
+                                    <Button fx:id="playButton" mnemonicParsing="false" onAction="#playAction">
+                                       <graphic>
+                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/iconPlay.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </Button>
                                     <Label text="%VoiceVolumn" />
                                     <Slider fx:id="volumeSlider" prefWidth="80.0" value="100.0" />
-                                 </children>
-                              </FlowPane>
-                              <FlowPane hgap="5.0" layoutX="20.0" layoutY="842.0" prefWidth="300.0" prefWrapLength="300.0" vgap="5.0">
-                                 <children>
                                     <Label text="%Loop" />
                                     <TextField fx:id="loopInput" prefWidth="78.0" text="1" />
                                  </children>
                               </FlowPane>
-                              <FlowPane hgap="5.0" layoutX="20.0" layoutY="1031.0" prefWidth="300.0" prefWrapLength="300.0" vgap="5.0" />
                                         <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Add" />
                                     </children>
                                     <padding>
-                                        <Insets left="10.0" right="10.0" />
+                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                     </padding>
                                 </VBox>
                             </content>

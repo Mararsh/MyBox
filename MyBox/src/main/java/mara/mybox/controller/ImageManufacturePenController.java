@@ -69,7 +69,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
     @FXML
     protected Label commentLabel;
     @FXML
-    protected Button withdrawButton, paletteButton, fillPaletteButton;
+    protected Button withdrawButton, paletteButton, paletteFillButton;
     @FXML
     protected CheckBox fillCheck, dottedCheck;
     @FXML
@@ -268,7 +268,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
 
     private void checkPenType() {
         try {
-            imageController.operatingNeedNotScope();
+            imageController.clearValues();
 
             setBox.getChildren().clear();
             imageController.initMaskControls(false);
@@ -392,7 +392,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
             FxmlControl.setTooltip(strokeRect, FxmlColor.colorNameDisplay(color));
             AppVariables.setUserConfigValue("ImagePenStrokeColor", color.toString());
 
-        } else if (fillPaletteButton.equals(control)) {
+        } else if (paletteFillButton.equals(control)) {
             fillRect.setFill(color);
             FxmlControl.setTooltip(fillRect, FxmlColor.colorNameDisplay(color));
             AppVariables.setUserConfigValue("ImagePenFillColor", color.toString());
@@ -409,7 +409,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
 
     @FXML
     public void showFillPalette(ActionEvent event) {
-        showPalette(fillPaletteButton, message("Fill"), true);
+        showPalette(paletteFillButton, message("Fill"), true);
     }
 
     public void updateMask() {

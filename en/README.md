@@ -11,9 +11,9 @@ Self-contain packages include all files and need not java env and installation. 
  
 | Platform | Link | Size | Launcher |    
 | --- | --- | ---  | ---  |    
-| win | [MyBox-5.9-win.zip](https://github.com/Mararsh/MyBox/releases/download/v5.9/MyBox-5.9-win-exe.zip)  | 241MB | MyBox.exe |       
-| linux | [MyBox-5.9-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v5.9/MyBox-5.9-linux.tar.gz)  | 200MB  | bin/MyBox  |     
-| mac | [MyBox-5.9-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v5.9/MyBox-5.9-mac.dmg)  | 202MB  |  MyBox-5.9.app   |   
+| win | [MyBox-5.95-win.zip](https://github.com/Mararsh/MyBox/releases/download/v5.95/MyBox-5.95-win-exe.zip)  | 241MB | MyBox.exe |       
+| linux | [MyBox-5.95-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v5.95/MyBox-5.95-linux.tar.gz)  | 200MB  | bin/MyBox  |     
+| mac | [MyBox-5.95-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v5.95/MyBox-5.95-mac.dmg)  | 202MB  |  MyBox-5.95.app   |   
 
 User can double click the launcher to start MyBox or run it by command line. The default "Open Method" of image/text/PDF files can be associated to MyBox and a file can be opened directly by MyBox by double clicking the file's name.
 (File with name including non-ascii can not be opened by double clicking currently)
@@ -23,16 +23,16 @@ When JRE or JDK 13 or higher(`Oracle jdk` or `open jdk`) is installed, jar can r
   
 | Platform | Link | Size | Requirements |   
 | --- | --- | ---  | ---  |    
-| win | [MyBox-5.9-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.9/MyBox-5.9-win-jar.zip)  | 128MB | Java 13.0.1 or higher |    
-| linux | [MyBox-5.9-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.9/MyBox-5.9-linux-jar.zip)  | 134MB  | Java 13.0.1 or higher |    
-| mac | [MyBox-5.9-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.9/MyBox-5.9-mac-jar.zip)  |  131MB  | Java 13.0.1 or higher |    
+| win | [MyBox-5.95-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.95/MyBox-5.95-win-jar.zip)  | 128MB | Java 13.0.1 or higher |    
+| linux | [MyBox-5.95-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.95/MyBox-5.95-linux-jar.zip)  | 134MB  | Java 13.0.1 or higher |    
+| mac | [MyBox-5.95-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.95/MyBox-5.95-mac-jar.zip)  |  131MB  | Java 13.0.1 or higher |    
  
     
 Run following command to launch this program with Jar package: 
-<PRE><CODE>     java   -jar   MyBox-5.9.jar</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-5.95.jar</CODE></PRE>
 	
 A file path can follow the command as argument to be opened directly by MyBox. Example, following command will open the image:    
-<PRE><CODE>     java   -jar   MyBox-5.9.jar   /tmp/a1.jpg</CODE></PRE>   
+<PRE><CODE>     java   -jar   MyBox-5.95.jar   /tmp/a1.jpg</CODE></PRE>   
 
 ### Other addresses to download   
 Download from cloud storage: https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F   
@@ -71,7 +71,7 @@ sourceforge: https://sourceforge.net/projects/mara-mybox/files/
 | User Guide - Network Tools | 5.0 | 2019-4-16 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-NetworkTools-en.pdf) |
 | Development Guide | 2.0 | 2019-11-18 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-DevGuide-2.0-en.pdf) |
 | Shortcuts | 5.9 | 2019-12-21 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts_en.html) |
-| Development Logs | 5.9 | 2019-12-21 | [html](#devLog) |
+| Development Logs | 5.95 | 2019-12-26 | [html](#devLog) |
 
 # Implementation
 
@@ -106,10 +106,11 @@ MyBox is based on following open sources softwares:
 | jaffree | warp ffmpeg | https://github.com/kokorin/Jaffree |   
 | ffmpeg| convert/create medias | http://ffmpeg.org |   
 | image4j | decode ico format | https://github.com/imcdonagh/image4j |   
+| AutoCommitCell | Submit updates | https://stackoverflow.com/questions/24694616 （Ogmios） |   
 
  
 # Current Version
-Current version is 5.9. Its features are mentioned below in summary:   
+Current version is 5.95. Its features are mentioned below in summary:   
  
 * [Cross platforms](#Cross-platform)
 * [Internationalized](#Internationalized)
@@ -563,12 +564,12 @@ Notice: This set of functions is based on ffmpeg, and user need download ffmpeg 
 2. Set the months range.
 3. Make sure whole page contents loaded. Can expand the comments and pictures in the pages.
 4. Save the pages as local html files which can not be loaded normally due to dynamic loading of WeiBo contents. They can be used to extract texts in the pages.
-5. Save the pages' snapshots as PDF files, with options like page size, margins, author, images format, etc.
+5. Save the pages' snapshots as PDF files, with options like dpi, format, page size, margins, author, etc.
 6. Save all original size pictures in the pages.
 7. Display progress information in time.
 8. Stop the progress at any time. The interrupted month will be record and input as start month for next execution.
 9. Set the retry times of failure.      
-Notice: Connections to Weibo servers are always blocked recently.
+
 
 ## Settings <a id="settings"></a>     
 1. Whether restore last size of each scene. Whether open new stage to display scene. Whether pop recent visited files/directories.
@@ -626,6 +627,11 @@ Developers need notice: JavaFx screen is not same as physical screen and has dif
 
 
 # Development Logs <a id="devLog"></a>     
+2019-12-26 v5.95  Improve interfaces of batch operations with multiple tabs instead of filling one page with all of controls.      
+Solved problems:  Avoid 414 error for Weibo Snap Tool; Controls' diable property is messed in interface of Image Manufacture; Format does not work for Image Manufacture in batch.        
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.95)      
+Today honor Chairman Mao and his comrades who made Chinese people standing up.
+
 2019-12-21 v5.9  Web browser which supports multiple tabs. Its histories can be manages and SSL certifcates of websites can be installed online.      
 Read certificates in any keystore/truststore and export as html file.  Add certificates from CA files or by download directly from websites.     
 Play videos/audios with options like auto-play, displaying millionseconds, loop number, random order, volumn, speed,  mute, full-screen, etc. Sounds from GuaiGuai and BenBen. Manage playlists.     

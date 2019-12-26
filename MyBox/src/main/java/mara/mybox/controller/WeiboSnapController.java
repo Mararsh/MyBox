@@ -1,5 +1,7 @@
 package mara.mybox.controller;
 
+import java.awt.Toolkit;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -18,6 +20,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Screen;
 import mara.mybox.data.WeiboSnapParameters;
 import mara.mybox.db.TableStringValues;
 import mara.mybox.fxml.FxmlControl;
@@ -44,7 +47,7 @@ public class WeiboSnapController extends BaseController {
     private final String WeiboExpandPicturesKey, WeiboExpandCommentsKey, WeiboUseTempKey;
     private final String WeiboPdfKey, WeiboHtmlKey, WeiboPixKey, WeiboKeepPageKey, WeiboMiaoKey;
     final private String AuthorKey;
-    private int accessInterval, webWidth, categoryType, retry, startPage, snapInterval;
+    private int accessInterval, webWidth, categoryType, retry, startPage, snapInterval, dpi;
     private boolean isImageSize;
     private String webAddress;
     private WeiboSnapParameters parameters;
@@ -57,7 +60,7 @@ public class WeiboSnapController extends BaseController {
     @FXML
     private ToggleGroup sizeGroup, formatGroup, categoryGroup, pdfMemGroup;
     @FXML
-    private ComboBox<String> addressBox, zoomBox, widthBox, retryBox,
+    private ComboBox<String> addressBox, zoomBox, widthBox, retryBox, dpiSelector,
             MarginsBox, standardSizeBox, standardDpiBox, jpegBox, pdfScaleBox;
     @FXML
     private TextField startMonthInput, endMonthInput, startPageInput, accessIntervalInput,
@@ -293,6 +296,26 @@ public class WeiboSnapController extends BaseController {
     }
 
     private void initSnapOptions() {
+
+        List<String> dpiValues = new ArrayList();
+        dpiValues.addAll(Arrays.asList("96", "120", "160", "300"));
+        dpiValues.add(0, Toolkit.getDefaultToolkit().getScreenResolution() + "");
+        dpiValues.add(Screen.getPrimary().getDpi() + "");
+        dpiSelector.getItems().addAll(dpiValues);
+        dpiSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> ov,
+                    String oldValue, String newValue) {
+                try {
+                    dpi = Integer.parseInt(newValue);
+                    AppVariables.setUserConfigValue("WeiboSnapDPI", dpi + "");
+                } catch (Exception e) {
+                    dpi = 96;
+                }
+            }
+        });
+        dpiSelector.getSelectionModel().select(AppVariables.getUserConfigValue("WeiboSnapDPI", "96"));
+
         zoomBox.getItems().addAll(Arrays.asList("1.0", "1.5", "2", "1.6", "1.8", "0.8"));
         zoomBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -1012,7 +1035,7 @@ public class WeiboSnapController extends BaseController {
             parameters.setDithering(ditherCheck.isSelected());
             parameters.setUseTempFiles(true);
             parameters.setSnapInterval(snapInterval);
-            parameters.setBypassSSL(bypassSSLCheck.isSelected());
+            parameters.setDpi(dpi);
             return parameters;
         } catch (Exception e) {
             parameters = null;

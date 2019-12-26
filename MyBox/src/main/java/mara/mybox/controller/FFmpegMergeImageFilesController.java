@@ -52,7 +52,6 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
                 } else {
                     result = AppVariables.message("NotFound");
                 }
-                currentParameters.currentTotalHandled++;
                 tableController.markFileHandled(currentParameters.currentIndex, result);
             }
             if (lastFile == null) {
@@ -80,6 +79,7 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
                 return AppVariables.message("Failed");
             }
             try {
+                totalFilesHandled++;
                 updateLogs(message("Handling") + ": " + file, true);
                 BufferedImage image = ImageFileReaders.readImage(file);
                 if (image == null) {

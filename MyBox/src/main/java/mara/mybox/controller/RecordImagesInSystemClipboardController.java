@@ -20,6 +20,7 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
+import javafx.scene.layout.HBox;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.fxml.FxmlStage;
@@ -62,7 +63,7 @@ public class RecordImagesInSystemClipboardController extends BaseController {
     @FXML
     private Button openTargetButton;
     @FXML
-    protected TitledPane targetPane, optionsPane;
+    protected TitledPane targetPane;
     @FXML
     protected RadioButton saveRadio, viewRadio, saveAndViewRadio;
     @FXML
@@ -73,6 +74,8 @@ public class RecordImagesInSystemClipboardController extends BaseController {
     protected ToggleGroup recordTypeGroup, imageTypeGroup;
     @FXML
     protected TextField thresholdInput;
+    @FXML
+    protected HBox typeBox;
 
     public RecordImagesInSystemClipboardController() {
         baseTitle = AppVariables.message("RecordImagesInSystemClipBoard");
@@ -242,7 +245,7 @@ public class RecordImagesInSystemClipboardController extends BaseController {
             isHandling = false;
             if (AppVariables.message("StartRecording").equals(startButton.getText())) {
                 targetPane.setDisable(true);
-                optionsPane.setDisable(true);
+                typeBox.setDisable(true);
                 startButton.setText(AppVariables.message("StopRecording"));
                 getMyStage().setIconified(true);
                 recordedNumber = 0;
@@ -297,7 +300,7 @@ public class RecordImagesInSystemClipboardController extends BaseController {
                 }, 0, checkInterval);
             } else {
                 targetPane.setDisable(false);
-                optionsPane.setDisable(false);
+                typeBox.setDisable(false);
                 startButton.setText(AppVariables.message("StartRecording"));
                 recordLabel.setText("");
                 if (timer != null) {

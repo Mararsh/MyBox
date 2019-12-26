@@ -205,8 +205,7 @@ public class FileCutController extends FilesBatchController {
         if (files == null || files.isEmpty()) {
             return AppVariables.message("Failed");
         } else {
-            currentParameters.finalTargetName = files.get(0).getAbsolutePath();
-            targetFiles.addAll(files);
+            targetFileGenerated(files);
             return MessageFormat.format(AppVariables.message("FilesGenerated"), files.size());
         }
     }

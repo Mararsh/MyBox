@@ -604,7 +604,7 @@ public class ImageManufactureController extends ImageViewerController {
             currentImageController.init(sourceFile, image, title + " - " + message("CurrentImage"));
             hisImageController.init(sourceFile, image, title + " - " + message("HistoricalImage"));
             refImageController.init(sourceFile, image, title + " - " + message("ReferenceImage"));
-            currentImageController.clearOperating();
+            currentImageController.clearValues();
 
             imageLoaded.set(true);
             imageUpdated.set(false);
@@ -1378,7 +1378,7 @@ public class ImageManufactureController extends ImageViewerController {
             return;
         }
         loadImageHistory(hisIndex.get() + 1, true);
-        currentImageController.clearOperating();
+        currentImageController.clearValues();
     }
 
     @FXML
@@ -1388,7 +1388,7 @@ public class ImageManufactureController extends ImageViewerController {
             return;
         }
         loadImageHistory(hisIndex.get() - 1, true);
-        currentImageController.clearOperating();
+        currentImageController.clearValues();
     }
 
     @FXML
@@ -1401,7 +1401,7 @@ public class ImageManufactureController extends ImageViewerController {
         currentImageController.updateImage(image);
         imageUpdated.set(false);
         updateBottom(ImageOperation.Recover);
-        currentImageController.clearOperating();
+        currentImageController.clearValues();
     }
 
     @FXML
@@ -1570,7 +1570,7 @@ public class ImageManufactureController extends ImageViewerController {
 
             popText(info, AppVariables.getCommentsDelay(), "white", "1.5em", null);
 
-            currentImageController.clearOperating();
+            currentImageController.clearValues();
         } catch (Exception e) {
             logger.debug(e.toString());
         }
@@ -1582,7 +1582,7 @@ public class ImageManufactureController extends ImageViewerController {
             imageUpdated.set(true);
             updateBottom(operation);
             imageTabs.getSelectionModel().select(currentImageTab);
-            currentImageController.clearOperating();
+            currentImageController.clearValues();
         } catch (Exception e) {
             logger.debug(e.toString());
         }

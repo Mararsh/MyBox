@@ -117,7 +117,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                     String mode = blendBox.getSelectionModel().getSelectedItem();
                     blendMode = PixelBlend.getBlendModeByName(mode);
                     opacityBox.setDisable(blendMode != PixelBlend.ImagesBlendMode.NORMAL);
-                    if (parent != null && imageController.operating.get()) {
+                    if (parent != null) {
                         displayClip(0);
                     }
                 }
@@ -134,7 +134,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                             opacity = f;
                             AppVariables.setUserConfigInt("ImageClipOpacity", (int) (f * 100));
                             FxmlControl.setEditorNormal(opacityBox);
-                            if (parent != null && imageController.operating.get()) {
+                            if (parent != null) {
                                 displayClip(0);
                             }
                         } else {
@@ -519,7 +519,6 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
 
                 @Override
                 protected void whenSucceeded() {
-                    imageController.operatingNeedNotScope();
                     imageController.maskRectangleData = new DoubleRectangle(0, 0,
                             currentClip.getWidth() - 1, currentClip.getHeight() - 1);
                     imageController.scope.setRectangle(imageController.maskRectangleData.cloneValues());
@@ -641,7 +640,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                 imageController.maskView.getImage(), -1);
         clipSource = null;
         currentClip = null;
-        imageController.clearOperating();
+        imageController.clearValues();
         okButton.setDisable(true);
     }
 
@@ -653,7 +652,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
         }
         clipSource = null;
         currentClip = null;
-        imageController.clearOperating();
+        imageController.clearValues();
         okButton.setDisable(true);
     }
 

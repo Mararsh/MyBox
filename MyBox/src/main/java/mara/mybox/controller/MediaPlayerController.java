@@ -630,7 +630,11 @@ public class MediaPlayerController extends BaseController {
                 isSettingValues = true;
                 tableController.markFileHandling(currentIndex);
                 isSettingValues = false;
-                popInformation(message("ReadingMedia...") + "\n" + currentMedia.getAddress());
+                if (!currentMedia.getURI().getScheme().startsWith("file")) {
+                    popInformation(message("ReadingStreamMedia...") + "\n" + currentMedia.getAddress(), 6000);
+                } else {
+                    popInformation(message("ReadingMedia...") + "\n" + currentMedia.getAddress());
+                }
 
                 task = new SingletonTask<Void>() {
 

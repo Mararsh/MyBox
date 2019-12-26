@@ -54,7 +54,6 @@ import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
-import mara.mybox.value.CommonValues;
 import static mara.mybox.value.CommonValues.Indent;
 
 /**
@@ -63,7 +62,7 @@ import static mara.mybox.value.CommonValues.Indent;
  * @Description
  * @License Apache License Version 2.0
  */
-public class IccProfileEditorController extends BaseController {
+public class IccProfileEditorController extends ChromaticityBaseController {
 
     protected SourceType sourceType;
     protected String embedICCName, externalDataName;
@@ -569,7 +568,8 @@ public class IccProfileEditorController extends BaseController {
         });
     }
 
-    protected void initOptions() {
+    @Override
+    public void initOptions() {
         maxDecodeInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue ov, String oldValue, String newValue) {
@@ -1708,11 +1708,6 @@ public class IccProfileEditorController extends BaseController {
             return;
         }
         super.popSaveAs(event);
-    }
-
-    @FXML
-    public void openLinks() {
-        openStage(CommonValues.ChromaticLinksFxml);
     }
 
     @FXML

@@ -77,8 +77,7 @@ public class TextLineBreakBatchController extends TextEncodingBatchController {
             logger.debug(target);
             targetInformation.setCharset(sourceInformation.getCharset());
             if (TextTools.convertLineBreak(sourceInformation, targetInformation)) {
-                actualParameters.finalTargetName = target.getAbsolutePath();
-                targetFiles.add(target);
+                targetFileGenerated(target);
                 return AppVariables.message("Successful");
             } else {
                 return AppVariables.message("Failed");

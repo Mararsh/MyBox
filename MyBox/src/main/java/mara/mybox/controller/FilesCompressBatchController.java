@@ -178,15 +178,13 @@ public class FilesCompressBatchController extends FilesBatchController {
                 targetFile.delete();
             }
             tmpFile.renameTo(targetFile);
-            totalHandled++;
             updateLogs(MessageFormat.format(message("FileCompressedSuccessfully"),
                     targetFile, FileTools.showFileSize(srcFile.length()),
                     FileTools.showFileSize(targetFile.length()),
                     (100 - targetFile.length() * 100 / srcFile.length()),
                     DateTools.showTime(new Date().getTime() - s)
             ));
-            currentParameters.finalTargetName = targetFile.toString();
-            targetFiles.add(targetFile);
+            targetFileGenerated(targetFile);
             return AppVariables.message("Successful");
         } catch (Exception e) {
             logger.debug(e.toString());

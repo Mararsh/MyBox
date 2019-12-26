@@ -18,9 +18,8 @@ public class WeiboSnapParameters {
     private int webWidth, retry, startPage, loadInterval, snapInterval;
     private boolean imagePerScreen, isImageSize, addPageNumber, createPDF, createHtml, savePictures, keepPagePdf;
     private boolean miao, expandComments, expandPicture, fullScreen, openPathWhenStop, useTempFiles, dithering;
-    private boolean bypassSSL;
     private String webAddress, author, title, fontName;
-    private int marginSize, pageWidth, pageHeight, jpegQuality, threshold, maxMergeSize, category, pdfScale;
+    private int marginSize, pageWidth, pageHeight, jpegQuality, threshold, maxMergeSize, category, pdfScale, dpi;
     private Date startMonth, endMonth;
     private float zoomScale;
     private File tempdir;
@@ -333,12 +332,12 @@ public class WeiboSnapParameters {
         this.snapInterval = snapInterval;
     }
 
-    public boolean isBypassSSL() {
-        return bypassSSL;
+    public int getDpi() {
+        return dpi;
     }
 
-    public void setBypassSSL(boolean bypassSSL) {
-        this.bypassSSL = bypassSSL;
+    public void setDpi(int dpi) {
+        this.dpi = dpi;
     }
 
 }

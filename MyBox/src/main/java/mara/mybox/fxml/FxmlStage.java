@@ -1,6 +1,8 @@
 package mara.mybox.fxml;
 
+import java.awt.Desktop;
 import java.io.File;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -36,13 +38,17 @@ import mara.mybox.controller.MediaPlayerController;
 import mara.mybox.controller.MyBoxLoadingController;
 import mara.mybox.controller.PdfViewController;
 import mara.mybox.controller.TextEditerController;
+import mara.mybox.controller.WebBrowserController;
+import mara.mybox.data.StringTable;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.image.ImageInformation;
 import mara.mybox.tools.CompressTools;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.HtmlTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 
@@ -286,6 +292,18 @@ public class FxmlStage {
         }
     }
 
+    public static WebBrowserController openWebBrowser(Stage stage, File file) {
+        try {
+            final WebBrowserController controller
+                    = (WebBrowserController) openScene(stage, CommonValues.WebBrowserFxml);
+            controller.loadFile(file);
+            return controller;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
     public static ImageManufactureController openImageManufacture(Stage stage, File file) {
         try {
             final ImageManufactureController controller
@@ -499,7 +517,7 @@ public class FxmlStage {
             return controller;
         }
         if (file.isDirectory()) {
-            SystemTools.browseURI(file.toURI());
+            browseURI(stage, file.toURI());
             return controller;
         }
 
@@ -534,6 +552,67 @@ public class FxmlStage {
 //            }
         }
         return controller;
+    }
+
+    public static boolean browseURI(Stage myStage, URI uri) {
+        if (uri == null) {
+            return false;
+        }
+
+        if (SystemTools.isLinux()) {
+            // On my CentOS 7, system hangs when both Desktop.isDesktopSupported() and
+            // desktop.isSupported(Desktop.Action.BROWSE) are true.
+            // https://stackoverflow.com/questions/27879854/desktop-getdesktop-browse-hangs
+            // Below workaround for Linux because "Desktop.getDesktop().browse()" doesn't work on some Linux implementations
+            try {
+                if (Runtime.getRuntime().exec(new String[]{"which", "xdg-open"}).getInputStream().read() != -1) {
+                    Runtime.getRuntime().exec(new String[]{"xdg-open",
+                        uri.toString()});
+                    return true;
+                } else {
+                }
+            } catch (Exception e) {
+            }
+            if (myStage != null) {
+                alertError(myStage, message("DesktopNotSupportBrowse"));
+            }
+
+        } else if (SystemTools.isMac()) {
+            // https://stackoverflow.com/questions/5226212/how-to-open-the-default-webbrowser-using-java/28807079#28807079
+            try {
+                Runtime rt = Runtime.getRuntime();
+                rt.exec("open " + uri.toString());
+            } catch (Exception e) {
+            }
+            if (myStage != null) {
+                alertError(myStage, message("DesktopNotSupportBrowse"));
+            }
+
+        } else if (Desktop.isDesktopSupported()) {
+            Desktop desktop = Desktop.getDesktop();
+            if (desktop.isSupported(Desktop.Action.BROWSE)) {
+                try {
+                    desktop.browse(uri);
+                    return true;
+                } catch (Exception e) {
+                    logger.error(e.toString());
+                }
+            } else {
+                if (myStage != null) {
+                    alertError(myStage, message("DesktopNotSupportBrowse"));
+                }
+            }
+
+        } else {
+            if (myStage != null) {
+                alertError(myStage, message("DesktopNotSupportBrowse"));
+            }
+        }
+
+        if (!uri.getScheme().equals("file") || new File(uri.getPath()).isFile()) {
+            openTarget(null, uri.toString());
+        }
+        return true;
     }
 
     public static void alertError(Stage myStage, String information) {
@@ -610,6 +689,44 @@ public class FxmlStage {
             logger.error(e.toString());
             return null;
         }
+    }
+
+    public static void openResourcesAboutColor(Stage myStage) {
+        try {
+            StringTable table = new StringTable(null, message("ResourcesAboutColor"));
+            newLinkRow(table, "ICCWebsite", "http://www.color.org");
+            newLinkRow(table, "ICCProfileTags", "https://sno.phy.queensu.ca/~phil/exiftool/TagNames/ICC_Profile.html");
+            newLinkRow(table, "IccProfilesECI", "http://www.eci.org/en/downloads");
+            newLinkRow(table, "IccProfilesAdobe", "https://supportdownloads.adobe.com/detail.jsp?ftpID=3680");
+            newLinkRow(table, "ColorSpace", "http://brucelindbloom.com/index.html?WorkingSpaceInfo.html#Specifications");
+            newLinkRow(table, "StandardsRGB", "https://www.w3.org/Graphics/Color/sRGB.html");
+            newLinkRow(table, "RGBXYZMatrices", "http://brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html");
+            newLinkRow(table, "ColorCalculator", "http://www.easyrgb.com/en/math.php");
+            newLinkRow(table, "", "http://brucelindbloom.com/index.html?ColorCalculator.html");
+            newLinkRow(table, "", "http://davengrace.com/cgi-bin/cspace.pl");
+            newLinkRow(table, "ColorData", "https://www.rit.edu/science/pocs/useful-data");
+            newLinkRow(table, "", "http://www.thefullwiki.org/Standard_illuminant");
+            newLinkRow(table, "ColorTopics", "https://www.codeproject.com/Articles/1202772/Color-Topics-for-Programmers");
+            newLinkRow(table, "", "https://www.w3.org/TR/css-color-4/#lab-to-rgb");
+            newLinkRow(table, "ChromaticAdaptation", "http://brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html");
+            newLinkRow(table, "ChromaticityDiagram", "http://demonstrations.wolfram.com/CIEChromaticityDiagram/");
+
+            File htmFile = HtmlTools.writeHtml(table.html());
+            browseURI(myStage, htmFile.toURI());
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    public static void newLinkRow(StringTable table, String name, String link) {
+        List<String> row = new ArrayList<>();
+        if (name != null && !name.isBlank()) {
+            row.addAll(Arrays.asList(message(name), "<a href=\"" + link + "\" target=_blank>" + link + "</a>"));
+        } else {
+            row.addAll(Arrays.asList("", "<a href=\"" + link + "\" target=_blank>" + link + "</a>"));
+        }
+        table.add(row);
     }
 
 }

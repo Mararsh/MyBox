@@ -14,8 +14,8 @@ import java.util.TimeZone;
  */
 public class CommonValues {
 
-    public static final String AppVersion = "5.9";
-    public static final String AppVersionDate = "2019-12-21";
+    public static final String AppVersion = "5.95";
+    public static final String AppVersionDate = "2019-12-26";
     public static final String AppDocVersion = "5.0";
 
     public static final String AppDerbyUser = "mara";
@@ -106,7 +106,6 @@ public class CommonValues {
     public static final String ConvolutionKernelManagerFxml = "/fxml/ConvolutionKernelManager.fxml";
     public static final String ColorPaletteFxml = "/fxml/ColorPalette.fxml";
     public static final String IccProfileEditorFxml = "/fxml/IccProfileEditor.fxml";
-    public static final String ChromaticLinksFxml = "/fxml/ChromaticLinks.fxml";
     public static final String ChromaticityDiagramFxml = "/fxml/ChromaticityDiagram.fxml";
     public static final String ChromaticAdaptationMatrixFxml = "/fxml/ChromaticAdaptationMatrix.fxml";
     public static final String ColorConversionFxml = "/fxml/ColorConversion.fxml";

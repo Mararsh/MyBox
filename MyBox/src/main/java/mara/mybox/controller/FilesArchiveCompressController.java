@@ -67,7 +67,7 @@ public class FilesArchiveCompressController extends FilesBatchController {
     @FXML
     protected ComboBox<String> encodeBox;
     @FXML
-    protected VBox compressBox;
+    protected VBox archiveVBox, compressVBox;
     @FXML
     protected Label archiverLabel;
     @FXML
@@ -273,6 +273,13 @@ public class FilesArchiveCompressController extends FilesBatchController {
         } catch (Exception e) {
 //            logger.error(e.toString());
         }
+    }
+
+    @Override
+    public void disableControls(boolean disable) {
+        super.disableControls(disable);
+        archiveVBox.setDisable(disable);
+        compressVBox.setDisable(disable);
     }
 
     @Override

@@ -27,8 +27,6 @@ import org.apache.pdfbox.rendering.PDFRenderer;
  */
 public class PdfConvertImagesBatchController extends PdfBatchController {
 
-    protected final String PdfConverterAppendColorKey, PdfConverterAppendCompressionKey,
-            PdfConverterAppendQualityKey, PdfConverterAppendDensityKey;
     protected ImageAttributes attributes;
     protected PDFRenderer renderer;
 
@@ -41,10 +39,6 @@ public class PdfConvertImagesBatchController extends PdfBatchController {
         baseTitle = AppVariables.message("PdfConvertImagesBatch");
         browseTargets = true;
 
-        PdfConverterAppendColorKey = "PdfConverterDitherKey";
-        PdfConverterAppendCompressionKey = "PdfConverterAppendCompressionKey";
-        PdfConverterAppendQualityKey = "PdfConverterAppendQualityKey";
-        PdfConverterAppendDensityKey = "PdfConverterAppendDensityKey";
     }
 
     @Override
@@ -78,34 +72,34 @@ public class PdfConvertImagesBatchController extends PdfBatchController {
             appendColorCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
-                    setUserConfigValue(PdfConverterAppendColorKey, appendColorCheck.isSelected());
+                    setUserConfigValue("PdfConverterAppendColor", appendColorCheck.isSelected());
                 }
             });
-            appendColorCheck.setSelected(AppVariables.getUserConfigBoolean(PdfConverterAppendColorKey));
+            appendColorCheck.setSelected(AppVariables.getUserConfigBoolean("PdfConverterAppendColor"));
 
             appendCompressionCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
-                    setUserConfigValue(PdfConverterAppendCompressionKey, appendCompressionCheck.isSelected());
+                    setUserConfigValue("PdfConverterAppendCompression", appendCompressionCheck.isSelected());
                 }
             });
-            appendCompressionCheck.setSelected(AppVariables.getUserConfigBoolean(PdfConverterAppendCompressionKey));
+            appendCompressionCheck.setSelected(AppVariables.getUserConfigBoolean("PdfConverterAppendCompression"));
 
             appendQualityCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
-                    setUserConfigValue(PdfConverterAppendQualityKey, appendQualityCheck.isSelected());
+                    setUserConfigValue("PdfConverterAppendQuality", appendQualityCheck.isSelected());
                 }
             });
-            appendQualityCheck.setSelected(AppVariables.getUserConfigBoolean(PdfConverterAppendQualityKey));
+            appendQualityCheck.setSelected(AppVariables.getUserConfigBoolean("PdfConverterAppendQuality"));
 
             appendDensityCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
-                    setUserConfigValue(PdfConverterAppendDensityKey, appendDensityCheck.isSelected());
+                    setUserConfigValue("PdfConverterAppendDensity", appendDensityCheck.isSelected());
                 }
             });
-            appendDensityCheck.setSelected(AppVariables.getUserConfigBoolean(PdfConverterAppendDensityKey));
+            appendDensityCheck.setSelected(AppVariables.getUserConfigBoolean("PdfConverterAppendDensity"));
 
         } catch (Exception e) {
             logger.debug(e.toString());
@@ -147,8 +141,7 @@ public class PdfConvertImagesBatchController extends PdfBatchController {
             if (!ImageFileWriters.writeImageFile(targetImage, attributes, tFile.getAbsolutePath())) {
                 return 0;
             }
-            actualParameters.finalTargetName = tFile.getAbsolutePath();
-            targetFiles.add(tFile);
+            targetFileGenerated(tFile);
             return 1;
         } catch (Exception e) {
             logger.error(e.toString());

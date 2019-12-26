@@ -67,7 +67,10 @@ public class ImageManufactureCropController extends ImageManufactureOperationCon
                 return;
             }
 
+            isSettingValues = true;
             imageController.scopeSetCheck.setSelected(true);
+            isSettingValues = false;
+            imageController.checkViewScope();
             try {
                 String c = AppVariables.getUserConfigValue("CropBackgroundColor", Color.TRANSPARENT.toString());
                 bgRect.setFill(Color.web(c));

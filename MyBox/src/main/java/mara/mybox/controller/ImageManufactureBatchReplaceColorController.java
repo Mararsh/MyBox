@@ -51,7 +51,7 @@ public class ImageManufactureBatchReplaceColorController extends ImageManufactur
     @FXML
     protected Rectangle originalRect, newRect;
     @FXML
-    protected Button originalPaletteButton, newPaletteButton;
+    protected Button paletteOriginalButton, paletteNewButton;
 
     public ImageManufactureBatchReplaceColorController() {
         baseTitle = AppVariables.message("ImageManufactureBatchReplaceColor");
@@ -160,12 +160,12 @@ public class ImageManufactureBatchReplaceColorController extends ImageManufactur
         if (control == null || color == null) {
             return false;
         }
-        if (originalPaletteButton.equals(control)) {
+        if (paletteOriginalButton.equals(control)) {
             originalRect.setFill(color);
             FxmlControl.setTooltip(originalRect, FxmlColor.colorNameDisplay(color));
             AppVariables.setUserConfigValue("ImageColorOriginal", color.toString());
 
-        } else if (newPaletteButton.equals(control)) {
+        } else if (paletteNewButton.equals(control)) {
             newRect.setFill(color);
             FxmlControl.setTooltip(newRect, FxmlColor.colorNameDisplay(color));
             AppVariables.setUserConfigValue("ImageColorNew", color.toString());
@@ -175,12 +175,12 @@ public class ImageManufactureBatchReplaceColorController extends ImageManufactur
 
     @FXML
     public void originalPalette(ActionEvent event) {
-        showPalette(originalPaletteButton, message("OriginalColor"));
+        showPalette(paletteOriginalButton, message("OriginalColor"));
     }
 
     @FXML
     public void newPalette(ActionEvent event) {
-        showPalette(newPaletteButton, message("NewColor"));
+        showPalette(paletteNewButton, message("NewColor"));
     }
 
     @Override

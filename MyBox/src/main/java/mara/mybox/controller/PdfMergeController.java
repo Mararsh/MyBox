@@ -112,8 +112,7 @@ public class PdfMergeController extends PdfBatchController {
             if (targetDoc != null) {
                 targetDoc.save(targetFile);
                 targetDoc.close();
-                currentParameters.finalTargetName = targetFile.getAbsolutePath();
-                targetFiles.add(targetFile);
+                targetFileGenerated(targetFile);
 
                 if (deleteCheck.isSelected()) {
                     List<PdfInformation> sources = new ArrayList<>();

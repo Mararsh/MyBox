@@ -259,8 +259,7 @@ public class PdfCompressImagesBatchController extends PdfBatchController {
                     tFile.delete();
                 }
                 tmpFile.renameTo(tFile);
-                currentParameters.finalTargetName = currentTargetFile;
-                targetFiles.add(new File(currentTargetFile));
+                targetFileGenerated(tFile);
             }
         } catch (Exception e) {
             logger.error(e.toString());

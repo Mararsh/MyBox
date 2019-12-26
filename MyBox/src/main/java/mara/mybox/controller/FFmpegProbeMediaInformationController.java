@@ -107,6 +107,7 @@ public class FFmpegProbeMediaInformationController extends FFmpegBaseController 
             sourceFileInput.setStyle(badStyle);
             return;
         }
+        sourceFileInput.setStyle(null);
         final File file = new File(v);
         if (file.exists()) {
             sourceFile = file;

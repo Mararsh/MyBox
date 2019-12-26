@@ -5,17 +5,22 @@ import java.util.Arrays;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Control;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlImageManufacture;
@@ -40,12 +45,16 @@ public class ImageManufactureBatchMarginsController extends ImageManufactureBatc
     @FXML
     protected ComboBox marginWidthBox;
     @FXML
-    protected ColorPicker marginsColorPicker;
-    @FXML
     protected CheckBox marginsTopCheck, marginsBottomCheck, marginsLeftCheck, marginsRightCheck,
             preAlphaCheck;
     @FXML
-    private HBox colorBox, distanceBox, widthBox, setBox;
+    protected FlowPane setPane;
+    @FXML
+    private HBox colorBox, distanceBox, widthBox;
+    @FXML
+    protected Rectangle bgRect;
+    @FXML
+    protected Button paletteButton;
     @FXML
     private TextField distanceInput;
     @FXML
@@ -115,41 +124,64 @@ public class ImageManufactureBatchMarginsController extends ImageManufactureBatc
                 }
             });
 
+            String c = AppVariables.getUserConfigValue("ImageMarginBackground", Color.TRANSPARENT.toString());
+            bgRect.setFill(Color.web(c));
+            FxmlControl.setTooltip(bgRect, FxmlColor.colorNameDisplay((Color) bgRect.getFill()));
+
         } catch (Exception e) {
             logger.error(e.toString());
         }
     }
 
+    @Override
+    public boolean setColor(Control control, Color color) {
+        if (control == null || color == null) {
+            return false;
+        }
+        if (paletteButton.equals(control)) {
+            bgRect.setFill(color);
+            FxmlControl.setTooltip(bgRect, FxmlColor.colorNameDisplay(color));
+            AppVariables.setUserConfigValue("ImageMarginBackground", color.toString());
+        }
+        return true;
+    }
+
+    @FXML
+    @Override
+    public void showPalette(ActionEvent event) {
+        showPalette(paletteButton, message("Margins"), true);
+    }
+
     private void checkOperationType() {
-        setBox.getChildren().clear();
+        setPane.getChildren().clear();
 
         RadioButton selected = (RadioButton) opGroup.getSelectedToggle();
         if (message("AddMargins").equals(selected.getText())) {
             opType = ImageManufactureMarginsController.OperationType.AddMargins;
-            setBox.getChildren().addAll(colorBox, widthBox);
+            setPane.getChildren().addAll(colorBox, widthBox);
             checkMarginWidth();
             distanceInput.setStyle(null);
 
         } else if (message("CutMarginsByWidth").equals(selected.getText())) {
             opType = ImageManufactureMarginsController.OperationType.CutMarginsByWidth;
-            setBox.getChildren().addAll(widthBox);
+            setPane.getChildren().addAll(widthBox);
             checkMarginWidth();
             distanceInput.setStyle(null);
 
         } else if (message("CutMarginsByColor").equals(selected.getText())) {
             opType = ImageManufactureMarginsController.OperationType.CutMarginsByColor;
-            setBox.getChildren().addAll(colorBox, distanceBox);
+            setPane.getChildren().addAll(colorBox, distanceBox);
             marginWidthBox.getEditor().setStyle(null);
             checkColor();
 
         } else if (message("BlurMargins").equals(selected.getText())) {
             opType = ImageManufactureMarginsController.OperationType.BlurMargins;
-            setBox.getChildren().addAll(widthBox, preAlphaTipsView, preAlphaCheck);
+            setPane.getChildren().addAll(widthBox, preAlphaTipsView, preAlphaCheck);
             checkMarginWidth();
             distanceInput.setStyle(null);
 
         }
-        FxmlControl.refreshStyle(setBox);
+        FxmlControl.refreshStyle(setPane);
 
     }
 
@@ -185,21 +217,6 @@ public class ImageManufactureBatchMarginsController extends ImageManufactureBatc
         }
     }
 
-    @FXML
-    public void setTransparentAction() {
-        marginsColorPicker.setValue(Color.TRANSPARENT);
-    }
-
-    @FXML
-    public void setBlackAction() {
-        marginsColorPicker.setValue(Color.BLACK);
-    }
-
-    @FXML
-    public void setWhiteAction() {
-        marginsColorPicker.setValue(Color.WHITE);
-    }
-
     @Override
     protected BufferedImage handleImage(BufferedImage source) {
         try {
@@ -207,7 +224,7 @@ public class ImageManufactureBatchMarginsController extends ImageManufactureBatc
             switch (opType) {
                 case CutMarginsByWidth:
                     target = ImageManufacture.cutMargins(source,
-                            FxmlImageManufacture.toAwtColor(marginsColorPicker.getValue()),
+                            FxmlImageManufacture.toAwtColor((Color) bgRect.getFill()),
                             marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
                             marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
                     break;
@@ -219,7 +236,7 @@ public class ImageManufactureBatchMarginsController extends ImageManufactureBatc
                     break;
                 case AddMargins:
                     target = ImageManufacture.addMargins(source,
-                            FxmlImageManufacture.toAwtColor(marginsColorPicker.getValue()), width,
+                            FxmlImageManufacture.toAwtColor((Color) bgRect.getFill()), width,
                             marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
                             marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
                     break;

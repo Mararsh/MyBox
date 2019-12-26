@@ -11,9 +11,9 @@
   
 | 平台 | 链接 | 大小 | 启动文件 |    
 | --- | --- | --- |  --- |   
-| win | [MyBox-5.9-win.zip](https://github.com/Mararsh/MyBox/releases/download/v5.9/MyBox-5.9-win-exe.zip)  | 241MB | MyBox.exe |       
-| linux | [MyBox-5.9-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v5.9/MyBox-5.9-linux.tar.gz)  | 200MB  | bin/MyBox  |     
-| mac | [MyBox-5.9-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v5.9/MyBox-5.9-mac.dmg)  | 202MB  |  MyBox-5.9.app   |   
+| win | [MyBox-5.95-win.zip](https://github.com/Mararsh/MyBox/releases/download/v5.95/MyBox-5.95-win-exe.zip)  | 241MB | MyBox.exe |       
+| linux | [MyBox-5.95-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v5.95/MyBox-5.95-linux.tar.gz)  | 200MB  | bin/MyBox  |     
+| mac | [MyBox-5.95-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v5.95/MyBox-5.95-mac.dmg)  | 202MB  |  MyBox-5.95.app   |   
 
 双击或者用命令行执行包内的启动文件即可运行程序。可以把图片/文本/PDF文件的打开方式关联到MyBox，这样双击文件名就直接是用MyBox打开了。
 （目前无法双击打开路径包含汉字的文件） 
@@ -23,14 +23,14 @@
  
 | 平台 | 链接 | 大小 | 运行需要 |    
 | --- | --- | --- |  --- |   
-| win | [MyBox-5.9-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.9/MyBox-5.9-win-jar.zip)  | 128MB | Java 13.0.1或更高版本 |    
-| linux | [MyBox-5.9-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.9/MyBox-5.9-linux-jar.zip)  | 134MB  | Java 13.0.1或更高版本 |    
-| mac | [MyBox-5.9-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.9/MyBox-5.9-mac-jar.zip)  |  131MB  | Java 13.0.1或更高版本 |    
+| win | [MyBox-5.95-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.95/MyBox-5.95-win-jar.zip)  | 128MB | Java 13.0.1或更高版本 |    
+| linux | [MyBox-5.95-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.95/MyBox-5.95-linux-jar.zip)  | 134MB  | Java 13.0.1或更高版本 |    
+| mac | [MyBox-5.95-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.95/MyBox-5.95-mac-jar.zip)  |  131MB  | Java 13.0.1或更高版本 |    
     
 执行以下命令来启动程序：
-<PRE><CODE>     java   -jar   MyBox-5.9.jar</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-5.95.jar</CODE></PRE>
 程序可以跟一个文件名作为参数、以用MyBox直接打开此文件。例如以下命令是打开此图片：
-<PRE><CODE>     java   -jar   MyBox-5.9.jar   /tmp/a1.jpg</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-5.95.jar   /tmp/a1.jpg</CODE></PRE>
 
 ### 其它下载地址  
 从云盘下载：  https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F     
@@ -69,7 +69,7 @@ sourceforge:  https://sourceforge.net/projects/mara-mybox/files/
 | 用户手册-网络工具 | 5.0 |  2019-4-16 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-NetworkTools-zh.pdf) |
 | 开发指南 | 2.0 |  2019-11-18 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-DevGuide-2.0-zh.pdf) |
 | 快捷键 | 5.9 |  2019-12-21 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts.html) |
-| 开发日志 | 5.9 |  2019-12-21 | [html](#devLog) |
+| 开发日志 | 5.95 |  2019-12-26 | [html](#devLog) |
 
 
 # 实现基础
@@ -104,10 +104,11 @@ MyBox基于以下开源软件：
 | jaffree | 封装ffmpeg | https://github.com/kokorin/Jaffree |   
 | ffmpeg| 媒体转换/生成 | http://ffmpeg.org |   
 | image4j | 读ico格式 | https://github.com/imcdonagh/image4j |   
+| AutoCommitCell | 提交单元的修改 | https://stackoverflow.com/questions/24694616 （Ogmios） |   
 
 
 # 当前版本
-当前是版本5.9，已实现的特点概述如下:
+当前是版本5.95，已实现的特点概述如下:
 * [跨平台](#cross-platform)
 * [国际化](#international)
 * [PDF工具](#pdfTools)
@@ -526,12 +527,11 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 2. 设置起止月份。
 3. 确保页面完全加载，可以展开页面包含的评论、可以展开页面包含的所有图片。
 4. 将页面保存为本地html文件。由于微博是动态加载内容，本地网页无法正常打开，仅供获取其中的文本内容。
-5. 将页面截图保存为PDF。可以设置页尺寸、边距、作者、以及图片格式。
+5. 将页面截图保存为PDF。可以设置截图的格式、像素密度，和PDF的页尺寸、边距、作者等。
 6. 将页面包含的所有图片的原图全部单独保存下来。
 7. 实时显示处理进度。
 8. 可以随时中断处理。程序自动保存上次中断的月份并填入作本次的开始月份。
 9. 可以设置错误时重试次数。若超时错误则自动加倍最大延迟时间。    
-注：现在连接微博服务器总是被阻。
 
 ## 设置<a id="settings" />
 1. 是否恢复界面上次尺寸、是否在新窗口中打开界面、是否弹出最近访问的文件/目录
@@ -588,7 +588,12 @@ Java 9以后已支持HiDPI，控件和字体都会适应当前清晰度配置。
 开发者需要注意的是：JavaFx虚拟屏幕的dpi不同于物理屏幕的dpi，对于窗口元素尺寸的计算还要考虑伸缩比。   
 
 
-# 开发日志<a id="devLog" />    
+# 开发日志<a id="devLog" />  
+2019-12-26 版本5.95  改进批处理界面：使用多页签而不是把控件挤在一个页面上。      
+解决问题：避免微博截图工具414错误；图像处理的界面控件显示逻辑混乱；图像批处理的保存格式不生效。        
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.95)      
+今天缅怀毛主席和他的战友， 他们使中国人民站起来了。
+
 2019-12-21 版本5.9 支持多页签的浏览器。 可管理浏览历史、在线安装网站SSL证书。   
 读取任意密钥库文件中的证书内容，可导出为html文件。在密钥库中添加证书文件的内容、或下载安装网址的证书。   
 视频/音频播放器，可设置自动播放、显示毫秒、循环次数、随机顺序、音量、速度、静音、全屏等。乖乖和笨笨的声音。管理播放列表。   

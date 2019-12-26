@@ -88,7 +88,6 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
             if (parent == null) {
                 return;
             }
-            imageController.operatingNeedNotScope();
             imageController.imageLabel.setText(message("ClickImageForText"));
 
             isSettingValues = true;
@@ -359,7 +358,7 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
                         maskView.setLayoutY(imageView.getLayoutY());
                     } else {
                         parent.updateImage(ImageOperation.Text, textInput.getText(), null, newImage, cost);
-                        imageController.operatingNeedNotScope();
+                        imageController.clearValues();
                         imageController.imageLabel.setText(message("ClickImageForText"));
 
                     }
@@ -389,7 +388,7 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
             return;
         }
         maskView.setImage(null);
-        imageController.operatingNeedNotScope();
+        imageController.clearValues();
         imageController.imageLabel.setText(message("ClickImageForText"));
 
     }

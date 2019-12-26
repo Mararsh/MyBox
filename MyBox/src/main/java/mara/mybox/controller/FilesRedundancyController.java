@@ -236,7 +236,7 @@ public class FilesRedundancyController extends FilesBatchController {
             @Override
             public void run() {
                 currentLabel.setText(info);
-                long cost = new Date().getTime() - currentParameters.startTime.getTime();
+                long cost = new Date().getTime() - processStartTime.getTime();
                 String s = message("FindingFilesRedundancy") + "   "
                         + message("Cost") + ": " + DateTools.showTime(cost) + ".   "
                         + MessageFormat.format(message("HandlingObject"),
@@ -276,7 +276,7 @@ public class FilesRedundancyController extends FilesBatchController {
         if (operationBarController.getStatusLabel() == null) {
             return;
         }
-        long cost = new Date().getTime() - startTime.getTime();
+        long cost = new Date().getTime() - processStartTime.getTime();
         String s;
         if (paused) {
             s = message("Paused");
@@ -287,7 +287,7 @@ public class FilesRedundancyController extends FilesBatchController {
                 + message("TotalCheckedFiles") + ": " + totalChecked + "   "
                 + message("TotalRedundancyFiles") + ": " + totalRedundancy.get() + "   "
                 + message("Cost") + ": " + DateTools.showTime(cost) + ". "
-                + message("StartTime") + ": " + DateTools.datetimeToString(startTime) + ", "
+                + message("StartTime") + ": " + DateTools.datetimeToString(processStartTime) + ", "
                 + message("EndTime") + ": " + DateTools.datetimeToString(new Date());
         statusLabel.setText(s);
         currentLabel.setText("");

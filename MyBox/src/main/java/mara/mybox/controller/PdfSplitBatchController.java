@@ -351,8 +351,7 @@ public class PdfSplitBatchController extends PdfBatchController {
                 pd.save(tFile);
                 pd.close();
 
-                actualParameters.finalTargetName = tFile.getAbsolutePath();
-                targetFiles.add(tFile);
+                targetFileGenerated(tFile);
             }
         } catch (Exception e) {
             logger.error(e.toString());

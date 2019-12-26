@@ -27,203 +27,219 @@ License:    Apache License Version 2.0
     <center>
         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
             <children>
-                <VBox fx:id="paraBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-                    <children>
-                        <SplitPane dividerPositions="0.49382022471910114" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-                            <items>
+            <TabPane fx:id="batchTabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+               <tabs>
+                  <Tab fx:id="sourceTab" text="%SourceFiles">
+                     <content>
                                 <fx:include fx:id="table" source="PDFsTable.fxml" HBox.hgrow="ALWAYS" />
-                                <ScrollPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefViewportHeight="510.0" prefViewportWidth="983.0">
-                                    <content>
-                                        <VBox>
-                                            <children>
-                                                <TitledPane maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Preprocess">
-                                                    <content>
-                                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="5.0">
-                                                            <children>
-                                                                <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
-                                                                    <children>
-                                                                        <RadioButton fx:id="convertRadio" mnemonicParsing="false" selected="true" text="%ConvertPagesAsImages">
-                                                                            <toggleGroup>
-                                                                                <ToggleGroup fx:id="getImageType" />
-                                                                            </toggleGroup>
-                                                                        </RadioButton>
-                                                                        <RadioButton fx:id="extractRadio" mnemonicParsing="false" text="%ExtractImagesFromPages" toggleGroup="$getImageType" />
-                                                                    </children>
-                                                                </HBox>
-                                                                <HBox fx:id="imageOptionsBox" alignment="CENTER_LEFT" layoutX="32.0" layoutY="152.0" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                                                    <children>
-                                                                        <Label text="%Enhancement" />
-                                                                        <ComboBox fx:id="enhancementSelector" editable="true" prefWidth="160.0" />
-                                                                        <HBox fx:id="scaleBox" alignment="CENTER_LEFT" spacing="5.0">
-                                                                            <children>
-                                                                                <Label text="%Scale" />
-                                                                                <ComboBox fx:id="scaleSelector" editable="true" prefWidth="100.0" />
-                                                                            </children>
-                                                                        </HBox>
-                                                                        <HBox fx:id="densityBox" alignment="CENTER_LEFT" spacing="5.0">
-                                                                            <children>
-                                                                                <Label text="%Density" />
-                                                                                <ComboBox fx:id="dpiSelector" editable="true" prefWidth="100.0" />
-                                                                                <Label text="dpi" />
-                                                                            </children>
-                                                                        </HBox>
-                                                                    </children>
-                                                                </HBox>
-                                                                <HBox alignment="CENTER_LEFT" layoutX="32.0" layoutY="90.0" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                                                    <children>
-                                                                        <Label text="%BinaryThreshold" />
-                                                                        <ComboBox fx:id="binarySelector" editable="true" prefWidth="100.0" />
-                                                                        <Label text="%Rotate" />
-                                                                        <ComboBox fx:id="rotateSelector" editable="true" prefWidth="100.0" />
-                                                                    </children>
-                                                                </HBox>
-                                                                <HBox fx:id="navBox1" alignment="CENTER_LEFT" spacing="5.0">
-                                                                    <children>
-                                                                        <CheckBox fx:id="deskewCheck" mnemonicParsing="false">
-                                                                            <graphic>
-                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                    <image>
-                                                                                        <Image url="@../buttons/iconShear.png" />
-                                                                                    </image>
-                                                                                </ImageView>
-                                                                            </graphic>
-                                                                        </CheckBox>
-                                                                        <CheckBox fx:id="invertCheck" layoutX="315.0" layoutY="18.0" mnemonicParsing="false">
-                                                                            <graphic>
-                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                    <image>
-                                                                                        <Image url="@../buttons/iconInvert.png" />
-                                                                                    </image>
-                                                                                </ImageView>
-                                                                            </graphic>
-                                                                        </CheckBox>
-                                                                    </children>
-                                                                </HBox>
-                                                                <Label styleClass="bottom-label" stylesheets="@../styles/MyBox.css" text="%OCRPreprocessComment" wrapText="true" />
-                                                            </children>
-                                                        </VBox>
-                                                    </content>
-                                                </TitledPane>
-                                                <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%OCROptions" VBox.vgrow="ALWAYS">
-                                                    <content>
-                                                        <VBox maxHeight="1.7976931348623157E308" spacing="5.0">
-                                                            <children>
-                                                                <Label fx:id="currentOCRFilesLabel" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" />
-                                                                <HBox alignment="CENTER_LEFT" spacing="5.0">
-                                                                    <children>
-                                                                        <Button fx:id="moveDownButton" mnemonicParsing="false" onAction="#downAction">
-                                                                            <graphic>
-                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                    <image>
-                                                                                        <Image url="@../buttons/iconDown.png" />
-                                                                                    </image>
-                                                                                </ImageView>
-                                                                            </graphic>
-                                                                        </Button>
-                                                                        <Button fx:id="moveUpButton" mnemonicParsing="false" onAction="#upAction">
-                                                                            <graphic>
-                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                    <image>
-                                                                                        <Image url="@../buttons/iconUp.png" />
-                                                                                    </image>
-                                                                                </ImageView>
-                                                                            </graphic>
-                                                                        </Button>
-                                                                        <Button fx:id="moveTopButton" mnemonicParsing="false" onAction="#topAction">
-                                                                            <graphic>
-                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                    <image>
-                                                                                        <Image url="@../buttons/iconDoubleUp.png" />
-                                                                                    </image>
-                                                                                </ImageView>
-                                                                            </graphic>
-                                                                        </Button>
-                                                                        <Button fx:id="settingsButton" mnemonicParsing="false" onAction="#settingsAction">
-                                                                            <graphic>
-                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                    <image>
-                                                                                        <Image url="@../buttons/iconSetting.png" />
-                                                                                    </image>
-                                                                                </ImageView>
-                                                                            </graphic>
-                                                                        </Button>
-                                                                        <Label text="%OCRSelection" />
-                                                                    </children>
-                                                                </HBox>
-                                                                <ListView fx:id="languageList" prefHeight="200.0" VBox.vgrow="ALWAYS" />
-                                                                <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
-                                                                    <children>
-                                                                        <CheckBox fx:id="separatorCheck" mnemonicParsing="false" selected="true" text="%InsertPageSeparator">
-                                                                            <HBox.margin>
-                                                                                <Insets />
-                                                                            </HBox.margin>
-                                                                        </CheckBox>
-                                                                    </children>
-                                                                </HBox>
-                                                                <TextField fx:id="separatorInput" maxWidth="1.7976931348623157E308" text="------------------------------&lt;Page Number&gt; / &lt;Total Number&gt;------------------------------" />
-                                                            </children>
-                                                        </VBox>
-                                                    </content>
-                                                </TitledPane>
-                                                <TitledPane maxWidth="1.7976931348623157E308" text="%TargetFiles">
-                                                    <content>
-                                                        <VBox spacing="5.0">
-                                                            <children>
-                                                                <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                                                    <children>
-                                                                        <Label text="%FilesPath" HBox.hgrow="NEVER">
-                                                                            <HBox.margin>
-                                                                                <Insets />
-                                                                            </HBox.margin>
-                                                                        </Label>
-                                                                        <TextField fx:id="targetPathInput" HBox.hgrow="ALWAYS" />
-                                                                        <Button fx:id="selectPathTargetButton" mnemonicParsing="false" onAction="#selectTargetPath" onMouseEntered="#popTargetPath" HBox.hgrow="NEVER">
-                                                                            <graphic>
-                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                    <image>
-                                                                                        <Image url="@../buttons/iconImageFolder.png" />
-                                                                                    </image>
-                                                                                </ImageView>
-                                                                            </graphic>
-                                                                        </Button>
-                                                                        <Button fx:id="previewButton" mnemonicParsing="false" onAction="#previewAction">
-                                                                            <graphic>
-                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                    <image>
-                                                                                        <Image url="@../buttons/iconPreview.png" />
-                                                                                    </image>
-                                                                                </ImageView>
-                                                                            </graphic>
-                                                                        </Button>
-                                                                    </children>
-                                                                </HBox>
-                                                                <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                                                    <children>
-                                                                        <Label text="%ExistedFiles" />
-                                                                        <RadioButton fx:id="targetReplaceRadio" mnemonicParsing="false" text="%Replace">
-                                                                            <toggleGroup>
-                                                                                <ToggleGroup fx:id="targetExistGroup" />
-                                                                            </toggleGroup>
-                                                                        </RadioButton>
-                                                                        <RadioButton fx:id="targetRenameRadio" mnemonicParsing="false" selected="true" text="%TargetNameAppend" toggleGroup="$targetExistGroup" />
+                     </content>
+                  </Tab>
+                  <Tab fx:id="preprocessTab" text="%Preprocess">
+                     <content>
+                        <VBox fx:id="preprocessVBox" spacing="10.0">
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                           <children>
+                              <FlowPane hgap="5.0" layoutX="20.0" layoutY="296.0" vgap="5.0" VBox.vgrow="NEVER">
+                                 <children>
+                                                      <RadioButton fx:id="convertRadio" mnemonicParsing="false" selected="true" text="%ConvertPagesAsImages">
+                                                          <toggleGroup>
+                                                              <ToggleGroup fx:id="getImageType" />
+                                                          </toggleGroup>
+                                                      </RadioButton>
+                                                      <RadioButton fx:id="extractRadio" mnemonicParsing="false" text="%ExtractImagesFromPages" toggleGroup="$getImageType" />
+                                 </children>
+                              </FlowPane>
+                              <FlowPane fx:id="imageOptionsPane" hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
+                                 <children>
+                                    <HBox fx:id="scaleBox" alignment="CENTER_LEFT" spacing="5.0">
+                                       <children>
+                                                              <Label text="%Scale" />
+                                                              <ComboBox fx:id="scaleSelector" editable="true" prefWidth="100.0" />
+                                       </children>
+                                    </HBox>
+                                    <HBox fx:id="dpiBox" alignment="CENTER_LEFT" spacing="5.0">
+                                       <children>
+                                                              <Label text="%Density" />
+                                                              <ComboBox fx:id="dpiSelector" editable="true" prefWidth="100.0" />
+                                                              <Label text="dpi" />
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </FlowPane>
+                              <FlowPane hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
+                                 <children>
+                                                      <Label text="%Enhancement" />
+                                                      <ComboBox fx:id="enhancementSelector" editable="true" prefWidth="160.0" />
+                                                      <Label text="%BinaryThreshold" />
+                                                      <ComboBox fx:id="binarySelector" editable="true" prefWidth="100.0" />
+                                                      <Label text="%Rotate" />
+                                    <ComboBox fx:id="rotateSelector" editable="true" prefWidth="100.0" />
+                                 </children>
+                              </FlowPane>
+                                              <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                                  <children>
+                                                      <CheckBox fx:id="deskewCheck" mnemonicParsing="false">
+                                                          <graphic>
+                                                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                  <image>
+                                                                      <Image url="@../buttons/iconShear.png" />
+                                                                  </image>
+                                                              </ImageView>
+                                                          </graphic>
+                                                      </CheckBox>
+                                                      <CheckBox fx:id="invertCheck" layoutX="315.0" layoutY="18.0" mnemonicParsing="false">
+                                                          <graphic>
+                                                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                  <image>
+                                                                      <Image url="@../buttons/iconInvert.png" />
+                                                                  </image>
+                                                              </ImageView>
+                                                          </graphic>
+                                                      </CheckBox>
+                                                  </children>
+                                              </HBox>
+                                              <Label styleClass="bottom-label" stylesheets="@../styles/MyBox.css" text="%OCRPreprocessComment" wrapText="true" />
+                           </children>
+                        </VBox>
+                     </content>
+                  </Tab>
+                  <Tab fx:id="ocrOptionsTab" text="%OCROptions">
+                     <content>
+                        <VBox fx:id="ocrOptionsVBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                           <children>
+                                              <Label fx:id="currentOCRFilesLabel" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER" />
+                              <FlowPane hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
+                                 <children>
+                                                      <Button fx:id="moveDownButton" mnemonicParsing="false" onAction="#downAction">
+                                                          <graphic>
+                                                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                  <image>
+                                                                      <Image url="@../buttons/iconDown.png" />
+                                                                  </image>
+                                                              </ImageView>
+                                                          </graphic>
+                                                      </Button>
+                                                      <Button fx:id="moveUpButton" mnemonicParsing="false" onAction="#upAction">
+                                                          <graphic>
+                                                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                  <image>
+                                                                      <Image url="@../buttons/iconUp.png" />
+                                                                  </image>
+                                                              </ImageView>
+                                                          </graphic>
+                                                      </Button>
+                                                      <Button fx:id="moveTopButton" mnemonicParsing="false" onAction="#topAction">
+                                                          <graphic>
+                                                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                  <image>
+                                                                      <Image url="@../buttons/iconDoubleUp.png" />
+                                                                  </image>
+                                                              </ImageView>
+                                                          </graphic>
+                                                      </Button>
+                                                      <Button fx:id="settingsButton" mnemonicParsing="false" onAction="#settingsAction">
+                                                          <graphic>
+                                                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                  <image>
+                                                                      <Image url="@../buttons/iconSetting.png" />
+                                                                  </image>
+                                                              </ImageView>
+                                                          </graphic>
+                                                      </Button>
+                                                      <Label text="%OCRSelection" wrapText="true" />
+                                 </children>
+                              </FlowPane>
+                                              <ListView fx:id="languageList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" VBox.vgrow="ALWAYS" />
+                                                <CheckBox fx:id="separatorCheck" mnemonicParsing="false" selected="true" text="%InsertPageSeparator" />
+                                              <TextField fx:id="separatorInput" text="------------------------------&lt;Page Number&gt; / &lt;Total Number&gt;------------------------------" VBox.vgrow="NEVER" />
+                           </children>
+                        </VBox>
+                     </content>
+                  </Tab>
+                  <Tab fx:id="targetTab" text="%TargetFiles">
+                     <content>
+                        <VBox fx:id="targetVBox" spacing="10.0">
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                           <children>
+                              <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
+                                 <children>
+                                                      <Label text="%FilesPath" />
+                                                      <TextField fx:id="targetPathInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                      <Button fx:id="selectPathTargetButton" mnemonicParsing="false" onAction="#selectTargetPath" onMouseEntered="#popTargetPath">
+                                                          <graphic>
+                                                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                  <image>
+                                                                      <Image url="@../buttons/iconImageFolder.png" />
+                                                                  </image>
+                                                              </ImageView>
+                                                          </graphic>
+                                                      </Button>
+                                                      <Button fx:id="previewButton" mnemonicParsing="false" onAction="#previewAction">
+                                                          <graphic>
+                                                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                  <image>
+                                                                      <Image url="@../buttons/iconPreview.png" />
+                                                                  </image>
+                                                              </ImageView>
+                                                          </graphic>
+                                                      </Button>
+                                 </children>
+                              </HBox>
+                              <FlowPane hgap="5.0" maxWidth="1.7976931348623157E308" vgap="5.0">
+                                 <children>
+                                                      <Label text="%ExistedFiles" />
+                                                      <RadioButton fx:id="targetReplaceRadio" mnemonicParsing="false" text="%Replace">
+                                                          <toggleGroup>
+                                                              <ToggleGroup fx:id="targetExistGroup" />
+                                                          </toggleGroup>
+                                                      </RadioButton>
+                                                      <RadioButton fx:id="targetSkipRadio" mnemonicParsing="false" text="%Skip" toggleGroup="$targetExistGroup" />
+                                                      <RadioButton fx:id="targetRenameRadio" mnemonicParsing="false" selected="true" text="%TargetNameAppend" toggleGroup="$targetExistGroup" />
 
-                                                                        <TextField fx:id="targetAppendInput" prefWidth="70.0" text="-m" />
-                                                                        <RadioButton fx:id="targetSkipRadio" mnemonicParsing="false" text="%Skip" toggleGroup="$targetExistGroup" />
-                                                                        <Label maxWidth="1.7976931348623157E308" visible="false" HBox.hgrow="ALWAYS" />
-                                                                    </children>
-                                                                </HBox>
-                                                            </children>
-                                                        </VBox>
-                                                    </content>
-                                                </TitledPane>
-                                            </children>
-                                        </VBox>
-                                    </content>
-                                </ScrollPane>
-                            </items>
-                        </SplitPane>
-                    </children>
-                </VBox>
+                                                            <TextField fx:id="targetAppendInput" prefWidth="70.0" text="-m" />
+                                 </children>
+                              </FlowPane>
+                           </children>
+                        </VBox>
+                     </content>
+                  </Tab>
+                  <Tab fx:id="logsTab" text="%Logs">
+                     <content>
+                        <VBox fx:id="logsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                           <children>
+                              <TextArea fx:id="logsTextArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" VBox.vgrow="ALWAYS" />
+                              <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="NEVER">
+                                 <children>
+                                    <Label text="%MaxLines" />
+                                    <TextField fx:id="maxLinesinput" prefWidth="80.0" text="5000" />
+                                    <CheckBox fx:id="verboseCheck" mnemonicParsing="false" text="%VerboseLogs" />
+                                    <Button fx:id="clearButton1" mnemonicParsing="false" onAction="#clearLogs">
+                                       <graphic>
+                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/iconClear.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </Button>
+                                 </children>
+                              </HBox>
+                           </children>
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                        </VBox>
+                     </content>
+                  </Tab>
+               </tabs>
+            </TabPane>
                 <fx:include fx:id="operationBar" source="OperationBatch.fxml" />
             </children>
         </VBox>

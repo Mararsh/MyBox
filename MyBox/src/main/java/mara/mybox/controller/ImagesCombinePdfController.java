@@ -58,7 +58,7 @@ public class ImagesCombinePdfController extends ImagesListController {
     @FXML
     protected TextField customWidthInput, customHeightInput, authorInput, thresholdInput, headerInput;
     @FXML
-    protected HBox sizeBox, targetBox;
+    protected HBox targetBox;
 
     public ImagesCombinePdfController() {
         baseTitle = AppVariables.message("ImagesCombinePdf");
@@ -476,7 +476,7 @@ public class ImagesCombinePdfController extends ImagesListController {
                 @Override
                 protected boolean handle() {
                     try {
-                        try (PDDocument document = new PDDocument(AppVariables.pdfMemUsage)) {
+                        try ( PDDocument document = new PDDocument(AppVariables.pdfMemUsage)) {
                             PDFont font = PdfTools.getFont(document, fontBox.getSelectionModel().getSelectedItem());
                             PDDocumentInformation info = new PDDocumentInformation();
                             info.setCreationDate(Calendar.getInstance());

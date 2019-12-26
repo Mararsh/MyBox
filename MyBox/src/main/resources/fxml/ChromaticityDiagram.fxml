@@ -41,14 +41,7 @@ License:    Apache License Version 2.0
                                             <items>
                                                 <HBox alignment="CENTER_LEFT" spacing="10.0">
                                                     <children>
-                                                        <ImageView fx:id="linksView" fitHeight="20.0" fitWidth="20.0" onMouseClicked="#openLinks" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconLink.png" />
-                                                            </image>
-                                                            <cursor>
-                                                                <Cursor fx:constant="HAND" />
-                                                            </cursor>
-                                                        </ImageView>
+                                          <Hyperlink onAction="#aboutColor" text="%AboutColor" />
                                                     </children>
                                                 </HBox>
                                                 <Label maxWidth="1.7976931348623157E308" text="" wrapText="true" HBox.hgrow="ALWAYS" />

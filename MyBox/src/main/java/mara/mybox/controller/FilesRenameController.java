@@ -270,8 +270,7 @@ public class FilesRenameController extends FilesBatchController {
                 }
                 if (file.renameTo(newFile)) {
                     newName = newFile.getAbsolutePath();
-                    currentParameters.finalTargetName = newName;
-                    targetFiles.add(newFile);
+                    targetFileGenerated(newFile);
                     return newName;
                 } else {
                     return null;

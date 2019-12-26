@@ -119,7 +119,6 @@ public class ImageManufactureOperationController extends ImageBaseController {
             } else {
                 return null;
             }
-            parent.currentImageController.clearOperating();
 
             FXMLLoader fxmlLoader = new FXMLLoader(FxmlStage.class.getResource(newFxml), AppVariables.currentBundle);
             Pane pane = fxmlLoader.load();
@@ -151,6 +150,40 @@ public class ImageManufactureOperationController extends ImageBaseController {
             if (!parent.imageLoaded.get()) {
                 return;
             }
+
+            if (myPane.equals(viewPane)) {
+                parent.currentImageController.showScopePane();
+            } else if (myPane.equals(clipboardPane)) {
+                parent.currentImageController.hideScopePane();
+            } else if (myPane.equals(cropPane)) {
+                parent.currentImageController.showScopePane();
+            } else if (myPane.equals(colorPane)) {
+                parent.currentImageController.showScopePane();
+            } else if (myPane.equals(effectPane)) {
+                parent.currentImageController.showScopePane();
+            } else if (myPane.equals(enhancementPane)) {
+                parent.currentImageController.showScopePane();
+            } else if (myPane.equals(scalePane)) {
+                parent.currentImageController.hideScopePane();
+            } else if (myPane.equals(transformPane)) {
+                parent.currentImageController.hideScopePane();
+            } else if (myPane.equals(shadowPane)) {
+                parent.currentImageController.hideScopePane();
+            } else if (myPane.equals(marginsPane)) {
+                parent.currentImageController.hideScopePane();
+            } else if (myPane.equals(arcPane)) {
+                parent.currentImageController.hideScopePane();
+            } else if (myPane.equals(penPane)) {
+                parent.currentImageController.hideScopePane();
+            } else if (myPane.equals(textPane)) {
+                parent.currentImageController.hideScopePane();
+            } else if (myPane.equals(richTextPane)) {
+                parent.currentImageController.hideScopePane();
+            } else {
+                parent.currentImageController.hideScopePane();
+            }
+            parent.currentImageController.clearValues();
+
             accordionPane.setExpandedPane(myPane);
             cropPane.disableProperty().bind(parent.editable.not());
             scalePane.disableProperty().bind(parent.editable.not());
@@ -217,7 +250,7 @@ public class ImageManufactureOperationController extends ImageBaseController {
         isPickingColor.unbind();
         isPickingColor.set(false);
         if (imageController != null) {
-            imageController.clearOperating();
+            imageController.clearValues();
         }
 
     }

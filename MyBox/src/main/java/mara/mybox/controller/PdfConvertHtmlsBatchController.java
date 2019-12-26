@@ -150,11 +150,9 @@ public class PdfConvertHtmlsBatchController extends PdfBatchController {
                             File htmlFile = writeHhml(fileName, currentParameters.currentPage, currentParameters.currentPage);
                             if (htmlFile != null) {
                                 generated++;
-                                actualParameters.finalTargetName = htmlFile.getAbsolutePath();
-                                targetFiles.add(htmlFile);
+                                targetFileGenerated(htmlFile);
                             }
                             updateFileProgress(currentParameters.currentPage - currentParameters.fromPage + 1, total);
-                            currentParameters.currentTotalHandled++;
                         }
 
                     } else {
@@ -162,11 +160,9 @@ public class PdfConvertHtmlsBatchController extends PdfBatchController {
                         File htmlFile = writeHhml(fileName, currentParameters.startPage, currentParameters.toPage);
                         if (htmlFile != null) {
                             generated++;
-                            actualParameters.finalTargetName = htmlFile.getAbsolutePath();
-                            targetFiles.add(htmlFile);
+                            targetFileGenerated(htmlFile);
                         }
                         updateFileProgress(total, total);
-                        currentParameters.currentTotalHandled++;
 
                     }
 

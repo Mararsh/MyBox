@@ -232,7 +232,7 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
         webView.setVisible(true);
 
         if (!imageController.maskRectangleLine.isVisible()) {
-            imageController.operatingNeedNotScope();
+            imageController.clearValues();
             imageController.maskRectangleData = new DoubleRectangle(0, 0,
                     imageView.getImage().getWidth() / 2, imageView.getImage().getHeight() / 2);
             imageController.scope.setRectangle(imageController.maskRectangleData.cloneValues());
@@ -448,7 +448,7 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
         if (editor != null) {
             editor.closeStage();
         }
-        imageController.clearOperating();
+        imageController.clearValues();
     }
 
 }

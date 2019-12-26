@@ -1,7 +1,6 @@
 package mara.mybox.data;
 
 import java.io.File;
-import java.util.Date;
 
 /**
  * @Author Mara
@@ -13,9 +12,8 @@ import java.util.Date;
 public class ProcessParameters {
 
     public File currentSourceFile, currentTargetPath;
-    public int startIndex, currentIndex, currentTotalHandled;
-    public String status, targetPath, targetRootPath, finalTargetName;
-    public Date startTime, endTime;
+    public int startIndex, currentIndex;
+    public String status, targetPath, targetRootPath;
     public boolean targetSubDir, isBatch;
     public int fromPage, toPage, startPage, acumFrom, acumStart, acumDigit;
     public String password;

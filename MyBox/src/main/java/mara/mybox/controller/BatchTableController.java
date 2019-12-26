@@ -28,6 +28,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.FlowPane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
@@ -83,6 +84,8 @@ public abstract class BatchTableController<P> extends BaseController {
     protected TextField tableFiltersInput;
     @FXML
     protected Label tableLabel;
+    @FXML
+    protected FlowPane selectPane;
 
     public BatchTableController() {
         sourceExtensionFilter = CommonFxValues.AllExtensionFilter;

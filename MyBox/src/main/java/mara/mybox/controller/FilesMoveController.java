@@ -33,7 +33,6 @@ public class FilesMoveController extends FilesBatchController {
             if (path == null) {
                 return AppVariables.message("Failed");
             }
-            totalHandled++;
             updateLogs(message("FileMovedSuccessfully") + ": " + path.toString());
             return AppVariables.message("Successful");
         } catch (Exception e) {
@@ -57,8 +56,7 @@ public class FilesMoveController extends FilesBatchController {
 
     @Override
     public void afterHandleFiles() {
-        currentParameters.finalTargetName = targetPath.toString();
-        targetFiles.add(targetPath);
+        targetFileGenerated(targetPath);
     }
 
 }

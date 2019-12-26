@@ -137,7 +137,6 @@ public class FilesDecompressUnarchiveBatchController extends FilesBatchControlle
             archiveFail = archiveSuccess = 0;
             unarchive(archiveSource, archiveExt);
             if (archiveSuccess > 0 || archiveFail > 0) {
-                totalHandled++;
                 updateLogs(MessageFormat.format(message("FileUnarchived"),
                         srcFile, archiveSuccess, archiveFail,
                         DateTools.showTime(new Date().getTime() - s), true, true
@@ -169,9 +168,7 @@ public class FilesDecompressUnarchiveBatchController extends FilesBatchControlle
                         Paths.get(targetFile.getAbsolutePath()));
                 decompressedFile.delete();
             }
-            totalHandled++;
-            currentParameters.finalTargetName = targetFile.toString();
-            targetFiles.add(targetFile);
+            targetFileGenerated(targetFile);
             if (deleteCheck.isSelected()) {
                 srcFile.delete();
             }
@@ -257,8 +254,7 @@ public class FilesDecompressUnarchiveBatchController extends FilesBatchControlle
                         IOUtils.copy(archiveInputStream, o);
                     }
                     archiveSuccess++;
-                    currentParameters.finalTargetName = file.toString();
-                    targetFiles.add(file);
+                    targetFileGenerated(file);
                 }
             }
         } catch (Exception e) {
@@ -298,8 +294,7 @@ public class FilesDecompressUnarchiveBatchController extends FilesBatchControlle
                         IOUtils.copy(in, out);
                     }
                     archiveSuccess++;
-                    currentParameters.finalTargetName = file.toString();
-                    targetFiles.add(file);
+                    targetFileGenerated(file);
                 }
             }
         } catch (Exception e) {
@@ -341,8 +336,7 @@ public class FilesDecompressUnarchiveBatchController extends FilesBatchControlle
                         }
                     }
                     archiveSuccess++;
-                    currentParameters.finalTargetName = file.toString();
-                    targetFiles.add(file);
+                    targetFileGenerated(file);
                 }
             }
         } catch (Exception e) {

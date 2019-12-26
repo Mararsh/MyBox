@@ -9,7 +9,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara
@@ -44,10 +43,7 @@ public class FilesCopyController extends FilesBatchController {
             if (path == null) {
                 return AppVariables.message("Failed");
             }
-            totalHandled++;
-            updateLogs(message("FileCopiedSuccessfully") + ": " + path.toString());
-            currentParameters.finalTargetName = path.toString();
-            targetFiles.add(target);
+            targetFileGenerated(target);
             return AppVariables.message("Successful");
 
         } catch (Exception e) {

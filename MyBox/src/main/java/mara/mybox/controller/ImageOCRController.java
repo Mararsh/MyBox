@@ -1289,9 +1289,4 @@ public class ImageOCRController extends ImageViewerController {
         }
     }
 
-    public void displayResult(BufferedImage image, String text) {
-        setPreprocessImage(SwingFXUtils.toFXImage(image, null));
-        textArea.setText(text);
-    }
-
 }

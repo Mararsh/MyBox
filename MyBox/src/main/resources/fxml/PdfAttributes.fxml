@@ -50,9 +50,9 @@ License:    Apache License Version 2.0
                         <Insets bottom="20.0" />
                     </VBox.margin>
                 </HBox>
-                <TitledPane text="%Attributes" VBox.vgrow="NEVER">
-                    <content>
-                        <VBox spacing="10.0">
+            <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="604.0" prefViewportWidth="1506.0" VBox.vgrow="ALWAYS">
+               <content>
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
                             <children>
                                 <HBox alignment="CENTER_LEFT" spacing="5.0">
                                     <children>
@@ -130,8 +130,8 @@ License:    Apache License Version 2.0
                                 </HBox>
                             </children>
                         </VBox>
-                    </content>
-                </TitledPane>
+               </content>
+            </ScrollPane>
                 <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="220.0" spacing="5.0" VBox.vgrow="NEVER">
                     <children>
                         <Label maxWidth="1.7976931348623157E308" text=" " HBox.hgrow="ALWAYS" />

@@ -106,8 +106,7 @@ public class FilesMergeController extends FilesBatchController {
     public void donePost() {
         try {
             outputStream.close();
-            actualParameters.finalTargetName = targetFile.getAbsolutePath();
-            targetFiles.add(targetFile);
+            targetFileGenerated(targetFile);
         } catch (Exception e) {
             logger.debug(e.toString());
         }

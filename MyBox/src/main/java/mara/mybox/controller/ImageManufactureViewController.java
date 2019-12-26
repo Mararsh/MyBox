@@ -47,7 +47,6 @@ public class ImageManufactureViewController extends ImageManufactureOperationCon
             if (parent == null) {
                 return;
             }
-            imageController.operatingNeedNotScope();
 
             zoomStepSelector.getItems().addAll(
                     Arrays.asList("10", "20", "5", "1", "3", "15", "30", "25", "45")

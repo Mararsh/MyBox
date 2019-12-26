@@ -2,6 +2,7 @@ package mara.mybox.fxml;
 
 import java.util.Map;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Labeled;
@@ -63,7 +64,7 @@ public class ControlStyle {
             return null;
         }
         String id = node.getId();
-        ControlStyle style;
+        ControlStyle style = null;
         if (id.startsWith("his")) {
             style = getHisControlStyle(id);
         } else if (id.startsWith("settings")) {
@@ -82,9 +83,8 @@ public class ControlStyle {
             style = getCheckBoxStyle(id);
         } else if (node instanceof ToggleButton) {
             style = getToggleButtonStyle(id);
-        } else {
-            style = getOtherControlStyle(id);
-
+        } else if (node instanceof Button) {
+            style = getButtonControlStyle(id);
         }
         return style;
     }
@@ -138,7 +138,7 @@ public class ControlStyle {
                 return new ControlStyle("settingsImageHisClearButton", message("Clear"), "", "iconClear.png");
 
             default:
-                return getOtherControlStyle(id);
+                return getButtonControlStyle(id);
         }
 
     }
@@ -174,7 +174,7 @@ public class ControlStyle {
                 return new ControlStyle("imageManuRefIInfoButton", message("Information"), "", "iconInfo.png");
 
             default:
-                return getOtherControlStyle(id);
+                return getButtonControlStyle(id);
         }
 
     }
@@ -195,7 +195,7 @@ public class ControlStyle {
                 return new ControlStyle("hisAsCurrentButton", message("SetAsCurrentImage"), "", "iconWithdraw.png");
 
             default:
-                return getOtherControlStyle(id);
+                return getButtonControlStyle(id);
         }
 
     }
@@ -257,7 +257,7 @@ public class ControlStyle {
                 return new ControlStyle("colorReplaceRadio", "", message("ReplaceColor"), "", "iconReplace.png");
 
             default:
-                return getOtherControlStyle(id);
+                return getButtonControlStyle(id);
         }
 
     }
@@ -344,7 +344,7 @@ public class ControlStyle {
                 return new ControlStyle("scopeOutlineKeepRatioCheck", message("KeepRatio"), "", "iconAspectRatio.png");
 
             default:
-                return getOtherControlStyle(id);
+                return getButtonControlStyle(id);
         }
 
     }
@@ -394,7 +394,7 @@ public class ControlStyle {
                 return new ControlStyle("shapeCircleRadio", "", message("Circle"), "", "iconCircle.png");
 
             default:
-                return getOtherControlStyle(id);
+                return getButtonControlStyle(id);
         }
 
     }
@@ -481,7 +481,7 @@ public class ControlStyle {
                 return new ControlStyle("invertCheck", "", message("Invert"), "", "iconInvert.png");
 
             default:
-                return getOtherControlStyle(id);
+                return getButtonControlStyle(id);
         }
 
     }
@@ -546,7 +546,7 @@ public class ControlStyle {
                 return new ControlStyle("rightPaneControl", "", "", "", "iconDoubleRight.png");
 
             default:
-                return getOtherControlStyle(id);
+                return getButtonControlStyle(id);
         }
 
     }
@@ -570,12 +570,12 @@ public class ControlStyle {
                 return new ControlStyle(id, message("Mute"), "", "iconMute.png");
 
             default:
-                return getOtherControlStyle(id);
+                return getButtonControlStyle(id);
         }
 
     }
 
-    public static ControlStyle getOtherControlStyle(String id) {
+    public static ControlStyle getButtonControlStyle(String id) {
         if (id == null || id.isEmpty()) {
             return null;
         }
@@ -591,8 +591,8 @@ public class ControlStyle {
         if (id.startsWith("clear")) {
             return new ControlStyle(id, message("Clear"), "", "iconClear.png");
         }
-        if (id.startsWith("new")) {
-            return new ControlStyle(id, message("Create"), "", "iconPlus.png");
+        if (id.startsWith("plus")) {
+            return new ControlStyle(id, message("Add"), "", "iconPlus.png");
         }
         if (id.startsWith("ok")) {
             switch (id) {
@@ -667,6 +667,10 @@ public class ControlStyle {
 
         if (id.startsWith("forward")) {
             return new ControlStyle(id, message("Forward"), "", "iconNext.png");
+        }
+
+        if (id.startsWith("palette")) {
+            return new ControlStyle(id, message("ColorPalette"), "", "iconPalette.png");
         }
 
         switch (id) {
@@ -870,8 +874,8 @@ public class ControlStyle {
             case "savePdfButton":
                 return new ControlStyle("savePdfButton", message("SaveAsPDF"), "", "iconPDF.png");
 
-            case "pdfSetButton":
-                return new ControlStyle("pdfSetButton", message("Set"), "", "iconEqual.png");
+            case "setAllButton":
+                return new ControlStyle(id, message("SetForAllRows"), "", "iconEqual.png");
 
             case "examplesButton":
                 return new ControlStyle("examplesButton", message("Examples"), "", "iconExamples.png");
@@ -1097,12 +1101,6 @@ public class ControlStyle {
 
             case "commonColorsButton":
                 return new ControlStyle("commonColorsButton", message("CommonColors"), "", "iconColor.png");
-
-            case "paletteButton":
-                return new ControlStyle("paletteButton", message("ColorPalette"), "", "iconPalette.png");
-
-            case "fillPaletteButton":
-                return new ControlStyle("fillPaletteButton", message("ColorPalette"), "", "iconPalette.png");
 
             case "htmlButton":
                 return new ControlStyle("htmlButton", message("DisplayHtml"), "", "iconHtml.png");

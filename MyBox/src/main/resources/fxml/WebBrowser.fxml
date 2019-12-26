@@ -33,7 +33,7 @@ License:    Apache License Version 2.0
                             <children>
                                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
                                     <children>
-                                        <Button fx:id="newTabButton" mnemonicParsing="false" onAction="#newTabAction">
+                                        <Button fx:id="plusButton" mnemonicParsing="false" onAction="#newTabAction">
                                             <graphic>
                                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -122,7 +122,7 @@ License:    Apache License Version 2.0
                                                 <VBox>
                                                     <children>
                                                         <FlowPane hgap="5.0" prefWrapLength="300.0" vgap="5.0" VBox.vgrow="NEVER" />
-                                          <Button mnemonicParsing="false" onAction="#manageHistories" text="%ManageHistories" />
+                                                        <Button mnemonicParsing="false" onAction="#manageHistories" text="%ManageHistories" />
                                                     </children>
                                                 </VBox>
                                             </content>
@@ -131,9 +131,9 @@ License:    Apache License Version 2.0
                                             <content>
                                                 <VBox spacing="5.0">
                                                     <children>
-                                          <Button mnemonicParsing="false" onAction="#manageCertificates" text="%ManageSSLCertificates" />
-                                          <Button mnemonicParsing="false" onAction="#manageBypass" text="%ManageBypasscSSLList" />
-                                          <CheckBox fx:id="bypassCheck" mnemonicParsing="false" text="%SSLBypassAll" />
+                                                        <Button mnemonicParsing="false" onAction="#manageCertificates" text="%ManageSSLCertificates" />
+                                                        <Button mnemonicParsing="false" onAction="#manageBypass" text="%ManageBypasscSSLList" />
+                                                        <CheckBox fx:id="bypassCheck" mnemonicParsing="false" text="%SSLBypassAll" />
                                                     </children>
                                                 </VBox>
                                             </content>

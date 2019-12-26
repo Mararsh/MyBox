@@ -20,7 +20,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.FlowPane;
 import mara.mybox.data.ConvolutionKernel;
 import mara.mybox.db.TableConvolutionKernel;
 import mara.mybox.fxml.FxmlControl;
@@ -59,7 +59,7 @@ public class ImageManufactureBatchEnhancementController extends ImageManufacture
     @FXML
     protected ToggleGroup enhancementGroup;
     @FXML
-    protected HBox setBox;
+    protected FlowPane setPane;
     @FXML
     protected RadioButton ContrastRadio, smoothRadio, SharpenRadio, ConvolutionRadio;
 
@@ -120,7 +120,7 @@ public class ImageManufactureBatchEnhancementController extends ImageManufacture
 
     private void checkEnhancementType() {
         try {
-            setBox.getChildren().clear();
+            setPane.getChildren().clear();
             startButton.disableProperty().unbind();
             removeTmpControls();
             stringBox = null;
@@ -196,7 +196,7 @@ public class ImageManufactureBatchEnhancementController extends ImageManufacture
             stringBox.getItems().addAll(Arrays.asList(message("AverageBlur"), message("GaussianBlur")));
             stringBox.getSelectionModel().select(message("GaussianBlur"));
 
-            setBox.getChildren().addAll(stringLabel, stringBox, intLabel, intBox);
+            setPane.getChildren().addAll(stringLabel, stringBox, intLabel, intBox);
             startButton.disableProperty().bind(
                     intBox.getEditor().styleProperty().isEqualTo(badStyle)
                             .or(stringBox.getEditor().styleProperty().isEqualTo(badStyle))
@@ -263,7 +263,7 @@ public class ImageManufactureBatchEnhancementController extends ImageManufacture
             ));
             stringBox.getSelectionModel().select(message("UnsharpMasking"));
 
-            setBox.getChildren().addAll(stringLabel, stringBox, intLabel, intBox);
+            setPane.getChildren().addAll(stringLabel, stringBox, intLabel, intBox);
             startButton.disableProperty().bind(
                     intBox.getEditor().styleProperty().isEqualTo(badStyle)
                             .or(stringBox.getEditor().styleProperty().isEqualTo(badStyle))
@@ -289,12 +289,12 @@ public class ImageManufactureBatchEnhancementController extends ImageManufacture
             stringBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    if (setBox.getChildren() != null) {
-                        if (setBox.getChildren().contains(intInput)) {
-                            setBox.getChildren().removeAll(intLabel, intInput);
+                    if (setPane.getChildren() != null) {
+                        if (setPane.getChildren().contains(intInput)) {
+                            setPane.getChildren().removeAll(intLabel, intInput);
                         }
-                        if (setBox.getChildren().contains(intInput2)) {
-                            setBox.getChildren().removeAll(intLabel2, intInput2);
+                        if (setPane.getChildren().contains(intInput2)) {
+                            setPane.getChildren().removeAll(intLabel2, intInput2);
                         }
                     }
                     startButton.disableProperty().unbind();
@@ -346,7 +346,7 @@ public class ImageManufactureBatchEnhancementController extends ImageManufacture
                         intInput2.setPrefWidth(100);
                         intInput2.setText("100");
 
-                        setBox.getChildren().addAll(intLabel, intInput, intLabel2, intInput2);
+                        setPane.getChildren().addAll(intLabel, intInput, intLabel2, intInput2);
                         startButton.disableProperty().bind(
                                 intInput.styleProperty().isEqualTo(badStyle)
                                         .or(intInput2.styleProperty().isEqualTo(badStyle))
@@ -382,7 +382,7 @@ public class ImageManufactureBatchEnhancementController extends ImageManufacture
                         intInput.setPrefWidth(100);
                         intInput.setText("10");
                         FxmlControl.setTooltip(intInput, new Tooltip("-255 ~ 255"));
-                        setBox.getChildren().addAll(intLabel, intInput);
+                        setPane.getChildren().addAll(intLabel, intInput);
                         startButton.disableProperty().bind(
                                 intInput.styleProperty().isEqualTo(badStyle)
                                         .or(Bindings.isEmpty(targetPathInput.textProperty()))
@@ -411,8 +411,8 @@ public class ImageManufactureBatchEnhancementController extends ImageManufacture
             });
             stringBox.getSelectionModel().select(0);
 
-            setBox.getChildren().addAll(stringLabel, stringBox);
-            FxmlControl.refreshStyle(setBox);
+            setPane.getChildren().addAll(stringLabel, stringBox);
+            FxmlControl.refreshStyle(setPane);
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -452,7 +452,7 @@ public class ImageManufactureBatchEnhancementController extends ImageManufacture
                 }
             });
 
-            setBox.getChildren().addAll(stringLabel, stringBox, settingButton);
+            setPane.getChildren().addAll(stringLabel, stringBox, settingButton);
             startButton.disableProperty().bind(
                     stringBox.getEditor().styleProperty().isEqualTo(badStyle)
                             .or(Bindings.isEmpty(targetPathInput.textProperty()))

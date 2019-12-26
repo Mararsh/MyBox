@@ -23,7 +23,6 @@ import static mara.mybox.value.AppVariables.setUserConfigValue;
  */
 public class ImageConverterBatchController extends ImagesBatchController {
 
-    protected final String ImageConverterAppendColorKey, ImageConverterAppendCompressionKey, ImageConverterAppendQualityKey;
     protected ImageAttributes attributes;
 
     @FXML
@@ -34,10 +33,6 @@ public class ImageConverterBatchController extends ImagesBatchController {
     public ImageConverterBatchController() {
         baseTitle = AppVariables.message("ImageConverterBatch");
         browseTargets = true;
-
-        ImageConverterAppendColorKey = "ImageConverterDitherKey";
-        ImageConverterAppendCompressionKey = "ImageConverterAppendCompressionKey";
-        ImageConverterAppendQualityKey = "ImageConverterAppendQualityKey";
 
     }
 
@@ -72,26 +67,26 @@ public class ImageConverterBatchController extends ImagesBatchController {
             appendColorCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
-                    setUserConfigValue(ImageConverterAppendColorKey, appendColorCheck.isSelected());
+                    setUserConfigValue("ImageConverterAppendColor", appendColorCheck.isSelected());
                 }
             });
-            appendColorCheck.setSelected(AppVariables.getUserConfigBoolean(ImageConverterAppendColorKey));
+            appendColorCheck.setSelected(AppVariables.getUserConfigBoolean("ImageConverterAppendColor"));
 
             appendCompressionCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
-                    setUserConfigValue(ImageConverterAppendCompressionKey, appendCompressionCheck.isSelected());
+                    setUserConfigValue("ImageConverterAppendCompression", appendCompressionCheck.isSelected());
                 }
             });
-            appendCompressionCheck.setSelected(AppVariables.getUserConfigBoolean(ImageConverterAppendCompressionKey));
+            appendCompressionCheck.setSelected(AppVariables.getUserConfigBoolean("ImageConverterAppendCompression"));
 
             appendQualityCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
-                    setUserConfigValue(ImageConverterAppendQualityKey, appendQualityCheck.isSelected());
+                    setUserConfigValue("ImageConverterAppendQuality", appendQualityCheck.isSelected());
                 }
             });
-            appendQualityCheck.setSelected(AppVariables.getUserConfigBoolean(ImageConverterAppendQualityKey));
+            appendQualityCheck.setSelected(AppVariables.getUserConfigBoolean("ImageConverterAppendQuality"));
 
         } catch (Exception e) {
             logger.debug(e.toString());
@@ -118,8 +113,7 @@ public class ImageConverterBatchController extends ImagesBatchController {
                 return AppVariables.message("Skip");
             }
             if (ImageConvert.convertColorSpace(srcFile, attributes, target)) {
-                actualParameters.finalTargetName = target.getAbsolutePath();
-                targetFiles.add(target);
+                targetFileGenerated(target);
                 return AppVariables.message("Successful");
             } else {
                 return AppVariables.message("Failed");

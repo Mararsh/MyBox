@@ -148,8 +148,7 @@ public class TextEncodingBatchController extends FilesBatchController {
             targetInformation.setFile(target);
             targetInformation.setWithBom(targetBomCheck.isSelected());
             if (TextTools.convertCharset(sourceInformation, targetInformation)) {
-                actualParameters.finalTargetName = target.getAbsolutePath();
-                targetFiles.add(target);
+                targetFileGenerated(target);
                 return AppVariables.message("Successful");
             } else {
                 return AppVariables.message("Failed");

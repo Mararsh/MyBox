@@ -5,21 +5,24 @@ import java.util.Arrays;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Control;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Color;
-import static mara.mybox.value.AppVariables.logger;
-import mara.mybox.image.ImageManufacture;
+import javafx.scene.shape.Rectangle;
+import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlImageManufacture;
+import mara.mybox.image.ImageManufacture;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -30,14 +33,13 @@ import static mara.mybox.value.AppVariables.message;
  */
 public class ImageManufactureBatchArcController extends ImageManufactureBatchController {
 
-    private final String ImageArcKey, ImageArcPerKey;
     private int arc, percent;
     private boolean isPercent;
 
     @FXML
-    private ColorPicker arcColorPicker;
+    protected Rectangle bgRect;
     @FXML
-    private Button transForArcButton;
+    protected Button paletteButton;
     @FXML
     private ComboBox<String> arcBox, perBox;
     @FXML
@@ -46,8 +48,6 @@ public class ImageManufactureBatchArcController extends ImageManufactureBatchCon
     public ImageManufactureBatchArcController() {
         baseTitle = AppVariables.message("ImageManufactureBatchArc");
 
-        ImageArcKey = "ImageArcKey";
-        ImageArcPerKey = "ImageArcPerKey";
     }
 
     @Override
@@ -100,11 +100,32 @@ public class ImageManufactureBatchArcController extends ImageManufactureBatchCon
             });
             checkType();
 
-            arcColorPicker.setValue(Color.TRANSPARENT);
+            String c = AppVariables.getUserConfigValue("ImageArcBackground", Color.TRANSPARENT.toString());
+            bgRect.setFill(Color.web(c));
+            FxmlControl.setTooltip(bgRect, FxmlColor.colorNameDisplay((Color) bgRect.getFill()));
 
         } catch (Exception e) {
             logger.error(e.toString());
         }
+    }
+
+    @Override
+    public boolean setColor(Control control, Color color) {
+        if (control == null || color == null) {
+            return false;
+        }
+        if (paletteButton.equals(control)) {
+            bgRect.setFill(color);
+            FxmlControl.setTooltip(bgRect, FxmlColor.colorNameDisplay(color));
+            AppVariables.setUserConfigValue("ImageArcBackground", color.toString());
+        }
+        return true;
+    }
+
+    @FXML
+    @Override
+    public void showPalette(ActionEvent event) {
+        showPalette(paletteButton, message("Arc"), true);
     }
 
     private void checkType() {
@@ -159,21 +180,6 @@ public class ImageManufactureBatchArcController extends ImageManufactureBatchCon
         }
     }
 
-    @FXML
-    public void arcTransparentAction() {
-        arcColorPicker.setValue(Color.TRANSPARENT);
-    }
-
-    @FXML
-    public void arcWhiteAction() {
-        arcColorPicker.setValue(Color.WHITE);
-    }
-
-    @FXML
-    public void arcBlackAction() {
-        arcColorPicker.setValue(Color.BLACK);
-    }
-
     @Override
     protected BufferedImage handleImage(BufferedImage source) {
         try {
@@ -182,7 +188,7 @@ public class ImageManufactureBatchArcController extends ImageManufactureBatchCon
                 value = source.getWidth() * percent / 100;
             }
             BufferedImage target = ImageManufacture.addArc(source, value,
-                    FxmlImageManufacture.toAwtColor(arcColorPicker.getValue()));
+                    FxmlImageManufacture.toAwtColor((Color) bgRect.getFill()));
             return target;
         } catch (Exception e) {
             logger.error(e.toString());

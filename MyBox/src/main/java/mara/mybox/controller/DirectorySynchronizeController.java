@@ -194,7 +194,7 @@ public class DirectorySynchronizeController extends FilesBatchController {
                 updateLogs(message("LastHanldedFile") + " " + lastFileName, true);
             }
 
-            startTime = new Date();
+            processStartTime = new Date();
 
             return true;
 
@@ -291,7 +291,7 @@ public class DirectorySynchronizeController extends FilesBatchController {
                     case "Started":
                         operationBarController.getStatusLabel().setText(message("Handling...") + " "
                                 + message("StartTime")
-                                + ": " + DateTools.datetimeToString(startTime));
+                                + ": " + DateTools.datetimeToString(processStartTime));
                         startButton.setText(AppVariables.message("Cancel"));
                         startButton.setOnAction(new EventHandler<ActionEvent>() {
                             @Override
@@ -309,8 +309,7 @@ public class DirectorySynchronizeController extends FilesBatchController {
                             }
                         });
                         operationBarController.progressBar.setProgress(-1);
-                        dirsBox.setDisable(true);
-                        conditionsBox.setDisable(true);
+                        disableControls(true);
                         break;
 
                     case "Done":
@@ -332,6 +331,7 @@ public class DirectorySynchronizeController extends FilesBatchController {
                                     startAction();
                                 }
                             });
+                            disableControls(true);
                         } else {
                             startButton.setText(AppVariables.message("Start"));
                             startButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -343,15 +343,19 @@ public class DirectorySynchronizeController extends FilesBatchController {
                             operationBarController.pauseButton.setVisible(false);
                             operationBarController.pauseButton.setDisable(true);
                             operationBarController.progressBar.setProgress(1);
-                            dirsBox.setDisable(false);
-                            conditionsBox.setDisable(false);
+                            disableControls(false);
                         }
                         donePost();
 
                 }
             }
         });
+    }
 
+    @Override
+    public void disableControls(boolean disable) {
+        paraBox.setDisable(disable);
+        batchTabPane.getSelectionModel().select(logsTab);
     }
 
     @Override
@@ -359,7 +363,7 @@ public class DirectorySynchronizeController extends FilesBatchController {
         if (operationBarController.getStatusLabel() == null) {
             return;
         }
-        long cost = new Date().getTime() - startTime.getTime();
+        long cost = new Date().getTime() - processStartTime.getTime();
         double avg = 0;
         if (copyAttr.getCopiedFilesNumber() != 0) {
             avg = DoubleTools.scale3((double) cost / copyAttr.getCopiedFilesNumber());
@@ -373,7 +377,7 @@ public class DirectorySynchronizeController extends FilesBatchController {
         s += ". " + message("HandledThisTime") + ": " + copyAttr.getCopiedFilesNumber() + " "
                 + message("Cost") + ": " + DateTools.showTime(cost) + ". "
                 + message("Average") + ": " + avg + " " + message("SecondsPerItem") + ". "
-                + message("StartTime") + ": " + DateTools.datetimeToString(startTime) + ", "
+                + message("StartTime") + ": " + DateTools.datetimeToString(processStartTime) + ", "
                 + message("EndTime") + ": " + DateTools.datetimeToString(new Date());
         operationBarController.getStatusLabel().setText(s);
     }
@@ -381,8 +385,8 @@ public class DirectorySynchronizeController extends FilesBatchController {
     @Override
     public void donePost() {
         showCost();
-        updateLogs(message("StartTime") + ": " + DateTools.datetimeToString(startTime) + "   "
-                + AppVariables.message("Cost") + ": " + DateTools.showTime(new Date().getTime() - startTime.getTime()), false, true);
+        updateLogs(message("StartTime") + ": " + DateTools.datetimeToString(processStartTime) + "   "
+                + AppVariables.message("Cost") + ": " + DateTools.showTime(new Date().getTime() - processStartTime.getTime()), false, true);
         updateLogs(AppVariables.message("TotalCheckedFiles") + ": " + copyAttr.getTotalFilesNumber() + "   "
                 + AppVariables.message("TotalCheckedDirectories") + ": " + copyAttr.getTotalDirectoriesNumber() + "   "
                 + AppVariables.message("TotalCheckedSize") + ": " + FileTools.showFileSize(copyAttr.getTotalSize()), false, true);

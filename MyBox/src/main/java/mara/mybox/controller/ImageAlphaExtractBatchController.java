@@ -55,25 +55,25 @@ public class ImageAlphaExtractBatchController extends ImageManufactureBatchContr
             if (target == null) {
                 return AppVariables.message("Skip");
             }
-            actualParameters.finalTargetName = target.getAbsolutePath();
+            finalTargetName = target.getAbsolutePath();
             BufferedImage source = ImageFileReaders.readImage(srcFile);
             BufferedImage[] targets = ImageManufacture.extractAlpha(source);
             if (targets == null) {
                 return AppVariables.message("Failed");
             }
-            targetFormat = fileType;
+            targetFormat = targetFileType;
             if (targetFormat == null) {
                 targetFormat = FileTools.getFileSuffix(srcFile.getName());
             }
             if (targetFormat == null || !CommonValues.SupportedImages.contains(targetFormat)) {
                 return AppVariables.message("Failed");
             }
-            String alphaFileName = FileTools.getFilePrefix(actualParameters.finalTargetName)
+            String alphaFileName = FileTools.getFilePrefix(finalTargetName)
                     + "_noAlpha." + targetFormat;
             ImageFileWriters.writeImageFile(targets[0], targetFormat, alphaFileName);
             targetFiles.add(new File(alphaFileName));
 
-            String noAlphaFileName = FileTools.getFilePrefix(actualParameters.finalTargetName)
+            String noAlphaFileName = FileTools.getFilePrefix(finalTargetName)
                     + "_alpha." + targetFormat;
             ImageFileWriters.writeImageFile(targets[1], "png", noAlphaFileName);
             targetFiles.add(new File(noAlphaFileName));

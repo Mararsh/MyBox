@@ -27,15 +27,15 @@ License:    Apache License Version 2.0
     <center>
         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
             <children>
-                <SplitPane dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-                    <items>
-                        <VBox fx:id="tableBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                            <children>
+            <TabPane fx:id="batchTabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+               <tabs>
+                  <Tab fx:id="sourceTab" text="%SourceFiles">
+                     <content>
                         <fx:include fx:id="table" source="FilesTable.fxml" />
-                            </children>
-                        </VBox>
-                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                            <children>
+                     </content>
+                  </Tab>
+                  <Tab fx:id="targetTab" text="%TargetFiles">
+                     <content>
                         <TableView fx:id="filesView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
                            <columns>
                               <TableColumn fx:id="fileColumn" editable="false" maxWidth="1.7976931348623157E308" prefWidth="300.0" text="%File" />
@@ -45,10 +45,10 @@ License:    Apache License Version 2.0
                               <TableColumn fx:id="createTimeColumn" editable="false" prefWidth="160.0" text="%CreateTime" />
                            </columns>
                         </TableView>
-                            </children>
-                        </VBox>
-                    </items>
-                </SplitPane>
+                     </content>
+                  </Tab>
+               </tabs>
+            </TabPane>
                 <fx:include fx:id="operationBar" source="Operation.fxml" />
             </children>
         </VBox>

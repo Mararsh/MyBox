@@ -1,6 +1,5 @@
 package mara.mybox.fxml;
 
-import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -69,7 +68,6 @@ public class FxmlControl {
     public static String darkRedText = "-fx-text-fill: #961c1c;  -fx-font-weight: bolder;";
     public static String badStyle = "-fx-text-box-border: red;   -fx-text-fill: red;";
     public static String warnStyle = "-fx-text-box-border: orange;   -fx-text-fill: orange;";
-    public static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
     public static void miao3() {
         playClip("/sound/guaiMiao3.mp3", "guaiMiao3.mp3");

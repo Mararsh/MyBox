@@ -47,8 +47,7 @@ public class PdfExtractImagesBatchController extends PdfBatchController {
                     String suffix = pdxObject.getSuffix();
                     File tFile = makeTargetFile(namePrefix, "." + suffix, currentParameters.currentTargetPath);
                     ImageFileWriters.writeImageFile(pdxObject.getImage(), suffix, tFile.getAbsolutePath());
-                    actualParameters.finalTargetName = tFile.getAbsolutePath();
-                    targetFiles.add(tFile);
+                    targetFileGenerated(tFile);
                     if (isPreview) {
                         break;
                     }

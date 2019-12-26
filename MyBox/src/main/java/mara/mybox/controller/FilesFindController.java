@@ -107,6 +107,12 @@ public class FilesFindController extends FilesBatchController {
     }
 
     @Override
+    public void disableControls(boolean disable) {
+        tableController.thisPane.setDisable(disable);
+        batchTabPane.getSelectionModel().select(targetTab);
+    }
+
+    @Override
     public String handleFile(File file) {
         try {
             totalChecked++;
@@ -155,7 +161,7 @@ public class FilesFindController extends FilesBatchController {
         if (operationBarController.getStatusLabel() == null) {
             return;
         }
-        long cost = new Date().getTime() - startTime.getTime();
+        long cost = new Date().getTime() - processStartTime.getTime();
         String s;
         if (paused) {
             s = message("Paused");
@@ -166,7 +172,7 @@ public class FilesFindController extends FilesBatchController {
                 + message("TotalCheckedFiles") + ": " + totalChecked + "   "
                 + message("TotalMatched") + ": " + totalMatched + ".   "
                 + message("Cost") + ": " + DateTools.showTime(cost) + ". "
-                + message("StartTime") + ": " + DateTools.datetimeToString(startTime) + ", "
+                + message("StartTime") + ": " + DateTools.datetimeToString(processStartTime) + ", "
                 + message("EndTime") + ": " + DateTools.datetimeToString(new Date());
         operationBarController.getStatusLabel().setText(s);
     }

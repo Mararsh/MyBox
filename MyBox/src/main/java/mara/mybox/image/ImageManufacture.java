@@ -286,8 +286,6 @@ public class ImageManufacture {
         int finalW = targetW;
         int finalH = targetH;
         if (keepRatio) {
-            logger.debug(source.getWidth() + " " + source.getHeight() + " "
-                    + targetW + " " + targetH);
             int[] wh = ImageManufacture.scale(source.getWidth(), source.getHeight(),
                     targetW, targetH, keepType);
             finalW = wh[0];
@@ -297,22 +295,26 @@ public class ImageManufacture {
     }
 
     public static BufferedImage fitSize(BufferedImage source, int targetW, int targetH) {
-        int[] wh = ImageManufacture.scale(source.getWidth(), source.getHeight(),
-                targetW, targetH, KeepRatioType.BaseOnSmaller);
-        int finalW = wh[0];
-        int finalH = wh[1];
-        int imageType = source.getType();
-        if (imageType == BufferedImage.TYPE_CUSTOM) {
-            imageType = BufferedImage.TYPE_INT_ARGB;
+        try {
+            int[] wh = ImageManufacture.scale(source.getWidth(), source.getHeight(),
+                    targetW, targetH, KeepRatioType.BaseOnSmaller);
+            int finalW = wh[0];
+            int finalH = wh[1];
+            int imageType = source.getType();
+            if (imageType == BufferedImage.TYPE_CUSTOM) {
+                imageType = BufferedImage.TYPE_INT_ARGB;
+            }
+            BufferedImage target = new BufferedImage(targetW, targetH, imageType);
+            Graphics2D g = target.createGraphics();
+            g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g.setBackground(CommonFxValues.TRANSPARENT);
+            g.drawImage(source, (targetW - finalW) / 2, (targetH - finalH) / 2, finalW, finalH, null);
+            g.dispose();
+            return target;
+        } catch (Exception e) {
+            return null;
         }
-        BufferedImage target = new BufferedImage(targetW, targetH, imageType);
-        Graphics2D g = target.createGraphics();
-        g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g.setBackground(CommonFxValues.TRANSPARENT);
-        g.drawImage(source, (targetW - finalW) / 2, (targetH - finalH) / 2, finalW, finalH, null);
-        g.dispose();
-        return target;
     }
 
     public static BufferedImage addText(BufferedImage source, String text,

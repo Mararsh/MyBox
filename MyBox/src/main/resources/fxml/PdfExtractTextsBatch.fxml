@@ -20,103 +20,120 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="720.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.PdfExtractTextsBatchController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.PdfExtractTextsBatchController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
     <center>
         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
             <children>
-                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-                    <children>
-                        <VBox fx:id="paraBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-                            <children>
-                                <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%SourcePDF" VBox.vgrow="ALWAYS">
-                                    <VBox.margin>
-                                        <Insets top="5.0" />
-                                    </VBox.margin>
-                                    <content>
-                                        <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
-                                            <content>
-                                                <fx:include fx:id="table" source="PDFsTable.fxml" HBox.hgrow="ALWAYS" />
-                                            </content>
-                                        </ScrollPane>
-                                    </content>
-                                </TitledPane>
-                                <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%TargetFiles" VBox.vgrow="NEVER">
-                                    <content>
-                                        <VBox spacing="2.0">
-                                            <children>
-                                                <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
-                                                    <children>
-                                                        <Label text="%FilesPath" HBox.hgrow="NEVER">
-                                                            <HBox.margin>
-                                                                <Insets />
-                                                            </HBox.margin>
-                                                        </Label>
-                                                        <TextField fx:id="targetPathInput" HBox.hgrow="ALWAYS" />
-                                                        <Button fx:id="selectPathTargetButton" mnemonicParsing="false" onAction="#selectTargetPath" onMouseEntered="#popTargetPath" HBox.hgrow="NEVER">
-                                                            <graphic>
-                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/iconFolder.png" />
-                                                                    </image>
-                                                                </ImageView>
-                                                            </graphic>
-                                                        </Button>
-                                                        <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#previewAction" HBox.hgrow="NEVER">
-                                                            <graphic>
-                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/iconPreview.png" />
-                                                                    </image>
-                                                                </ImageView>
-                                                            </graphic>
-                                                        </Button>
-                                                    </children>
-                                                    <VBox.margin>
-                                                        <Insets right="10.0" />
-                                                    </VBox.margin>
-                                                </HBox>
-                                                <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                                    <children>
-                                                        <Label text="%ExistedFiles" />
-                                                        <RadioButton fx:id="targetReplaceRadio" mnemonicParsing="false" text="%Replace">
-                                                            <toggleGroup>
-                                                                <ToggleGroup fx:id="targetExistGroup" />
-                                                            </toggleGroup>
-                                                        </RadioButton>
-                                                        <RadioButton fx:id="targetRenameRadio" mnemonicParsing="false" selected="true" text="%TargetNameAppend" toggleGroup="$targetExistGroup" />
-                                                        <TextField fx:id="targetAppendInput" prefWidth="70.0" text="-m" />
-                                                        <RadioButton fx:id="targetSkipRadio" mnemonicParsing="false" text="%Skip" toggleGroup="$targetExistGroup" />
-                                                        <Label maxWidth="1.7976931348623157E308" visible="false" HBox.hgrow="ALWAYS" />
-                                                    </children>
-                                                </HBox>
-                                                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
-                                                    <children>
-                                                        <CheckBox fx:id="separatorCheck" mnemonicParsing="false" selected="true" text="%InsertPageSeparator" HBox.hgrow="NEVER" />
-                                                        <TextField fx:id="separatorInput" maxWidth="1.7976931348623157E308" prefWidth="700.0" text="------------------------------&lt;Page Number&gt; / &lt;Total Number&gt;------------------------------" HBox.hgrow="ALWAYS" />
-                                                    </children>
-                                                    <VBox.margin>
-                                                        <Insets bottom="5.0" top="5.0" />
-                                                    </VBox.margin>
-                                                </HBox>
-                                                <Label text="%InsertPageSeparatorComments" VBox.vgrow="NEVER">
+            <TabPane fx:id="batchTabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+               <tabs>
+                  <Tab fx:id="sourceTab" text="%SourceFiles">
+                     <content>
+                                    <fx:include fx:id="table" source="PDFsTable.fxml" HBox.hgrow="ALWAYS" />
+                     </content>
+                  </Tab>
+                  <Tab fx:id="optionsTab" text="%Options">
+                     <content>
+                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="537.0" prefViewportWidth="418.0">
+                           <content>
+                              <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
+                                 <padding>
+                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                 </padding>
+                                 <children>
+                                                  <CheckBox fx:id="separatorCheck" mnemonicParsing="false" selected="true" text="%InsertPageSeparator" />
+                                                  <TextField fx:id="separatorInput" maxWidth="1.7976931348623157E308" prefWidth="700.0" text="------------------------------&lt;Page Number&gt; / &lt;Total Number&gt;------------------------------" />
+                                                <Label text="%InsertPageSeparatorComments" wrapText="true" VBox.vgrow="NEVER">
                                                     <VBox.margin>
                                                         <Insets />
                                                     </VBox.margin>
                                                 </Label>
-                                            </children>
-                                        </VBox>
-                                    </content>
-                                    <VBox.margin>
-                                        <Insets top="5.0" />
-                                    </VBox.margin>
-                                </TitledPane>
-                            </children>
+                                 </children>
+                              </VBox>
+                           </content>
+                        </ScrollPane>
+                     </content>
+                  </Tab>
+                  <Tab fx:id="targetTab" text="%TargetFiles">
+                     <content>
+                        <VBox fx:id="targetVBox" spacing="10.0">
+                           <children>
+                              <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="10.0">
+                                 <children>
+                                    <Label text="%FilesPath" />
+                                    <TextField fx:id="targetPathInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                    <Button fx:id="selectPathTargetButton" mnemonicParsing="false" onAction="#selectTargetPath" onMouseEntered="#popTargetPath">
+                                       <graphic>
+                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/iconImageFolder.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </Button>
+                                    <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#previewAction">
+                                       <graphic>
+                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/iconPreview.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </Button>
+                                 </children>
+                              </HBox>
+                              <FlowPane hgap="5.0" vgap="5.0">
+                                 <children>
+                                    <Label text="%ExistedFiles" />
+                                    <RadioButton fx:id="targetReplaceRadio" mnemonicParsing="false" text="%Replace">
+                                       <toggleGroup>
+                                          <ToggleGroup fx:id="targetExistGroup" />
+                                       </toggleGroup>
+                                    </RadioButton>
+                                    <RadioButton fx:id="targetSkipRadio" mnemonicParsing="false" text="%Skip" toggleGroup="$targetExistGroup" />
+                                    <RadioButton fx:id="targetRenameRadio" mnemonicParsing="false" selected="true" text="%TargetNameAppend" toggleGroup="$targetExistGroup" />
+                                    <TextField fx:id="targetAppendInput" prefWidth="70.0" text="-m" />
+                                 </children>
+                              </FlowPane>
+                           </children>
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
                         </VBox>
-                    </children>
-                </VBox>
+                     </content>
+                  </Tab>
+                  <Tab fx:id="logsTab" text="%Logs">
+                     <content>
+                        <VBox fx:id="logsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                           <children>
+                              <TextArea fx:id="logsTextArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" VBox.vgrow="ALWAYS" />
+                              <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="NEVER">
+                                 <children>
+                                    <Label text="%MaxLines" />
+                                    <TextField fx:id="maxLinesinput" prefWidth="80.0" text="5000" />
+                                    <CheckBox fx:id="verboseCheck" mnemonicParsing="false" text="%VerboseLogs" />
+                                    <Button fx:id="clearButton1" mnemonicParsing="false" onAction="#clearLogs">
+                                       <graphic>
+                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/iconClear.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </Button>
+                                 </children>
+                              </HBox>
+                           </children>
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                        </VBox>
+                     </content>
+                  </Tab>
+               </tabs>
+            </TabPane>
                 <fx:include fx:id="operationBar" source="OperationBatch.fxml" />
             </children>
         </VBox>

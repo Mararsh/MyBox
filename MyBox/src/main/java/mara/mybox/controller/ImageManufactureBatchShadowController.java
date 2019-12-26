@@ -5,16 +5,19 @@ import java.util.Arrays;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Control;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlImageManufacture;
@@ -35,9 +38,9 @@ public class ImageManufactureBatchShadowController extends ImageManufactureBatch
     private boolean isPercent;
 
     @FXML
-    private ColorPicker shadowColorPicker;
+    protected Rectangle colorRect;
     @FXML
-    private Button transShadowButton;
+    protected Button paletteButton;
     @FXML
     private ToggleGroup shadowGroup;
     @FXML
@@ -101,11 +104,32 @@ public class ImageManufactureBatchShadowController extends ImageManufactureBatch
             });
             checkType();
 
-            shadowColorPicker.setValue(Color.BLACK);
+            String c = AppVariables.getUserConfigValue("ImageShadowColor", Color.BLACK.toString());
+            colorRect.setFill(Color.web(c));
+            FxmlControl.setTooltip(colorRect, FxmlColor.colorNameDisplay((Color) colorRect.getFill()));
 
         } catch (Exception e) {
             logger.error(e.toString());
         }
+    }
+
+    @Override
+    public boolean setColor(Control control, Color color) {
+        if (control == null || color == null) {
+            return false;
+        }
+        if (paletteButton.equals(control)) {
+            colorRect.setFill(color);
+            FxmlControl.setTooltip(colorRect, FxmlColor.colorNameDisplay(color));
+            AppVariables.setUserConfigValue("ImageShadowColor", color.toString());
+        }
+        return true;
+    }
+
+    @FXML
+    @Override
+    public void showPalette(ActionEvent event) {
+        showPalette(paletteButton, message("Shadow"), true);
     }
 
     private void checkType() {
@@ -159,21 +183,6 @@ public class ImageManufactureBatchShadowController extends ImageManufactureBatch
         }
     }
 
-    @FXML
-    public void shadowTransparentAction() {
-        shadowColorPicker.setValue(Color.TRANSPARENT);
-    }
-
-    @FXML
-    public void shadowWhiteAction() {
-        shadowColorPicker.setValue(Color.WHITE);
-    }
-
-    @FXML
-    public void shadowBlackAction() {
-        shadowColorPicker.setValue(Color.BLACK);
-    }
-
     @Override
     protected BufferedImage handleImage(BufferedImage source) {
         try {
@@ -181,7 +190,7 @@ public class ImageManufactureBatchShadowController extends ImageManufactureBatch
             if (isPercent) {
                 value = source.getWidth() * percent / 100;
             }
-            Color color = shadowColorPicker.getValue();
+            Color color = (Color) colorRect.getFill();
             BufferedImage target;
             if (preAlphaCheck.isSelected()) {
                 target = ImageManufacture.addShadowNoAlpha(source, value, FxmlImageManufacture.toAwtColor(color));

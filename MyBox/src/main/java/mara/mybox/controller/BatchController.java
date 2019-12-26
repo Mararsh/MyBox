@@ -18,7 +18,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
@@ -46,39 +49,43 @@ import mara.mybox.value.CommonFxValues;
 public abstract class BatchController<T> extends BaseController {
 
     protected String targetSubdirKey, previewKey;
-
     protected ObservableList<T> tableData;
     protected TableView<T> tableView;
-
     protected List<File> sourceFiles, targetFiles;
-
     protected List<String> filesPassword;
-
-    protected boolean sourceCheckSubdir, allowPaused, browseTargets, viewTargetPath,
-            createDirectories;
+    protected boolean sourceCheckSubdir, allowPaused, browseTargets, viewTargetPath, createDirectories;
     protected boolean isPreview, paused;
-    protected int dirFilesNumber, dirFilesHandled;
+    protected int dirFilesNumber, dirFilesHandled, totalFilesHandled = 0, totalItemsHandled = 0;
     protected long fileSelectorSize, fileSelectorTime;
     protected String[] sourceFilesSelector;
     protected FileSelectorType fileSelectorType;
     protected SimpleBooleanProperty optionsValid;
-
     protected ProcessParameters actualParameters, previewParameters, currentParameters;
+    protected StringBuffer newLogs;
+    protected int logsNewlines, logsMaxLines, logsTotalLines, logsCacheLines = 200;
+    protected Date processStartTime, fileStartTime;
+    protected String finalTargetName;
 
+    @FXML
+    protected TabPane batchTabPane;
+    @FXML
+    protected Tab sourceTab, optionsTab, targetTab, logsTab;
     @FXML
     protected BatchTableController<T> tableController;
     @FXML
-    protected VBox tableBox;
+    protected VBox tableBox, optionsVBox, targetVBox;
     @FXML
-    protected TextField previewInput, acumFromInput, digitInput;
+    protected TextField previewInput, acumFromInput, digitInput, maxLinesinput;
     @FXML
-    protected CheckBox targetSubdirCheck, miaoCheck, openCheck;
+    protected CheckBox targetSubdirCheck, miaoCheck, openCheck, verboseCheck;
     @FXML
     protected Button pauseButton, openTargetButton;
     @FXML
     protected ProgressBar progressBar, fileProgressBar;
     @FXML
     protected Label progressValue, fileProgressValue;
+    @FXML
+    protected TextArea logsTextArea;
 
     public BatchController() {
         targetSubdirKey = "targetSubdirKey";
@@ -96,20 +103,20 @@ public abstract class BatchController<T> extends BaseController {
 
     }
 
-    // "targetFiles" and "actualParameters.finalTargetName" should be written by this method
+    // "targetFiles" and "finalTargetName" should be written by this method
     public String handleFile(File srcFile, File targetPath) {
         showHandling(srcFile);
         File target = makeTargetFile(srcFile, targetPath);
         if (target == null) {
             return AppVariables.message("Skip");
         }
-        currentParameters.finalTargetName = target.getAbsolutePath();
-        targetFiles.add(target);
+        targetFileGenerated(target);
         return AppVariables.message("Successful");
     }
 
     public void donePost() {
         tableView.refresh();
+
         if (miaoCheck != null && miaoCheck.isSelected()) {
             FxmlControl.miao3();
         }
@@ -119,11 +126,11 @@ public abstract class BatchController<T> extends BaseController {
         if (targetFiles != null && viewTargetPath) {
             openTarget(null);
         } else if (targetFiles == null || targetFiles.size() == 1) {
-            if (actualParameters.finalTargetName == null
-                    || !new File(actualParameters.finalTargetName).exists()) {
+            if (finalTargetName == null
+                    || !new File(finalTargetName).exists()) {
                 alertInformation(AppVariables.message("NoDataNotSupported"));
             } else {
-                viewTarget(new File(actualParameters.finalTargetName));
+                viewTarget(new File(finalTargetName));
             }
         } else if (targetFiles.size() > 1) {
             if (browseTargets) {
@@ -150,8 +157,8 @@ public abstract class BatchController<T> extends BaseController {
             File path = null;
             if (targetFiles != null && !targetFiles.isEmpty()) {
                 path = targetFiles.get(0).getParentFile();
-            } else if (actualParameters != null && actualParameters.finalTargetName != null) {
-                path = new File(actualParameters.finalTargetName).getParentFile();
+            } else if (actualParameters != null && finalTargetName != null) {
+                path = new File(finalTargetName).getParentFile();
             } else if (actualParameters != null && actualParameters.targetPath != null) {
                 path = new File(actualParameters.targetPath);
             } else if (targetPathInput != null) {
@@ -403,9 +410,9 @@ public abstract class BatchController<T> extends BaseController {
         fileSelectorTime = tableController.fileSelectorTime;
 
         if (targetFileInput != null) {
-            actualParameters.finalTargetName = targetFileInput.getText();
+            finalTargetName = targetFileInput.getText();
             try {
-                targetFile = new File(actualParameters.finalTargetName);
+                targetFile = new File(finalTargetName);
                 targetPath = new File(targetFileInput.getText()).getParentFile();
             } catch (Exception e) {
             }
@@ -468,6 +475,10 @@ public abstract class BatchController<T> extends BaseController {
             }
             sourceFiles.add(tableController.file(index));
         }
+
+        initLogs();
+        totalFilesHandled = totalItemsHandled = 0;
+        processStartTime = new Date();
         return true;
     }
 
@@ -492,7 +503,6 @@ public abstract class BatchController<T> extends BaseController {
         newParameters.currentPage = theConversion.currentPage;
         newParameters.currentIndex = theConversion.currentIndex;
         newParameters.startIndex = theConversion.startIndex;
-        newParameters.currentTotalHandled = theConversion.currentTotalHandled;
         newParameters.currentSourceFile = theConversion.currentSourceFile;
         newParameters.targetRootPath = theConversion.targetRootPath;
         newParameters.targetPath = theConversion.targetPath;
@@ -502,9 +512,24 @@ public abstract class BatchController<T> extends BaseController {
         newParameters.startPage = theConversion.startPage;
         newParameters.status = theConversion.status;
         newParameters.toPage = theConversion.toPage;
-        newParameters.startTime = theConversion.startTime;
         newParameters.isBatch = theConversion.isBatch;
         return newParameters;
+    }
+
+    protected void initLogs() {
+        if (logsTextArea != null) {
+            logsTextArea.setText("");
+            newLogs = new StringBuffer();
+            logsNewlines = 0;
+            logsTotalLines = 0;
+            if (maxLinesinput != null) {
+                try {
+                    logsMaxLines = Integer.parseInt(maxLinesinput.getText());
+                } catch (Exception e) {
+                    logsMaxLines = 5000;
+                }
+            }
+        }
     }
 
     public File getCurrentFile() {
@@ -520,8 +545,8 @@ public abstract class BatchController<T> extends BaseController {
                 if (task != null) {
                     return;
                 }
-                currentParameters.startTime = new Date();
-                currentParameters.currentTotalHandled = 0;
+                processStartTime = new Date();
+                totalFilesHandled = totalItemsHandled = 0;
                 updateInterface("Started");
                 task = new SingletonTask<Void>() {
 
@@ -643,7 +668,7 @@ public abstract class BatchController<T> extends BaseController {
             } else {
                 return;
             }
-            currentParameters.currentTotalHandled++;
+            totalItemsHandled++;
             tableController.markFileHandled(currentParameters.currentIndex, result);
         } catch (Exception e) {
             logger.debug(e.toString());
@@ -863,24 +888,44 @@ public abstract class BatchController<T> extends BaseController {
         if (paraBox != null) {
             paraBox.setDisable(disable);
         }
+        if (tableController != null) {
+            tableController.thisPane.setDisable(disable);
+        }
+        if (optionsVBox != null) {
+            optionsVBox.setDisable(disable);
+        }
+        if (targetVBox != null) {
+            targetVBox.setDisable(disable);
+        }
+        if (batchTabPane != null && logsTab != null) {
+            batchTabPane.getSelectionModel().select(logsTab);
+        }
     }
 
     public void showHandling(File file) {
-        if (statusLabel == null || file == null) {
+        if (file == null) {
             return;
         }
         showHandling(file.getAbsolutePath());
     }
 
     public void showHandling(String name) {
-        if (statusLabel == null || name == null) {
+        if (name == null) {
             return;
         }
-        showStatus(MessageFormat.format(message("HandlingObject"), name) + "    "
-                + message("StartTime") + ": " + DateTools.nowString());
+        totalFilesHandled++;
+        fileStartTime = new Date();
+        String msg = MessageFormat.format(message("HandlingObject"), name);
+        updateStatusLabel(msg + "    " + message("StartTime") + ": " + DateTools.datetimeToString(fileStartTime));
+        updateLogs(msg, true, true);
     }
 
     public void showStatus(String info) {
+        updateStatusLabel(info);
+        updateLogs(info, true, true);
+    }
+
+    public void updateStatusLabel(String info) {
         if (statusLabel == null || info == null) {
             return;
         }
@@ -894,6 +939,79 @@ public abstract class BatchController<T> extends BaseController {
                 }
             }
         });
+    }
+
+    protected void updateLogs(final String line) {
+        updateLogs(line, true, false);
+    }
+
+    protected void updateLogs(final String line, boolean immediate) {
+        updateLogs(line, true, immediate);
+    }
+
+    protected void updateLogs(final String line, boolean showTime, boolean immediate) {
+        try {
+            if (logsTextArea == null) {
+                return;
+            }
+            if (showTime) {
+                newLogs.append(DateTools.datetimeToString(new Date())).append("  ");
+            }
+            newLogs.append(line).append("\n");
+            logsNewlines++;
+            long past = new Date().getTime() - processStartTime.getTime();
+            if (immediate || logsNewlines > logsCacheLines || past > 5000) {
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        logsTextArea.appendText(newLogs.toString());
+                        logsTotalLines += logsNewlines;
+                        if (logsTotalLines > logsMaxLines + logsCacheLines) {
+                            logsTextArea.deleteText(0, newLogs.length());
+                        }
+                        newLogs = new StringBuffer();
+                        logsNewlines = 0;
+                    }
+                });
+            }
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+    @FXML
+    protected void clearLogs() {
+        logsTextArea.setText("");
+    }
+
+    public void targetFileGenerated(File target) {
+        if (target == null || !target.exists()) {
+            return;
+        }
+        finalTargetName = target.getAbsolutePath();
+        targetFiles.add(target);
+        String msg;
+        msg = MessageFormat.format(message("FilesGenerated"), finalTargetName);
+        msg += "  " + message("Cost") + ":" + DateTools.showTime(new Date().getTime() - fileStartTime.getTime());
+        updateStatusLabel(msg);
+        updateLogs(msg, true, true);
+    }
+
+    public void targetFileGenerated(List<File> tFiles) {
+        if (tFiles == null || tFiles.isEmpty()) {
+            return;
+        }
+        finalTargetName = tFiles.get(0).getAbsolutePath();
+        targetFiles.addAll(tFiles);
+        String msg;
+        if (tFiles.size() == 1) {
+            msg = MessageFormat.format(message("FilesGenerated"), finalTargetName);
+        } else {
+            msg = MessageFormat.format(message("FilesGenerated"), tFiles.size());
+        }
+        msg += "  " + message("Cost") + ":" + DateTools.showTime(new Date().getTime() - fileStartTime.getTime());
+        updateStatusLabel(msg);
+        updateLogs(msg, true, true);
     }
 
     public void updateInterface(final String newStatus) {
@@ -974,17 +1092,14 @@ public abstract class BatchController<T> extends BaseController {
 
     public double countAverageTime(long cost) {
         double avg = 0;
-        if (currentParameters.currentTotalHandled != 0) {
-            avg = DoubleTools.scale3((double) cost / currentParameters.currentTotalHandled);
+        if (totalFilesHandled != 0) {
+            avg = DoubleTools.scale3((double) cost / totalFilesHandled);
         }
         return avg;
     }
 
     public void showCost() {
-        if (statusLabel == null) {
-            return;
-        }
-        long cost = new Date().getTime() - currentParameters.startTime.getTime();
+        long cost = new Date().getTime() - processStartTime.getTime();
         double avg = countAverageTime(cost);
         String s;
         if (paused) {
@@ -993,7 +1108,7 @@ public abstract class BatchController<T> extends BaseController {
             s = message(currentParameters.status);
         }
         String space = "   ";
-        s += ". " + message("HandledThisTime") + ":" + currentParameters.currentTotalHandled + space;
+        s += ". " + message("HandledThisTime") + ":" + totalFilesHandled + space;
         int count = 0;
         if (targetFiles != null) {
             count = targetFiles.size();
@@ -1002,9 +1117,12 @@ public abstract class BatchController<T> extends BaseController {
         s += MessageFormat.format(AppVariables.message("FilesGenerated"), count) + space;
         s += message("Cost") + ": " + DateTools.showTime(cost) + "." + space
                 + message("Average") + ":" + DateTools.showTime(Math.round(avg)) + " "
-                + message("StartTime") + ":" + DateTools.datetimeToString(currentParameters.startTime) + space
+                + message("StartTime") + ":" + DateTools.datetimeToString(processStartTime) + space
                 + message("EndTime") + ":" + DateTools.datetimeToString(new Date());
-        statusLabel.setText(s);
+        if (statusLabel != null) {
+            statusLabel.setText(s);
+        }
+        updateLogs(s, true, true);
     }
 
     public void quitProcess() {

@@ -17,7 +17,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.fxml.FxmlControl;
@@ -44,17 +45,12 @@ import mara.mybox.value.CommonValues;
  */
 public class ImageConverterOptionsController extends BaseController {
 
-    protected final String ImageConverterFormatKey, ImageConverterColorKey, ImageConverterCompressionTypeKey;
-    protected final String ImageConverterQualityKey, ImageConverterDpiKey, ImageConverterAlphaKey, ImageConverterEmbedKey;
-    protected final String ImageConverterBinaryKey, ImageConverterThreasholdKey, ImageConverterDitherKey;
-    protected final String ImageConverterAppendColorKey, ImageConverterAppendCompressionKey, ImageConverterAppendQualityKey;
     protected ImageAttributes attributes;
 
     @FXML
-    protected ComboBox<String> formatSelector, colorSpaceSelector, alphaSelector, compressionSelector,
-            qualitySelector, dpiSelector;
+    protected ComboBox<String> colorSpaceSelector, compressionSelector, qualitySelector, dpiSelector;
     @FXML
-    protected ToggleGroup binaryGroup;
+    protected ToggleGroup formatGroup, alphaGroup, binaryGroup;
     @FXML
     protected TextField profileInput, thresholdInput;
     @FXML
@@ -62,28 +58,18 @@ public class ImageConverterOptionsController extends BaseController {
     @FXML
     protected CheckBox embedProfileCheck, alphaCheck;
     @FXML
-    protected HBox attrBox1, attrBox2, binBox, alphaBox, compressBox, profileBox, binaryBox, dpiBox;
+    protected FlowPane formatPane, colorspacePane, profilePane, alphaPane, dpiPane, compressPane, qualityPane;
+    @FXML
+    protected VBox csBox, compressBox, binaryBox;
     @FXML
     protected Button iccSelectButton;
+    @FXML
+    protected RadioButton alphaKeepRadio, alphaRemoveRadio, alphaPreKeepRadio, alphaPreReomveRadio;
     @FXML
     protected Label formatCommentsLabel;
 
     public ImageConverterOptionsController() {
         baseTitle = AppVariables.message("ImageConverterBatch");
-
-        ImageConverterFormatKey = "ImageConverterFormatKey";
-        ImageConverterColorKey = "ImageConverterColorKey";
-        ImageConverterCompressionTypeKey = "ImageConverterCompressionTypeKey";
-        ImageConverterQualityKey = "ImageConverterQualityKey";
-        ImageConverterAlphaKey = "ImageConverterAlphaKey";
-        ImageConverterBinaryKey = "ImageConverterBinaryKey";
-        ImageConverterThreasholdKey = "ImageConverterThreasholdKey";
-        ImageConverterEmbedKey = "ImageConverterEmbedKey";
-        ImageConverterDitherKey = "ImageConverterDitherKey";
-        ImageConverterAppendColorKey = "ImageConverterDitherKey";
-        ImageConverterAppendCompressionKey = "ImageConverterAppendCompressionKey";
-        ImageConverterAppendQualityKey = "ImageConverterAppendQualityKey";
-        ImageConverterDpiKey = "ImageConverterDpiKey";
 
     }
 
@@ -92,13 +78,13 @@ public class ImageConverterOptionsController extends BaseController {
         try {
             super.initializeNext();
 
-            formatSelector.getItems().addAll(CommonValues.SupportedImages);
-            formatSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            formatGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
-                public void changed(ObservableValue<? extends String> v, String oldV, String newV) {
+                public void changed(ObservableValue v, Toggle oldV, Toggle newV) {
                     checkFileFormat();
                 }
             });
+            checkFileFormat();
 
             colorSpaceSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -106,6 +92,7 @@ public class ImageConverterOptionsController extends BaseController {
                     checkColorSpace();
                 }
             });
+            checkColorSpace();
 
             embedProfileCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -121,12 +108,13 @@ public class ImageConverterOptionsController extends BaseController {
                 }
             });
 
-            alphaSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            alphaGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
-                public void changed(ObservableValue<? extends String> v, String oldV, String newV) {
+                public void changed(ObservableValue v, Toggle oldV, Toggle newV) {
                     checkAlpha();
                 }
             });
+            checkAlpha();
 
             compressionSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -168,12 +156,11 @@ public class ImageConverterOptionsController extends BaseController {
             });
 
             isSettingValues = true;
-            embedProfileCheck.setSelected(getUserConfigBoolean(ImageConverterEmbedKey, true));
-            FxmlControl.setRadioSelected(binaryGroup, getUserConfigValue(ImageConverterBinaryKey, message("OTSU")));
-            thresholdInput.setText(getUserConfigValue(ImageConverterThreasholdKey, null));
-            ditherCheck.setSelected(getUserConfigBoolean(ImageConverterDitherKey, true));
+            embedProfileCheck.setSelected(getUserConfigBoolean("ImageConverterEmbed", true));
+            FxmlControl.setRadioSelected(binaryGroup, getUserConfigValue("ImageConverterBinary", message("OTSU")));
+            thresholdInput.setText(getUserConfigValue("ImageConverterThreashold", null));
+            ditherCheck.setSelected(getUserConfigBoolean("ImageConverterDither", true));
             isSettingValues = false;
-            formatSelector.getSelectionModel().select(getUserConfigValue(ImageConverterFormatKey, "png"));
 
         } catch (Exception e) {
             logger.debug(e.toString());
@@ -192,11 +179,11 @@ public class ImageConverterOptionsController extends BaseController {
                     checkDpi();
                 }
             });
-            dpiSelector.getSelectionModel().select(getUserConfigValue(ImageConverterDpiKey, "96"));
+            dpiSelector.getSelectionModel().select(getUserConfigValue("ImageConverterDpi", "96"));
 
         } else {
             FxmlControl.setEditorNormal(dpiSelector);
-            attrBox2.getChildren().remove(dpiBox);
+            thisPane.getChildren().remove(dpiPane);
         }
     }
 
@@ -206,9 +193,9 @@ public class ImageConverterOptionsController extends BaseController {
         }
         attributes = new ImageAttributes();
 
-        String format = formatSelector.getSelectionModel().getSelectedItem();
+        String format = ((RadioButton) formatGroup.getSelectedToggle()).getText();
         attributes.setImageFormat(format);
-        setUserConfigValue(ImageConverterFormatKey, format);
+        setUserConfigValue("ImageConverterFormat", format);
 
         if ("pcx".equals(format)) {
             formatCommentsLabel.setText(message("PcxComments"));
@@ -231,7 +218,7 @@ public class ImageConverterOptionsController extends BaseController {
         isSettingValues = true;
         colorSpaceSelector.getItems().clear();
         colorSpaceSelector.getItems().addAll(csList);
-        String dcs = getUserConfigValue(ImageConverterColorKey, "sRGB");
+        String dcs = getUserConfigValue("ImageConverterColor", "sRGB");
         if (csList.contains(dcs)) {
             colorSpaceSelector.getSelectionModel().select(dcs);
         } else {
@@ -243,8 +230,8 @@ public class ImageConverterOptionsController extends BaseController {
         switch (format) {
             case "tif":
             case "tiff":
-                if (!attrBox1.getChildren().contains(embedProfileCheck)) {
-                    attrBox1.getChildren().add(embedProfileCheck);
+                if (!csBox.getChildren().contains(embedProfileCheck)) {
+                    csBox.getChildren().add(embedProfileCheck);
                 }
                 embedProfileCheck.setDisable(true);
                 embedProfileCheck.setSelected(true);
@@ -252,14 +239,14 @@ public class ImageConverterOptionsController extends BaseController {
             case "png":
             case "jpg":
             case "jpeg":
-                if (!attrBox1.getChildren().contains(embedProfileCheck)) {
-                    attrBox1.getChildren().add(embedProfileCheck);
+                if (!csBox.getChildren().contains(embedProfileCheck)) {
+                    csBox.getChildren().add(embedProfileCheck);
                 }
                 embedProfileCheck.setDisable(false);
                 break;
             default:
-                if (attrBox1.getChildren().contains(embedProfileCheck)) {
-                    attrBox1.getChildren().remove(embedProfileCheck);
+                if (csBox.getChildren().contains(embedProfileCheck)) {
+                    csBox.getChildren().remove(embedProfileCheck);
                 }
                 break;
         }
@@ -276,64 +263,60 @@ public class ImageConverterOptionsController extends BaseController {
         attributes.setColorSpaceName(colorSpace);
         attributes.setProfile(null);
         attributes.setProfileName(null);
-        setUserConfigValue(ImageConverterColorKey, colorSpace);
+        setUserConfigValue("ImageConverterColor", colorSpace);
 
         if (message("IccProfile").equals(colorSpace)) {
-            if (!attrBox1.getChildren().contains(profileBox)) {
-                attrBox1.getChildren().add(profileBox);
-                FxmlControl.refreshStyle(profileBox);
+            if (!csBox.getChildren().contains(profilePane)) {
+                csBox.getChildren().add(profilePane);
+                FxmlControl.refreshStyle(profilePane);
             }
             checkProfile();
         } else {
             profileInput.setStyle(null);
-            if (attrBox1.getChildren().contains(profileBox)) {
-                attrBox1.getChildren().remove(profileBox);
+            if (csBox.getChildren().contains(profilePane)) {
+                csBox.getChildren().remove(profilePane);
             }
         }
         if (message("BlackOrWhite").equals(colorSpace)) {
-            if (!thisPane.getChildren().contains(binBox)) {
-                thisPane.getChildren().add(binBox);
-                FxmlControl.refreshStyle(binBox);
+            if (!thisPane.getChildren().contains(binaryBox)) {
+                thisPane.getChildren().add(binaryBox);
+                FxmlControl.refreshStyle(binaryBox);
             }
-            if (attrBox1.getChildren().contains(embedProfileCheck)) {
-                attrBox1.getChildren().remove(embedProfileCheck);
+            if (csBox.getChildren().contains(embedProfileCheck)) {
+                csBox.getChildren().remove(embedProfileCheck);
             }
             checkBinary();
         } else {
-            if (thisPane.getChildren().contains(binBox)) {
-                thisPane.getChildren().remove(binBox);
+            if (thisPane.getChildren().contains(binaryBox)) {
+                thisPane.getChildren().remove(binaryBox);
             }
-            if (!attrBox1.getChildren().contains(embedProfileCheck)) {
-                attrBox1.getChildren().add(embedProfileCheck);
+            if (!csBox.getChildren().contains(embedProfileCheck)) {
+                csBox.getChildren().add(embedProfileCheck);
             }
             thresholdInput.setStyle(null);
         }
 
-        isSettingValues = true;
-        alphaSelector.getItems().clear();
         if (CommonValues.PremultiplyAlphaImages.contains(attributes.getImageFormat())
                 && !message("BlackOrWhite").equals(colorSpace)) {
-            alphaSelector.getItems().addAll(Arrays.asList(
-                    message("Keep"), message("Remove"), message("PremultipliedAndKeep"), message("PremultipliedAndRemove")
-            ));
+            alphaKeepRadio.setDisable(false);
+            alphaRemoveRadio.setDisable(false);
+            alphaPreKeepRadio.setDisable(false);
+            alphaPreReomveRadio.setDisable(false);
+            alphaKeepRadio.fire();
         } else if (CommonValues.AlphaImages.contains(attributes.getImageFormat())
                 && !message("BlackOrWhite").equals(colorSpace)) {
-            alphaSelector.getItems().addAll(Arrays.asList(
-                    message("Keep"), message("Remove"), message("PremultipliedAndRemove")
-            ));
+            alphaKeepRadio.setDisable(false);
+            alphaRemoveRadio.setDisable(false);
+            alphaPreKeepRadio.setDisable(true);
+            alphaPreReomveRadio.setDisable(false);
+            alphaKeepRadio.fire();
         } else {
-            alphaSelector.getItems().addAll(Arrays.asList(
-                    message("Remove"), message("PremultipliedAndRemove")
-            ));
+            alphaKeepRadio.setDisable(true);
+            alphaRemoveRadio.setDisable(false);
+            alphaPreKeepRadio.setDisable(true);
+            alphaPreReomveRadio.setDisable(false);
+            alphaRemoveRadio.fire();
         }
-        String a = getUserConfigValue(ImageConverterAlphaKey, message("Keep"));
-        if (alphaSelector.getItems().contains(a)) {
-            alphaSelector.getSelectionModel().select(a);
-        } else {
-            alphaSelector.getSelectionModel().select(0);
-        }
-        isSettingValues = false;
-        alphaSelector.setVisibleRowCount(alphaSelector.getItems().size());
 
         checkEmbed();
 
@@ -342,7 +325,7 @@ public class ImageConverterOptionsController extends BaseController {
     }
 
     public void checkProfile() {
-        if (!attrBox1.getChildren().contains(profileBox)) {
+        if (!csBox.getChildren().contains(profilePane)) {
             return;
         }
         try {
@@ -366,14 +349,14 @@ public class ImageConverterOptionsController extends BaseController {
             return;
         }
         attributes.setEmbedProfile(embedProfileCheck.isSelected());
-        setUserConfigValue(ImageConverterEmbedKey, embedProfileCheck.isSelected());
+        setUserConfigValue("ImageConverterEmbed", embedProfileCheck.isSelected());
     }
 
     public void checkAlpha() {
         if (isSettingValues) {
             return;
         }
-        String alpha = alphaSelector.getSelectionModel().getSelectedItem();
+        String alpha = ((RadioButton) alphaGroup.getSelectedToggle()).getText();
         if (message("Keep").equals(alpha)) {
             attributes.setAlpha(ImageAttributes.Alpha.Keep);
         } else if (message("Remove").equals(alpha)) {
@@ -383,7 +366,7 @@ public class ImageConverterOptionsController extends BaseController {
         } else if (message("PremultipliedAndRemove").equals(alpha)) {
             attributes.setAlpha(ImageAttributes.Alpha.PremultipliedAndRemove);
         }
-        setUserConfigValue(ImageConverterAlphaKey, alpha);
+        setUserConfigValue("ImageConverterAlpha", alpha);
 
         boolean hasAlpha = attributes.getAlpha() == ImageAttributes.Alpha.Keep
                 || attributes.getAlpha() == ImageAttributes.Alpha.PremultipliedAndKeep;
@@ -393,16 +376,16 @@ public class ImageConverterOptionsController extends BaseController {
             isSettingValues = true;
             compressionSelector.getItems().clear();
             compressionSelector.getItems().addAll(Arrays.asList(compressionTypes));
-            String c = getUserConfigValue(ImageConverterCompressionTypeKey, "Deflate");
+            String c = getUserConfigValue("ImageConverterCompressionType", "Deflate");
             if (compressionSelector.getItems().contains(c)) {
                 compressionSelector.getSelectionModel().select(c);
             } else {
                 compressionSelector.getSelectionModel().select(0);
             }
-            String q = getUserConfigValue(ImageConverterQualityKey, "100");
+            String q = getUserConfigValue("ImageConverterQuality", "100");
             qualitySelector.getSelectionModel().select(q);
-            if (!attrBox2.getChildren().contains(compressBox)) {
-                attrBox2.getChildren().add(compressBox);
+            if (!thisPane.getChildren().contains(compressBox)) {
+                thisPane.getChildren().add(compressBox);
             }
             isSettingValues = false;
             checkCompression();
@@ -411,8 +394,8 @@ public class ImageConverterOptionsController extends BaseController {
             isSettingValues = true;
             compressionSelector.getItems().clear();
             FxmlControl.setEditorNormal(qualitySelector);
-            if (attrBox2.getChildren().contains(compressBox)) {
-                attrBox2.getChildren().remove(compressBox);
+            if (thisPane.getChildren().contains(compressBox)) {
+                thisPane.getChildren().remove(compressBox);
             }
             isSettingValues = false;
             attributes.setCompressionType(null);
@@ -426,7 +409,7 @@ public class ImageConverterOptionsController extends BaseController {
         }
         String v = compressionSelector.getValue();
         attributes.setCompressionType(v);
-        setUserConfigValue(ImageConverterCompressionTypeKey, v);
+        setUserConfigValue("ImageConverterCompressionType", v);
     }
 
     public void checkQuality() {
@@ -438,7 +421,7 @@ public class ImageConverterOptionsController extends BaseController {
             if (v > 0 && v <= 100) {
                 attributes.setQuality(v);
                 FxmlControl.setEditorNormal(qualitySelector);
-                setUserConfigValue(ImageConverterQualityKey, v + "");
+                setUserConfigValue("ImageConverterQuality", v + "");
             } else {
                 FxmlControl.setEditorBadStyle(qualitySelector);
             }
@@ -450,7 +433,7 @@ public class ImageConverterOptionsController extends BaseController {
 
     public void checkBinary() {
         try {
-            if (isSettingValues || !thisPane.getChildren().contains(binBox)) {
+            if (isSettingValues || !thisPane.getChildren().contains(binaryBox)) {
                 return;
             }
             RadioButton selected = (RadioButton) binaryGroup.getSelectedToggle();
@@ -468,7 +451,7 @@ public class ImageConverterOptionsController extends BaseController {
                 thresholdInput.setStyle(null);
                 thresholdInput.setDisable(true);
             }
-            setUserConfigValue(ImageConverterBinaryKey, s);
+            setUserConfigValue("ImageConverterBinary", s);
 
             checkDither();
 
@@ -479,14 +462,14 @@ public class ImageConverterOptionsController extends BaseController {
 
     public void checkThreshold() {
         try {
-            if (!thisPane.getChildren().contains(binBox)) {
+            if (!thisPane.getChildren().contains(binaryBox)) {
                 return;
             }
             int inputValue = Integer.parseInt(thresholdInput.getText());
             if (inputValue >= 0 && inputValue <= 255) {
                 attributes.setThreshold(inputValue);
                 thresholdInput.setStyle(null);
-                AppVariables.setUserConfigValue(ImageConverterThreasholdKey, inputValue + "");
+                AppVariables.setUserConfigValue("ImageConverterThreashold", inputValue + "");
             } else {
                 thresholdInput.setStyle(badStyle);
             }
@@ -500,11 +483,11 @@ public class ImageConverterOptionsController extends BaseController {
             return;
         }
         attributes.setIsDithering(ditherCheck.isSelected());
-        setUserConfigValue(ImageConverterDitherKey, ditherCheck.isSelected());
+        setUserConfigValue("ImageConverterDither", ditherCheck.isSelected());
     }
 
     public void checkDpi() {
-        if (isSettingValues || !attrBox2.getChildren().contains(dpiBox)) {
+        if (isSettingValues || !thisPane.getChildren().contains(dpiPane)) {
             return;
         }
         try {
@@ -512,7 +495,7 @@ public class ImageConverterOptionsController extends BaseController {
             if (v > 0) {
                 attributes.setDensity(v);
                 FxmlControl.setEditorNormal(dpiSelector);
-                setUserConfigValue(ImageConverterDpiKey, v + "");
+                setUserConfigValue("ImageConverterDpi", v + "");
             } else {
                 FxmlControl.setEditorBadStyle(dpiSelector);
             }

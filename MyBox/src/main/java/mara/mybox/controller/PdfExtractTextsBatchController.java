@@ -101,8 +101,7 @@ public class PdfExtractTextsBatchController extends PdfBatchController {
                     tFile.delete();
                 }
                 tmpFile.renameTo(tFile);
-                currentParameters.finalTargetName = currentTargetFile;
-                targetFiles.add(tFile);
+                targetFileGenerated(tFile);
             }
         } catch (Exception e) {
             logger.error(e.toString());

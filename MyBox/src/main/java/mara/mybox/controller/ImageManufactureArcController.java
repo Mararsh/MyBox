@@ -60,7 +60,6 @@ public class ImageManufactureArcController extends ImageManufactureOperationCont
             if (parent == null) {
                 return;
             }
-            imageController.operatingNeedNotScope();
 
             String c = AppVariables.getUserConfigValue("ImageArcBackground", Color.TRANSPARENT.toString());
             bgRect.setFill(Color.web(c));

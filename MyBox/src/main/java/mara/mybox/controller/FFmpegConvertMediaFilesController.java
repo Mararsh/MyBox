@@ -13,7 +13,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
 import java.nio.file.Paths;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -30,7 +29,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mara.mybox.fxml.FxmlControl;
@@ -65,8 +63,6 @@ public class FFmpegConvertMediaFilesController extends FFmpegBaseController {
 
     @FXML
     protected TitledPane ffmpegPane, optionsPane;
-    @FXML
-    protected VBox ffmpegBox, optionsBox;
     @FXML
     protected ComboBox<String> muxerSelector, audioEncoderSelector, videoEncoderSelector,
             subtitleEncoderSelector, aspectSelector, resolutionSelector, videoFrameRateSelector;
@@ -275,8 +271,11 @@ public class FFmpegConvertMediaFilesController extends FFmpegBaseController {
                     }
                 }
             });
-            resolutionSelector.getSelectionModel().select(
-                    AppVariables.getUserConfigValue("ffmpegDefaultResolution", "ntsc  720x480"));
+            String dres = AppVariables.getUserConfigValue("ffmpegDefaultResolution", "ntsc  720x480");
+            if (mustSetResolution && message("NotSetting").equals(dres)) {
+                dres = "ntsc  720x480";
+            }
+            resolutionSelector.getSelectionModel().select(dres);
 
             videoFrameRate = -1;
             videoFrameRateSelector.getItems().add(message("NotSetting"));
@@ -537,21 +536,9 @@ public class FFmpegConvertMediaFilesController extends FFmpegBaseController {
     }
 
     @Override
-    public void disableControls(boolean disable) {
-        tableBox.setDisable(disable);
-        ffmpegBox.setDisable(disable);
-        optionsBox.setDisable(disable);
-        if (disable) {
-            ffmpegPane.setExpanded(false);
-            optionsPane.setExpanded(false);
-        }
-    }
-
-    @Override
     public String handleFile(File srcFile, File targetPath) {
         try {
             showHandling(srcFile);
-            updateLogs(MessageFormat.format(message("HandlingObject"), srcFile), true);
             String ext = extensionInput.getText().trim();
             if (ext.isEmpty() || message("OriginalFormat").equals(ext)) {
                 ext = FileTools.getFileSuffix(srcFile.getName());
@@ -562,10 +549,7 @@ public class FFmpegConvertMediaFilesController extends FFmpegBaseController {
                 return AppVariables.message("Skip");
             }
             convert(srcFile, target, -1);
-            totalHandled++;
-            actualParameters.finalTargetName = target.getAbsolutePath();
-            targetFiles.add(target);
-            updateLogs(MessageFormat.format(message("FilesGenerated"), target), true);
+            targetFileGenerated(target);
             return AppVariables.message("Successful");
         } catch (Exception e) {
             updateLogs(e.toString(), true);

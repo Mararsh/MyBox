@@ -80,7 +80,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
     @FXML
     protected Button colorIncreaseButton, colorDecreaseButton, colorFilterButton,
             colorInvertButton, paletteButton, demoButton,
-            originalPaletteButton, newPaletteButton;
+            paletteOriginalButton, paletteNewButton;
     @FXML
     protected CheckBox preAlphaCheck, distanceExcludeCheck;
     @FXML
@@ -241,16 +241,19 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
             FxmlControl.setEditorNormal(valueSelector);
 
             RadioButton selected = (RadioButton) colorGroup.getSelectedToggle();
+            imageController.clearValues();
 
             if (colorReplaceRadio.equals(selected)) {
-                imageController.operatingNeedNotScope();
+                imageController.hideScopePane();
+
                 okButton.disableProperty().bind(distanceInput.styleProperty().isEqualTo(badStyle));
 
                 colorOperationType = OperationType.ReplaceColor;
                 setBox.getChildren().addAll(replaceBox);
 
             } else {
-                imageController.clearOperating();
+                imageController.showScopePane();
+
                 okButton.disableProperty().unbind();
                 okButton.setDisable(true);
 
@@ -395,12 +398,12 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
             FxmlControl.setTooltip(colorRect, FxmlColor.colorNameDisplay(color));
             AppVariables.setUserConfigValue("ImageColorSet", color.toString());
 
-        } else if (originalPaletteButton.equals(control)) {
+        } else if (paletteOriginalButton.equals(control)) {
             originalRect.setFill(color);
             FxmlControl.setTooltip(originalRect, FxmlColor.colorNameDisplay(color));
             AppVariables.setUserConfigValue("ImageColorOriginal", color.toString());
 
-        } else if (newPaletteButton.equals(control)) {
+        } else if (paletteNewButton.equals(control)) {
             newRect.setFill(color);
             FxmlControl.setTooltip(newRect, FxmlColor.colorNameDisplay(color));
             AppVariables.setUserConfigValue("ImageColorNew", color.toString());
@@ -416,12 +419,12 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
 
     @FXML
     public void originalPalette(ActionEvent event) {
-        showPalette(originalPaletteButton, message("OriginalColor"), true);
+        showPalette(paletteOriginalButton, message("OriginalColor"), true);
     }
 
     @FXML
     public void newPalette(ActionEvent event) {
-        showPalette(newPaletteButton, message("NewColor"), true);
+        showPalette(paletteNewButton, message("NewColor"), true);
     }
 
     @FXML

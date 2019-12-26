@@ -70,7 +70,6 @@ public class FilesDeleteController extends FilesBatchController {
                 msg = message("FileMoveToTrashSuccessfully") + ": " + srcFile.getAbsolutePath();
             }
             if (ok) {
-                totalHandled++;
                 updateLogs(msg);
                 return AppVariables.message("Successful");
             } else {

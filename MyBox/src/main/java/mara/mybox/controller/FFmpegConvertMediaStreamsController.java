@@ -37,8 +37,8 @@ public class FFmpegConvertMediaStreamsController extends FFmpegConvertMediaFiles
             d.setHandled("");
         }
         initLogs();
-        totalHandled = 0;
-        startTime = new Date();
+        totalFilesHandled = 0;
+        processStartTime = new Date();
         return true;
     }
 
@@ -52,8 +52,8 @@ public class FFmpegConvertMediaStreamsController extends FFmpegConvertMediaFiles
                 if (task != null) {
                     return;
                 }
-                currentParameters.startTime = new Date();
-                currentParameters.currentTotalHandled = 0;
+                processStartTime = new Date();
+                totalFilesHandled = 0;
                 updateInterface("Started");
                 task = new SingletonTask<Void>() {
 
@@ -162,13 +162,9 @@ public class FFmpegConvertMediaStreamsController extends FFmpegConvertMediaFiles
             } else {
                 updateLogs(message("TargetFile") + ": " + target, true);
                 convert(address, target, info.getDuration());
-                actualParameters.finalTargetName = target.getAbsolutePath();
-                targetFiles.add(target);
-                updateLogs(MessageFormat.format(message("FilesGenerated"), target), true);
+                targetFileGenerated(target);
                 result = AppVariables.message("Successful");
             }
-            totalHandled++;
-            currentParameters.currentTotalHandled++;
         } catch (Exception e) {
             updateLogs(e.toString(), true);
             result = AppVariables.message("Failed");

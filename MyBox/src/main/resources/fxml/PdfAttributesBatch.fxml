@@ -29,28 +29,35 @@ License:    Apache License Version 2.0
             <children>
                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                     <children>
-                        <VBox fx:id="paraBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-                            <children>
-                        <SplitPane dividerPositions="0.6" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-                           <items>
+                  <TabPane fx:id="batchTabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+                     <tabs>
+                        <Tab fx:id="sourceTab" text="%SourceFiles">
+                           <content>
                                           <fx:include fx:id="table" source="PDFsTable.fxml" HBox.hgrow="ALWAYS" />
-                              <ScrollPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefViewportHeight="817.0" prefViewportWidth="767.0">
+                           </content>
+                        </Tab>
+                        <Tab fx:id="optionsTab" text="%Options">
+                           <content>
+                              <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="537.0" prefViewportWidth="418.0">
                                  <content>
-                                              <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                                  <children>
+                                    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
+                                       <padding>
+                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                       </padding>
+                                       <children>
                                                       <HBox alignment="CENTER_LEFT" spacing="5.0">
                                                           <children>
                                                               <CheckBox fx:id="titleCheck" mnemonicParsing="false" text="%Title" />
                                                               <TextField fx:id="titleInput" disable="true" HBox.hgrow="ALWAYS" />
                                                           </children>
                                                       </HBox>
-                                          <HBox alignment="CENTER_LEFT" layoutX="32.0" layoutY="32.0" spacing="5.0">
+                                          <HBox alignment="CENTER_LEFT" spacing="5.0">
                                              <children>
                                                               <CheckBox fx:id="subjectCheck" mnemonicParsing="false" text="%Subject" />
                                                               <TextField fx:id="subjectInput" disable="true" HBox.hgrow="ALWAYS" />
                                              </children>
                                           </HBox>
-                                          <HBox alignment="CENTER_LEFT" layoutX="32.0" layoutY="346.0" spacing="5.0">
+                                          <HBox alignment="CENTER_LEFT" spacing="5.0">
                                              <children>
                                                               <CheckBox fx:id="keywordsCheck" mnemonicParsing="false" text="%Keywords" />
                                                               <TextField fx:id="keywordInput" disable="true" maxHeight="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
@@ -62,13 +69,13 @@ License:    Apache License Version 2.0
                                                               <TextField fx:id="creatorInput" disable="true" HBox.hgrow="ALWAYS" />
                                                           </children>
                                                       </HBox>
-                                          <HBox alignment="CENTER_LEFT" layoutX="32.0" layoutY="346.0" spacing="5.0">
+                                          <HBox alignment="CENTER_LEFT" spacing="5.0">
                                              <children>
                                                               <CheckBox fx:id="productorCheck" mnemonicParsing="false" text="%PDFProducer" />
                                                               <TextField fx:id="producerInput" disable="true" HBox.hgrow="ALWAYS" />
                                              </children>
                                           </HBox>
-                                          <HBox alignment="CENTER_LEFT" layoutX="32.0" layoutY="351.0" spacing="5.0">
+                                          <HBox alignment="CENTER_LEFT" spacing="5.0">
                                              <children>
                                                               <CheckBox fx:id="authorCheck" mnemonicParsing="false" text="%Author" />
                                                               <TextField fx:id="authorInput" disable="true" HBox.hgrow="ALWAYS" />
@@ -105,40 +112,58 @@ License:    Apache License Version 2.0
                                              </children>
                                           </FlowPane>
                                                           <Label styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%PdfProtectionComments" wrapText="true" />
-                                                          <HBox alignment="CENTER_LEFT" spacing="5.0">
-                                                              <children>
-                                                                  <Label text="%UserPassword">
-                                                                      <HBox.margin>
-                                                                          <Insets />
-                                                                      </HBox.margin>
-                                                                  </Label>
-                                                                  <PasswordField fx:id="userPasswordInput" prefWidth="100.0" HBox.hgrow="ALWAYS" />
-                                                                  <Label layoutX="10.0" layoutY="15.0" text="%PasswordAgain" />
-                                                                  <PasswordField fx:id="userPasswordInput2" layoutX="175.0" layoutY="10.0" prefWidth="100.0" HBox.hgrow="ALWAYS" />
-                                                              </children>
-                                                          </HBox>
-                                          <HBox alignment="CENTER_LEFT" layoutX="32.0" layoutY="356.0" spacing="5.0">
+                                          <FlowPane hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
+                                             <children>
+                                                                  <Label text="%UserPassword" />
+                                                                  <PasswordField fx:id="userPasswordInput" prefWidth="200.0" />
+                                                                  <Label text="%PasswordAgain" />
+                                                                  <PasswordField fx:id="userPasswordInput2" prefWidth="200.0" />
+                                             </children>
+                                          </FlowPane>
+                                          <FlowPane hgap="5.0" vgap="5.0">
                                              <children>
                                                                   <Label text="%OwnerPassword" />
-                                                                  <PasswordField fx:id="ownerPasswordInput" prefWidth="100.0" HBox.hgrow="ALWAYS" />
+                                                                  <PasswordField fx:id="ownerPasswordInput" prefWidth="200.0" />
                                                                   <Label text="%PasswordAgain" />
-                                                                  <PasswordField fx:id="ownerPasswordInput2" prefWidth="100.0" />
+                                                                  <PasswordField fx:id="ownerPasswordInput2" prefWidth="200.0" />
                                              </children>
-                                          </HBox>
-                                                  </children>
-                                       <padding>
-                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                       </padding>
-                                              </VBox>
+                                          </FlowPane>
+                                       </children>
+                                    </VBox>
                                  </content>
                               </ScrollPane>
-                           </items>
-                        </SplitPane>
-                            </children>
-                     <VBox.margin>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                     </VBox.margin>
-                        </VBox>
+                           </content>
+                        </Tab>
+                        <Tab fx:id="logsTab" text="%Logs">
+                           <content>
+                              <VBox fx:id="logsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                 <children>
+                                    <TextArea fx:id="logsTextArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" VBox.vgrow="ALWAYS" />
+                                    <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="NEVER">
+                                       <children>
+                                          <Label text="%MaxLines" />
+                                          <TextField fx:id="maxLinesinput" prefWidth="80.0" text="5000" />
+                                          <CheckBox fx:id="verboseCheck" mnemonicParsing="false" text="%VerboseLogs" />
+                                          <Button fx:id="clearButton1" mnemonicParsing="false" onAction="#clearLogs">
+                                             <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../buttons/iconClear.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </Button>
+                                       </children>
+                                    </HBox>
+                                 </children>
+                                 <padding>
+                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                 </padding>
+                              </VBox>
+                           </content>
+                        </Tab>
+                     </tabs>
+                  </TabPane>
                     </children>
                 </VBox>
                 <fx:include fx:id="operationBar" source="Operation.fxml" />

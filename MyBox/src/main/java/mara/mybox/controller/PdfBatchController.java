@@ -153,8 +153,6 @@ public abstract class PdfBatchController extends BatchController<PdfInformation>
                         generated += handleCurrentPage();
 
                         updateFileProgress(currentParameters.currentPage - currentParameters.fromPage + 1, total);
-
-                        currentParameters.currentTotalHandled++;
                     }
                 }
                 postHandlePages();
@@ -179,8 +177,6 @@ public abstract class PdfBatchController extends BatchController<PdfInformation>
     }
 
     public int handleCurrentPage() {
-//        currentParameters.finalTargetName = target.getAbsolutePath();
-//        targetFiles.add(target);
         return 0;
     }
 

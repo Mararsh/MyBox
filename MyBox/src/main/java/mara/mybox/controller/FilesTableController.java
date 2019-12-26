@@ -3,8 +3,6 @@ package mara.mybox.controller;
 import java.io.File;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.fxml.FXML;
-import javafx.scene.layout.FlowPane;
 import mara.mybox.data.FileInformation;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.value.AppVariables;
@@ -21,9 +19,6 @@ import static mara.mybox.value.AppVariables.logger;
     T must be subClass of FileInformation
  */
 public class FilesTableController extends BatchTableController<FileInformation> {
-
-    @FXML
-    protected FlowPane selectPane;
 
     public FilesTableController() {
     }

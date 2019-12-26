@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
@@ -78,7 +77,6 @@ public class ImageManufacturePaneController extends ImageMaskController {
     protected float opacity;
     protected WebView webView;
     protected BufferedImage outlineSource;
-    protected SimpleBooleanProperty operating;
 
     @FXML
     protected CheckBox scopeSetCheck, scopeManageCheck, areaExcludedCheck, colorExcludedCheck,
@@ -119,10 +117,9 @@ public class ImageManufacturePaneController extends ImageMaskController {
     @Override
     public void initControls() {
         try {
-            operating = new SimpleBooleanProperty(false);
             imageView.toBack();
 
-            maskView.visibleProperty().bind(operating
+            maskView.visibleProperty().bind(scopeCommonBox.disabledProperty()
                     .or(scopeSetCheck.selectedProperty().and(typeGroup.selectedToggleProperty().isNotNull()))
             );
             opacityBox.visibleProperty().bind(scopeSetCheck.selectedProperty());
@@ -190,7 +187,7 @@ public class ImageManufacturePaneController extends ImageMaskController {
 
     public void init(File sourceFile, Image image, String title) {
         try {
-            clearOperating();
+            clearValues();
             super.init(sourceFile, image);
             scopeSetCheck.setSelected(false);
             baseTitle = title;
@@ -202,7 +199,7 @@ public class ImageManufacturePaneController extends ImageMaskController {
     public void updateImage(Image newImage) {
         try {
             super.init(sourceFile, newImage);
-            clearOperating();
+            clearValues();
 
         } catch (Exception e) {
             logger.debug(e.toString());
@@ -235,6 +232,9 @@ public class ImageManufacturePaneController extends ImageMaskController {
     }
 
     protected void checkViewScope() {
+        if (isSettingValues) {
+            return;
+        }
         if (scopeSetCheck.isSelected()) {
             if (!thisPane.getChildren().contains(scopePane)) {
                 thisPane.getChildren().add(0, scopePane);
@@ -1047,7 +1047,7 @@ public class ImageManufacturePaneController extends ImageMaskController {
             Color color = pixelReader.getColor(p.getX(), p.getY());
             colorPicked(color);
 
-        } else if (operating.get()) {
+        } else if (scopeCommonBox.isDisabled()) {
             super.paneClicked(event);
             parent.operationController.paneClicked(event);
 
@@ -1131,14 +1131,14 @@ public class ImageManufacturePaneController extends ImageMaskController {
 
     @FXML
     public void mousePressed(MouseEvent event) {
-        if (operating.get()) {
+        if (scopeCommonBox.isDisabled()) {
             parent.operationController.mousePressed(event);
         }
     }
 
     @FXML
     public void mouseDragged(MouseEvent event) {
-        if (operating.get()) {
+        if (scopeCommonBox.isDisabled()) {
             super.paneClicked(event);
             parent.operationController.mouseDragged(event);
         }
@@ -1146,7 +1146,7 @@ public class ImageManufacturePaneController extends ImageMaskController {
 
     @FXML
     public void mouseReleased(MouseEvent event) {
-        if (operating.get()) {
+        if (scopeCommonBox.isDisabled()) {
             parent.operationController.mouseReleased(event);
         }
     }
@@ -1865,28 +1865,31 @@ public class ImageManufacturePaneController extends ImageMaskController {
     /*
        Operate
      */
-    public void operatingNeedNotScope() {
-        if (scopeSetCheck.isSelected()) {
-            scopeSetCheck.setSelected(false);
-            scopePane.setDisable(true);
-        }
-        maskView.setOpacity(1.0f);
+    public void hideScopePane() {
+        scopeSetCheck.setSelected(false);
+        scopePane.setDisable(true);
         scopeCommonBox.setDisable(true);
-        operating.set(true);
+        clearScopeValue();
+    }
+
+    public void showScopePane() {
+        scopePane.setDisable(false);
+        scopeSetCheck.setSelected(false);
+        scopeCommonBox.setDisable(false);
+        clearScopeValue();
+    }
+
+    public void clearScopeValue() {
+        maskView.setOpacity(1.0f);
         scope = new ImageScope();
         scope.setScopeType(ImageScope.ScopeType.Operate);
     }
 
-    public void clearOperating() {
-        if (scopeSetCheck.isSelected()) {
-            typeGroup.selectToggle(null);
-            scopePane.setDisable(false);
-        }
+    public void clearValues() {
+        clearScopeValue();
+
         imageView.setRotate(0);
-        scopeCommonBox.setDisable(false);
         imageLabel.setText("");
-        operating.set(false);
-        scope = null;
         isPickingColor.unbind();
         isPickingColor.set(false);
 

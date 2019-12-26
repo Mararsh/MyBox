@@ -168,9 +168,11 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
         imageController.imageLabel.setText("");
 
         if (opGroup.getSelectedToggle() == null) {
-            imageController.clearOperating();
+            imageController.clearValues();
             return;
         }
+
+        imageController.clearValues();
 
         RadioButton selected = (RadioButton) opGroup.getSelectedToggle();
         if (message("Dragging").equals(selected.getText())) {
@@ -179,8 +181,6 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
             initDragging();
 
         } else {
-
-            imageController.clearOperating();
 
             if (message("AddMargins").equals(selected.getText())) {
                 opType = OperationType.AddMargins;
@@ -209,7 +209,6 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
     }
 
     private void initDragging() {
-        imageController.operatingNeedNotScope();
         imageController.maskRectangleData = new DoubleRectangle(0, 0,
                 imageView.getImage().getWidth() - 1,
                 imageView.getImage().getHeight() - 1);
