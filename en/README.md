@@ -659,7 +659,7 @@ Solved several bugs of Image Manufacture.
 
 2019-12-26 v5.95  Improve interfaces of batch operations with multiple tabs instead of filling one page with all of controls.      
 Solved problems:  Avoid 414 error for Weibo Snap Tool; Controls' diable property is messed in interface of Image Manufacture; Format does not work for Image Manufacture in batch.        
-Today honor Chairman Mao and his comrades who made Chinese people standing up.     
+Today honor Chairman Mao and his comrades who made Chinese people standing up.      
 [Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.95)       
 
 2019-12-21 v5.9  Web browser which supports multiple tabs. Its histories can be manages and SSL certifcates of websites can be installed online.      
