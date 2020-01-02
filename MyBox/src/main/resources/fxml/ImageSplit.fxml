@@ -6,6 +6,7 @@ License:    Apache License Version 2.0
             http://www.apache.org/licenses/LICENSE-2.0
 -->
 
+<?import javafx.scene.shape.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.web.*?>
@@ -164,6 +165,11 @@ License:    Apache License Version 2.0
                                     <content>
                                         <AnchorPane fx:id="maskPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#paneClicked" onMouseDragged="#showXY" onMouseMoved="#showXY" onMousePressed="#showXY" onMouseReleased="#showXY" VBox.vgrow="ALWAYS">
                                             <children>
+                                    <Rectangle fx:id="borderLine" arcHeight="5.0" arcWidth="5.0" disable="true" fill="#ffffff00" height="200.0" onMousePressed="#handlerPressed" onMouseReleased="#rectangleReleased" stroke="#cccccc" strokeType="OUTSIDE" width="200.0">
+                                       <cursor>
+                                          <Cursor fx:constant="NONE" />
+                                       </cursor>
+                                    </Rectangle>
                                                 <ImageView fx:id="imageView" cache="true" fitHeight="300.0" fitWidth="300.0" onMouseClicked="#imageClicked" pickOnBounds="true" preserveRatio="true">
                                                 </ImageView>
                                                 <Text strokeType="OUTSIDE" strokeWidth="0.0" x="200.0" y="200.0" fx:id="xyText" />

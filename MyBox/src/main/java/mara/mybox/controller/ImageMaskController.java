@@ -1027,6 +1027,7 @@ public class ImageMaskController extends ImageBaseController {
 
         double xRatio = imageView.getBoundsInParent().getWidth() / getImageWidth();
         double yRatio = imageView.getBoundsInParent().getHeight() / getImageHeight();
+        double drawStrokeWidth = strokeWidth * xRatio;
         if (size == 1) {
             polygonP1.setOpacity(1);
             DoublePoint p1 = maskLineData.get(0);
@@ -1046,10 +1047,10 @@ public class ImageMaskController extends ImageBaseController {
                     } else {
                         line.setStroke(strokeColor);
                     }
-                    line.setStrokeWidth(strokeWidth);
+                    line.setStrokeWidth(drawStrokeWidth);
                     line.getStrokeDashArray().clear();
                     if (dotted) {
-                        line.getStrokeDashArray().addAll(strokeWidth * 1d, strokeWidth * 3d);
+                        line.getStrokeDashArray().addAll(drawStrokeWidth * 1d, drawStrokeWidth * 3d);
                     }
                     line.setOpacity(opacity);
                     maskLineLines.add(line);
@@ -1084,6 +1085,7 @@ public class ImageMaskController extends ImageBaseController {
 
     }
 
+    // strokeWidth is value expected shown on image, so it needs apply ratio for view
     public boolean drawMaskPenLines(double strokeWidth, Color strokeColor, boolean dotted, float opacity) {
         for (List<Line> penline : maskPenLines) {
             maskPane.getChildren().removeAll(penline);
@@ -1096,6 +1098,7 @@ public class ImageMaskController extends ImageBaseController {
         }
         double xRatio = imageView.getBoundsInParent().getWidth() / getImageWidth();
         double yRatio = imageView.getBoundsInParent().getHeight() / getImageHeight();
+        double drawStrokeWidth = strokeWidth * xRatio;
         if (size == 1) {
             polygonP1.setOpacity(1);
             DoublePoint p1 = maskPenData.getPoint(0);
@@ -1118,10 +1121,10 @@ public class ImageMaskController extends ImageBaseController {
                         } else {
                             line.setStroke(strokeColor);
                         }
-                        line.setStrokeWidth(strokeWidth);
+                        line.setStrokeWidth(drawStrokeWidth);
                         line.getStrokeDashArray().clear();
                         if (dotted) {
-                            line.getStrokeDashArray().addAll(strokeWidth * 1d, strokeWidth * 3d);
+                            line.getStrokeDashArray().addAll(drawStrokeWidth * 1d, drawStrokeWidth * 3d);
                         }
                         line.setOpacity(opacity);
                         penLine.add(line);

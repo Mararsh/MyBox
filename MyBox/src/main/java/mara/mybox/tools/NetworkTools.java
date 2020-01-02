@@ -5,10 +5,12 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.URL;
 import java.net.URLConnection;
 import java.security.KeyStore;
 import java.security.MessageDigest;
@@ -465,7 +467,6 @@ public class NetworkTools {
             }
             MessageDigest md = MessageDigest.getInstance("SHA-384");
             for (X509Certificate cert : chain) {
-                logger.debug(cert);
                 md.update(cert.getEncoded());
                 keyStore.setCertificateEntry(alias, cert);
             }
@@ -591,6 +592,61 @@ public class NetworkTools {
             }
             return jdkSuppliedAddress;
         } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static boolean download(String address, File targetFile) {
+        try {
+            if (targetFile == null || address == null) {
+                return false;
+            }
+            File tmpFile = FileTools.getTempFile();
+            URL url = new URL(address);
+            HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+            SSLContext sc = SSLContext.getInstance("SSL");
+            sc.init(null, trustAllManager(), new SecureRandom());
+            conn.setSSLSocketFactory(sc.getSocketFactory());
+            conn.setHostnameVerifier(trustAllVerifier());
+            InputStream inStream = conn.getInputStream();
+            FileOutputStream fs = new FileOutputStream(tmpFile);
+            byte[] buf = new byte[1204];
+            int len;
+            while ((len = inStream.read(buf)) != -1) {
+                fs.write(buf, 0, len);
+            }
+            if (targetFile.exists()) {
+                targetFile.delete();
+            }
+            tmpFile.renameTo(targetFile);
+            return targetFile.exists();
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return false;
+        }
+    }
+
+    public static String urlFileName(URL url) {
+        try {
+            if (url == null || url.getFile() == null) {
+                return null;
+            }
+            String filename = url.getFile().substring(url.getFile().lastIndexOf('/'));
+            String validname = "";
+            for (int i = 0; i < filename.length(); i++) {
+                char c = filename.charAt(i);
+                if (c >= 'a' && c <= 'z'
+                        || c >= 'A' && c <= 'Z'
+                        || c >= '0' && c <= '9'
+                        || c == '_' || c == '-' || c == '.') {
+                    validname += c;
+                } else {
+                    validname += "-";
+                }
+            }
+            return validname;
+        } catch (Exception e) {
+            logger.error(e.toString());
             return null;
         }
     }

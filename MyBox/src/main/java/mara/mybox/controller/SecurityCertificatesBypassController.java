@@ -9,7 +9,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import mara.mybox.data.CertificateBypass;
 import mara.mybox.db.TableBrowserBypassSSL;
-import mara.mybox.fxml.TableTimeCell;
+import mara.mybox.fxml.TableDateCell;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
@@ -36,7 +36,7 @@ public class SecurityCertificatesBypassController extends TableController<Certif
 
             hostColumn.setCellValueFactory(new PropertyValueFactory<>("host"));
             timeColumn.setCellValueFactory(new PropertyValueFactory<>("createTime"));
-            timeColumn.setCellFactory(new TableTimeCell());
+            timeColumn.setCellFactory(new TableDateCell());
         } catch (Exception e) {
             logger.error(e.toString());
         }

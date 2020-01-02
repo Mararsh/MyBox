@@ -59,7 +59,7 @@ public class ImageManufactureOperationController extends ImageBaseController {
             isPickingColor.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                    if (imageController == null) {
+                    if (imageController == null || imageController.isPickingColor.isBound()) {
                         return;
                     }
                     imageController.isPickingColor.set(newVal);

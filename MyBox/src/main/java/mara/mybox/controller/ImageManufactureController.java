@@ -468,6 +468,10 @@ public class ImageManufactureController extends ImageViewerController {
     @FXML
     @Override
     public void copyAction() {
+        if (operationController.myPane == operationController.textPane
+                || operationController.myPane == operationController.richTextPane) {
+            return;
+        }
         copy(false);
     }
 
@@ -497,7 +501,8 @@ public class ImageManufactureController extends ImageViewerController {
                         } else {
                             return false;
                         }
-                        if (scope == null || scope.getScopeType() == ImageScope.ScopeType.All) {
+                        if (scope == null || scope.getScopeType() == ImageScope.ScopeType.All
+                                || scope.getScopeType() == ImageScope.ScopeType.Operate) {
                             newImage = srcImage;
                         } else {
                             switch (scope.getScopeType()) {
@@ -525,6 +530,7 @@ public class ImageManufactureController extends ImageViewerController {
                         }
                         return ImageClipboard.add(newImage) != null;
                     } catch (Exception e) {
+                        logger.debug(e.toString());
                         error = e.toString();
                         return false;
                     }
@@ -1646,6 +1652,11 @@ public class ImageManufactureController extends ImageViewerController {
     @Override
     public void pasteAction() {
         if (!editable.get()) {
+            return;
+        }
+        // Ctrl-c/v are necessary for text editing
+        if (operationController.myPane == operationController.textPane
+                || operationController.myPane == operationController.richTextPane) {
             return;
         }
         if (operationController.myPane != operationController.clipboardPane) {

@@ -14,6 +14,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Modality;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.fxml.FxmlControl;
@@ -54,6 +55,8 @@ public abstract class ImageBaseController extends BaseController {
     protected ScrollPane scrollPane;
     @FXML
     protected ImageView imageView;
+    @FXML
+    protected Rectangle borderLine;
     @FXML
     protected Label sampledTips;
     @FXML
@@ -181,6 +184,12 @@ public abstract class ImageBaseController extends BaseController {
         }
         FxmlControl.moveXCenter(scrollPane, imageView);
         scrollPane.setVvalue(scrollPane.getVmin());
+        if (borderLine != null) {
+            borderLine.setLayoutX(imageView.getLayoutX() - 1);
+            borderLine.setLayoutY(imageView.getLayoutY() - 1);
+            borderLine.setWidth(imageView.getBoundsInParent().getWidth() + 2);
+            borderLine.setHeight(imageView.getBoundsInParent().getHeight() + 2);
+        }
     }
 
     public double getImageWidth() {

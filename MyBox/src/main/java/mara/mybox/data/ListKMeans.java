@@ -39,8 +39,9 @@ public class ListKMeans<T> {
                 centers.addAll(data);
                 return;
             }
+            Random random = new Random();
             while (centers.size() < k) {
-                int index = new Random().nextInt(data.size());
+                int index = random.nextInt(data.size());
                 T d = data.get(index);
                 if (!centers.contains(d)) {
                     centers.add(d);

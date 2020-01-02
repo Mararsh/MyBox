@@ -14,7 +14,7 @@ import javafx.scene.input.MouseEvent;
 import mara.mybox.data.FileInformation;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.TableFileSizeCell;
-import mara.mybox.fxml.TableTimeCell;
+import mara.mybox.fxml.TableDateCell;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
@@ -73,10 +73,10 @@ public class FilesFindController extends FilesBatchController {
             sizeColumn.setCellFactory(new TableFileSizeCell());
 
             modifyTimeColumn.setCellValueFactory(new PropertyValueFactory<>("modifyTime"));
-            modifyTimeColumn.setCellFactory(new TableTimeCell());
+            modifyTimeColumn.setCellFactory(new TableDateCell());
 
             createTimeColumn.setCellValueFactory(new PropertyValueFactory<>("createTime"));
-            createTimeColumn.setCellFactory(new TableTimeCell());
+            createTimeColumn.setCellFactory(new TableDateCell());
 
             filesView.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override

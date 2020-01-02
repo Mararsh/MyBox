@@ -64,8 +64,6 @@ public class MainApp extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         try {
-
-            tmp();
             FXMLLoader fxmlLoader = new FXMLLoader(
                     FxmlStage.class.getResource(CommonValues.MyBoxLoadingFxml));
             Pane pane = fxmlLoader.load();
@@ -90,6 +88,7 @@ public class MainApp extends Application {
                         if (!initPaths(stage)) {
                             return null;
                         }
+//                        tmp();
 
                         Platform.runLater(new Runnable() {
                             @Override
@@ -216,11 +215,33 @@ public class MainApp extends Application {
                 }
             }
 
+            AppVariables.MyBoxLanguagesPath = new File(AppVariables.MyboxDataPath + File.separator + "mybox_languages");
+            if (!AppVariables.MyBoxLanguagesPath.exists()) {
+                if (!AppVariables.MyBoxLanguagesPath.mkdirs()) {
+                    FxmlStage.alertError(stage,
+                            MessageFormat.format(AppVariables.message(lang, "UserPathFail"),
+                                    AppVariables.MyBoxLanguagesPath));
+                    return false;
+                }
+            }
+
+            AppVariables.MyBoxDownloadsPath = new File(AppVariables.MyboxDataPath + File.separator + "downloads");
+            if (!AppVariables.MyBoxDownloadsPath.exists()) {
+                if (!AppVariables.MyBoxDownloadsPath.mkdirs()) {
+                    FxmlStage.alertError(stage,
+                            MessageFormat.format(AppVariables.message(lang, "UserPathFail"),
+                                    AppVariables.MyBoxDownloadsPath));
+                    return false;
+                }
+            }
+
             AppVariables.MyBoxDerbyPath = new File(AppVariables.MyboxDataPath + File.separator + "mybox_derby");
             AppVariables.MyBoxReservePaths = new ArrayList<File>() {
                 {
                     add(AppVariables.MyBoxTempPath);
                     add(AppVariables.MyBoxDerbyPath);
+                    add(AppVariables.MyBoxLanguagesPath);
+                    add(AppVariables.MyBoxDownloadsPath);
                 }
             };
             AppVariables.AlarmClocksFile = AppVariables.MyboxDataPath + File.separator + ".alarmClocks";
@@ -270,7 +291,7 @@ public class MainApp extends Application {
                 }
             }
 
-            String oldPath = ConfigTools.readConfigValue("MyBoxOldDataPath");
+            String oldPath = ConfigTools.readValue("MyBoxOldDataPath");
             if (oldPath != null) {
                 if (oldPath.equals(ConfigTools.defaultDataPath())) {
                     FileTools.deleteDirExcept(new File(oldPath), ConfigTools.defaultConfigFile());
@@ -300,7 +321,7 @@ public class MainApp extends Application {
 
     public void tmp() {
         // Uncomment this line to generate Icons automatically in different color styles
-//        makeIcons();
+        //makeIcons();
 //        testSSL();
 
     }

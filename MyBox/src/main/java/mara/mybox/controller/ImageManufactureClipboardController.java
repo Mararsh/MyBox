@@ -453,13 +453,13 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                 @Override
                 protected boolean handle() {
                     List<Image> examples = Arrays.asList(
-                            new Image("img/About.png"), new Image("img/buttefly1.png"), new Image("img/MyBox.png"),
+                            new Image("img/ww1.png"), new Image("img/ww2.png"), new Image("img/ww5.png"),
+                            new Image("img/ww3.png"), new Image("img/ww4.png"), new Image("img/ww6.png"),
+                            new Image("img/ww7.png"), new Image("img/ww8.png"), new Image("img/ww9.png"),
+                            new Image("img/About.png"), new Image("img/MyBox.png"), new Image("img/DataTools.png"),
                             new Image("img/RecentAccess.png"), new Image("img/FileTools.png"), new Image("img/ImageTools.png"),
                             new Image("img/PdfTools.png"), new Image("img/MediaTools.png"), new Image("img/NetworkTools.png"),
-                            new Image("img/Settings.png"), new Image("img/DataTools.png"),
-                            new Image("img/bee1.png"), new Image("img/flower1.png"), new Image("img/flower2.png"),
-                            new Image("img/flower3.png"), new Image("img/insect1.png"), new Image("img/insect2.png"),
-                            new Image("img/p1.png"), new Image("img/p2.png"), new Image("img/p3.png")
+                            new Image("img/Settings.png"), new Image("img/zz1.png"), new Image("img/jade.png")
                     );
                     clips = new ArrayList<>();
                     for (int i = examples.size() - 1; i >= 0; i--) {
@@ -591,6 +591,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                         imageController.drawMaskRectangleLineAsData();
                         imageController.scope.setRectangle(imageController.maskRectangleData.cloneValues());
                         imageController.maskView.setImage(blended);
+                        imageController.maskView.setOpacity(1);
                         imageController.maskView.setLayoutX(imageController.imageView.getLayoutX());
                         imageController.maskView.setLayoutY(imageController.imageView.getLayoutY());
                         imageController.maskView.setFitWidth(imageController.imageView.getFitWidth());
@@ -622,11 +623,13 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
     @FXML
     @Override
     public void copyAction() {
+        logger.debug("here");
         // This responses to shortcut. Must empty to avoid handle twice
     }
 
     @FXML
     public void copyAction(ActionEvent event) {
+        logger.debug("here");
         parent.copy(false);  // This response to the button
     }
 

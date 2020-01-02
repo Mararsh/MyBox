@@ -40,7 +40,7 @@ import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.TableFileSizeCell;
 import mara.mybox.fxml.TableNumberCell;
-import mara.mybox.fxml.TableTimeCell;
+import mara.mybox.fxml.TableDateCell;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
@@ -215,11 +215,11 @@ public abstract class BatchTableController<P> extends BaseController {
 
             if (modifyTimeColumn != null) {
                 modifyTimeColumn.setCellValueFactory(new PropertyValueFactory<>("modifyTime"));
-                modifyTimeColumn.setCellFactory(new TableTimeCell());
+                modifyTimeColumn.setCellFactory(new TableDateCell());
             }
             if (createTimeColumn != null) {
                 createTimeColumn.setCellValueFactory(new PropertyValueFactory<>("createTime"));
-                createTimeColumn.setCellFactory(new TableTimeCell());
+                createTimeColumn.setCellFactory(new TableDateCell());
             }
 
         } catch (Exception e) {

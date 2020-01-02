@@ -20,6 +20,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
@@ -75,6 +76,14 @@ public class FxmlControl {
 
     public static void miao5() {
         playClip("/sound/guaiMiao5.mp3", "guaiMiao5.mp3");
+    }
+
+    public static void BenWu() {
+        playClip("/sound/BenWu.mp3", "BenWu.mp3");
+    }
+
+    public static void GuaiAO() {
+        playClip("/sound/GuaiAO.mp3", "GuaiAO.mp3");
     }
 
     public static Node findNode(Pane pane, String nodeId) {
@@ -221,6 +230,19 @@ public class FxmlControl {
             }
         }
         return false;
+    }
+
+    public static void setTooltip(final Node node, Node tip) {
+        if (node instanceof Control) {
+            removeTooltip((Control) node);
+        }
+        Tooltip tooltip = new Tooltip();
+        tooltip.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+        tooltip.setGraphic(tip);
+        tooltip.setShowDelay(Duration.millis(10));
+        tooltip.setShowDuration(Duration.millis(360000));
+        tooltip.setHideDelay(Duration.millis(10));
+        Tooltip.install(node, tooltip);
     }
 
     public static void setTooltip(final Node node, String tips) {
@@ -481,14 +503,14 @@ public class FxmlControl {
         setEditorStyle(box, null);
     }
 
-    public static double getX(Control control) {
-        return control.getScene().getWindow().getX() + control.getScene().getX()
-                + control.localToScene(0, 0).getX();
+    public static double getX(Node node) {
+        return node.getScene().getWindow().getX() + node.getScene().getX()
+                + node.localToScene(0, 0).getX();
     }
 
-    public static double getY(Control control) {
-        return control.getScene().getWindow().getY() + control.getScene().getY()
-                + control.localToScene(0, 0).getY();
+    public static double getY(Node node) {
+        return node.getScene().getWindow().getY() + node.getScene().getY()
+                + node.localToScene(0, 0).getY();
     }
 
     public static double getWidth(Control control) {

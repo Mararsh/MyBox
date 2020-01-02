@@ -5,7 +5,9 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import mara.mybox.value.AppVariables;
@@ -19,6 +21,9 @@ import static mara.mybox.value.AppVariables.logger;
  */
 public class ConfigTools {
 
+    /*
+        MyBox config
+     */
     public static String defaultDataPath() {
         return defaultDataPathFile().getAbsolutePath();
     }
@@ -40,24 +45,70 @@ public class ConfigTools {
         return configFile;
     }
 
-    public static Map<String, String> readConfigValues() {
+    public static Map<String, String> readValues() {
+        return ConfigTools.readValues(AppVariables.MyboxConfigFile);
+    }
+
+    public static String readValue(String key) {
+        return ConfigTools.readValue(AppVariables.MyboxConfigFile, key);
+    }
+
+    public static int readInt(String key, int defaultValue) {
         try {
-            Map<String, String> values = new HashMap<>();
-            try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(AppVariables.MyboxConfigFile))) {
+            String v = ConfigTools.readValue(key);
+            return Integer.parseInt(v);
+        } catch (Exception e) {
+            return defaultValue;
+        }
+    }
+
+    public static boolean writeConfigValue(String key, String value) {
+        try {
+            if (!AppVariables.MyboxConfigFile.exists()) {
+                if (!AppVariables.MyboxConfigFile.createNewFile()) {
+                    return false;
+                }
+            }
+            return writeValue(AppVariables.MyboxConfigFile, key, value);
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return false;
+        }
+    }
+
+    public static List<String> languages() {
+        List<String> languages = new ArrayList();
+        try {
+            for (File file : AppVariables.MyBoxLanguagesPath.listFiles()) {
+                if (file.isFile()) {
+                    languages.add(file.getName());
+                }
+            }
+        } catch (Exception e) {
+        }
+        return languages;
+    }
+
+    /*
+        General config
+     */
+    public static Map<String, String> readValues(File file) {
+        Map<String, String> values = new HashMap<>();
+        try {
+            try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
                 Properties conf = new Properties();
                 conf.load(in);
                 for (String key : conf.stringPropertyNames()) {
                     values.put(key, conf.getProperty(key));
                 }
             }
-            return values;
         } catch (Exception e) {
             logger.error(e.toString());
-            return null;
         }
+        return values;
     }
 
-    public static String readConfigValue(File file, String key) {
+    public static String readValue(File file, String key) {
         try {
             if (!file.exists() || !file.isFile()) {
                 return null;
@@ -72,19 +123,6 @@ public class ConfigTools {
         } catch (Exception e) {
             logger.error(e.toString());
             return null;
-        }
-    }
-
-    public static String readConfigValue(String key) {
-        return readConfigValue(AppVariables.MyboxConfigFile, key);
-    }
-
-    public static int readConfigInt(String key, int defaultValue) {
-        try {
-            String v = readConfigValue(key);
-            return Integer.parseInt(v);
-        } catch (Exception e) {
-            return defaultValue;
         }
     }
 
@@ -109,17 +147,44 @@ public class ConfigTools {
         }
     }
 
-    public static boolean writeConfigValue(String key, String value) {
+    public static boolean writeValue(File file, String key, String value) {
         try {
-            if (!AppVariables.MyboxConfigFile.exists()) {
-                if (!AppVariables.MyboxConfigFile.createNewFile()) {
-                    return false;
-                }
+            Properties conf = new Properties();
+            try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
+                conf.load(in);
             }
-            return writeConfigValue(AppVariables.MyboxConfigFile, key, value);
+            try ( BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file))) {
+                if (value == null) {
+                    conf.remove(key);
+                } else {
+                    conf.setProperty(key, value);
+                }
+                conf.store(out, "Update " + key);
+            }
+            return true;
         } catch (Exception e) {
             logger.error(e.toString());
             return false;
         }
     }
+
+    public static boolean writeValues(File file, Map<String, String> values) {
+        try {
+            if (file == null || values == null) {
+                return false;
+            }
+            Properties conf = new Properties();
+            try ( BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file))) {
+                for (String key : values.keySet()) {
+                    conf.setProperty(key, values.get(key));
+                }
+                conf.store(out, "Update ");
+            }
+            return true;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return false;
+        }
+    }
+
 }

@@ -8,7 +8,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import mara.mybox.data.BrowserHistory;
 import mara.mybox.db.TableBrowserHistory;
 import mara.mybox.fxml.TableImageFileCell;
-import mara.mybox.fxml.TableTimeCell;
+import mara.mybox.fxml.TableDateCell;
 import static mara.mybox.value.AppVariables.logger;
 
 /**
@@ -39,7 +39,7 @@ public class WebBrowserHistoryController extends TableController<BrowserHistory>
             titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
             addressColumn.setCellValueFactory(new PropertyValueFactory<>("address"));
             timeColumn.setCellValueFactory(new PropertyValueFactory<>("visitTime"));
-            timeColumn.setCellFactory(new TableTimeCell());
+            timeColumn.setCellFactory(new TableDateCell());
 
         } catch (Exception e) {
             logger.error(e.toString());

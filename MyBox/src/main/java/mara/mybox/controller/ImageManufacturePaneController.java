@@ -579,12 +579,13 @@ public class ImageManufacturePaneController extends ImageMaskController {
     public void initOutlineBox() {
         try {
             List<Image> prePixList = Arrays.asList(
-                    new Image("img/About.png"), new Image("img/buttefly1.png"), new Image("img/MyBox.png"),
+                    new Image("img/ww1.png"), new Image("img/jade.png"),
+                    new Image("img/ww3.png"), new Image("img/ww4.png"), new Image("img/ww6.png"),
+                    new Image("img/ww7.png"), new Image("img/ww8.png"), new Image("img/ww9.png"),
+                    new Image("img/About.png"), new Image("img/MyBox.png"), new Image("img/DataTools.png"),
                     new Image("img/RecentAccess.png"), new Image("img/FileTools.png"), new Image("img/ImageTools.png"),
                     new Image("img/PdfTools.png"), new Image("img/MediaTools.png"), new Image("img/NetworkTools.png"),
-                    new Image("img/bee1.png"), new Image("img/flower1.png"), new Image("img/flower2.png"),
-                    new Image("img/flower3.png"), new Image("img/insect1.png"), new Image("img/insect2.png"),
-                    new Image("img/p1.png"), new Image("img/p2.png"), new Image("img/p3.png")
+                    new Image("img/zz1.png")
             );
             pixBox.getItems().addAll(prePixList);
             pixBox.setButtonCell(new ListImageCell());
@@ -898,11 +899,18 @@ public class ImageManufacturePaneController extends ImageMaskController {
         if (isPickingColor.get()) {
             imageLabel.setStyle(darkRedText);
             imageLabel.setText(message("PickingColorsNow"));
-            maskView.setOpacity(opacity - 0.15);
+            if (!scopeCommonBox.isDisabled()) {
+                maskView.setOpacity(opacity - 0.15);
+            }
         } else {
             imageLabel.setStyle(blueText);
             imageLabel.setText(tips);
-            maskView.setOpacity(opacity);
+            if (scopeCommonBox.isDisabled()) {
+                maskView.setOpacity(0);
+            } else {
+                maskView.setOpacity(opacity);
+            }
+
         }
     }
 
@@ -918,26 +926,34 @@ public class ImageManufacturePaneController extends ImageMaskController {
         if (isSettingValues) {
             return;
         }
-        int index = scopePointsList.getSelectionModel().getSelectedIndex();
-        if (index >= 0) {
-            isSettingValues = true;
-            scope.getPoints().remove(index);
-            scopePointsList.getItems().remove(index);
-            int size = scopePointsList.getItems().size();
-            if (size > 0) {
-                if (index > size - 1) {
-                    scopePointsList.getSelectionModel().select(index - 1);
-                } else {
-                    scopePointsList.getSelectionModel().select(index);
+        try {
+            int index = scopePointsList.getSelectionModel().getSelectedIndex();
+            if (index >= 0) {
+                isSettingValues = true;
+                if (index < scope.getPoints().size()) {
+                    scope.getPoints().remove(index);
+                }
+                if (index < scopePointsList.getItems().size()) {
+                    scopePointsList.getItems().remove(index);
+                }
+                int size = scopePointsList.getItems().size();
+                if (size > 0) {
+                    if (index > size - 1) {
+                        scopePointsList.getSelectionModel().select(index - 1);
+                    } else {
+                        scopePointsList.getSelectionModel().select(index);
+                    }
+                }
+                isSettingValues = false;
+                indicateScope();
+                if (scope.getScopeType() == ScopeType.Polygon
+                        || scope.getScopeType() == ScopeType.PolygonColor) {
+                    maskPolygonData.remove(index);
+                    drawMaskPolygonLine();
                 }
             }
-            isSettingValues = false;
-            indicateScope();
-            if (scope.getScopeType() == ScopeType.Polygon
-                    || scope.getScopeType() == ScopeType.PolygonColor) {
-                maskPolygonData.remove(index);
-                drawMaskPolygonLine();
-            }
+        } catch (Exception e) {
+            logger.debug(e.toString());
         }
     }
 
@@ -964,11 +980,12 @@ public class ImageManufacturePaneController extends ImageMaskController {
         if (isSettingValues) {
             return;
         }
+        Color color = scopeColorsList.getSelectionModel().getSelectedItem();
         int index = scopeColorsList.getSelectionModel().getSelectedIndex();
-        if (index >= 0) {
+        if (color != null) {
             isSettingValues = true;
-            scope.getColors().remove(index);
-            scopeColorsList.getItems().remove(index);
+            scope.getColors().remove(ImageColor.converColor(color));
+            scopeColorsList.getItems().remove(color);
             int size = scopeColorsList.getItems().size();
             if (size > 0) {
                 if (index > size - 1) {
@@ -1869,6 +1886,7 @@ public class ImageManufacturePaneController extends ImageMaskController {
         scopeSetCheck.setSelected(false);
         scopePane.setDisable(true);
         scopeCommonBox.setDisable(true);
+        maskView.setOpacity(0);
         clearScopeValue();
     }
 
@@ -1876,11 +1894,11 @@ public class ImageManufacturePaneController extends ImageMaskController {
         scopePane.setDisable(false);
         scopeSetCheck.setSelected(false);
         scopeCommonBox.setDisable(false);
+        maskView.setOpacity(opacity);
         clearScopeValue();
     }
 
     public void clearScopeValue() {
-        maskView.setOpacity(1.0f);
         scope = new ImageScope();
         scope.setScopeType(ImageScope.ScopeType.Operate);
     }
@@ -1894,7 +1912,11 @@ public class ImageManufacturePaneController extends ImageMaskController {
         isPickingColor.set(false);
 
         maskView.setImage(null);
-        maskView.setOpacity(opacity);
+        if (scopeCommonBox.isDisabled()) {
+            maskView.setOpacity(0);
+        } else {
+            maskView.setOpacity(opacity);
+        }
 
         setMaskRectangleLineVisible(false);
         maskRectangleLine.setArcWidth(0);

@@ -58,6 +58,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
+import mara.mybox.data.BaseTask;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.data.VisitHistory.FileType;
 import mara.mybox.db.DerbyBase;
@@ -365,6 +366,9 @@ public class BaseController implements Initializable {
                 topCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        if (!topCheck.isVisible()) {
+                            return;
+                        }
                         if (getMyStage() != null) {
                             myStage.setAlwaysOnTop(topCheck.isSelected());
                         }
@@ -518,7 +522,9 @@ public class BaseController implements Initializable {
                         getMyStage().toFront();
                         if (topCheck != null) {
                             topCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "Top", true));
-                            myStage.setAlwaysOnTop(topCheck.isSelected());
+                            if (topCheck.isVisible()) {
+                                myStage.setAlwaysOnTop(topCheck.isSelected());
+                            }
                         }
                         timer = null;
                     }
@@ -2623,55 +2629,14 @@ public class BaseController implements Initializable {
     /*
         Task
      */
-    public class SingletonTask<Void> extends Task<Void> {
-
-        protected boolean ok;
-        protected String error;
-        protected long startTime, cost;
+    public class SingletonTask<Void> extends BaseTask<Void> {
 
         @Override
-        protected Void call() {
-            try {
-                startTime = new Date().getTime();
-                if (!handle() || isCancelled()) {
-                    return null;
-                }
-                ok = true;
-            } catch (Exception e) {
-                error = e.toString();
-                logger.debug(error);
-            }
-            return null;
-        }
-
-        protected boolean handle() {
-            return true;
-        }
-
-        @Override
-        protected void succeeded() {
-            super.succeeded();
-            taskQuit();  // Must run this here, to release task in case that later actions will start new task
-            cost = new Date().getTime() - startTime;
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    if (ok) {
-                        whenSucceeded();
-
-                    } else {
-                        whenFailed();
-                    }
-                    finalAction();
-                }
-            });
-
-        }
-
         protected void whenSucceeded() {
             popSuccessul();
         }
 
+        @Override
         protected void whenFailed() {
             if (error != null) {
                 popError(AppVariables.message(error));
@@ -2681,25 +2646,9 @@ public class BaseController implements Initializable {
         }
 
         @Override
-        protected void failed() {
-            super.failed();
-            taskQuit();
-            finalAction();
-        }
-
-        @Override
-        protected void cancelled() {
-            super.cancelled();
-            taskQuit();
-            finalAction();
-        }
-
         protected void taskQuit() {
+            endTime = new Date().getTime();
             task = null;    // Notice: This must be done in each task!!
-        }
-
-        protected void finalAction() {
-
         }
 
     };

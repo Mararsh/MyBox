@@ -184,7 +184,7 @@ public class DerbyBase {
     }
 
     public static String readMode() {
-        String value = ConfigTools.readConfigValue("DerbyMode");
+        String value = ConfigTools.readValue("DerbyMode");
         String modeValue;
         if (value != null) {
             modeValue = "client".equals(value.toLowerCase()) ? "client" : "embedded";

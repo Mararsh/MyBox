@@ -258,6 +258,9 @@ public class FilesRenameController extends FilesBatchController {
     }
 
     protected String renameFile(File file) {
+        if (file == null || !file.exists() || !file.isFile()) {
+            return null;
+        }
         String newName = makeNewFilename(file);
         try {
             if (newName != null) {
@@ -350,7 +353,7 @@ public class FilesRenameController extends FilesBatchController {
 
     protected String makeNewFilename(File file) {
         try {
-            if (file == null || !file.isFile()) {
+            if (file == null || !file.exists() || !file.isFile()) {
                 return null;
             }
             String filePath = file.getParent() + File.separator;

@@ -159,6 +159,7 @@ public class ImageClipboard {
         try {
             return add(SwingFXUtils.fromFXImage(image, null), putSystemClipboard);
         } catch (Exception e) {
+            logger.debug(e.toString());
             return null;
         }
     }

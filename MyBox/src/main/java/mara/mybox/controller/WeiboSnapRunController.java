@@ -1323,15 +1323,17 @@ public class WeiboSnapRunController extends BaseController {
             protected Void call() {
                 try {
                     List<File> files = new ArrayList<>();
+                    long totalSize = 0;
                     for (int i = 1; i <= pageCount; i++) {
                         String name = path.getAbsolutePath() + File.separator + accountName + "-"
                                 + month + "-第" + i + "页.pdf";
                         File file = new File(name);
                         if (file.exists()) {
                             files.add(file);
+                            totalSize += file.length();
                         }
                     }
-                    if (files.isEmpty()) {
+                    if (files.isEmpty() || totalSize > 500 * 1024 * 1024) {
                         pdfs.remove(month);
                         return null;
                     }

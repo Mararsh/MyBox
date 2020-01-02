@@ -230,7 +230,7 @@ public class ImageAnalyseController extends ImageViewerController {
 
 
     /*
-        Image VIew
+        Image View
      */
     @Override
     public void afterImageLoaded() {

@@ -46,7 +46,7 @@ public class MyBox {
                 if (arg.startsWith("config=")) {
                     String config = arg.substring("config=".length());
                     File configFile = new File(config);
-                    String dataPath = ConfigTools.readConfigValue(configFile, "MyBoxDataPath");
+                    String dataPath = ConfigTools.readValue(configFile, "MyBoxDataPath");
                     if (dataPath != null) {
                         try {
                             File dataPathFile = new File(dataPath);
@@ -68,7 +68,7 @@ public class MyBox {
             }
         }
         AppVariables.MyboxConfigFile = ConfigTools.defaultConfigFile();
-        String dataPath = ConfigTools.readConfigValue("MyBoxDataPath");
+        String dataPath = ConfigTools.readValue("MyBoxDataPath");
         if (dataPath != null) {
             try {
                 File dataPathFile = new File(dataPath);
@@ -111,7 +111,7 @@ public class MyBox {
     }
 
     public static boolean setJVMmemory() {
-        String JVMmemory = ConfigTools.readConfigValue("JVMmemory");
+        String JVMmemory = ConfigTools.readValue("JVMmemory");
         if (JVMmemory == null) {
             return false;
         }
@@ -136,7 +136,7 @@ public class MyBox {
 
             // https://stackoverflow.com/questions/47613006/how-to-disable-scaling-the-ui-on-windows-for-java-9-applications?r=SearchResults
 //            System.setProperty("sun.java2d.uiScale", "1.0");
-            System.setProperty("prism.allowhidpi", "true".equals(ConfigTools.readConfigValue("DisableHidpi")) ? "false" : "true");
+            System.setProperty("prism.allowhidpi", "true".equals(ConfigTools.readValue("DisableHidpi")) ? "false" : "true");
 
             // https://blog.csdn.net/iteye_3493/article/details/82060349
             // https://stackoverflow.com/questions/1004327/getting-rid-of-derby-log/1933310#1933310
@@ -190,7 +190,7 @@ public class MyBox {
             List<String> commands = new ArrayList<>();
             commands.add(System.getProperty("java.home") + File.separator + "bin" + File.separator + "java");
 
-            String JVMmemory = ConfigTools.readConfigValue("JVMmemory");
+            String JVMmemory = ConfigTools.readValue("JVMmemory");
             if (JVMmemory != null) {
                 commands.add(JVMmemory);
             }
@@ -232,7 +232,7 @@ public class MyBox {
             commands.add("-cp");
             commands.add(ManagementFactory.getRuntimeMXBean().getClassPath());
 
-            String JVMmemory = ConfigTools.readConfigValue("JVMmemory");
+            String JVMmemory = ConfigTools.readValue("JVMmemory");
             if (JVMmemory != null) {
                 commands.add(JVMmemory);
             }

@@ -273,6 +273,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
             setBox.getChildren().clear();
             imageController.initMaskControls(false);
             maskView.setImage(null);
+            maskView.setOpacity(1);
             imageController.maskPane.getChildren().removeAll(imageController.maskLineLines);
             imageController.maskLineLines.clear();
             imageController.maskLineData.clear();
@@ -283,6 +284,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
             imageController.maskPenData.clear();
 
             if (typeGroup.getSelectedToggle() == null) {
+                opType = null;
                 imageController.imageLabel.setText("");
                 commentLabel.setText("");
                 return;
@@ -747,7 +749,9 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
     @FXML
     @Override
     public void mousePressed(MouseEvent event) {
-
+        if (null == opType || imageView == null || imageView.getImage() == null) {
+            return;
+        }
         DoublePoint p = imageController.getImageXY(event, imageView);
         imageController.showXY(event, p);
 
@@ -782,6 +786,9 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
     @FXML
     @Override
     public void mouseDragged(MouseEvent event) {
+        if (null == opType || imageView == null || imageView.getImage() == null) {
+            return;
+        }
         DoublePoint p = imageController.getImageXY(event, imageView);
         imageController.showXY(event, p);
 
@@ -816,6 +823,9 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
     @FXML
     @Override
     public void mouseReleased(MouseEvent event) {
+        if (null == opType || imageView == null || imageView.getImage() == null) {
+            return;
+        }
         imageController.scrollPane.setPannable(true);
         DoublePoint p = imageController.getImageXY(event, imageView);
         imageController.showXY(event, p);
@@ -848,6 +858,9 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
 
     @FXML
     public void withdrawAction() {
+        if (null == opType || imageView == null || imageView.getImage() == null) {
+            return;
+        }
         switch (opType) {
             case Polygon:
                 imageController.maskPolygonData.removeLast();
@@ -868,6 +881,9 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
     @FXML
     @Override
     public void clearAction() {
+        if (null == opType || imageView == null || imageView.getImage() == null) {
+            return;
+        }
         switch (opType) {
             case Polyline:
                 imageController.maskPane.getChildren().removeAll(imageController.maskLineLines);

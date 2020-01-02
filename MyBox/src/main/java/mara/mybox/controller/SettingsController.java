@@ -497,7 +497,7 @@ public class SettingsController extends BaseController {
                 }
             });
             isSettingValues = true;
-            AppVariables.disableHiDPI = "true".equals(ConfigTools.readConfigValue("DisableHidpi"));
+            AppVariables.disableHiDPI = "true".equals(ConfigTools.readValue("DisableHidpi"));
             hidpiCheck.setSelected(AppVariables.disableHiDPI);
             isSettingValues = false;
 

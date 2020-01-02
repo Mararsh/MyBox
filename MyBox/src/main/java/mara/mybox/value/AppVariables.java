@@ -15,13 +15,11 @@ import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
 import mara.mybox.controller.AlarmClockController;
+import mara.mybox.data.CustomizedLanguage;
 import mara.mybox.db.TableSystemConf;
 import mara.mybox.db.TableUserConf;
 import mara.mybox.fxml.ControlStyle;
 import static mara.mybox.value.CommonValues.BundleEnUS;
-import static mara.mybox.value.CommonValues.BundleEsES;
-import static mara.mybox.value.CommonValues.BundleFrFR;
-import static mara.mybox.value.CommonValues.BundleRuRU;
 import static mara.mybox.value.CommonValues.BundleZhCN;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,7 +36,7 @@ public class AppVariables {
     public static String[] appArgs;
     public static File MyboxConfigFile;
     public static String MyboxDataPath, AlarmClocksFile;
-    public static File MyBoxTempPath, MyBoxDerbyPath;
+    public static File MyBoxTempPath, MyBoxDerbyPath, MyBoxLanguagesPath, MyBoxDownloadsPath;
     public static List<File> MyBoxReservePaths;
 
     public static Logger logger = LogManager.getLogger(AppVariables.class);
@@ -110,9 +108,17 @@ public class AppVariables {
                 AppVariables.currentBundle = CommonValues.BundleZhCN;
                 break;
             case "en":
-            default:
                 AppVariables.currentBundle = CommonValues.BundleEnUS;
                 break;
+            default: {
+                try {
+                    AppVariables.currentBundle = new CustomizedLanguage(lang);
+                } catch (Exception e) {
+                }
+                if (AppVariables.currentBundle == null) {
+                    AppVariables.currentBundle = CommonValues.BundleEnUS;
+                }
+            }
         }
         return AppVariables.currentBundle;
     }
@@ -139,18 +145,6 @@ public class AppVariables {
                 case "en":
                 case "en_us":
                     value = BundleEnUS.getString(thestr);
-                    break;
-                case "fr":
-                case "fr_fr":
-                    value = BundleFrFR.getString(thestr);
-                    break;
-                case "es":
-                case "es_es":
-                    value = BundleEsES.getString(thestr);
-                    break;
-                case "ru":
-                case "ru_ru":
-                    value = BundleRuRU.getString(thestr);
                     break;
             }
 //            logger.debug(language + " " + thestr + " " + value);

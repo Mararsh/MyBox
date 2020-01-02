@@ -19,6 +19,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.RadioMenuItem;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
@@ -27,6 +28,7 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlStage;
+import mara.mybox.tools.ConfigTools;
 import mara.mybox.tools.FloatTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
@@ -52,6 +54,8 @@ public class MainMenuController extends BaseController {
     @FXML
     private Pane mainMenuPane;
     @FXML
+    private ToggleGroup langGroup;
+    @FXML
     private RadioMenuItem chineseMenuItem, englishMenuItem,
             font12MenuItem, font15MenuItem, font17MenuItem,
             normalIconMenuItem, bigIconMenuItem, smallIconMenuItem,
@@ -60,9 +64,9 @@ public class MainMenuController extends BaseController {
     private CheckMenuItem monitorMemroyCheck, monitorCpuCheck,
             newWindowCheck, restoreStagesSizeCheck, popRecentCheck, controlTextCheck;
     @FXML
-    private Menu settingsMenu, recentMenu, imageMenu, pdfMenu;
+    private Menu settingsMenu, recentMenu;
     @FXML
-    private MenuItem imageOcrMenu, imageOcrBatchMenu, pdfOcrBatchMenu;
+    private MenuItem manageLanguagesMenuItem;
 
     @Override
     public void initializeNext() {
@@ -83,6 +87,14 @@ public class MainMenuController extends BaseController {
                 }
             });
 
+//            menuBar.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+//                @Override
+//                public void handle(MouseEvent e) {
+//                    logger.debug("mouse:" + e.getButton() + "  " + e.getEventType());
+//
+////                    e.consume();
+//                }
+//            });
 //            String os = System.getProperty("os.name").toLowerCase();
 //            if (!os.contains("windows")) {
 //                imageMenu.getItems().removeAll(imageOcrMenu, imageOcrBatchMenu);
@@ -103,18 +115,51 @@ public class MainMenuController extends BaseController {
         newWindowCheck.setSelected(AppVariables.openStageInNewWindow);
         restoreStagesSizeCheck.setSelected(AppVariables.restoreStagesSize);
         popRecentCheck.setSelected(AppVariables.fileRecentNumber > 0);
-        checkMemroyMonitor();
-        checkCpuMonitor();
         checkControlColor();
 
     }
 
     protected void checkLanguage() {
+        List<MenuItem> items = new ArrayList();
+        items.addAll(settingsMenu.getItems());
+        int pos1 = items.indexOf(englishMenuItem);
+        int pos2 = items.indexOf(manageLanguagesMenuItem);
+        for (int i = pos2 - 1; i > pos1; i--) {
+            items.remove(i);
+        }
+        List<String> languages = ConfigTools.languages();
+        if (languages != null && !languages.isEmpty()) {
+            String lang = AppVariables.getLanguage();
+            for (int i = 0; i < languages.size(); i++) {
+                final String name = languages.get(i);
+                RadioMenuItem langItem = new RadioMenuItem(name);
+                langItem.setToggleGroup(langGroup);
+                langItem.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        if (isSettingValues) {
+                            return;
+                        }
+                        AppVariables.setLanguage(name);
+                        refresh();
+                    }
+                });
+                items.add(pos1 + 1 + i, langItem);
+                if (name.equals(lang)) {
+                    isSettingValues = true;
+                    langItem.setSelected(true);
+                    isSettingValues = false;
+                }
+            }
+        }
+        settingsMenu.getItems().clear();
+        settingsMenu.getItems().addAll(items);
         if (AppVariables.currentBundle == CommonValues.BundleZhCN) {
             chineseMenuItem.setSelected(true);
-        } else {
+        } else if (AppVariables.currentBundle == CommonValues.BundleEnUS) {
             englishMenuItem.setSelected(true);
         }
+
     }
 
     protected void checkFontSize() {
@@ -179,6 +224,11 @@ public class MainMenuController extends BaseController {
     @FXML
     protected void showHome(ActionEvent event) {
         openStage(CommonValues.MyboxFxml);
+    }
+
+    @FXML
+    protected void download(ActionEvent event) {
+        loadScene(CommonValues.DownloadFxml);
     }
 
     @FXML
@@ -417,6 +467,11 @@ public class MainMenuController extends BaseController {
     protected void setChinese(ActionEvent event) {
         AppVariables.setLanguage("zh");
         refresh();
+    }
+
+    @FXML
+    protected void openManageLanguages(ActionEvent event) {
+        loadScene(CommonValues.MyBoxLanguagesFxml);
     }
 
     @FXML
@@ -1115,6 +1170,11 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
+    private void openGameElimniation(ActionEvent event) {
+        loadScene(CommonValues.GameElimniationFxml);
+    }
+
+    @FXML
     private void showAbout(ActionEvent event) {
         openStage(CommonValues.AboutFxml);
     }
@@ -1137,14 +1197,15 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
-    public void developerGuide(ActionEvent event) {
-        try {
-            String link = "https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-DevGuide-2.0"
-                    + "-" + AppVariables.getLanguage() + ".pdf";
-            browseURI(new URI(link));
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
+    public void documents(ActionEvent event) {
+        openStage(CommonValues.DocumentsFxml);
+//        try {
+//            String link = "https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-DevGuide-2.0"
+//                    + "-" + AppVariables.getLanguage() + ".pdf";
+//            browseURI(new URI(link));
+//        } catch (Exception e) {
+//            logger.error(e.toString());
+//        }
 
     }
 

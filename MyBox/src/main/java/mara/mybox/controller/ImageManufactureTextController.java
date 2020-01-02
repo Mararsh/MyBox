@@ -104,11 +104,14 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
                 @Override
                 public void changed(ObservableValue<? extends Boolean> observable,
                         Boolean oldValue, Boolean newValue) {
-                    if (!newValue) {
+                    String v = textInput.getText();
+                    if (!newValue && !v.isBlank()) {
+                        AppVariables.setUserConfigValue("ImageTextValue", v);
                         write(true);
                     }
                 }
             });
+            textInput.setText(AppVariables.getUserConfigValue("ImageTextValue", "MyBox"));
 
             String c = AppVariables.getUserConfigValue("ImageTextBackground", Color.ORANGE.toString());
             colorRect.setFill(Color.web(c));
@@ -278,7 +281,7 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
         if (paletteButton.equals(control)) {
             colorRect.setFill(color);
             FxmlControl.setTooltip(colorRect, FxmlColor.colorNameDisplay(color));
-            AppVariables.setUserConfigValue("ImagTextBackground", color.toString());
+            AppVariables.setUserConfigValue("ImageTextBackground", color.toString());
             write(true);
         }
         return true;
@@ -315,7 +318,8 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
         if (isSettingValues || imageView.getImage() == null
                 || x < 0 || y < 0
                 || x >= imageView.getImage().getWidth()
-                || y >= imageView.getImage().getHeight()) {
+                || y >= imageView.getImage().getHeight()
+                || textInput.getText().isBlank()) {
             return;
         }
         synchronized (this) {
@@ -352,6 +356,7 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
                 protected void whenSucceeded() {
                     if (editing) {
                         maskView.setImage(newImage);
+                        maskView.setOpacity(1);
                         maskView.setFitWidth(imageView.getFitWidth());
                         maskView.setFitHeight(imageView.getFitHeight());
                         maskView.setLayoutX(imageView.getLayoutX());

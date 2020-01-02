@@ -13,7 +13,7 @@ import mara.mybox.tools.DateTools;
  * @Description
  * @License Apache License Version 2.0
  */
-public class TableTimeCell<T, Long> extends TableCell<T, Long>
+public class TableDateCell<T, Long> extends TableCell<T, Long>
         implements Callback<TableColumn<T, Long>, TableCell<T, Long>> {
 
     @Override

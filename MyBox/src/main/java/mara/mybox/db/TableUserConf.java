@@ -41,7 +41,7 @@ public class TableUserConf extends DerbyBase {
                 return false;
             }
             statement.executeUpdate(Create_Table_Statement);
-            Map<String, String> values = ConfigTools.readConfigValues();
+            Map<String, String> values = ConfigTools.readValues();
             if (values != null && !values.isEmpty()) {
                 for (String key : values.keySet()) {
                     String value = values.get(key);

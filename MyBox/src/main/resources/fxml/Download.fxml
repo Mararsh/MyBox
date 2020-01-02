@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.scene.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.web.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.effect.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<BorderPane fx:id="thisPane" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.DownloadController">
+    <top>
+        <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
+    </top>
+    <center>
+        <VBox fx:id="contentBox" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" BorderPane.alignment="CENTER">
+            <BorderPane.margin>
+                <Insets />
+            </BorderPane.margin>
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            </padding>
+            <children>
+            <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="20.0" maxWidth="1.7976931348623157E308" spacing="5.0">
+               <children>
+                  <Button fx:id="openFolderButton" mnemonicParsing="false" onAction="#openAction">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/iconOpen.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                  <Button fx:id="infoButton" disable="true" mnemonicParsing="false" onAction="#infoAction">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/iconInfo.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Button fx:id="cancelButton" disable="true" layoutX="1252.0" layoutY="10.0" mnemonicParsing="false" onAction="#cancelAction">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/iconCancel.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Button fx:id="downloadButton" disable="true" mnemonicParsing="false" onAction="#downloadAction">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/iconDownload.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Button fx:id="deleteButton" disable="true" layoutX="1252.0" layoutY="10.0" mnemonicParsing="false" onAction="#deleteAction">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/iconDelete.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Button fx:id="plusButton" mnemonicParsing="false" onAction="#plusAction">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/iconPlus.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+               </children>
+            </HBox>
+                <TableView fx:id="tableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="addressColumn" prefWidth="400.0" text="%Address" />
+                  <TableColumn fx:id="statusColumn" prefWidth="150.0" text="%Status" />
+                        <TableColumn fx:id="progressColumn" prefWidth="150.0" text="%Progess" />
+                  <TableColumn fx:id="currentColumn" prefWidth="150.0" text="%CurrentSize" />
+                  <TableColumn fx:id="totalColumn" prefWidth="150.0" text="%TotalSize" />
+                  <TableColumn fx:id="speedColumn" prefWidth="150.0" text="%Speed" />
+                  <TableColumn fx:id="costColumn" prefWidth="150.0" text="%Cost" />
+                        <TableColumn fx:id="startColumn" prefWidth="150.0" text="%StartTime" />
+                  <TableColumn fx:id="endColumn" prefWidth="150.0" text="%EndTime" />
+                    </columns>
+                </TableView>
+                <Label fx:id="tableLabel" maxWidth="1.7976931348623157E308" text="%DownloadComments" wrapText="true" VBox.vgrow="NEVER" />
+            </children>
+        </VBox>
+    </center>
+    <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+    </padding>
+</BorderPane>

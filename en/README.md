@@ -11,9 +11,9 @@ Self-contain packages include all files and need not java env and installation. 
  
 | Platform | Link | Size | Launcher |    
 | --- | --- | ---  | ---  |    
-| win | [MyBox-5.95-win.zip](https://github.com/Mararsh/MyBox/releases/download/v5.95/MyBox-5.95-win-exe.zip)  | 241MB | MyBox.exe |       
-| linux | [MyBox-5.95-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v5.95/MyBox-5.95-linux.tar.gz)  | 200MB  | bin/MyBox  |     
-| mac | [MyBox-5.95-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v5.95/MyBox-5.95-mac.dmg)  | 202MB  |  MyBox-5.95.app   |   
+| win | [MyBox-6.0-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.0/MyBox-6.0-win-exe.zip)  | 242MB | MyBox.exe |       
+| linux | [MyBox-6.0-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.0/MyBox-6.0-linux.tar.gz)  | 201MB  | bin/MyBox  |     
+| mac | [MyBox-6.0-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.0/MyBox-6.0-mac.dmg)  | 203MB  |  MyBox-6.0.app   |   
 
 User can double click the launcher to start MyBox or run it by command line. The default "Open Method" of image/text/PDF files can be associated to MyBox and a file can be opened directly by MyBox by double clicking the file's name.
 (File with name including non-ascii can not be opened by double clicking currently)
@@ -23,16 +23,16 @@ When JRE or JDK 13 or higher(`Oracle jdk` or `open jdk`) is installed, jar can r
   
 | Platform | Link | Size | Requirements |   
 | --- | --- | ---  | ---  |    
-| win | [MyBox-5.95-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.95/MyBox-5.95-win-jar.zip)  | 128MB | Java 13.0.1 or higher |    
-| linux | [MyBox-5.95-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.95/MyBox-5.95-linux-jar.zip)  | 134MB  | Java 13.0.1 or higher |    
-| mac | [MyBox-5.95-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.95/MyBox-5.95-mac-jar.zip)  |  131MB  | Java 13.0.1 or higher |    
+| win | [MyBox-6.0-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.0/MyBox-6.0-win-jar.zip)  | 129MB | Java 13.0.1 or higher |    
+| linux | [MyBox-6.0-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.0/MyBox-6.0-linux-jar.zip)  | 135MB  | Java 13.0.1 or higher |    
+| mac | [MyBox-6.0-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.0/MyBox-6.0-mac-jar.zip)  |  132MB  | Java 13.0.1 or higher |    
  
     
 Run following command to launch this program with Jar package: 
-<PRE><CODE>     java   -jar   MyBox-5.95.jar</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-6.0.jar</CODE></PRE>
 	
 A file path can follow the command as argument to be opened directly by MyBox. Example, following command will open the image:    
-<PRE><CODE>     java   -jar   MyBox-5.95.jar   /tmp/a1.jpg</CODE></PRE>   
+<PRE><CODE>     java   -jar   MyBox-6.0.jar   /tmp/a1.jpg</CODE></PRE>   
 
 ### Other addresses to download   
 Download from cloud storage: https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F   
@@ -71,7 +71,7 @@ sourceforge: https://sourceforge.net/projects/mara-mybox/files/
 | User Guide - Network Tools | 5.0 | 2019-4-16 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-NetworkTools-en.pdf) |
 | Development Guide | 2.0 | 2019-11-18 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-DevGuide-2.0-en.pdf) |
 | Shortcuts | 5.9 | 2019-12-21 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts_en.html) |
-| Development Logs | 5.95 | 2019-12-26 | [html](#devLog) |
+| Development Logs | 6.0 | 2020-1-2 | [html](#devLog) |
 
 # Implementation
 
@@ -79,8 +79,8 @@ MyBox is based on following open sources softwares:
 
 | Software | Role | Link |    
 | --- | --- | --- |    
-| JDK | Java | http://jdk.java.net/13/    
-|   |   | https://www.oracle.com/technetwork/java/javase/downloads/index.html /    
+| JDK | Java | http://jdk.java.net/13/   |      
+|   |   | https://www.oracle.com/technetwork/java/javase/downloads/index.html  |        
 |  JavaFx | GUI |  https://gluonhq.com/products/javafx/ |     
 |   |   |  https://docs.oracle.com/javafx/2/  |     
 |   |   |  https://www.oracle.com/technetwork/java/javafxscenebuilder-1x-archive-2199384.html  |     
@@ -110,7 +110,7 @@ MyBox is based on following open sources softwares:
 
  
 # Current Version
-Current version is 5.95. Its features are mentioned below in summary:   
+Current version is 6.0. Its features are mentioned below in summary:   
  
 * [Cross platforms](#Cross-platform)
 * [Internationalized](#Internationalized)
@@ -145,6 +145,7 @@ Current version is 5.95. Its features are mentioned below in summary:
     - [Play Videos/Audios](#mediaPlayer)
     - [Manage Playlists](#mediaList)
     - [Warp ffmpeg functions](#ffmpeg)
+    - [Game-Elimination](#gameElimination)
     - [Others](#mediaOthers)
 * [Network Tools](#netTools)
     - [Edit Html](#htmlEditor)
@@ -152,6 +153,7 @@ Current version is 5.95. Its features are mentioned below in summary:
     - [Security Certificates](#securityCerificates)
     - [Edit Markdown](#markdownEditor)
     - [Conversion between html and Markdown](#htmlMarkdownConversion)
+    - [Manage Downloads](#manageDownloads)
     - [Snap WeiBo](#weiboSnap)
 * [Settings](#settings)
 * [Window](#windows)
@@ -167,9 +169,14 @@ Previous versions are based on Java 8.
 
 Recognizing texts in image/PDF(OCR) works only on Windows currently.    
 
-## Internationalized <a id="Internationalized"></a>       
-All codes of MyBox are internationalized. User can switch language in time.
-Currently MyBox supports Chinese and English. To support a new language is just to edit a new resource file.
+## Internationalized <a id="Internationalized"></a> 
+1. All codes of MyBox are internationalized.
+2. User can switch language in time.
+3. Currently MyBox supports Chinese and English. 
+4. To support a new language is just to edit a new resource file.   
+5. Support adding new languages online. Table is provided with English as comparison. New langauges take effects at once.    
+6. Translated files can be shared with others: Put the files under "mybox_languages" of data path and MyBox is aware of them immediately.    
+       
 
 ## PDF Tools <a id="PDFTools"></a> 
 1. View PDF in html mode. Browse and edit html page by page. Bookmarks and thumbnails.
@@ -522,6 +529,13 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 9. Read information of ffmpeg, like version, supported formats/codecs/filters, and query with customized parameters.    
 Notice: This set of functions is based on ffmpeg, and user need download ffmpeg by yourself. (Suggest to use static version)
 
+### Game-Elimination<a id="gameElimination" />
+1. Options about chesses images, number, size, effects like dropshadow or arc.     
+2. select sound: praise from GuaiGuai, praise from BenBen, 3-conection from Ben and others from Guai, or mute.     
+3. Select counted chesses: Make scores only when eliminate selected types of chesses.       
+4. Customize rulers that how to give score when eliminate different type of connection.       
+
+
 ### Others<a id="mediaOthers" />
 1. Monitor images in system clipboard and have user save/view them. Lossless or compression type can be selected.
 2. Alarm clocks, including options of time and music. Support rings of “Meow”, wav files, and mp3. Can run in background.
@@ -559,6 +573,14 @@ Notice: This set of functions is based on ffmpeg, and user need download ffmpeg 
 1. Conversion from html to Markdown in batch.    
 2. Conversion from Markdown to html in batch.   
 
+
+### Manage Downloads<a id="manageDownloads" />
+1. Manage downloads tasks in table and update progress when receive data.   
+2. Add, delete, start, cancel download tasks.  
+3. Resume broken downloads.   
+4. Read header of network address.     
+Notice: Some downloads look standstill at 0% but they are actually dragging data hardly from net, and finally they are 100% suddenly. Do not know why...       
+
 ### Weibo Snaping Tool <a id="weiboSnap"></a>     
 1. Save Weibo pages of any months of any Weibo accounts automatically.
 2. Set the months range.
@@ -594,8 +616,7 @@ Notice: This set of functions is based on ffmpeg, and user need download ffmpeg 
 ## Helps <a id="helps"></a>     
 1. MyBox shortcuts
 2. MyBox Attributes
-3. User Guides(Addresses)
-4. Development Guide(Addresses)
+3. Documents：Help user start download tasks. If MyBox documents are put into data path, MyBox will find them automatically.     
 
 
 ## Configuration <a id="Config"></a>     
@@ -626,11 +647,20 @@ MyBox supports enable/disable dpi-aware on line, which will cause MyBox reboots 
 Developers need notice: JavaFx screen is not same as physical screen and has different dpi definition which considers X/Y scale ratio too.    
 
 
-# Development Logs <a id="devLog"></a>     
+# Development Logs <a id="devLog"></a>       
+2020-1-2 v6.0  Pop large image in Images Browser.    
+Support translating MyBox online. Provide table with English as comparison. New language file can be shared with others. Put resource files under data path and MyBox will 
+be aware of new languages.     
+Game-Elimination.  Options about chesses images, number, size, effects. Sound choices.  Counted chesses: Make scores only when eliminate selected types of chesses.  
+Customize rulers that how to give score when eliminate different type of connection.      
+Manage download tasks. Resume break points.  Read header of address.     
+Solved several bugs of Image Manufacture.        
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.0)     
+
 2019-12-26 v5.95  Improve interfaces of batch operations with multiple tabs instead of filling one page with all of controls.      
 Solved problems:  Avoid 414 error for Weibo Snap Tool; Controls' diable property is messed in interface of Image Manufacture; Format does not work for Image Manufacture in batch.        
-[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.95)      
-Today honor Chairman Mao and his comrades who made Chinese people standing up.
+Today honor Chairman Mao and his comrades who made Chinese people standing up.     
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.95)       
 
 2019-12-21 v5.9  Web browser which supports multiple tabs. Its histories can be manages and SSL certifcates of websites can be installed online.      
 Read certificates in any keystore/truststore and export as html file.  Add certificates from CA files or by download directly from websites.     

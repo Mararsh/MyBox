@@ -312,6 +312,7 @@ public class ImageViewerController extends ImageMaskController {
         controlLeftPane();
         myStage.sizeToScene();
         myStage.centerOnScreen();
+        topCheck.setVisible(true);
     }
 
     @Override

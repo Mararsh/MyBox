@@ -11,9 +11,9 @@
   
 | 平台 | 链接 | 大小 | 启动文件 |    
 | --- | --- | --- |  --- |   
-| win | [MyBox-5.95-win.zip](https://github.com/Mararsh/MyBox/releases/download/v5.95/MyBox-5.95-win-exe.zip)  | 241MB | MyBox.exe |       
-| linux | [MyBox-5.95-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v5.95/MyBox-5.95-linux.tar.gz)  | 200MB  | bin/MyBox  |     
-| mac | [MyBox-5.95-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v5.95/MyBox-5.95-mac.dmg)  | 202MB  |  MyBox-5.95.app   |   
+| win | [MyBox-6.0-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.0/MyBox-6.0-win-exe.zip)  | 242MB | MyBox.exe |       
+| linux | [MyBox-6.0-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.0/MyBox-6.0-linux.tar.gz)  | 201MB  | bin/MyBox  |     
+| mac | [MyBox-6.0-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.0/MyBox-6.0-mac.dmg)  | 203MB  |  MyBox-6.0.app   |   
 
 双击或者用命令行执行包内的启动文件即可运行程序。可以把图片/文本/PDF文件的打开方式关联到MyBox，这样双击文件名就直接是用MyBox打开了。
 （目前无法双击打开路径包含汉字的文件） 
@@ -23,14 +23,14 @@
  
 | 平台 | 链接 | 大小 | 运行需要 |    
 | --- | --- | --- |  --- |   
-| win | [MyBox-5.95-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.95/MyBox-5.95-win-jar.zip)  | 128MB | Java 13.0.1或更高版本 |    
-| linux | [MyBox-5.95-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.95/MyBox-5.95-linux-jar.zip)  | 134MB  | Java 13.0.1或更高版本 |    
-| mac | [MyBox-5.95-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.95/MyBox-5.95-mac-jar.zip)  |  131MB  | Java 13.0.1或更高版本 |    
+| win | [MyBox-6.0-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.0/MyBox-6.0-win-jar.zip)  | 129MB | Java 13.0.1或更高版本 |    
+| linux | [MyBox-6.0-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.0/MyBox-6.0-linux-jar.zip)  | 135MB  | Java 13.0.1或更高版本 |    
+| mac | [MyBox-6.0-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.0/MyBox-6.0-mac-jar.zip)  |  132MB  | Java 13.0.1或更高版本 |    
     
 执行以下命令来启动程序：
-<PRE><CODE>     java   -jar   MyBox-5.95.jar</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-6.0.jar</CODE></PRE>
 程序可以跟一个文件名作为参数、以用MyBox直接打开此文件。例如以下命令是打开此图片：
-<PRE><CODE>     java   -jar   MyBox-5.95.jar   /tmp/a1.jpg</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-6.0.jar   /tmp/a1.jpg</CODE></PRE>
 
 ### 其它下载地址  
 从云盘下载：  https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F     
@@ -69,7 +69,7 @@ sourceforge:  https://sourceforge.net/projects/mara-mybox/files/
 | 用户手册-网络工具 | 5.0 |  2019-4-16 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-NetworkTools-zh.pdf) |
 | 开发指南 | 2.0 |  2019-11-18 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-DevGuide-2.0-zh.pdf) |
 | 快捷键 | 5.9 |  2019-12-21 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts.html) |
-| 开发日志 | 5.95 |  2019-12-26 | [html](#devLog) |
+| 开发日志 | 6.0 |  2020-1-2 | [html](#devLog) |
 
 
 # 实现基础
@@ -77,7 +77,7 @@ MyBox基于以下开源软件：
 
 | 软件 | 角色 | 链接 |  
 | --- | --- | --- | 
-| JDK | Java语言 | http://jdk.java.net/13/    
+| JDK | Java语言 | http://jdk.java.net/13/   |
 |   |   | https://www.oracle.com/technetwork/java/javase/downloads/index.html  |   
 | JavaFx | 图形化界面 | https://gluonhq.com/products/javafx/  |     
 |   |   |  https://docs.oracle.com/javafx/2/  |     
@@ -104,11 +104,11 @@ MyBox基于以下开源软件：
 | jaffree | 封装ffmpeg | https://github.com/kokorin/Jaffree |   
 | ffmpeg| 媒体转换/生成 | http://ffmpeg.org |   
 | image4j | 读ico格式 | https://github.com/imcdonagh/image4j |   
-| AutoCommitCell | 提交单元的修改 | https://stackoverflow.com/questions/24694616 （Ogmios） |   
+| AutoCommitCell | 提交修改 | https://stackoverflow.com/questions/24694616 （Ogmios） |   
 
 
 # 当前版本
-当前是版本5.95，已实现的特点概述如下:
+当前是版本6.0，已实现的特点概述如下:
 * [跨平台](#cross-platform)
 * [国际化](#international)
 * [PDF工具](#pdfTools)
@@ -142,6 +142,7 @@ MyBox基于以下开源软件：
     - [播放视频/音频](#mediaPlayer)
     - [管理播放列表](#mediaList)
     - [封装ffmpeg的功能](#ffmpeg)
+    - [游戏-消消乐](#gameElimination)
     - [其它](#mediaOthers)
 * [网络工具](#netTools)
     - [编辑网页](#htmlEditor)
@@ -149,6 +150,7 @@ MyBox基于以下开源软件：
     - [管理安全证书](#securityCerificates)
     - [编辑Markdown](#markdownEditor)
     - [html与Markdown互换](#htmlMarkdownConversion)
+    - [管理下载](#manageDownloads)
     - [微博截图工具](#weiboSnap)
 * [设置](#settings)
 * [窗口](#windows)
@@ -162,7 +164,12 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 图像识别文字目前只支持windows平台。
 
 ## 国际化<a id="international" />
-所有代码均国际化。可实时切换语言。目前支持中文、英文。扩展语言只需编辑资源文件。
+1. 所有代码均国际化。
+2. 可实时切换语言。
+3. 目前支持中文、英文。
+4. 扩展语言只需编辑资源文件。
+5. 支持在线添加语言，提供表格，对照英语翻译。新语言可实时生效。
+6. 新语言的资源文件可共享给别人：把新语言文件复制到数据目录的子目录“mybox_languages”下，则MyBox可即时感知到新语言。
 
 ## PDF工具<a id="pdfTools" />
 1. 以网页模式查看PDF文件，可逐页查看和编辑页面和html。标签和缩略图。
@@ -200,14 +207,16 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 4. 删除、重命名、恢复。
 5. 可选显示：坐标、横标尺、纵标尺、数据。
 6. 查看图像的元数据和属性，可解码图像中嵌入的ICC特性文件。
-7. 同目录下图像文件导览，多种文件排序方式。
+7. 同目录下图像文件导览，多种文件排序方式。  
+
 ### 浏览图像<a id="browserImage" />
 1. 同屏显示多图，分别或者同步旋转和缩放。
 2. 旋转可选保存。
 3. 格栅模式：可选文件数、列数、加载宽度
 4. 文件列表模式
 5. 缩略图列表模式
-6. 重命名、删除
+6. 重命名、删除   
+
 ### 图像处理<a id="imageManufacture" />
 1. 粘贴板。
 	-  数据来源：对图像整体或选择的部分做“复制”（CTRL+c）、剪切下来的图片部分、系统粘贴板、系统中的图片文件、示例图片。
@@ -486,6 +495,13 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 9. 读取ffmpeg的信息：版本、格式、支持的编码解码器、支持的滤镜，以及自定义查询参数。    
 注：这一组功能依赖于ffmpeg，需要用户自己下载ffmpeg（建议使用静态版本）。
 
+### 游戏-消消乐<a id="gameElimination" />
+1. 可选棋子的图片、个数、尺寸、显示效果（是否阴影/圆角）。   
+2. 可选音效：来自乖乖的赞许、来自笨笨的赞许、3连由笨笨赞许其它由乖乖赞许、静音。   
+3. 可选计分的棋子：只有消除选择的棋子的连线，才能得分。   
+4. 可设置得分规则：定义不同的连接个数对应的分数值。   
+
+
 ### 其它<a id="mediaOthers" />
 1. 记录系统粘贴板中的图像：保存或查看粘贴板中的图像，可选无损图像或压缩类型。
 2. 闹钟，包括时间选项和音乐选项，支持铃音“喵”、wav铃音、和MP3铃音，可以在后端运行。
@@ -522,6 +538,13 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 1. html到Markdown的批量转换。
 2. Markdown到html的批量转换。
 
+### 管理下载<a id="manageDownloads" />
+1. 以表格管理下载任务，并按收到的数据实时更新表格。   
+2. 可添加、删除、启动、取消下载任务。  
+3. 断点续传：退出MyBox再入后，下载任务可以从上次中断处继续。   
+4. 读取下载地址的头数据。    
+注：一些下载看起来停滞在0%，但是实际上它们正在勤奋地从网络拖数据，最终它们突然变为100%。不知原因。。。    
+
 ### 微博截图工具<a id="weiboSnap" />
 1. 自动保存任意微博账户的任意月份的微博内容
 2. 设置起止月份。
@@ -556,8 +579,8 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 ## 帮助<a id="helps" />
 1. MyBox快捷键列表
 2. MyBox的属性
-3. 用户手册（网址）
-4. 开发指南（网址）
+3. 文档：帮助用户启动下载任务。若数据目录下已有MyBox文档，则MyBox会自动发现它们。
+
 
 ## 配置<a id="Config" />
 
@@ -589,10 +612,17 @@ Java 9以后已支持HiDPI，控件和字体都会适应当前清晰度配置。
 
 
 # 开发日志<a id="devLog" />  
+2020-1-2 版本6.0  图像浏览界面可以方便地弹出大图。    
+支持在线翻译MyBox：在表格中对照英语翻译。资源文件可分享给别人：把新资源文件复制到数据目录下，则MyBox即时感知到新语言。   
+游戏消消乐： 可选棋子的图片、个数、尺寸、是否阴影/圆角；音效：来自乖乖或笨笨的赞许；可选计分棋子；可设置不同连接个数对应的分数值。   
+下载管理：添加、删除、启动、取消下载任务；断点续传；读取下载地址的头数据。
+解决问题：修正多个关于图像处理的问题。        
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.0)      
+
 2019-12-26 版本5.95  改进批处理界面：使用多页签而不是把控件挤在一个页面上。      
 解决问题：避免微博截图工具414错误；图像处理的界面控件显示逻辑混乱；图像批处理的保存格式不生效。        
-[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.95)      
 今天缅怀毛主席和他的战友， 他们使中国人民站起来了。
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av5.95)      
 
 2019-12-21 版本5.9 支持多页签的浏览器。 可管理浏览历史、在线安装网站SSL证书。   
 读取任意密钥库文件中的证书内容，可导出为html文件。在密钥库中添加证书文件的内容、或下载安装网址的证书。   

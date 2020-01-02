@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -112,7 +113,7 @@ public class MyBoxController extends BaseController {
             vbox.getChildren().add(view);
 
             text = new Text();
-            text.setStyle("-fx-font-size: 1.5em;");
+            text.setStyle("-fx-font-size: 1.2em;");
 
             vbox.getChildren().add(text);
             vbox.setPadding(new Insets(15, 15, 15, 15));
@@ -120,7 +121,6 @@ public class MyBoxController extends BaseController {
         } catch (Exception e) {
             logger.debug(e.toString());
         }
-
     }
 
     private void initAlocks() {
@@ -290,7 +290,7 @@ public class MyBoxController extends BaseController {
         showMenu(pdfBox, event);
 
         view.setImage(new Image("img/PdfTools.png"));
-        text.setText(message("PDFToolsImageTips"));
+        text.setText(message("PdfToolsImageTips"));
         text.setWrappingWidth(500);
         locateImage(pdfBox, true);
 
@@ -713,7 +713,7 @@ public class MyBoxController extends BaseController {
     }
 
     @FXML
-    void showNetworkMenu(MouseEvent event) {
+    private void showNetworkMenu(MouseEvent event) {
         hideMenu(event);
 
         MenuItem htmlEditor = new MenuItem(AppVariables.message("HtmlEditor"));
@@ -767,6 +767,14 @@ public class MyBoxController extends BaseController {
             }
         });
 
+        MenuItem DownloadManage = new MenuItem(AppVariables.message("DownloadManage"));
+        DownloadManage.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.DownloadFxml);
+            }
+        });
+
         MenuItem SecurityCertificates = new MenuItem(AppVariables.message("SecurityCertificates"));
         SecurityCertificates.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -780,6 +788,7 @@ public class MyBoxController extends BaseController {
         popMenu.getItems().addAll(
                 htmlEditor, webBrowserHtml, SecurityCertificates, new SeparatorMenuItem(),
                 markdownEditor, htmlToMarkdown, markdownToHtml, new SeparatorMenuItem(),
+                DownloadManage, new SeparatorMenuItem(),
                 weiboSnap
         );
         showMenu(networkBox, event);
@@ -791,7 +800,7 @@ public class MyBoxController extends BaseController {
     }
 
     @FXML
-    void showFileMenu(MouseEvent event) {
+    private void showFileMenu(MouseEvent event) {
         hideMenu(event);
 
         MenuItem filesRename = new MenuItem(AppVariables.message("FilesRename"));
@@ -967,26 +976,80 @@ public class MyBoxController extends BaseController {
     }
 
     @FXML
-    void showSettingsMenu(MouseEvent event) {
+    private void showSettingsMenu(MouseEvent event) {
         hideMenu(event);
 
+        String lang = AppVariables.getLanguage();
+        List<MenuItem> langItems = new ArrayList();
         ToggleGroup langGroup = new ToggleGroup();
         RadioMenuItem English = new RadioMenuItem("English");
         English.setToggleGroup(langGroup);
         English.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                if (isSettingValues) {
+                    return;
+                }
                 AppVariables.setLanguage("en");
                 loadScene(myFxml);
             }
         });
+        langItems.add(English);
+        if ("en".equals(lang)) {
+            isSettingValues = true;
+            English.setSelected(true);
+            isSettingValues = false;
+        }
         RadioMenuItem Chinese = new RadioMenuItem("中文");
         Chinese.setToggleGroup(langGroup);
         Chinese.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                if (isSettingValues) {
+                    return;
+                }
                 AppVariables.setLanguage("zh");
                 loadScene(myFxml);
+            }
+        });
+        langItems.add(Chinese);
+        if ("zh".equals(lang)) {
+            isSettingValues = true;
+            Chinese.setSelected(true);
+            isSettingValues = false;
+        }
+
+        List<String> languages = ConfigTools.languages();
+        if (languages != null && !languages.isEmpty()) {
+
+            for (int i = 0; i < languages.size(); i++) {
+                final String name = languages.get(i);
+                RadioMenuItem langItem = new RadioMenuItem(name);
+                langItem.setToggleGroup(langGroup);
+                langItem.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        if (isSettingValues) {
+                            return;
+                        }
+                        AppVariables.setLanguage(name);
+                        loadScene(myFxml);
+                    }
+                });
+                langItems.add(langItem);
+                if (name.equals(lang)) {
+                    isSettingValues = true;
+                    langItem.setSelected(true);
+                    isSettingValues = false;
+                }
+            }
+        }
+
+        MenuItem ManageLanguages = new MenuItem(AppVariables.message("ManageLanguages"));
+        ManageLanguages.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.MyBoxLanguagesFxml);
             }
         });
 
@@ -1012,7 +1075,7 @@ public class MyBoxController extends BaseController {
             }
         });
         isSettingValues = true;
-        AppVariables.disableHiDPI = "true".equals(ConfigTools.readConfigValue("DisableHidpi"));
+        AppVariables.disableHiDPI = "true".equals(ConfigTools.readValue("DisableHidpi"));
         disableHidpi.setSelected(AppVariables.disableHiDPI);
         isSettingValues = false;
 
@@ -1069,7 +1132,8 @@ public class MyBoxController extends BaseController {
 
         popMenu = new ContextMenu();
         popMenu.setAutoHide(true);
-        popMenu.getItems().addAll(English, Chinese, new SeparatorMenuItem(),
+        popMenu.getItems().addAll(langItems);
+        popMenu.getItems().addAll(ManageLanguages, new SeparatorMenuItem(),
                 disableHidpi, derbyServer, new SeparatorMenuItem(),
                 mybox, new SeparatorMenuItem(),
                 settings);
@@ -1082,7 +1146,7 @@ public class MyBoxController extends BaseController {
     }
 
     @FXML
-    void showRecentMenu(MouseEvent event) {
+    private void showRecentMenu(MouseEvent event) {
         hideMenu(event);
 
         popMenu = new ContextMenu();
@@ -1096,7 +1160,7 @@ public class MyBoxController extends BaseController {
     }
 
     @FXML
-    void showDataMenu(MouseEvent event) {
+    private void showDataMenu(MouseEvent event) {
         hideMenu(event);
 
         Menu csMenu = makeColorSpaceMenu();
@@ -1157,7 +1221,7 @@ public class MyBoxController extends BaseController {
     }
 
     @FXML
-    void showMediaMenu(MouseEvent event) {
+    private void showMediaMenu(MouseEvent event) {
         hideMenu(event);
 
         MenuItem mediaPlayer = new MenuItem(AppVariables.message("MediaPlayer"));
@@ -1240,14 +1304,23 @@ public class MyBoxController extends BaseController {
             }
         });
 
+        MenuItem GameElimniation = new MenuItem(AppVariables.message("GameElimniation"));
+        GameElimniation.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.GameElimniationFxml);
+            }
+        });
+
         popMenu = new ContextMenu();
         popMenu.setAutoHide(true);
         popMenu.getItems().addAll(
                 mediaPlayer, mediaLists, new SeparatorMenuItem(),
                 FFmpegConversionStreams, FFmpegConversionFiles, FFmpegMergeImages, FFmpegMergeImageFiles,
                 FFprobe, FFmpegInformation, new SeparatorMenuItem(),
-                recordImages, new SeparatorMenuItem(),
-                alarmClock);
+                recordImages, new SeparatorMenuItem(), alarmClock, new SeparatorMenuItem(),
+                GameElimniation
+        );
 
         showMenu(mediaBox, event);
 
@@ -1260,7 +1333,7 @@ public class MyBoxController extends BaseController {
     private void showAboutImage(MouseEvent event) {
         hideMenu(event);
 
-        view.setImage(new Image("img/About59.png"));
+        view.setImage(new Image("img/About" + CommonValues.AppVersion + ".png"));
         text.setText(message("AboutImageTips"));
         locateImage(aboutBox, false);
     }

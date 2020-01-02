@@ -26,7 +26,7 @@ import javafx.stage.Modality;
 import mara.mybox.data.CertificateEntry;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.fxml.FxmlStage;
-import mara.mybox.fxml.TableTimeCell;
+import mara.mybox.fxml.TableDateCell;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.NetworkTools;
@@ -81,7 +81,7 @@ public class SecurityCertificatesController extends BaseController {
 
             aliasColumn.setCellValueFactory(new PropertyValueFactory<>("alias"));
             timeColumn.setCellValueFactory(new PropertyValueFactory<>("createTime"));
-            timeColumn.setCellFactory(new TableTimeCell());
+            timeColumn.setCellFactory(new TableDateCell());
 
             tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
             tableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {

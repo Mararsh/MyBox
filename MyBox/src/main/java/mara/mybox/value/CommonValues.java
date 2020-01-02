@@ -14,8 +14,8 @@ import java.util.TimeZone;
  */
 public class CommonValues {
 
-    public static final String AppVersion = "5.95";
-    public static final String AppVersionDate = "2019-12-26";
+    public static final String AppVersion = "6.0";
+    public static final String AppVersionDate = "2020-01-02";
     public static final String AppDocVersion = "5.0";
 
     public static final String AppDerbyUser = "mara";
@@ -35,6 +35,7 @@ public class CommonValues {
 
     public static final String MyboxFxml = "/fxml/MyBox.fxml";
     public static final String MyBoxPropertiesFxml = "/fxml/MyBoxProperties.fxml";
+    public static final String MyBoxLanguagesFxml = "/fxml/MyBoxLanguages.fxml";
     public static final String ShortcutsFxml = "/fxml/Shortcuts.fxml";
     public static final String PdfHtmlViewerFxml = "/fxml/PdfHtmlViewer.fxml";
     public static final String PdfViewFxml = "/fxml/PdfView.fxml";
@@ -53,6 +54,7 @@ public class CommonValues {
     public static final String AboutFxml = "/fxml/About.fxml";
     public static final String SettingsFxml = "/fxml/Settings.fxml";
     public static final String LoadingFxml = "/fxml/Loading.fxml";
+    public static final String DocumentsFxml = "/fxml/Documents.fxml";
     public static final String ImageInformationFxml = "/fxml/ImageInformation.fxml";
     public static final String ImageViewerFxml = "/fxml/ImageViewer.fxml";
     public static final String ImageAnalyseFxml = "/fxml/ImageAnalyse.fxml";
@@ -167,18 +169,21 @@ public class CommonValues {
     public static final String SecurityCertificatesFxml = "/fxml/SecurityCertificates.fxml";
     public static final String SecurityCertificateAddFxml = "/fxml/SecurityCertificateAdd.fxml";
     public static final String SecurityCertificatesBypassFxml = "/fxml/SecurityCertificatesBypass.fxml";
+    public static final String DownloadFxml = "/fxml/Download.fxml";
+    public static final String GameElimniationFxml = "/fxml/GameElimination.fxml";
 
     public static final Locale LocaleZhCN = new Locale("zh", "CN");
     public static final Locale LocaleEnUS = new Locale("en", "US");
-    public static final Locale LocaleFrFR = new Locale("fr", "FR");
-    public static final Locale LocaleEsES = new Locale("es", "ES");
-    public static final Locale LocaleRuRU = new Locale("ru", "RU");
+//    public static final Locale LocaleFrFR = new Locale("fr", "FR");
+//    public static final Locale LocaleEsES = new Locale("es", "ES");
+//    public static final Locale LocaleRuRU = new Locale("ru", "RU");
 
+    public static final ResourceBundle BundleBase = ResourceBundle.getBundle("bundles/Messages");
     public static final ResourceBundle BundleZhCN = ResourceBundle.getBundle("bundles/Messages", LocaleZhCN);
     public static final ResourceBundle BundleEnUS = ResourceBundle.getBundle("bundles/Messages", LocaleEnUS);
-    public static final ResourceBundle BundleFrFR = ResourceBundle.getBundle("bundles/Messages", LocaleFrFR);
-    public static final ResourceBundle BundleEsES = ResourceBundle.getBundle("bundles/Messages", LocaleEsES);
-    public static final ResourceBundle BundleRuRU = ResourceBundle.getBundle("bundles/Messages", LocaleRuRU);
+//    public static final ResourceBundle BundleFrFR = ResourceBundle.getBundle("bundles/Messages", LocaleFrFR);
+//    public static final ResourceBundle BundleEsES = ResourceBundle.getBundle("bundles/Messages", LocaleEsES);
+//    public static final ResourceBundle BundleRuRU = ResourceBundle.getBundle("bundles/Messages", LocaleRuRU);
     public static final ResourceBundle BundleDefault = ResourceBundle.getBundle("bundles/Messages", Locale.getDefault());
 
     public static final TimeZone zoneUTC = TimeZone.getTimeZone("GMT+0"); // 世界标准时,UTC

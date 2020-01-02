@@ -480,6 +480,9 @@ public class ControlStyle {
             case "invertCheck":
                 return new ControlStyle("invertCheck", "", message("Invert"), "", "iconInvert.png");
 
+            case "popCheck":
+                return new ControlStyle(id, message("Pop"), "", "iconPop.png");
+
             default:
                 return getButtonControlStyle(id);
         }
@@ -606,6 +609,9 @@ public class ControlStyle {
                     return new ControlStyle(id, message("OK"), "", "iconOK.png");
             }
         }
+        if (id.startsWith("download")) {
+            return new ControlStyle(id, message("Download"), "", "iconDownload.png");
+        }
         if (id.startsWith("recover")) {
             switch (id) {
                 case "recoverButton":
@@ -671,6 +677,10 @@ public class ControlStyle {
 
         if (id.startsWith("palette")) {
             return new ControlStyle(id, message("ColorPalette"), "", "iconPalette.png");
+        }
+
+        if (id.startsWith("openFolder")) {
+            return new ControlStyle(id, message("Open"), "", "iconOpen.png");
         }
 
         switch (id) {
@@ -1212,9 +1222,6 @@ public class ControlStyle {
 
             case "setDurationAllButton":
                 return new ControlStyle(id, message("Set"), "", "iconEqual.png");
-
-            case "openButton":
-                return new ControlStyle(id, message("Open"), "", "iconOpen.png");
 
             default:
                 return null;

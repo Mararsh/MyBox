@@ -17,6 +17,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
@@ -30,7 +31,7 @@ import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
@@ -45,6 +46,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import mara.mybox.fxml.FxmlControl;
@@ -70,11 +72,14 @@ public class ImagesBrowserController extends ImageViewerController {
 
     private final ObservableList<File> imageFileList = FXCollections.observableArrayList();
     private final ObservableList<ImageInformation> tableData = FXCollections.observableArrayList();
-    private int rowsNum, colsNum, filesNumber;
+    private int rowsNum, colsNum, filesNumber, popSize = 500;
     private List<VBox> imageBoxList;
     private List<ScrollPane> imageScrollList;
     private List<ImageView> imageViewList;
-    private List<TextField> imageTitleList;
+    private List<Label> imageTitleList;
+    private Popup imagePop;
+    private ImageView popView;
+    private Text popText;
 
     private TableView<ImageInformation> tableView;
     private TableColumn<ImageInformation, Image> imageColumn;
@@ -87,7 +92,7 @@ public class ImagesBrowserController extends ImageViewerController {
     protected List<Integer> selectedIndexes;
     protected List<ImageInformation> selectedImages;
     protected String ImageSortTypeKey = "ImageSortType";
-    protected int maxShow = 100, popTime = 500;
+    protected int maxShow = 100;
     private File path;
     private DisplayMode displayMode;
 
@@ -102,13 +107,15 @@ public class ImagesBrowserController extends ImageViewerController {
     @FXML
     protected FlowPane rotatePane;
     @FXML
-    protected ComboBox<String> colsnumBox, filesBox, popTimeSelector;
+    protected ComboBox<String> colsnumBox, filesBox, popSizeSelector;
     @FXML
-    private CheckBox saveRotationCheck;
+    private CheckBox saveRotationCheck, popCheck;
     @FXML
     private Label totalLabel;
     @FXML
     private Button filesListButton, thumbsListButton;
+    @FXML
+    protected ToggleGroup popGroup;
 
     public ImagesBrowserController() {
         baseTitle = AppVariables.message("ImagesBrowser");
@@ -182,43 +189,37 @@ public class ImagesBrowserController extends ImageViewerController {
                 }
             });
 
-            List<String> popValues = Arrays.asList("500", "1000",
-                    AppVariables.message("NotDisplay"),
-                    "2000", "5000", "3000", "10000");
-            popTimeSelector.getItems().addAll(popValues);
-            popTimeSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            List<String> sizeValues = Arrays.asList("500", "400", "600", "300", "200", "700");
+            popSizeSelector.getItems().addAll(sizeValues);
+            popSizeSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
                         if (isSettingValues) {
                             return;
                         }
-                        if (AppVariables.message("NotDisplay").equals(newValue)) {
-                            popTime = 0;
-                            FxmlControl.setEditorNormal(popTimeSelector);
-                            AppVariables.setUserConfigInt("ImageBrowserPopTime", popTime);
-                            if (!isSettingValues) {
-                                makeImagesPane();
-                            }
+                        int v = Integer.valueOf(newValue);
+                        if (v >= 0) {
+                            FxmlControl.setEditorNormal(popSizeSelector);
+                            popSize = v;
+                            AppVariables.setUserConfigInt("ImageBrowserPopSize", popSize);
                         } else {
-                            int v = Integer.valueOf(newValue);
-                            if (v >= 0) {
-                                FxmlControl.setEditorNormal(popTimeSelector);
-                                popTime = v;
-                                AppVariables.setUserConfigInt("ImageBrowserPopTime", popTime);
-                                if (!isSettingValues) {
-                                    makeImagesPane();
-                                }
-                            } else {
-                                FxmlControl.setEditorBadStyle(popTimeSelector);
-                            }
+                            FxmlControl.setEditorBadStyle(popSizeSelector);
                         }
                     } catch (Exception e) {
-                        FxmlControl.setEditorBadStyle(popTimeSelector);
+                        FxmlControl.setEditorBadStyle(popSizeSelector);
                     }
                 }
             });
-            popTimeSelector.getSelectionModel().select(AppVariables.getUserConfigInt("ImageBrowserPopTime", 500) + "");
+            popSizeSelector.getSelectionModel().select(AppVariables.getUserConfigInt("ImageBrowserPopSize", 500) + "");
+
+            popCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    AppVariables.setUserConfigValue("ImagesBrowserPop", newValue);
+                }
+            });
+            popCheck.setSelected(AppVariables.getUserConfigBoolean("ImagesBrowserPop", true));
 
             fileBox.disableProperty().bind(Bindings.isEmpty(imageFileList));
             viewPane.disableProperty().bind(Bindings.isEmpty(imageFileList));
@@ -228,7 +229,6 @@ public class ImagesBrowserController extends ImageViewerController {
             leftPaneControl.visibleProperty().bind(Bindings.isEmpty(imageFileList).not());
 
             FxmlControl.setTooltip(filesListButton, new Tooltip(message("FilesList")));
-
             FxmlControl.setTooltip(thumbsListButton, new Tooltip(message("ThumbnailsList")));
 
         } catch (Exception e) {
@@ -580,7 +580,7 @@ public class ImagesBrowserController extends ImageViewerController {
                     String nname = newFile.getAbsolutePath();
                     int index = selectedIndexes.get(0);
                     imageFileList.set(index, newFile);
-                    makeImagesNevigator(false);
+                    makeImagesNevigator(true);
                     popInformation(MessageFormat.format(AppVariables.message("FileRenamed"), oname, nname));
                 }
             }
@@ -712,7 +712,6 @@ public class ImagesBrowserController extends ImageViewerController {
     }
 
     private void makeGridBox() {
-
         int num = tableData.size();
         HBox line = new HBox();
         for (int i = 0; i < num; i++) {
@@ -752,31 +751,31 @@ public class ImagesBrowserController extends ImageViewerController {
             final ImageView iView = new ImageView();
             iView.setPreserveRatio(true);
             iBox.getChildren().add(iView);
-            TextField titleInput = new TextField();
-            titleInput.setEditable(false);
-            VBox.setVgrow(titleInput, Priority.NEVER);
-            HBox.setHgrow(titleInput, Priority.ALWAYS);
-            vbox.getChildren().add(titleInput);
+            Label titleLabel = new Label();
+            titleLabel.setWrapText(true);
+            VBox.setVgrow(titleLabel, Priority.NEVER);
+            HBox.setHgrow(titleLabel, Priority.ALWAYS);
+            vbox.getChildren().add(titleLabel);
             vbox.getChildren().add(sPane);
 
             final ImageInformation imageInfo = tableData.get(i);
             final File file = imageInfo.getImageFileInformation().getFile();
-
-            iView.setImage(imageInfo.getImage());
+            final Image iImage = imageInfo.getImage();
+            iView.setImage(iImage);
 
             String title = file.getName();
             if (imageInfo.isIsMultipleFrames()) {
                 title += " " + AppVariables.message("MultipleFrames");
-                titleInput.setStyle("-fx-text-box-border: red;   -fx-text-fill: red;");
+                titleLabel.setStyle("-fx-text-box-border: red;   -fx-text-fill: red;");
             }
             if (imageInfo.isIsSampled()) {
                 title += " " + AppVariables.message("Sampled");
-                titleInput.setStyle("-fx-text-box-border: red;   -fx-text-fill: red;");
+                titleLabel.setStyle("-fx-text-box-border: red;   -fx-text-fill: red;");
             }
 //            if (imageInfo.isIsScaled()) {
 //                title += " " + AppVariables.message("Scaled");
 //            }
-            titleInput.setText(title);
+            titleLabel.setText(title);
 
             final int index = i;
             vbox.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -819,21 +818,11 @@ public class ImagesBrowserController extends ImageViewerController {
                             + AppVariables.message("DisplayedSize") + ":"
                             + (int) iView.getFitWidth() + "x" + (int) iView.getFitHeight();
                     bottomLabel.setText(str1);
-                    if (popTime > 0) {
-                        String str2 = imageInfo.getFileName() + "\n"
-                                + AppVariables.message("Format") + ":" + imageInfo.getImageFormat() + "\n"
-                                + AppVariables.message("ModifyTime") + ":" + DateTools.datetimeToString(file.lastModified()) + "\n"
-                                + AppVariables.message("Size") + ":" + FileTools.showFileSize(file.length()) + "\n"
-                                + AppVariables.message("Pixels") + ":" + imageInfo.getWidth() + "x" + imageInfo.getHeight() + "\n"
-                                + AppVariables.message("LoadedSize") + ":"
-                                + (int) iView.getImage().getWidth() + "x" + (int) iView.getImage().getHeight() + "\n"
-                                + AppVariables.message("DisplayedSize") + ":"
-                                + (int) iView.getFitWidth() + "x" + (int) iView.getFitHeight();
-                        popInformation(str2, popTime);
-                        if (popup != null && popup.isShowing()) {
-                            Region region = (Region) event.getSource();
-                            FxmlControl.locateCenter(region, popup);
-                        }
+                    if (imagePop != null) {
+                        imagePop.hide();
+                    }
+                    if (popCheck.isSelected()) {
+                        makeImagePopup(vbox, imageInfo, iView);
                     }
                 }
             });
@@ -841,7 +830,7 @@ public class ImagesBrowserController extends ImageViewerController {
             tableData.add(imageInfo);
             imageScrollList.add(sPane);
             imageViewList.add(iView);
-            imageTitleList.add(titleInput);
+            imageTitleList.add(titleLabel);
             imageBoxList.add(vbox);
 
         }
@@ -858,6 +847,58 @@ public class ImagesBrowserController extends ImageViewerController {
         imagesPane.layout();
         paneSize();
 
+    }
+
+    private void makeImagePopup(VBox imageBox, ImageInformation imageInfo, ImageView iView) {
+        try {
+            File file = imageInfo.getImageFileInformation().getFile();
+            final Image iImage = imageInfo.getImage();
+            imagePop = new Popup();
+            imagePop.setWidth(popSize + 40);
+            imagePop.setHeight(popSize + 40);
+            imagePop.setAutoHide(true);
+
+            VBox vbox = new VBox();
+            VBox.setVgrow(vbox, Priority.ALWAYS);
+            HBox.setHgrow(vbox, Priority.ALWAYS);
+            vbox.setMaxWidth(Double.MAX_VALUE);
+            vbox.setMaxHeight(Double.MAX_VALUE);
+            vbox.setStyle("-fx-background-color: white;");
+            imagePop.getContent().add(vbox);
+
+            popView = new ImageView();
+            popView.setImage(iImage);
+            if (iImage.getWidth() > iImage.getHeight()) {
+                popView.setFitWidth(popSize);
+            } else {
+                popView.setFitHeight(popSize);
+            }
+            popView.setPreserveRatio(true);
+            vbox.getChildren().add(popView);
+
+            popText = new Text();
+            popText.setStyle("-fx-font-size: 1.0em;");
+
+            vbox.getChildren().add(popText);
+            vbox.setPadding(new Insets(15, 15, 15, 15));
+
+            String info = imageInfo.getFileName() + "\n"
+                    + AppVariables.message("Format") + ":" + imageInfo.getImageFormat() + "  "
+                    + AppVariables.message("ModifyTime") + ":" + DateTools.datetimeToString(file.lastModified()) + "\n"
+                    + AppVariables.message("Size") + ":" + FileTools.showFileSize(file.length()) + "  "
+                    + AppVariables.message("Pixels") + ":" + imageInfo.getWidth() + "x" + imageInfo.getHeight() + "  "
+                    + AppVariables.message("LoadedSize") + ":"
+                    + (int) iView.getImage().getWidth() + "x" + (int) iView.getImage().getHeight() + "  "
+                    + AppVariables.message("DisplayedSize") + ":"
+                    + (int) iView.getFitWidth() + "x" + (int) iView.getFitHeight();
+            popText.setText(info);
+            popText.setWrappingWidth(popSize);
+            Bounds bounds = imageBox.localToScreen(imageBox.getBoundsInLocal());
+            imagePop.show(imageBox, bounds.getMinX() + bounds.getWidth() / 2, bounds.getMinY());
+
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
     }
 
     private void makeSourceTable() {
@@ -1213,7 +1254,7 @@ public class ImagesBrowserController extends ImageViewerController {
 
     @Override
     public void makeImageNevigator() {
-        makeImagesNevigator(false);
+        makeImagesNevigator(true);
     }
 
     private void makeImagesNevigator(boolean makeCurrentList) {
@@ -1226,13 +1267,10 @@ public class ImagesBrowserController extends ImageViewerController {
             if (imageFileList != null && !imageFileList.isEmpty() && filesNumber > 0) {
                 loadingController = openHandlingStage(Modality.WINDOW_MODAL);
 
-                FileTools.sortFiles(imageFileList, sortMode);
-
                 File firstFile = imageFileList.get(0);
                 path = firstFile.getParentFile();
                 List<File> pathFiles = new ArrayList<>();
-                File[] files = path.listFiles();
-                for (File file : files) {
+                for (File file : path.listFiles()) {
                     if (file.isFile() && FileTools.isSupportedImage(file)) {
                         pathFiles.add(file);
                     }
@@ -1241,26 +1279,26 @@ public class ImagesBrowserController extends ImageViewerController {
                 totalLabel.setText("/" + pathFiles.size());
 
                 if (makeCurrentList) {
-                    List<File> oldList = new ArrayList<>();
-                    oldList.addAll(imageFileList);
-                    for (File f : oldList) {
-                        if (!f.exists() || !f.isFile() || !FileTools.isSupportedImage(f)) {
-                            imageFileList.remove(f);
-                        }
+                    imageFileList.clear();
+                    int pos = pathFiles.indexOf(firstFile);
+                    if (pos < 0) {
+                        pos = 0;
                     }
-                    if (imageFileList.size() < filesNumber) {
-                        for (File f : pathFiles) {
-                            if (!imageFileList.contains(f)) {
-                                imageFileList.add(f);
-                            }
-                            if (imageFileList.size() == filesNumber) {
-                                break;
-                            }
-                        }
-                    } else if (imageFileList.size() > filesNumber) {
-                        imageFileList.remove(filesNumber, imageFileList.size());
+                    int start;
+                    int end;
+                    if (pathFiles.size() <= filesNumber) {
+                        start = 0;
+                        end = pathFiles.size() - 1;
+                    } else if (pos + filesNumber < pathFiles.size()) {
+                        start = pos;
+                        end = pos + filesNumber - 1;
+                    } else {
+                        start = pathFiles.size() - filesNumber;
+                        end = pathFiles.size() - 1;
                     }
-
+                    for (int i = start; i <= end; i++) {
+                        imageFileList.add(pathFiles.get(i));
+                    }
                 }
 
                 if (pathFiles.size() > filesNumber) {

@@ -1691,15 +1691,17 @@ public class ImageManufacture {
             }
             BufferedImage target = new BufferedImage(width, height, imageType);
             Graphics2D g = target.createGraphics();
-            g.drawImage(source, 0, 0, width, height, null);
-            AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity);
-            g.setComposite(ac);
-
+            g.setBackground(CommonFxValues.TRANSPARENT);
+            AlphaComposite ac;
             if (strokeColor.getRGB() == 0) {
-                g.setColor(null);
+                ac = AlphaComposite.getInstance(AlphaComposite.SRC_OUT, opacity);
             } else {
-                g.setColor(strokeColor);
+                ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity);
             }
+            g.setColor(strokeColor);
+            g.setComposite(ac);
+            g.drawImage(source, 0, 0, width, height, null);
+
             BasicStroke stroke;
             if (dotted) {
                 stroke = new BasicStroke(strokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER,

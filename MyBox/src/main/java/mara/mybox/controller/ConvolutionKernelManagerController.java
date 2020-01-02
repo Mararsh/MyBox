@@ -714,7 +714,7 @@ public class ConvolutionKernelManagerController extends BaseController {
         }
         ImageManufactureController c
                 = (ImageManufactureController) openStage(CommonValues.ImageManufactureFxml);
-        c.loadImage(new Image("img/p3.png"));
+        c.loadImage(new Image("img/zz1.png"));
         c.operationController.applyKernel(kernel);
     }
 

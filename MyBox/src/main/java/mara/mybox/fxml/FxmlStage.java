@@ -192,6 +192,19 @@ public class FxmlStage {
 
     public static void appExit() {
         try {
+//            if (AppVariables.backgroundTasks != null && !AppVariables.backgroundTasks.isEmpty()) {
+//                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+//                alert.setContentText(MessageFormat.format(message("BackgroundTasksRunning"), AppVariables.backgroundTasks.size()));
+//                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+//                Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+//                stage.setAlwaysOnTop(true);
+//                stage.toFront();
+//                Optional<ButtonType> result = alert.showAndWait();
+//                if (result.get() != ButtonType.OK) {
+//                    return;
+//                }
+//            }
+
             if (Window.getWindows() != null) {
                 List<Window> windows = new ArrayList<>();
                 windows.addAll(Window.getWindows());
@@ -199,6 +212,7 @@ public class FxmlStage {
                     window.hide();
                 }
             }
+
             if (AppVariables.scheduledTasks != null && !AppVariables.scheduledTasks.isEmpty()) {
                 if (AppVariables.getUserConfigBoolean("StopAlarmsWhenExit")) {
                     for (Long key : AppVariables.scheduledTasks.keySet()) {

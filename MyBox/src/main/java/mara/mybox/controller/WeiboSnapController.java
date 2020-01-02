@@ -118,11 +118,11 @@ public class WeiboSnapController extends BaseController {
 
         addressList = TableStringValues.max("WeiBoAddress", 20);
         addressBox.getItems().addAll(addressList);
-        addressBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+        addressBox.valueProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov,
                     String oldValue, String newValue) {
-                if (newValue == null || newValue.trim().isEmpty()) {
+                if (isSettingValues || newValue == null || newValue.trim().isEmpty()) {
                     return;
                 }
                 Platform.runLater(new Runnable() {
