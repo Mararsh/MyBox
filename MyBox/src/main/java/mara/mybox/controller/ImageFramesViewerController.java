@@ -104,7 +104,7 @@ public class ImageFramesViewerController extends ImagesListController {
                         error = "FailedReadFile";
                         return false;
                     }
-                    for (int i = 0; i < bufferImages.size(); i++) {
+                    for (int i = 0; i < bufferImages.size(); ++i) {
                         if (task == null || isCancelled()) {
                             return false;
                         }
@@ -198,7 +198,7 @@ public class ImageFramesViewerController extends ImagesListController {
                         String filename;
                         int digit = (selectedImages.size() + "").length();
                         filenames = new ArrayList<>();
-                        for (int i = 0; i < selectedImages.size(); i++) {
+                        for (int i = 0; i < selectedImages.size(); ++i) {
                             if (task == null || isCancelled()) {
                                 return false;
                             }

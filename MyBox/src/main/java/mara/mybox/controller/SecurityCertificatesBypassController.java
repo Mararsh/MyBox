@@ -19,7 +19,7 @@ import static mara.mybox.value.AppVariables.message;
  * @CreateDate 2019-12-1
  * @License Apache License Version 2.0
  */
-public class SecurityCertificatesBypassController extends TableController<CertificateBypass> {
+public class SecurityCertificatesBypassController extends TableManageController<CertificateBypass> {
 
     @FXML
     protected TableColumn<CertificateBypass, String> hostColumn;
@@ -91,7 +91,7 @@ public class SecurityCertificatesBypassController extends TableController<Certif
                 if (newdata != null) {
                     tableData.add(newdata);
                     tableView.refresh();
-                    popSuccessul();
+                    popSuccessful();
                 } else {
                     popFailed();
                 }

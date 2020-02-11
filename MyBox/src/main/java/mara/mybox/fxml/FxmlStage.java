@@ -61,7 +61,8 @@ import mara.mybox.value.CommonValues;
  */
 public class FxmlStage {
 
-    public static BaseController initScene(final Stage stage, final String newFxml,
+    public static BaseController initScene(final Stage stage,
+            final String newFxml,
             StageStyle stageStyle) {
         try {
             if (stage == null) {
@@ -121,7 +122,8 @@ public class FxmlStage {
     }
 
     public static BaseController openStage(Stage myStage,
-            String newFxml, boolean isOwned, Modality modality, StageStyle stageStyle) {
+            String newFxml, boolean isOwned, Modality modality,
+            StageStyle stageStyle) {
         try {
             Stage stage = new Stage();
             stage.initModality(modality);
@@ -157,7 +159,8 @@ public class FxmlStage {
         return openStage(null, newFxml, false, Modality.NONE);
     }
 
-    public static BaseController openScene(Stage stage, String newFxml, StageStyle stageStyle) {
+    public static BaseController openScene(Stage stage, String newFxml,
+            StageStyle stageStyle) {
         try {
             Stage newStage = new Stage();  // new stage should be opened instead of keeping old stage, to clean resources
             newStage.initModality(Modality.NONE);
@@ -200,7 +203,7 @@ public class FxmlStage {
 //                stage.setAlwaysOnTop(true);
 //                stage.toFront();
 //                Optional<ButtonType> result = alert.showAndWait();
-//                if (result.get() != ButtonType.OK) {
+//                if (result.get() == null || result.get() != ButtonType.OK) {
 //                    return;
 //                }
 //            }
@@ -318,7 +321,8 @@ public class FxmlStage {
         }
     }
 
-    public static ImageManufactureController openImageManufacture(Stage stage, File file) {
+    public static ImageManufactureController openImageManufacture(Stage stage,
+            File file) {
         try {
             final ImageManufactureController controller
                     = (ImageManufactureController) openScene(stage, CommonValues.ImageManufactureFxml);
@@ -428,7 +432,8 @@ public class FxmlStage {
         }
     }
 
-    public static MarkdownEditerController openMarkdownEditer(Stage stage, File file) {
+    public static MarkdownEditerController openMarkdownEditer(Stage stage,
+            File file) {
         try {
             final MarkdownEditerController controller
                     = (MarkdownEditerController) openScene(stage, CommonValues.MarkdownEditorFxml);
@@ -440,7 +445,8 @@ public class FxmlStage {
         }
     }
 
-    public static ImageInformationController openImageInformation(Stage stage, ImageInformation info) {
+    public static ImageInformationController openImageInformation(Stage stage,
+            ImageInformation info) {
         try {
             if (info == null) {
                 return null;
@@ -455,7 +461,8 @@ public class FxmlStage {
         }
     }
 
-    public static ImageMetaDataController openImageMetaData(Stage stage, ImageInformation info) {
+    public static ImageMetaDataController openImageMetaData(Stage stage,
+            ImageInformation info) {
         try {
             final ImageMetaDataController controller = (ImageMetaDataController) openScene(stage,
                     CommonValues.ImageMetaDataFxml);
@@ -467,7 +474,8 @@ public class FxmlStage {
         }
     }
 
-    public static FileDecompressUnarchiveController openDecompressUnarchive(Stage stage, File file) {
+    public static FileDecompressUnarchiveController openDecompressUnarchive(
+            Stage stage, File file) {
         try {
             final FileDecompressUnarchiveController controller = (FileDecompressUnarchiveController) openScene(stage,
                     CommonValues.FileDecompressUnarchiveFxml);
@@ -491,11 +499,13 @@ public class FxmlStage {
         }
     }
 
-    public static LoadingController openLoadingStage(Stage stage, Modality block, String info) {
+    public static LoadingController openLoadingStage(Stage stage, Modality block,
+            String info) {
         return openLoadingStage(stage, block, null, info);
     }
 
-    public static LoadingController openLoadingStage(Stage stage, Modality block, Task task, String info) {
+    public static LoadingController openLoadingStage(Stage stage, Modality block,
+            Task task, String info) {
         try {
             final LoadingController controller
                     = (LoadingController) FxmlStage.openStage(stage, CommonValues.LoadingFxml,
@@ -564,6 +574,11 @@ public class FxmlStage {
 //               browseURI(file.toURI());
 //            } catch (Exception e) {
 //            }
+        }
+        if (controller != null) {
+            if (controller.getMyStage() != null) {
+                controller.getMyStage().toFront();
+            }
         }
         return controller;
     }

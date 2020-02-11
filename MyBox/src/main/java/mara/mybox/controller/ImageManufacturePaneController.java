@@ -1420,7 +1420,7 @@ public class ImageManufacturePaneController extends ImageMaskController {
         scope = selected;
         // Force listView to refresh
         // https://stackoverflow.com/questions/13906139/javafx-update-of-listview-if-an-element-of-observablelist-changes?r=SearchResults
-        for (int i = 0; i < scopeSelector.getItems().size(); i++) {
+        for (int i = 0; i < scopeSelector.getItems().size(); ++i) {
             scopeSelector.getItems().set(i, scopeSelector.getItems().get(i));
         }
         showScope(scope);

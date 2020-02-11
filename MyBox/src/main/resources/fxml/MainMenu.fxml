@@ -106,6 +106,7 @@ License:    Apache License Version 2.0
                                 <MenuItem mnemonicParsing="false" onAction="#openConvolutionKernelManager" text="%ConvolutionKernelManager" />
                                 <MenuItem mnemonicParsing="false" onAction="#openPixelsCalculator" text="%PixelsCalculator" />
                                 <MenuItem mnemonicParsing="false" onAction="#openColorPalette" text="%ColorPalette" />
+                                <MenuItem mnemonicParsing="false" onAction="#openManageColors" text="%ManageColors" />
                                 <Menu mnemonicParsing="false" text="%ColorSpace">
                                     <items>
                                         <MenuItem mnemonicParsing="false" onAction="#openChromaticityDiagram" text="%DrawChromaticityDiagram" />
@@ -140,6 +141,13 @@ License:    Apache License Version 2.0
                                 <MenuItem mnemonicParsing="false" onAction="#openBarcodeDecoder" text="%BarcodeDecoder" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openMessageDigest" text="%MessageDigest" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem mnemonicParsing="false" onAction="#openDataGeographyCode" text="%GeographyCode" />
+                                <MenuItem mnemonicParsing="false" onAction="#openLocationInMap" text="%LocationInMap" />
+                                <MenuItem mnemonicParsing="false" onAction="#openLocationsData" text="%LocationsData" />
+                                <MenuItem mnemonicParsing="false" onAction="#openLocationsDataInMap" text="%LocationsDataInMap" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem mnemonicParsing="false" onAction="#openEpidemicReports" text="%EpidemicReport" />
                             </items>
                         </Menu>
                         <Menu mnemonicParsing="false" text="%File">
@@ -155,6 +163,8 @@ License:    Apache License Version 2.0
                                 <MenuItem mnemonicParsing="false" onAction="#openFilesCompressBatch" text="%FilesCompressBatch" />
                                 <MenuItem mnemonicParsing="false" onAction="#openFileDecompressUnarchive" text="%FileDecompressUnarchive" />
                                 <MenuItem mnemonicParsing="false" onAction="#openFilesDecompressUnarchiveBatch" text="%FilesDecompressUnarchiveBatch" />
+                                <MenuItem mnemonicParsing="false" onAction="#openFilesArrangement" text="%FilesArrangement" />
+                                <MenuItem mnemonicParsing="false" onAction="#openDirectorySynchronize" text="%DirectorySynchronize" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openFilesFind" text="%FilesFind" />
                                 <MenuItem mnemonicParsing="false" onAction="#openFilesCompare" text="%FilesCompare" />
@@ -163,9 +173,8 @@ License:    Apache License Version 2.0
                                 <MenuItem mnemonicParsing="false" onAction="#openFilesDelete" text="%FilesDelete" />
                                 <MenuItem mnemonicParsing="false" onAction="#openFilesCopy" text="%FilesCopy" />
                                 <MenuItem mnemonicParsing="false" onAction="#openFilesMove" text="%FilesMove" />
-                                <SeparatorMenuItem mnemonicParsing="false" />
-                                <MenuItem mnemonicParsing="false" onAction="#openFilesArrangement" text="%FilesArrangement" />
-                                <MenuItem mnemonicParsing="false" onAction="#openDirectorySynchronize" text="%DirectorySynchronize" />
+                                <MenuItem mnemonicParsing="false" onAction="#openDeleteEmptyDirectories" text="%DeleteEmptyDirectories" />
+                                <MenuItem mnemonicParsing="false" onAction="#openDeleteNestedDirectories" text="%DeleteNestedDirectories" />
                             </items>
                         </Menu>
                         <Menu mnemonicParsing="false" text="%Media">

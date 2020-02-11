@@ -12,7 +12,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -55,7 +54,7 @@ public abstract class BatchController<T> extends BaseController {
     protected List<String> filesPassword;
     protected boolean sourceCheckSubdir, allowPaused, browseTargets, viewTargetPath, createDirectories;
     protected boolean isPreview, paused;
-    protected int dirFilesNumber, dirFilesHandled, totalFilesHandled = 0, totalItemsHandled = 0;
+    protected long dirFilesNumber, dirFilesHandled, totalFilesHandled = 0, totalItemsHandled = 0;
     protected long fileSelectorSize, fileSelectorTime;
     protected String[] sourceFilesSelector;
     protected FileSelectorType fileSelectorType;
@@ -105,7 +104,7 @@ public abstract class BatchController<T> extends BaseController {
 
     // "targetFiles" and "finalTargetName" should be written by this method
     public String handleFile(File srcFile, File targetPath) {
-        showHandling(srcFile);
+        countHandling(srcFile);
         File target = makeTargetFile(srcFile, targetPath);
         if (target == null) {
             return AppVariables.message("Skip");
@@ -267,7 +266,9 @@ public abstract class BatchController<T> extends BaseController {
                 FxmlControl.setPositiveValidation(previewInput);
                 previewInput.textProperty().addListener(new ChangeListener<String>() {
                     @Override
-                    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    public void changed(
+                            ObservableValue<? extends String> observable,
+                            String oldValue, String newValue) {
                         if (newValue == null || newValue.isEmpty()) {
                             return;
                         }
@@ -327,7 +328,8 @@ public abstract class BatchController<T> extends BaseController {
             if (miaoCheck != null) {
                 miaoCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
-                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    public void changed(ObservableValue ov, Boolean oldValue,
+                            Boolean newValue) {
                         AppVariables.setUserConfigValue("Miao", newValue);
 
                     }
@@ -338,12 +340,25 @@ public abstract class BatchController<T> extends BaseController {
             if (openCheck != null) {
                 openCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
-                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    public void changed(ObservableValue ov, Boolean oldValue,
+                            Boolean newValue) {
                         AppVariables.setUserConfigValue("OpenWhenComplete", newValue);
 
                     }
                 });
                 openCheck.setSelected(AppVariables.getUserConfigBoolean("OpenWhenComplete"));
+            }
+
+            if (verboseCheck != null) {
+                verboseCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue,
+                            Boolean newValue) {
+                        AppVariables.setUserConfigValue("BatchLogVerbose", newValue);
+
+                    }
+                });
+                verboseCheck.setSelected(AppVariables.getUserConfigBoolean("BatchLogVerbose", true));
             }
 
         } catch (Exception e) {
@@ -364,6 +379,9 @@ public abstract class BatchController<T> extends BaseController {
     @FXML
     @Override
     public void startAction() {
+        if (statusLabel != null) {
+            statusLabel.setText("");
+        }
         isPreview = false;
         if (!makeActualParameters()) {
 //            popError(message("Invalid"));
@@ -449,15 +467,11 @@ public abstract class BatchController<T> extends BaseController {
     }
 
     public boolean makeMoreParameters() {
-        return makeBatchParameters();
-    }
-
-    public boolean makeBatchParameters() {
         if (tableData == null || tableData.isEmpty()) {
             actualParameters = null;
             return false;
         }
-        for (int i = 0; i < tableData.size(); i++) {
+        for (int i = 0; i < tableData.size(); ++i) {
             FileInformation d = tableController.fileInformation(i);
             if (d == null) {
                 continue;
@@ -479,6 +493,7 @@ public abstract class BatchController<T> extends BaseController {
         initLogs();
         totalFilesHandled = totalItemsHandled = 0;
         processStartTime = new Date();
+        fileStartTime = new Date();
         return true;
     }
 
@@ -558,7 +573,8 @@ public abstract class BatchController<T> extends BaseController {
                         }
                         updateTaskProgress(currentParameters.currentIndex, sourceFiles.size());
                         int len = sourceFiles.size();
-                        for (; currentParameters.currentIndex < len; currentParameters.currentIndex++) {
+                        for (; currentParameters.currentIndex < len;
+                                currentParameters.currentIndex++) {
                             if (isCancelled()) {
                                 break;
                             }
@@ -624,18 +640,15 @@ public abstract class BatchController<T> extends BaseController {
     }
 
     public void updateTaskProgress(long number, long total) {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                double p = (number * 1d) / total;
-                String s = number + "/" + total;
-                if (fileProgressBar != null) {
-                    fileProgressBar.setProgress(p);
-                    fileProgressValue.setText(s);
-                } else if (progressBar != null) {
-                    progressBar.setProgress(p);
-                    progressValue.setText(s);
-                }
+        Platform.runLater(() -> {
+            double p = (number * 1d) / total;
+            String s = number + "/" + total;
+            if (fileProgressBar != null) {
+                fileProgressBar.setProgress(p);
+                fileProgressValue.setText(s);
+            } else if (progressBar != null) {
+                progressBar.setProgress(p);
+                progressValue.setText(s);
             }
         });
     }
@@ -800,7 +813,9 @@ public abstract class BatchController<T> extends BaseController {
             dirFilesNumber = dirFilesHandled = 0;
             if (currentParameters.targetPath != null) {
                 File targetDir;
-                if (createDirectories) {
+
+                if (createDirectories
+                        && !currentParameters.targetPath.equals(dir.getAbsolutePath())) {
                     targetDir = new File(currentParameters.targetPath + File.separator + dir.getName());
                 } else {
                     targetDir = new File(currentParameters.targetPath);
@@ -824,6 +839,9 @@ public abstract class BatchController<T> extends BaseController {
         }
         try {
             File[] files = sourcePath.listFiles();
+            if (files == null) {
+                return false;
+            }
             for (File srcFile : files) {
                 if (task == null || task.isCancelled()) {
                     return false;
@@ -902,14 +920,14 @@ public abstract class BatchController<T> extends BaseController {
         }
     }
 
-    public void showHandling(File file) {
+    public void countHandling(File file) {
         if (file == null) {
             return;
         }
-        showHandling(file.getAbsolutePath());
+        countHandling(file.getAbsolutePath());
     }
 
-    public void showHandling(String name) {
+    public void countHandling(String name) {
         if (name == null) {
             return;
         }
@@ -917,7 +935,9 @@ public abstract class BatchController<T> extends BaseController {
         fileStartTime = new Date();
         String msg = MessageFormat.format(message("HandlingObject"), name);
         updateStatusLabel(msg + "    " + message("StartTime") + ": " + DateTools.datetimeToString(fileStartTime));
-        updateLogs(msg, true, true);
+        if (verboseCheck == null || verboseCheck.isSelected()) {
+            updateLogs(msg, true, true);
+        }
     }
 
     public void showStatus(String info) {
@@ -929,15 +949,8 @@ public abstract class BatchController<T> extends BaseController {
         if (statusLabel == null || info == null) {
             return;
         }
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    statusLabel.setText(info);
-                } catch (Exception e) {
-                    logger.debug(e.toString());
-                }
-            }
+        Platform.runLater(() -> {
+            statusLabel.setText(info);
         });
     }
 
@@ -949,7 +962,8 @@ public abstract class BatchController<T> extends BaseController {
         updateLogs(line, true, immediate);
     }
 
-    protected void updateLogs(final String line, boolean showTime, boolean immediate) {
+    protected void updateLogs(final String line, boolean showTime,
+            boolean immediate) {
         try {
             if (logsTextArea == null) {
                 return;
@@ -1016,74 +1030,54 @@ public abstract class BatchController<T> extends BaseController {
 
     public void updateInterface(final String newStatus) {
         currentParameters.status = newStatus;
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
+        Platform.runLater(() -> {
+            switch (newStatus) {
 
-                switch (newStatus) {
-
-                    case "Started":
-                        startButton.setText(AppVariables.message("Cancel"));
-                        startButton.setOnAction(new EventHandler<ActionEvent>() {
-                            @Override
-                            public void handle(ActionEvent event) {
-                                cancelProcess(event);
-                            }
+                case "Started":
+                    startButton.setText(AppVariables.message("Cancel"));
+                    startButton.setOnAction((ActionEvent event) -> {
+                        cancelProcess(event);
+                    });
+                    if (allowPaused) {
+                        pauseButton.setVisible(true);
+                        pauseButton.setDisable(false);
+                        pauseButton.setText(AppVariables.message("Pause"));
+                        pauseButton.setOnAction((ActionEvent event) -> {
+                            pauseProcess(event);
                         });
-                        if (allowPaused) {
-                            pauseButton.setVisible(true);
-                            pauseButton.setDisable(false);
-                            pauseButton.setText(AppVariables.message("Pause"));
-                            pauseButton.setOnAction(new EventHandler<ActionEvent>() {
-                                @Override
-                                public void handle(ActionEvent event) {
-                                    pauseProcess(event);
-                                }
-                            });
-                        }
+                    }
+                    disableControls(true);
+                    break;
+
+                case "CompleteFile":
+                    showCost();
+                    break;
+
+                case "Done":
+                default:
+                    if (paused) {
+                        startButton.setText(AppVariables.message("Cancel"));
+                        startButton.setOnAction((ActionEvent event) -> {
+                            cancelProcess(event);
+                        });
+                        pauseButton.setVisible(true);
+                        pauseButton.setDisable(false);
+                        pauseButton.setText(AppVariables.message("Continue"));
+                        pauseButton.setOnAction((ActionEvent event) -> {
+                            startAction();
+                        });
                         disableControls(true);
-                        break;
-
-                    case "CompleteFile":
-                        showCost();
-                        break;
-
-                    case "Done":
-                    default:
-                        if (paused) {
-                            startButton.setText(AppVariables.message("Cancel"));
-                            startButton.setOnAction(new EventHandler<ActionEvent>() {
-                                @Override
-                                public void handle(ActionEvent event) {
-                                    cancelProcess(event);
-                                }
-                            });
-                            pauseButton.setVisible(true);
-                            pauseButton.setDisable(false);
-                            pauseButton.setText(AppVariables.message("Continue"));
-                            pauseButton.setOnAction(new EventHandler<ActionEvent>() {
-                                @Override
-                                public void handle(ActionEvent event) {
-                                    startAction();
-                                }
-                            });
-                            disableControls(true);
-                        } else {
-                            startButton.setText(AppVariables.message("Start"));
-                            startButton.setOnAction(new EventHandler<ActionEvent>() {
-                                @Override
-                                public void handle(ActionEvent event) {
-                                    startAction();
-                                }
-                            });
-                            pauseButton.setVisible(false);
-                            pauseButton.setDisable(true);
-                            disableControls(false);
-                            donePost();
-                        }
-                        showCost();
-
-                }
+                    } else {
+                        startButton.setText(AppVariables.message("Start"));
+                        startButton.setOnAction((ActionEvent event) -> {
+                            startAction();
+                        });
+                        pauseButton.setVisible(false);
+                        pauseButton.setDisable(true);
+                        disableControls(false);
+                        donePost();
+                    }
+                    showCost();
 
             }
         });

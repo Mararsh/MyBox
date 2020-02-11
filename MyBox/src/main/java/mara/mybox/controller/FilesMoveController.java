@@ -23,7 +23,7 @@ public class FilesMoveController extends FilesBatchController {
     @Override
     public String handleFile(File srcFile, File targetPath) {
         try {
-            showHandling(srcFile);
+            countHandling(srcFile);
             File target = makeTargetFile(srcFile, targetPath);
             if (target == null) {
                 return AppVariables.message("Skip");
@@ -33,7 +33,9 @@ public class FilesMoveController extends FilesBatchController {
             if (path == null) {
                 return AppVariables.message("Failed");
             }
-            updateLogs(message("FileMovedSuccessfully") + ": " + path.toString());
+            if (verboseCheck == null || verboseCheck.isSelected()) {
+                updateLogs(message("FileMovedSuccessfully") + ": " + path.toString());
+            }
             return AppVariables.message("Successful");
         } catch (Exception e) {
             logger.error(e.toString());

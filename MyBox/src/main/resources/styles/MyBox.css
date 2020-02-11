@@ -111,6 +111,10 @@ Red increase 151 -> pink                #de88c7         #ffdcfe
     -fx-border-width: 0px;
 }
 
+.column-header.editable-column > .label {
+    -fx-text-fill: darkblue;
+    -fx-font-weight: bolder;
+}
 
 
 .open-button {

@@ -11,6 +11,7 @@ import java.util.Optional;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -25,6 +26,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
+import javafx.scene.image.PixelReader;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -35,6 +37,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import static mara.mybox.controller.BaseController.openImageViewer;
 import mara.mybox.data.DoubleRectangle;
+import mara.mybox.data.IntPoint;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.fxml.FxmlStage;
@@ -66,7 +69,7 @@ public class ImageViewerController extends ImageMaskController {
     protected FileSortMode sortMode;
 
     @FXML
-    protected TitledPane filePane, viewPane, saveAsPane, browsePane, tipsPane;
+    protected TitledPane filePane, viewPane, saveAsPane, editPane, browsePane, tipsPane;
     @FXML
     protected VBox contentBox, fileBox;
     @FXML
@@ -75,16 +78,18 @@ public class ImageViewerController extends ImageMaskController {
     public Button moveUpButton, moveDownButton, manufactureButton, statisticButton, splitButton,
             sampleButton, browseButton;
     @FXML
-    protected CheckBox selectAreaCheck, deleteConfirmCheck;
+    protected CheckBox selectAreaCheck, deleteConfirmCheck, saveConfirmCheck;
     @FXML
     protected ToggleGroup saveAsGroup, sortGroup;
     @FXML
     protected RadioButton saveLoadRadio, saveOpenRadio, saveJustRadio;
     @FXML
     protected ComboBox<String> loadWidthBox;
+    @FXML
+    protected Button pickColorButton;
 
     public ImageViewerController() {
-        baseTitle = AppVariables.message("ImageViewer");
+        baseTitle = message("ImageViewer");
 
     }
 
@@ -94,7 +99,9 @@ public class ImageViewerController extends ImageMaskController {
             initFilePane();
             initViewPane();
             initSaveAsPane();
+            initEditPane();
             initBrowsePane();
+            initTipsPane();
             initOperationBox();
             initImageView();
             initMaskPane();
@@ -177,10 +184,15 @@ public class ImageViewerController extends ImageMaskController {
 
     protected void initViewPane() {
         try {
-            if (viewPane != null && imageView != null) {
-                viewPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
+            if (viewPane != null) {
+                if (imageView != null) {
+                    viewPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
+                }
+                viewPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
+                    AppVariables.setUserConfigValue(baseName + "ViewPane", viewPane.isExpanded());
+                });
+                viewPane.setExpanded(AppVariables.getUserConfigBoolean(baseName + "ViewPane", false));
             }
-
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -188,8 +200,15 @@ public class ImageViewerController extends ImageMaskController {
 
     protected void initSaveAsPane() {
         try {
-            if (saveAsPane != null && imageView != null) {
-                saveAsPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
+            if (saveAsPane != null) {
+                if (imageView != null) {
+                    saveAsPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
+                }
+                saveAsPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
+                    AppVariables.setUserConfigValue(baseName + "SaveAsPane", saveAsPane.isExpanded());
+                });
+                saveAsPane.setExpanded(AppVariables.getUserConfigBoolean(baseName + "SaveAsPane", false));
+
             }
 
             if (saveAsGroup != null) {
@@ -241,8 +260,14 @@ public class ImageViewerController extends ImageMaskController {
 
     protected void initBrowsePane() {
         try {
-            if (browsePane != null && imageView != null) {
-                browsePane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
+            if (browsePane != null) {
+                if (imageView != null) {
+                    browsePane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
+                }
+                browsePane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
+                    AppVariables.setUserConfigValue(baseName + "BrowsePane", browsePane.isExpanded());
+                });
+                browsePane.setExpanded(AppVariables.getUserConfigBoolean(baseName + "BrowsePane", false));
             }
 
             if (previousButton != null) {
@@ -254,28 +279,52 @@ public class ImageViewerController extends ImageMaskController {
 
             sortMode = FileTools.FileSortMode.ModifyTimeDesc;
             if (sortGroup != null) {
-                sortGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                    @Override
-                    public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                        if (newValue == null) {
-                            return;
-                        }
-                        String selected = ((RadioButton) newValue).getText();
-                        for (FileSortMode mode : FileSortMode.values()) {
-                            if (message(mode.name()).equals(selected)) {
-                                sortMode = mode;
-                                break;
+                sortGroup.selectedToggleProperty().addListener(
+                        (ObservableValue<? extends Toggle> ov, Toggle oldValue, Toggle newValue) -> {
+                            if (newValue == null) {
+                                return;
                             }
-                        }
-                        if (!isSettingValues) {
-                            makeImageNevigator();
-                        }
-                    }
-                });
+                            String selected = ((RadioButton) newValue).getText();
+                            for (FileSortMode mode : FileSortMode.values()) {
+                                if (message(mode.name()).equals(selected)) {
+                                    sortMode = mode;
+                                    break;
+                                }
+                            }
+                            if (!isSettingValues) {
+                                makeImageNevigator();
+                            }
+                        });
             }
 
         } catch (Exception e) {
             logger.error(e.toString());
+        }
+    }
+
+    protected void initEditPane() {
+        try {
+            if (editPane != null) {
+                if (imageView != null) {
+                    editPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
+                }
+                editPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
+                    AppVariables.setUserConfigValue(baseName + "EditPane", editPane.isExpanded());
+                });
+                editPane.setExpanded(AppVariables.getUserConfigBoolean(baseName + "EditPane", false));
+            }
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    protected void initTipsPane() {
+        if (tipsPane != null) {
+            tipsPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
+                AppVariables.setUserConfigValue(baseName + "TipsPane", tipsPane.isExpanded());
+            });
+            tipsPane.setExpanded(AppVariables.getUserConfigBoolean(baseName + "TipsPane", false));
         }
     }
 
@@ -302,8 +351,7 @@ public class ImageViewerController extends ImageMaskController {
             });
             selectAreaCheck.setSelected(AppVariables.getUserConfigBoolean("ImageSelect", false));
             checkSelect();
-            Tooltip tips = new Tooltip("CTRL+t");
-            FxmlControl.setTooltip(selectAreaCheck, tips);
+            FxmlControl.setTooltip(selectAreaCheck, new Tooltip("CTRL+t"));
         }
 
     }
@@ -466,6 +514,8 @@ public class ImageViewerController extends ImageMaskController {
                 }
                 isSettingValues = false;
             }
+
+            refinePane();
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -660,6 +710,35 @@ public class ImageViewerController extends ImageMaskController {
 
         } catch (Exception e) {
             logger.debug(e.toString());
+        }
+    }
+
+    @FXML
+    public void pickColorAction(ActionEvent event) {
+        if (paletteController == null || !paletteController.getMyStage().isShowing()) {
+            paletteController = (ColorPaletteController) openStage(CommonValues.ColorPaletteFxml);
+            paletteController.init(this, pickColorButton, message("ImageViewer"), true);
+            paletteController.pickColorButton.setSelected(true);
+            popInformation(message("PickingColorsNow"));
+        }
+    }
+
+    @FXML
+    @Override
+    public void paneClicked(MouseEvent event) {
+        if (paletteController == null || !paletteController.getParentController().equals(this)) {
+            isPickingColor.set(false);
+        }
+        if (isPickingColor.get()) {
+            IntPoint p = getImageXYint(event, imageView);
+            if (p == null) {
+                return;
+            }
+            PixelReader pixelReader = imageView.getImage().getPixelReader();
+            Color color = pixelReader.getColor(p.getX(), p.getY());
+            paletteController.setColor(color);
+        } else {
+            super.paneClicked(event);
         }
     }
 
@@ -944,6 +1023,28 @@ public class ImageViewerController extends ImageMaskController {
         }
 
         try {
+            if (saveConfirmCheck != null && saveConfirmCheck.isSelected()) {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle(getMyStage().getTitle());
+                alert.setContentText(AppVariables.message("SureOverrideFile"));
+                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                ButtonType buttonSave = new ButtonType(AppVariables.message("Save"));
+                ButtonType buttonSaveAs = new ButtonType(AppVariables.message("SaveAs"));
+                ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
+                alert.getButtonTypes().setAll(buttonSave, buttonSaveAs, buttonCancel);
+                Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+                stage.setAlwaysOnTop(true);
+                stage.toFront();
+
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == buttonCancel) {
+                    return;
+                } else if (result.get() == buttonSaveAs) {
+                    saveAsAction();
+                    return;
+                }
+            }
+
             if (imageInformation != null && imageInformation.isIsSampled()) {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.setTitle(getMyStage().getTitle());
@@ -958,7 +1059,7 @@ public class ImageViewerController extends ImageMaskController {
                 alert.getButtonTypes().setAll(buttonSure, buttonCancel);
 
                 Optional<ButtonType> result = alert.showAndWait();
-                if (result.get() == buttonCancel) {
+                if (result.get() != buttonSure) {
                     return;
                 }
             }
@@ -970,12 +1071,17 @@ public class ImageViewerController extends ImageMaskController {
                 task = new SingletonTask<Void>() {
 
                     private String filename;
+                    private Image selected;
 
                     @Override
                     protected boolean handle() {
                         String format = FileTools.getFileSuffix(sourceFile.getName());
+                        selected = cropImage();
+                        if (selected == null) {
+                            selected = imageView.getImage();
+                        }
 
-                        final BufferedImage bufferedImage = FxmlImageManufacture.getBufferedImage(imageView.getImage());
+                        final BufferedImage bufferedImage = FxmlImageManufacture.getBufferedImage(selected);
                         if (bufferedImage == null || task == null || isCancelled()) {
                             return false;
                         }
@@ -997,7 +1103,8 @@ public class ImageViewerController extends ImageMaskController {
 
                     @Override
                     protected void whenSucceeded() {
-                        image = imageView.getImage();
+                        image = selected;
+                        imageView.setImage(image);
                         popInformation(filename + "   " + AppVariables.message("Saved"));
                         setImageChanged(false);
                     }
@@ -1124,12 +1231,12 @@ public class ImageViewerController extends ImageMaskController {
             stage.toFront();
 
             Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == buttonCancel) {
+            if (result.get() != buttonSure) {
                 return false;
             }
         }
         if (sfile.delete()) {
-            popSuccessul();
+            popSuccessful();
             return true;
         } else {
             popFailed();
@@ -1199,7 +1306,7 @@ public class ImageViewerController extends ImageMaskController {
                 }
             }
             if (sfile.renameTo(file)) {
-                popSuccessul();
+                popSuccessful();
                 return file;
             } else {
                 popFailed();
@@ -1271,30 +1378,32 @@ public class ImageViewerController extends ImageMaskController {
             File path = currentfile.getParentFile();
             List<File> pathFiles = new ArrayList<>();
             File[] files = path.listFiles();
-            for (File file : files) {
-                if (file.isFile() && FileTools.isSupportedImage(file)) {
-                    pathFiles.add(file);
+            if (files != null) {
+                for (File file : files) {
+                    if (file.isFile() && FileTools.isSupportedImage(file)) {
+                        pathFiles.add(file);
+                    }
                 }
-            }
-            FileTools.sortFiles(pathFiles, sortMode);
+                FileTools.sortFiles(pathFiles, sortMode);
 
-            for (int i = 0; i < pathFiles.size(); i++) {
-                if (pathFiles.get(i).getAbsoluteFile().equals(currentfile.getAbsoluteFile())) {
-                    if (i < pathFiles.size() - 1) {
-                        nextFile = pathFiles.get(i + 1);
-                        nextButton.setDisable(false);
-                    } else {
-                        nextFile = null;
-                        nextButton.setDisable(true);
+                for (int i = 0; i < pathFiles.size(); ++i) {
+                    if (pathFiles.get(i).getAbsoluteFile().equals(currentfile.getAbsoluteFile())) {
+                        if (i < pathFiles.size() - 1) {
+                            nextFile = pathFiles.get(i + 1);
+                            nextButton.setDisable(false);
+                        } else {
+                            nextFile = null;
+                            nextButton.setDisable(true);
+                        }
+                        if (i > 0) {
+                            previousFile = pathFiles.get(i - 1);
+                            previousButton.setDisable(false);
+                        } else {
+                            previousFile = null;
+                            previousButton.setDisable(true);
+                        }
+                        return;
                     }
-                    if (i > 0) {
-                        previousFile = pathFiles.get(i - 1);
-                        previousButton.setDisable(false);
-                    } else {
-                        previousFile = null;
-                        previousButton.setDisable(true);
-                    }
-                    return;
                 }
             }
             previousFile = null;

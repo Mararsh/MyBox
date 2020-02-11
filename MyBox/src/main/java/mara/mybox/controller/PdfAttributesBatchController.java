@@ -22,7 +22,6 @@ import mara.mybox.data.PdfInformation;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DateTools;
-import mara.mybox.tools.PdfTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
@@ -325,12 +324,15 @@ public class PdfAttributesBatchController extends PdfBatchController {
             alert.setTitle(myStage.getTitle());
             alert.setContentText(message("SureSetPasswords"));
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+            ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
+            ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
+            alert.getButtonTypes().setAll(buttonSure, buttonCancel);
             Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
             stage.setAlwaysOnTop(true);
             stage.toFront();
 
             Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() != ButtonType.OK) {
+            if (result.get() != buttonSure) {
                 return false;
             }
         } else {
@@ -338,12 +340,15 @@ public class PdfAttributesBatchController extends PdfBatchController {
             alert.setTitle(myStage.getTitle());
             alert.setContentText(message("SureUnsetPasswords"));
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+            ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
+            ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
+            alert.getButtonTypes().setAll(buttonSure, buttonCancel);
             Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
             stage.setAlwaysOnTop(true);
             stage.toFront();
 
             Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() != ButtonType.OK) {
+            if (result.get() != buttonSure) {
                 return false;
             }
         }
@@ -353,11 +358,8 @@ public class PdfAttributesBatchController extends PdfBatchController {
 
     @Override
     public String handleFile(File srcFile, File targetPath) {
-        if (!PdfTools.isPDF(srcFile)) {
-            return message("Skip");
-        }
         try {
-            showHandling(srcFile);
+            countHandling(srcFile);
             PdfInformation rowInfo = tableData.get(currentParameters.currentIndex);
             String filePassword = rowInfo.getOwnerPassword();
             try ( PDDocument pd = PDDocument.load(srcFile, filePassword, AppVariables.pdfMemUsage)) {

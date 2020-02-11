@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.scene.shape.*?>
+<?import javafx.geometry.*?>
+<?import javafx.collections.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
+
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="800.0" spacing="5.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.LocationEditController">
+    <children>
+        <VBox fx:id="contentBox" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS">
+            <children>
+                <HBox alignment="CENTER" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
+                    <children>
+                        <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="%Location" HBox.hgrow="ALWAYS" />
+                    </children>
+                </HBox>
+                <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="200.0" prefViewportWidth="1506.0" VBox.vgrow="ALWAYS">
+                    <content>
+                        <VBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" spacing="5.0">
+                            <children>
+                                <HBox alignment="CENTER" spacing="5.0">
+                                    <children>
+                                        <Label alignment="CENTER_RIGHT" prefWidth="200.0" text="%Dataid" />
+                                        <TextField fx:id="dataidInput" disable="true" prefWidth="400.0" />
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER" spacing="5.0" VBox.vgrow="NEVER">
+                                    <children>
+                                        <Label alignment="CENTER_RIGHT" prefWidth="200.0" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%DataSet" />
+                                        <ComboBox fx:id="datasetSelector" editable="true" prefWidth="400.0" />
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER" layoutX="10.0" layoutY="688.0" spacing="5.0">
+                                    <children>
+                                        <Label alignment="CENTER_RIGHT" prefWidth="200.0" text="%DataLabel" />
+                                        <TextField fx:id="labelInput" prefWidth="400.0" />
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER" layoutX="10.0" layoutY="242.0" spacing="5.0">
+                                    <children>
+                                        <Label alignment="CENTER_RIGHT" prefWidth="200.0" text="%Address"  styleClass="blue-label" stylesheets="@../styles/MyBox.css" />
+                                        <TextField fx:id="addressInput" prefWidth="400.0" />
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER" layoutX="10.0" layoutY="10.0" spacing="5.0">
+                                    <children>
+                                        <Label alignment="CENTER_RIGHT" prefWidth="200.0" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%Longitude" />
+                                        <HBox prefWidth="400.0" spacing="5.0">
+                                            <children>
+                                                <TextField fx:id="longitudeInput" />
+                                                <Button fx:id="locationButton" mnemonicParsing="false" onAction="#locationAction">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconLocation.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER" layoutX="10.0" layoutY="68.0" spacing="5.0">
+                                    <children>
+                                        <Label alignment="CENTER_RIGHT" prefWidth="200.0" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%Latitude" />
+                                        <TextField fx:id="latitudeInput" prefWidth="400.0" />
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER" layoutX="10.0" layoutY="126.0" spacing="5.0">
+                                    <children>
+                                        <Label alignment="CENTER_RIGHT" prefWidth="200.0" text="%Altitude" />
+                                        <TextField fx:id="altitudeInput" prefWidth="400.0" />
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER" layoutX="10.0" layoutY="68.0" spacing="5.0">
+                                    <children>
+                                        <Label alignment="CENTER_RIGHT" prefWidth="200.0" text="%Precision" />
+                                        <TextField fx:id="precisionInput" prefWidth="400.0" />
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER" layoutX="10.0" layoutY="184.0" spacing="5.0">
+                                    <children>
+                                        <Label alignment="CENTER_RIGHT" prefWidth="200.0" text="%Speed" />
+                                        <TextField fx:id="speedInput" prefWidth="400.0" />
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER" layoutX="10.0" layoutY="126.0" spacing="5.0">
+                                    <children>
+                                        <Label alignment="CENTER_RIGHT" prefWidth="200.0" text="%Direction" />
+                                        <HBox alignment="CENTER_LEFT" prefWidth="400.0" spacing="5.0" HBox.hgrow="NEVER">
+                                            <children>
+                                                <ComboBox fx:id="directionSelector" editable="true" prefWidth="200.0" />
+                                                <Label text="0~360" />
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER" layoutX="10.0" layoutY="358.0" spacing="5.0">
+                                    <children>
+                                        <Label alignment="CENTER_RIGHT" prefWidth="200.0" text="%Comments" />
+                                        <TextArea fx:id="commentsArea" prefHeight="300.0" prefWidth="400.0" wrapText="true" />
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER" layoutX="10.0" layoutY="300.0" spacing="5.0">
+                                    <children>
+                                        <Label alignment="CENTER_RIGHT" prefWidth="200.0" text="%Image" />
+                                        <HBox prefWidth="400.0" spacing="5.0">
+                                            <children>
+                                                <TextField fx:id="sourceFileInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconOpen.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER" layoutX="10.0" layoutY="358.0" spacing="5.0">
+                                    <children>
+                                        <Label alignment="CENTER_RIGHT" prefWidth="200.0" text="%DataValue" />
+                                        <TextField fx:id="valueInput" prefWidth="400.0" />
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER" layoutX="10.0" layoutY="953.0" spacing="5.0">
+                                    <children>
+                                        <Label alignment="CENTER_RIGHT" prefWidth="200.0" text="%DataSize" />
+                                        <TextField fx:id="sizeInput" prefWidth="400.0" />
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER" layoutX="10.0" layoutY="10.0" spacing="5.0">
+                                    <children>
+                                        <Label alignment="CENTER_RIGHT" prefWidth="200.0" text="%DataTime" />
+                                        <HBox alignment="CENTER_LEFT" prefWidth="400.0" spacing="5.0">
+                                            <children>
+                                                <CheckBox fx:id="timeBCCheck" minWidth="-Infinity" mnemonicParsing="false" text="%BC" />
+                                                <TextField fx:id="timeInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </HBox>
+                            </children>
+                        </VBox>
+                    </content>
+                </ScrollPane>
+            </children>
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            </padding>
+        </VBox>
+        <HBox fx:id="closeBox" alignment="CENTER_RIGHT" spacing="5.0" VBox.vgrow="NEVER">
+            <children>
+                <Label fx:id="sizeLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                <CheckBox fx:id="saveCloseCheck" mnemonicParsing="false">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconFlower.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </CheckBox>
+                <CheckBox fx:id="topCheck" mnemonicParsing="false" selected="true" VBox.vgrow="NEVER">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconTop.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </CheckBox>
+                <Button fx:id="closeButton" mnemonicParsing="false" onAction="#closeAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconClose.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Save" />
+            </children>
+        </HBox>
+
+    </children>
+    <padding>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+    </padding>
+</VBox>

@@ -106,7 +106,7 @@ public class ImageGifFile {
             try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(src))) {
                 final GifImage gif = GifDecoder.read(in);
                 final int frameCount = gif.getFrameCount();
-                for (int i = 0; i < frameCount; i++) {
+                for (int i = 0; i < frameCount; ++i) {
                     final BufferedImage img = gif.getFrame(i);
                     images.add(img);
                 }
@@ -132,7 +132,8 @@ public class ImageGifFile {
         return image;
     }
 
-    public static BufferedImage readBrokenGifFile(String src, int index, int xscale, int yscale) {
+    public static BufferedImage readBrokenGifFile(String src, int index,
+            int xscale, int yscale) {
         BufferedImage image = null;
         try {
             try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(src))) {
@@ -149,14 +150,15 @@ public class ImageGifFile {
         return image;
     }
 
-    public static List<BufferedImage> readBrokenGifFile(String src, int xscale, int yscale) {
+    public static List<BufferedImage> readBrokenGifFile(String src, int xscale,
+            int yscale) {
         try {
 //            logger.debug("readBrokenGifFile");
             List<BufferedImage> images = new ArrayList<>();
             try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(src))) {
                 final GifImage gif = GifDecoder.read(in);
                 final int frameCount = gif.getFrameCount();
-                for (int i = 0; i < frameCount; i++) {
+                for (int i = 0; i < frameCount; ++i) {
                     final BufferedImage img = gif.getFrame(i);
                     int width = img.getWidth() / xscale;
                     int height = img.getHeight() / yscale;
@@ -170,14 +172,15 @@ public class ImageGifFile {
         }
     }
 
-    public static List<BufferedImage> readBrokenGifFileWithWidth(String src, int width) {
+    public static List<BufferedImage> readBrokenGifFileWithWidth(String src,
+            int width) {
         try {
 //            logger.debug("readBrokenGifFile");
             List<BufferedImage> images = new ArrayList<>();
             try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(src))) {
                 final GifImage gif = GifDecoder.read(in);
                 final int frameCount = gif.getFrameCount();
-                for (int i = 0; i < frameCount; i++) {
+                for (int i = 0; i < frameCount; ++i) {
                     final BufferedImage img = gif.getFrame(i);
                     images.add(ImageManufacture.scaleImageWidthKeep(img, width));
                 }
@@ -189,14 +192,15 @@ public class ImageGifFile {
         }
     }
 
-    public static List<BufferedImage> readBrokenGifFile(String src, List<ImageInformation> imagesInfo) {
+    public static List<BufferedImage> readBrokenGifFile(String src,
+            List<ImageInformation> imagesInfo) {
         try {
 //            logger.debug("readBrokenGifFile");
             List<BufferedImage> images = new ArrayList<>();
             try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(src))) {
                 final GifImage gif = GifDecoder.read(in);
                 final int frameCount = gif.getFrameCount();
-                for (int i = 0; i < frameCount; i++) {
+                for (int i = 0; i < frameCount; ++i) {
                     ImageInformation info = imagesInfo.get(i);
                     boolean needSampled = needSampled(info, frameCount);
                     final BufferedImage img = gif.getFrame(i);
@@ -218,7 +222,8 @@ public class ImageGifFile {
         }
     }
 
-    public static BufferedImage readBrokenGifFile(String src, ImageInformation imageInfo) {
+    public static BufferedImage readBrokenGifFile(String src,
+            ImageInformation imageInfo) {
         try {
             BufferedImage bufferedImage;
             try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(src))) {
@@ -260,7 +265,7 @@ public class ImageGifFile {
             String filename;
             int digit = (size + "").length();
             List<String> names = new ArrayList<>();
-            for (int i = from; i <= to; i++) {
+            for (int i = from; i <= to; ++i) {
                 filename = filePrefix + "-" + StringTools.fillLeftZero(i, digit) + "." + format;
                 ImageFileWriters.writeImageFile(images.get(i), format, filename);
                 names.add(filename);
@@ -279,7 +284,8 @@ public class ImageGifFile {
         return writer;
     }
 
-    public static ImageWriteParam getPara(ImageAttributes attributes, ImageWriter writer) {
+    public static ImageWriteParam getPara(ImageAttributes attributes,
+            ImageWriter writer) {
         try {
             ImageWriteParam param = writer.getDefaultWriteParam();
             if (param.canWriteCompressed()) {
@@ -300,7 +306,8 @@ public class ImageGifFile {
         }
     }
 
-    public static IIOMetadata getWriterMeta(ImageAttributes attributes, BufferedImage image,
+    public static IIOMetadata getWriterMeta(ImageAttributes attributes,
+            BufferedImage image,
             ImageWriter writer, ImageWriteParam param) {
         try {
             GIFImageMetadata metaData;
@@ -341,8 +348,9 @@ public class ImageGifFile {
         }
     }
 
-    public static boolean getParaMeta(int interval, boolean loop,
-            GIFImageWriter gifWriter, ImageWriteParam param, GIFImageMetadata metaData) {
+    public static boolean getParaMeta(long interval, boolean loop,
+            GIFImageWriter gifWriter, ImageWriteParam param,
+            GIFImageMetadata metaData) {
         try {
 
             param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
@@ -389,47 +397,8 @@ public class ImageGifFile {
     // https://programtalk.com/python-examples/com.sun.media.imageioimpl.plugins.gif.GIFImageWriterSpi/
     // https://www.jianshu.com/p/df52f1511cf8
     // http://giflib.sourceforge.net/whatsinagif/index.html
-    public static boolean writeImages(List<BufferedImage> images,
-            File outFile, int interval, boolean loop) {
-        try {
-            if (images == null || outFile == null || images.isEmpty()) {
-                return false;
-            }
-            GIFImageWriterSpi gifspi = new GIFImageWriterSpi();
-            GIFImageWriter gifWriter = new GIFImageWriter(gifspi);
-            ImageWriteParam param = gifWriter.getDefaultWriteParam();
-            GIFImageMetadata metaData = (GIFImageMetadata) gifWriter.getDefaultImageMetadata(
-                    ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_RGB), param);
-            File tmpFile = FileTools.getTempFile();
-            try ( ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
-                gifWriter.setOutput(out);
-                getParaMeta(interval, loop, gifWriter, param, metaData);
-                gifWriter.prepareWriteSequence(null);
-                for (BufferedImage image : images) {
-                    gifWriter.writeToSequence(new IIOImage(image, null, metaData), param);
-                }
-                gifWriter.endWriteSequence();
-                out.flush();
-            }
-            gifWriter.dispose();
-            try {
-                if (outFile.exists()) {
-                    outFile.delete();
-                }
-                tmpFile.renameTo(outFile);
-            } catch (Exception e) {
-                return false;
-            }
-            return true;
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-            return false;
-        }
-    }
-
     public static String writeImages(List<ImageInformation> imagesInfo,
-            File outFile, int interval, boolean loop, boolean keepSize, int width, int height) {
+            File outFile, boolean loop, boolean keepSize, int width, int height) {
         try {
             if (imagesInfo == null || imagesInfo.isEmpty() || outFile == null) {
                 return "InvalidParameters";
@@ -442,7 +411,7 @@ public class ImageGifFile {
             File tmpFile = FileTools.getTempFile();
             try ( ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                 gifWriter.setOutput(out);
-                getParaMeta(interval, loop, gifWriter, param, metaData);
+
                 gifWriter.prepareWriteSequence(null);
                 for (ImageInformation info : imagesInfo) {
                     BufferedImage bufferedImage = ImageFileReaders.getBufferedImage(info);
@@ -450,6 +419,7 @@ public class ImageGifFile {
                         if (!keepSize) {
                             bufferedImage = ImageManufacture.scaleImage(bufferedImage, width, height);
                         }
+                        getParaMeta(info.getDuration(), loop, gifWriter, param, metaData);
                         gifWriter.writeToSequence(new IIOImage(bufferedImage, null, metaData), param);
                     }
                 }
@@ -472,6 +442,204 @@ public class ImageGifFile {
         } catch (Exception e) {
             logger.error(e.toString());
             return e.toString();
+        }
+    }
+
+    public static String writeImages(List<BufferedImage> images, File outFile,
+            int duration) {
+        try {
+            if (images == null || images.isEmpty() || outFile == null) {
+                return "InvalidParameters";
+            }
+            GIFImageWriterSpi gifspi = new GIFImageWriterSpi();
+            GIFImageWriter gifWriter = new GIFImageWriter(gifspi);
+            ImageWriteParam param = gifWriter.getDefaultWriteParam();
+            GIFImageMetadata metaData = (GIFImageMetadata) gifWriter.getDefaultImageMetadata(
+                    ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_RGB), param);
+            File tmpFile = FileTools.getTempFile();
+            try ( ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
+                gifWriter.setOutput(out);
+
+                gifWriter.prepareWriteSequence(null);
+                for (BufferedImage bufferedImage : images) {
+                    if (bufferedImage != null) {
+                        getParaMeta(duration, true, gifWriter, param, metaData);
+                        gifWriter.writeToSequence(new IIOImage(bufferedImage, null, metaData), param);
+                    }
+                }
+                gifWriter.endWriteSequence();
+                out.flush();
+            }
+            gifWriter.dispose();
+
+            try {
+                if (outFile.exists()) {
+                    outFile.delete();
+                }
+                tmpFile.renameTo(outFile);
+            } catch (Exception e) {
+                return e.toString();
+            }
+
+            return "";
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return e.toString();
+        }
+    }
+
+    public static void explainGifMetaData(
+            Map<String, Map<String, List<Map<String, Object>>>> metaData,
+            ImageInformation info) {
+        try {
+            String format = "javax_imageio_gif_stream_1.0";
+            if (metaData.containsKey(format)) {
+                logger.debug(format);
+                Map<String, List<Map<String, Object>>> javax_imageio_gif_stream = metaData.get(format);
+                if (javax_imageio_gif_stream.containsKey("Version")) {
+                    Map<String, Object> Version = javax_imageio_gif_stream.get("Version").get(0);
+                    if (Version.containsKey("value")) {
+                        info.setNativeAttribute("Version", (String) Version.get("value"));
+                    }
+                }
+                if (javax_imageio_gif_stream.containsKey("LogicalScreenDescriptor")) {
+                    Map<String, Object> LogicalScreenDescriptor = javax_imageio_gif_stream.get("LogicalScreenDescriptor").get(0);
+                    if (LogicalScreenDescriptor.containsKey("logicalScreenWidth")) {
+                        info.setNativeAttribute("logicalScreenWidth", Integer.valueOf((String) LogicalScreenDescriptor.get("logicalScreenWidth")));
+                    }
+                    if (LogicalScreenDescriptor.containsKey("logicalScreenHeight")) {
+                        info.setNativeAttribute("logicalScreenHeight", Integer.valueOf((String) LogicalScreenDescriptor.get("logicalScreenHeight")));
+                    }
+                    if (LogicalScreenDescriptor.containsKey("colorResolution")) {
+                        info.setNativeAttribute("colorResolution", Integer.valueOf((String) LogicalScreenDescriptor.get("colorResolution")));
+                    }
+                    if (LogicalScreenDescriptor.containsKey("pixelAspectRatio")) {
+                        int v = Integer.valueOf((String) LogicalScreenDescriptor.get("pixelAspectRatio"));
+                        if (v == 0) {
+                            info.setNativeAttribute("pixelAspectRatio", 1);
+                        } else {
+                            info.setNativeAttribute("pixelAspectRatio", (v + 15.f) / 64);
+                        }
+                    }
+                }
+                if (javax_imageio_gif_stream.containsKey("GlobalColorTable")) {
+                    Map<String, Object> GlobalColorTable = javax_imageio_gif_stream.get("GlobalColorTable").get(0);
+                    if (GlobalColorTable.containsKey("sizeOfGlobalColorTable")) {
+                        info.setNativeAttribute("sizeOfGlobalColorTable", Integer.valueOf((String) GlobalColorTable.get("sizeOfGlobalColorTable")));
+                    }
+                    if (GlobalColorTable.containsKey("backgroundColorIndex")) {
+                        info.setNativeAttribute("backgroundColorIndex", Integer.valueOf((String) GlobalColorTable.get("backgroundColorIndex")));
+                    }
+                    if (GlobalColorTable.containsKey("sortFlag")) {
+                        info.setNativeAttribute("sortFlag", (String) GlobalColorTable.get("sortFlag"));
+                    }
+                }
+                if (javax_imageio_gif_stream.containsKey("stream_ColorTableEntry")) {
+                    List<Map<String, Object>> ColorTableEntryList = javax_imageio_gif_stream.get("ColorTableEntry");
+                    if (ColorTableEntryList != null) {
+                        info.setNativeAttribute("stream_ColorTableEntryList", ColorTableEntryList.size());  // Extract data if need in future
+                    }
+                }
+            }
+
+            format = "javax_imageio_gif_image_1.0";
+            if (metaData.containsKey(format)) {
+                Map<String, List<Map<String, Object>>> javax_imageio_gif_image = metaData.get(format);
+                if (javax_imageio_gif_image.containsKey("Version")) {
+                    Map<String, Object> ImageDescriptor = javax_imageio_gif_image.get("ImageDescriptor").get(0);
+                    if (ImageDescriptor.containsKey("imageLeftPosition")) {
+                        info.setNativeAttribute("imageLeftPosition", (String) ImageDescriptor.get("imageLeftPosition"));
+                    }
+                    if (ImageDescriptor.containsKey("imageTopPosition")) {
+                        info.setNativeAttribute("imageTopPosition", (String) ImageDescriptor.get("imageTopPosition"));
+                    }
+                    if (ImageDescriptor.containsKey("imageWidth")) {
+                        info.setNativeAttribute("imageWidth", (String) ImageDescriptor.get("imageWidth"));
+                    }
+                    if (ImageDescriptor.containsKey("imageHeight")) {
+                        info.setNativeAttribute("imageHeight", (String) ImageDescriptor.get("imageHeight"));
+                    }
+                    if (ImageDescriptor.containsKey("interlaceFlag")) {
+                        info.setNativeAttribute("interlaceFlag", (String) ImageDescriptor.get("interlaceFlag"));
+                    }
+                }
+                if (javax_imageio_gif_image.containsKey("ColorTableEntry")) {
+                    List<Map<String, Object>> ColorTableEntryList = javax_imageio_gif_image.get("ColorTableEntry");
+                    if (ColorTableEntryList != null) {
+                        info.setNativeAttribute("ColorTableEntryList", ColorTableEntryList.size()); // Extract data if need in future
+                    }
+                }
+                if (javax_imageio_gif_image.containsKey("GraphicControlExtension")) {
+                    Map<String, Object> GraphicControlExtension = javax_imageio_gif_image.get("GraphicControlExtension").get(0);
+                    if (GraphicControlExtension.containsKey("disposalMethod")) {
+                        info.setNativeAttribute("disposalMethod", (String) GraphicControlExtension.get("disposalMethod"));
+                    }
+                    if (GraphicControlExtension.containsKey("userInputFlag")) {
+                        info.setNativeAttribute("userInputFlag", (String) GraphicControlExtension.get("userInputFlag"));
+                    }
+                    if (GraphicControlExtension.containsKey("transparentColorFlag")) {
+                        info.setNativeAttribute("transparentColorFlag", (String) GraphicControlExtension.get("transparentColorFlag"));
+                    }
+                    if (GraphicControlExtension.containsKey("delayTime")) {   // in hundredths of a second
+                        info.setNativeAttribute("delayTime", GraphicControlExtension.get("delayTime"));
+                        try {
+                            int v = Integer.valueOf((String) GraphicControlExtension.get("delayTime"));
+                            info.setDuration(v * 10);
+                        } catch (Exception e) {
+                        }
+                    }
+                    if (GraphicControlExtension.containsKey("transparentColorIndex")) {
+                        info.setNativeAttribute("transparentColorIndex", (String) GraphicControlExtension.get("transparentColorIndex"));
+                    }
+                }
+                if (javax_imageio_gif_image.containsKey("PlainTextExtension")) {
+                    Map<String, Object> PlainTextExtension = javax_imageio_gif_image.get("PlainTextExtension").get(0);
+                    if (PlainTextExtension.containsKey("textGridLeft")) {
+                        info.setNativeAttribute("textGridLeft", PlainTextExtension.get("textGridLeft"));
+                    }
+                    if (PlainTextExtension.containsKey("textGridTop")) {
+                        info.setNativeAttribute("textGridTop", PlainTextExtension.get("textGridTop"));
+                    }
+                    if (PlainTextExtension.containsKey("textGridWidth")) {
+                        info.setNativeAttribute("textGridWidth", PlainTextExtension.get("textGridWidth"));
+                    }
+                    if (PlainTextExtension.containsKey("textGridHeight")) {
+                        info.setNativeAttribute("textGridHeight", PlainTextExtension.get("textGridHeight"));
+                    }
+                    if (PlainTextExtension.containsKey("characterCellWidth")) {
+                        info.setNativeAttribute("characterCellWidth", PlainTextExtension.get("characterCellWidth"));
+                    }
+                    if (PlainTextExtension.containsKey("characterCellHeight")) {
+                        info.setNativeAttribute("characterCellHeight", PlainTextExtension.get("characterCellHeight"));
+                    }
+                    if (PlainTextExtension.containsKey("textForegroundColor")) {
+                        info.setNativeAttribute("textForegroundColor", PlainTextExtension.get("textForegroundColor"));
+                    }
+                    if (PlainTextExtension.containsKey("textBackgroundColor")) {
+                        info.setNativeAttribute("textBackgroundColor", PlainTextExtension.get("textBackgroundColor"));
+                    }
+                }
+                if (javax_imageio_gif_image.containsKey("ApplicationExtensions")) {
+                    Map<String, Object> ApplicationExtensions = javax_imageio_gif_image.get("ApplicationExtensions").get(0);
+                    if (ApplicationExtensions.containsKey("applicationID")) {
+                        info.setNativeAttribute("applicationID", ApplicationExtensions.get("applicationID"));
+                    }
+                    if (ApplicationExtensions.containsKey("authenticationCode")) {
+                        info.setNativeAttribute("authenticationCode", ApplicationExtensions.get("authenticationCode"));
+                    }
+                }
+                if (javax_imageio_gif_image.containsKey("CommentExtensions")) {
+                    Map<String, Object> CommentExtensions = javax_imageio_gif_image.get("CommentExtensions").get(0);
+                    if (CommentExtensions.containsKey("value")) {
+                        info.setNativeAttribute("CommentExtensions", CommentExtensions.get("value"));
+                    }
+
+                }
+            }
+
+        } catch (Exception e) {
+
         }
     }
 

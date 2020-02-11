@@ -747,14 +747,14 @@ public class ImageSplitController extends ImageViewerController {
         }
         cols = new ArrayList<>();
         cols.add(0);
-        for (int i = 1; i < colsNumber; i++) {
+        for (int i = 1; i < colsNumber; ++i) {
             int v = i * imageInformation.getWidth() / colsNumber;
             cols.add(v);
         }
         cols.add(imageInformation.getWidth() - 1);
         rows = new ArrayList<>();
         rows.add(0);
-        for (int i = 1; i < rowsNumber; i++) {
+        for (int i = 1; i < rowsNumber; ++i) {
             int v = i * imageInformation.getHeight() / rowsNumber;
             rows.add(v);
         }
@@ -915,7 +915,7 @@ public class ImageSplitController extends ImageViewerController {
             double h = imageView.getBoundsInParent().getHeight();
             double ratiox = w / imageView.getImage().getWidth();
             double ratioy = h / imageView.getImage().getHeight();
-            for (int i = 0; i < rows.size(); i++) {
+            for (int i = 0; i < rows.size(); ++i) {
                 double row = rows.get(i) * ratioy / scale;
                 if (row <= 0 || row >= h - 1) {
                     continue;
@@ -930,7 +930,7 @@ public class ImageSplitController extends ImageViewerController {
                 line.setLayoutY(imageView.getLayoutY() + line.getLayoutY());
                 maskPane.getChildren().add(line);
             }
-            for (int i = 0; i < cols.size(); i++) {
+            for (int i = 0; i < cols.size(); ++i) {
                 double col = cols.get(i) * ratiox / scale;
                 if (col <= 0 || col >= w - 1) {
                     continue;
@@ -950,10 +950,10 @@ public class ImageSplitController extends ImageViewerController {
                 String style = " -fx-font-size: 1.2em; ";
                 DoubleTools.sortList(rows);
                 DoubleTools.sortList(cols);
-                for (int i = 0; i < rows.size() - 1; i++) {
+                for (int i = 0; i < rows.size() - 1; ++i) {
                     double row = rows.get(i) * ratioy / scale;
                     int hv = rows.get(i + 1) - rows.get(i) + 1;
-                    for (int j = 0; j < cols.size() - 1; j++) {
+                    for (int j = 0; j < cols.size() - 1; ++j) {
                         double col = cols.get(j) * ratiox / scale;
                         int wv = cols.get(j + 1) - cols.get(j) + 1;
                         Text text = new Text(wv + "x" + hv);
@@ -1013,7 +1013,7 @@ public class ImageSplitController extends ImageViewerController {
             stage.toFront();
 
             Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == buttonCancel) {
+            if (result.get() != buttonSure) {
                 return null;
             }
         }
@@ -1061,13 +1061,13 @@ public class ImageSplitController extends ImageViewerController {
                     wholeSource = FxmlImageManufacture.getBufferedImage(image);
                 }
                 int total = (rows.size() - 1) * (cols.size() - 1);
-                for (int i = 0; i < rows.size() - 1; i++) {
+                for (int i = 0; i < rows.size() - 1; ++i) {
                     if (imageTask == null || isCancelled()) {
                         return null;
                     }
                     y1 = rows.get(i);
                     y2 = rows.get(i + 1);
-                    for (int j = 0; j < cols.size() - 1; j++) {
+                    for (int j = 0; j < cols.size() - 1; ++j) {
                         if (imageTask == null || isCancelled()) {
                             return null;
                         }
@@ -1161,7 +1161,7 @@ public class ImageSplitController extends ImageViewerController {
                     final String sourceFormat = imageInformation.getImageFormat();
                     final String sourcefile = sourceFile.getAbsolutePath();
                     File tmpFile = FileTools.getTempFile();
-                    try (PDDocument document = new PDDocument(AppVariables.pdfMemUsage)) {
+                    try ( PDDocument document = new PDDocument(AppVariables.pdfMemUsage)) {
                         PDFont font = PdfTools.getFont(document, fontName);
                         PDDocumentInformation info = new PDDocumentInformation();
                         info.setCreationDate(Calendar.getInstance());
@@ -1178,13 +1178,13 @@ public class ImageSplitController extends ImageViewerController {
                         }
                         int count = 0;
                         int total = (rows.size() - 1) * (cols.size() - 1);
-                        for (int i = 0; i < rows.size() - 1; i++) {
+                        for (int i = 0; i < rows.size() - 1; ++i) {
                             if (pdfTask == null || isCancelled()) {
                                 return null;
                             }
                             y1 = rows.get(i);
                             y2 = rows.get(i + 1);
-                            for (int j = 0; j < cols.size() - 1; j++) {
+                            for (int j = 0; j < cols.size() - 1; ++j) {
                                 if (pdfTask == null || isCancelled()) {
                                     return null;
                                 }
@@ -1245,7 +1245,7 @@ public class ImageSplitController extends ImageViewerController {
                     public void run() {
                         try {
                             if (ok && tFile.exists()) {
-                                popSuccessul();
+                                popSuccessful();
                                 FxmlStage.openPdfViewer(null, tFile);
 //                               browseURI(targetFile.toURI());
                             } else {
@@ -1286,7 +1286,7 @@ public class ImageSplitController extends ImageViewerController {
                 try {
                     ImageWriter writer = getWriter();
                     File tmpFile = FileTools.getTempFile();
-                    try (ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
+                    try ( ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                         writer.setOutput(out);
                         ImageWriteParam param = getPara(null, writer);
                         writer.prepareWriteSequence(null);
@@ -1296,13 +1296,13 @@ public class ImageSplitController extends ImageViewerController {
                             wholeSource = FxmlImageManufacture.getBufferedImage(imageInformation.getImage());
                         }
                         int total = (rows.size() - 1) * (cols.size() - 1);
-                        for (int i = 0; i < rows.size() - 1; i++) {
+                        for (int i = 0; i < rows.size() - 1; ++i) {
                             if (tiffTask == null || isCancelled()) {
                                 return null;
                             }
                             y1 = rows.get(i);
                             y2 = rows.get(i + 1);
-                            for (int j = 0; j < cols.size() - 1; j++) {
+                            for (int j = 0; j < cols.size() - 1; ++j) {
                                 if (tiffTask == null || isCancelled()) {
                                     return null;
                                 }
@@ -1366,7 +1366,7 @@ public class ImageSplitController extends ImageViewerController {
                     public void run() {
                         try {
                             if (ok && tFile.exists()) {
-                                popSuccessul();
+                                popSuccessful();
                                 final ImageFramesViewerController controller
                                         = (ImageFramesViewerController) openStage(CommonValues.ImageFramesViewerFxml);
                                 controller.selectSourceFile(tFile);

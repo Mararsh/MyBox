@@ -46,7 +46,7 @@ public class IntTools {
             }
         });
         int[] sorted = new int[numbers.length];
-        for (int i = 0; i < list.size(); i++) {
+        for (int i = 0; i < list.size(); ++i) {
             sorted[i] = list.get(i);
         }
         return sorted;

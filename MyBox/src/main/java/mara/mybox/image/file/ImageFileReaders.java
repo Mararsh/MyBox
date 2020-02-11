@@ -26,9 +26,11 @@ import mara.mybox.image.ImageColor;
 import static mara.mybox.image.ImageConvert.pixelSizeMm2dpi;
 import mara.mybox.image.ImageFileInformation;
 import mara.mybox.image.ImageInformation;
+import mara.mybox.image.ImageManufacture;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import net.sf.image4j.codec.ico.ICODecoder;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
@@ -56,6 +58,10 @@ public class ImageFileReaders {
         }
         BufferedImage image;
         try {
+            String format = FileTools.getFileSuffix(file);
+            if ("ico".equals(format) || "icon".equals(format)) {
+                return readIcon(file);
+            }
 //            if (ImageJpeg2000File.isJpeg2000(file)) {
 //                return ImageJpeg2000File.readImage(file);
 //            }
@@ -79,11 +85,15 @@ public class ImageFileReaders {
         return image;
     }
 
-    public static BufferedImage readFileByHeight(String format, String filename, int height) {
+    public static BufferedImage readFileByHeight(String format, String filename,
+            int height) {
         BufferedImage bufferedImage;
         int scale = 1;
         try {
-
+            if ("ico".equals(format) || "icon".equals(format)) {
+                bufferedImage = readIcon(new File(filename));
+                return ImageManufacture.scaleImageHeightKeep(bufferedImage, height);
+            }
             ImageReader reader = getReader(format);
             try ( ImageInputStream in = ImageIO.createImageInputStream(
                     new BufferedInputStream(new BufferedInputStream(new FileInputStream(filename))))) {
@@ -109,10 +119,15 @@ public class ImageFileReaders {
         return bufferedImage;
     }
 
-    public static BufferedImage readFileByWidth(String format, String filename, int width) {
+    public static BufferedImage readFileByWidth(String format, String filename,
+            int width) {
         BufferedImage bufferedImage;
         int scale = 1;
         try {
+            if ("ico".equals(format) || "icon".equals(format)) {
+                bufferedImage = readIcon(new File(filename));
+                return ImageManufacture.scaleImageWidthKeep(bufferedImage, width);
+            }
             ImageReader reader = getReader(format);
             try ( ImageInputStream in = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
                 reader.setInput(in, false);
@@ -136,9 +151,14 @@ public class ImageFileReaders {
         return bufferedImage;
     }
 
-    public static BufferedImage readFileByScale(String format, String filename, int scale) {
+    public static BufferedImage readFileByScale(String format, String filename,
+            int scale) {
         BufferedImage bufferedImage;
         try {
+            if ("ico".equals(format) || "icon".equals(format)) {
+                bufferedImage = readIcon(new File(filename));
+                return ImageManufacture.scaleImage(bufferedImage, scale);
+            }
             ImageReader reader = getReader(format);
             try ( ImageInputStream in = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
 
@@ -193,8 +213,18 @@ public class ImageFileReaders {
         return bufferedImage;
     }
 
+    public static List<BufferedImage> readFrames(File file) {
+        if (file == null || !file.exists()) {
+            return null;
+        }
+        return readFrames(FileTools.getFileSuffix(file), file.getAbsolutePath());
+    }
+
     public static List<BufferedImage> readFrames(String format, String filename) {
         try {
+            if ("ico".equals(format) || "icon".equals(format)) {
+                return ICODecoder.read(new File(filename));
+            }
             List<BufferedImage> images = new ArrayList<>();
             ImageReader reader = getReader(format);
             try ( ImageInputStream in = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
@@ -223,9 +253,17 @@ public class ImageFileReaders {
         }
     }
 
-    public static List<BufferedImage> readFramesWithWidth(String format, String filename, int width) {
+    public static List<BufferedImage> readFramesWithWidth(String format,
+            String filename, int width) {
         try {
             List<BufferedImage> images = new ArrayList<>();
+            if ("ico".equals(format) || "icon".equals(format)) {
+                List<BufferedImage> imageSrc = ICODecoder.read(new File(filename));
+                for (BufferedImage image : imageSrc) {
+                    images.add(ImageManufacture.scaleImageWidthKeep(image, width));
+                }
+                return images;
+            }
             ImageReader reader = getReader(format);
             boolean broken = false;
             try ( ImageInputStream in = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
@@ -264,7 +302,8 @@ public class ImageFileReaders {
         }
     }
 
-    public static boolean needSampled(ImageInformation imageInfo, int framesNumber) {
+    public static boolean needSampled(ImageInformation imageInfo,
+            int framesNumber) {
         if (imageInfo == null || framesNumber < 1) {
             return false;
         }
@@ -335,6 +374,9 @@ public class ImageFileReaders {
     public static List<BufferedImage> readFrames(String format, String filename,
             List<ImageInformation> imagesInfo) {
         try {
+            if ("ico".equals(format) || "icon".equals(format)) {
+                return readFrames(format, filename);
+            }
             List<BufferedImage> images = new ArrayList<>();
             if (imagesInfo == null || imagesInfo.isEmpty()) {
                 return images;
@@ -346,7 +388,7 @@ public class ImageFileReaders {
                 reader.setInput(in, false);
                 int scale;
                 ImageReadParam param = reader.getDefaultReadParam();
-                for (int i = 0; i < imagesInfo.size(); i++) {
+                for (int i = 0; i < imagesInfo.size(); ++i) {
                     ImageInformation info = imagesInfo.get(i);
                     scale = 1;
                     boolean needSampled = needSampled(info, total);
@@ -396,6 +438,9 @@ public class ImageFileReaders {
     public static BufferedImage readImage(String format, String filename,
             ImageInformation imageInfo) {
         try {
+            if ("ico".equals(format) || "icon".equals(format)) {
+                return readIcon(new File(filename));
+            }
             BufferedImage bufferedImage;
             ImageReader reader = getReader(format);
             try ( ImageInputStream in = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
@@ -448,10 +493,13 @@ public class ImageFileReaders {
         }
     }
 
-    public static BufferedImage readFrame(String format, String filename, int index) {
+    public static BufferedImage readFrame(String format, String filename,
+            int index) {
         BufferedImage bufferedImage = null;
         try {
-
+            if ("ico".equals(format) || "icon".equals(format)) {
+                return ICODecoder.read(new File(filename)).get(index);
+            }
             ImageReader reader = getReader(format);
             try ( ImageInputStream in = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
                 reader.setInput(in, false);
@@ -489,6 +537,11 @@ public class ImageFileReaders {
                 return null;
             }
             BufferedImage bufferedImage;
+            if ("ico".equals(format) || "icon".equals(format)) {
+                bufferedImage = readIcon(new File(filename));
+                bufferedImage = bufferedImage.getSubimage(bounds.x, bounds.y, bounds.width, bounds.height);
+                return bufferedImage;
+            }
             ImageReader reader = getReader(format);
             try ( ImageInputStream in = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
                 reader.setInput(in, false);
@@ -509,6 +562,22 @@ public class ImageFileReaders {
         }
     }
 
+    public static BufferedImage readIcon(File srcFile) {
+        try {
+            if (srcFile == null) {
+                return null;
+            }
+            List<BufferedImage> images = ICODecoder.read(srcFile);
+            if (images == null || images.isEmpty()) {
+                return null;
+            }
+            return images.get(0);
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
     /*
         Broken image
      */
@@ -516,12 +585,14 @@ public class ImageFileReaders {
         return readBrokenImage(e, file, 1);
     }
 
-    public static BufferedImage readBrokenImage(Exception e, File file, int scale) {
+    public static BufferedImage readBrokenImage(Exception e, File file,
+            int scale) {
         return readBrokenImage(e, file, 0, 1, 1);
 
     }
 
-    public static BufferedImage readBrokenImage(Exception e, File file, int index, int xscale, int yscale) {
+    public static BufferedImage readBrokenImage(Exception e, File file,
+            int index, int xscale, int yscale) {
         BufferedImage image = null;
         try {
             ImageFileInformation finfo = readImageFileMetaData(file.getAbsolutePath());
@@ -530,16 +601,18 @@ public class ImageFileReaders {
             }
             image = readBrokenImage(e, file, finfo.getImageInformation(), index, xscale, yscale);
         } catch (Exception ex) {
-            logger.error(ex.toString());
+//            logger.error(ex.toString());
         }
         return image;
     }
 
-    public static BufferedImage readBrokenImage(Exception e, File file, ImageInformation imageInfo) {
+    public static BufferedImage readBrokenImage(Exception e, File file,
+            ImageInformation imageInfo) {
         return readBrokenImage(e, file, imageInfo, 0, 1, 1);
     }
 
-    public static BufferedImage readBrokenImage(Exception e, File file, ImageInformation imageInfo,
+    public static BufferedImage readBrokenImage(Exception e, File file,
+            ImageInformation imageInfo,
             int index, int xscale, int yscale) {
         if (imageInfo == null) {
             return null;
@@ -561,7 +634,7 @@ public class ImageFileReaders {
                 }
                 break;
             default:
-                logger.error(e.toString());
+//                logger.error(e.toString());
         }
         return image;
     }
@@ -578,6 +651,23 @@ public class ImageFileReaders {
             return null;
         }
         ImageFileInformation fileInfo = new ImageFileInformation(file);
+        String targetFormat = FileTools.getFileSuffix(file).toLowerCase();
+        if ("ico".equals(targetFormat) || "icon".equals(targetFormat)) {
+            fileInfo.setNumberOfImages(1);
+            fileInfo.setImageFormat(targetFormat);
+            ImageInformation imageInfo = ImageInformation.create(targetFormat, file);
+            imageInfo.setImageFileInformation(fileInfo);
+            imageInfo.setImageFormat(targetFormat);
+            imageInfo.setFileName(fileInfo.getFileName());
+            imageInfo.setCreateTime(fileInfo.getCreateTime());
+            imageInfo.setModifyTime(fileInfo.getModifyTime());
+            imageInfo.setFileSize(fileInfo.getFileSize());
+            List<ImageInformation> imagesInfo = new ArrayList<>();
+            imagesInfo.add(imageInfo);
+            fileInfo.setImagesInformation(imagesInfo);
+            fileInfo.setImageInformation(imageInfo);
+            return fileInfo;
+        }
         try {
             try ( ImageInputStream iis = ImageIO.createImageInputStream(file)) {
                 Iterator<ImageReader> readers = ImageIO.getImageReaders(iis);
@@ -590,7 +680,7 @@ public class ImageFileReaders {
                     fileInfo.setImageFormat(format);
 
                     List<ImageInformation> imagesInfo = new ArrayList<>();
-                    for (int i = 0; i < num; i++) {
+                    for (int i = 0; i < num; ++i) {
                         ImageInformation imageInfo = ImageInformation.create(format, file);
                         imageInfo.setImageFileInformation(fileInfo);
                         imageInfo.setImageFormat(format);
@@ -603,7 +693,6 @@ public class ImageFileReaders {
                         imageInfo.setIsMultipleFrames(num > 1);
                         imageInfo.setIsTiled(reader.isImageTiled(i));
                         imageInfo.setIndex(i + 1);
-
                         Iterator<ImageTypeSpecifier> types = reader.getImageTypes(i);
                         List<ImageTypeSpecifier> typesValue = new ArrayList<>();
                         if (types != null) {
@@ -687,6 +776,9 @@ public class ImageFileReaders {
                 case "jpeg":
                     ImageJpgFile.explainJpegMetaData(metaData, imageInfo);
                     break;
+                case "gif":
+                    ImageGifFile.explainGifMetaData(metaData, imageInfo);
+                    break;
                 case "bmp":
                     ImageBmpFile.explainBmpMetaData(metaData, imageInfo);
                     break;
@@ -704,11 +796,12 @@ public class ImageFileReaders {
         }
     }
 
-    public static void readImageMetaData(Map<String, List<Map<String, Object>>> formatMetaData,
+    public static void readImageMetaData(
+            Map<String, List<Map<String, Object>>> formatMetaData,
             StringBuilder metaDataXml, IIOMetadataNode node, int level) {
         try {
             String lineSeparator = System.getProperty("line.separator");
-            for (int i = 0; i < level; i++) {
+            for (int i = 0; i < level; ++i) {
                 metaDataXml.append("    ");
             }
             metaDataXml.append("<").append(node.getNodeName());
@@ -717,7 +810,7 @@ public class ImageFileReaders {
             boolean isTiff = "TIFFField".equals(node.getNodeName());
             if (map != null && map.getLength() > 0) {
                 int length = map.getLength();
-                for (int i = 0; i < length; i++) {
+                for (int i = 0; i < length; ++i) {
                     Node attr = map.item(i);
                     String name = attr.getNodeName();
                     String value = attr.getNodeValue();
@@ -756,7 +849,7 @@ public class ImageFileReaders {
                 readImageMetaData(formatMetaData, metaDataXml, child, level + 1);
                 child = (IIOMetadataNode) child.getNextSibling();
             }
-            for (int i = 0; i < level; i++) {
+            for (int i = 0; i < level; ++i) {
                 metaDataXml.append("    ");
             }
             metaDataXml.append("</").append(node.getNodeName()).append(">").append(lineSeparator);
@@ -766,7 +859,8 @@ public class ImageFileReaders {
     }
 
     // https://docs.oracle.com/javase/10/docs/api/javax/imageio/metadata/doc-files/standard_metadata.html
-    public static void explainCommonMetaData(Map<String, Map<String, List<Map<String, Object>>>> metaData,
+    public static void explainCommonMetaData(
+            Map<String, Map<String, List<Map<String, Object>>>> metaData,
             ImageInformation imageInfo) {
         try {
             if (!metaData.containsKey("javax_imageio_1.0")) {

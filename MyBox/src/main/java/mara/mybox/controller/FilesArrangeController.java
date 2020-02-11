@@ -485,6 +485,9 @@ public class FilesArrangeController extends FilesBatchController {
                 return false;
             }
             File[] files = sourcePath.listFiles();
+            if (files == null) {
+                return false;
+            }
             String srcFileName;
             long len;
             for (File srcFile : files) {
@@ -511,7 +514,7 @@ public class FilesArrangeController extends FilesBatchController {
                 }
                 if (srcFile.isDirectory()) {
                     if (handleSubdirCheck.isSelected()) {
-                        if (verboseCheck.isSelected()) {
+                        if (verboseCheck == null || verboseCheck.isSelected()) {
                             updateLogs(message("HandlingDirectory") + " " + srcFileName, true, true);
                         }
                         arrangeFiles(srcFile);
@@ -544,7 +547,7 @@ public class FilesArrangeController extends FilesBatchController {
                             path = new File(targetPath + File.separator + c.get(Calendar.YEAR));
                             if (!path.exists()) {
                                 path.mkdirs();
-                                if (verboseCheck.isSelected()) {
+                                if (verboseCheck == null || verboseCheck.isSelected()) {
                                     updateLogs(strCreatedSuccessfully + path.getAbsolutePath(), true, true);
                                 }
                             }
@@ -555,7 +558,7 @@ public class FilesArrangeController extends FilesBatchController {
                                     + File.separator + c.get(Calendar.YEAR) + "-" + month + "-" + day);
                             if (!path.exists()) {
                                 path.mkdirs();
-                                if (verboseCheck.isSelected()) {
+                                if (verboseCheck == null || verboseCheck.isSelected()) {
                                     updateLogs(strCreatedSuccessfully + path.getAbsolutePath(), true, true);
                                 }
                             }
@@ -566,7 +569,7 @@ public class FilesArrangeController extends FilesBatchController {
                                     + File.separator + c.get(Calendar.YEAR) + "-" + month);
                             if (!path.exists()) {
                                 path.mkdirs();
-                                if (verboseCheck.isSelected()) {
+                                if (verboseCheck == null || verboseCheck.isSelected()) {
                                     updateLogs(strCreatedSuccessfully + path.getAbsolutePath(), true, true);
                                 }
                             }
@@ -594,13 +597,13 @@ public class FilesArrangeController extends FilesBatchController {
                     if (!isCopy) {
                         srcFile.delete();
                         copyAttr.setDeletedSize(copyAttr.getDeletedSize() + len);
-                        if (verboseCheck.isSelected()) {
+                        if (verboseCheck == null || verboseCheck.isSelected()) {
                             updateLogs(strDeleteSuccessfully + srcFileName, true, true);
                         }
                     }
                     copyAttr.setCopiedFilesNumber(copyAttr.getCopiedFilesNumber() + 1);
                     copyAttr.setCopiedSize(copyAttr.getCopiedSize() + len);
-                    if (verboseCheck.isSelected()) {
+                    if (verboseCheck == null || verboseCheck.isSelected()) {
                         updateLogs(copyAttr.getCopiedFilesNumber() + "  " + strCopySuccessfully
                                 + srcFileName + " -> " + newFile.getAbsolutePath(), true, true);
                     }

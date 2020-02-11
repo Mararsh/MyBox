@@ -12,12 +12,12 @@ License:    Apache License Version 2.0
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane fx:id="thisPane" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.PdfAttributesController">
+<BorderPane fx:id="thisPane" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.PdfAttributesController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
     <center>
-        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+        <VBox maxWidth="1.7976931348623157E308" spacing="5.0">
             <children>
                 <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
                     <children>
@@ -50,9 +50,9 @@ License:    Apache License Version 2.0
                         <Insets bottom="20.0" />
                     </VBox.margin>
                 </HBox>
-            <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="604.0" prefViewportWidth="1506.0" VBox.vgrow="ALWAYS">
+            <ScrollPane fitToHeight="true" fitToWidth="true" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="604.0" prefViewportWidth="1506.0">
                <content>
-                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
+                        <VBox maxWidth="1.7976931348623157E308" spacing="10.0">
                             <children>
                                 <HBox alignment="CENTER_LEFT" spacing="5.0">
                                     <children>

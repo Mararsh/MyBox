@@ -65,7 +65,7 @@ public class ColorTemperature {
         double vs = (6.0 * xyz[1]) / (xyz[0] + 15.0 * xyz[1] + 3.0 * xyz[2]);
         double di = 0.0, dm = 0.0;
         int i;
-        for (i = 0; i < uvt.length; i++) {
+        for (i = 0; i < uvt.length; ++i) {
             di = (vs - uvt[i][1]) - uvt[i][2] * (us - uvt[i][0]);
             if ((i > 0) && (((di < 0.0) && (dm >= 0.0)) || ((di >= 0.0) && (dm < 0.0)))) {
                 break;

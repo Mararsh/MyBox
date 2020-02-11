@@ -54,7 +54,7 @@ public class OperationController extends BaseController {
             }
         });
         openCheck.setSelected(AppVariables.getUserConfigBoolean("OpenWhenComplete"));
-        
+
     }
 
     public void deleteOpenControls() {

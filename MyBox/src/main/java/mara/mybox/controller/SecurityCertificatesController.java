@@ -391,7 +391,7 @@ public class SecurityCertificatesController extends BaseController {
                     protected void whenSucceeded() {
                         if (error == null) {
                             readAction();
-                            popSuccessul();
+                            popSuccessful();
                         } else {
                             popError(error);
                         }

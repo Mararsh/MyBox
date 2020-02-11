@@ -1801,7 +1801,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                 @Override
                 protected void whenSucceeded() {
                     displayProfileData();
-                    popSuccessul();
+                    popSuccessful();
                 }
 
             };
@@ -1884,7 +1884,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                     if (openExportCheck.isSelected()) {
                         browseURI(file.toURI());
                     }
-                    popSuccessul();
+                    popSuccessful();
                 }
 
             };
@@ -2002,7 +2002,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                     sourceFile = file;
                     sourceType = SourceType.External_File;
                     openProfile(file.getAbsolutePath());
-                    popSuccessul();
+                    popSuccessful();
                 }
 
             };

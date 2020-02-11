@@ -97,8 +97,8 @@ public class ConvolutionKernel {
         kernel.setDescription("");
         float v = 1.0f / (size * size * 1.0f);
         float[][] k = new float[size][size];
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
+        for (int i = 0; i < size; ++i) {
+            for (int j = 0; j < size; ++j) {
                 k[i][j] = v;
             }
         }
@@ -137,8 +137,8 @@ public class ConvolutionKernel {
         float[] data = new float[size];
         int index = 0;
         float x, y;
-        for (int i = -radius; i <= radius; i++) {
-            for (int j = -radius; j <= radius; j++) {
+        for (int i = -radius; i <= radius; ++i) {
+            for (int j = -radius; j <= radius; ++j) {
                 x = i * i;
                 y = j * j;
                 data[index] = (float) Math.exp(-(x + y) / twoSigmaSquare) / sigmaRoot;
@@ -261,8 +261,8 @@ public class ConvolutionKernel {
         kernel.setType(Convolution_Type.SHARPNEN);
         kernel.setDescription("");
         float[][] k = makeGaussMatrix(radius);
-        for (int i = 0; i < k.length; i++) {
-            for (int j = 0; j < k[i].length; j++) {
+        for (int i = 0; i < k.length; ++i) {
+            for (int j = 0; j < k[i].length; ++j) {
                 k[i][j] = 0 - k[i][j];
             }
         }
@@ -304,8 +304,8 @@ public class ConvolutionKernel {
         kernel.setDescription("");
 
         float[][] k = new float[length][length];
-        for (int i = 0; i < length; i++) {
-            for (int j = 0; j < length; j++) {
+        for (int i = 0; i < length; ++i) {
+            for (int j = 0; j < length; ++j) {
                 k[i][j] = (float) Math.sin(angle);
             }
         }

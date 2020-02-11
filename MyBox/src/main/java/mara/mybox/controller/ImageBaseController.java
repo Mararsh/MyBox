@@ -15,6 +15,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.fxml.FxmlControl;
@@ -57,6 +58,8 @@ public abstract class ImageBaseController extends BaseController {
     protected ImageView imageView;
     @FXML
     protected Rectangle borderLine;
+    @FXML
+    protected Text sizeText;
     @FXML
     protected Label sampledTips;
     @FXML
@@ -141,13 +144,15 @@ public abstract class ImageBaseController extends BaseController {
         try {
             imageView.fitWidthProperty().addListener(new ChangeListener<Number>() {
                 @Override
-                public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
+                public void changed(ObservableValue<? extends Number> ov,
+                        Number old_val, Number new_val) {
                     viewSizeChanged(Math.abs(new_val.intValue() - old_val.intValue()));
                 }
             });
             imageView.fitHeightProperty().addListener(new ChangeListener<Number>() {
                 @Override
-                public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
+                public void changed(ObservableValue<? extends Number> ov,
+                        Number old_val, Number new_val) {
                     viewSizeChanged(Math.abs(new_val.intValue() - old_val.intValue()));
 
                 }
@@ -155,13 +160,15 @@ public abstract class ImageBaseController extends BaseController {
             if (scrollPane != null) {
                 scrollPane.widthProperty().addListener(new ChangeListener<Number>() {
                     @Override
-                    public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
+                    public void changed(ObservableValue<? extends Number> ov,
+                            Number old_val, Number new_val) {
                         viewSizeChanged(Math.abs(new_val.intValue() - old_val.intValue()));
                     }
                 });
                 scrollPane.heightProperty().addListener(new ChangeListener<Number>() {
                     @Override
-                    public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
+                    public void changed(ObservableValue<? extends Number> ov,
+                            Number old_val, Number new_val) {
                         viewSizeChanged(Math.abs(new_val.intValue() - old_val.intValue()));
                     }
                 });
@@ -189,6 +196,11 @@ public abstract class ImageBaseController extends BaseController {
             borderLine.setLayoutY(imageView.getLayoutY() - 1);
             borderLine.setWidth(imageView.getBoundsInParent().getWidth() + 2);
             borderLine.setHeight(imageView.getBoundsInParent().getHeight() + 2);
+        }
+        if (sizeText != null) {
+            sizeText.setX(borderLine.getLayoutX() + borderLine.getWidth() + 1);
+            sizeText.setY(borderLine.getLayoutY() + borderLine.getHeight() - 10);
+            sizeText.setText((int) (imageView.getImage().getWidth()) + "x" + (int) (imageView.getImage().getHeight()));
         }
     }
 
@@ -232,6 +244,7 @@ public abstract class ImageBaseController extends BaseController {
         try {
             isPaneSize = false;
             FxmlControl.imageSize(scrollPane, imageView);
+            refinePane();
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -245,6 +258,7 @@ public abstract class ImageBaseController extends BaseController {
         try {
             isPaneSize = true;
             FxmlControl.paneSize(scrollPane, imageView);
+            refinePane();
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -261,6 +275,7 @@ public abstract class ImageBaseController extends BaseController {
             } else {
                 loadedSize();
             }
+            refinePane();
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -273,6 +288,7 @@ public abstract class ImageBaseController extends BaseController {
         }
         isPaneSize = false;
         FxmlControl.zoomIn(scrollPane, imageView, xZoomStep, yZoomStep);
+        refinePane();
     }
 
     @FXML
@@ -282,6 +298,7 @@ public abstract class ImageBaseController extends BaseController {
         }
         isPaneSize = false;
         FxmlControl.zoomOut(scrollPane, imageView, xZoomStep, yZoomStep);
+        refinePane();
     }
 
     public void loadImage(final File file) {
@@ -301,10 +318,12 @@ public abstract class ImageBaseController extends BaseController {
     }
 
     public void loadImage(final File file, final boolean onlyInformation,
-            final int inLoadWidth, final int inFrameIndex, final boolean inCareFrames) {
+            final int inLoadWidth, final int inFrameIndex,
+            final boolean inCareFrames) {
         if (file == null) {
             return;
         }
+        recordFileOpened(file);
         synchronized (this) {
             if (loadTask != null) {
                 return;
@@ -324,30 +343,32 @@ public abstract class ImageBaseController extends BaseController {
                             || imageFileInformation.getImagesInformation().isEmpty()) {
                         return null;
                     }
-
                     String format = FileTools.getFileSuffix(fileName).toLowerCase();
                     if (loadTask == null || isCancelled() || "raw".equals(format)) {
                         return null;
                     }
+                    boolean needSampled = false;
                     if (!onlyInformation) {
-                        if (imageFileInformation.getImagesInformation().size() > 1
-                                && careFrames) {
-                            multiplied = true;
-                            return null;
-                        }
-                        boolean needSampled = ImageFileReaders.needSampled(imageFileInformation.getImageInformation(), 1);
-                        if (needSampled) {
-                            Platform.runLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (loadTask == null || !loadTask.isRunning() || loadingController == null) {
-                                        return;
+                        if (!"ico".equals(format) && !"icon".equals(format)) {
+                            if (imageFileInformation.getImagesInformation().size() > 1
+                                    && careFrames) {
+                                multiplied = true;
+                                return null;
+                            }
+                            needSampled = ImageFileReaders.needSampled(imageFileInformation.getImageInformation(), 1);
+                            if (needSampled) {
+                                Platform.runLater(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (loadTask == null || !loadTask.isRunning() || loadingController == null) {
+                                            return;
+                                        }
+                                        imageInfo = imageFileInformation.getImageInformation();
+                                        loadingController.setInfo(MessageFormat.format(AppVariables.message("ImageLargeSampling"),
+                                                imageInfo.getWidth() + "x" + imageInfo.getHeight()));
                                     }
-                                    imageInfo = imageFileInformation.getImageInformation();
-                                    loadingController.setInfo(MessageFormat.format(AppVariables.message("ImageLargeSampling"),
-                                            imageInfo.getWidth() + "x" + imageInfo.getHeight()));
-                                }
-                            });
+                                });
+                            }
                         }
 
                         imageInfo = ImageInformation.loadImage(file,
@@ -376,6 +397,7 @@ public abstract class ImageBaseController extends BaseController {
                                 getMyStage().setTitle(getBaseTitle() + " " + fileName);
                                 afterInfoLoaded();
                                 afterImageLoaded();
+                                refinePane();
                             } else if (multiplied) {
                                 loadMultipleFramesImage(file);
                             } else {
@@ -418,7 +440,8 @@ public abstract class ImageBaseController extends BaseController {
         }
     }
 
-    public void loadImage(File sourceFile, Image image, ImageInformation imageInformation) {
+    public void loadImage(File sourceFile, Image image,
+            ImageInformation imageInformation) {
         this.sourceFile = sourceFile;
         this.imageInformation = imageInformation;
         this.image = image;

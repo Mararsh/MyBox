@@ -167,6 +167,7 @@ License:    Apache License Version 2.0
                                                                             <children>
                                                                                 <RadioButton fx:id="pcxRadio" mnemonicParsing="false" text="pcx" toggleGroup="$fileTypeGroup" />
                                                                                 <RadioButton mnemonicParsing="false" text="wbmp" toggleGroup="$fileTypeGroup" />
+<RadioButton mnemonicParsing="false" text="ico" toggleGroup="$fileTypeGroup" />
                                                                             </children>
                                                                         </FlowPane>
                                                                     </children>

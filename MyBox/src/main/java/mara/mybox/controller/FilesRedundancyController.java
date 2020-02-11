@@ -42,6 +42,7 @@ public class FilesRedundancyController extends FilesBatchController {
     protected Map<String, List<FileInformation>> redundancy;
     protected long totalChecked;
     protected LongProperty totalRedundancy;
+    protected String done;
 
     @FXML
     protected HBox currentBox;
@@ -67,6 +68,7 @@ public class FilesRedundancyController extends FilesBatchController {
             redundancy = new ConcurrentHashMap();
 
             currentBox.setVisible(false);
+            done = AppVariables.message("Done");
 
         } catch (Exception e) {
             logger.debug(e.toString());
@@ -75,29 +77,29 @@ public class FilesRedundancyController extends FilesBatchController {
     }
 
     @Override
-    public boolean makeBatchParameters() {
+    public boolean makeMoreParameters() {
         filesList.clear();
         redundancy.clear();
         totalChecked = 0;
         totalRedundancy = new SimpleLongProperty(0);
         currentBox.setVisible(true);
         handleButton.disableProperty().bind(totalRedundancy.isEqualTo(0));
-        return super.makeBatchParameters();
+        return super.makeMoreParameters();
     }
 
     @Override
     public String handleFile(File file) {
         try {
-            showHandling(file);
+            countHandling(file);
             if (!match(file)) {
-                return AppVariables.message("Done");
+                return done;
             }
             totalChecked++;
             FileInformation d = new FileInformation(file);
             filesList.add(d);
-            return AppVariables.message("Done");
+            return done;
         } catch (Exception e) {
-            return AppVariables.message("Done");
+            return done;
         }
     }
 
@@ -105,13 +107,16 @@ public class FilesRedundancyController extends FilesBatchController {
     public String handleDirectory(File directory) {
         try {
             if (directory == null || !directory.isDirectory()) {
-                return AppVariables.message("Done");
+                return done;
             }
-            showHandling(directory);
+            countHandling(directory);
             File[] files = directory.listFiles();
+            if (files == null) {
+                return done;
+            }
             for (File srcFile : files) {
                 if (task == null || task.isCancelled()) {
-                    return AppVariables.message("Done");
+                    return done;
                 }
                 if (srcFile.isFile()) {
                     handleFile(srcFile);
@@ -119,10 +124,10 @@ public class FilesRedundancyController extends FilesBatchController {
                     handleDirectory(srcFile);
                 }
             }
-            return AppVariables.message("Done");
+            return done;
         } catch (Exception e) {
 //            logger.error(e.toString());
-            return AppVariables.message("Done");
+            return done;
         }
     }
 
@@ -153,7 +158,7 @@ public class FilesRedundancyController extends FilesBatchController {
             List<FileInformation> sameSize = new ArrayList();
             sameSize.add(f);
             updateTaskProgress(1, filesList.size());
-            for (int i = 1; i < filesList.size(); i++) {
+            for (int i = 1; i < filesList.size(); ++i) {
                 if (task == null || task.isCancelled()) {
                     return;
                 }
@@ -206,7 +211,7 @@ public class FilesRedundancyController extends FilesBatchController {
         String digest = f.getData();
         List<FileInformation> sameFiles = new ArrayList();
         sameFiles.add(f);
-        for (int i = 1; i < files.size(); i++) {
+        for (int i = 1; i < files.size(); ++i) {
             if (task == null || task.isCancelled()) {
                 return;
             }

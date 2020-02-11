@@ -204,6 +204,7 @@ public class NetworkTools {
             @Override
             public boolean verify(String hostname, SSLSession session) {
                 List<String> bypass = CertificateBypass.bypass();
+//                logger.debug(hostname);
                 for (String host : bypass) {
                     if (hostname.equals(" " + host)
                             || hostname.equals("www." + host)
@@ -228,11 +229,13 @@ public class NetworkTools {
                 }
 
                 @Override
-                public void checkClientTrusted(X509Certificate[] certs, String authType) {
+                public void checkClientTrusted(X509Certificate[] certs,
+                        String authType) {
                 }
 
                 @Override
-                public void checkServerTrusted(X509Certificate[] certs, String authType) {
+                public void checkServerTrusted(X509Certificate[] certs,
+                        String authType) {
                 }
             }
         };
@@ -327,7 +330,8 @@ public class NetworkTools {
         }
     }
 
-    public static Certificate getCertificateByHost(String keyStoreFile, String passwprd, String host)
+    public static Certificate getCertificateByHost(String keyStoreFile,
+            String passwprd, String host)
             throws Exception {
         try {
             int port = 443;
@@ -364,7 +368,8 @@ public class NetworkTools {
         }
     }
 
-    public static String installCertificateByFile(String keyStoreFile, String passwprd,
+    public static String installCertificateByFile(String keyStoreFile,
+            String passwprd,
             File certFile, String alias) throws Exception {
         try {
             char[] passphrase = passwprd.toCharArray();
@@ -435,7 +440,8 @@ public class NetworkTools {
     }
 
     // https://github.com/escline/InstallCert/blob/master/InstallCert.java
-    public static String installCertificateByHost(String keyStoreFile, String passwprd,
+    public static String installCertificateByHost(String keyStoreFile,
+            String passwprd,
             String host, String alias) throws Exception {
         try {
             int port = 443;
@@ -490,7 +496,8 @@ public class NetworkTools {
         return isHostCertificateInstalled(SystemTools.keystore(), SystemTools.keystorePassword(), host);
     }
 
-    public static boolean isHostCertificateInstalled(String keyStoreFile, String passwprd, String host)
+    public static boolean isHostCertificateInstalled(String keyStoreFile,
+            String passwprd, String host)
             throws Exception {
         try {
             int port = 443;
@@ -523,7 +530,8 @@ public class NetworkTools {
 
     }
 
-    public static String uninstallCertificate(String keyStoreFile, String passwprd,
+    public static String uninstallCertificate(String keyStoreFile,
+            String passwprd,
             List<String> aliases) throws Exception {
         try {
             char[] passphrase = passwprd.toCharArray();
@@ -569,9 +577,11 @@ public class NetworkTools {
         try {
             InetAddress candidateAddress = null;
             logger.debug("InetAddress.getLocalHost():" + InetAddress.getLocalHost());
-            for (Enumeration ifaces = NetworkInterface.getNetworkInterfaces(); ifaces.hasMoreElements();) {
+            for (Enumeration ifaces = NetworkInterface.getNetworkInterfaces();
+                    ifaces.hasMoreElements();) {
                 NetworkInterface iface = (NetworkInterface) ifaces.nextElement();
-                for (Enumeration inetAddrs = iface.getInetAddresses(); inetAddrs.hasMoreElements();) {
+                for (Enumeration inetAddrs = iface.getInetAddresses();
+                        inetAddrs.hasMoreElements();) {
                     InetAddress inetAddr = (InetAddress) inetAddrs.nextElement();
                     logger.debug("inetAddr.getHostAddress:" + inetAddr.getHostAddress());
                     if (!inetAddr.isLoopbackAddress()) {
@@ -633,7 +643,7 @@ public class NetworkTools {
             }
             String filename = url.getFile().substring(url.getFile().lastIndexOf('/'));
             String validname = "";
-            for (int i = 0; i < filename.length(); i++) {
+            for (int i = 0; i < filename.length(); ++i) {
                 char c = filename.charAt(i);
                 if (c >= 'a' && c <= 'z'
                         || c >= 'A' && c <= 'Z'

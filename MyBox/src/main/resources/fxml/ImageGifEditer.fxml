@@ -43,7 +43,7 @@ License:    Apache License Version 2.0
                             <graphic>
                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../buttons/iconAddFile.png" />
+                                        <Image url="@../buttons/iconFileAdd.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -62,45 +62,43 @@ License:    Apache License Version 2.0
                         <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Save" />
                     </children>
                 </HBox>
-                  <VBox fx:id="optionsBox" spacing="5.0">
-                      <children>
-                          <HBox alignment="CENTER_LEFT" spacing="10.0">
-                              <children>
-                                  <Label text="%IntervalMilliseconds" />
-                                  <ComboBox fx:id="intervalCBox" editable="true" prefWidth="100.0" />
-                                  <CheckBox fx:id="loopCheck" mnemonicParsing="false" selected="true" text="%Loop" />
-                                  <RadioButton mnemonicParsing="false" selected="true" text="%KeepImagesSize">
-                                      <toggleGroup>
-                                          <ToggleGroup fx:id="sizeGroup" />
-                                      </toggleGroup>
-                           <HBox.margin>
-                              <Insets left="60.0" />
-                           </HBox.margin>
-                                  </RadioButton>
-                                  <RadioButton mnemonicParsing="false" text="%AllSetAs" toggleGroup="$sizeGroup">
-                           <HBox.margin>
-                              <Insets />
-                           </HBox.margin>
-                        </RadioButton>
-                                  <TextField fx:id="widthInput" prefWidth="100.0" promptText="%Width">
-                           <HBox.margin>
-                              <Insets />
-                           </HBox.margin>
-                        </TextField>
-                                  <TextField fx:id="heightInput" prefWidth="100.0" promptText="%Height">
-                           <HBox.margin>
-                              <Insets />
-                           </HBox.margin>
-                        </TextField>
-                              </children>
-                          </HBox>
-                      </children>
-                  </VBox>
-                  <VBox fx:id="tableBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-                      <children>
-                          <fx:include fx:id="table" source="ImagesTable.fxml" />
-                      </children>
-                  </VBox>
+                <VBox fx:id="optionsBox" spacing="5.0">
+                    <children>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                            <children>
+                                <CheckBox fx:id="loopCheck" mnemonicParsing="false" selected="true" text="%Loop" />
+                                <RadioButton mnemonicParsing="false" selected="true" text="%KeepImagesSize">
+                                    <toggleGroup>
+                                        <ToggleGroup fx:id="sizeGroup" />
+                                    </toggleGroup>
+                                    <HBox.margin>
+                                        <Insets left="60.0" />
+                                    </HBox.margin>
+                                </RadioButton>
+                                <RadioButton mnemonicParsing="false" text="%AllSetAs" toggleGroup="$sizeGroup">
+                                    <HBox.margin>
+                                        <Insets />
+                                    </HBox.margin>
+                                </RadioButton>
+                                <TextField fx:id="widthInput" prefWidth="100.0" promptText="%Width">
+                                    <HBox.margin>
+                                        <Insets />
+                                    </HBox.margin>
+                                </TextField>
+                                <TextField fx:id="heightInput" prefWidth="100.0" promptText="%Height">
+                                    <HBox.margin>
+                                        <Insets />
+                                    </HBox.margin>
+                                </TextField>
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+                <VBox fx:id="tableBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                    <children>
+                        <fx:include fx:id="table" source="ImagesDurationTable.fxml" />
+                    </children>
+                </VBox>
             </children>
             <BorderPane.margin>
                 <Insets />

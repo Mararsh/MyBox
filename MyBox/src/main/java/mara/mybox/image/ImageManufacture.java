@@ -17,6 +17,7 @@ import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
@@ -37,6 +38,7 @@ import mara.mybox.data.DoubleShape;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.image.ImageCombine.CombineSizeType;
 import mara.mybox.image.ImageMosaic.MosaicType;
+import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.tools.SystemTools;
 import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonFxValues;
@@ -95,7 +97,8 @@ public class ImageManufacture {
     }
 
     // https://bugs.java.com/bugdatabase/view_bug.do?bug_id=4836466
-    public static BufferedImage checkAlpha(BufferedImage source, String targetFormat) {
+    public static BufferedImage checkAlpha(BufferedImage source,
+            String targetFormat) {
         if (targetFormat == null) {
             return source;
         }
@@ -120,8 +123,8 @@ public class ImageManufacture {
             int imageType = BufferedImage.TYPE_INT_RGB;
             BufferedImage target = new BufferedImage(width, height, imageType);
             int colorPixel = color.getRGB();
-            for (int j = 0; j < height; j++) {
-                for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; ++j) {
+                for (int i = 0; i < width; ++i) {
                     int pixel = source.getRGB(i, j);
                     if (pixel == 0) {
                         target.setRGB(i, j, colorPixel);
@@ -197,7 +200,8 @@ public class ImageManufacture {
         return true;
     }
 
-    public static BufferedImage scaleImage(BufferedImage source, int width, int height) {
+    public static BufferedImage scaleImage(BufferedImage source, int width,
+            int height) {
         if (width == source.getWidth() && height == source.getHeight()) {
             return source;
         }
@@ -218,12 +222,14 @@ public class ImageManufacture {
         return target;
     }
 
-    public static BufferedImage scaleImageWidthKeep(BufferedImage source, int width) {
+    public static BufferedImage scaleImageWidthKeep(BufferedImage source,
+            int width) {
         int height = source.getHeight() * width / source.getWidth();
         return scaleImage(source, width, height);
     }
 
-    public static BufferedImage scaleImageHeightKeep(BufferedImage source, int height) {
+    public static BufferedImage scaleImageHeightKeep(BufferedImage source,
+            int height) {
         int width = source.getWidth() * height / source.getHeight();
         return scaleImage(source, width, height);
     }
@@ -245,7 +251,8 @@ public class ImageManufacture {
         return scaleImage(source, scale);
     }
 
-    public static int[] scale(int sourceX, int sourceY, int newWidth, int newHeight, int keepRatioType) {
+    public static int[] scale(int sourceX, int sourceY, int newWidth,
+            int newHeight, int keepRatioType) {
         int finalW = newWidth;
         int finalH = newHeight;
         double ratioW = (double) newWidth / sourceX;
@@ -294,7 +301,8 @@ public class ImageManufacture {
         return scaleImage(source, finalW, finalH);
     }
 
-    public static BufferedImage fitSize(BufferedImage source, int targetW, int targetH) {
+    public static BufferedImage fitSize(BufferedImage source, int targetW,
+            int targetH) {
         try {
             int[] wh = ImageManufacture.scale(source.getWidth(), source.getHeight(),
                     targetW, targetH, KeepRatioType.BaseOnSmaller);
@@ -337,7 +345,7 @@ public class ImageManufacture {
             g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
             if (isVertical) {
                 int ay = y;
-                for (int i = 0; i < text.length(); i++) {
+                for (int i = 0; i < text.length(); ++i) {
                     String c = String.valueOf(text.charAt(i));
                     addText(g, c, font, color, x, ay, opacity, shadow, angle, isOutline);
                     ay += g.getFontMetrics().getStringBounds(c, g).getHeight();
@@ -409,7 +417,7 @@ public class ImageManufacture {
             g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, transparent));
             g.setColor(color);
             g.setFont(font);
-            for (int i = 0; i < texts.size(); i++) {
+            for (int i = 0; i < texts.size(); ++i) {
                 g.drawString(texts.get(i), xs.get(i), ys.get(i));
             }
             g.dispose();
@@ -454,7 +462,8 @@ public class ImageManufacture {
         }
     }
 
-    public static BufferedImage addArc(BufferedImage source, int arc, Color bgColor) {
+    public static BufferedImage addArc(BufferedImage source, int arc,
+            Color bgColor) {
         int width = source.getWidth();
         int height = source.getHeight();
         int imageType = source.getType();
@@ -486,7 +495,8 @@ public class ImageManufacture {
         }
     }
 
-    public static BufferedImage addShadowAlpha(BufferedImage source, int shadowWidth,
+    public static BufferedImage addShadowAlpha(BufferedImage source,
+            int shadowWidth,
             Color shadowColor) {
         try {
             int width = source.getWidth();
@@ -498,8 +508,8 @@ public class ImageManufacture {
             BufferedImage shadowImage = new BufferedImage(width, height, imageType);
             Color newColor;
             float iOpocity, jOpacity, opocity;
-            for (int j = 0; j < height; j++) {
-                for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; ++j) {
+                for (int i = 0; i < width; ++i) {
                     int pixel = source.getRGB(i, j);
                     if (pixel == 0) {
                         shadowImage.setRGB(i, j, 0);
@@ -545,7 +555,8 @@ public class ImageManufacture {
         }
     }
 
-    public static BufferedImage addShadowNoAlpha(BufferedImage source, int shadowWidth,
+    public static BufferedImage addShadowNoAlpha(BufferedImage source,
+            int shadowWidth,
             Color shadowColor) {
         try {
             int width = source.getWidth();
@@ -558,8 +569,8 @@ public class ImageManufacture {
             float iOpocity, jOpacity, opocity;
             Color newColor;
             Color alphaColor = ImageColor.getAlphaColor();
-            for (int j = 0; j < height; j++) {
-                for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; ++j) {
+                for (int i = 0; i < width; ++i) {
                     int pixel = source.getRGB(i, j);
                     if (pixel == 0) {
                         shadowImage.setRGB(i, j, alphaColor.getRGB());
@@ -617,8 +628,8 @@ public class ImageManufacture {
             if (cutTop) {
                 top = -1;
                 toploop:
-                for (int j = 0; j < height; j++) {
-                    for (int i = 0; i < width; i++) {
+                for (int j = 0; j < height; ++j) {
+                    for (int i = 0; i < width; ++i) {
                         if (source.getRGB(i, j) != cutValue) {
                             top = j;
                             break toploop;
@@ -634,8 +645,8 @@ public class ImageManufacture {
             if (cutBottom) {
                 bottom = - 1;
                 bottomploop:
-                for (int j = height - 1; j >= 0; j--) {
-                    for (int i = 0; i < width; i++) {
+                for (int j = height - 1; j >= 0; --j) {
+                    for (int i = 0; i < width; ++i) {
                         if (source.getRGB(i, j) != cutValue) {
                             bottom = j;
                             break bottomploop;
@@ -651,8 +662,8 @@ public class ImageManufacture {
             if (cutLeft) {
                 left = -1;
                 leftloop:
-                for (int i = 0; i < width; i++) {
-                    for (int j = 0; j < height; j++) {
+                for (int i = 0; i < width; ++i) {
+                    for (int j = 0; j < height; ++j) {
                         if (source.getRGB(i, j) != cutValue) {
                             left = i;
                             break leftloop;
@@ -668,8 +679,8 @@ public class ImageManufacture {
             if (cutRight) {
                 right = - 1;
                 rightloop:
-                for (int i = width - 1; i >= 0; i--) {
-                    for (int j = 0; j < height; j++) {
+                for (int i = width - 1; i >= 0; --i) {
+                    for (int j = 0; j < height; ++j) {
                         if (source.getRGB(i, j) != cutValue) {
                             right = i;
                             break rightloop;
@@ -694,7 +705,8 @@ public class ImageManufacture {
     }
 
     public static BufferedImage cutMargins(BufferedImage source,
-            int MarginWidth, boolean cutTop, boolean cutBottom, boolean cutLeft, boolean cutRight) {
+            int MarginWidth, boolean cutTop, boolean cutBottom, boolean cutLeft,
+            boolean cutRight) {
         try {
             if (source == null || MarginWidth <= 0) {
                 return source;
@@ -725,7 +737,8 @@ public class ImageManufacture {
     }
 
     public static BufferedImage addMargins(BufferedImage source, Color addColor,
-            int MarginWidth, boolean addTop, boolean addBottom, boolean addLeft, boolean addRight) {
+            int MarginWidth, boolean addTop, boolean addBottom, boolean addLeft,
+            boolean addRight) {
         try {
             if (source == null || MarginWidth <= 0) {
                 return source;
@@ -768,8 +781,10 @@ public class ImageManufacture {
         }
     }
 
-    public static BufferedImage blurMarginsAlpha(BufferedImage source, int blurWidth,
-            boolean blurTop, boolean blurBottom, boolean blurLeft, boolean blurRight) {
+    public static BufferedImage blurMarginsAlpha(BufferedImage source,
+            int blurWidth,
+            boolean blurTop, boolean blurBottom, boolean blurLeft,
+            boolean blurRight) {
         try {
             int width = source.getWidth();
             int height = source.getHeight();
@@ -777,8 +792,8 @@ public class ImageManufacture {
             BufferedImage target = new BufferedImage(width, height, imageType);
             float iOpocity, jOpacity, opocity;
             Color newColor;
-            for (int j = 0; j < height; j++) {
-                for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; ++j) {
+                for (int i = 0; i < width; ++i) {
                     int pixel = source.getRGB(i, j);
                     if (pixel == 0) {
                         target.setRGB(i, j, 0);
@@ -822,8 +837,10 @@ public class ImageManufacture {
         }
     }
 
-    public static BufferedImage blurMarginsNoAlpha(BufferedImage source, int blurWidth,
-            boolean blurTop, boolean blurBottom, boolean blurLeft, boolean blurRight) {
+    public static BufferedImage blurMarginsNoAlpha(BufferedImage source,
+            int blurWidth,
+            boolean blurTop, boolean blurBottom, boolean blurLeft,
+            boolean blurRight) {
         try {
             int width = source.getWidth();
             int height = source.getHeight();
@@ -831,8 +848,8 @@ public class ImageManufacture {
             BufferedImage target = new BufferedImage(width, height, imageType);
             float iOpocity, jOpacity, opocity;
             Color alphaColor = ImageColor.getAlphaColor();
-            for (int j = 0; j < height; j++) {
-                for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; ++j) {
+                for (int i = 0; i < width; ++i) {
                     int pixel = source.getRGB(i, j);
                     if (pixel == 0) {
                         target.setRGB(i, j, alphaColor.getRGB());
@@ -925,7 +942,7 @@ public class ImageManufacture {
                 imageType = BufferedImage.TYPE_INT_ARGB;
             }
             BufferedImage target = new BufferedImage(width, height, imageType);
-            for (int j = 0; j < height; j++) {
+            for (int j = 0; j < height; ++j) {
                 int l = 0, r = width - 1;
                 while (l < r) {
                     int pl = source.getRGB(l, j);
@@ -952,7 +969,7 @@ public class ImageManufacture {
                 imageType = BufferedImage.TYPE_INT_ARGB;
             }
             BufferedImage target = new BufferedImage(width, height, imageType);
-            for (int i = 0; i < width; i++) {
+            for (int i = 0; i < width; ++i) {
                 int t = 0, b = height - 1;
                 while (t < b) {
                     int pt = source.getRGB(i, t);
@@ -970,7 +987,8 @@ public class ImageManufacture {
         }
     }
 
-    public static BufferedImage shearImage(BufferedImage source, float shearX, float shearY) {
+    public static BufferedImage shearImage(BufferedImage source, float shearX,
+            float shearY) {
         try {
             int scale = Math.round(Math.abs(shearX));
             if (scale <= 1) {
@@ -1021,7 +1039,8 @@ public class ImageManufacture {
         return createCompatibleImage(width, height, Transparency.TRANSLUCENT);
     }
 
-    public static BufferedImage createCompatibleImage(int width, int height, int transparency) {
+    public static BufferedImage createCompatibleImage(int width, int height,
+            int transparency) {
         BufferedImage image = getGraphicsConfiguration().createCompatibleImage(width, height, transparency);
         image.coerceData(true);
         return image;
@@ -1083,8 +1102,8 @@ public class ImageManufacture {
             }
             BufferedImage target = new BufferedImage(width, height, imageType);
             int bgPixel = bgColor.getRGB();
-            for (int j = 0; j < height; j++) {
-                for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; ++j) {
+                for (int i = 0; i < width; ++i) {
                     if (shape.include(i, j)) {
                         target.setRGB(i, j, bgPixel);
                     } else {
@@ -1110,7 +1129,34 @@ public class ImageManufacture {
         return cropOutside(source, new DoubleRectangle(x1, y1, x2, y2), Color.WHITE);
     }
 
-    public static BufferedImage combineSingleColumn(List<javafx.scene.image.Image> images) {
+    public static BufferedImage mergeImagesVertical(List<File> files, int width,
+            int height) {
+        if (files == null || files.isEmpty()) {
+            return null;
+        }
+        try {
+            BufferedImage target = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g = target.createGraphics();
+            int y = 0;
+            for (File file : files) {
+                BufferedImage image = ImageFileReaders.readImage(file);
+                if (image == null) {
+                    continue;
+                }
+                int imageWidth = (int) image.getWidth();
+                int imageHeight = (int) image.getHeight();
+                g.drawImage(image, 0, y, imageWidth, imageHeight, null);
+                y += imageHeight;
+            }
+            return target;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
+    public static BufferedImage combineSingleColumn(
+            List<javafx.scene.image.Image> images) {
         if (images == null || images.isEmpty()) {
             return null;
         }
@@ -1143,7 +1189,8 @@ public class ImageManufacture {
         }
     }
 
-    public static javafx.scene.image.Image combineSingleColumn(ImageCombine imageCombine,
+    public static javafx.scene.image.Image combineSingleColumn(
+            ImageCombine imageCombine,
             List<ImageInformation> images, boolean isPart, boolean careTotal) {
         if (imageCombine == null || images == null) {
             return null;
@@ -1172,7 +1219,7 @@ public class ImageManufacture {
             List<Integer> ys = new ArrayList<>();
             List<Integer> widths = new ArrayList<>();
             List<Integer> heights = new ArrayList<>();
-            for (int i = 0; i < images.size(); i++) {
+            for (int i = 0; i < images.size(); ++i) {
                 ImageInformation imageInfo = images.get(i);
                 javafx.scene.image.Image image = imageInfo.getImage();
                 imageWidth = (int) image.getWidth();
@@ -1229,7 +1276,8 @@ public class ImageManufacture {
         }
     }
 
-    public static javafx.scene.image.Image combineSingleRow(ImageCombine imageCombine,
+    public static javafx.scene.image.Image combineSingleRow(
+            ImageCombine imageCombine,
             List<ImageInformation> images, boolean isPart, boolean careTotal) {
         if (imageCombine == null || images == null) {
             return null;
@@ -1262,7 +1310,7 @@ public class ImageManufacture {
             List<Integer> ys = new ArrayList<>();
             List<Integer> widths = new ArrayList<>();
             List<Integer> heights = new ArrayList<>();
-            for (int i = 0; i < images.size(); i++) {
+            for (int i = 0; i < images.size(); ++i) {
                 ImageInformation imageInfo = images.get(i);
                 javafx.scene.image.Image image = imageInfo.getImage();
                 imageWidth = (int) image.getWidth();
@@ -1316,9 +1364,11 @@ public class ImageManufacture {
         }
     }
 
-    public static javafx.scene.image.Image combineImages(List<ImageInformation> images,
+    public static javafx.scene.image.Image combineImages(
+            List<ImageInformation> images,
             int totalWidth, int totalHeight, Color bgColor,
-            List<Integer> xs, List<Integer> ys, List<Integer> widths, List<Integer> heights,
+            List<Integer> xs, List<Integer> ys, List<Integer> widths,
+            List<Integer> heights,
             int trueTotalWidth, int trueTotalHeight,
             boolean isTotalWidth, boolean isTotalHeight) {
         if (images == null || xs == null || ys == null || widths == null || heights == null) {
@@ -1332,7 +1382,7 @@ public class ImageManufacture {
             g.setColor(bgColor);
             g.fillRect(0, 0, totalWidth, totalHeight);
 
-            for (int i = 0; i < images.size(); i++) {
+            for (int i = 0; i < images.size(); ++i) {
                 ImageInformation imageInfo = images.get(i);
                 javafx.scene.image.Image image = imageInfo.getImage();
                 BufferedImage source = SwingFXUtils.fromFXImage(image, null);
@@ -1731,7 +1781,8 @@ public class ImageManufacture {
         }
     }
 
-    protected static int mosaic(BufferedImage source, int imageWidth, int imageHeight,
+    protected static int mosaic(BufferedImage source, int imageWidth,
+            int imageHeight,
             int x, int y, MosaicType type, int intensity) {
         int newColor;
         if (type == MosaicType.Mosaic) {
@@ -1808,7 +1859,8 @@ public class ImageManufacture {
                 if (x1 == x2) {
                     if (y2 > y1) {
 //                        logger.debug(Math.max(0, x1 - strokeWidth) + "," + Math.min(width, x1 + strokeWidth));
-                        for (int x = Math.max(0, x1 - strokeWidth); x <= Math.min(width, x1 + strokeWidth); x++) {
+                        for (int x = Math.max(0, x1 - strokeWidth);
+                                x <= Math.min(width, x1 + strokeWidth); x++) {
 
                             for (int y = y1; y <= y2; y++) {
 
@@ -1818,7 +1870,8 @@ public class ImageManufacture {
                         }
                     } else {
 //                        logger.debug(Math.max(0, x1 - strokeWidth) + "," + Math.min(width, x1 + strokeWidth));
-                        for (int x = Math.max(0, x1 - strokeWidth); x <= Math.min(width, x1 + strokeWidth); x++) {
+                        for (int x = Math.max(0, x1 - strokeWidth);
+                                x <= Math.min(width, x1 + strokeWidth); x++) {
                             for (int y = y2; y <= y1; y++) {
                                 pixel = mosaic(source, width, height, x, y, mosaicType, strokeWidth);
                                 target.setRGB(x, y, pixel);
@@ -1832,7 +1885,8 @@ public class ImageManufacture {
                         int y0 = (x - x1) * (y2 - y1) / (x2 - x1) + y1;
                         int offset = (int) (x / (strokeWidth * Math.sqrt(x * x + y0 * y0)));
 //                        logger.debug(y0 + "," + offset);
-                        for (int y = Math.max(0, y0 - offset); y <= Math.min(height, y0 + offset); y++) {
+                        for (int y = Math.max(0, y0 - offset);
+                                y <= Math.min(height, y0 + offset); y++) {
                             pixel = mosaic(source, width, height, x, y, mosaicType, strokeWidth);
                             target.setRGB(x, y, pixel);
                         }
@@ -1844,7 +1898,8 @@ public class ImageManufacture {
                         int y0 = (x - x2) * (y1 - y2) / (x1 - x2) + y2;
                         int offset = (int) (x / (strokeWidth * Math.sqrt(x * x + y0 * y0)));
 //                        logger.debug(y0 + "," + offset);
-                        for (int y = Math.max(0, y0 - offset); y <= Math.min(height, y0 + offset); y++) {
+                        for (int y = Math.max(0, y0 - offset);
+                                y <= Math.min(height, y0 + offset); y++) {
                             pixel = mosaic(source, width, height, x, y, mosaicType, strokeWidth);
                             target.setRGB(x, y, pixel);
                         }
@@ -1854,8 +1909,8 @@ public class ImageManufacture {
             }
 
 //            int pixel, white = Color.BLACK.getRGB();
-//            for (int j = 0; j < height; j++) {
-//                for (int i = 0; i < width; i++) {
+//            for (int j = 0; j < height; ++j) {
+//                for (int i = 0; i < width; ++i) {
 //                    pixel = source.getRGB(i, j);
 //                    if (pixel == 0 || mask.getRGB(i, j) == 0) {
 //                        continue;
@@ -1884,8 +1939,8 @@ public class ImageManufacture {
             BufferedImage noAlphaImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
             Color color, newColor;
             int pixel;
-            for (int j = 0; j < height; j++) {
-                for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; ++j) {
+                for (int i = 0; i < width; ++i) {
                     pixel = source.getRGB(i, j);
                     color = new Color(pixel, true);
 
@@ -1915,8 +1970,8 @@ public class ImageManufacture {
             BufferedImage alphaImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
             Color color, newColor;
             int pixel;
-            for (int j = 0; j < height; j++) {
-                for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; ++j) {
+                for (int i = 0; i < width; ++i) {
                     pixel = source.getRGB(i, j);
                     color = new Color(pixel, true);
                     newColor = new Color(0, 0, 0, color.getAlpha());
@@ -1931,7 +1986,8 @@ public class ImageManufacture {
     }
 
     public static BufferedImage[] outline(BufferedImage srcImage,
-            DoubleRectangle rect, int targetWidth, int targetHeight, boolean keepRatio,
+            DoubleRectangle rect, int targetWidth, int targetHeight,
+            boolean keepRatio,
             Color bgColor, boolean exclude) {
         try {
             if (srcImage == null) {
@@ -1960,8 +2016,8 @@ public class ImageManufacture {
             }
             g.fillRect(0, 0, width, height);
             int pixel, bgPixel = bgColor.getRGB();
-            for (int j = 0; j < scaledHeight; j++) {
-                for (int i = 0; i < scaledWidth; i++) {
+            for (int j = 0; j < scaledHeight; ++j) {
+                for (int i = 0; i < scaledWidth; ++i) {
                     pixel = scaledImage.getRGB(i, j);
                     if (!exclude) {
                         if (pixel == 0) {
@@ -2004,8 +2060,8 @@ public class ImageManufacture {
             BufferedImage target = new BufferedImage(sourceWidth, sourceHeight, BufferedImage.TYPE_INT_ARGB);
             Color sourceColor, alphaColor, newColor;
             int alphaValue;
-            for (int j = 0; j < sourceHeight; j++) {
-                for (int i = 0; i < sourceWidth; i++) {
+            for (int j = 0; j < sourceHeight; ++j) {
+                for (int i = 0; i < sourceWidth; ++i) {
 
                     if (i < alphaWidth && j < alphaHeight) {
                         sourceColor = new Color(source.getRGB(i, j), addAlpha);
@@ -2042,8 +2098,8 @@ public class ImageManufacture {
             BufferedImage target = new BufferedImage(sourceWidth, sourceHeight, BufferedImage.TYPE_INT_ARGB);
             Color sourceColor, newColor;
             int opacityValue = Math.min(255, Math.round(opacity * 255));
-            for (int j = 0; j < sourceHeight; j++) {
-                for (int i = 0; i < sourceWidth; i++) {
+            for (int j = 0; j < sourceHeight; ++j) {
+                for (int i = 0; i < sourceWidth; ++i) {
                     sourceColor = new Color(source.getRGB(i, j), addAlpha);
                     if (addAlpha) {
                         opacityValue = Math.min(255, opacityValue + sourceColor.getAlpha());
@@ -2060,7 +2116,8 @@ public class ImageManufacture {
         }
     }
 
-    public static BufferedImage premultipliedAlpha(BufferedImage source, boolean removeAlpha) {
+    public static BufferedImage premultipliedAlpha(BufferedImage source,
+            boolean removeAlpha) {
         try {
             if (source == null || !hasAlpha(source)
                     || (source.isAlphaPremultiplied() && !removeAlpha)) {
@@ -2077,8 +2134,8 @@ public class ImageManufacture {
             BufferedImage target = new BufferedImage(sourceWidth, sourceHeight, imageType);
             Color sourceColor, newColor, bkColor = ImageColor.getAlphaColor();
             int bkPixel = bkColor.getRGB();
-            for (int j = 0; j < sourceHeight; j++) {
-                for (int i = 0; i < sourceWidth; i++) {
+            for (int j = 0; j < sourceHeight; ++j) {
+                for (int i = 0; i < sourceWidth; ++i) {
                     int pixel = source.getRGB(i, j);
                     if (pixel == 0) {
                         target.setRGB(i, j, bkPixel);
@@ -2096,7 +2153,8 @@ public class ImageManufacture {
         }
     }
 
-    public static BufferedImage premultipliedAlpha2(BufferedImage source, boolean removeAlpha) {
+    public static BufferedImage premultipliedAlpha2(BufferedImage source,
+            boolean removeAlpha) {
         try {
             if (source == null || !hasAlpha(source)
                     || (source.isAlphaPremultiplied() && !removeAlpha)) {
@@ -2114,7 +2172,8 @@ public class ImageManufacture {
         }
     }
 
-    public static BufferedImage drawHTML(BufferedImage backImage, BufferedImage html,
+    public static BufferedImage drawHTML(BufferedImage backImage,
+            BufferedImage html,
             DoubleRectangle bkRect, Color bkColor, float bkOpacity, int bkarc,
             int rotate, int margin) {
         try {
@@ -2155,7 +2214,8 @@ public class ImageManufacture {
         }
     }
 
-    public static BufferedImage drawHTML2(BufferedImage backImage, BufferedImage html,
+    public static BufferedImage drawHTML2(BufferedImage backImage,
+            BufferedImage html,
             DoubleRectangle bkRect, Color bkColor, float bkOpacity, int bkarc,
             int rotate, int margin) {
         try {
@@ -2200,7 +2260,8 @@ public class ImageManufacture {
         }
     }
 
-    public static BufferedImage drawHTML(BufferedImage backImage, BufferedImage html,
+    public static BufferedImage drawHTML(BufferedImage backImage,
+            BufferedImage html,
             int htmlX, int htmlY, int htmlWdith, int htmlHeight) {
         try {
             if (html == null || backImage == null) {

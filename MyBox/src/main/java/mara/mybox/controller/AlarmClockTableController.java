@@ -128,12 +128,15 @@ public class AlarmClockTableController extends BaseController {
         alert.setTitle(getBaseTitle());
         alert.setContentText(AppVariables.message("SureClearAlarmClocks"));
         alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+        ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
+        ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
+        alert.getButtonTypes().setAll(buttonSure, buttonCancel);
         Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
         stage.setAlwaysOnTop(true);
         stage.toFront();
 
         Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() != ButtonType.OK) {
+        if (result.get() != buttonSure) {
             return;
         }
 

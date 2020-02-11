@@ -410,7 +410,7 @@ public class ImageAnalyseController extends ImageViewerController {
                 public void run() {
                     view.getEngine().loadContent​(html);
                     ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
-                    for (int i = 0; i < sortedCounts.size(); i++) {
+                    for (int i = 0; i < sortedCounts.size(); ++i) {
                         ColorCount count = sortedCounts.get(i);
                         Color color = ImageColor.converColor(count.color);
                         String name = "#" + color.toString().substring(2, 8) + "  "
@@ -418,7 +418,7 @@ public class ImageAnalyseController extends ImageViewerController {
                         pieChartData.add(new PieChart.Data(name, count.count));
                     }
                     pie.setData(pieChartData);
-                    for (int i = 0; i < sortedCounts.size(); i++) {
+                    for (int i = 0; i < sortedCounts.size(); ++i) {
                         ColorCount count = sortedCounts.get(i);
                         String colorString = FxmlColor.rgb2Hex(ImageColor.converColor(count.color));
                         PieChart.Data data = pieChartData.get(i);
@@ -712,7 +712,7 @@ public class ImageAnalyseController extends ImageViewerController {
         if (selected.isEmpty()) {
             return;
         }
-        for (int i = 0; i < selected.size(); i++) {
+        for (int i = 0; i < selected.size(); ++i) {
             showComponentsHistogram(i, selected.get(i));
         }
         updateComponentsLegend();
@@ -729,7 +729,7 @@ public class ImageAnalyseController extends ImageViewerController {
         int[] histogram = data.histogram(component);
 
         XYChart.Series series = new XYChart.Series();
-        for (int i = 0; i < histogram.length; i++) {
+        for (int i = 0; i < histogram.length; ++i) {
             series.getData().add(new XYChart.Data(i + "", histogram[i]));
         }
         series.setName(message(component.name()));
@@ -838,7 +838,7 @@ public class ImageAnalyseController extends ImageViewerController {
             StringTable table = new StringTable(names, message(component.name()), 3);
             long total = (long) (image.getWidth() * image.getHeight());
             int[] histogram = data.histogram(component);
-            for (int i = histogram.length - 1; i >= 0; i--) {
+            for (int i = histogram.length - 1; i >= 0; --i) {
                 List<String> row = new ArrayList<>();
                 java.awt.Color aColor = ImageStatistic.color(component, i);
                 int red = aColor.getRed();
@@ -859,7 +859,7 @@ public class ImageAnalyseController extends ImageViewerController {
             view.getEngine().loadContent​(html);
 
             XYChart.Series series = new XYChart.Series();
-            for (int i = 0; i < histogram.length; i++) {
+            for (int i = 0; i < histogram.length; ++i) {
                 series.getData().add(new XYChart.Data(i + "", histogram[i]));
             }
             series.setName(message(component.name()));

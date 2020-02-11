@@ -83,8 +83,8 @@ public class ImageBlend {
                     x + foreImage.getWidth() - 1, y + foreImage.getHeight() - 1);
             BufferedImage target = new BufferedImage(backImage.getWidth(), backImage.getHeight(), imageType);
             PixelBlend colorBlend = PixelBlend.newColorBlend(blendMode, alpha);
-            for (int j = 0; j < backImage.getHeight(); j++) {
-                for (int i = 0; i < backImage.getWidth(); i++) {
+            for (int j = 0; j < backImage.getHeight(); ++j) {
+                for (int i = 0; i < backImage.getWidth(); ++i) {
                     int pixelBack = backImage.getRGB(i, j);
                     if (rect.include(i, j)) {
                         int pixelFore = foreImage.getRGB(i - x, j - y);
@@ -143,16 +143,16 @@ public class ImageBlend {
             }
             int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(backImage.getWidth(), backImage.getHeight(), imageType);
-            for (int j = 0; j < backImage.getHeight(); j++) {
-                for (int i = 0; i < backImage.getWidth(); i++) {
+            for (int j = 0; j < backImage.getHeight(); ++j) {
+                for (int i = 0; i < backImage.getWidth(); ++i) {
                     target.setRGB(i, j, backImage.getRGB(i, j));
                 }
             }
             int areaWidth = Math.min(backImage.getWidth() - x, foreImage.getWidth());
             int areaHeight = Math.min(backImage.getHeight() - y, foreImage.getHeight());
             PixelBlend colorBlend = PixelBlend.newColorBlend(blendMode, alpha);
-            for (int j = 0; j < areaHeight; j++) {
-                for (int i = 0; i < areaWidth; i++) {
+            for (int j = 0; j < areaHeight; ++j) {
+                for (int i = 0; i < areaWidth; ++i) {
                     int pixelFore = foreImage.getRGB(i, j);
                     int pixelBack = backImage.getRGB(i + x, j + y);
                     target.setRGB(i + x, j + y, colorBlend.blend(pixelFore, pixelBack));
@@ -176,8 +176,8 @@ public class ImageBlend {
             int areaHeight = Math.min(backImage.getHeight() - y, foreImage.getHeight());
             BufferedImage target = new BufferedImage(areaWidth, areaHeight, imageType);
             PixelBlend colorBlend = PixelBlend.newColorBlend(blendMode, alpha);
-            for (int j = 0; j < areaHeight; j++) {
-                for (int i = 0; i < areaWidth; i++) {
+            for (int j = 0; j < areaHeight; ++j) {
+                for (int i = 0; i < areaWidth; ++i) {
                     int pixelFore = foreImage.getRGB(i, j);
                     int pixelBack = backImage.getRGB(i + x, j + y);
                     target.setRGB(i, j, colorBlend.blend(pixelFore, pixelBack));
@@ -198,16 +198,16 @@ public class ImageBlend {
             }
             int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(foreImage.getWidth(), foreImage.getHeight(), imageType);
-            for (int j = 0; j < foreImage.getHeight(); j++) {
-                for (int i = 0; i < foreImage.getWidth(); i++) {
+            for (int j = 0; j < foreImage.getHeight(); ++j) {
+                for (int i = 0; i < foreImage.getWidth(); ++i) {
                     target.setRGB(i, j, foreImage.getRGB(i, j));
                 }
             }
             int areaWidth = Math.min(foreImage.getWidth() - x, backImage.getWidth());
             int areaHeight = Math.min(foreImage.getHeight() - y, backImage.getHeight());
             PixelBlend colorBlend = PixelBlend.newColorBlend(blendMode, alpha);
-            for (int j = 0; j < areaHeight; j++) {
-                for (int i = 0; i < areaWidth; i++) {
+            for (int j = 0; j < areaHeight; ++j) {
+                for (int i = 0; i < areaWidth; ++i) {
                     int pixelFore = foreImage.getRGB(i + x, j + y);
                     int pixelBack = backImage.getRGB(i, j);
                     target.setRGB(i + x, j + y, colorBlend.blend(pixelFore, pixelBack));
@@ -231,8 +231,8 @@ public class ImageBlend {
             int areaHeight = Math.min(foreImage.getHeight() - y, backImage.getHeight());
             BufferedImage target = new BufferedImage(areaWidth, areaHeight, imageType);
             PixelBlend colorBlend = PixelBlend.newColorBlend(blendMode, alpha);
-            for (int j = 0; j < areaHeight; j++) {
-                for (int i = 0; i < areaWidth; i++) {
+            for (int j = 0; j < areaHeight; ++j) {
+                for (int i = 0; i < areaWidth; ++i) {
                     int pixelFore = foreImage.getRGB(i + x, j + y);
                     int pixelBack = backImage.getRGB(i, j);
                     target.setRGB(i, j, colorBlend.blend(pixelFore, pixelBack));

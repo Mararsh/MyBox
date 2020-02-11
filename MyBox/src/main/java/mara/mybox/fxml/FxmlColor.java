@@ -8,15 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javafx.scene.paint.Color;
-import mara.mybox.color.AdobeRGB;
-import mara.mybox.color.AppleRGB;
-import mara.mybox.color.CIEColorSpace;
-import mara.mybox.color.RGBColorSpace;
 import mara.mybox.color.SRGB;
-import mara.mybox.db.TableSRGB;
-import mara.mybox.image.ImageColor;
-import mara.mybox.image.ImageValue;
-import mara.mybox.tools.DoubleTools;
+import mara.mybox.data.ColorData;
+import mara.mybox.db.TableColorData;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -250,118 +244,16 @@ public class FxmlColor {
         }
     }
 
-    public static String colorName(String color) {
-        return colorName(Color.web(color));
-    }
-
-    public static String colorName(Color color) {
-        SRGB srgb = TableSRGB.read(color.toString());
-        if (srgb != null && srgb.getColorName() != null) {
-            return srgb.getColorName();
-        }
-        String name = colorsName().get(color);
-        if (name != null) {
-            TableSRGB.setName(color.toString(), name);
-        }
-        return name;
-    }
-
     public static String colorNameDisplay(Color color) {
         if (color == null) {
             return "";
         }
-        String s = "";
-        String name = colorName(color);
-        if (name != null) {
-            s = name + "\n";
+        ColorData data = TableColorData.read(color);
+        if (data != null) {
+            return data.display();
         }
-        return s + colorDisplay(color);
-    }
-
-    public static String colorDisplay(Color color) {
-        if (color == null) {
-            return "";
-        }
-        SRGB srgb = TableSRGB.read(color.toString());
-        if (srgb != null && srgb.getColorDisplay() != null) {
-            return srgb.getColorDisplay();
-        }
-        String s = color.toString() + "\n";
-        s += "sRGB  " + message("Red") + ":" + Math.round(color.getRed() * 255) + " "
-                + message("Green") + ":" + Math.round(color.getGreen() * 255) + " "
-                + message("Blue") + ":" + Math.round(color.getBlue() * 255) + " "
-                + message("Opacity") + ":" + Math.round(color.getOpacity() * 100) + "%\n";
-        s += "HSB  " + message("Hue") + ":" + Math.round(color.getHue()) + " "
-                + message("Saturation") + ":" + Math.round(color.getSaturation() * 100) + "% "
-                + message("Brightness") + ":" + Math.round(color.getBrightness() * 100) + "%\n";
-
-        float[] adobeRGB = SRGB.srgb2profile(ImageValue.adobeRGBProfile(), color);
-        s += "Adobe RGB:  "
-                + Math.round(adobeRGB[0] * 255) + " "
-                + Math.round(adobeRGB[1] * 255) + " "
-                + Math.round(adobeRGB[2] * 255) + " \n";
-
-        float[] appleRGB = SRGB.srgb2profile(ImageValue.appleRGBProfile(), color);
-        s += "Apple RGB:  "
-                + Math.round(appleRGB[0] * 255) + " "
-                + Math.round(appleRGB[1] * 255) + " "
-                + Math.round(appleRGB[2] * 255) + " \n";
-
-        float[] eciRGB = SRGB.srgb2profile(ImageValue.eciRGBProfile(), color);
-        s += "ECI RGB:  "
-                + Math.round(eciRGB[0] * 255) + " "
-                + Math.round(eciRGB[1] * 255) + " "
-                + Math.round(eciRGB[2] * 255) + " \n";
-
-        s += "sRGB Linear:  "
-                + Math.round(RGBColorSpace.linearSRGB(color.getRed()) * 255) + " "
-                + Math.round(RGBColorSpace.linearSRGB(color.getGreen()) * 255) + " "
-                + Math.round(RGBColorSpace.linearSRGB(color.getBlue()) * 255) + " " + " \n";
-
-        s += "Adobe RGB Linear:  " + Math.round(AdobeRGB.linearAdobeRGB(adobeRGB[0]) * 255) + " "
-                + Math.round(AdobeRGB.linearAdobeRGB(adobeRGB[1]) * 255) + " "
-                + Math.round(AdobeRGB.linearAdobeRGB(adobeRGB[2]) * 255) + " \n";
-
-        s += "Apple RGB Linear:  " + Math.round(AppleRGB.linearAppleRGB(appleRGB[0]) * 255) + " "
-                + Math.round(AppleRGB.linearAppleRGB(appleRGB[1]) * 255) + " "
-                + Math.round(AppleRGB.linearAppleRGB(appleRGB[2]) * 255) + " \n";
-
-        double[] cmyk = SRGB.rgb2cmyk(color);
-        s += "Calculated CMYK:  " + Math.round(cmyk[0] * 100) + " " + Math.round(cmyk[1] * 100) + " "
-                + Math.round(cmyk[2] * 100) + " " + Math.round(cmyk[3] * 100) + " \n";
-
-        float[] cmyk2 = SRGB.srgb2profile(ImageValue.eciCmykProfile(), color);
-        s += "ECI CMYK:  " + Math.round(cmyk2[0] * 100) + " " + Math.round(cmyk2[1] * 100) + " "
-                + Math.round(cmyk2[2] * 100) + " " + Math.round(cmyk2[3] * 100) + " \n";
-
-        cmyk2 = SRGB.srgb2profile(ImageValue.adobeCmykProfile(), color);
-        s += "Adobe CMYK Uncoated FOGRA29:  " + Math.round(cmyk2[0] * 100) + " " + Math.round(cmyk2[1] * 100) + " "
-                + Math.round(cmyk2[2] * 100) + " " + Math.round(cmyk2[3] * 100) + " \n";
-
-        double[] xyz = SRGB.toXYZd50(ImageColor.converColor(color));
-        s += "XYZ: " + DoubleTools.scale(xyz[0], 6) + " "
-                + DoubleTools.scale(xyz[1], 6) + " "
-                + DoubleTools.scale(xyz[2], 6) + "\n";
-        double[] cieLab = CIEColorSpace.XYZd50toCIELab(xyz[0], xyz[1], xyz[2]);
-        s += "CIE-L*ab:  " + DoubleTools.scale(cieLab[0], 2) + " "
-                + DoubleTools.scale(cieLab[1], 2) + " "
-                + DoubleTools.scale(cieLab[2], 2) + " \n";
-        double[] LCHab = CIEColorSpace.LabtoLCHab(cieLab);
-        s += "LCH(ab):  " + DoubleTools.scale(LCHab[0], 2) + " "
-                + DoubleTools.scale(LCHab[1], 2) + " "
-                + DoubleTools.scale(LCHab[2], 2) + " \n";
-        double[] cieLuv = CIEColorSpace.XYZd50toCIELuv(xyz[0], xyz[1], xyz[2]);
-        s += "CIE-L*uv:  " + DoubleTools.scale(cieLuv[0], 2) + " "
-                + DoubleTools.scale(cieLuv[1], 2) + " "
-                + DoubleTools.scale(cieLuv[2], 2) + " \n";
-        double[] LCHuv = CIEColorSpace.LuvtoLCHuv(cieLuv);
-        s += "LCH(uv):  " + DoubleTools.scale(LCHuv[0], 2) + " "
-                + DoubleTools.scale(LCHuv[1], 2) + " "
-                + DoubleTools.scale(LCHuv[2], 2) + " \n";
-
-        TableSRGB.setDisplay(color.toString(), s);
-
-        return s;
+        data = new ColorData(color.toString());
+        return data.display();
     }
 
     public static String colorDisplaySimple(Color color) {

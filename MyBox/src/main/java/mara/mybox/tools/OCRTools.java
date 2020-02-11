@@ -150,18 +150,19 @@ public class OCRTools {
             data.addAll(names());
             List<String> codes = codes();
             File[] files = new File(dataPath).listFiles();
-            for (File f : files) {
-                String name = f.getName();
-                if (!f.isFile() || !name.endsWith(".traineddata")) {
-                    continue;
+            if (files != null) {
+                for (File f : files) {
+                    String name = f.getName();
+                    if (!f.isFile() || !name.endsWith(".traineddata")) {
+                        continue;
+                    }
+                    String code = name.substring(0, name.length() - ".traineddata".length());
+                    if (codes.contains(code)) {
+                        continue;
+                    }
+                    data.add(code);
                 }
-                String code = name.substring(0, name.length() - ".traineddata".length());
-                if (codes.contains(code)) {
-                    continue;
-                }
-                data.add(code);
             }
-
         } catch (Exception e) {
             logger.debug(e.toString());
         }

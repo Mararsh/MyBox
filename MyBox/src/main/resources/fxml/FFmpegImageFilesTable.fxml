@@ -19,7 +19,7 @@ License:    Apache License Version 2.0
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/iconAddFile.png" />
+                                <Image url="@../buttons/iconFileAdd.png" />
                             </image>
                         </ImageView>
                     </graphic>
@@ -28,7 +28,7 @@ License:    Apache License Version 2.0
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/iconAddFolder.png" />
+                                <Image url="@../buttons/iconFolderAdd.png" />
                             </image>
                         </ImageView>
                     </graphic>
@@ -37,7 +37,7 @@ License:    Apache License Version 2.0
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/iconInsertFile.png" />
+                                <Image url="@../buttons/iconFileInsert.png" />
                             </image>
                         </ImageView>
                     </graphic>
@@ -46,7 +46,7 @@ License:    Apache License Version 2.0
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/iconInsertFolder.png" />
+                                <Image url="@../buttons/iconFolderInsert.png" />
                             </image>
                         </ImageView>
                     </graphic>
@@ -100,7 +100,7 @@ License:    Apache License Version 2.0
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/iconDeleteFile.png" />
+                                <Image url="@../buttons/iconFileDelete.png" />
                             </image>
                         </ImageView>
                     </graphic>
@@ -127,7 +127,7 @@ License:    Apache License Version 2.0
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/iconAddFoloder.png" />
+                                <Image url="@../buttons/iconFolderLink.png" />
                             </image>
                         </ImageView>
                     </graphic>
@@ -203,7 +203,7 @@ License:    Apache License Version 2.0
                         <TextField fx:id="durationInput" prefWidth="150.0" />
                     </children>
                 </HBox>
-                <Button fx:id="setDurationAllButton" mnemonicParsing="false" onAction="#setDurationAllAction">
+                <Button fx:id="setAllOrSelectedButton" mnemonicParsing="false" onAction="#setDurationAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
@@ -212,7 +212,7 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-                <Label fx:id="setLabel" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%SetForAllRows" />
+                <Label fx:id="setLabel" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%SetAllOrSelected" />
             </children>
         </FlowPane>
     </children>

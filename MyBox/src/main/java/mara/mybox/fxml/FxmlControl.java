@@ -86,6 +86,14 @@ public class FxmlControl {
         playClip("/sound/GuaiAO.mp3", "GuaiAO.mp3");
     }
 
+    public static void BenWu2() {
+        playClip("/sound/BenWu2.mp3", "BenWu2.mp3");
+    }
+
+    public static void mp3(File file) {
+        playClip(file);
+    }
+
     public static Node findNode(Pane pane, String nodeId) {
         try {
             Node node = pane.lookup("#" + nodeId);
@@ -181,7 +189,8 @@ public class FxmlControl {
         MediaTools.play(miao, 1, 1);
     }
 
-    public static void setScrollPane(ScrollPane scrollPane, double xOffset, double yOffset) {
+    public static void setScrollPane(ScrollPane scrollPane, double xOffset,
+            double yOffset) {
         final Bounds visibleBounds = scrollPane.getViewportBounds();
         double scrollWidth = scrollPane.getContent().getBoundsInParent().getWidth() - visibleBounds.getWidth();
         double scrollHeight = scrollPane.getContent().getBoundsInParent().getHeight() - visibleBounds.getHeight();
@@ -295,7 +304,8 @@ public class FxmlControl {
         setNonnegativeValidation(input, Integer.MAX_VALUE);
     }
 
-    public static void setNonnegativeValidation(final TextField input, final int max) {
+    public static void setNonnegativeValidation(final TextField input,
+            final int max) {
         input.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable,
@@ -318,7 +328,8 @@ public class FxmlControl {
         setPositiveValidation(input, Integer.MAX_VALUE);
     }
 
-    public static void setPositiveValidation(final TextField input, final int max) {
+    public static void setPositiveValidation(final TextField input,
+            final int max) {
         input.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable,
@@ -426,12 +437,14 @@ public class FxmlControl {
         });
     }
 
-    public static File getInternalFile(String resourceFile, String subPath, String userFile) {
+    public static File getInternalFile(String resourceFile, String subPath,
+            String userFile) {
         return getInternalFile(resourceFile, subPath, userFile, false);
     }
 
     // Solution from https://stackoverflow.com/questions/941754/how-to-get-a-path-to-a-resource-in-a-java-jar-file
-    public static File getInternalFile(String resourceFile, String subPath, String userFile,
+    public static File getInternalFile(String resourceFile, String subPath,
+            String userFile,
             boolean deleteExisted) {
         if (resourceFile == null || userFile == null) {
             return null;
@@ -611,7 +624,8 @@ public class FxmlControl {
         }
     }
 
-    public static void zoomIn(ScrollPane sPane, ImageView iView, int xZoomStep, int yZoomStep) {
+    public static void zoomIn(ScrollPane sPane, ImageView iView, int xZoomStep,
+            int yZoomStep) {
         double currentWidth = iView.getFitWidth();
         if (currentWidth == -1) {
             currentWidth = iView.getImage().getWidth();
@@ -625,7 +639,8 @@ public class FxmlControl {
         FxmlControl.moveXCenter(sPane, iView);
     }
 
-    public static void zoomOut(ScrollPane sPane, ImageView iView, int xZoomStep, int yZoomStep) {
+    public static void zoomOut(ScrollPane sPane, ImageView iView, int xZoomStep,
+            int yZoomStep) {
         double currentWidth = iView.getFitWidth();
         if (currentWidth == -1) {
             currentWidth = iView.getImage().getWidth();
@@ -718,7 +733,8 @@ public class FxmlControl {
         }
     }
 
-    public static void popText(String text, String color, String size, Stage stage) {
+    public static void popText(String text, String color, String size,
+            Stage stage) {
         try {
             Popup popup = new Popup();
             popup.setAutoHide(true);

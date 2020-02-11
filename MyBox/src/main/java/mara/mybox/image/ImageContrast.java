@@ -115,7 +115,7 @@ public class ImageContrast extends PixelsOperation {
         float nf = 255.0f / (width * height);
         int cumulative = 0;
         int[] lookUpTable = new int[256];
-        for (int i = 0; i < 256; i++) {
+        for (int i = 0; i < 256; ++i) {
             cumulative += greyHistogram[i];
             lookUpTable[i] = Math.round(cumulative * nf);
         }
@@ -165,13 +165,13 @@ public class ImageContrast extends PixelsOperation {
         int height = grayImage.getHeight();
         int min = 0, max = 0;
         int[] greyHistogram = grayHistogram(image);
-        for (int i = 0; i < 256; i++) {
+        for (int i = 0; i < 256; ++i) {
             if (greyHistogram[i] >= leftThreshold) {
                 min = i;
                 break;
             }
         }
-        for (int i = 255; i >= 0; i--) {
+        for (int i = 255; i >= 0; --i) {
             if (greyHistogram[i] >= rightThreshold) {
                 max = i;
                 break;
@@ -215,7 +215,7 @@ public class ImageContrast extends PixelsOperation {
         float nf = 100.0f / (width * height);
         int cumulative = 0;
         int[] lookUpTable = new int[101];
-        for (int i = 0; i < 101; i++) {
+        for (int i = 0; i < 101; ++i) {
             cumulative += brightnessHistogram[i];
             lookUpTable[i] = Math.round(cumulative * nf);
         }
@@ -253,7 +253,7 @@ public class ImageContrast extends PixelsOperation {
 //            float nf = 255.0f / (width * height);
 //            int cumulative = 0;
 //            int[] lookUpTable = new int[256];
-//            for (int i = 0; i < 256; i++) {
+//            for (int i = 0; i < 256; ++i) {
 //                cumulative += lumaHistogram[i];
 //                lookUpTable[i] = Math.round(cumulative * nf);
 //            }

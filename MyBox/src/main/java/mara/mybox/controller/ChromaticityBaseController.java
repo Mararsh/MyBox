@@ -50,7 +50,7 @@ public class ChromaticityBaseController extends BaseController {
         AddFileType = VisitHistory.FileType.Text;
         AddPathType = VisitHistory.FileType.Text;
 
-        sourceExtensionFilter = CommonFxValues.TxtExtensionFilter;
+        sourceExtensionFilter = CommonFxValues.TextExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
     }
 
@@ -79,7 +79,8 @@ public class ChromaticityBaseController extends BaseController {
         if (scaleInput != null) {
             scaleInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                public void changed(ObservableValue<? extends String> observable,
+                        String oldValue, String newValue) {
                     checkScale();
                 }
             });
@@ -171,7 +172,7 @@ public class ChromaticityBaseController extends BaseController {
     @FXML
     public void exportAction() {
         final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
-                exportName, CommonFxValues.TxtExtensionFilter, true);
+                exportName, CommonFxValues.TextExtensionFilter, true);
         if (file == null) {
             return;
         }
@@ -191,7 +192,7 @@ public class ChromaticityBaseController extends BaseController {
                 @Override
                 protected void whenSucceeded() {
                     view(file);
-                    popSuccessul();
+                    popSuccessful();
                 }
 
             };

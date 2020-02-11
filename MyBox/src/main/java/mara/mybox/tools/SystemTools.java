@@ -109,10 +109,10 @@ public class SystemTools {
         group.enumerate(groups, false);
         System.out.println(index + "线程组的名称- " + group.getName() + " 最高优先级- "
                 + group.getMaxPriority() + (group.isDaemon() ? " 守护" : " "));
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < count; ++i) {
             showThread(threads[i], index + "  ");
         }
-        for (int i = 0; i < countGroup; i++) {
+        for (int i = 0; i < countGroup; ++i) {
             showThreadGroup(groups[i], index + "  ");
         }
     }

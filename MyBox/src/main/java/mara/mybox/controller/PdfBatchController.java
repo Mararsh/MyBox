@@ -21,7 +21,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
  */
 public abstract class PdfBatchController extends BatchController<PdfInformation> {
 
-    protected PDFsTableController pdfsTableController;
+    protected PdfsTableController pdfsTableController;
     protected String password, currentTargetFile;
     protected int fromPage, toPage, startPage;
     protected PDDocument doc;
@@ -53,7 +53,7 @@ public abstract class PdfBatchController extends BatchController<PdfInformation>
         try {
             super.initializeNext();
             allowPaused = true;
-            pdfsTableController = (PDFsTableController) tableController;
+            pdfsTableController = (PdfsTableController) tableController;
 
             if (!needUserPassword) {
                 tableView.getColumns().remove(pdfsTableController.getUserPasswordColumn());
@@ -112,7 +112,7 @@ public abstract class PdfBatchController extends BatchController<PdfInformation>
         int generated = 0;
         doc = null;
         try {
-            showHandling(srcFile);
+            countHandling(srcFile);
             currentParameters.currentSourceFile = srcFile;
             if (!isPreview) {
                 PdfInformation info = tableData.get(currentParameters.currentIndex);

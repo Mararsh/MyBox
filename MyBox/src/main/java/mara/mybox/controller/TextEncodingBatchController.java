@@ -133,7 +133,7 @@ public class TextEncodingBatchController extends FilesBatchController {
     @Override
     public String handleFile(File srcFile, File targetPath) {
         try {
-            showHandling(srcFile);
+            countHandling(srcFile);
             File target = makeTargetFile(srcFile, targetPath);
             if (target == null) {
                 return AppVariables.message("Skip");

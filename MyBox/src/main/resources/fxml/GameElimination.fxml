@@ -36,6 +36,15 @@ License:    Apache License Version 2.0
                                   <children>
                                       <HBox fx:id="operationBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
                                           <children>
+                                    <Button fx:id="helpMeButton" layoutX="1136.0" layoutY="13.0" mnemonicParsing="false" onAction="#helpMeAction">
+                                       <graphic>
+                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/iconCatFoot.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </Button>
                                     <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
                                           <Image url="@../buttons/iconTips.png" />
@@ -51,6 +60,15 @@ License:    Apache License Version 2.0
                                           </ImageView>
                                        </graphic>
                                     </Button>
+                                    <ToggleButton fx:id="catButton" mnemonicParsing="false">
+                                       <graphic>
+                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/iconCat.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </ToggleButton>
                                     <Button fx:id="startButton" mnemonicParsing="false" onAction="#startAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Start" />
                                           </children>
                                       </HBox>
@@ -95,8 +113,34 @@ License:    Apache License Version 2.0
                               </HBox>
                               <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
                                  <children>
-                                    <Label fx:id="chessesLabel" maxWidth="1.7976931348623157E308" text="%SelectChesses" HBox.hgrow="ALWAYS" />
-                                    <CheckBox fx:id="viewImageCheck" mnemonicParsing="false" selected="true" text="%ViewImage" />
+                                    <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile">
+                                       <graphic>
+                                          <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/iconOpen.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </Button>
+                                    <Button fx:id="paletteButton" mnemonicParsing="false" onAction="#showPalette">
+                                       <graphic>
+                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/iconPalette.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </Button>
+                                    <Button fx:id="deleteChessesButton" layoutX="132.0" layoutY="10.0" mnemonicParsing="false" onAction="#deleteChessesAction">
+                                       <graphic>
+                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/iconDelete.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </Button>
+                                    <Label fx:id="chessesLabel" alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" text="%SelectChesses" textAlignment="RIGHT" HBox.hgrow="ALWAYS" />
                                     <Button fx:id="clearChessSelectionButton" mnemonicParsing="false" onAction="#clearChessSelectionAction">
                                        <graphic>
                                           <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -108,7 +152,22 @@ License:    Apache License Version 2.0
                                     </Button>
                                  </children>
                               </HBox>
-                              <FlowPane fx:id="chessImagesPane" hgap="5.0" vgap="5.0" VBox.vgrow="NEVER" />
+                              <SplitPane dividerPositions="0.3" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                 <items>
+                                    <ListView fx:id="imagesListview" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+                                    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                       <children>
+                                          <ScrollPane fx:id="scrollpane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="150.0" prefViewportWidth="200.0" VBox.vgrow="ALWAYS">
+                                             <content>
+                                                <ImageView fx:id="imageView" fitHeight="241.0" fitWidth="408.0" pickOnBounds="true" preserveRatio="true" VBox.vgrow="ALWAYS" />
+                                             </content>
+                                          </ScrollPane>
+                                          <Label fx:id="imageLabel" text="Label" VBox.vgrow="NEVER" />
+                                       </children>
+                                    </VBox>
+                                 </items>
+                              </SplitPane>
+                                <Label maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%ChessesSelectionComments" wrapText="true" />
                            </children>
                            <padding>
                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -134,21 +193,10 @@ License:    Apache License Version 2.0
                                     </Button>
                                  </children>
                               </HBox>
-                              <FlowPane fx:id="rulersImagesPane" hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
-                                 <children>
-                                    <Label text="%Sound" />
-                                    <RadioButton fx:id="guaiRadio" mnemonicParsing="false" selected="true" text="%GuaiPraise">
-                                       <toggleGroup>
-                                          <ToggleGroup fx:id="soundGroup" />
-                                       </toggleGroup>
-                                    </RadioButton>
-                                    <RadioButton fx:id="benRadio" mnemonicParsing="false" text="%BenPraise" toggleGroup="$soundGroup" />
-                                    <RadioButton fx:id="guaiBenRadio" mnemonicParsing="false" text="%GuaiBenPraise" toggleGroup="$soundGroup" />
-                                    <RadioButton fx:id="muteRadio" mnemonicParsing="false" text="%Mute" toggleGroup="$soundGroup" />
-                                 </children></FlowPane>
                               <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="20.0" maxWidth="1.7976931348623157E308" spacing="5.0">
                                  <children>
                                     <Label text="%CountedChesses" />
+                                    <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                     <Button fx:id="clearCountedImagesButton" mnemonicParsing="false" onAction="#clearCountedImagesAction">
                                        <graphic>
                                           <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -172,14 +220,14 @@ License:    Apache License Version 2.0
                                     <Insets top="20.0" />
                                  </VBox.margin>
                               </HBox>
-                              <FlowPane fx:id="countedImagesPane" hgap="5.0" layoutX="20.0" layoutY="78.0" vgap="5.0" />
+                              <FlowPane fx:id="countedImagesPane" hgap="5.0" layoutX="20.0" layoutY="238.0" vgap="5.0" />
                               <Label text="%ScoreRulers">
                                  <VBox.margin>
                                     <Insets top="20.0" />
                                  </VBox.margin></Label>
                               <TableView fx:id="rulersTable" editable="true">
                                 <columns>
-                                  <TableColumn fx:id="linksColumn" editable="false" prefWidth="200.0" text="%ConnectionNumber" />
+                                  <TableColumn fx:id="numberColumn" editable="false" prefWidth="200.0" text="%AdjacentChessesNumber" />
                                   <TableColumn fx:id="scoreColumn" prefWidth="200.0" text="%Score" />
                                 </columns>
                               </TableView>
@@ -187,6 +235,95 @@ License:    Apache License Version 2.0
                            <padding>
                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                            </padding>
+                        </VBox>
+                     </content>
+                  </Tab>
+                  <Tab fx:id="settingsTab" text="%Settings">
+                     <content>
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                           <children>
+                              <Label text="%Sound" />
+                              <FlowPane fx:id="rulersImagesPane" hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
+                                 <children>
+                                    <RadioButton fx:id="guaiRadio" mnemonicParsing="false" selected="true" text="%GuaiPraise">
+                                       <toggleGroup>
+                                          <ToggleGroup fx:id="soundGroup" />
+                                       </toggleGroup>
+                                    </RadioButton>
+                                    <RadioButton fx:id="benRadio" mnemonicParsing="false" text="%BenPraise" toggleGroup="$soundGroup" />
+                                    <RadioButton fx:id="guaiBenRadio" mnemonicParsing="false" text="%GuaiBenPraise" toggleGroup="$soundGroup" />
+                                    <RadioButton fx:id="muteRadio" mnemonicParsing="false" text="%Mute" toggleGroup="$soundGroup" />
+                                    <RadioButton fx:id="customizedSoundRadio" layoutX="10.0" layoutY="51.0" mnemonicParsing="false" text="%Customized" toggleGroup="$soundGroup" />
+                                    <HBox fx:id="selectSoundBox" alignment="CENTER_LEFT" spacing="5.0">
+                                       <children>
+                                          <Label fx:id="soundFileLabel" />
+                                          <Button fx:id="selectFileSoundButton" mnemonicParsing="false" onAction="#selectSoundFile" onMouseEntered="#popSoundFile">
+                                             <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../buttons/iconOpen.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </Button>
+                                       </children>
+                                    </HBox>
+                                 </children></FlowPane>
+                              <Label text="%WhenDeadlock">
+                                 <VBox.margin>
+                                    <Insets top="20.0" />
+                                 </VBox.margin></Label>
+                              <FlowPane fx:id="rulersImagesPane1" hgap="5.0" vgap="5.0">
+                                 <children>
+                                    <RadioButton fx:id="deadRenewRadio" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%RenewGame">
+                                       <toggleGroup>
+                                          <ToggleGroup fx:id="deadGroup" />
+                                       </toggleGroup>
+                                    </RadioButton>
+                                    <RadioButton fx:id="deadChanceRadio" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%MakeChance" toggleGroup="$deadGroup" />
+                                    <RadioButton fx:id="deadPromptRadio" mnemonicParsing="false" text="%Prompt" toggleGroup="$deadGroup" />
+                                 </children>
+                              </FlowPane>
+                              <Label text="%AutoPlaySpeed">
+                                 <VBox.margin>
+                                    <Insets top="20.0" />
+                                 </VBox.margin></Label>
+                              <FlowPane fx:id="rulersImagesPane11" hgap="5.0" layoutX="20.0" layoutY="117.0" vgap="5.0">
+                                 <children>
+                                    <RadioButton fx:id="speed1Radio" layoutX="503.0" layoutY="10.0" mnemonicParsing="false" text="1">
+                                       <toggleGroup>
+                                          <ToggleGroup fx:id="speedGroup" />
+                                       </toggleGroup>
+                                    </RadioButton>
+                                    <RadioButton fx:id="speed2Radio" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="2" toggleGroup="$speedGroup" />
+                                    <RadioButton fx:id="speed3Radio" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="3" toggleGroup="$speedGroup" />
+                                    <RadioButton fx:id="speed5Radio" mnemonicParsing="false" text="5" toggleGroup="$speedGroup" />
+                                 </children>
+                              </FlowPane>
+                              <Label text="%EliminationFlushTimes">
+                                 <VBox.margin>
+                                    <Insets top="20.0" />
+                                 </VBox.margin></Label>
+                              <FlowPane fx:id="rulersImagesPane111" hgap="5.0" layoutX="20.0" layoutY="173.0" vgap="5.0">
+                                 <children>
+                                    <RadioButton fx:id="flush0Radio" layoutX="503.0" layoutY="10.0" mnemonicParsing="false" text="0">
+                                       <toggleGroup>
+                                          <ToggleGroup fx:id="flushGroup" />
+                                       </toggleGroup>
+                                    </RadioButton>
+                                    <RadioButton fx:id="flush1Radio" layoutX="366.0" layoutY="10.0" mnemonicParsing="false" text="1" toggleGroup="$flushGroup" />
+                                    <RadioButton fx:id="flush2Radio" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="2" toggleGroup="$flushGroup" />
+                                    <RadioButton fx:id="flush3Radio" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="3" toggleGroup="$flushGroup" />
+                                 </children>
+                              </FlowPane>
+                              <CheckBox fx:id="scoreCheck" mnemonicParsing="false" selected="true" text="%PopScores">
+                                 <VBox.margin>
+                                    <Insets top="20.0" />
+                                 </VBox.margin></CheckBox>
+                           </children>
                         </VBox>
                      </content>
                   </Tab>
@@ -204,7 +341,4 @@ License:    Apache License Version 2.0
     <padding>
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
     </padding>
-    <bottom>
-        <Label fx:id="bottomLabel" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER_LEFT" />
-    </bottom>
 </BorderPane>

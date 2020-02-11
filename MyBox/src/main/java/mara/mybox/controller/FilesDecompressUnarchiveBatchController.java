@@ -109,11 +109,13 @@ public class FilesDecompressUnarchiveBatchController extends FilesBatchControlle
     @Override
     public String handleFile(File srcFile, File targetPath) {
         try {
-            showHandling(srcFile);
+            countHandling(srcFile);
             long s = new Date().getTime();
             fileName = srcFile.getName();
 
-            updateLogs(MessageFormat.format(message("HandlingObject"), srcFile), true, true);
+            if (verboseCheck == null || verboseCheck.isSelected()) {
+                updateLogs(MessageFormat.format(message("HandlingObject"), srcFile), true, true);
+            }
 
             File decompressedFile = null, archiveSource;
             Map<String, Object> uncompress = CompressTools.decompress(srcFile, null);
@@ -121,9 +123,11 @@ public class FilesDecompressUnarchiveBatchController extends FilesBatchControlle
             if (uncompress != null) {
                 compressor = (String) uncompress.get("compressor");
                 decompressedFile = (File) uncompress.get("decompressedFile");
-                updateLogs(MessageFormat.format(message("FileDecompressedSuccessfully"),
-                        srcFile, DateTools.showTime(new Date().getTime() - s), true, true
-                ));
+                if (verboseCheck == null || verboseCheck.isSelected()) {
+                    updateLogs(MessageFormat.format(message("FileDecompressedSuccessfully"),
+                            srcFile, DateTools.showTime(new Date().getTime() - s), true, true
+                    ));
+                }
                 archiveSource = decompressedFile;
                 String suffix = "." + CompressTools.extensionByCompressor(compressor);
                 if (fileName.toLowerCase().endsWith(suffix)) {
@@ -137,10 +141,12 @@ public class FilesDecompressUnarchiveBatchController extends FilesBatchControlle
             archiveFail = archiveSuccess = 0;
             unarchive(archiveSource, archiveExt);
             if (archiveSuccess > 0 || archiveFail > 0) {
-                updateLogs(MessageFormat.format(message("FileUnarchived"),
-                        srcFile, archiveSuccess, archiveFail,
-                        DateTools.showTime(new Date().getTime() - s), true, true
-                ));
+                if (verboseCheck == null || verboseCheck.isSelected()) {
+                    updateLogs(MessageFormat.format(message("FileUnarchived"),
+                            srcFile, archiveSuccess, archiveFail,
+                            DateTools.showTime(new Date().getTime() - s), true, true
+                    ));
+                }
                 if (archiveFail > 0) {
                     return AppVariables.message("Failed");
                 } else {
@@ -234,10 +240,14 @@ public class FilesDecompressUnarchiveBatchController extends FilesBatchControlle
             }
             ArchiveEntry entry;
             while ((entry = archiveInputStream.getNextEntry()) != null) {
-                updateLogs(message("Handling...") + ":   " + entry.getName());
+                if (verboseCheck == null || verboseCheck.isSelected()) {
+                    updateLogs(message("Handling...") + ":   " + entry.getName());
+                }
                 if (!archiveInputStream.canReadEntryData(entry)) {
                     archiveFail++;
-                    updateLogs(message("CanNotReadEntryData" + ":" + entry.getName()));
+                    if (verboseCheck == null || verboseCheck.isSelected()) {
+                        updateLogs(message("CanNotReadEntryData" + ":" + entry.getName()));
+                    }
                     continue;
                 }
                 if (!entry.isDirectory()) {
@@ -248,7 +258,9 @@ public class FilesDecompressUnarchiveBatchController extends FilesBatchControlle
                     File parent = file.getParentFile();
                     if (!parent.isDirectory() && !parent.mkdirs()) {
                         archiveFail++;
-                        updateLogs(message("FailOpenFile" + ":" + file));
+                        if (verboseCheck == null || verboseCheck.isSelected()) {
+                            updateLogs(message("FailOpenFile" + ":" + file));
+                        }
                     }
                     try ( OutputStream o = Files.newOutputStream(file.toPath())) {
                         IOUtils.copy(archiveInputStream, o);
@@ -278,7 +290,9 @@ public class FilesDecompressUnarchiveBatchController extends FilesBatchControlle
                     if (entry.isDirectory()) {
                         continue;
                     }
-                    updateLogs(message("Handling...") + ":   " + entry.getName());
+                    if (verboseCheck == null || verboseCheck.isSelected()) {
+                        updateLogs(message("Handling...") + ":   " + entry.getName());
+                    }
                     File file = makeTargetFile(entry.getName(), targetPath);
                     if (file == null) {
                         continue;
@@ -286,11 +300,13 @@ public class FilesDecompressUnarchiveBatchController extends FilesBatchControlle
                     File parent = file.getParentFile();
                     if (!parent.isDirectory() && !parent.mkdirs()) {
                         archiveFail++;
-                        updateLogs(message("FailOpenFile" + ":" + file));
+                        if (verboseCheck == null || verboseCheck.isSelected()) {
+                            updateLogs(message("FailOpenFile" + ":" + file));
+                        }
                         continue;
                     }
                     try ( FileOutputStream out = new FileOutputStream(file);
-                             InputStream in = zipFile.getInputStream(entry)) {
+                          InputStream in = zipFile.getInputStream(entry)) {
                         IOUtils.copy(in, out);
                     }
                     archiveSuccess++;
@@ -317,7 +333,9 @@ public class FilesDecompressUnarchiveBatchController extends FilesBatchControlle
                     if (entry.isDirectory()) {
                         continue;
                     }
-                    updateLogs(message("Handling...") + ":   " + entry.getName());
+                    if (verboseCheck == null || verboseCheck.isSelected()) {
+                        updateLogs(message("Handling...") + ":   " + entry.getName());
+                    }
                     File file = makeTargetFile(entry.getName(), targetPath);
                     if (file == null) {
                         continue;
@@ -325,7 +343,9 @@ public class FilesDecompressUnarchiveBatchController extends FilesBatchControlle
                     File parent = file.getParentFile();
                     if (!parent.isDirectory() && !parent.mkdirs()) {
                         archiveFail++;
-                        updateLogs(message("FailOpenFile" + ":" + file));
+                        if (verboseCheck == null || verboseCheck.isSelected()) {
+                            updateLogs(message("FailOpenFile" + ":" + file));
+                        }
                         continue;
                     }
                     try ( FileOutputStream out = new FileOutputStream(file)) {

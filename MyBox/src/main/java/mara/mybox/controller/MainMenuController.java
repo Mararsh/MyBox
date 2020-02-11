@@ -124,13 +124,13 @@ public class MainMenuController extends BaseController {
         items.addAll(settingsMenu.getItems());
         int pos1 = items.indexOf(englishMenuItem);
         int pos2 = items.indexOf(manageLanguagesMenuItem);
-        for (int i = pos2 - 1; i > pos1; i--) {
+        for (int i = pos2 - 1; i > pos1; --i) {
             items.remove(i);
         }
         List<String> languages = ConfigTools.languages();
         if (languages != null && !languages.isEmpty()) {
             String lang = AppVariables.getLanguage();
-            for (int i = 0; i < languages.size(); i++) {
+            for (int i = 0; i < languages.size(); ++i) {
                 final String name = languages.get(i);
                 RadioMenuItem langItem = new RadioMenuItem(name);
                 langItem.setToggleGroup(langGroup);
@@ -676,7 +676,7 @@ public class MainMenuController extends BaseController {
         String f = parentController.getMyFxml();
         BaseController c = loadScene(f);
         c.getMyStage().setTitle(parentController.getMyStage().getTitle());
-        popSuccessul();
+        popSuccessful();
     }
 
     @FXML
@@ -920,7 +920,12 @@ public class MainMenuController extends BaseController {
 
     @FXML
     private void openColorPalette(ActionEvent event) {
-        paletteController = (ColorPaletteController) openStage(CommonValues.ColorPaletteFxml);
+        openStage(CommonValues.ColorPaletteFxml);
+    }
+
+    @FXML
+    private void openManageColors(ActionEvent event) {
+        loadScene(CommonValues.ManageColorsFxml);
     }
 
     @FXML
@@ -986,6 +991,16 @@ public class MainMenuController extends BaseController {
     @FXML
     private void openFilesArrangement(ActionEvent event) {
         loadScene(CommonValues.FilesArrangementFxml);
+    }
+
+    @FXML
+    private void openDeleteEmptyDirectories(ActionEvent event) {
+        loadScene(CommonValues.FilesDeleteEmptyDirFxml);
+    }
+
+    @FXML
+    private void openDeleteNestedDirectories(ActionEvent event) {
+        loadScene(CommonValues.FilesDeleteNestedDirFxml);
     }
 
     @FXML
@@ -1172,6 +1187,31 @@ public class MainMenuController extends BaseController {
     @FXML
     private void openGameElimniation(ActionEvent event) {
         loadScene(CommonValues.GameElimniationFxml);
+    }
+
+    @FXML
+    private void openLocationsData(ActionEvent event) {
+        loadScene(CommonValues.LocationsDataFxml);
+    }
+
+    @FXML
+    private void openDataGeographyCode(ActionEvent event) {
+        loadScene(CommonValues.GeographyCodeFxml);
+    }
+
+    @FXML
+    private void openLocationsDataInMap(ActionEvent event) {
+        loadScene(CommonValues.LocationsDataInMapFxml);
+    }
+
+    @FXML
+    private void openLocationInMap(ActionEvent event) {
+        loadScene(CommonValues.LocationInMapFxml);
+    }
+
+    @FXML
+    private void openEpidemicReports(ActionEvent event) {
+        loadScene(CommonValues.EpidemicReportsFxml);
     }
 
     @FXML

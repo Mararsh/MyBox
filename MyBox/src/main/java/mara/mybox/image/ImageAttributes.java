@@ -21,7 +21,7 @@ public class ImageAttributes {
     }
     private String imageFormat, compressionType, colorSpaceName;
     private ImageType colorType;
-    private int density, threshold, quality, ratioAdjustion;
+    private int density, threshold, quality, ratioAdjustion, width;
     private Alpha alpha;
     private BinaryConversion binaryConversion;
     private boolean embedProfile, keepRatio, isDithering;
@@ -191,6 +191,14 @@ public class ImageAttributes {
 
     public void setEmbedProfile(boolean embedProfile) {
         this.embedProfile = embedProfile;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
     }
 
 }

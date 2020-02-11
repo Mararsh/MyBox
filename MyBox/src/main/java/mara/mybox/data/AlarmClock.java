@@ -267,7 +267,7 @@ public final class AlarmClock {
             if (alarms == null || key <= 0) {
                 return -1;
             }
-            for (int i = 0; i < alarms.size(); i++) {
+            for (int i = 0; i < alarms.size(); ++i) {
                 if (alarms.get(i).getKey() == key) {
                     return i;
                 }

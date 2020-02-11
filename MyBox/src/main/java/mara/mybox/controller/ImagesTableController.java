@@ -65,6 +65,7 @@ public class ImagesTableController extends BatchTableController<ImageInformation
         sourcePathKey = "ImageFilePath";
         sourceExtensionFilter = CommonFxValues.ImageExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
+
     }
 
     @Override
@@ -90,6 +91,7 @@ public class ImagesTableController extends BatchTableController<ImageInformation
                 }
             });
         }
+
     }
 
     @Override
@@ -152,19 +154,23 @@ public class ImagesTableController extends BatchTableController<ImageInformation
 
     @Override
     public void updateLabel() {
-        if (tableLabel != null) {
-            long pixels = 0;
-            for (ImageInformation m : tableData) {
-                pixels += m.getWidth() * m.getHeight();
-            }
-            String s = message("TotalPixels") + ": " + StringTools.formatData(pixels) + "  ";
-            s += MessageFormat.format(message("TotalFilesNumberSize"),
-                    totalFilesNumber, FileTools.showFileSize(totalFilesSize));
-            if (viewFileButton != null) {
-                s += "  " + message("DoubleClickToView");
-            }
-            tableLabel.setText(s);
+        if (tableLabel == null) {
+            return;
         }
+        long d = 0, pixels = 0;
+        for (ImageInformation m : tableData) {
+            pixels += m.getWidth() * m.getHeight();
+            if (m.getDuration() > 0) {
+                d += m.getDuration();
+            }
+        }
+        String s = message("TotalPixels") + ": " + StringTools.formatData(pixels) + "  ";
+        s += MessageFormat.format(message("TotalFilesNumberSize"),
+                totalFilesNumber, FileTools.showFileSize(totalFilesSize));
+        if (viewFileButton != null) {
+            s += "  " + message("DoubleClickToView");
+        }
+        tableLabel.setText(s);
     }
 
     public boolean hasSampled() {
@@ -213,7 +219,7 @@ public class ImagesTableController extends BatchTableController<ImageInformation
                             continue;
                         }
                         if (!tableView.getColumns().contains(imageColumn)) {
-                            for (int i = 0; i < finfo.getNumberOfImages(); i++) {
+                            for (int i = 0; i < finfo.getNumberOfImages(); ++i) {
                                 ImageInformation minfo = finfo.getImagesInformation().get(i);
                                 if (minfo.isIsSampled()) {
                                     hasSampled = true;
@@ -229,7 +235,7 @@ public class ImagesTableController extends BatchTableController<ImageInformation
                                 error = "FailedReadFile";
                                 break;
                             }
-                            for (int i = 0; i < bufferImages.size(); i++) {
+                            for (int i = 0; i < bufferImages.size(); ++i) {
                                 if (task == null || isCancelled()) {
                                     return false;
                                 }
@@ -259,6 +265,7 @@ public class ImagesTableController extends BatchTableController<ImageInformation
                     if (hasSampled) {
                         alertWarning(AppVariables.message("ImageSampled"));
                     }
+
                 }
 
             };

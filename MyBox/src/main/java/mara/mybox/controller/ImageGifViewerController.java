@@ -26,6 +26,7 @@ import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageFileInformation;
+import mara.mybox.image.ImageInformation;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.image.file.ImageGifFile;
 import mara.mybox.tools.FileTools;
@@ -44,10 +45,12 @@ import mara.mybox.value.CommonValues;
 public class ImageGifViewerController extends ImageViewerController {
 
     protected Image[] images;
-    protected int currentIndex, interval, fromIndex, toIndex, totalNumber;
+    protected int[] delays;
+    protected int currentIndex, currentDelay, fromIndex, toIndex, totalNumber;
+    protected double speed;
 
     @FXML
-    protected ComboBox<String> intervalCBox, frameBox;
+    protected ComboBox<String> frameBox, speedSelector;
     @FXML
     protected Button pauseButton, extractButton;
     @FXML
@@ -67,7 +70,6 @@ public class ImageGifViewerController extends ImageViewerController {
         AddFileType = VisitHistory.FileType.Image;
         AddPathType = VisitHistory.FileType.Image;
 
-        TipsLabelKey = "GifViewTips";
         needNotRulers = true;
         needNotCoordinates = true;
 
@@ -125,28 +127,6 @@ public class ImageGifViewerController extends ImageViewerController {
                             .or(toInput.styleProperty().isEqualTo(badStyle))
             );
 
-            interval = 500;
-            List<String> values = Arrays.asList("500", "300", "1000", "2000", "3000", "5000", "10000");
-            intervalCBox.getItems().addAll(values);
-            intervalCBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    try {
-                        int v = Integer.valueOf(newValue);
-                        if (v > 0) {
-                            interval = v;
-                            FxmlControl.setEditorNormal(intervalCBox);
-                            showGifImage(currentIndex);
-                        } else {
-                            FxmlControl.setEditorBadStyle(intervalCBox);
-                        }
-                    } catch (Exception e) {
-                        FxmlControl.setEditorBadStyle(intervalCBox);
-                    }
-                }
-            });
-            intervalCBox.getSelectionModel().select(0);
-
             frameBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
@@ -164,6 +144,28 @@ public class ImageGifViewerController extends ImageViewerController {
             });
 
             setPauseButton(false);
+
+            speed = 1.0;
+            speedSelector.getItems().addAll(Arrays.asList(
+                    "1", "1.5", "2", "0.5", "0.8", "1.2", "0.3", "3", "0.1", "5", "0.2", "8"
+            ));
+            speedSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    try {
+                        double v = Double.valueOf(newValue);
+                        if (v <= 0) {
+                            speedSelector.getEditor().setStyle(badStyle);
+                        } else {
+                            speed = v;
+                            speedSelector.getEditor().setStyle(null);
+                        }
+                    } catch (Exception e) {
+                        speedSelector.getEditor().setStyle(badStyle);
+                    }
+                }
+            });
+            speedSelector.getSelectionModel().select(0);
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -192,6 +194,16 @@ public class ImageGifViewerController extends ImageViewerController {
                             return true;
                         }
                         imageInformation = imageFileInformation.getImageInformation();
+                        List<ImageInformation> imagesInformation = imageFileInformation.getImagesInformation();
+                        delays = new int[imagesInformation.size()];
+                        for (int i = 0; i < imagesInformation.size(); ++i) {
+                            Object d = imagesInformation.get(i).getNativeAttribute("delayTime");
+                            if (d == null) {
+                                delays[i] = 500;
+                            } else {
+                                delays[i] = Integer.valueOf((String) d);
+                            }
+                        }
                         if (onlyInformation) {
                             return true;
                         }
@@ -201,7 +213,7 @@ public class ImageGifViewerController extends ImageViewerController {
                         }
                         totalNumber = bimages.size();
                         images = new Image[totalNumber];
-                        for (int i = 0; i < totalNumber; i++) {
+                        for (int i = 0; i < totalNumber; ++i) {
                             if (task == null || isCancelled()) {
                                 return false;
                             }
@@ -245,7 +257,7 @@ public class ImageGifViewerController extends ImageViewerController {
             }
             showGifImage(0);
             List<String> frames = new ArrayList<>();
-            for (int i = 0; i < images.length; i++) {
+            for (int i = 0; i < images.length; ++i) {
                 frames.add(i + "");
             }
             frameBox.getItems().clear();
@@ -378,6 +390,7 @@ public class ImageGifViewerController extends ImageViewerController {
             }
             setPauseButton(false);
             currentIndex = start;
+            setCurrentFrame();
             if (timer != null) {
                 timer.cancel();
             }
@@ -385,14 +398,11 @@ public class ImageGifViewerController extends ImageViewerController {
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            setCurrentFrame();
-                        }
+                    Platform.runLater(() -> {
+                        showGifImage(currentIndex);
                     });
                 }
-            }, 0, interval);
+            }, currentDelay);
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -416,28 +426,32 @@ public class ImageGifViewerController extends ImageViewerController {
     }
 
     protected void setCurrentFrame() {
-        if (currentIndex > images.length - 1) {
-            currentIndex -= images.length;
-        } else if (currentIndex < 0) {
-            currentIndex += images.length;
-        }
-        imageView.setImage(images[currentIndex]);
-        refinePane();
-        promptLabel.setText(AppVariables.message("TotalFrames") + ": " + images.length + "  "
-                + AppVariables.message("CurrentFrame") + ": " + currentIndex + "  "
-                + AppVariables.message("Size") + ": " + (int) images[currentIndex].getWidth()
-                + "*" + (int) images[currentIndex].getHeight());
-        isSettingValues = true;
-        frameBox.getSelectionModel().select(currentIndex + "");
-        isSettingValues = false;
+        try {
+            if (currentIndex > images.length - 1) {
+                currentIndex -= images.length;
+            } else if (currentIndex < 0) {
+                currentIndex += images.length;
+            }
+            currentDelay = (int) (delays[currentIndex] * 10 / speed);
+            imageView.setImage(images[currentIndex]);
+            refinePane();
+            promptLabel.setText(AppVariables.message("TotalFrames") + ": " + images.length + "  "
+                    + AppVariables.message("CurrentFrame") + ": " + currentIndex + "  "
+                    + AppVariables.message("DurationMilliseconds") + ": " + currentDelay + "  "
+                    + AppVariables.message("Size") + ": " + (int) images[currentIndex].getWidth()
+                    + "*" + (int) images[currentIndex].getHeight());
+            isSettingValues = true;
+            frameBox.getSelectionModel().select(currentIndex + "");
+            isSettingValues = false;
 
-        currentIndex++;
+            currentIndex++;
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
     }
 
     @Override
     public ImageGifViewerController refresh() {
-        File oldfile = sourceFile;
-
         ImageGifViewerController c = (ImageGifViewerController) refreshBase();
         if (c == null) {
             return null;

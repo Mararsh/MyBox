@@ -40,12 +40,12 @@ public class TextEditInformation extends FileEditInformation {
             if (file == null || pageSize <= 0 || lineBreakValue == null) {
                 return false;
             }
-            try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
-                    InputStreamReader reader = new InputStreamReader(inputStream, charset)) {
+            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
+                     InputStreamReader reader = new InputStreamReader(inputStream, charset)) {
                 if (withBom) {
                     inputStream.skip(bomSize(charset.name()));
                 }
-                char[] buf = new char[(int) pageSize];
+                char[] buf = new char[pageSize];
                 int charIndex = 0, lineIndex = 1, len;
                 String bufStr;
                 while ((len = reader.read(buf)) != -1) {
@@ -77,12 +77,12 @@ public class TextEditInformation extends FileEditInformation {
             }
             long lineEnd = 1, lineStart = 1, pageIndex = 1;
             String pageText = null;
-            try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
-                    InputStreamReader reader = new InputStreamReader(inputStream, charset)) {
+            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
+                     InputStreamReader reader = new InputStreamReader(inputStream, charset)) {
                 if (withBom) {
                     inputStream.skip(bomSize(charset.name()));
                 }
-                char[] buf = new char[(int) pageSize];
+                char[] buf = new char[pageSize];
                 String bufStr;
                 int len;
                 while ((len = reader.read(buf)) != -1) {
@@ -125,8 +125,8 @@ public class TextEditInformation extends FileEditInformation {
             if (file == null || charset == null || text == null || text.isEmpty()) {
                 return false;
             }
-            try (BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file));
-                    OutputStreamWriter writer = new OutputStreamWriter(outputStream, charset)) {
+            try ( BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file));
+                     OutputStreamWriter writer = new OutputStreamWriter(outputStream, charset)) {
                 if (withBom) {
                     byte[] bytes = bomBytes(charset.name());
                     outputStream.write(bytes);
@@ -150,7 +150,8 @@ public class TextEditInformation extends FileEditInformation {
     }
 
     @Override
-    public boolean writePage(FileEditInformation sourceInfo, long pageNumber, String text) {
+    public boolean writePage(FileEditInformation sourceInfo, long pageNumber,
+            String text) {
         try {
             if (sourceInfo.getFile() == null || sourceInfo.getCharset() == null
                     || sourceInfo.getPageSize() <= 0 || pageNumber < 1
@@ -162,10 +163,10 @@ public class TextEditInformation extends FileEditInformation {
             if (sourceInfo.getFile().equals(file)) {
                 targetFile = FileTools.getTempFile();
             }
-            try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(sourceInfo.getFile()));
-                    InputStreamReader reader = new InputStreamReader(inputStream, sourceInfo.getCharset());
-                    BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(targetFile));
-                    OutputStreamWriter writer = new OutputStreamWriter(outputStream, charset)) {
+            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(sourceInfo.getFile()));
+                     InputStreamReader reader = new InputStreamReader(inputStream, sourceInfo.getCharset());
+                     BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(targetFile));
+                     OutputStreamWriter writer = new OutputStreamWriter(outputStream, charset)) {
                 if (sourceInfo.isWithBom()) {
                     inputStream.skip(bomSize(sourceInfo.getCharset().name()));
                 }
@@ -175,7 +176,7 @@ public class TextEditInformation extends FileEditInformation {
                 }
                 String sourceLineBreak = sourceInfo.getLineBreakValue();
                 boolean sameLineBreak = lineBreakValue.equals(sourceLineBreak);
-                char[] buf = new char[(int) sourceInfo.getPageSize()];
+                char[] buf = new char[sourceInfo.getPageSize()];
                 int bufLen, pageIndex = 1;
                 while ((bufLen = reader.read(buf)) != -1) {
                     if (pageIndex == pageNumber) {
@@ -230,8 +231,8 @@ public class TextEditInformation extends FileEditInformation {
                 previousPos = -1;
             }
             String pageText = null, preText;
-            try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
-                    InputStreamReader reader = new InputStreamReader(inputStream, charset)) {
+            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
+                     InputStreamReader reader = new InputStreamReader(inputStream, charset)) {
                 if (withBom) {
                     inputStream.skip(bomSize(charset.name()));
                 }
@@ -240,7 +241,7 @@ public class TextEditInformation extends FileEditInformation {
                     pageIndex = previousPage;
                     reader.skip((previousPage - 1) * pageSize);
                 }
-                char[] buf = new char[(int) pageSize];
+                char[] buf = new char[pageSize];
                 int len, pos, findLen = findString.length();
                 String bufStr = null, crossString = "";
                 while ((len = reader.read(buf)) != -1) {
@@ -325,12 +326,12 @@ public class TextEditInformation extends FileEditInformation {
             String pageText = null, preText;
             long maxIndex = -1;
             int maxLineStart = -1, maxLineEnd = -1, maxPage = 1;
-            try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
-                    InputStreamReader reader = new InputStreamReader(inputStream, charset)) {
+            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
+                     InputStreamReader reader = new InputStreamReader(inputStream, charset)) {
                 if (withBom) {
                     inputStream.skip(bomSize(charset.name()));
                 }
-                char[] buf = new char[(int) pageSize];
+                char[] buf = new char[pageSize];
                 int len, pos, findLen = findString.length();
                 String bufStr = null, crossString = "";
                 while ((len = reader.read(buf)) != -1) {
@@ -413,12 +414,12 @@ public class TextEditInformation extends FileEditInformation {
             String pageText = null, preText;
             long maxIndex = -1;
             int maxLineStart = -1, maxLineEnd = -1, maxPage = 1;
-            try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
-                    InputStreamReader reader = new InputStreamReader(inputStream, charset)) {
+            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
+                     InputStreamReader reader = new InputStreamReader(inputStream, charset)) {
                 if (withBom) {
                     inputStream.skip(bomSize(charset.name()));
                 }
-                char[] buf = new char[(int) pageSize];
+                char[] buf = new char[pageSize];
                 int len, pos, findLen = findString.length();
                 String bufStr = null, crossString = "", addedStr;
                 while ((len = reader.read(buf)) != -1) {
@@ -482,12 +483,12 @@ public class TextEditInformation extends FileEditInformation {
             }
             int lineEnd = 1, lineStart = 1, pageIndex = 1;
             String pageText = null;
-            try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
-                    InputStreamReader reader = new InputStreamReader(inputStream, charset)) {
+            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
+                     InputStreamReader reader = new InputStreamReader(inputStream, charset)) {
                 if (withBom) {
                     inputStream.skip(bomSize(charset.name()));
                 }
-                char[] buf = new char[(int) pageSize];
+                char[] buf = new char[pageSize];
                 int len;
                 String bufStr;
                 while ((len = reader.read(buf)) != -1) {
@@ -529,16 +530,16 @@ public class TextEditInformation extends FileEditInformation {
         int replaceAllNumber = 0;
         try {
             File targetFile = FileTools.getTempFile();
-            try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
-                    InputStreamReader reader = new InputStreamReader(inputStream, charset);
-                    BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(targetFile));
-                    OutputStreamWriter writer = new OutputStreamWriter(outputStream, charset)) {
+            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
+                     InputStreamReader reader = new InputStreamReader(inputStream, charset);
+                     BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(targetFile));
+                     OutputStreamWriter writer = new OutputStreamWriter(outputStream, charset)) {
                 if (withBom) {
                     byte[] bytes = bomBytes(charset.name());
                     inputStream.skip(bytes.length);
                     outputStream.write(bytes);
                 }
-                char[] buf = new char[(int) pageSize];
+                char[] buf = new char[pageSize];
                 int bufLen, findLen = findString.length();
                 String thisPage, crossString = "";
                 while ((bufLen = reader.read(buf)) != -1) {
@@ -596,13 +597,13 @@ public class TextEditInformation extends FileEditInformation {
         }
         int count = 0;
         try {
-            try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
-                    InputStreamReader reader = new InputStreamReader(inputStream, charset)) {
+            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
+                     InputStreamReader reader = new InputStreamReader(inputStream, charset)) {
                 if (withBom) {
                     byte[] bytes = bomBytes(charset.name());
                     inputStream.skip(bytes.length);
                 }
-                char[] buf = new char[(int) pageSize];
+                char[] buf = new char[pageSize];
                 int bufLen, findLen = findString.length();
                 String thisPage, crossString = "";
                 while ((bufLen = reader.read(buf)) != -1) {
@@ -647,23 +648,23 @@ public class TextEditInformation extends FileEditInformation {
             }
             File targetFile = FileTools.getTempFile();
             int lineEnd = 1, lineStart = 1;
-            try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
-                    InputStreamReader reader = new InputStreamReader(inputStream, charset);
-                    BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(targetFile));
-                    OutputStreamWriter writer = new OutputStreamWriter(outputStream, charset)) {
+            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
+                     InputStreamReader reader = new InputStreamReader(inputStream, charset);
+                     BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(targetFile));
+                     OutputStreamWriter writer = new OutputStreamWriter(outputStream, charset)) {
                 if (withBom) {
                     byte[] bytes = bomBytes(charset.name());
                     inputStream.skip(bytes.length);
                     outputStream.write(bytes);
                 }
-                char[] buf = new char[(int) pageSize];
+                char[] buf = new char[pageSize];
                 int len;
                 String bufStr, crossString = "";
                 while ((len = reader.read(buf)) != -1) {
                     bufStr = crossString + new String(buf, 0, len);
                     String[] lines = bufStr.split(lineBreakValue);
                     lineEnd += lines.length - 1;
-                    for (int i = 0; i < lines.length - 1; i++) {
+                    for (int i = 0; i < lines.length - 1; ++i) {
                         if (isMatchFilters(lines[i])) {
                             if (recordLineNumbers) {
                                 String lineNumber = StringTools.fillRightBlank(lineStart + i, 15);

@@ -296,7 +296,7 @@ public class TextTools {
             return new IndexRange(0, 0);
         }
         int lbLen = lineBreakValue.getBytes(charset).length * 3 + 1;
-        for (int i = 0; i < text.length(); i++) {
+        for (int i = 0; i < text.length(); ++i) {
             if (cBegin == i) {
                 hBegin = hIndex;
             }

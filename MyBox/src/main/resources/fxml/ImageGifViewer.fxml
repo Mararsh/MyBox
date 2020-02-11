@@ -38,11 +38,6 @@ License:    Apache License Version 2.0
                                   </ImageView>
                               </graphic>
                           </Button>
-                          <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                              <image>
-                                  <Image url="@../buttons/iconTips.png" />
-                              </image>
-                          </ImageView>
                           <Label maxWidth="1.7976931348623157E308" text=" " visible="false" HBox.hgrow="ALWAYS" />
                   <HBox fx:id="operationBox" alignment="CENTER_LEFT" spacing="5.0">
                      <children>
@@ -78,70 +73,6 @@ License:    Apache License Version 2.0
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
                                                 <Image url="@../buttons/iconZoomOut.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-      
-                                <Button fx:id="moveRightButton" mnemonicParsing="false" onAction="#moveRight">
-                                    <graphic>
-                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/iconRight.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                                <Button fx:id="moveLeftButton" mnemonicParsing="false" onAction="#moveLeft">
-                                    <graphic>
-                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/iconLeft.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                                <Button fx:id="moveUpButton" mnemonicParsing="false" onAction="#moveUp">
-                                    <graphic>
-                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/iconUp.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                                <Button fx:id="moveDownButton" mnemonicParsing="false" onAction="#moveDown">
-                                    <graphic>
-                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/iconDown.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                                <Button fx:id="rotateRightButton" mnemonicParsing="false" onAction="#rotateRight">
-                                    <graphic>
-                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/iconRotateRight.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                                <Button fx:id="rotateLeftButton" mnemonicParsing="false" onAction="#rotateLeft">
-                                    <graphic>
-                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/iconRotateLeft.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                                <Button fx:id="turnOverButton" mnemonicParsing="false" onAction="#turnOver">
-                                    <graphic>
-                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/iconTurnOver.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>
@@ -188,8 +119,8 @@ License:    Apache License Version 2.0
                             <items>
                                 <Label fx:id="promptLabel" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" HBox.hgrow="ALWAYS" />
                                 <Button mnemonicParsing="false" visible="false" />
-                                <Label text="%IntervalMilliseconds" />
-                                <ComboBox fx:id="intervalCBox" editable="true" prefWidth="100.0" />
+                        <Label text="%Speed" />
+                        <ComboBox fx:id="speedSelector" editable="true" layoutX="1193.0" layoutY="10.0" prefWidth="100.0" />
                                 <Label text="%Frame" />
                                 <ComboBox fx:id="frameBox" prefWidth="100.0" />
                                 <Button fx:id="pauseButton" mnemonicParsing="false" onAction="#pauseAction">

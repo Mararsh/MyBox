@@ -73,7 +73,7 @@ public class IccTags {
                 return tags;
             }
             int number = bytesToInt(subBytes(data, 128, 4));
-            for (int i = 0; i < number; i++) {
+            for (int i = 0; i < number; ++i) {
                 int offset = bytesToInt(subBytes(data, 136 + i * 12, 4));
                 int size = bytesToInt(subBytes(data, 140 + i * 12, 4));
                 IccTag tag = new IccTag(new String(subBytes(data, 132 + i * 12, 4)),
@@ -120,7 +120,7 @@ public class IccTags {
 
             System.arraycopy(intToBytes(number), 0, data, 128, 4);
             int offset = 132 + 12 * number;
-            for (int i = 0; i < number; i++) {
+            for (int i = 0; i < number; ++i) {
                 IccTag tag = tags.get(i);
                 size = tag.getBytes().length;
                 // Item in Tags Table

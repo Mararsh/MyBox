@@ -14,7 +14,6 @@ import javafx.scene.control.ToggleGroup;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.PdfTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
@@ -107,71 +106,69 @@ public class PdfConvertHtmlsBatchController extends PdfBatchController {
     public String handleFile(File srcFile, File targetPath) {
         int generated = 0;
         doc = null;
-        if (PdfTools.isPDF(srcFile)) {
-            try {
-                showHandling(srcFile);
-                currentParameters.currentSourceFile = srcFile;
-                if (!isPreview) {
-                    PdfInformation info = tableData.get(currentParameters.currentIndex);
-                    actualParameters.fromPage = info.getFromPage();
-                    if (actualParameters.fromPage <= 0) {
-                        actualParameters.fromPage = 1;
-                    }
-                    actualParameters.toPage = info.getToPage();
-                    actualParameters.password = info.getUserPassword();
-                    actualParameters.startPage = actualParameters.fromPage;
-                    actualParameters.currentPage = actualParameters.fromPage;
+        try {
+            countHandling(srcFile);
+            currentParameters.currentSourceFile = srcFile;
+            if (!isPreview) {
+                PdfInformation info = tableData.get(currentParameters.currentIndex);
+                actualParameters.fromPage = info.getFromPage();
+                if (actualParameters.fromPage <= 0) {
+                    actualParameters.fromPage = 1;
                 }
+                actualParameters.toPage = info.getToPage();
+                actualParameters.password = info.getUserPassword();
+                actualParameters.startPage = actualParameters.fromPage;
+                actualParameters.currentPage = actualParameters.fromPage;
+            }
 
-                try ( PDDocument pd = PDDocument.load(currentParameters.currentSourceFile,
-                        currentParameters.password, AppVariables.pdfMemUsage)) {
-                    doc = pd;
+            try ( PDDocument pd = PDDocument.load(currentParameters.currentSourceFile,
+                    currentParameters.password, AppVariables.pdfMemUsage)) {
+                doc = pd;
 
-                    if (currentParameters.toPage <= 0 || currentParameters.toPage > doc.getNumberOfPages()) {
-                        currentParameters.toPage = doc.getNumberOfPages();
+                if (currentParameters.toPage <= 0 || currentParameters.toPage > doc.getNumberOfPages()) {
+                    currentParameters.toPage = doc.getNumberOfPages();
+                }
+                int total = currentParameters.toPage - currentParameters.fromPage + 1;
+                updateFileProgress(0, total);
+                currentParameters.currentTargetPath = targetPath;
+
+                String filePrefix = FileTools.getFilePrefix(currentParameters.currentSourceFile.getName());
+                if (separatedHtml) {
+                    currentParameters.currentTargetPath = new File(targetPath.getAbsolutePath() + File.separator + filePrefix);
+                    if (!currentParameters.currentTargetPath.exists()) {
+                        currentParameters.currentTargetPath.mkdirs();
                     }
-                    int total = currentParameters.toPage - currentParameters.fromPage + 1;
-                    updateFileProgress(0, total);
-                    currentParameters.currentTargetPath = targetPath;
-
-                    String filePrefix = FileTools.getFilePrefix(currentParameters.currentSourceFile.getName());
-                    if (separatedHtml) {
-                        currentParameters.currentTargetPath = new File(targetPath.getAbsolutePath() + File.separator + filePrefix);
-                        if (!currentParameters.currentTargetPath.exists()) {
-                            currentParameters.currentTargetPath.mkdirs();
+                    for (currentParameters.currentPage = currentParameters.startPage;
+                            currentParameters.currentPage <= currentParameters.toPage; currentParameters.currentPage++) {
+                        if (task.isCancelled()) {
+                            break;
                         }
-                        for (currentParameters.currentPage = currentParameters.startPage;
-                                currentParameters.currentPage <= currentParameters.toPage; currentParameters.currentPage++) {
-                            if (task.isCancelled()) {
-                                break;
-                            }
-                            String fileName = currentParameters.currentTargetPath + File.separator
-                                    + filePrefix + "_p" + currentParameters.currentPage;
-                            File htmlFile = writeHhml(fileName, currentParameters.currentPage, currentParameters.currentPage);
-                            if (htmlFile != null) {
-                                generated++;
-                                targetFileGenerated(htmlFile);
-                            }
-                            updateFileProgress(currentParameters.currentPage - currentParameters.fromPage + 1, total);
-                        }
-
-                    } else {
-                        String fileName = currentParameters.currentTargetPath + File.separator + filePrefix;
-                        File htmlFile = writeHhml(fileName, currentParameters.startPage, currentParameters.toPage);
+                        String fileName = currentParameters.currentTargetPath + File.separator
+                                + filePrefix + "_p" + currentParameters.currentPage;
+                        File htmlFile = writeHhml(fileName, currentParameters.currentPage, currentParameters.currentPage);
                         if (htmlFile != null) {
                             generated++;
                             targetFileGenerated(htmlFile);
                         }
-                        updateFileProgress(total, total);
-
+                        updateFileProgress(currentParameters.currentPage - currentParameters.fromPage + 1, total);
                     }
 
-                    doc.close();
+                } else {
+                    String fileName = currentParameters.currentTargetPath + File.separator + filePrefix;
+                    File htmlFile = writeHhml(fileName, currentParameters.startPage, currentParameters.toPage);
+                    if (htmlFile != null) {
+                        generated++;
+                        targetFileGenerated(htmlFile);
+                    }
+                    updateFileProgress(total, total);
+
                 }
-                currentParameters.startPage = 1;
-            } catch (Exception e) {
-                logger.error(e.toString());
+
+                doc.close();
             }
+            currentParameters.startPage = 1;
+        } catch (Exception e) {
+            logger.error(e.toString());
         }
         updateInterface("CompleteFile");
         return MessageFormat.format(AppVariables.message("HandlePagesGenerateNumber"),

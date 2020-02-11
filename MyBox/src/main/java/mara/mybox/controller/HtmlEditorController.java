@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import com.vladsch.flexmark.html2md.converter.*;
 import com.vladsch.flexmark.util.data.MutableDataSet;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -9,6 +10,7 @@ import java.io.FileWriter;
 import java.io.StringWriter;
 import java.net.URI;
 import java.nio.charset.Charset;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -21,6 +23,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker.State;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -72,6 +75,7 @@ import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.fxml.RecentVisitMenu;
+import mara.mybox.image.ImageManufacture;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlTools;
@@ -95,16 +99,20 @@ public class HtmlEditorController extends BaseController {
     private final String HtmlImagePathKey, HtmlSnapDelayKey, HtmlLastUrlsKey, HtmlPdfPathKey;
     private WebEngine webEngine;
     private int delay, fontSize, orginalStageHeight, orginalStageY, orginalStageWidth;
-    protected int lastHtmlLen, lastCodesLen, snapHeight, snapCount;
+    protected int lastHtmlLen, lastCodesLen;
     private boolean isOneImage;
     private URI uri;
-    private List<Image> images;
+    private List<File> snaps;
     private LoadingController loadingController;
     private float zoomScale;
     protected boolean loadSynchronously, isFrameSet, notChangedAfterLoad;
     protected SimpleBooleanProperty fileChanged;
     protected int cols, rows;
     protected int lastTextLen;
+    protected SnapshotParameters snapParameters;
+    protected int snapFileWidth, snapFileHeight, snapsTotal,
+            snapImageWidth, snapImageHeight, snapTotalHeight, snapHeight, snapStep, dpi;
+    protected double snapScale;
 
     @FXML
     private Button snapshotButton;
@@ -119,7 +127,7 @@ public class HtmlEditorController extends BaseController {
     @FXML
     private Tab editorTab, codesTab, browserTab, markdownTab;
     @FXML
-    private ComboBox<String> urlBox, delayBox;
+    private ComboBox<String> urlBox, delayBox, dpiSelector;
     @FXML
     private ScrollPane scrollPane;
     @FXML
@@ -235,7 +243,8 @@ public class HtmlEditorController extends BaseController {
             fileChanged = new SimpleBooleanProperty(false);
             fileChanged.addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+                public void changed(ObservableValue<? extends Boolean> ov,
+                        Boolean old_val, Boolean new_val) {
                     if (isSettingValues) {
                         return;
                     }
@@ -304,7 +313,8 @@ public class HtmlEditorController extends BaseController {
 
             codesArea.textProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                public void changed(ObservableValue ov, String oldValue,
+                        String newValue) {
                     if (!isSettingValues) {
                         fileChanged.set(true);
                     }
@@ -375,12 +385,37 @@ public class HtmlEditorController extends BaseController {
             });
             checkOneImage();
 
+            List<String> dpiValues = new ArrayList();
+            dpiValues.addAll(Arrays.asList("96", "120", "160", "300"));
+            String sValue = Toolkit.getDefaultToolkit().getScreenResolution() + "";
+            if (dpiValues.contains(sValue)) {
+                dpiValues.remove(sValue);
+            }
+            dpiValues.add(0, sValue);
+            sValue = (int) Screen.getPrimary().getDpi() + "";
+            if (dpiValues.contains(sValue)) {
+                dpiValues.remove(sValue);
+            }
+            dpiValues.add(sValue);
+            dpiSelector.getItems().addAll(dpiValues);
+            dpiSelector.getSelectionModel().selectedItemProperty().addListener(
+                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
+                        try {
+                            dpi = Integer.parseInt(newValue);
+                            AppVariables.setUserConfigValue("HtmlSnapDPI", dpi + "");
+                        } catch (Exception e) {
+                            dpi = 96;
+                        }
+                    });
+            dpiSelector.getSelectionModel().select(AppVariables.getUserConfigValue("HtmlSnapDPI", "96"));
+
             webEngine = webView.getEngine();
             webEngine.setJavaScriptEnabled(true);
 
             webEngine.getLoadWorker().stateProperty().addListener(new ChangeListener<State>() {
                 @Override
-                public void changed(ObservableValue ov, State oldState, State newState) {
+                public void changed(ObservableValue ov, State oldState,
+                        State newState) {
                     try {
 //                        logger.debug(newState.name() + " " + webEngine.getLocation());
                         snapBar.setDisable(true);
@@ -440,8 +475,8 @@ public class HtmlEditorController extends BaseController {
 
                 @Override
                 public void handle(WebErrorEvent event) {
-                    popError(event.getMessage());
-                    logger.debug(event.getMessage());
+//                    popError(event.getMessage());
+//                    logger.debug(event.getMessage());
                 }
             });
 
@@ -456,7 +491,8 @@ public class HtmlEditorController extends BaseController {
 
             webEngine.getLoadWorker().exceptionProperty().addListener(new ChangeListener<Throwable>() {
                 @Override
-                public void changed(ObservableValue<? extends Throwable> ov, Throwable ot, Throwable nt) {
+                public void changed(ObservableValue<? extends Throwable> ov,
+                        Throwable ot, Throwable nt) {
                     if (nt == null) {
                         return;
                     }
@@ -476,7 +512,7 @@ public class HtmlEditorController extends BaseController {
                                 ButtonType buttonCancel = new ButtonType(AppVariables.message("ISee"));
                                 alert.getButtonTypes().setAll(buttonBypass, buttonCancel);
                                 Optional<ButtonType> result = alert.showAndWait();
-                                if (result.get() == buttonCancel) {
+                                if (result.get() != buttonBypass) {
                                     return;
                                 }
                                 TableBrowserBypassSSL.write(host);
@@ -488,7 +524,7 @@ public class HtmlEditorController extends BaseController {
                                 ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
                                 alert.getButtonTypes().setAll(buttonSure, buttonCancel);
                                 Optional<ButtonType> result = alert.showAndWait();
-                                if (result.get() == buttonCancel) {
+                                if (result.get() == null || result.get() != buttonSure) {
                                     return;
                                 }
                                 String msg = NetworkTools.installCertificateByHost(host, host);
@@ -812,7 +848,6 @@ public class HtmlEditorController extends BaseController {
             AppVariables.setUserConfigValue(HtmlPdfPathKey, file.getParent());
         }
         targetFile = file;
-        images = new ArrayList<>();
 
         loadWholePage();
 
@@ -850,11 +885,11 @@ public class HtmlEditorController extends BaseController {
                 public void run() {
                     boolean quit = false;
                     if (new Date().getTime() - startTime > maxDelay) {
-                        logger.debug(" TimeOver:" + newHeight);
+//                        logger.debug(" TimeOver:" + newHeight);
                         quit = true;
                     }
                     if (newHeight == lastHeight) {
-                        logger.debug(" Complete:" + newHeight);
+//                        logger.debug(" Complete:" + newHeight);
                         quit = true;
                     }
                     if (quit) {
@@ -871,25 +906,22 @@ public class HtmlEditorController extends BaseController {
                     }
 
                     lastHeight = newHeight;
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                newHeight = (Integer) webEngine.executeScript("document.body.scrollHeight");
-                                loadingController.setInfo(AppVariables.message("CurrentPageHeight") + ": " + newHeight);
-                                if (newHeight == lastHeight) {
-                                    loadingController.setInfo(AppVariables.message("ExpandingPage"));
-                                    startSnap();
-                                } else {
-                                    webEngine.executeScript("window.scrollTo(0," + newHeight + ");");
-                                }
+                    Platform.runLater(() -> {
+                        try {
+                            newHeight = (Integer) webEngine.executeScript("document.body.scrollHeight");
+                            loadingController.setInfo(AppVariables.message("CurrentPageHeight") + ": " + newHeight);
+                            if (newHeight == lastHeight) {
+                                loadingController.setInfo(AppVariables.message("ExpandingPage"));
+                                startSnap();
+                            } else {
+                                webEngine.executeScript("window.scrollTo(0," + newHeight + ");");
+                            }
 
-                            } catch (Exception e) {
-                                logger.error(e.toString());
-                                if (loadingController != null) {
-                                    loadingController.closeStage();
-                                    loadingController = null;
-                                }
+                        } catch (Exception e) {
+                            logger.error(e.toString());
+                            if (loadingController != null) {
+                                loadingController.closeStage();
+                                loadingController = null;
                             }
                         }
                     });
@@ -905,23 +937,26 @@ public class HtmlEditorController extends BaseController {
 
     private void startSnap() {
         try {
-            final int totalHeight = (Integer) webEngine.executeScript("document.body.scrollHeight");
-            final int snapStep = (Integer) webEngine.executeScript("document.documentElement.clientHeight < document.body.clientHeight ? document.documentElement.clientHeight : document.body.clientHeight");
-            final int width = (Integer) webEngine.executeScript("document.documentElement.clientWidth < document.body.clientWidth ? document.documentElement.clientWidth : document.body.clientWidth ");
-            snapHeight = 0;
-            snapCount = 0;
             webEngine.executeScript("window.scrollTo(0,0 );");
-            final int scrollDelay = 300;
+            snapTotalHeight = (Integer) webEngine.executeScript("document.body.scrollHeight");
+            snapStep = (Integer) webEngine.executeScript("document.documentElement.clientHeight < document.body.clientHeight ? document.documentElement.clientHeight : document.body.clientHeight");
+            snapHeight = 0;
             bottomText.setText(AppVariables.message("SnapingImage..."));
 
             // http://news.kynosarges.org/2017/02/01/javafx-snapshot-scaling/
             final Bounds bounds = webView.getLayoutBounds();
-            double scale = FxmlControl.dpiScale();
-            int imageWidth = (int) Math.round(bounds.getWidth() * scale);
-            int imageHeight = (int) Math.round(bounds.getHeight() * scale);
-            final SnapshotParameters parameters = new SnapshotParameters();
-            parameters.setFill(Color.TRANSPARENT);
-            parameters.setTransform(javafx.scene.transform.Transform.scale(scale, scale));
+            snapScale = dpi / Screen.getPrimary().getDpi();
+            snapScale = snapScale > 1 ? snapScale : 1;
+            snapImageWidth = (int) Math.round(bounds.getWidth() * snapScale);
+            snapImageHeight = (int) Math.round(bounds.getHeight() * snapScale);
+            snapParameters = new SnapshotParameters();
+            snapParameters.setFill(Color.TRANSPARENT);
+            snapParameters.setTransform(javafx.scene.transform.Transform.scale(snapScale, snapScale));
+
+            snaps = new ArrayList<>();
+            snapsTotal = snapTotalHeight % snapStep == 0
+                    ? snapTotalHeight / snapStep : snapTotalHeight / snapStep + 1;
+            snapFileWidth = snapFileHeight = 0;
 
             if (timer != null) {
                 timer.cancel();
@@ -930,81 +965,121 @@ public class HtmlEditorController extends BaseController {
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    if (totalHeight <= snapHeight) {
-                        this.cancel();
-                    } else {
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-
-                                    WritableImage snapshot = new WritableImage(imageWidth, imageHeight);
-                                    snapshot = webView.snapshot(parameters, snapshot);
-
-                                    Image cropped;
-                                    if (totalHeight < snapHeight + snapStep) { // last snap
-                                        cropped = FxmlImageManufacture.cropOutsideFx(snapshot, 0,
-                                                (snapStep - (totalHeight - snapHeight)) * scale,
-                                                width - 1, (int) snapshot.getHeight() - 1);
-                                    } else {
-                                        cropped = FxmlImageManufacture.cropOutsideFx(snapshot, 0, 0,
-                                                width - 1, (int) snapshot.getHeight() - 1);
-                                    }
-                                    images.add(cropped);
-                                    snapHeight += snapStep;
-                                    loadingController.setInfo(AppVariables.message("CurrentPageHeight") + ": " + snapHeight);
-                                    if (totalHeight <= snapHeight) { // last snap
-
-                                        loadingController.setInfo(AppVariables.message("WritingFile"));
-                                        boolean success = true;
-                                        if (isOneImage) {
-                                            Image finalImage = FxmlImageManufacture.combineSingleColumn(images);
-                                            if (finalImage != null) {
-                                                String format = FileTools.getFileSuffix(targetFile.getAbsolutePath());
-                                                final BufferedImage bufferedImage = FxmlImageManufacture.getBufferedImage(finalImage);
-                                                ImageFileWriters.writeImageFile(bufferedImage, format, targetFile.getAbsolutePath());
-                                            } else {
-                                                success = false;
-                                            }
-                                        } else {
-                                            success = PdfTools.htmlIntoPdf(images, targetFile, windowSizeCheck.isSelected());
-                                        }
-                                        if (success && targetFile.exists()) {
-                                            view(targetFile);
-                                        } else {
-                                            popFailed();
-                                        }
-
-                                        webEngine.executeScript("window.scrollTo(0,0 );");
-                                        bottomText.setText("");
-                                        snapshotButton.setDisable(false);
-
-                                        if (loadingController != null) {
-                                            loadingController.closeStage();
-                                            loadingController = null;
-                                        }
-                                        myStage.setY(orginalStageY);
-                                        myStage.setHeight(orginalStageHeight);
-                                    } else {
-                                        webEngine.executeScript("window.scrollTo(0, " + snapHeight + ");");
-                                    }
-                                } catch (Exception e) {
-                                    logger.error(e.toString());
-                                    webEngine.executeScript("window.scrollTo(0,0 );");
-                                    popFailed();
-                                    if (loadingController != null) {
-                                        loadingController.closeStage();
-                                        loadingController = null;
-                                    }
-                                }
-                            }
-                        });
-                    }
+                    Platform.runLater(() -> {
+                        snap();
+                    });
                 }
-            }, delay, scrollDelay);
+            }, 2000);    // make sure page is loaded before snapping
+
         } catch (Exception e) {
             logger.error(e.toString());
         }
+    }
+
+    private void snap() {
+        try {
+            if (loadingController == null) {
+                return;
+            }
+            WritableImage snapshot = new WritableImage(snapImageWidth, snapImageHeight);
+            snapshot = webView.snapshot(snapParameters, snapshot);
+            Image cropped;
+            if (snapTotalHeight < snapHeight + snapStep) { // last snap
+                cropped = FxmlImageManufacture.cropOutsideFx(snapshot, 0,
+                        (int) ((snapStep + snapHeight - snapTotalHeight) * snapScale),
+                        (int) snapshot.getWidth() - 1, (int) snapshot.getHeight() - 1);
+            } else {
+                cropped = snapshot;
+            }
+            if (cropped.getWidth() > snapFileWidth) {
+                snapFileWidth = (int) cropped.getWidth();
+            }
+            snapFileHeight += cropped.getHeight();
+            snapHeight += snapStep;
+            File tmpfile = FileTools.getTempFile(".png");
+            ImageFileWriters.writeImageFile(SwingFXUtils.fromFXImage(cropped, null), "png", tmpfile.getAbsolutePath());
+            snaps.add(tmpfile);
+            loadingController.setInfo(AppVariables.message("CurrentPageHeight") + ": " + snapHeight);
+            if (snapTotalHeight > snapHeight) {
+                webEngine.executeScript("window.scrollTo(0, " + snapHeight + ");");
+                if (timer != null) {
+                    timer.cancel();
+                }
+                timer = new Timer();
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        Platform.runLater(() -> {
+                            snap();
+                        });
+                    }
+                }, 300);    // make sure page is loaded before snapping
+
+            } else { // last snap
+                loadingController.setInfo(AppVariables.message("WritingFile"));
+                boolean success = true;
+                if (isOneImage) {
+                    Runtime r = Runtime.getRuntime();
+                    long availableMem = r.maxMemory() - (r.totalMemory() - r.freeMemory()) / (1024 * 1024);
+                    long requiredMem = snapFileWidth * snapFileHeight * 5 / (1024 * 1024) + 200;
+                    if (availableMem < requiredMem) {
+                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                        alert.setTitle(getBaseTitle());
+                        alert.setContentText(MessageFormat.format(AppVariables.message("MergedSnapshotTooLarge"), availableMem, requiredMem));
+                        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                        ButtonType buttonPdf = new ButtonType(AppVariables.message("SaveAsPdf"));
+                        ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
+                        alert.getButtonTypes().setAll(buttonPdf, buttonCancel);
+                        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+                        stage.setAlwaysOnTop(true);
+                        stage.toFront();
+
+                        Optional<ButtonType> result = alert.showAndWait();
+                        if (result.get() == buttonPdf) {
+                            success = PdfTools.htmlIntoPdf(snaps, targetFile, windowSizeCheck.isSelected());
+                        } else {
+                            success = false;
+                        }
+                    } else {
+                        BufferedImage finalImage = ImageManufacture.mergeImagesVertical(snaps, snapFileWidth, snapFileHeight);
+                        if (finalImage != null) {
+                            String format = FileTools.getFileSuffix(targetFile.getAbsolutePath());
+                            ImageFileWriters.writeImageFile(finalImage, format, targetFile.getAbsolutePath());
+                        } else {
+                            success = false;
+                        }
+                    }
+                } else {
+                    success = PdfTools.htmlIntoPdf(snaps, targetFile, windowSizeCheck.isSelected());
+                }
+                snaps = null;
+                if (success && targetFile.exists()) {
+                    view(targetFile);
+                } else {
+                    popFailed();
+                }
+
+                webEngine.executeScript("window.scrollTo(0,0 );");
+                bottomText.setText("");
+                snapshotButton.setDisable(false);
+
+                if (loadingController != null) {
+                    loadingController.closeStage();
+                    loadingController = null;
+                }
+                myStage.setY(orginalStageY);
+                myStage.setHeight(orginalStageHeight);
+            }
+
+        } catch (Exception e) {
+            webEngine.executeScript("window.scrollTo(0,0 );");
+            popFailed();
+            if (loadingController != null) {
+                loadingController.closeStage();
+                loadingController = null;
+            }
+        }
+
     }
 
     @FXML

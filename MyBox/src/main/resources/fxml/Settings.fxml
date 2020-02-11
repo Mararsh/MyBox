@@ -205,7 +205,7 @@ License:    Apache License Version 2.0
                                                         <ToggleGroup fx:id="derbyGroup" />
                                                     </toggleGroup>
                                                 </RadioButton>
-                                                <RadioButton fx:id="networkRadio" mnemonicParsing="false" text="%NetworkMode" toggleGroup="$derbyGroup" />
+                                                <RadioButton fx:id="networkRadio" mnemonicParsing="false" text="%NetworkModeOnlyLocal" toggleGroup="$derbyGroup" />
                                             </children>
                                         </HBox>
                                         <Label fx:id="derbyStatus" text="Label">

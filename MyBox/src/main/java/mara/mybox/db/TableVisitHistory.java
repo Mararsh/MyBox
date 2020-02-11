@@ -156,7 +156,7 @@ public class TableVisitHistory extends DerbyBase {
                 statement.setMaxRows(count);
             }
             String sql = " SELECT   * FROM visit_history  WHERE ( file_type=" + fileTypes[0];
-            for (int i = 1; i < fileTypes.length; i++) {
+            for (int i = 1; i < fileTypes.length; ++i) {
                 sql += " OR file_type=" + fileTypes[i];
             }
             sql += " )";

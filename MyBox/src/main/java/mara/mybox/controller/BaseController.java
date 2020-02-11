@@ -241,18 +241,16 @@ public class BaseController implements Initializable {
             }
 
             if (sourceFileInput != null) {
-                sourceFileInput.textProperty().addListener(new ChangeListener<String>() {
-                    @Override
-                    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                        checkSourceFileInput();
-                    }
+                sourceFileInput.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+                    checkSourceFileInput();
                 });
             }
 
             if (sourcePathInput != null) {
                 sourcePathInput.textProperty().addListener(new ChangeListener<String>() {
                     @Override
-                    public void changed(ObservableValue<? extends String> observable,
+                    public void changed(
+                            ObservableValue<? extends String> observable,
                             String oldValue, String newValue) {
                         checkSourcetPathInput();
                     }
@@ -266,7 +264,9 @@ public class BaseController implements Initializable {
             if (targetFileInput != null) {
                 targetFileInput.textProperty().addListener(new ChangeListener<String>() {
                     @Override
-                    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    public void changed(
+                            ObservableValue<? extends String> observable,
+                            String oldValue, String newValue) {
                         checkTargetFileInput();
                     }
                 });
@@ -275,7 +275,9 @@ public class BaseController implements Initializable {
             if (targetPathInput != null) {
                 targetPathInput.textProperty().addListener(new ChangeListener<String>() {
                     @Override
-                    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    public void changed(
+                            ObservableValue<? extends String> observable,
+                            String oldValue, String newValue) {
                         checkTargetPathInput();
                     }
                 });
@@ -331,7 +333,8 @@ public class BaseController implements Initializable {
                 saveAsOptionsBox.getItems().addAll(optionsList);
                 saveAsOptionsBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
                     @Override
-                    public void changed(ObservableValue ov, Number oldValue, Number newValue) {
+                    public void changed(ObservableValue ov, Number oldValue,
+                            Number newValue) {
                         checkSaveAsOption();
                     }
                 });
@@ -356,7 +359,8 @@ public class BaseController implements Initializable {
             if (moreButton != null) {
                 moreButton.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
-                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    public void changed(ObservableValue ov, Boolean oldValue,
+                            Boolean newValue) {
                         moreAction();
                     }
                 });
@@ -365,7 +369,8 @@ public class BaseController implements Initializable {
             if (topCheck != null) {
                 topCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
-                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    public void changed(ObservableValue ov, Boolean oldValue,
+                            Boolean newValue) {
                         if (!topCheck.isVisible()) {
                             return;
                         }
@@ -380,7 +385,8 @@ public class BaseController implements Initializable {
             if (saveCloseCheck != null) {
                 saveCloseCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
-                    public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
+                    public void changed(ObservableValue<? extends Boolean> ov,
+                            Boolean oldVal, Boolean newVal) {
                         AppVariables.setUserConfigValue(baseName + "SaveClose", saveCloseCheck.isSelected());
                     }
                 });
@@ -400,7 +406,8 @@ public class BaseController implements Initializable {
                 if (targetAppendInput != null) {
                     targetAppendInput.textProperty().addListener(new ChangeListener<String>() {
                         @Override
-                        public void changed(ObservableValue<? extends String> ov, String oldv, String newv) {
+                        public void changed(ObservableValue<? extends String> ov,
+                                String oldv, String newv) {
                             checkTargetExistType();
                         }
                     });
@@ -456,7 +463,8 @@ public class BaseController implements Initializable {
 
                 myScene.widthProperty().addListener(new ChangeListener<Number>() {
                     @Override
-                    public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
+                    public void changed(ObservableValue<? extends Number> ov,
+                            Number old_val, Number new_val) {
                         if (!myStage.isMaximized() && !myStage.isFullScreen() && !myStage.isIconified()
                                 && myStage.getWidth() > minSize) {
                             AppVariables.setUserConfigInt(prefix + "StageWidth", (int) myStage.getWidth());
@@ -465,7 +473,8 @@ public class BaseController implements Initializable {
                 });
                 myScene.heightProperty().addListener(new ChangeListener<Number>() {
                     @Override
-                    public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
+                    public void changed(ObservableValue<? extends Number> ov,
+                            Number old_val, Number new_val) {
                         if (!myStage.isMaximized() && !myStage.isFullScreen() && !myStage.isIconified()
                                 && myStage.getHeight() > minSize) {
                             AppVariables.setUserConfigInt(prefix + "StageHeight", (int) myStage.getHeight());
@@ -512,25 +521,26 @@ public class BaseController implements Initializable {
     }
 
     public void toFront() {
-        timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
+        try {
+            timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    Platform.runLater(() -> {
                         getMyStage().toFront();
                         if (topCheck != null) {
                             topCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "Top", true));
                             if (topCheck.isVisible()) {
-                                myStage.setAlwaysOnTop(topCheck.isSelected());
+                                getMyStage().setAlwaysOnTop(topCheck.isSelected());
                             }
                         }
                         timer = null;
-                    }
-                });
-            }
-        }, 1000);
+                    });
+                }
+            }, 1000);
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
     }
 
     public void initSplitPanes() {
@@ -547,7 +557,9 @@ public class BaseController implements Initializable {
                 }
                 leftDividerListener = new ChangeListener<Number>() {
                     @Override
-                    public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                    public void changed(
+                            ObservableValue<? extends Number> observable,
+                            Number oldValue, Number newValue) {
                         if (!isSettingValues) {
                             if (splitPane.getItems().contains(leftPane)) {
                                 AppVariables.setUserConfigValue(baseName + "LeftPanePosition", newValue.doubleValue() + "");
@@ -566,7 +578,9 @@ public class BaseController implements Initializable {
                 }
                 rightDividerListener = new ChangeListener<Number>() {
                     @Override
-                    public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                    public void changed(
+                            ObservableValue<? extends Number> observable,
+                            Number oldValue, Number newValue) {
                         if (!isSettingValues) {
                             AppVariables.setUserConfigValue(baseName + "RightPanePosition", newValue.doubleValue() + "");
                         }
@@ -584,7 +598,9 @@ public class BaseController implements Initializable {
                 }
                 leftDividerListener = new ChangeListener<Number>() {
                     @Override
-                    public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                    public void changed(
+                            ObservableValue<? extends Number> observable,
+                            Number oldValue, Number newValue) {
                         if (!isSettingValues) {
                             if (splitPane.getItems().contains(leftPane)) {
                                 AppVariables.setUserConfigValue(baseName + "LeftPanePosition", newValue.doubleValue() + "");
@@ -596,7 +612,9 @@ public class BaseController implements Initializable {
                 };
                 rightDividerListener = new ChangeListener<Number>() {
                     @Override
-                    public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                    public void changed(
+                            ObservableValue<? extends Number> observable,
+                            Number oldValue, Number newValue) {
                         if (!isSettingValues) {
                             AppVariables.setUserConfigValue(baseName + "RightPanePosition", newValue.doubleValue() + "");
                         }
@@ -698,7 +716,8 @@ public class BaseController implements Initializable {
         }
 
         @Override
-        public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+        public void changed(ObservableValue<? extends Boolean> ov,
+                Boolean old_val, Boolean new_val) {
             AppVariables.setUserConfigValue(prefix + "FullScreen", getMyStage().isFullScreen());
         }
     }
@@ -712,7 +731,8 @@ public class BaseController implements Initializable {
         }
 
         @Override
-        public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+        public void changed(ObservableValue<? extends Boolean> ov,
+                Boolean old_val, Boolean new_val) {
             AppVariables.setUserConfigValue(prefix + "Maximized", getMyStage().isMaximized());
         }
     }
@@ -1166,7 +1186,10 @@ public class BaseController implements Initializable {
         try {
             if (thisPane != null && style != null) {
                 thisPane.getStylesheets().clear();
-                thisPane.getStylesheets().add(BaseController.class.getResource(style).toExternalForm());
+                if (!CommonValues.MyBoxStyle.equals(style)) {
+                    thisPane.getStylesheets().add(BaseController.class.getResource(style).toExternalForm());
+                }
+                thisPane.getStylesheets().add(BaseController.class.getResource(CommonValues.MyBoxStyle).toExternalForm());
             }
         } catch (Exception e) {
 //            logger.error(e.toString());
@@ -1545,15 +1568,6 @@ public class BaseController implements Initializable {
             return;
         }
         new RecentVisitMenu(this, event) {
-            @Override
-            public List<VisitHistory> recentFiles() {
-                return recentSourceFiles();
-            }
-
-            @Override
-            public List<VisitHistory> recentPaths() {
-                return recentSourcePathsBesidesFiles();
-            }
 
             @Override
             public void handleSelect() {
@@ -1568,11 +1582,6 @@ public class BaseController implements Initializable {
                     return;
                 }
                 selectSourceFile(file);
-            }
-
-            @Override
-            public void handlePath(String fname) {
-                handleSourcePath(fname);
             }
 
         }.pop();
@@ -1613,11 +1622,6 @@ public class BaseController implements Initializable {
                 addFile(file);
             }
 
-            @Override
-            public void handlePath(String fname) {
-                handleSourcePath(fname);
-            }
-
         }.pop();
     }
 
@@ -1654,11 +1658,6 @@ public class BaseController implements Initializable {
                     return;
                 }
                 insertFile(file);
-            }
-
-            @Override
-            public void handlePath(String fname) {
-                handleSourcePath(fname);
             }
 
         }.pop();
@@ -1924,7 +1923,8 @@ public class BaseController implements Initializable {
         }
     }
 
-    public File makeTargetFile(String namePrefix, String nameSuffix, File targetPath) {
+    public File makeTargetFile(String namePrefix, String nameSuffix,
+            File targetPath) {
         try {
             String targetPrefix = targetPath.getAbsolutePath() + File.separator + namePrefix;
             File target = new File(targetPrefix + nameSuffix);
@@ -2113,12 +2113,15 @@ public class BaseController implements Initializable {
         alert.setTitle(getBaseTitle());
         alert.setContentText(AppVariables.message("SureClear"));
         alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+        ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
+        ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
+        alert.getButtonTypes().setAll(buttonSure, buttonCancel);
         Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
         stage.setAlwaysOnTop(true);
         stage.toFront();
 
         Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() != ButtonType.OK) {
+        if (result.get() != buttonSure) {
             return false;
         }
         DerbyBase.clearData();
@@ -2132,6 +2135,9 @@ public class BaseController implements Initializable {
             File userPath = new File(MyboxDataPath);
             if (userPath.exists()) {
                 File[] files = userPath.listFiles();
+                if (files == null) {
+                    return;
+                }
                 for (File f : files) {
                     if (f.isFile() && !f.equals(AppVariables.MyboxConfigFile)) {
                         f.delete();
@@ -2224,12 +2230,15 @@ public class BaseController implements Initializable {
                 alert.setTitle(getMyStage().getTitle());
                 alert.setContentText(AppVariables.message("TaskRunning"));
                 alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
+                ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
+                alert.getButtonTypes().setAll(buttonSure, buttonCancel);
                 Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
                 stage.setAlwaysOnTop(true);
                 stage.toFront();
 
                 Optional<ButtonType> result = alert.showAndWait();
-                if (result.get() == ButtonType.OK && task != null) {
+                if (result.get() == buttonSure && task != null) {
                     task.cancel();
                     task = null;
                 } else {
@@ -2265,7 +2274,8 @@ public class BaseController implements Initializable {
         return chooseSaveFile(null, defaultPath, defaultName, filters, mustHaveExtension);
     }
 
-    public File chooseSaveFile(String title, File defaultPath, String defaultName,
+    public File chooseSaveFile(String title, File defaultPath,
+            String defaultName,
             List<FileChooser.ExtensionFilter> filters, boolean mustHaveExtension) {
         try {
             FileChooser fileChooser = new FileChooser();
@@ -2340,7 +2350,8 @@ public class BaseController implements Initializable {
         popText(text, delay, color, "1.1em", null);
     }
 
-    public void popText(String text, int delay, String color, String size, Region attach) {
+    public void popText(String text, int delay, String color, String size,
+            Region attach) {
         try {
             if (popup != null) {
                 popup.hide();
@@ -2383,7 +2394,7 @@ public class BaseController implements Initializable {
         }
     }
 
-    public void popSuccessul() {
+    public void popSuccessful() {
         popBigInformation(message("Successful"));
     }
 
@@ -2461,11 +2472,13 @@ public class BaseController implements Initializable {
         }
     }
 
-    public LoadingController openHandlingStage(final Task<?> task, Modality block) {
+    public LoadingController openHandlingStage(final Task<?> task,
+            Modality block) {
         return openHandlingStage(task, block, null);
     }
 
-    public LoadingController openHandlingStage(final Task<?> task, Modality block, String info) {
+    public LoadingController openHandlingStage(final Task<?> task,
+            Modality block, String info) {
         try {
             final LoadingController controller
                     = FxmlStage.openLoadingStage(getMyStage(), block, task, info);
@@ -2560,7 +2573,7 @@ public class BaseController implements Initializable {
             if (num > 10) {
                 num = 10;
             }
-            for (int i = 0; i < num; i++) {
+            for (int i = 0; i < num; ++i) {
                 info += "\n    " + fileNames.get(i);
             }
             if (fileNames.size() > num) {
@@ -2633,7 +2646,7 @@ public class BaseController implements Initializable {
 
         @Override
         protected void whenSucceeded() {
-            popSuccessul();
+            popSuccessful();
         }
 
         @Override
@@ -2815,7 +2828,8 @@ public class BaseController implements Initializable {
         return sourceExtensionFilter;
     }
 
-    public void setFileExtensionFilter(List<FileChooser.ExtensionFilter> fileExtensionFilter) {
+    public void setFileExtensionFilter(
+            List<FileChooser.ExtensionFilter> fileExtensionFilter) {
         this.sourceExtensionFilter = fileExtensionFilter;
     }
 
@@ -3039,7 +3053,8 @@ public class BaseController implements Initializable {
         return operationBarController;
     }
 
-    public void setOperationBarController(OperationController operationBarController) {
+    public void setOperationBarController(
+            OperationController operationBarController) {
         this.operationBarController = operationBarController;
     }
 
@@ -3363,7 +3378,8 @@ public class BaseController implements Initializable {
         return sourceExtensionFilter;
     }
 
-    public void setSourceExtensionFilter(List<FileChooser.ExtensionFilter> sourceExtensionFilter) {
+    public void setSourceExtensionFilter(
+            List<FileChooser.ExtensionFilter> sourceExtensionFilter) {
         this.sourceExtensionFilter = sourceExtensionFilter;
     }
 
@@ -3371,7 +3387,8 @@ public class BaseController implements Initializable {
         return targetExtensionFilter;
     }
 
-    public void setTargetExtensionFilter(List<FileChooser.ExtensionFilter> targetExtensionFilter) {
+    public void setTargetExtensionFilter(
+            List<FileChooser.ExtensionFilter> targetExtensionFilter) {
         this.targetExtensionFilter = targetExtensionFilter;
     }
 

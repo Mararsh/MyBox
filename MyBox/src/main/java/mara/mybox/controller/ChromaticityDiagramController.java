@@ -146,7 +146,7 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
         AddFileType = VisitHistory.FileType.Text;
         AddPathType = VisitHistory.FileType.Text;
 
-        sourceExtensionFilter = CommonFxValues.TxtExtensionFilter;
+        sourceExtensionFilter = CommonFxValues.TextExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
     }
 
@@ -192,7 +192,8 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
         backgroundBox.setVisibleRowCount(bgList.size());
         backgroundBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+            public void changed(ObservableValue<? extends String> observable,
+                    String oldValue, String newValue) {
                 checkBackground();
             }
         });
@@ -206,7 +207,8 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
         dotTypeBox.setVisibleRowCount(opList.size());
         dotTypeBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+            public void changed(ObservableValue<? extends String> observable,
+                    String oldValue, String newValue) {
                 checkDotType();
             }
         });
@@ -216,14 +218,16 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
         fontSelector.setVisibleRowCount(fontList.size());
         fontSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+            public void changed(ObservableValue<? extends String> observable,
+                    String oldValue, String newValue) {
                 checkFontSize();
             }
         });
 
         calculateCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
-            public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+            public void changed(ObservableValue<? extends Boolean> ov,
+                    Boolean old_val, Boolean new_val) {
                 if (!isSettingValues) {
                     displayChromaticityDiagram();
                 }
@@ -231,97 +235,113 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
         });
         inputCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
-            public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+            public void changed(ObservableValue<? extends Boolean> ov,
+                    Boolean old_val, Boolean new_val) {
                 displayChromaticityDiagram();
             }
         });
         waveCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
-            public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+            public void changed(ObservableValue<? extends Boolean> ov,
+                    Boolean old_val, Boolean new_val) {
                 displayChromaticityDiagram();
             }
         });
         gridCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
-            public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+            public void changed(ObservableValue<? extends Boolean> ov,
+                    Boolean old_val, Boolean new_val) {
                 displayChromaticityDiagram();
             }
         });
         whitePointsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
-            public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+            public void changed(ObservableValue<? extends Boolean> ov,
+                    Boolean old_val, Boolean new_val) {
                 displayChromaticityDiagram();
             }
         });
         degree2Check.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
-            public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+            public void changed(ObservableValue<? extends Boolean> ov,
+                    Boolean old_val, Boolean new_val) {
                 displayChromaticityDiagram();
             }
         });
         degree10Check.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
-            public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+            public void changed(ObservableValue<? extends Boolean> ov,
+                    Boolean old_val, Boolean new_val) {
                 displayChromaticityDiagram();
             }
         });
         cdProPhotoCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
-            public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+            public void changed(ObservableValue<? extends Boolean> ov,
+                    Boolean old_val, Boolean new_val) {
                 displayChromaticityDiagram();
             }
         });
         cdColorMatchCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
-            public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+            public void changed(ObservableValue<? extends Boolean> ov,
+                    Boolean old_val, Boolean new_val) {
                 displayChromaticityDiagram();
             }
         });
         cdNTSCCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
-            public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+            public void changed(ObservableValue<? extends Boolean> ov,
+                    Boolean old_val, Boolean new_val) {
                 displayChromaticityDiagram();
             }
         });
         cdPALCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
-            public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+            public void changed(ObservableValue<? extends Boolean> ov,
+                    Boolean old_val, Boolean new_val) {
                 displayChromaticityDiagram();
             }
         });
         cdAppleCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
-            public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+            public void changed(ObservableValue<? extends Boolean> ov,
+                    Boolean old_val, Boolean new_val) {
                 displayChromaticityDiagram();
             }
         });
         cdAdobeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
-            public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+            public void changed(ObservableValue<? extends Boolean> ov,
+                    Boolean old_val, Boolean new_val) {
                 displayChromaticityDiagram();
             }
         });
         cdSRGBCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
-            public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+            public void changed(ObservableValue<? extends Boolean> ov,
+                    Boolean old_val, Boolean new_val) {
                 displayChromaticityDiagram();
             }
         });
         cdECICheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
-            public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+            public void changed(ObservableValue<? extends Boolean> ov,
+                    Boolean old_val, Boolean new_val) {
                 displayChromaticityDiagram();
             }
         });
         cdCIECheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
-            public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+            public void changed(ObservableValue<? extends Boolean> ov,
+                    Boolean old_val, Boolean new_val) {
                 displayChromaticityDiagram();
             }
         });
         cdSMPTECCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
-            public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+            public void changed(ObservableValue<? extends Boolean> ov,
+                    Boolean old_val, Boolean new_val) {
                 displayChromaticityDiagram();
             }
         });
@@ -331,7 +351,8 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
     private void initDiagram() {
         cieDiagram.fitWidthProperty().addListener(new ChangeListener<Number>() {
             @Override
-            public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
+            public void changed(ObservableValue<? extends Number> ov,
+                    Number old_val, Number new_val) {
                 if (Math.abs(new_val.intValue() - old_val.intValue()) > 20) {
                     refinePane();
                 }
@@ -339,7 +360,8 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
         });
         cieDiagram.fitHeightProperty().addListener(new ChangeListener<Number>() {
             @Override
-            public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
+            public void changed(ObservableValue<? extends Number> ov,
+                    Number old_val, Number new_val) {
                 if (Math.abs(new_val.intValue() - old_val.intValue()) > 20) {
                     refinePane();
                 }
@@ -347,7 +369,8 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
         });
         cieDiagramScroll.widthProperty().addListener(new ChangeListener<Number>() {
             @Override
-            public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
+            public void changed(ObservableValue<? extends Number> ov,
+                    Number old_val, Number new_val) {
                 if (Math.abs(new_val.intValue() - old_val.intValue()) > 20) {
                     refinePane();
                 }
@@ -360,14 +383,16 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
         try {
             dataGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
-                public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
+                public void changed(ObservableValue<? extends Toggle> observable,
+                        Toggle oldValue, Toggle newValue) {
                     loadTableData();
                 }
             });
 
             XInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                public void changed(ObservableValue<? extends String> observable,
+                        String oldValue, String newValue) {
                     try {
                         X = Double.parseDouble(newValue);
                         XInput.setStyle(null);
@@ -378,7 +403,8 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
             });
             YInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                public void changed(ObservableValue<? extends String> observable,
+                        String oldValue, String newValue) {
                     try {
                         Y = Double.parseDouble(newValue);
                         if (Y == 0) {
@@ -393,7 +419,8 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
             });
             ZInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                public void changed(ObservableValue<? extends String> observable,
+                        String oldValue, String newValue) {
                     try {
                         Z = Double.parseDouble(newValue);
                         ZInput.setStyle(null);
@@ -406,7 +433,8 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
 
             xInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                public void changed(ObservableValue<? extends String> observable,
+                        String oldValue, String newValue) {
                     try {
                         x = Double.parseDouble(newValue);
                         double z = 1 - x - y;
@@ -422,7 +450,8 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
             });
             yInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                public void changed(ObservableValue<? extends String> observable,
+                        String oldValue, String newValue) {
                     try {
                         y = Double.parseDouble(newValue);
                         double z = 1 - x - y;
@@ -462,7 +491,9 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
             sourceInputArea.setText(message("ChromaticityDiagramTips"));
             sourceInputArea.focusedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                public void changed(
+                        ObservableValue<? extends Boolean> observable,
+                        Boolean oldValue, Boolean newValue) {
                     if (inputInit) {
                         sourceInputArea.clear();
                         sourceInputArea.setStyle(null);
@@ -473,7 +504,8 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
 
             sourceInputArea.textProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                public void changed(ObservableValue<? extends String> observable,
+                        String oldValue, String newValue) {
                     if (isSettingValues) {
                         return;
                     }
@@ -1288,7 +1320,7 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
 
     public void exportAction(String filename, TextArea textArea) {
         final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
-                filename, CommonFxValues.TxtExtensionFilter, true);
+                filename, CommonFxValues.TextExtensionFilter, true);
         if (file == null) {
             return;
         }
@@ -1308,7 +1340,7 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
                 @Override
                 protected void whenSucceeded() {
                     view(file);
-                    popSuccessul();
+                    popSuccessful();
                 }
 
             };

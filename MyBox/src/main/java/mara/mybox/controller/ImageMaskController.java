@@ -184,10 +184,9 @@ public class ImageMaskController extends ImageBaseController {
     }
 
     protected void checkCoordinate() {
-//        if (xyText != null) {
-//            boolean show = AppVariables.getUserConfigBoolean("ImagePopCooridnate", false);
-//            xyText.setVisible(show);
-//        }
+        if (xyText != null) {
+            xyText.setText("");
+        }
     }
 
     @Override
@@ -852,7 +851,7 @@ public class ImageMaskController extends ImageBaseController {
             double yRatio = imageView.getBoundsInParent().getHeight() / getImageHeight();
 
             List<Double> d = new ArrayList<>();
-            for (int i = 0; i < maskPolygonData.getSize(); i++) {
+            for (int i = 0; i < maskPolygonData.getSize(); ++i) {
                 d.add(maskPolygonData.get(i).getX() * xRatio);
                 d.add(maskPolygonData.get(i).getY() * yRatio);
             }
@@ -955,7 +954,7 @@ public class ImageMaskController extends ImageBaseController {
             double yRatio = imageView.getBoundsInParent().getHeight() / getImageHeight();
 
             List<Double> d = new ArrayList<>();
-            for (int i = 0; i < maskPolylineData.getSize(); i++) {
+            for (int i = 0; i < maskPolylineData.getSize(); ++i) {
                 d.add(maskPolylineData.get(i).getX() * xRatio);
                 d.add(maskPolylineData.get(i).getY() * yRatio);
             }
@@ -1304,7 +1303,7 @@ public class ImageMaskController extends ImageBaseController {
 
         List<DoublePoint> maskPoints = maskPolygonData.getPoints();
         List<DoublePoint> points = new ArrayList<>();
-        for (int i = 0; i < maskPoints.size(); i++) {
+        for (int i = 0; i < maskPoints.size(); ++i) {
             DoublePoint mp = maskPoints.get(i);
             points.add(new DoublePoint(mp.getX() + x, mp.getY() + y));
         }

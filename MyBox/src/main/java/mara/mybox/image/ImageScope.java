@@ -367,14 +367,14 @@ public class ImageScope {
 //            BasicStroke stroke = new BasicStroke(lineWidth, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND);
             g.setStroke(stroke);
 
-            for (int i = 0; i < rows.size(); i++) {
+            for (int i = 0; i < rows.size(); ++i) {
                 int row = (int) (rows.get(i) / scale);
                 if (row <= 0 || row >= height - 1) {
                     continue;
                 }
                 g.drawLine(0, row, width, row);
             }
-            for (int i = 0; i < cols.size(); i++) {
+            for (int i = 0; i < cols.size(); ++i) {
                 int col = (int) (cols.get(i) / scale);
                 if (col <= 0 || col >= width - 1) {
                     continue;
@@ -386,9 +386,9 @@ public class ImageScope {
                 List<String> texts = new ArrayList<>();
                 List<Integer> xs = new ArrayList<>();
                 List<Integer> ys = new ArrayList<>();
-                for (int i = 0; i < rows.size() - 1; i++) {
+                for (int i = 0; i < rows.size() - 1; ++i) {
                     int h = rows.get(i + 1) - rows.get(i) + 1;
-                    for (int j = 0; j < cols.size() - 1; j++) {
+                    for (int j = 0; j < cols.size() - 1; ++j) {
                         int w = cols.get(j + 1) - cols.get(j) + 1;
                         texts.add(w + "x" + h);
                         xs.add(cols.get(j) + w / 3);
@@ -400,7 +400,7 @@ public class ImageScope {
                 int fontSize = width / (cols.size() * 10);
                 Font font = new Font(Font.MONOSPACED, Font.BOLD, fontSize);
                 g.setFont(font);
-                for (int i = 0; i < texts.size(); i++) {
+                for (int i = 0; i < texts.size(); ++i) {
                     g.drawString(texts.get(i), xs.get(i), ys.get(i));
                 }
             }

@@ -67,7 +67,7 @@ public class ImageTiffEditerController extends ImagesListController {
 
                 @Override
                 protected void whenSucceeded() {
-                    popSuccessul();
+                    popSuccessful();
                     if (outFile.equals(sourceFile)) {
                         setImageChanged(false);
                     }

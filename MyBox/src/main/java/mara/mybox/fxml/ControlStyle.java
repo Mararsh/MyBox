@@ -48,7 +48,8 @@ public class ControlStyle {
         this.iconName = iconName;
     }
 
-    public ControlStyle(String id, String name, String comments, String shortcut, String iconName) {
+    public ControlStyle(String id, String name, String comments, String shortcut,
+            String iconName) {
         this.id = id;
         this.name = name;
         this.comments = comments;
@@ -338,7 +339,7 @@ public class ControlStyle {
                 return new ControlStyle("scopeSetCheck", message("SetScope"), "", "iconTarget.png");
 
             case "scopeManageCheck":
-                return new ControlStyle("scopeManageCheck", message("ManageScope"), "", "iconData.png");
+                return new ControlStyle("scopeManageCheck", message("ManageScope"), "", "iconDataImport.png");
 
             case "scopeOutlineKeepRatioCheck":
                 return new ControlStyle("scopeOutlineKeepRatioCheck", message("KeepRatio"), "", "iconAspectRatio.png");
@@ -394,7 +395,7 @@ public class ControlStyle {
                 return new ControlStyle("shapeCircleRadio", "", message("Circle"), "", "iconCircle.png");
 
             default:
-                return getButtonControlStyle(id);
+                return null;
         }
 
     }
@@ -412,7 +413,7 @@ public class ControlStyle {
                 return new ControlStyle("tableExpandDirCheck", "", message("ExpandDirectories"), "", "iconUnfold.png");
 
             case "tableCreateDirCheck":
-                return new ControlStyle("tableCreateDirCheck", "", message("CreateDirectories"), "", "iconAddFoloder.png");
+                return new ControlStyle("tableCreateDirCheck", "", message("CreateDirectories"), "", "iconFolderLink.png");
 
             case "countDirCheck":
                 return new ControlStyle("countDirCheck", "", message("CountFilesUnderFolders"), "", "iconFolderBrowse.png");
@@ -484,7 +485,7 @@ public class ControlStyle {
                 return new ControlStyle(id, message("Pop"), "", "iconPop.png");
 
             default:
-                return getButtonControlStyle(id);
+                return null;
         }
 
     }
@@ -573,7 +574,7 @@ public class ControlStyle {
                 return new ControlStyle(id, message("Mute"), "", "iconMute.png");
 
             default:
-                return getButtonControlStyle(id);
+                return null;
         }
 
     }
@@ -621,7 +622,7 @@ public class ControlStyle {
                     return new ControlStyle("recoveryAllButton", message("RecoverAll"), "", "iconRecover.png");
 
                 case "recoverySelectedButton":
-                    return new ControlStyle("recoverySelectedButton", message("RecoverSelected"), "", "iconRestoreFile.png");
+                    return new ControlStyle("recoverySelectedButton", message("RecoverSelected"), "", "iconFileRestore.png");
 
                 default:
                     return new ControlStyle(id, message("Recover"), "", "iconRecover.png");
@@ -683,10 +684,24 @@ public class ControlStyle {
             return new ControlStyle(id, message("Open"), "", "iconOpen.png");
         }
 
+        if (id.startsWith("delete")) {
+            switch (id) {
+                case "deleteButton":
+                    return new ControlStyle("deleteButton", message("Delete"), "DELETE / CTRL+d / ALT+d", "iconDelete.png");
+
+                default:
+                    return new ControlStyle(id, message("Delete"), "", "iconDelete.png");
+            }
+
+        }
+
         switch (id) {
 
             case "selectButton":
                 return new ControlStyle(id, message("Select"), "", "iconSelect.png");
+
+            case "unselectButton":
+                return new ControlStyle(id, message("Unselect"), "", "iconSelectNone.png");
 
             case "selectAllButton":
                 return new ControlStyle("selectAllButton", message("SelectAll"), "CTRL+a / ALT+a", "iconSelectAll.png");
@@ -705,9 +720,6 @@ public class ControlStyle {
 
             case "createButton":
                 return new ControlStyle("createButton", message("Create"), "CTRL+n", "iconEdit.png");
-
-            case "deleteButton":
-                return new ControlStyle("deleteButton", message("Delete"), "DELETE / CTRL+d / ALT+d", "iconDelete.png");
 
             case "copyButton":
                 return new ControlStyle("copyButton", message("Copy"), "CTRL+c / ALT+c ", "iconCopy.png");
@@ -833,22 +845,16 @@ public class ControlStyle {
                 return new ControlStyle("polygonClearButton", message("Delete"), "", "iconClear.png");
 
             case "addFilesButton":
-                return new ControlStyle("addFilesButton", message("AddFiles"), "", "iconAddFile.png");
+                return new ControlStyle("addFilesButton", message("AddFiles"), "", "iconFileAdd.png");
 
             case "insertFilesButton":
-                return new ControlStyle("insertFilesButton", message("InsertFiles"), "", "iconInsertFile.png");
+                return new ControlStyle("insertFilesButton", message("InsertFiles"), "", "iconFileInsert.png");
 
             case "addDirectoryButton":
-                return new ControlStyle("addDirectoryButton", message("AddDirectory"), "", "iconAddFolder.png");
+                return new ControlStyle("addDirectoryButton", message("AddDirectory"), "", "iconFolderAdd.png");
 
             case "insertDirectoryButton":
-                return new ControlStyle("insertDirectoryButton", message("InsertDirectory"), "", "iconInsertFolder.png");
-
-            case "deleteFileButton":
-                return new ControlStyle("deleteFileButton", message("Delete"), "", "iconDeleteFile.png");
-
-            case "deleteFilesButton":
-                return new ControlStyle("deleteFilesButton", message("Delete"), "", "iconDeleteFile.png");
+                return new ControlStyle("insertDirectoryButton", message("InsertDirectory"), "", "iconFolderInsert.png");
 
             case "openTargetButton":
                 return new ControlStyle("openTargetButton", message("Open"), "", "iconOpen.png");
@@ -884,8 +890,8 @@ public class ControlStyle {
             case "savePdfButton":
                 return new ControlStyle("savePdfButton", message("SaveAsPDF"), "", "iconPDF.png");
 
-            case "setAllButton":
-                return new ControlStyle(id, message("SetForAllRows"), "", "iconEqual.png");
+            case "setAllOrSelectedButton":
+                return new ControlStyle(id, message("SetAllOrSelected"), "", "iconEqual.png");
 
             case "examplesButton":
                 return new ControlStyle("examplesButton", message("Examples"), "", "iconExamples.png");
@@ -1212,7 +1218,7 @@ public class ControlStyle {
                 return new ControlStyle(id, message("Link"), "", "iconLink.png");
 
             case "dataButton":
-                return new ControlStyle(id, message("Data"), "", "iconData.png");
+                return new ControlStyle(id, message("Data"), "", "iconDataImport.png");
 
             case "catButton":
                 return new ControlStyle(id, message("Meow"), "", "iconCat.png");
@@ -1220,8 +1226,32 @@ public class ControlStyle {
             case "streamMediaButton":
                 return new ControlStyle(id, message("StreamMedia"), "", "iconLink.png");
 
-            case "setDurationAllButton":
-                return new ControlStyle(id, message("Set"), "", "iconEqual.png");
+            case "helpMeButton":
+                return new ControlStyle(id, message("HelpMe"), "h / H", "iconCatFoot.png");
+
+            case "copyEnglishButton":
+                return new ControlStyle(id, message("CopyEnglish"), "CTRL+e / ALT+e ", "iconCopy.png");
+
+            case "pickColorButton":
+                return new ControlStyle(id, message("PickColor"), message("ColorPickerComments"), "", "iconPickColor.png");
+
+            case "locationButton":
+                return new ControlStyle(id, message("Locate"), "", "iconLocation.png");
+
+            case "footButton":
+                return new ControlStyle(id, message("Footprints"), "", "iconCatFoot.png");
+
+            case "chinaButton":
+                return new ControlStyle(id, message("China"), "", "iconChina.png");
+
+            case "globalButton":
+                return new ControlStyle(id, message("Global"), "", "iconGlobal.png");
+
+            case "dataImportButton":
+                return new ControlStyle(id, message("Import"), "", "iconDataImport.png");
+
+            case "dataExportButton":
+                return new ControlStyle(id, message("Export"), "", "iconDataExport.png");
 
             default:
                 return null;
@@ -1426,7 +1456,8 @@ public class ControlStyle {
         setColorStyle(node, style, AppVariables.ControlColor);
     }
 
-    public static void setColorStyle(Node node, ControlStyle style, ColorStyle color) {
+    public static void setColorStyle(Node node, ControlStyle style,
+            ColorStyle color) {
         setIcon(node, getIcon(style, color));
     }
 

@@ -35,9 +35,11 @@ public class PdfExtractTextsBatchController extends PdfBatchController {
     }
 
     @Override
-    public boolean makeBatchParameters() {
+    public boolean makeMoreParameters() {
         try {
-            super.makeBatchParameters();
+            if (!super.makeMoreParameters()) {
+                return false;
+            }
             separator = separatorInput.getText();
             if (!separatorCheck.isSelected() || separator == null || separator.isEmpty()) {
                 separator = null;

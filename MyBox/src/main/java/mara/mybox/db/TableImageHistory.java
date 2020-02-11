@@ -54,7 +54,7 @@ public class TableImageHistory extends DerbyBase {
         }
         int max = AppVariables.getUserConfigInt("MaxImageHistories", Default_Max_Histories);
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
+              Statement statement = conn.createStatement()) {
             String sql = " SELECT * FROM image_history WHERE image_location='" + image + "' ORDER BY operation_time DESC";
             ResultSet results = statement.executeQuery(sql);
             while (results.next()) {
@@ -71,7 +71,7 @@ public class TableImageHistory extends DerbyBase {
             }
 
             List<ImageHistory> valid = new ArrayList<>();
-            for (int i = 0; i < records.size(); i++) {
+            for (int i = 0; i < records.size(); ++i) {
                 String hisname = records.get(i).getHistoryLocation();
                 File hisFile = new File(hisname);
                 if (!hisFile.exists()) {
@@ -81,13 +81,14 @@ public class TableImageHistory extends DerbyBase {
                 valid.add(records.get(i));
             }
             if (valid.size() > max) {
-                for (int i = max; i < valid.size(); i++) {
+                for (int i = max; i < valid.size(); ++i) {
                     deleteRecord(statement, image, valid.get(i).getHistoryLocation());
                 }
                 return valid.subList(0, max);
             }
 
-        } catch (Exception e) {  failed(e);
+        } catch (Exception e) {
+            failed(e);
             // logger.debug(e.toString());
         }
         return records;
@@ -106,7 +107,8 @@ public class TableImageHistory extends DerbyBase {
             if (thumbFile.exists()) {
                 thumbFile.delete();
             }
-        } catch (Exception e) {  failed(e);
+        } catch (Exception e) {
+            failed(e);
             // logger.debug(e.toString());
         }
     }
@@ -122,7 +124,7 @@ public class TableImageHistory extends DerbyBase {
             return read(image);
         }
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
+              Statement statement = conn.createStatement()) {
             String fields = "image_location, history_location ,operation_time ";
             String values = " '" + image + "', '" + his_location + "', '" + DateTools.datetimeToString(new Date()) + "' ";
             if (update_type != null) {
@@ -151,7 +153,8 @@ public class TableImageHistory extends DerbyBase {
 //            logger.debug(sql);
             statement.executeUpdate(sql);
             return read(image);
-        } catch (Exception e) {  failed(e);
+        } catch (Exception e) {
+            failed(e);
             // logger.debug(e.toString());
             return read(image);
         }
@@ -160,14 +163,15 @@ public class TableImageHistory extends DerbyBase {
     public static boolean clearImage(String image) {
         List<ImageHistory> records = read(image);
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
+              Statement statement = conn.createStatement()) {
             conn.setAutoCommit(false);
-            for (int i = 0; i < records.size(); i++) {
+            for (int i = 0; i < records.size(); ++i) {
                 deleteRecord(statement, image, records.get(i).getHistoryLocation());
             }
             conn.commit();
             return true;
-        } catch (Exception e) {  failed(e);
+        } catch (Exception e) {
+            failed(e);
             // logger.debug(e.toString());
             return false;
         }
@@ -175,10 +179,11 @@ public class TableImageHistory extends DerbyBase {
 
     public static boolean deleteHistory(String image, String hisname) {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
+              Statement statement = conn.createStatement()) {
             deleteRecord(statement, image, hisname);
             return true;
-        } catch (Exception e) {  failed(e);
+        } catch (Exception e) {
+            failed(e);
             // logger.debug(e.toString());
             return false;
         }
@@ -187,27 +192,31 @@ public class TableImageHistory extends DerbyBase {
     @Override
     public boolean clear() {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
+              Statement statement = conn.createStatement()) {
             String sql = " SELECT history_location FROM image_history";
             ResultSet results = statement.executeQuery(sql);
             while (results.next()) {
                 try {
                     new File(results.getString("history_location")).delete();
-                } catch (Exception e) {  failed(e);
+                } catch (Exception e) {
+                    failed(e);
                 }
             }
             String imageHistoriesPath = AppVariables.getImageHisPath();
             File path = new File(imageHistoriesPath);
             if (path.exists()) {
                 File[] files = path.listFiles();
-                for (File f : files) {
-                    f.delete();
+                if (files != null) {
+                    for (File f : files) {
+                        f.delete();
+                    }
                 }
             }
             sql = "DELETE FROM image_history";
             statement.executeUpdate(sql);
             return true;
-        } catch (Exception e) {  failed(e);
+        } catch (Exception e) {
+            failed(e);
             // logger.debug(e.toString());
             return false;
         }

@@ -61,6 +61,13 @@ public class MainApp extends Application {
     public void init() throws Exception {
     }
 
+    public void tmp() {
+        // Uncomment this line to generate Icons automatically in different color styles
+//        makeIcons();
+//        testSSL();
+
+    }
+
     @Override
     public void start(Stage stage) throws Exception {
         try {
@@ -78,43 +85,31 @@ public class MainApp extends Application {
                 @Override
                 protected Void call() {
                     try {
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                loadController.setInfo(MessageFormat.format(message(lang,
-                                        "InitializeDataUnder"), AppVariables.MyboxDataPath));
-                            }
+                        Platform.runLater(() -> {
+                            loadController.setInfo(MessageFormat.format(message(lang,
+                                    "InitializeDataUnder"), AppVariables.MyboxDataPath));
                         });
                         if (!initPaths(stage)) {
                             return null;
                         }
-//                        tmp();
+                        tmp();
 
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                loadController.pathReady();
-                                loadController.setInfo(MessageFormat.format(message(lang,
-                                        "LoadingDatabase"), AppVariables.MyBoxDerbyPath));
-                            }
+                        Platform.runLater(() -> {
+                            loadController.pathReady();
+                            loadController.setInfo(MessageFormat.format(message(lang,
+                                    "LoadingDatabase"), AppVariables.MyBoxDerbyPath));
                         });
                         DerbyBase.status = DerbyStatus.NotConnected;
                         String initDB = DerbyBase.startDerby();
                         if (DerbyBase.status != DerbyStatus.Embedded
                                 && DerbyBase.status != DerbyStatus.Nerwork) {
-                            Platform.runLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    FxmlStage.alertWarning(stage, initDB);
-                                }
+                            Platform.runLater(() -> {
+                                FxmlStage.alertWarning(stage, initDB);
                             });
                             AppVariables.initAppVaribles();
                         } else {
-                            Platform.runLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    loadController.setInfo(initDB);
-                                }
+                            Platform.runLater(() -> {
+                                loadController.setInfo(initDB);
                             });
                             // The following statements should be done in this order
                             DerbyBase.initTables();
@@ -136,36 +131,32 @@ public class MainApp extends Application {
                 protected void succeeded() {
                     super.succeeded();
 
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            loadController.setInfo(message(lang, "LoadingInterface"));
+                    Platform.runLater(() -> {
+                        loadController.setInfo(message(lang, "LoadingInterface"));
 
-                            String inFile = null;
-                            if (AppVariables.appArgs != null) {
-                                for (String arg : AppVariables.appArgs) {
-                                    if (MyBox.InternalRestartFlag.equals(arg) || arg.startsWith("config=")) {
-                                        continue;
-                                    }
-                                    if (new File(arg).exists()) {
-                                        inFile = arg;
-                                        break;
-                                    } else {
-                                        FxmlStage.alertError(stage, MessageFormat.format(
-                                                message("FilepathNonAscii"), arg));
-                                    }
+                        String inFile = null;
+                        if (AppVariables.appArgs != null) {
+                            for (String arg : AppVariables.appArgs) {
+                                if (MyBox.InternalRestartFlag.equals(arg) || arg.startsWith("config=")) {
+                                    continue;
+                                }
+                                if (new File(arg).exists()) {
+                                    inFile = arg;
+                                    break;
+                                } else {
+                                    FxmlStage.alertError(stage, MessageFormat.format(
+                                            message("FilepathNonAscii"), arg));
                                 }
                             }
+                        }
 
-                            if (inFile != null) {
-                                BaseController controller = FxmlStage.openTarget(stage, inFile, false);
-                                if (controller == null) {
-                                    FxmlStage.openMyBox(stage);
-                                }
-                            } else {
+                        if (inFile != null) {
+                            BaseController controller = FxmlStage.openTarget(stage, inFile, false);
+                            if (controller == null) {
                                 FxmlStage.openMyBox(stage);
                             }
-
+                        } else {
+                            FxmlStage.openMyBox(stage);
                         }
                     });
 
@@ -319,18 +310,11 @@ public class MainApp extends Application {
         Application.launch(args);
     }
 
-    public void tmp() {
-        // Uncomment this line to generate Icons automatically in different color styles
-        //makeIcons();
-//        testSSL();
-
-    }
-
     // This is for developement to generate Icons automatically in different color style
     public static void makeIcons() {
         try {
             List<String> keeps = Arrays.asList(
-                    "iconRGB.png", "iconSaveAs.png", "iconWOW.png", "iconPDF.png",
+                    "iconChina.png", "iconRGB.png", "iconSaveAs.png", "iconWOW.png", "iconPDF.png",
                     "iconHue.png", "iconColorWheel.png", "iconColor.png", "iconButterfly.png", "iconPalette.png",
                     "iconMosaic.png", "iconBlackWhite.png", "iconGrayscale.png"
             );

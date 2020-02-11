@@ -387,7 +387,7 @@ public class FFmpegProbeMediaInformationController extends FFmpegBaseController 
         List<Stream> streams = probeResult.getStreams();
         StringBuilder s = new StringBuilder();
         Stream videoStream = null;
-        for (int i = 0; i < streams.size(); i++) {
+        for (int i = 0; i < streams.size(); ++i) {
             Stream stream = streams.get(i);
             if (stream.getCodecType() == StreamType.VIDEO) {
                 videoStream = stream;
@@ -413,7 +413,7 @@ public class FFmpegProbeMediaInformationController extends FFmpegBaseController 
         List<Stream> streams = probeResult.getStreams();
         StringBuilder s = new StringBuilder();
         Stream audioStream = null;
-        for (int i = 0; i < streams.size(); i++) {
+        for (int i = 0; i < streams.size(); ++i) {
             Stream stream = streams.get(i);
             if (stream.getCodecType() == StreamType.AUDIO) {
                 audioStream = stream;
@@ -439,7 +439,7 @@ public class FFmpegProbeMediaInformationController extends FFmpegBaseController 
         List<Stream> streams = probeResult.getStreams();
         StringBuilder s = new StringBuilder();
         List<Stream> otherStreams = new ArrayList();
-        for (int i = 0; i < streams.size(); i++) {
+        for (int i = 0; i < streams.size(); ++i) {
             Stream stream = streams.get(i);
             if (stream.getCodecType() != StreamType.AUDIO
                     && stream.getCodecType() != StreamType.VIDEO) {
@@ -454,7 +454,7 @@ public class FFmpegProbeMediaInformationController extends FFmpegBaseController 
             tabPane.getTabs().add(streamsTab);
         }
 
-        for (int i = 0; i < otherStreams.size(); i++) {
+        for (int i = 0; i < otherStreams.size(); ++i) {
             Stream stream = otherStreams.get(i);
             s.append(streamTable(stream, message("Stream") + " " + stream.getIndex())).append("</hr>");
         }
@@ -717,7 +717,7 @@ public class FFmpegProbeMediaInformationController extends FFmpegBaseController 
         StringBuilder s = new StringBuilder();
         int size = frames.size();
         s.append(message("Found")).append(": ").append(size);
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < size; ++i) {
             Frame frame = frames.get(i);
             StringTable table = new StringTable(null, message("Frame") + " " + i);
             if (frame.getMediaType() != null) {
@@ -870,7 +870,7 @@ public class FFmpegProbeMediaInformationController extends FFmpegBaseController 
         StringBuilder s = new StringBuilder();
         int size = packets.size();
         s.append(message("Found")).append(": ").append(size);
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < size; ++i) {
             Packet packet = packets.get(i);
             StringTable table = new StringTable(null, message("Frame") + " " + i);
             if (packet.getCodecType() != null) {

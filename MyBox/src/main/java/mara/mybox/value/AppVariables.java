@@ -49,7 +49,7 @@ public class AppVariables {
     public static MemoryUsageSetting pdfMemUsage;
     public static int sceneFontSize, fileRecentNumber, iconSize;
     public static boolean openStageInNewWindow, restoreStagesSize, controlDisplayText,
-            ImagePopCooridnate, disableHiDPI;
+            ImagePopCooridnate, disableHiDPI, DerbyFailAsked;
     public static ControlStyle.ColorStyle ControlColor;
     public static String lastError;
     public static SSLSocketFactory defaultSSLSocketFactory;
@@ -72,7 +72,7 @@ public class AppVariables {
             ControlColor = ControlStyle.getConfigColorStyle();
             controlDisplayText = AppVariables.getUserConfigBoolean("ControlDisplayText", false);
             ImagePopCooridnate = AppVariables.getUserConfigBoolean("ImagePopCooridnate", false);
-            disableHiDPI = false;
+            disableHiDPI = DerbyFailAsked = false;
             lastError = null;
             if (defaultSSLSocketFactory == null) {
                 defaultSSLSocketFactory = HttpsURLConnection.getDefaultSSLSocketFactory();
@@ -90,7 +90,8 @@ public class AppVariables {
     }
 
     public static String getLanguage() {
-        return getUserConfigValue("language", Locale.getDefault().getLanguage().toLowerCase());
+        String lang = getUserConfigValue("language", Locale.getDefault().getLanguage().toLowerCase());
+        return lang != null ? lang : Locale.getDefault().getLanguage().toLowerCase();
     }
 
     public static ResourceBundle setLanguage(String lang) {
@@ -103,6 +104,9 @@ public class AppVariables {
 
     public static ResourceBundle getBundle() {
         String lang = getLanguage();
+        if (lang == null) {
+            lang = Locale.getDefault().getLanguage().toLowerCase();
+        }
         switch (lang.toLowerCase()) {
             case "zh":
                 AppVariables.currentBundle = CommonValues.BundleZhCN;
@@ -125,6 +129,9 @@ public class AppVariables {
 
     public static String message(String thestr) {
         try {
+            if (currentBundle == null) {
+                currentBundle = CommonValues.BundleEnUS;
+            }
             return currentBundle.getString(thestr);
         } catch (Exception e) {
             return thestr;
@@ -135,6 +142,9 @@ public class AppVariables {
         try {
             if (thestr.trim().isEmpty()) {
                 return thestr;
+            }
+            if (language == null) {
+                language = Locale.getDefault().getLanguage().toLowerCase();
             }
             String value = thestr;
             switch (language.toLowerCase()) {
@@ -230,7 +240,7 @@ public class AppVariables {
     }
 
     public static String getStyle() {
-        return getUserConfigValue("InterfaceStyle", CommonValues.DefaultStyle);
+        return getUserConfigValue("InterfaceStyle", CommonValues.MyBoxStyle);
     }
 
     public static String getImageHisPath() {

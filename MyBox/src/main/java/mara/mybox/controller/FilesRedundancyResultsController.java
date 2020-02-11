@@ -215,7 +215,7 @@ public class FilesRedundancyResultsController extends FilesTreeController {
                 continue;
             }
             files.get(0).getValue().setSelected(false);
-            for (int i = 1; i < files.size(); i++) {
+            for (int i = 1; i < files.size(); ++i) {
                 files.get(i).getValue().setSelected(true);
             }
         }
@@ -241,7 +241,7 @@ public class FilesRedundancyResultsController extends FilesTreeController {
             if (files == null || files.isEmpty()) {
                 continue;
             }
-            for (int i = 0; i < files.size() - 1; i++) {
+            for (int i = 0; i < files.size() - 1; ++i) {
                 files.get(i).getValue().setSelected(true);
             }
             files.get(files.size() - 1).getValue().setSelected(false);

@@ -170,7 +170,7 @@ public class CIEData {
         relativeY = scale(relativeY, scale);
         relativeZ = scale(relativeZ, scale);
         if (channels != null) {
-            for (int i = 0; i < channels.length; i++) {
+            for (int i = 0; i < channels.length; ++i) {
                 channels[i] = scale(channels[i], scale);
             }
         }
@@ -564,11 +564,11 @@ public class CIEData {
             int num = 0;
             if (cs != null) {
                 num = cs.getNumComponents();
-                for (int i = 0; i < num; i++) {
+                for (int i = 0; i < num; ++i) {
                     s.append(message(cs.getName(i))).append(sp);
                 }
                 if (cs.getType() == ColorSpace.TYPE_RGB) {
-                    for (int i = 0; i < num; i++) {
+                    for (int i = 0; i < num; ++i) {
                         s.append(message(cs.getName(i))).append("-").append(message("Integer")).append(sp);
                     }
                 }
@@ -576,7 +576,7 @@ public class CIEData {
             s.append("\n");
 
             double[] channels;
-            for (int i = 0; i < data.size(); i++) {
+            for (int i = 0; i < data.size(); ++i) {
                 CIEData d = data.get(i);
                 s.append(d.getWaveLength()).append(sp).
                         append(d.X).append(sp).
@@ -590,11 +590,11 @@ public class CIEData {
                         append(d.getRelativeZ()).append(sp);
                 if (cs != null) {
                     channels = d.getChannels();
-                    for (int j = 0; j < num; j++) {
+                    for (int j = 0; j < num; ++j) {
                         s.append(channels[j]).append(sp);
                     }
                     if (cs.getType() == ColorSpace.TYPE_RGB) {
-                        for (int j = 0; j < num; j++) {
+                        for (int j = 0; j < num; ++j) {
                             s.append(Math.round(channels[j] * 255)).append(sp);
                         }
                     }

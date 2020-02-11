@@ -331,7 +331,7 @@ public class MatrixCalculationController extends BaseController {
             return;
         }
         String s = "";
-        for (int i = 0; i < dList.size(); i++) {
+        for (int i = 0; i < dList.size(); ++i) {
             s += dList.get(i) + "\n";
         }
         editArea.setStyle(null);
@@ -345,7 +345,7 @@ public class MatrixCalculationController extends BaseController {
             return;
         }
         String s = "";
-        for (int i = 0; i < dList.size(); i++) {
+        for (int i = 0; i < dList.size(); ++i) {
             s += dList.get(i) + "\t";
         }
         editArea.setStyle(null);
@@ -370,8 +370,8 @@ public class MatrixCalculationController extends BaseController {
             rows++;
             editArea.setStyle(badStyle);
         }
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < columns; j++) {
+        for (int i = 0; i < rows; ++i) {
+            for (int j = 0; j < columns; ++j) {
                 int index = i * columns + j;
                 if (index >= dList.size()) {
                     f = true;
@@ -394,8 +394,8 @@ public class MatrixCalculationController extends BaseController {
         double[][] m = MatrixTools.identityDouble(n);
         String s = "";
         int rows = m.length, columns = m[0].length;
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < columns; j++) {
+        for (int i = 0; i < rows; ++i) {
+            for (int j = 0; j < columns; ++j) {
                 double d = DoubleTools.scale(m[i][j], scale);
                 s += d + "\t";
             }
@@ -411,8 +411,8 @@ public class MatrixCalculationController extends BaseController {
         double[][] m = MatrixTools.randomMatrix(n);
         String s = "";
         int rows = m.length, columns = m[0].length;
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < columns; j++) {
+        for (int i = 0; i < rows; ++i) {
+            for (int j = 0; j < columns; ++j) {
                 double d = DoubleTools.scale(m[i][j], scale);
                 s += d + "\t";
             }
@@ -451,8 +451,8 @@ public class MatrixCalculationController extends BaseController {
         double[][] mx = MatrixTools.randomMatrix(m, n);
         String s = "";
         int rows = mx.length, columns = mx[0].length;
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < columns; j++) {
+        for (int i = 0; i < rows; ++i) {
+            for (int j = 0; j < columns; ++j) {
                 double d = DoubleTools.scale(mx[i][j], scale);
                 s += d + "\t";
             }
@@ -575,9 +575,9 @@ public class MatrixCalculationController extends BaseController {
         }
 
         matrix = new double[m.size()][col];
-        for (int i = 0; i < m.size(); i++) {
+        for (int i = 0; i < m.size(); ++i) {
             List<Double> ds = m.get(i);
-            for (int j = 0; j < col; j++) {
+            for (int j = 0; j < col; ++j) {
                 matrix[i][j] = DoubleTools.scale(ds.get(j), scale);
             }
         }
@@ -762,8 +762,8 @@ public class MatrixCalculationController extends BaseController {
                 }
                 String s = "";
                 int rows = matrix.length, columns = matrix[0].length;
-                for (int i = 0; i < rows; i++) {
-                    for (int j = 0; j < columns; j++) {
+                for (int i = 0; i < rows; ++i) {
+                    for (int j = 0; j < columns; ++j) {
                         if (isInteger) {
                             matrix[i][j] = (int) Math.round(matrix[i][j]);
                         } else {

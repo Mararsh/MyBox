@@ -64,7 +64,7 @@ public class DoublePolyline implements DoubleShape {
             return false;
         }
         List<Double> d = new ArrayList<>();
-        for (int i = 0; i < points.size(); i++) {
+        for (int i = 0; i < points.size(); ++i) {
             DoublePoint p = points.get(i);
             if (p.getX() == x && p.getY() == y) {
                 points.remove(i);
@@ -130,7 +130,7 @@ public class DoublePolyline implements DoubleShape {
             }
         }
         List<DoublePoint> bPoints = polyline.getPoints();
-        for (int i = 0; i < points.size(); i++) {
+        for (int i = 0; i < points.size(); ++i) {
             DoublePoint point = points.get(i);
             if (!point.same(bPoints.get(i))) {
                 return false;
@@ -169,7 +169,7 @@ public class DoublePolyline implements DoubleShape {
 
     public List<Double> getData() {
         List<Double> d = new ArrayList<>();
-        for (int i = 0; i < points.size(); i++) {
+        for (int i = 0; i < points.size(); ++i) {
             d.add(points.get(i).getX());
             d.add(points.get(i).getY());
         }
@@ -183,7 +183,7 @@ public class DoublePolyline implements DoubleShape {
         }
         int[] x = new int[points.size()];
         int[] y = new int[points.size()];
-        for (int i = 0; i < points.size(); i++) {
+        for (int i = 0; i < points.size(); ++i) {
             x[i] = (int) Math.round(points.get(i).getX());
             y[i] = (int) Math.round(points.get(i).getY());
         }
@@ -195,7 +195,7 @@ public class DoublePolyline implements DoubleShape {
     @Override
     public DoublePolyline move(double offset) {
         DoublePolyline np = new DoublePolyline();
-        for (int i = 0; i < points.size(); i++) {
+        for (int i = 0; i < points.size(); ++i) {
             DoublePoint p = points.get(i);
             np.add(p.getX() + offset, p.getY() + offset);
         }
@@ -205,7 +205,7 @@ public class DoublePolyline implements DoubleShape {
     @Override
     public DoublePolyline move(double offsetX, double offsetY) {
         DoublePolyline np = new DoublePolyline();
-        for (int i = 0; i < points.size(); i++) {
+        for (int i = 0; i < points.size(); ++i) {
             DoublePoint p = points.get(i);
             np.add(p.getX() + offsetX, p.getY() + offsetY);
         }

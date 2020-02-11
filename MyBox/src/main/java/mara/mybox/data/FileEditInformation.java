@@ -29,8 +29,9 @@ public abstract class FileEditInformation extends FileInformation {
     protected Edit_Type editType;
     protected boolean withBom, totalNumberRead, findRegex;
     protected Charset charset;
+    protected int pageSize;
     protected long objectsNumber, currentPageLineStart, currentPageLineEnd;
-    protected long linesNumber, pageSize, pagesNumber, currentPage;
+    protected long linesNumber, pagesNumber, currentPage;
     protected long currentPageObjectStart, currentPageObjectEnd;
     protected String findString, replaceString;
     protected String[] filterStrings;
@@ -111,7 +112,8 @@ public abstract class FileEditInformation extends FileInformation {
         }
     }
 
-    public static FileEditInformation newEditInformation(Edit_Type type, File file) {
+    public static FileEditInformation newEditInformation(Edit_Type type,
+            File file) {
         switch (type) {
             case Text:
                 return new TextEditInformation(file);
@@ -122,7 +124,8 @@ public abstract class FileEditInformation extends FileInformation {
         }
     }
 
-    public static FileEditInformation newEditInformationFull(FileEditInformation sourceInfo) {
+    public static FileEditInformation newEditInformationFull(
+            FileEditInformation sourceInfo) {
         FileEditInformation newInformation
                 = FileEditInformation.newEditInformation(sourceInfo.getEditType(), sourceInfo.getFile());
         newInformation.setCharset(sourceInfo.getCharset());
@@ -145,7 +148,8 @@ public abstract class FileEditInformation extends FileInformation {
         return newInformation;
     }
 
-    public static FileEditInformation newEditInformationMajor(FileEditInformation sourceInfo) {
+    public static FileEditInformation newEditInformationMajor(
+            FileEditInformation sourceInfo) {
         FileEditInformation newInformation
                 = FileEditInformation.newEditInformation(sourceInfo.getEditType(), sourceInfo.getFile());
         newInformation.setCharset(sourceInfo.getCharset());
@@ -161,7 +165,8 @@ public abstract class FileEditInformation extends FileInformation {
         return newInformation;
     }
 
-    public static FileEditInformation newEditInformation(FileEditInformation sourceInfo, boolean full) {
+    public static FileEditInformation newEditInformation(
+            FileEditInformation sourceInfo, boolean full) {
         if (full) {
             return newEditInformationFull(sourceInfo);
         } else {
@@ -176,7 +181,7 @@ public abstract class FileEditInformation extends FileInformation {
             }
             String setName;
             withBom = false;
-            try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
+            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
                 byte[] header = new byte[4];
                 if ((inputStream.read(header, 0, 4) != -1)) {
                     setName = checkCharsetByBom(header);
@@ -202,10 +207,10 @@ public abstract class FileEditInformation extends FileInformation {
                     || targetInfo == null || targetInfo.getFile() == null || targetInfo.getCharset() == null) {
                 return false;
             }
-            try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
-                    InputStreamReader reader = new InputStreamReader(inputStream, charset);
-                    BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(targetInfo.getFile()));
-                    OutputStreamWriter writer = new OutputStreamWriter(outputStream, targetInfo.getCharset())) {
+            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
+                     InputStreamReader reader = new InputStreamReader(inputStream, charset);
+                     BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(targetInfo.getFile()));
+                     OutputStreamWriter writer = new OutputStreamWriter(outputStream, targetInfo.getCharset())) {
                 if (withBom) {
                     inputStream.skip(bomSize(charset.name()));
                 }
@@ -235,9 +240,11 @@ public abstract class FileEditInformation extends FileInformation {
 
     public abstract boolean writeObject(String text);
 
-    public abstract boolean writePage(FileEditInformation sourceInfo, String text);
+    public abstract boolean writePage(FileEditInformation sourceInfo,
+            String text);
 
-    public abstract boolean writePage(FileEditInformation sourceInfo, long pageNumber, String text);
+    public abstract boolean writePage(FileEditInformation sourceInfo,
+            long pageNumber, String text);
 
     public abstract String findFirst();
 
@@ -493,11 +500,11 @@ public abstract class FileEditInformation extends FileInformation {
         this.linesNumber = linesNumber;
     }
 
-    public long getPageSize() {
+    public int getPageSize() {
         return pageSize;
     }
 
-    public void setPageSize(long pageSize) {
+    public void setPageSize(int pageSize) {
         this.pageSize = pageSize;
     }
 

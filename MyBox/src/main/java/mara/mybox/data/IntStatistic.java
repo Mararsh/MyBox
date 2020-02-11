@@ -67,7 +67,7 @@ public class IntStatistic {
      */
     public static long sum(int[] values) {
         long sum = 0;
-        for (int i = 0; i < values.length; i++) {
+        for (int i = 0; i < values.length; ++i) {
             sum += values[i];
         }
         return sum;
@@ -78,7 +78,7 @@ public class IntStatistic {
             return Integer.MIN_VALUE;
         }
         int max = Integer.MIN_VALUE;
-        for (int i = 0; i < values.length; i++) {
+        for (int i = 0; i < values.length; ++i) {
             if (values[i] > max) {
                 max = values[i];
             }
@@ -91,7 +91,7 @@ public class IntStatistic {
             return -1;
         }
         int max = Integer.MIN_VALUE, maxIndex = -1;
-        for (int i = 0; i < values.length; i++) {
+        for (int i = 0; i < values.length; ++i) {
             if (values[i] > max) {
                 max = values[i];
                 maxIndex = i;
@@ -105,7 +105,7 @@ public class IntStatistic {
             return Integer.MAX_VALUE;
         }
         int min = Integer.MAX_VALUE;
-        for (int i = 0; i < values.length; i++) {
+        for (int i = 0; i < values.length; ++i) {
             if (values[i] < min) {
                 min = values[i];
             }
@@ -119,7 +119,7 @@ public class IntStatistic {
             return s;
         }
         int sum = 0, min = Integer.MAX_VALUE, max = Integer.MIN_VALUE;
-        for (int i = 0; i < values.length; i++) {
+        for (int i = 0; i < values.length; ++i) {
             sum += values[i];
             if (values[i] > max) {
                 max = values[i];
@@ -161,7 +161,7 @@ public class IntStatistic {
         }
         int[] sorted = IntTools.sortArray(values);
         int mid = sorted[sorted.length / 2];
-        for (int i = 0; i < values.length; i++) {
+        for (int i = 0; i < values.length; ++i) {
             if (values[i] == mid) {
                 return i;
             }
@@ -176,7 +176,7 @@ public class IntStatistic {
 
     public static int variance(int[] values, int mean) {
         int variance = 0;
-        for (int i = 0; i < values.length; i++) {
+        for (int i = 0; i < values.length; ++i) {
             variance += Math.pow(values[i] - mean, 2);
         }
         variance = (int) Math.sqrt(variance / values.length);
@@ -185,7 +185,7 @@ public class IntStatistic {
 
     public static int skewness(int[] values, int mean) {
         int skewness = 0;
-        for (int i = 0; i < values.length; i++) {
+        for (int i = 0; i < values.length; ++i) {
             skewness += Math.pow(values[i] - mean, 3);
         }
         skewness = (int) Math.pow(skewness / values.length, 1.0 / 3);

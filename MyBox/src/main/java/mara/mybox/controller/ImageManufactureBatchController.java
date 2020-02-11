@@ -67,7 +67,7 @@ public class ImageManufactureBatchController extends ImagesBatchController {
     @Override
     public String handleFile(File srcFile, File targetPath) {
         try {
-            showHandling(srcFile);
+            countHandling(srcFile);
             browseButton.setDisable(targetFiles == null || targetFiles.isEmpty());
 
             File target = makeTargetFile(srcFile, targetPath);

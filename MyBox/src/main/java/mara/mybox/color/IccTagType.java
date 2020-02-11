@@ -191,7 +191,7 @@ public class IccTagType {
         }
         int size = (bytes.length - 8) / 12;
         double[][] xyzArray = new double[size][3];
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < size; ++i) {
             double[] xyz = XYZNumber(subBytes(bytes, 8 + i * 12, 12));
             xyzArray[i] = xyz;
         }
@@ -289,7 +289,7 @@ public class IccTagType {
         values.put("size", size);
         logger.debug(num + " " + size);
         int offset = 16;
-        for (int i = 0; i < num; i++) {
+        for (int i = 0; i < num; ++i) {
             int languageCode = uInt16Number(subBytes(bytes, offset + i * 12, 2));
             values.put("languageCode" + i, languageCode);
             int countryCode = uInt16Number(subBytes(bytes, offset + i * 12 + 2, 2));
@@ -345,7 +345,7 @@ public class IccTagType {
                 break;
             default:
                 values = new double[count];
-                for (int i = 0; i < count; i++) {
+                for (int i = 0; i < count; ++i) {
                     values[i] = uInt16Number(subBytes(bytes, 12 + i * 2, 2)) / 65535d;
                 }
                 break;
@@ -384,7 +384,7 @@ public class IccTagType {
         }
         int size = (bytes.length - 8) / 4;
         double[] array = new double[size];
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < size; ++i) {
             double v = IccTagType.s15Fixed16Number(subBytes(bytes, 8 + i * 4, 4));
             array[i] = v;
         }
@@ -444,7 +444,7 @@ public class IccTagType {
             List<List<Double>> InputTables = new ArrayList<>();
             for (int n = 0; n < 256; n++) {
                 List<Double> InputTable = new ArrayList<>();
-                for (int i = 0; i < InputChannelsNumber; i++) {
+                for (int i = 0; i < InputChannelsNumber; ++i) {
                     double v = uInt8Number(bytes[offset++]);
                     if (normalizedLut) {
                         InputTable.add(v / 255);
@@ -461,7 +461,7 @@ public class IccTagType {
             values.put("InputTables", InputTables);
             List<List<Double>> CLUTTables = new ArrayList<>();
             double dimensionSize = Math.pow(GridPointsNumber, InputChannelsNumber);
-            for (int i = 0; i < dimensionSize; i++) {
+            for (int i = 0; i < dimensionSize; ++i) {
                 List<Double> GridPoint = new ArrayList<>();
                 for (int o = 0; o < OutputChannelsNumber; o++) {
                     double v = uInt8Number(bytes[offset++]);
@@ -481,7 +481,7 @@ public class IccTagType {
             List<List<Double>> OutputTables = new ArrayList<>();
             for (int m = 0; m < 256; m++) {
                 List<Double> OutputTable = new ArrayList<>();
-                for (int i = 0; i < OutputChannelsNumber; i++) {
+                for (int i = 0; i < OutputChannelsNumber; ++i) {
                     double v = uInt8Number(bytes[offset++]);
                     if (normalizedLut) {
                         OutputTable.add(v / 255);
@@ -544,7 +544,7 @@ public class IccTagType {
             List<List<Double>> InputTables = new ArrayList<>();
             for (int n = 0; n < InputTablesNumber; n++) {
                 List<Double> InputTable = new ArrayList<>();
-                for (int i = 0; i < InputChannelsNumber; i++) {
+                for (int i = 0; i < InputChannelsNumber; ++i) {
                     double v = uInt16Number(subBytes(bytes, offset, 2));
                     if (normalizedLut) {
                         InputTable.add(v / 65535);
@@ -562,7 +562,7 @@ public class IccTagType {
             values.put("InputTables", InputTables);
             List<List<Double>> CLUTTables = new ArrayList<>();
             double dimensionSize = Math.pow(GridPointsNumber, InputChannelsNumber);
-            for (int i = 0; i < dimensionSize; i++) {
+            for (int i = 0; i < dimensionSize; ++i) {
                 List<Double> GridPoint = new ArrayList<>();
                 for (int o = 0; o < OutputChannelsNumber; o++) {
                     double v = uInt16Number(subBytes(bytes, offset, 2));
@@ -583,7 +583,7 @@ public class IccTagType {
             List<List<Double>> OutputTables = new ArrayList<>();
             for (int m = 0; m < OutputTablesNumber; m++) {
                 List<Double> OutputTable = new ArrayList<>();
-                for (int i = 0; i < OutputChannelsNumber; i++) {
+                for (int i = 0; i < OutputChannelsNumber; ++i) {
                     double v = uInt16Number(subBytes(bytes, offset, 2));
                     if (normalizedLut) {
                         OutputTable.add(v / 65535);
@@ -739,7 +739,7 @@ public class IccTagType {
                 return null;
             }
             double[] doubles = new double[3];
-            for (int i = 0; i < doubles.length; i++) {
+            for (int i = 0; i < doubles.length; ++i) {
                 doubles[i] = Double.parseDouble(strings[i]);
             }
             return doubles;
@@ -843,7 +843,7 @@ public class IccTagType {
                 return null;
             }
             double[][] doubles = new double[strings.length / 3][3];
-            for (int i = 0; i < doubles.length; i++) {
+            for (int i = 0; i < doubles.length; ++i) {
                 doubles[i][0] = Double.parseDouble(strings[i * 3]);
                 doubles[i][1] = Double.parseDouble(strings[i * 3 + 1]);
                 doubles[i][2] = Double.parseDouble(strings[i * 3 + 2]);
@@ -864,7 +864,7 @@ public class IccTagType {
             byte[] sigBytes = toBytes("XYZ ");
             byte[] tagBytes = new byte[12 * values.length + 8];
             System.arraycopy(sigBytes, 0, tagBytes, 0, 4);
-            for (int i = 0; i < values.length; i++) {
+            for (int i = 0; i < values.length; ++i) {
                 double[] xyz = values[i];
                 byte[] xyzBytes = XYZNumber(xyz);
                 System.arraycopy(xyzBytes, 0, tagBytes, 8 + 12 * i, 12);
@@ -903,7 +903,7 @@ public class IccTagType {
         try {
             String[] strings = StringTools.splitBySpace(values.replace("\n", " "));
             double[] doubles = new double[strings.length];
-            for (int i = 0; i < doubles.length; i++) {
+            for (int i = 0; i < doubles.length; ++i) {
                 doubles[i] = Double.parseDouble(strings[i]);
             }
             return doubles;
@@ -943,7 +943,7 @@ public class IccTagType {
                 System.arraycopy(sigBytes, 0, tagBytes, 0, 4);
                 byte[] countBytes = uInt32Number(count);
                 System.arraycopy(countBytes, 0, tagBytes, 8, 4);
-                for (int i = 0; i < count; i++) {
+                for (int i = 0; i < count; ++i) {
                     byte[] valueBytes = uInt16Number((int) (values[i] * 65535));
                     System.arraycopy(valueBytes, 0, tagBytes, 12 + i * 2, 2);
 
@@ -1019,7 +1019,7 @@ public class IccTagType {
         try {
             String[] strings = StringTools.splitBySpace(values.replace("\n", " "));
             double[] doubles = new double[strings.length];
-            for (int i = 0; i < doubles.length; i++) {
+            for (int i = 0; i < doubles.length; ++i) {
                 doubles[i] = Double.parseDouble(strings[i]);
             }
             return doubles;
@@ -1040,7 +1040,7 @@ public class IccTagType {
             byte[] tagBytes = new byte[8 + 4 * count];
             System.arraycopy(sigBytes, 0, tagBytes, 0, 4);
 
-            for (int i = 0; i < count; i++) {
+            for (int i = 0; i < count; ++i) {
                 byte[] valueBytes = s15Fixed16Number(values[i]);
                 System.arraycopy(valueBytes, 0, tagBytes, 8 + i * 4, 4);
             }
@@ -1100,7 +1100,7 @@ public class IccTagType {
 
     public static String XYZNumberDisplay(double[][] values) {
         String s = "";
-        for (int i = 0; i < values.length; i++) {
+        for (int i = 0; i < values.length; ++i) {
             if (i > 0) {
                 s += "\n";
             }
@@ -1117,7 +1117,7 @@ public class IccTagType {
 
     public static String curveDisplay(double[] values) {
         String s = "";
-        for (int i = 0; i < values.length; i++) {
+        for (int i = 0; i < values.length; ++i) {
             s += values[i] + Indent;
         }
         return s;
@@ -1170,7 +1170,7 @@ public class IccTagType {
 
     public static String s15Fixed16ArrayDisplay(double[] values) {
         String s = "";
-        for (int i = 0; i < values.length; i++) {
+        for (int i = 0; i < values.length; ++i) {
             if (i % 3 == 0 && i > 0 && i < values.length - 1) {
                 s += "\n";
             }

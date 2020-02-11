@@ -336,6 +336,18 @@ public class ImageColor {
                 (int) (color.getBlue() * 255), (int) (color.getOpacity() * 255));
     }
 
+    public static int getRGB(javafx.scene.paint.Color color) {
+        return ImageColor.converColor(color).getRGB();
+    }
+
+    public static int getRGB(String rgba) {
+        return ImageColor.converColor(javafx.scene.paint.Color.web(rgba)).getRGB();
+    }
+
+    public static javafx.scene.paint.Color getColor(int pixel) {
+        return ImageColor.converColor(new Color(pixel));
+    }
+
     // https://www.cnblogs.com/xiaonanxia/p/9448444.html
     public static Color blendAlpha(Color color, float opocity, Color bgColor, boolean keepAlpha) {
         int red = (int) (color.getRed() * opocity + bgColor.getRed() * (1 - opocity));

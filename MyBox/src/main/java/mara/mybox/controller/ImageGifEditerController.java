@@ -1,21 +1,17 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.List;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.Modality;
 import mara.mybox.data.VisitHistory;
-import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.file.ImageGifFile;
 import mara.mybox.value.AppVariables;
@@ -32,11 +28,9 @@ import mara.mybox.value.CommonValues;
  */
 public class ImageGifEditerController extends ImagesListController {
 
-    protected int currentIndex, interval, width, height;
+    protected int currentIndex, width, height;
     private boolean keepSize;
 
-    @FXML
-    protected ComboBox<String> intervalCBox;
     @FXML
     protected ToggleGroup sizeGroup;
     @FXML
@@ -64,27 +58,6 @@ public class ImageGifEditerController extends ImagesListController {
 
             optionsBox.setDisable(true);
             tableBox.setDisable(true);
-
-            interval = 500;
-            List<String> values = Arrays.asList("500", "300", "1000", "2000", "3000", "5000", "10000");
-            intervalCBox.getItems().addAll(values);
-            intervalCBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    try {
-                        int v = Integer.valueOf(newValue);
-                        if (v > 0) {
-                            interval = v;
-                            FxmlControl.setEditorNormal(intervalCBox);
-                        } else {
-                            FxmlControl.setEditorBadStyle(intervalCBox);
-                        }
-                    } catch (Exception e) {
-                        FxmlControl.setEditorBadStyle(intervalCBox);
-                    }
-                }
-            });
-            intervalCBox.getSelectionModel().select(0);
 
             sizeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -179,7 +152,7 @@ public class ImageGifEditerController extends ImagesListController {
                 @Override
                 protected boolean handle() {
                     ret = ImageGifFile.writeImages(tableData, outFile,
-                            interval, loopCheck.isSelected(), keepSize, width, height);
+                            loopCheck.isSelected(), keepSize, width, height);
                     if (ret.isEmpty()) {
                         return true;
                     } else {
@@ -190,7 +163,7 @@ public class ImageGifEditerController extends ImagesListController {
 
                 @Override
                 protected void whenSucceeded() {
-                    popSuccessul();
+                    popSuccessful();
                     if (outFile.equals(sourceFile)) {
                         setImageChanged(false);
                     }

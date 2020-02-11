@@ -31,7 +31,7 @@ public class HtmlTools {
             + "tr { height: 1.2em;  }\n";
 //            + "td { padding: 5px; }\n";
     public static final String ConsoleStyle
-            = "body { background-color:black; color:#66FF66; }\n"
+            = "body { background-color:black; color:#CCFF99; }\n"
             + "table, th, td { border: #66FF66; }\n"
             + "a:link {color: #FFFFFF}\n"
             + "a:visited  {color: #DDDDDD}\n"

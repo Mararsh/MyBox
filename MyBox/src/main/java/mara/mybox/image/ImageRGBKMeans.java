@@ -134,7 +134,7 @@ public class ImageRGBKMeans extends ListKMeans<Color> {
         if (mappedColor == null) {
             mappedColor = regionColor;
             int minDistance = Integer.MAX_VALUE;
-            for (int i = 0; i < centers.size(); i++) {
+            for (int i = 0; i < centers.size(); ++i) {
                 Color centerColor = centers.get(i);
                 int distance = ImageColor.calculateColorDistance2(regionColor, centerColor);
                 if (distance < minDistance) {

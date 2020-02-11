@@ -462,7 +462,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                             new Image("img/Settings.png"), new Image("img/zz1.png"), new Image("img/jade.png")
                     );
                     clips = new ArrayList<>();
-                    for (int i = examples.size() - 1; i >= 0; i--) {
+                    for (int i = examples.size() - 1; i >= 0; --i) {
                         String name = ImageClipboard.add(examples.get(i), false);
                         ImageClipboard clip = ImageClipboard.clip(name, false, true);
                         if (clip != null) {

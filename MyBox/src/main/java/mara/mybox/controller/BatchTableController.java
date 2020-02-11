@@ -38,9 +38,9 @@ import mara.mybox.data.FileInformation.FileSelectorType;
 import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
+import mara.mybox.fxml.TableDateCell;
 import mara.mybox.fxml.TableFileSizeCell;
 import mara.mybox.fxml.TableNumberCell;
-import mara.mybox.fxml.TableDateCell;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
@@ -85,7 +85,7 @@ public abstract class BatchTableController<P> extends BaseController {
     @FXML
     protected Label tableLabel;
     @FXML
-    protected FlowPane selectPane;
+    protected FlowPane selectPane, buttonsPane;
 
     public BatchTableController() {
         sourceExtensionFilter = CommonFxValues.AllExtensionFilter;
@@ -141,19 +141,6 @@ public abstract class BatchTableController<P> extends BaseController {
 
             tableSelected();
 
-//            tableView.disableProperty().addListener(new ChangeListener() {
-//                @Override
-//                public void changed(ObservableValue ov, Object t, Object t1) {
-//                    if (tableView.isDisable()) {
-//                        tableView.setStyle("-fx-opacity: 1.0;");
-//                    }
-//                }
-//            });
-//            tableBox.styleProperty().bind(
-//                    Bindings.when(tableBox.disableProperty())
-//                            .then(new SimpleStringProperty("-fx-opacity: 1.0;"))
-//                            .otherwise(new SimpleStringProperty("-fx-opacity: 1.0;"))
-//            );
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -613,7 +600,7 @@ public abstract class BatchTableController<P> extends BaseController {
 
                 @Override
                 protected Void call() {
-                    for (int i = 0; i < tableData.size(); i++) {
+                    for (int i = 0; i < tableData.size(); ++i) {
                         if (backgroundTask == null || isCancelled()) {
                             canceled = true;
                             return null;
@@ -623,7 +610,7 @@ public abstract class BatchTableController<P> extends BaseController {
                             continue;
                         }
                         if (info.getFile().isDirectory()) {
-                            boolean sub = tableSubdirCheck != null && tableSubdirCheck.isSelected();
+                            boolean sub = tableSubdirCheck == null || tableSubdirCheck.isSelected();
                             info.setDirectorySize(sub);
                             Platform.runLater(new Runnable() {
                                 @Override
@@ -739,7 +726,6 @@ public abstract class BatchTableController<P> extends BaseController {
             recordFileAdded(files.get(0));
             List<P> infos = new ArrayList<>();
             for (File file : files) {
-
                 P t = create(file);
                 if (t != null) {
                     infos.add(t);
@@ -893,7 +879,7 @@ public abstract class BatchTableController<P> extends BaseController {
             return;
         }
         List<Integer> newselected = new ArrayList<>();
-        for (int i = selected.size() - 1; i >= 0; i--) {
+        for (int i = selected.size() - 1; i >= 0; --i) {
             int index = selected.get(i);
             if (index == tableData.size() - 1
                     || newselected.contains(index + 1)) {
@@ -936,7 +922,7 @@ public abstract class BatchTableController<P> extends BaseController {
             return;
         }
         isSettingValues = true;
-        for (int i = selected.size() - 1; i >= 0; i--) {
+        for (int i = selected.size() - 1; i >= 0; --i) {
             int index = selected.get(i);
             if (index < 0 || index > tableData.size() - 1) {
                 continue;
@@ -1005,7 +991,7 @@ public abstract class BatchTableController<P> extends BaseController {
             FilesFindController controller
                     = (FilesFindController) openStage(CommonValues.FilesFindFxml);
             controller.tableData.clear();
-            for (int i = 0; i < tableData.size(); i++) {
+            for (int i = 0; i < tableData.size(); ++i) {
                 FileInformation finfo = fileInformation(i);
                 controller.tableData.add(finfo);
             }

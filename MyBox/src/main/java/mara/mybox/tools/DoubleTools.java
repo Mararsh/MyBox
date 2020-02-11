@@ -56,7 +56,7 @@ public class DoubleTools {
                 return null;
             }
             double[] result = new double[data.length];
-            for (int i = 0; i < data.length; i++) {
+            for (int i = 0; i < data.length; ++i) {
                 result[i] = scale(data[i], scale);
             }
             return result;
@@ -86,7 +86,7 @@ public class DoubleTools {
             }
         });
         double[] sorted = new double[numbers.length];
-        for (int i = 0; i < list.size(); i++) {
+        for (int i = 0; i < list.size(); ++i) {
             sorted[i] = list.get(i);
         }
         return sorted;

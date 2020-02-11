@@ -202,6 +202,7 @@ License:    Apache License Version 2.0
                                                                     <children>
                                                                         <RadioButton fx:id="pcxRadio" mnemonicParsing="false" text="pcx" toggleGroup="$fileTypeGroup" />
                                                                         <RadioButton mnemonicParsing="false" text="wbmp" toggleGroup="$fileTypeGroup" />
+<RadioButton mnemonicParsing="false" text="ico" toggleGroup="$fileTypeGroup" />
                                                                     </children>
                                                                 </FlowPane>
                                                             </children>
@@ -406,11 +407,13 @@ License:    Apache License Version 2.0
                                                             <content>
                                                                 <AnchorPane fx:id="maskPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#paneClicked" onMouseDragged="#showXY" onMouseMoved="#showXY" onMousePressed="#showXY" onMouseReleased="#showXY" VBox.vgrow="ALWAYS">
                                                                     <children>
-                                                      <Rectangle fx:id="borderLine" arcHeight="5.0" arcWidth="5.0" disable="true" fill="#ffffff00" height="200.0" onMousePressed="#handlerPressed" onMouseReleased="#rectangleReleased" stroke="#cccccc" strokeType="OUTSIDE" width="200.0">
-                                                         <cursor>
-                                                            <Cursor fx:constant="NONE" />
-                                                         </cursor>
-                                                      </Rectangle>
+                                                                        <Rectangle fx:id="borderLine" arcHeight="5.0" arcWidth="5.0" disable="true" fill="#ffffff00" height="200.0" onMousePressed="#handlerPressed" onMouseReleased="#rectangleReleased" stroke="#cccccc" strokeType="OUTSIDE" width="200.0">
+                                                                            <cursor>
+                                                                                <Cursor fx:constant="NONE" />
+                                                                            </cursor>
+                                                                        </Rectangle>
+                                                                        <Text fx:id="sizeText" fill="#cccccc" layoutX="10.0" layoutY="10.0" strokeType="OUTSIDE" strokeWidth="0.0" x="200.0" y="200.0">
+                                                                        </Text>
                                                                         <ImageView fx:id="imageView" cache="true" fitHeight="300.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true">
                                                                         </ImageView>
                                                                         <Rectangle fx:id="maskRectangleLine" arcHeight="5.0" arcWidth="5.0" fill="#ffffff00" height="241.0" layoutX="163.0" layoutY="77.0" onMousePressed="#handlerPressed" onMouseReleased="#rectangleReleased" stroke="RED" strokeType="INSIDE" width="334.0">

@@ -344,7 +344,7 @@ public class ImageOCRBatchController extends ImagesBatchController {
         selected.addAll(languageList.getSelectionModel().getSelectedItems());
         isSettingValues = true;
         int size = selectedIndices.size();
-        for (int i = size - 1; i >= 0; i--) {
+        for (int i = size - 1; i >= 0; --i) {
             int index = selectedIndices.get(i);
             languageList.getItems().remove(index);
         }
@@ -365,7 +365,7 @@ public class ImageOCRBatchController extends ImagesBatchController {
         }
         isSettingValues = true;
         List<Integer> newselected = new ArrayList<>();
-        for (int i = selected.size() - 1; i >= 0; i--) {
+        for (int i = selected.size() - 1; i >= 0; --i) {
             int index = selected.get(i);
             if (index == languageList.getItems().size() - 1
                     || newselected.contains(index + 1)) {
@@ -405,6 +405,9 @@ public class ImageOCRBatchController extends ImagesBatchController {
 
         try {
             OCRinstance = new Tesseract();
+            // https://stackoverflow.com/questions/58286373/tess4j-pdf-to-tiff-to-tesseract-warning-invalid-resolution-0-dpi-using-70/58296472#58296472
+            OCRinstance.setTessVariable("user_defined_dpi", "96");
+            OCRinstance.setTessVariable("debug_file", "/dev/null");
             String path = AppVariables.getUserConfigValue("TessDataPath", null);
             if (path != null) {
                 OCRinstance.setDatapath(path);
@@ -431,7 +434,7 @@ public class ImageOCRBatchController extends ImagesBatchController {
     @Override
     public String handleFile(File srcFile, File targetPath) {
         try {
-            showHandling(srcFile);
+            countHandling(srcFile);
             File target = makeTargetFile(srcFile, targetPath);
             if (target == null) {
                 return AppVariables.message("Skip");
@@ -566,7 +569,7 @@ public class ImageOCRBatchController extends ImagesBatchController {
                         message("Width"), message("Height")
                 ));
                 StringTable table = new StringTable(names, srcFile.getAbsolutePath());
-                for (int i = 0; i < words.size(); i++) {
+                for (int i = 0; i < words.size(); ++i) {
                     Word word = words.get(i);
                     Rectangle rect = word.getBoundingBox();
                     List<String> data = new ArrayList<>();
@@ -592,7 +595,7 @@ public class ImageOCRBatchController extends ImagesBatchController {
                         message("Width"), message("Height")
                 ));
                 StringTable table = new StringTable(names, srcFile.getAbsolutePath());
-                for (int i = 0; i < rectangles.size(); i++) {
+                for (int i = 0; i < rectangles.size(); ++i) {
                     Rectangle rect = rectangles.get(i);
                     List<String> data = new ArrayList<>();
                     data.addAll(Arrays.asList(

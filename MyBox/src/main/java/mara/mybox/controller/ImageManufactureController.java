@@ -31,6 +31,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TitledPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
@@ -92,6 +93,8 @@ public class ImageManufactureController extends ImageViewerController {
         Mosaic, Convolution
     }
 
+    @FXML
+    protected TitledPane newPane;
     @FXML
     protected VBox displayBox, imageBox, rightPaneBox;
     @FXML
@@ -231,41 +234,42 @@ public class ImageManufactureController extends ImageViewerController {
             fileBox.disableProperty().bind(imageLoaded.not());
             saveAsPane.disableProperty().bind(imageLoaded.not());
             browsePane.disableProperty().bind(imageLoaded.not());
-
             saveButton.disableProperty().bind(imageUpdated.not());
 
-            newWidthInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    try {
-                        int v = Integer.parseInt(newValue);
-                        if (v > 0) {
-                            newWidth = v;
-                            newWidthInput.setStyle(null);
-                        } else {
+            newPane.expandedProperty().addListener(
+                    (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
+                        AppVariables.setUserConfigValue("ImageManufactureNewPane", newPane.isExpanded());
+                    });
+            newPane.setExpanded(AppVariables.getUserConfigBoolean("ImageManufactureNewPane", true));
+
+            newWidthInput.textProperty().addListener(
+                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
+                        try {
+                            int v = Integer.parseInt(newValue);
+                            if (v > 0) {
+                                newWidth = v;
+                                newWidthInput.setStyle(null);
+                            } else {
+                                newWidthInput.setStyle(badStyle);
+                            }
+                        } catch (Exception e) {
                             newWidthInput.setStyle(badStyle);
                         }
-                    } catch (Exception e) {
-                        newWidthInput.setStyle(badStyle);
-                    }
-                }
-            });
-            newHeightInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    try {
-                        int v = Integer.parseInt(newValue);
-                        if (v > 0) {
-                            newHeight = v;
-                            newHeightInput.setStyle(null);
-                        } else {
+                    });
+            newHeightInput.textProperty().addListener(
+                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
+                        try {
+                            int v = Integer.parseInt(newValue);
+                            if (v > 0) {
+                                newHeight = v;
+                                newHeightInput.setStyle(null);
+                            } else {
+                                newHeightInput.setStyle(badStyle);
+                            }
+                        } catch (Exception e) {
                             newHeightInput.setStyle(badStyle);
                         }
-                    } catch (Exception e) {
-                        newHeightInput.setStyle(badStyle);
-                    }
-                }
-            });
+                    });
             try {
                 String c = AppVariables.getUserConfigValue("NewBackgroundColor", Color.TRANSPARENT.toString());
                 bgRect.setFill(Color.web(c));
@@ -284,6 +288,7 @@ public class ImageManufactureController extends ImageViewerController {
 
             initSaveAsPane();
             initBrowsePane();
+            initTipsPane();
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -1154,7 +1159,7 @@ public class ImageManufactureController extends ImageViewerController {
                                 popText(info, AppVariables.getCommentsDelay(), "white", "1.5em", null);
                                 // Force listView to refresh
                                 // https://stackoverflow.com/questions/13906139/javafx-update-of-listview-if-an-element-of-observablelist-changes?r=SearchResults
-                                for (int i = 0; i < hisBox.getItems().size(); i++) {
+                                for (int i = 0; i < hisBox.getItems().size(); ++i) {
                                     hisBox.getItems().set(i, hisBox.getItems().get(i));
                                 }
 
@@ -1195,12 +1200,15 @@ public class ImageManufactureController extends ImageViewerController {
         alert.setTitle(getBaseTitle());
         alert.setContentText(AppVariables.message("SureClear"));
         alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+        ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
+        ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
+        alert.getButtonTypes().setAll(buttonSure, buttonCancel);
         Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
         stage.setAlwaysOnTop(true);
         stage.toFront();
 
         Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() != ButtonType.OK) {
+        if (result.get() != buttonSure) {
             return;
         }
         hisBox.getItems().clear();
@@ -1526,7 +1534,7 @@ public class ImageManufactureController extends ImageViewerController {
                         } else if (saveAsType == SaveAsType.Open) {
                             openImageManufacture(file.getAbsolutePath());
                         }
-                        popSuccessul();
+                        popSuccessful();
                     }
                 };
                 openHandlingStage(task, Modality.WINDOW_MODAL);

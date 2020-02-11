@@ -44,26 +44,46 @@ License:    Apache License Version 2.0
                                                     </ImageView>
                                                 </children>
                                             </HBox>
-                                            <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
-                                                <children>
-                                                    <Label text="%StartMonth" />
-                                                    <TextField fx:id="startMonthInput" prefWidth="90.0" promptText="2016-05" />
-                                                    <Label text="%EmptyForVeryStart" />
-                                                    <Label text="%StartPage">
-                                                        <HBox.margin>
-                                                            <Insets left="30.0" />
-                                                        </HBox.margin>
-                                                    </Label>
-                                                    <TextField fx:id="startPageInput" prefWidth="40.0" />
-                                                </children>
-                                            </HBox>
-                                            <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="60.0" spacing="10.0">
-                                                <children>
-                                                    <Label text="%EndMonth" />
-                                                    <TextField fx:id="endMonthInput" prefWidth="90.0" promptText="2018-09" />
-                                                    <Label text="%EmptyForNow" />
-                                                </children>
-                                            </HBox>
+                              <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="209.0" spacing="10.0">
+                                 <children>
+                                    <CheckBox fx:id="postsCheck" mnemonicParsing="false" selected="true" text="%Posts" />
+                                 </children>
+                              </HBox>
+                              <VBox fx:id="monthsBox" spacing="5.0">
+                                 <children>
+                                                  <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
+                                                      <children>
+                                                          <Label text="%StartMonth" />
+                                                          <TextField fx:id="startMonthInput" prefWidth="90.0" promptText="2016-05" />
+                                                          <Label text="%EmptyForVeryStart" />
+                                                          <Label text="%StartPage">
+                                                              <HBox.margin>
+                                                                  <Insets left="30.0" />
+                                                              </HBox.margin>
+                                                          </Label>
+                                                          <TextField fx:id="startPageInput" prefWidth="60.0" />
+                                                      </children>
+                                                  </HBox>
+                                                  <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                                      <children>
+                                                          <Label text="%EndMonth" />
+                                                          <TextField fx:id="endMonthInput" prefWidth="90.0" promptText="2018-09" />
+                                                          <Label text="%EmptyForNow" />
+                                                      </children>
+                                                  </HBox>
+                                 </children>
+                              </VBox>
+                              <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="83.0" spacing="10.0">
+                                 <children>
+                                    <CheckBox fx:id="likeCheck" mnemonicParsing="false" text="%Like" />
+                                    <Label text="%StartPage">
+                                       <HBox.margin>
+                                          <Insets left="20.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                    <TextField fx:id="likeStartPageInput" prefWidth="60.0" />
+                                 </children>
+                              </HBox>
                                             <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
                                                 <children>
                                                     <CheckBox fx:id="expandCommentsCheck" mnemonicParsing="false" selected="true" text="%ExpandComments">
@@ -89,11 +109,12 @@ License:    Apache License Version 2.0
                                                     </CheckBox>
                                                 </children>
                                             </HBox>
-                              <CheckBox fx:id="bypassSSLCheck" mnemonicParsing="false" text="%WeiboBypassSSL" VBox.vgrow="NEVER">
-                                 <VBox.margin>
-                                    <Insets top="10.0" />
-                                 </VBox.margin>
-                              </CheckBox>
+                              <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                 <children>
+                                    <Label text="%DPI" />
+                                    <ComboBox fx:id="dpiSelector" editable="true" prefWidth="120.0" />
+                                 </children>
+                              </HBox>
                                         </children>
                                         <padding>
                                             <Insets top="10.0" />
@@ -154,12 +175,6 @@ License:    Apache License Version 2.0
                                                     <CheckBox fx:id="ditherCheck" mnemonicParsing="false" text="%Dithering" />
                                                 </children>
                                             </HBox>
-                              <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                 <children>
-                                    <Label text="%DPI" />
-                                    <ComboBox fx:id="dpiSelector" editable="true" prefWidth="120.0" />
-                                 </children>
-                              </HBox>
                                             <HBox alignment="CENTER_LEFT" spacing="10.0">
                                                 <children>
                                                     <Label text="%SnapInterval">
@@ -297,6 +312,11 @@ License:    Apache License Version 2.0
                                                     <Label text="%MinAccessIntervalComments" />
                                  </children>
                                             </HBox>
+                              <CheckBox fx:id="bypassSSLCheck" mnemonicParsing="false" text="%WeiboBypassSSL" VBox.vgrow="NEVER">
+                                 <VBox.margin>
+                                    <Insets top="10.0" />
+                                 </VBox.margin>
+                              </CheckBox>
                                         </children>
                                     </VBox>
                                 </content>

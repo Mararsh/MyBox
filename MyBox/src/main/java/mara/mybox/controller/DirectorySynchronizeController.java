@@ -449,6 +449,9 @@ public class DirectorySynchronizeController extends FilesBatchController {
                 return false;
             }
             File[] files = sourcePath.listFiles();
+            if (files == null) {
+                return false;
+            }
             String srcFileName;
             long len;
             for (File srcFile : files) {
@@ -515,19 +518,19 @@ public class DirectorySynchronizeController extends FilesBatchController {
                     if (copyFile(srcFile, tFile)) {
                         copyAttr.setCopiedFilesNumber(copyAttr.getCopiedFilesNumber() + 1);
                         copyAttr.setCopiedSize(copyAttr.getCopiedSize() + len);
-                        if (verboseCheck.isSelected()) {
+                        if (verboseCheck == null || verboseCheck.isSelected()) {
                             updateLogs(copyAttr.getCopiedFilesNumber() + "  " + strCopySuccessfully
                                     + srcFileName + " -> " + tFile.getAbsolutePath());
                         }
                         lastFileName = srcFileName;
                     } else if (!copyAttr.isContinueWhenError()) {
-                        if (verboseCheck.isSelected()) {
+                        if (verboseCheck == null || verboseCheck.isSelected()) {
                             updateLogs(strFailedCopy + srcFileName + " -> " + tFile.getAbsolutePath());
                         }
                         return false;
                     }
                 } else if (srcFile.isDirectory() && copyAttr.isCopySubdir()) {
-                    if (verboseCheck.isSelected()) {
+                    if (verboseCheck == null || verboseCheck.isSelected()) {
                         updateLogs(message("HandlingDirectory") + " " + srcFileName, true);
                     }
                     if (srcFile.listFiles() == null && !copyAttr.isCopyEmpty()) {
@@ -535,7 +538,7 @@ public class DirectorySynchronizeController extends FilesBatchController {
                     }
                     if (startHandle && !tFile.exists()) {
                         tFile.mkdirs();
-                        if (verboseCheck.isSelected()) {
+                        if (verboseCheck == null || verboseCheck.isSelected()) {
                             updateLogs(strCreatedSuccessfully + tFile.getAbsolutePath());
                         }
                     }
@@ -543,13 +546,13 @@ public class DirectorySynchronizeController extends FilesBatchController {
                         if (startHandle) {
                             copyAttr.setCopiedDirectoriesNumber(copyAttr.getCopiedDirectoriesNumber() + 1);
                             copyAttr.setCopiedSize(copyAttr.getCopiedSize() + len);
-                            if (verboseCheck.isSelected()) {
+                            if (verboseCheck == null || verboseCheck.isSelected()) {
                                 updateLogs(copyAttr.getCopiedDirectoriesNumber() + "  " + strCopySuccessfully
                                         + srcFileName + " -> " + tFile.getAbsolutePath());
                             }
                         }
                     } else if (!copyAttr.isContinueWhenError()) {
-                        if (verboseCheck.isSelected()) {
+                        if (verboseCheck == null || verboseCheck.isSelected()) {
                             updateLogs(strFailedCopy + srcFile.getAbsolutePath() + " -> " + tFile.getAbsolutePath());
                         }
                         return false;
@@ -570,6 +573,9 @@ public class DirectorySynchronizeController extends FilesBatchController {
                 return false;
             }
             File[] files = sourcePath.listFiles();
+            if (files == null) {
+                return false;
+            }
             String srcFileName;
             long len;
             for (File srcFile : files) {
@@ -581,7 +587,7 @@ public class DirectorySynchronizeController extends FilesBatchController {
                 if (!startHandle) {
                     if (lastFileName.equals(srcFileName)) {
                         startHandle = true;
-                        if (verboseCheck.isSelected()) {
+                        if (verboseCheck == null || verboseCheck.isSelected()) {
                             updateLogs(message("ReachFile") + " " + lastFileName, true);
                         }
                     }
@@ -601,24 +607,24 @@ public class DirectorySynchronizeController extends FilesBatchController {
                     if (copyFile(srcFile, tFile)) {
                         copyAttr.setCopiedFilesNumber(copyAttr.getCopiedFilesNumber() + 1);
                         copyAttr.setCopiedSize(copyAttr.getCopiedSize() + len);
-                        if (verboseCheck.isSelected()) {
+                        if (verboseCheck == null || verboseCheck.isSelected()) {
                             updateLogs(copyAttr.getCopiedFilesNumber() + "  " + strCopySuccessfully
                                     + srcFileName + " -> " + tFile.getAbsolutePath());
                         }
                         lastFileName = srcFileName;
                     } else if (!copyAttr.isContinueWhenError()) {
-                        if (verboseCheck.isSelected()) {
+                        if (verboseCheck == null || verboseCheck.isSelected()) {
                             updateLogs(strFailedCopy + srcFileName + " -> " + tFile.getAbsolutePath());
                         }
                         return false;
                     }
                 } else if (srcFile.isDirectory()) {
-                    if (verboseCheck.isSelected()) {
+                    if (verboseCheck == null || verboseCheck.isSelected()) {
                         updateLogs(message("HandlingDirectory") + " " + srcFileName, true);
                     }
                     if (startHandle) {
                         tFile.mkdirs();
-                        if (verboseCheck.isSelected()) {
+                        if (verboseCheck == null || verboseCheck.isSelected()) {
                             updateLogs(strCreatedSuccessfully + tFile.getAbsolutePath());
                         }
                     }
@@ -626,13 +632,13 @@ public class DirectorySynchronizeController extends FilesBatchController {
                         if (startHandle) {
                             copyAttr.setCopiedDirectoriesNumber(copyAttr.getCopiedDirectoriesNumber() + 1);
                             copyAttr.setCopiedSize(copyAttr.getCopiedSize() + len);
-                            if (verboseCheck.isSelected()) {
+                            if (verboseCheck == null || verboseCheck.isSelected()) {
                                 updateLogs(copyAttr.getCopiedDirectoriesNumber() + "  " + strCopySuccessfully
                                         + srcFileName + " -> " + tFile.getAbsolutePath());
                             }
                         }
                     } else if (!copyAttr.isContinueWhenError()) {
-                        if (verboseCheck.isSelected()) {
+                        if (verboseCheck == null || verboseCheck.isSelected()) {
                             updateLogs(strFailedCopy + srcFile.getAbsolutePath() + " -> " + tFile.getAbsolutePath());
                         }
                         return false;
@@ -663,7 +669,7 @@ public class DirectorySynchronizeController extends FilesBatchController {
                         if (record) {
                             copyAttr.setDeletedDirectories(copyAttr.getDeletedDirectories() + 1);
                             copyAttr.setDeletedSize(copyAttr.getDeletedSize() + len);
-                            if (verboseCheck.isSelected()) {
+                            if (verboseCheck == null || verboseCheck.isSelected()) {
                                 updateLogs(copyAttr.getDeletedDirectories() + "  " + strDirectoryDeleteSuccessfully + filename);
                             }
                         }
@@ -681,7 +687,7 @@ public class DirectorySynchronizeController extends FilesBatchController {
                     if (record) {
                         copyAttr.setFailedDeletedDirectories(copyAttr.getFailedDeletedDirectories() + 1);
                         copyAttr.setFailedDeletedSize(copyAttr.getFailedDeletedSize() + len);
-                        if (verboseCheck.isSelected()) {
+                        if (verboseCheck == null || verboseCheck.isSelected()) {
                             updateLogs(strFailedDelete + filename);
                         }
                     }
@@ -695,7 +701,7 @@ public class DirectorySynchronizeController extends FilesBatchController {
                 if (record) {
                     copyAttr.setDeletedFiles(copyAttr.getDeletedFiles() + 1);
                     copyAttr.setDeletedSize(copyAttr.getDeletedSize() + len);
-                    if (verboseCheck.isSelected()) {
+                    if (verboseCheck == null || verboseCheck.isSelected()) {
                         updateLogs(copyAttr.getDeletedFiles() + "  " + strFileDeleteSuccessfully + filename);
                     }
                 }
@@ -765,13 +771,13 @@ public class DirectorySynchronizeController extends FilesBatchController {
                         tFile.delete();
                         copyAttr.setDeletedDirectories(copyAttr.getDeletedDirectories() + 1);
                         copyAttr.setDeletedSize(copyAttr.getDeletedSize() + len);
-                        if (verboseCheck.isSelected()) {
+                        if (verboseCheck == null || verboseCheck.isSelected()) {
                             updateLogs(strDirectoryDeleteSuccessfully + filename);
                         }
                     } catch (Exception e) {
                         copyAttr.setFailedDeletedDirectories(copyAttr.getFailedDeletedDirectories() + 1);
                         copyAttr.setFailedDeletedSize(copyAttr.getFailedDeletedSize() + len);
-                        if (verboseCheck.isSelected()) {
+                        if (verboseCheck == null || verboseCheck.isSelected()) {
                             updateLogs(strFailedDelete + filename);
                         }
                         if (!copyAttr.isContinueWhenError()) {
@@ -781,7 +787,7 @@ public class DirectorySynchronizeController extends FilesBatchController {
                 } else {
                     copyAttr.setFailedDeletedDirectories(copyAttr.getFailedDeletedDirectories() + 1);
                     copyAttr.setFailedDeletedSize(copyAttr.getFailedDeletedSize() + len);
-                    if (verboseCheck.isSelected()) {
+                    if (verboseCheck == null || verboseCheck.isSelected()) {
                         updateLogs(strFailedDelete + filename);
                     }
                     if (!copyAttr.isContinueWhenError()) {
@@ -793,7 +799,7 @@ public class DirectorySynchronizeController extends FilesBatchController {
                     tFile.delete();
                     copyAttr.setDeletedFiles(copyAttr.getDeletedFiles() + 1);
                     copyAttr.setDeletedSize(copyAttr.getDeletedSize() + len);
-                    if (verboseCheck.isSelected()) {
+                    if (verboseCheck == null || verboseCheck.isSelected()) {
                         updateLogs(strFileDeleteSuccessfully + filename);
                     }
                 } catch (Exception e) {

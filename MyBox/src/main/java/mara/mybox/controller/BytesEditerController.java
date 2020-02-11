@@ -80,7 +80,7 @@ public class BytesEditerController extends FileEditerController {
         });
 
         List<String> capitalList = new ArrayList<>();
-        for (char i = 'A'; i <= 'Z'; i++) {
+        for (char i = 'A'; i <= 'Z'; ++i) {
             capitalList.add(i + "");
         }
         capitalBox.getItems().addAll(capitalList);
@@ -92,7 +92,7 @@ public class BytesEditerController extends FileEditerController {
         });
 
         List<String> smallList = new ArrayList<>();
-        for (char i = 'a'; i <= 'z'; i++) {
+        for (char i = 'a'; i <= 'z'; ++i) {
             smallList.add(i + "");
         }
         smallBox.getItems().addAll(smallList);
@@ -104,7 +104,7 @@ public class BytesEditerController extends FileEditerController {
         });
 
         List<String> numberList = new ArrayList<>();
-        for (char i = '0'; i <= '9'; i++) {
+        for (char i = '0'; i <= '9'; ++i) {
             numberList.add(i + "");
         }
         numberBox.getItems().addAll(numberList);
@@ -115,11 +115,18 @@ public class BytesEditerController extends FileEditerController {
             }
         });
 
+        inputPane.expandedProperty().addListener(
+                (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
+                    AppVariables.setUserConfigValue(baseName + "InputPane", inputPane.isExpanded());
+                });
+        inputPane.setExpanded(AppVariables.getUserConfigBoolean(baseName + "InputPane", true));
     }
 
     @Override
     protected void initLineBreakTab() {
         try {
+            super.initLineBreakTab();
+
             lineBreakGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue<? extends Toggle> ov,
@@ -489,7 +496,7 @@ public class BytesEditerController extends FileEditerController {
         }
         filterStrings = new String[vs.size()];
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < vs.size(); i++) {
+        for (int i = 0; i < vs.size(); ++i) {
             filterStrings[i] = vs.get(i);
             if (i == 0) {
                 sb.append(filterStrings[i]);

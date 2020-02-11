@@ -128,7 +128,7 @@ public class SecurityCertificatesAddController extends BaseController {
                             if (saveCloseCheck.isSelected()) {
                                 closeStage();
                             }
-                            popSuccessul();
+                            popSuccessful();
                         } else {
                             popError(error);
                         }

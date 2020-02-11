@@ -639,7 +639,7 @@ public class FxmlImageManufacture {
             int width = (int) image.getWidth();
             int height = (int) image.getHeight();
             int row;
-            for (int i = 0; i < rows.size(); i++) {
+            for (int i = 0; i < rows.size(); ++i) {
                 row = rows.get(i);
                 if (row <= 0 || row >= height - 1) {
                     continue;
@@ -650,7 +650,7 @@ public class FxmlImageManufacture {
                 group.getChildren().add(rowLine);
             }
             int col;
-            for (int i = 0; i < cols.size(); i++) {
+            for (int i = 0; i < cols.size(); ++i) {
                 col = cols.get(i);
                 if (col <= 0 || col >= width - 1) {
                     continue;
@@ -662,9 +662,9 @@ public class FxmlImageManufacture {
             }
 
             if (showSize) {
-                for (int i = 0; i < rows.size() - 1; i++) {
+                for (int i = 0; i < rows.size() - 1; ++i) {
                     int h = rows.get(i + 1) - rows.get(i) + 1;
-                    for (int j = 0; j < cols.size() - 1; j++) {
+                    for (int j = 0; j < cols.size() - 1; ++j) {
                         int w = cols.get(j + 1) - cols.get(j) + 1;
                         Text text = new Text();
                         text.setX(cols.get(j) + w / 3);
@@ -702,7 +702,7 @@ public class FxmlImageManufacture {
             Group group = new Group();
 
             int x = Margin, y = Margin, width = 0, height = 0;
-            for (int i = 0; i < images.size(); i++) {
+            for (int i = 0; i < images.size(); ++i) {
                 Image image = images.get(i);
                 ImageView view = new ImageView(image);
                 view.setPreserveRatio(true);
@@ -774,7 +774,7 @@ public class FxmlImageManufacture {
                     }
                 }
             }
-            for (int i = 0; i < images.size(); i++) {
+            for (int i = 0; i < images.size(); ++i) {
                 ImageInformation imageInfo = images.get(i);
                 Image image = imageInfo.getImage();
                 ImageView view = new ImageView(image);
@@ -852,7 +852,7 @@ public class FxmlImageManufacture {
                     }
                 }
             }
-            for (int i = 0; i < images.size(); i++) {
+            for (int i = 0; i < images.size(); ++i) {
                 ImageInformation imageInfo = images.get(i);
                 Image image = imageInfo.getImage();
                 ImageView view = new ImageView(image);
@@ -1103,9 +1103,9 @@ public class FxmlImageManufacture {
             int top = 0, bottom = height - 1, left = 0, right = width - 1;
             int distance2 = colorDistance * colorDistance;
             if (cutTop) {
-                for (int j = 0; j < height; j++) {
+                for (int j = 0; j < height; ++j) {
                     boolean notMatch = false;
-                    for (int i = 0; i < width; i++) {
+                    for (int i = 0; i < width; ++i) {
                         if (!FxmlImageManufacture.isColorMatch2(pixelReader.getColor(i, j), mColor, distance2)) {
                             notMatch = true;
                             break;
@@ -1122,9 +1122,9 @@ public class FxmlImageManufacture {
                 return null;
             }
             if (cutBottom) {
-                for (int j = height - 1; j >= 0; j--) {
+                for (int j = height - 1; j >= 0; --j) {
                     boolean notMatch = false;
-                    for (int i = 0; i < width; i++) {
+                    for (int i = 0; i < width; ++i) {
                         if (!FxmlImageManufacture.isColorMatch2(pixelReader.getColor(i, j), mColor, distance2)) {
                             notMatch = true;
                             break;
@@ -1141,9 +1141,9 @@ public class FxmlImageManufacture {
                 return null;
             }
             if (cutLeft) {
-                for (int i = 0; i < width; i++) {
+                for (int i = 0; i < width; ++i) {
                     boolean notMatch = false;
-                    for (int j = 0; j < height; j++) {
+                    for (int j = 0; j < height; ++j) {
                         if (!FxmlImageManufacture.isColorMatch2(pixelReader.getColor(i, j), mColor, distance2)) {
                             notMatch = true;
                             break;
@@ -1160,9 +1160,9 @@ public class FxmlImageManufacture {
                 return null;
             }
             if (cutRight) {
-                for (int i = width - 1; i >= 0; i--) {
+                for (int i = width - 1; i >= 0; --i) {
                     boolean notMatch = false;
-                    for (int j = 0; j < height; j++) {
+                    for (int j = 0; j < height; ++j) {
                         if (!FxmlImageManufacture.isColorMatch2(pixelReader.getColor(i, j), mColor, distance2)) {
                             notMatch = true;
                             break;
@@ -1278,8 +1278,8 @@ public class FxmlImageManufacture {
             WritableImage newImage = new WritableImage(rwidth, rheight);
             PixelWriter pixelWriter = newImage.getPixelWriter();
             int ix, iy;
-            for (int j = 0; j < rheight; j++) {
-                for (int i = 0; i < rwidth; i++) {
+            for (int j = 0; j < rheight; ++j) {
+                for (int i = 0; i < rwidth; ++i) {
                     ix = i + rx;
                     iy = j + ry;
                     if (ix >= 0 && ix < iwidth && iy >= 0 && iy < iheight) {
@@ -1364,7 +1364,7 @@ public class FxmlImageManufacture {
         WritableImage newImage = new WritableImage(width, height);
         PixelWriter pixelWriter = newImage.getPixelWriter();
 
-        for (int j = 0; j < height; j++) {
+        for (int j = 0; j < height; ++j) {
             int l = 0, r = width - 1;
             while (l <= r) {
                 Color cl = pixelReader.getColor(l, j);
@@ -1384,7 +1384,7 @@ public class FxmlImageManufacture {
         PixelReader pixelReader = image.getPixelReader();
         WritableImage newImage = new WritableImage(width, height);
         PixelWriter pixelWriter = newImage.getPixelWriter();
-        for (int i = 0; i < width; i++) {
+        for (int i = 0; i < width; ++i) {
             int t = 0, b = height - 1;
             while (t <= b) {
                 Color ct = pixelReader.getColor(i, t);

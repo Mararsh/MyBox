@@ -155,7 +155,7 @@ public class EncodingDetect {
             int row, column;
             // Stage 1: Check to see if characters fit into acceptable ranges
             rawtextlen = rawtext.length;
-            for (i = 0; i < rawtextlen - 1; i++) {
+            for (i = 0; i < rawtextlen - 1; ++i) {
                 // System.err.println(rawtext[i]);
                 if (rawtext[i] >= 0) {
                     // asciichars++;
@@ -194,7 +194,7 @@ public class EncodingDetect {
             int row, column;
             // Stage 1: Check to see if characters fit into acceptable ranges
             rawtextlen = rawtext.length;
-            for (i = 0; i < rawtextlen - 1; i++) {
+            for (i = 0; i < rawtextlen - 1; ++i) {
                 // System.err.println(rawtext[i]);
                 if (rawtext[i] >= 0) {
                     // asciichars++;
@@ -254,7 +254,7 @@ public class EncodingDetect {
             int row, column;
             // Stage 1: Check to see if characters fit into acceptable ranges
             rawtextlen = rawtext.length;
-            for (i = 0; i < rawtextlen - 1; i++) {
+            for (i = 0; i < rawtextlen - 1; ++i) {
                 // System.err.println(rawtext[i]);
                 if (rawtext[i] >= 0) {
                     // asciichars++;
@@ -326,7 +326,7 @@ public class EncodingDetect {
             int hzstart = 0, hzend = 0;
             int row, column;
             rawtextlen = rawtext.length;
-            for (i = 0; i < rawtextlen; i++) {
+            for (i = 0; i < rawtextlen; ++i) {
                 if (rawtext[i] == '~') {
                     if (rawtext[i + 1] == '{') {
                         hzstart++;
@@ -396,7 +396,7 @@ public class EncodingDetect {
             int row, column;
             // Check to see if characters fit into acceptable ranges
             rawtextlen = rawtext.length;
-            for (i = 0; i < rawtextlen - 1; i++) {
+            for (i = 0; i < rawtextlen - 1; ++i) {
                 if (rawtext[i] >= 0) {
                     // asciichars++;
                 } else {
@@ -438,7 +438,7 @@ public class EncodingDetect {
             int row, column;
             // Stage 1: Check to see if characters fit into acceptable ranges
             rawtextlen = rawtext.length;
-            for (i = 0; i < rawtextlen - 1; i++) {
+            for (i = 0; i < rawtextlen - 1; ++i) {
                 // System.err.println(rawtext[i]);
                 if (rawtext[i] >= 128) {
                     // asciichars++;
@@ -502,7 +502,7 @@ public class EncodingDetect {
             // Check to see if characters fit into acceptable ranges
             // and have expected frequency of use
             rawtextlen = rawtext.length;
-            for (i = 0; i < rawtextlen - 1; i++) {
+            for (i = 0; i < rawtextlen - 1; ++i) {
                 if (rawtext[i] >= 0) { // in ASCII range
                     // asciichars++;
                 } else { // high bit set
@@ -548,7 +548,7 @@ public class EncodingDetect {
             // Check to see if characters fit into acceptable ranges
             // and have expected frequency of use
             rawtextlen = rawtext.length;
-            for (i = 0; i < rawtextlen - 1; i++) {
+            for (i = 0; i < rawtextlen - 1; ++i) {
                 if (rawtext[i] == (byte) 0x1B && i + 3 < rawtextlen) { // Escape
                     // char ESC
                     if (rawtext[i + 1] == (byte) 0x24 && rawtext[i + 2] == 0x29 && rawtext[i + 3] == (byte) 0x41) { // GB
@@ -622,7 +622,7 @@ public class EncodingDetect {
             // Maybe also use UTF8 Byte Order Mark: EF BB BF
             // Check to see if characters fit into acceptable ranges
             rawtextlen = rawtext.length;
-            for (i = 0; i < rawtextlen; i++) {
+            for (i = 0; i < rawtextlen; ++i) {
                 if ((rawtext[i] & (byte) 0x7F) == rawtext[i]) { // One byte
                     asciibytes++;
                     // Ignore ASCII, can throw off count
@@ -695,7 +695,7 @@ public class EncodingDetect {
             int score = 75;
             int i, rawtextlen;
             rawtextlen = rawtext.length;
-            for (i = 0; i < rawtextlen; i++) {
+            for (i = 0; i < rawtextlen; ++i) {
                 if (rawtext[i] < 0) {
                     score = score - 5;
                 } else if (rawtext[i] == (byte) 0x1B) { // ESC (used by ISO 2022)
@@ -720,7 +720,7 @@ public class EncodingDetect {
             int row, column;
             // Stage 1: Check to see if characters fit into acceptable ranges
             rawtextlen = rawtext.length;
-            for (i = 0; i < rawtextlen - 1; i++) {
+            for (i = 0; i < rawtextlen - 1; ++i) {
                 // System.err.println(rawtext[i]);
                 if (rawtext[i] >= 0) {
                     // asciichars++;
@@ -758,7 +758,7 @@ public class EncodingDetect {
             int row, column;
             // Stage 1: Check to see if characters fit into acceptable ranges
             rawtextlen = rawtext.length;
-            for (i = 0; i < rawtextlen - 1; i++) {
+            for (i = 0; i < rawtextlen - 1; ++i) {
                 // System.err.println(rawtext[i]);
                 if (rawtext[i] >= 0) {
                     // asciichars++;
@@ -789,7 +789,7 @@ public class EncodingDetect {
 
         int iso_2022_kr_probability(byte[] rawtext) {
             int i;
-            for (i = 0; i < rawtext.length; i++) {
+            for (i = 0; i < rawtext.length; ++i) {
                 if (i + 3 < rawtext.length && rawtext[i] == 0x1b && (char) rawtext[i + 1] == '$' && (char) rawtext[i + 2] == ')'
                         && (char) rawtext[i + 3] == 'C') {
                     return 100;
@@ -810,7 +810,7 @@ public class EncodingDetect {
             int row, column;
             // Stage 1: Check to see if characters fit into acceptable ranges
             rawtextlen = rawtext.length;
-            for (i = 0; i < rawtextlen - 1; i++) {
+            for (i = 0; i < rawtextlen - 1; ++i) {
                 // System.err.println(rawtext[i]);
                 if (rawtext[i] >= 0) {
                     // asciichars++;
@@ -838,7 +838,7 @@ public class EncodingDetect {
 
         int iso_2022_jp_probability(byte[] rawtext) {
             int i;
-            for (i = 0; i < rawtext.length; i++) {
+            for (i = 0; i < rawtext.length; ++i) {
                 if (i + 2 < rawtext.length && rawtext[i] == 0x1b && (char) rawtext[i + 1] == '$' && (char) rawtext[i + 2] == 'B') {
                     return 100;
                 }
@@ -858,7 +858,7 @@ public class EncodingDetect {
             int row, column, adjust;
             // Stage 1: Check to see if characters fit into acceptable ranges
             rawtextlen = rawtext.length;
-            for (i = 0; i < rawtextlen - 1; i++) {
+            for (i = 0; i < rawtextlen - 1; ++i) {
                 // System.err.println(rawtext[i]);
                 if (rawtext[i] >= 0) {
                     // asciichars++;
@@ -911,33 +911,33 @@ public class EncodingDetect {
 
         void initialize_frequencies() {
             int i, j;
-            for (i = 0; i < 94; i++) {
-                for (j = 0; j < 94; j++) {
+            for (i = 0; i < 94; ++i) {
+                for (j = 0; j < 94; ++j) {
                     GBFreq[i][j] = 0;
                 }
             }
-            for (i = 0; i < 126; i++) {
-                for (j = 0; j < 191; j++) {
+            for (i = 0; i < 126; ++i) {
+                for (j = 0; j < 191; ++j) {
                     GBKFreq[i][j] = 0;
                 }
             }
-            for (i = 0; i < 94; i++) {
-                for (j = 0; j < 158; j++) {
+            for (i = 0; i < 94; ++i) {
+                for (j = 0; j < 158; ++j) {
                     Big5Freq[i][j] = 0;
                 }
             }
-            for (i = 0; i < 126; i++) {
-                for (j = 0; j < 191; j++) {
+            for (i = 0; i < 126; ++i) {
+                for (j = 0; j < 191; ++j) {
                     Big5PFreq[i][j] = 0;
                 }
             }
-            for (i = 0; i < 94; i++) {
-                for (j = 0; j < 94; j++) {
+            for (i = 0; i < 94; ++i) {
+                for (j = 0; j < 94; ++j) {
                     EUC_TWFreq[i][j] = 0;
                 }
             }
-            for (i = 0; i < 94; i++) {
-                for (j = 0; j < 94; j++) {
+            for (i = 0; i < 94; ++i) {
+                for (j = 0; j < 94; ++j) {
                     JPFreq[i][j] = 0;
                 }
             }

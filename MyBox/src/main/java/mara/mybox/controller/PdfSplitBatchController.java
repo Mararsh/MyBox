@@ -18,7 +18,6 @@ import mara.mybox.data.PdfInformation;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.PdfTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
@@ -205,55 +204,53 @@ public class PdfSplitBatchController extends PdfBatchController {
     public String handleFile(File srcFile, File targetPath) {
         doc = null;
         targetFiles = new ArrayList<>();
-        if (PdfTools.isPDF(srcFile)) {
-            try {
-                showHandling(srcFile);
-                currentParameters.currentSourceFile = srcFile;
-                if (!isPreview) {
-                    PdfInformation info = tableData.get(currentParameters.currentIndex);
-                    actualParameters.fromPage = info.getFromPage();
-                    if (actualParameters.fromPage <= 0) {
-                        actualParameters.fromPage = 1;
-                    }
-                    actualParameters.toPage = info.getToPage();
-                    actualParameters.password = info.getUserPassword();
+        try {
+            countHandling(srcFile);
+            currentParameters.currentSourceFile = srcFile;
+            if (!isPreview) {
+                PdfInformation info = tableData.get(currentParameters.currentIndex);
+                actualParameters.fromPage = info.getFromPage();
+                if (actualParameters.fromPage <= 0) {
+                    actualParameters.fromPage = 1;
                 }
-
-                try ( PDDocument pd = PDDocument.load(currentParameters.currentSourceFile,
-                        currentParameters.password, AppVariables.pdfMemUsage)) {
-                    doc = pd;
-                    if (currentParameters.toPage <= 0 || currentParameters.toPage > doc.getNumberOfPages()) {
-                        currentParameters.toPage = doc.getNumberOfPages();
-                    }
-
-                    currentParameters.currentTargetPath = targetPath;
-                    if (currentParameters.targetSubDir) {
-                        currentParameters.currentTargetPath = new File(targetPath.getAbsolutePath() + "/"
-                                + FileTools.getFilePrefix(currentParameters.currentSourceFile.getName()));
-                        if (!currentParameters.currentTargetPath.exists()) {
-                            currentParameters.currentTargetPath.mkdirs();
-                        }
-                    }
-                    if (null != splitType) {
-                        switch (splitType) {
-                            case PagesNumber:
-                                splitByPagesSize(doc);
-                                break;
-                            case FilesNumber:
-                                splitByFilesNumber(doc);
-                                break;
-                            case StartEndList:
-                                splitByList(doc);
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                    doc.close();
-                }
-            } catch (Exception e) {
-                logger.error(e.toString());
+                actualParameters.toPage = info.getToPage();
+                actualParameters.password = info.getUserPassword();
             }
+
+            try ( PDDocument pd = PDDocument.load(currentParameters.currentSourceFile,
+                    currentParameters.password, AppVariables.pdfMemUsage)) {
+                doc = pd;
+                if (currentParameters.toPage <= 0 || currentParameters.toPage > doc.getNumberOfPages()) {
+                    currentParameters.toPage = doc.getNumberOfPages();
+                }
+
+                currentParameters.currentTargetPath = targetPath;
+                if (currentParameters.targetSubDir) {
+                    currentParameters.currentTargetPath = new File(targetPath.getAbsolutePath() + "/"
+                            + FileTools.getFilePrefix(currentParameters.currentSourceFile.getName()));
+                    if (!currentParameters.currentTargetPath.exists()) {
+                        currentParameters.currentTargetPath.mkdirs();
+                    }
+                }
+                if (null != splitType) {
+                    switch (splitType) {
+                        case PagesNumber:
+                            splitByPagesSize(doc);
+                            break;
+                        case FilesNumber:
+                            splitByFilesNumber(doc);
+                            break;
+                        case StartEndList:
+                            splitByList(doc);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                doc.close();
+            }
+        } catch (Exception e) {
+            logger.error(e.toString());
         }
         updateInterface("CompleteFile");
         return MessageFormat.format(AppVariables.message("HandlePagesGenerateNumber"),

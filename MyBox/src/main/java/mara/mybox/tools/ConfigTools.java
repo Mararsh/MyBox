@@ -77,11 +77,14 @@ public class ConfigTools {
     }
 
     public static List<String> languages() {
-        List<String> languages = new ArrayList();
+        List<String> languages = new ArrayList<>();
         try {
-            for (File file : AppVariables.MyBoxLanguagesPath.listFiles()) {
-                if (file.isFile()) {
-                    languages.add(file.getName());
+            File[] files = AppVariables.MyBoxLanguagesPath.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    if (file.isFile()) {
+                        languages.add(file.getName());
+                    }
                 }
             }
         } catch (Exception e) {

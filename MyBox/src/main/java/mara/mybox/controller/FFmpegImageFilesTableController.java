@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -107,6 +108,7 @@ public class FFmpegImageFilesTableController extends FilesTableController {
                     }
                 }
             });
+            durationColumn.getStyleClass().add("editable-column");
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -114,14 +116,18 @@ public class FFmpegImageFilesTableController extends FilesTableController {
     }
 
     @FXML
-    public void setDurationAllAction() {
+    public void setDurationAction() {
         try {
             if (duration <= 0) {
                 popError(message("InvalidData"));
                 return;
             }
             isSettingValues = true;
-            for (FileInformation info : tableData) {
+            List<FileInformation> rows = tableView.getSelectionModel().getSelectedItems();
+            if (rows == null || rows.isEmpty()) {
+                rows = tableData;
+            }
+            for (FileInformation info : rows) {
                 info.setDuration(duration);
             }
             isSettingValues = false;

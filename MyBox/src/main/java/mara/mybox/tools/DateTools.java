@@ -40,6 +40,13 @@ public class DateTools {
         return dateString;
     }
 
+    public static String nowString5() {
+        SimpleDateFormat formatter = new SimpleDateFormat(CommonValues.DatetimeFormat5, CommonValues.LocaleEnUS);
+        formatter.setTimeZone(AppVariables.getTimeZone());
+        String dateString = formatter.format(new Date());
+        return dateString;
+    }
+
     public static String datetimeToString(long dvalue) {
         return datetimeToString(new Date(dvalue));
     }
@@ -49,11 +56,30 @@ public class DateTools {
     }
 
     public static String datetimeToString(Date theDate, TimeZone theZone) {
+        return datetimeToString(theDate, CommonValues.DatetimeFormat, theZone);
+    }
+
+    public static String datetimeToString(Date theDate, String format) {
+        return datetimeToString(theDate, format, AppVariables.getTimeZone());
+    }
+
+    public static String datetimeToString(Date theDate, String format,
+            TimeZone theZone) {
         if (theDate == null || theZone == null) {
             return null;
         }
-        SimpleDateFormat formatter = new SimpleDateFormat(CommonValues.DatetimeFormat);
+        SimpleDateFormat formatter = new SimpleDateFormat(format);
         formatter.setTimeZone(theZone);
+        String dateString = formatter.format(theDate);
+        return dateString;
+    }
+
+    public static String datetime5ToString(Date theDate) {
+        if (theDate == null) {
+            return null;
+        }
+        SimpleDateFormat formatter = new SimpleDateFormat(CommonValues.DatetimeFormat5, CommonValues.LocaleEnUS);
+        formatter.setTimeZone(AppVariables.getTimeZone());
         String dateString = formatter.format(theDate);
         return dateString;
     }
@@ -86,6 +112,17 @@ public class DateTools {
 
     public static Date stringToDatetime(String strDate) {
         return DateTools.stringToDatetime(strDate, "yyyy-MM-dd HH:mm:ss");
+    }
+
+    public static Date stringToDatetime5(String strDate) {
+        try {
+            SimpleDateFormat formatter = new SimpleDateFormat(CommonValues.DatetimeFormat5, CommonValues.LocaleEnUS);
+//            formatter.setTimeZone(theZone);
+            ParsePosition pos = new ParsePosition(0);
+            return formatter.parse(strDate, pos);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public static Date stringToDatetime(String strDate, String format) {

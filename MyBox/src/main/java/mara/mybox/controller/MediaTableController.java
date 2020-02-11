@@ -612,7 +612,7 @@ public class MediaTableController extends BatchTableController<MediaInformation>
         if (TableMediaList.set(mediaListName, tableData)) {
             tableLabel.setText(message("MediaList") + ": " + mediaListName);
             if (parentController != null) {
-                parentController.popSuccessul();
+                parentController.popSuccessful();
                 if (parentController instanceof MediaListController) {
                     ((MediaListController) parentController).update(mediaListName);
                 }

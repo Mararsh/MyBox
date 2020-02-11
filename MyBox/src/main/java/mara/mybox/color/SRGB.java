@@ -19,9 +19,6 @@ import mara.mybox.tools.MatrixTools;
  */
 public class SRGB {
 
-    protected String colorValue, colorName, colorDisplay;
-    protected int paletteIndex;
-
     /*
         static methods
      */
@@ -127,41 +124,6 @@ public class SRGB {
 
     public static double[] rgb2cmyk(Color color) {
         return CMYKColorSpace.cmy2cmky(rgb2cmy(color));
-    }
-
-    /*
-        get/set
-     */
-    public String getColorValue() {
-        return colorValue;
-    }
-
-    public void setColorValue(String colorValue) {
-        this.colorValue = colorValue;
-    }
-
-    public String getColorName() {
-        return colorName;
-    }
-
-    public void setColorName(String colorName) {
-        this.colorName = colorName;
-    }
-
-    public String getColorDisplay() {
-        return colorDisplay;
-    }
-
-    public void setColorDisplay(String colorDisplay) {
-        this.colorDisplay = colorDisplay;
-    }
-
-    public int getPaletteIndex() {
-        return paletteIndex;
-    }
-
-    public void setPaletteIndex(int paletteIndex) {
-        this.paletteIndex = paletteIndex;
     }
 
 }

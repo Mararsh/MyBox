@@ -499,8 +499,8 @@ public class ImageManufactureBatchEnhancementController extends ImageManufacture
     }
 
     @Override
-    public boolean makeBatchParameters() {
-        if (!super.makeBatchParameters()) {
+    public boolean makeMoreParameters() {
+        if (!super.makeMoreParameters()) {
             return false;
         }
 

@@ -22,7 +22,7 @@ public class FloatTools {
             return null;
         }
         double[] d = new double[f.length];
-        for (int i = 0; i < f.length; i++) {
+        for (int i = 0; i < f.length; ++i) {
             d[i] = f[i];
         }
         return d;
@@ -33,8 +33,8 @@ public class FloatTools {
             return null;
         }
         double[][] d = new double[f.length][f[0].length];
-        for (int i = 0; i < f.length; i++) {
-            for (int j = 0; j < f[i].length; j++) {
+        for (int i = 0; i < f.length; ++i) {
+            for (int j = 0; j < f[i].length; ++j) {
                 d[i][j] = f[i][j];
             }
         }

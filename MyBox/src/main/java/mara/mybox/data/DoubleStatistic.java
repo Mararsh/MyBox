@@ -38,7 +38,7 @@ public class DoubleStatistic {
 
     public static double sum(double[] values) {
         double sum = 0;
-        for (int i = 0; i < values.length; i++) {
+        for (int i = 0; i < values.length; ++i) {
             sum += values[i];
         }
         return sum;
@@ -49,7 +49,7 @@ public class DoubleStatistic {
             return Integer.MIN_VALUE;
         }
         double max = Integer.MIN_VALUE;
-        for (int i = 0; i < values.length; i++) {
+        for (int i = 0; i < values.length; ++i) {
             if (values[i] > max) {
                 max = values[i];
             }
@@ -62,7 +62,7 @@ public class DoubleStatistic {
             return -1;
         }
         double max = Integer.MIN_VALUE, maxIndex = -1;
-        for (int i = 0; i < values.length; i++) {
+        for (int i = 0; i < values.length; ++i) {
             if (values[i] > max) {
                 max = values[i];
                 maxIndex = i;
@@ -76,7 +76,7 @@ public class DoubleStatistic {
             return Integer.MAX_VALUE;
         }
         double min = Integer.MAX_VALUE;
-        for (int i = 0; i < values.length; i++) {
+        for (int i = 0; i < values.length; ++i) {
             if (values[i] < min) {
                 min = values[i];
             }
@@ -90,7 +90,7 @@ public class DoubleStatistic {
             return s;
         }
         double sum = 0, min = Integer.MAX_VALUE, max = Integer.MIN_VALUE;
-        for (int i = 0; i < values.length; i++) {
+        for (int i = 0; i < values.length; ++i) {
             sum += values[i];
             if (values[i] > max) {
                 max = values[i];
@@ -132,7 +132,7 @@ public class DoubleStatistic {
         }
         double[] sorted = DoubleTools.sortArray(values);
         double mid = sorted[sorted.length / 2];
-        for (int i = 0; i < values.length; i++) {
+        for (int i = 0; i < values.length; ++i) {
             if (values[i] == mid) {
                 return i;
             }
@@ -147,7 +147,7 @@ public class DoubleStatistic {
 
     public static double variance(double[] values, double mean) {
         double variance = 0;
-        for (int i = 0; i < values.length; i++) {
+        for (int i = 0; i < values.length; ++i) {
             variance += Math.pow(values[i] - mean, 2);
         }
         variance = (double) Math.sqrt(variance / values.length);
@@ -156,7 +156,7 @@ public class DoubleStatistic {
 
     public static double skewness(double[] values, double mean) {
         double skewness = 0;
-        for (int i = 0; i < values.length; i++) {
+        for (int i = 0; i < values.length; ++i) {
             skewness += Math.pow(values[i] - mean, 3);
         }
         skewness = Math.pow(skewness / values.length, 1.0 / 3);

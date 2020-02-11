@@ -45,7 +45,7 @@ import java.util.List;
  * final int width = gifImage.getWidth();
  * final int height = gifImage.getHeight();
  * final int frameCount = gifImage.getFrameCount();
- * for (int i = 0; i < frameCount; i++) {
+ * for (int i = 0; i < frameCount; ++i) {
  * 	final BufferedImage image = gifImage.getFrame(i);
  * 	final int delay = gif.getDelay(i);
  * }
@@ -361,7 +361,7 @@ public final class GifDecoder {
             GifFrame fr = frames.get(index);
             if (fr.img == null) {
                 // Draw all frames until and including the requested frame
-                for (int i = 0; i <= index; i++) {
+                for (int i = 0; i <= index; ++i) {
                     fr = frames.get(i);
                     if (fr.img == null) {
                         drawFrame(fr);

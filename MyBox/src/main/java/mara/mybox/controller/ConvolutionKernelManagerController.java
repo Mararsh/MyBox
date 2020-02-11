@@ -363,7 +363,7 @@ public class ConvolutionKernelManagerController extends BaseController {
         } else if (height != matrixValues.length || width != matrixValues[0].length) {
             float[][] old = matrixValues;
             matrixValues = new float[height][width];
-            for (int j = 0; j < Math.min(height, old.length); j++) {
+            for (int j = 0; j < Math.min(height, old.length); ++j) {
                 System.arraycopy(old[j], 0, matrixValues[j], 0, Math.min(width, old[0].length));
             }
 
@@ -378,8 +378,8 @@ public class ConvolutionKernelManagerController extends BaseController {
         matrixPane.setPadding(new Insets(5.0));
         matrixPane.setHgap(5);
         matrixPane.setVgap(5);
-        for (int j = 0; j < height; j++) {
-            for (int i = 0; i < width; i++) {
+        for (int j = 0; j < height; ++j) {
+            for (int i = 0; i < width; ++i) {
                 ColumnConstraints column = new ColumnConstraints(colWidth + 1);
                 column.setHgrow(Priority.ALWAYS);
                 matrixPane.getColumnConstraints().add(column);
@@ -412,8 +412,8 @@ public class ConvolutionKernelManagerController extends BaseController {
             return;
         }
         matrixValid = true;
-        for (int j = 0; j < height; j++) {
-            for (int i = 0; i < width; i++) {
+        for (int j = 0; j < height; ++j) {
+            for (int i = 0; i < width; ++i) {
                 TextField valueInput = matrixInputs[j][i];
                 try {
                     matrixValues[j][i] = Float.valueOf(valueInput.getText());
@@ -514,7 +514,7 @@ public class ConvolutionKernelManagerController extends BaseController {
         stage.toFront();
 
         Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == buttonCancel) {
+        if (result.get() != buttonSure) {
             return;
         }
         synchronized (this) {
@@ -564,7 +564,7 @@ public class ConvolutionKernelManagerController extends BaseController {
         stage.toFront();
 
         Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == buttonCancel) {
+        if (result.get() != buttonSure) {
             return;
         }
         synchronized (this) {
@@ -595,8 +595,8 @@ public class ConvolutionKernelManagerController extends BaseController {
     @FXML
     private void normalization(ActionEvent event) {
         float sum = 0.0f;
-        for (int j = 0; j < height; j++) {
-            for (int i = 0; i < width; i++) {
+        for (int j = 0; j < height; ++j) {
+            for (int i = 0; i < width; ++i) {
                 sum += matrixValues[j][i];
             }
         }
@@ -604,8 +604,8 @@ public class ConvolutionKernelManagerController extends BaseController {
             return;
         }
         isSettingValues = true;
-        for (int j = 0; j < height; j++) {
-            for (int i = 0; i < width; i++) {
+        for (int j = 0; j < height; ++j) {
+            for (int i = 0; i < width; ++i) {
                 matrixInputs[j][i].setText(FloatTools.roundFloat5(matrixValues[j][i] / sum) + "");
             }
         }
@@ -621,8 +621,8 @@ public class ConvolutionKernelManagerController extends BaseController {
         }
         float[][] m = ConvolutionKernel.makeGaussMatrix(width / 2);
         isSettingValues = true;
-        for (int j = 0; j < height; j++) {
-            for (int i = 0; i < width; i++) {
+        for (int j = 0; j < height; ++j) {
+            for (int i = 0; i < width; ++i) {
                 matrixInputs[j][i].setText(m[j][i] + "");
             }
         }
@@ -637,8 +637,8 @@ public class ConvolutionKernelManagerController extends BaseController {
         }
         matrixValues = new float[height][width];
         isSettingValues = true;
-        for (int j = 0; j < height; j++) {
-            for (int i = 0; i < width; i++) {
+        for (int j = 0; j < height; ++j) {
+            for (int i = 0; i < width; ++i) {
                 matrixInputs[j][i].setText("0");
             }
         }
@@ -652,8 +652,8 @@ public class ConvolutionKernelManagerController extends BaseController {
         }
         matrixValues = new float[height][width];
         isSettingValues = true;
-        for (int j = 0; j < height; j++) {
-            for (int i = 0; i < width; i++) {
+        for (int j = 0; j < height; ++j) {
+            for (int i = 0; i < width; ++i) {
                 matrixValues[j][i] = 1;
                 matrixInputs[j][i].setText("1");
             }

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.15&key=06b9e078a51325a843dfefd57ffd876c"></script>
+        <script type="text/javascript" src="https://cache.amap.com/lbs/static/addToolbar.js"></script>
+        <title>Map</title>
+        <style>
+            html,
+            body,
+            #container {
+                width: 100%;
+                height: 100%;
+            }
+
+            .amap-marker-label {
+                position: absolute;
+                border: 0;
+                background-color: transparent;
+                white-space: nowrap;
+                padding: 1px;
+                font-size: 14px;
+            }
+
+        </style>
+    </head>
+    <body>
+        <div id="container"></div>
+        <script  type="text/javascript">
+            var standardLayer, satelliteLayer, roadLayer, trafficLayer;
+            var infoWindow;
+            var map = new AMap.Map('container', {
+                resizeEnable: true,
+                center: [116.397428, 39.90923],
+                zooms: [3, 18],
+                zoom: 11
+            });
+
+            standardLayer = map.getLayers()[0];
+            map.on('complete', loadComplete);
+            map.on('click', showInfoClick);
+            map.on('mousemove', showInfoMove);
+
+
+            function loadComplete() {
+                alert("Loaded");
+            }
+
+            function showInfoClick(e) {
+                var text = 'click:' + e.lnglat.getLng() + ',' + e.lnglat.getLat();
+                alert(text);
+            }
+
+            function showInfoMove(e) {
+                var text = 'move:' + e.lnglat.getLng() + ',' + e.lnglat.getLat();
+                alert(text);
+            }
+
+
+            function setCenter(longtitude, latitude) {
+                map.setCenter(new AMap.LngLat(longtitude, latitude));
+            }
+
+            function setLanguage(language) {
+                map.setLang(language);
+            }
+
+            function clearMap() {
+                map.clearMap();
+            }
+
+            function addMarker(longtitude, latitude, markerSize, label, info, image, zoom, multiple) {
+                if (!multiple)
+                    map.clearMap();
+                var marker;
+                marker = new AMap.Marker({
+                    content: '<img src="file:///' + image + '" width=' + markerSize + '>',
+                    position: [longtitude, latitude],
+                    offset: new AMap.Pixel(-markerSize / 2, -markerSize / 2)
+                });
+                if (label !== null && label.length > 0) {
+                    marker.setLabel({
+                        content: "<div>" + label + "</div>",
+                        offset: new AMap.Pixel(-10, -10)
+//                        direction: 'top'
+                    });
+                }
+                marker.on('mousemove', function () {
+                    infoWindow = new AMap.InfoWindow({
+                        content: info
+                    });
+                    infoWindow.open(map, [longtitude, latitude]);
+                });
+                marker.on('mouseout', function () {
+                    infoWindow.close();
+                });
+                map.add(marker);
+
+                if (zoom >= 3 && zoom <= 18) {
+                    map.setZoom(zoom);
+                    map.setCenter([longtitude, latitude]);
+                } else {
+                    map.setFitView();
+                }
+            }
+
+            function hideStandardLayer() {
+                if (standardLayer !== undefined)
+                    map.remove(standardLayer);
+                standardLayer = undefined;
+            }
+
+
+            function setStandardLayerOpacity(v) {
+                if (standardLayer === undefined) {
+                    standardLayer = new AMap.TileLayer({
+                        zooms: [3, 18],
+                        visible: true,
+                        opacity: v,
+                        zIndex: 0
+                    });
+                    map.add(standardLayer);
+                } else {
+                    standardLayer.setOpacity(v);
+                }
+            }
+
+            function hideSatelliteLayer() {
+                if (satelliteLayer !== undefined)
+                    map.remove(satelliteLayer);
+                satelliteLayer = undefined;
+            }
+
+
+            function setSatelliteLayerOpacity(v) {
+                if (satelliteLayer === undefined) {
+                    satelliteLayer = new AMap.TileLayer.Satellite({
+                        zooms: [3, 18],
+                        visible: true,
+                        opacity: v
+                    });
+                    map.add(satelliteLayer);
+                } else {
+                    satelliteLayer.setOpacity(v);
+                }
+            }
+
+
+            function hideRoadLayer() {
+                if (roadLayer !== undefined)
+                    map.remove(roadLayer);
+                roadLayer = undefined;
+            }
+
+
+            function setRoadLayerOpacity(v) {
+                if (roadLayer === undefined) {
+                    roadLayer = new AMap.TileLayer.RoadNet({
+                        zooms: [3, 18],
+                        visible: true,
+                        opacity: v
+                    });
+                    map.add(roadLayer);
+                } else {
+                    roadLayer.setOpacity(v);
+                }
+            }
+
+
+            function hideTrafficLayer() {
+                if (trafficLayer !== undefined) {
+                    trafficLayer.hide();
+                    map.remove(trafficLayer);
+                }
+                trafficLayer = undefined;
+            }
+
+            function setTrafficLayerOpacity(v) {
+                if (trafficLayer === undefined) {
+                    trafficLayer = new AMap.TileLayer.Traffic({
+                        zooms: [3, 18],
+                        visible: true,
+                        opacity: v
+                    });
+                    map.add(trafficLayer);
+                } else {
+                    trafficLayer.setOpacity(v);
+                }
+            }
+
+        </script>
+
+    </body>
+</html>

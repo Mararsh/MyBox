@@ -43,16 +43,11 @@ public class CommonFxValues {
             add(new FileChooser.ExtensionFilter("mp3", "*.mp3"));
         }
     };
-    public static List<FileChooser.ExtensionFilter> TxtExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
-        {
-            add(new FileChooser.ExtensionFilter("txt", "*.txt"));
-            add(new FileChooser.ExtensionFilter("*", "*.*"));
-        }
-    };
+
     public static List<FileChooser.ExtensionFilter> ImageExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
         {
             add(new FileChooser.ExtensionFilter("images", "*.png", "*.jpg", "*.jpeg", "*.bmp", //                    "*.jpeg2000", "*.jpx", "*.jp2", "*.jpm",
-                    "*.tif", "*.tiff", "*.gif", "*.pcx", "*.pnm", "*.wbmp"));
+                    "*.tif", "*.tiff", "*.gif", "*.pcx", "*.pnm", "*.wbmp", "*.ico", "*.icon"));
             add(new FileChooser.ExtensionFilter("png", "*.png"));
             add(new FileChooser.ExtensionFilter("jpg", "*.jpg", "*.jpeg"));
             //            add(new FileChooser.ExtensionFilter("jpeg2000", "*.jp2", "*.jpeg2000", "*.jpx", "*.jpm"));
@@ -62,11 +57,12 @@ public class CommonFxValues {
             add(new FileChooser.ExtensionFilter("pcx", "*.pcx"));
             add(new FileChooser.ExtensionFilter("pnm", "*.pnm"));
             add(new FileChooser.ExtensionFilter("wbmp", "*.wbmp"));
+            add(new FileChooser.ExtensionFilter("ico", "*.ico", "*.icon"));
         }
     };
     public static List<FileChooser.ExtensionFilter> TextExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
         {
-            add(new FileChooser.ExtensionFilter("txt", "*.txt", "*.log", "*.ini", "*.cfg", "*.conf", "*.sh"));
+            add(new FileChooser.ExtensionFilter("txt", "*.txt", "*.log", "*.ini", "*.cfg", "*.conf", "*.sh", "*.del"));
             add(new FileChooser.ExtensionFilter("codes", "*.java", "*.c", "*.h", "*.py", "*.php", "*.fxml", "*.cpp", "*.cc", "*.js", "*.css", "*.bat"));
             add(new FileChooser.ExtensionFilter("html", "*.html", "*.htm"));
             add(new FileChooser.ExtensionFilter("xml", "*.xml"));
@@ -77,9 +73,10 @@ public class CommonFxValues {
     };
     public static List<FileChooser.ExtensionFilter> AlphaImageExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
         {
-            add(new FileChooser.ExtensionFilter("images", "*.png", "*.tif", "*.tiff"));
+            add(new FileChooser.ExtensionFilter("images", "*.png", "*.tif", "*.tiff", "*.ico", "*.icon"));
             add(new FileChooser.ExtensionFilter("png", "*.png"));
             add(new FileChooser.ExtensionFilter("tif", "*.tif", "*.tiff"));
+            add(new FileChooser.ExtensionFilter("ico", "*.ico", "*.icon"));
         }
     };
     public static List<FileChooser.ExtensionFilter> PdfExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
@@ -134,6 +131,14 @@ public class CommonFxValues {
             add(new FileChooser.ExtensionFilter("wav", "*.wav"));
             add(new FileChooser.ExtensionFilter("mp3", "*.mp3"));
             add(new FileChooser.ExtensionFilter("m4a", "*.m4a"));
+            add(new FileChooser.ExtensionFilter("*", "*.*"));
+        }
+    };
+    public static List<FileChooser.ExtensionFilter> Mp3WavExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
+        {
+            add(new FileChooser.ExtensionFilter("sound", "*.wav", "*.mp3"));
+            add(new FileChooser.ExtensionFilter("wav", "*.wav"));
+            add(new FileChooser.ExtensionFilter("mp3", "*.mp3"));
             add(new FileChooser.ExtensionFilter("*", "*.*"));
         }
     };

@@ -67,7 +67,7 @@ public class MyBoxLoadingController implements Initializable {
         try {
             lang = Locale.getDefault().getLanguage().toLowerCase();
             infoLabel.setText(message(lang, "Initializing..."));
-            networkRadio.setText(message(lang, "NetworkMode"));
+            networkRadio.setText(message(lang, "NetworkModeOnlyLocal"));
             embeddedRadio.setText(message(lang, "EmbeddedMode"));
             derbyBox.setVisible(true);
 

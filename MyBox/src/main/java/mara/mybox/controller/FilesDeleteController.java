@@ -6,7 +6,6 @@ import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.ToggleGroup;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
@@ -19,9 +18,7 @@ import static mara.mybox.value.AppVariables.message;
 public class FilesDeleteController extends FilesBatchController {
 
     @FXML
-    protected ToggleGroup deleteType;
-    @FXML
-    protected RadioButton deleteRadio, trashRadio;
+    protected RadioButton deleteRadio;
     @FXML
     protected CheckBox deleteEmptyCheck;
 
@@ -59,7 +56,7 @@ public class FilesDeleteController extends FilesBatchController {
             if (srcFile == null || !srcFile.isFile()) {
                 return AppVariables.message("Skip");
             }
-            showHandling(srcFile);
+            countHandling(srcFile);
             boolean ok;
             String msg;
             if (deleteRadio.isSelected()) {
@@ -70,7 +67,9 @@ public class FilesDeleteController extends FilesBatchController {
                 msg = message("FileMoveToTrashSuccessfully") + ": " + srcFile.getAbsolutePath();
             }
             if (ok) {
-                updateLogs(msg);
+                if (verboseCheck == null || verboseCheck.isSelected()) {
+                    updateLogs(msg);
+                }
                 return AppVariables.message("Successful");
             } else {
                 return AppVariables.message("Failed");
@@ -89,7 +88,7 @@ public class FilesDeleteController extends FilesBatchController {
         }
         try {
             File[] files = sourcePath.listFiles();
-            if (files.length == 0) {
+            if (files == null || files.length == 0) {
                 deleteEmptyDirectory(sourcePath);
             } else {
                 super.handleDirectory(sourcePath, targetPath);
@@ -109,14 +108,18 @@ public class FilesDeleteController extends FilesBatchController {
         }
         try {
             File[] files = sourcePath.listFiles();
-            if (files.length == 0) {
+            if (files == null || files.length == 0) {
                 if (deleteRadio.isSelected()) {
                     if (sourcePath.delete()) {
-                        updateLogs(message("DirectoryDeletedSuccessfully") + ": " + sourcePath.getAbsolutePath());
+                        if (verboseCheck == null || verboseCheck.isSelected()) {
+                            updateLogs(message("DirectoryDeletedSuccessfully") + ": " + sourcePath.getAbsolutePath());
+                        }
                     }
                 } else {
                     if (Desktop.getDesktop().moveToTrash(sourcePath)) {
-                        updateLogs(message("DirectoryMoveToTrashSuccessfully") + ": " + sourcePath.getAbsolutePath());
+                        if (verboseCheck == null || verboseCheck.isSelected()) {
+                            updateLogs(message("DirectoryMoveToTrashSuccessfully") + ": " + sourcePath.getAbsolutePath());
+                        }
                     }
                 }
             }

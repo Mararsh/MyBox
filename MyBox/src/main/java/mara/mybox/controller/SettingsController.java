@@ -342,7 +342,7 @@ public class SettingsController extends BaseController {
     protected void checkStyle(String s) {
         try {
             if (message("DefaultStyle").equals(s)) {
-                setStyle(CommonValues.DefaultStyle);
+                setStyle(CommonValues.MyBoxStyle);
             } else if (message("caspianStyle").equals(s)) {
                 setStyle(CommonValues.caspianStyle);
             } else if (message("WhiteOnBlackStyle").equals(s)) {
@@ -627,12 +627,15 @@ public class SettingsController extends BaseController {
             alert.setTitle(getBaseTitle());
             alert.setContentText(AppVariables.message("ChangeDataPathConfirm"));
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+            ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
+            ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
+            alert.getButtonTypes().setAll(buttonSure, buttonCancel);
             Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
             stage.setAlwaysOnTop(true);
             stage.toFront();
 
             Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() != ButtonType.OK) {
+            if (result.get() != buttonSure) {
                 return;
             }
             popInformation(message("CopyingFilesFromTo"));
@@ -696,7 +699,7 @@ public class SettingsController extends BaseController {
     ) {
         AppVariables.setUserConfigInt("FileRecentNumber", recentFileNumber);
         AppVariables.fileRecentNumber = recentFileNumber;
-        popSuccessul();
+        popSuccessful();
     }
 
     @FXML
@@ -706,16 +709,19 @@ public class SettingsController extends BaseController {
         alert.setTitle(getBaseTitle());
         alert.setContentText(AppVariables.message("SureClear"));
         alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+        ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
+        ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
+        alert.getButtonTypes().setAll(buttonSure, buttonCancel);
         Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
         stage.setAlwaysOnTop(true);
         stage.toFront();
 
         Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() != ButtonType.OK) {
+        if (result.get() != buttonSure) {
             return;
         }
         new TableVisitHistory().clear();
-        popSuccessul();
+        popSuccessful();
     }
 
     @FXML
@@ -724,7 +730,7 @@ public class SettingsController extends BaseController {
         fileRecentInput.setText("0");
         AppVariables.setUserConfigInt("FileRecentNumber", 0);
         AppVariables.fileRecentNumber = 0;
-        popSuccessul();
+        popSuccessful();
     }
 
     /*
@@ -895,7 +901,7 @@ public class SettingsController extends BaseController {
                         if (v > 0) {
                             AppVariables.setUserConfigInt("ThumbnailWidth", v);
                             thumbnailWidthInput.setStyle(null);
-                            popSuccessul();
+                            popSuccessful();
                         } else {
                             thumbnailWidthInput.setStyle(badStyle);
                         }
@@ -909,7 +915,7 @@ public class SettingsController extends BaseController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     AppVariables.setUserConfigValue("RecordImageLoad", recordLoadCheck.isSelected());
-                    popSuccessul();
+                    popSuccessful();
                 }
             });
             FxmlControl.setTooltip(recordLoadCheck, new Tooltip(message("RecordImageLoad")));
@@ -1032,7 +1038,7 @@ public class SettingsController extends BaseController {
                 }
 
             }
-            popSuccessul();
+            popSuccessful();
             return true;
         } catch (Exception e) {
             logger.debug(e.toString());
@@ -1047,16 +1053,19 @@ public class SettingsController extends BaseController {
         alert.setTitle(getBaseTitle());
         alert.setContentText(AppVariables.message("SureClear"));
         alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+        ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
+        ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
+        alert.getButtonTypes().setAll(buttonSure, buttonCancel);
         Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
         stage.setAlwaysOnTop(true);
         stage.toFront();
 
         Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() != ButtonType.OK) {
+        if (result.get() != buttonSure) {
             return;
         }
         new TableImageHistory().clear();
-        popSuccessul();
+        popSuccessful();
     }
 
     @FXML
@@ -1068,7 +1077,7 @@ public class SettingsController extends BaseController {
 //                ImageManufactureBaseController p = (ImageManufactureBaseController) parentController;
 //                p.updateHisBox();
 //            }
-            popSuccessul();
+            popSuccessful();
         } catch (Exception e) {
 
         }
@@ -1083,7 +1092,7 @@ public class SettingsController extends BaseController {
 //            ImageManufactureBaseController p = (ImageManufactureBaseController) parentController;
 //            p.updateHisBox();
 //        }
-        popSuccessul();
+        popSuccessful();
     }
 
     /*
@@ -1240,7 +1249,7 @@ public class SettingsController extends BaseController {
         selected.addAll(languageList.getSelectionModel().getSelectedItems());
         isSettingValues = true;
         int size = selectedIndices.size();
-        for (int i = size - 1; i >= 0; i--) {
+        for (int i = size - 1; i >= 0; --i) {
             int index = selectedIndices.get(i);
             languageList.getItems().remove(index);
         }
@@ -1261,7 +1270,7 @@ public class SettingsController extends BaseController {
         }
         isSettingValues = true;
         List<Integer> newselected = new ArrayList<>();
-        for (int i = selected.size() - 1; i >= 0; i--) {
+        for (int i = selected.size() - 1; i >= 0; --i) {
             int index = selected.get(i);
             if (index == languageList.getItems().size() - 1
                     || newselected.contains(index + 1)) {

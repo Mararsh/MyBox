@@ -123,7 +123,7 @@ public class TableBrowserBypassSSL extends DerbyBase {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
             String d = host.trim();
-            String sql = "DELETE FROM Browser_Bypass_SSL WHERE WHERE host='" + d + "'";
+            String sql = "DELETE FROM Browser_Bypass_SSL WHERE host='" + d + "'";
             statement.executeUpdate(sql);
             return true;
         } catch (Exception e) {
@@ -139,12 +139,13 @@ public class TableBrowserBypassSSL extends DerbyBase {
         }
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
-            conn.setAutoCommit(false);
-            for (CertificateBypass h : hosts) {
-                String sql = "DELETE FROM Browser_Bypass_SSL WHERE WHERE host='" + h.getHost() + "'";
-                statement.executeUpdate(sql);
+            String inStr = "( '" + hosts.get(0).getHost() + "'";
+            for (int i = 1; i < hosts.size(); ++i) {
+                inStr += ", '" + hosts.get(i).getHost() + "'";
             }
-            conn.commit();
+            inStr += " )";
+            String sql = "DELETE FROM Browser_Bypass_SSL WHERE key_value IN " + inStr;
+            statement.executeUpdate(sql);
             return true;
         } catch (Exception e) {
             failed(e);

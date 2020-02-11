@@ -64,7 +64,7 @@ public class ImageInformationController extends HtmlViewerController {
             ImageFileInformation finfo = info.getImageFileInformation();
             StringBuilder s = new StringBuilder();
             s.append(makeFileInfoTable(finfo)).append("\n</br></br>\n");
-            for (int i = 0; i < finfo.getImagesInformation().size(); i++) {
+            for (int i = 0; i < finfo.getImagesInformation().size(); ++i) {
                 ImageInformation iInfo = finfo.getImagesInformation().get(i);
                 if (iInfo.getIccProfile() != null) {
                     indexSelector.getItems().add((i + 1) + "");

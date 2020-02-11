@@ -249,7 +249,7 @@ License:    Apache License Version 2.0
                                         <Label fx:id="colorsSizeLabel" text=" " />
                                     </children>
                                 </FlowPane>
-                        <CheckBox fx:id="eightNeighborCheck" layoutX="10.0" layoutY="68.0" mnemonicParsing="false" selected="true" text="%EightNeighbor" />
+                                <CheckBox fx:id="eightNeighborCheck" layoutX="10.0" layoutY="68.0" mnemonicParsing="false" selected="true" text="%EightNeighbor" />
                                 <FlowPane fx:id="scopeMatchBox" hgap="5.0" minHeight="-Infinity" prefWrapLength="550.0" vgap="5.0">
                                     <children>
                                         <Label fx:id="scopeMatchLabel" text="%Match" />
@@ -317,7 +317,7 @@ License:    Apache License Version 2.0
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../buttons/iconData.png" />
+                                        <Image url="@../buttons/iconDataImport.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -348,11 +348,13 @@ License:    Apache License Version 2.0
             <content>
                 <AnchorPane fx:id="maskPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#paneClicked" onMouseDragged="#mouseDragged" onMouseMoved="#showXY" onMousePressed="#mousePressed" onMouseReleased="#mouseReleased" VBox.vgrow="ALWAYS">
                     <children>
-                  <Rectangle fx:id="borderLine" arcHeight="5.0" arcWidth="5.0" disable="true" fill="#ffffff00" height="200.0" layoutX="30.0" layoutY="74.0" onMousePressed="#handlerPressed" onMouseReleased="#rectangleReleased" stroke="#cccccc" strokeType="OUTSIDE" width="200.0">
-                     <cursor>
-                        <Cursor fx:constant="NONE" />
-                     </cursor>
-                  </Rectangle>
+                        <Rectangle fx:id="borderLine" arcHeight="5.0" arcWidth="5.0" disable="true" fill="#ffffff00" height="200.0" layoutX="30.0" layoutY="74.0" onMousePressed="#handlerPressed" onMouseReleased="#rectangleReleased" stroke="#cccccc" strokeType="OUTSIDE" width="200.0">
+                            <cursor>
+                                <Cursor fx:constant="NONE" />
+                            </cursor>
+                        </Rectangle>
+                        <Text fx:id="sizeText" fill="#cccccc" layoutX="10.0" layoutY="10.0" strokeType="OUTSIDE" strokeWidth="0.0" x="200.0" y="200.0">
+                        </Text>
                         <ImageView fx:id="imageView" cache="true" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
                         <ImageView fx:id="maskView" cache="true" fitHeight="100.0" fitWidth="100.0" layoutY="100.0" pickOnBounds="true" preserveRatio="true" visible="false" />
                         <Rectangle fx:id="maskRectangleLine" arcHeight="5.0" arcWidth="5.0" fill="#ffffff00" height="200.0" layoutX="20.0" layoutY="64.0" onMousePressed="#handlerPressed" onMouseReleased="#rectangleReleased" stroke="RED" strokeType="INSIDE" width="200.0">

@@ -36,7 +36,7 @@ public class HtmlToMarkdownController extends FilesBatchController {
     }
 
     @Override
-    public boolean makeBatchParameters() {
+    public boolean makeMoreParameters() {
         try {
             parserOptions = new MutableDataSet();
         } catch (Exception e) {
@@ -44,7 +44,7 @@ public class HtmlToMarkdownController extends FilesBatchController {
             return false;
         }
 
-        return super.makeBatchParameters();
+        return super.makeMoreParameters();
     }
 
     @Override
@@ -60,7 +60,7 @@ public class HtmlToMarkdownController extends FilesBatchController {
     @Override
     public String handleFile(File srcFile, File targetPath) {
         try {
-            showHandling(srcFile);
+            countHandling(srcFile);
             File target = makeTargetFile(srcFile, targetPath);
             if (target == null) {
                 return AppVariables.message("Skip");

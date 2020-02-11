@@ -13,6 +13,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
+import javafx.stage.FileChooser;
 import mara.mybox.controller.BaseController;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.value.AppVariables;
@@ -27,10 +28,24 @@ public abstract class RecentVisitMenu {
     protected final BaseController controller;
     protected final MouseEvent event;
     protected List<String> examples;
+    protected int SourceFileType, SourcePathType, AddFileType, AddPathType, TargetPathType;
+    protected List<FileChooser.ExtensionFilter> sourceExtensionFilter;
+    protected String defaultPathKey, LastPathKey, sourcePathKey, targetPathKey;
 
     public RecentVisitMenu(BaseController controller, MouseEvent event) {
         this.controller = controller;
         this.event = event;
+        this.LastPathKey = controller.getLastPathKey();
+        this.defaultPathKey = controller.getDefaultPathKey();
+        this.sourcePathKey = controller.getSourcePathKey();
+        this.targetPathKey = controller.getTargetPathKey();
+        this.SourceFileType = controller.getSourceFileType();
+        this.SourcePathType = controller.getSourcePathType();
+        this.AddFileType = controller.getAddFileType();
+        if (this.AddFileType <= 0) {
+            this.AddFileType = this.SourceFileType;
+        }
+        this.TargetPathType = controller.getTargetPathType();
     }
 
     public void pop() {
@@ -128,15 +143,21 @@ public abstract class RecentVisitMenu {
 
     }
 
-    public abstract List<VisitHistory> recentFiles();
-
-    public abstract List<VisitHistory> recentPaths();
-
     public abstract void handleSelect();
 
     public abstract void handleFile(String fname);
 
-    public abstract void handlePath(String fname);
+    public List<VisitHistory> recentFiles() {
+        return recentSourceFiles();
+    }
+
+    public List<VisitHistory> recentPaths() {
+        return recentSourcePathsBesidesFiles();
+    }
+
+    public void handlePath(String fname) {
+        handleSourcePath(fname);
+    }
 
     public List<String> paths() {
         List<VisitHistory> his = recentPaths();
@@ -147,11 +168,10 @@ public abstract class RecentVisitMenu {
                 paths.add(pathname);
             }
         }
-        if (controller.getDefaultPathKey() != null
-                && !paths.contains(controller.getDefaultPathKey())) {
-            paths.add(controller.getDefaultPathKey());
+        if (defaultPathKey != null && !paths.contains(defaultPathKey)) {
+            paths.add(defaultPathKey);
         }
-        File lastPath = AppVariables.getUserConfigPath(controller.getLastPathKey());
+        File lastPath = AppVariables.getUserConfigPath(LastPathKey);
         if (lastPath != null) {
             String lastPathString = lastPath.getAbsolutePath();
             if (!paths.contains(lastPathString)) {
@@ -163,28 +183,25 @@ public abstract class RecentVisitMenu {
 
     public List<VisitHistory> recentSourceFiles() {
         int fileNumber = AppVariables.fileRecentNumber * 2 / 3 + 1;
-        return VisitHistory.getRecentFile(controller.getSourceFileType(), fileNumber);
+        return VisitHistory.getRecentFile(SourceFileType, fileNumber);
     }
 
     public List<VisitHistory> recentAddFiles() {
         int fileNumber = AppVariables.fileRecentNumber * 2 / 3 + 1;
-        if (controller.getAddFileType() <= 0) {
-            controller.setAddFileType(controller.getSourceFileType());
-        }
-        return VisitHistory.getRecentFile(controller.getAddFileType(), fileNumber);
+        return VisitHistory.getRecentFile(AddFileType, fileNumber);
     }
 
     public List<VisitHistory> recentSourcePathsBesidesFiles() {
         int pathNumber = AppVariables.fileRecentNumber / 3 + 1;
-        return VisitHistory.getRecentPath(controller.getSourcePathType(), pathNumber);
+        return VisitHistory.getRecentPath(SourcePathType, pathNumber);
     }
 
     public List<VisitHistory> recentSourcePaths() {
-        return VisitHistory.getRecentPath(controller.getSourcePathType());
+        return VisitHistory.getRecentPath(SourcePathType);
     }
 
     public List<VisitHistory> recentTargetPaths() {
-        return VisitHistory.getRecentPath(controller.getTargetPathType());
+        return VisitHistory.getRecentPath(TargetPathType);
     }
 
     public void handleSourcePath(String fname) {
@@ -193,7 +210,7 @@ public abstract class RecentVisitMenu {
             handleSelect();
             return;
         }
-        AppVariables.setUserConfigValue(controller.getSourcePathKey(), fname);
+        AppVariables.setUserConfigValue(sourcePathKey, fname);
         handleSelect();
     }
 
@@ -203,7 +220,7 @@ public abstract class RecentVisitMenu {
             handleSelect();
             return;
         }
-        AppVariables.setUserConfigValue(controller.getTargetPathKey(), fname);
+        AppVariables.setUserConfigValue(targetPathKey, fname);
         handleSelect();
     }
 
@@ -214,8 +231,99 @@ public abstract class RecentVisitMenu {
         return examples;
     }
 
-    public void setExamples(List<String> examples) {
+    public RecentVisitMenu setExamples(List<String> examples) {
         this.examples = examples;
+        return this;
+    }
+
+    public int getSourceFileType() {
+        return SourceFileType;
+    }
+
+    public RecentVisitMenu setSourceFileType(int SourceFileType) {
+        this.SourceFileType = SourceFileType;
+        return this;
+    }
+
+    public int getSourcePathType() {
+        return SourcePathType;
+    }
+
+    public RecentVisitMenu setSourcePathType(int SourcePathType) {
+        this.SourcePathType = SourcePathType;
+        return this;
+    }
+
+    public int getAddFileType() {
+        return AddFileType;
+    }
+
+    public RecentVisitMenu setAddFileType(int AddFileType) {
+        this.AddFileType = AddFileType;
+        return this;
+    }
+
+    public int getAddPathType() {
+        return AddPathType;
+    }
+
+    public RecentVisitMenu setAddPathType(int AddPathType) {
+        this.AddPathType = AddPathType;
+        return this;
+    }
+
+    public int getTargetPathType() {
+        return TargetPathType;
+    }
+
+    public RecentVisitMenu setTargetPathType(int TargetPathType) {
+        this.TargetPathType = TargetPathType;
+        return this;
+    }
+
+    public List<FileChooser.ExtensionFilter> getSourceExtensionFilter() {
+        return sourceExtensionFilter;
+    }
+
+    public RecentVisitMenu setSourceExtensionFilter(List<FileChooser.ExtensionFilter> sourceExtensionFilter) {
+        this.sourceExtensionFilter = sourceExtensionFilter;
+        return this;
+    }
+
+    public String getDefaultPathKey() {
+        return defaultPathKey;
+    }
+
+    public RecentVisitMenu setDefaultPathKey(String defaultPathKey) {
+        this.defaultPathKey = defaultPathKey;
+        return this;
+    }
+
+    public String getLastPathKey() {
+        return LastPathKey;
+    }
+
+    public RecentVisitMenu setLastPathKey(String LastPathKey) {
+        this.LastPathKey = LastPathKey;
+        return this;
+    }
+
+    public String getSourcePathKey() {
+        return sourcePathKey;
+    }
+
+    public RecentVisitMenu setSourcePathKey(String sourcePathKey) {
+        this.sourcePathKey = sourcePathKey;
+        return this;
+    }
+
+    public String getTargetPathKey() {
+        return targetPathKey;
+    }
+
+    public RecentVisitMenu setTargetPathKey(String targetPathKey) {
+        this.targetPathKey = targetPathKey;
+        return this;
     }
 
 }

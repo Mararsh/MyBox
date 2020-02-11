@@ -52,6 +52,7 @@ public class ImageConverterBatchController extends ImagesBatchController {
                             .or(optionsController.qualitySelector.getEditor().styleProperty().isEqualTo(badStyle))
                             .or(optionsController.profileInput.styleProperty().isEqualTo(badStyle))
                             .or(optionsController.thresholdInput.styleProperty().isEqualTo(badStyle))
+                            .or(optionsController.icoWidthSelector.getEditor().styleProperty().isEqualTo(badStyle))
             );
 
         } catch (Exception e) {
@@ -66,7 +67,8 @@ public class ImageConverterBatchController extends ImagesBatchController {
 
             appendColorCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
+                public void changed(ObservableValue<? extends Boolean> v,
+                        Boolean oldV, Boolean newV) {
                     setUserConfigValue("ImageConverterAppendColor", appendColorCheck.isSelected());
                 }
             });
@@ -74,7 +76,8 @@ public class ImageConverterBatchController extends ImagesBatchController {
 
             appendCompressionCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
+                public void changed(ObservableValue<? extends Boolean> v,
+                        Boolean oldV, Boolean newV) {
                     setUserConfigValue("ImageConverterAppendCompression", appendCompressionCheck.isSelected());
                 }
             });
@@ -82,7 +85,8 @@ public class ImageConverterBatchController extends ImagesBatchController {
 
             appendQualityCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
+                public void changed(ObservableValue<? extends Boolean> v,
+                        Boolean oldV, Boolean newV) {
                     setUserConfigValue("ImageConverterAppendQuality", appendQualityCheck.isSelected());
                 }
             });
@@ -107,7 +111,7 @@ public class ImageConverterBatchController extends ImagesBatchController {
     @Override
     public String handleFile(File srcFile, File targetPath) {
         try {
-            showHandling(srcFile);
+            countHandling(srcFile);
             File target = makeTargetFile(srcFile, targetPath);
             if (target == null) {
                 return AppVariables.message("Skip");
@@ -130,19 +134,21 @@ public class ImageConverterBatchController extends ImagesBatchController {
             String namePrefix = FileTools.getFilePrefix(srcFile.getName());
             String nameSuffix = "";
             if (srcFile.isFile()) {
-                if (appendColorCheck.isSelected()) {
-                    if (message("IccProfile").equals(attributes.getColorSpaceName())) {
-                        namePrefix += "_" + attributes.getProfileName();
-                    } else {
-                        namePrefix += "_" + attributes.getColorSpaceName();
+                if (!"ico".equals(attributes.getImageFormat())) {
+                    if (appendColorCheck.isSelected()) {
+                        if (message("IccProfile").equals(attributes.getColorSpaceName())) {
+                            namePrefix += "_" + attributes.getProfileName();
+                        } else {
+                            namePrefix += "_" + attributes.getColorSpaceName();
+                        }
                     }
-                }
-                if (attributes.getCompressionType() != null) {
-                    if (appendCompressionCheck.isSelected()) {
-                        namePrefix += "_" + attributes.getCompressionType();
-                    }
-                    if (appendQualityCheck.isSelected()) {
-                        namePrefix += "_quality-" + attributes.getQuality() + "%";
+                    if (attributes.getCompressionType() != null) {
+                        if (appendCompressionCheck.isSelected()) {
+                            namePrefix += "_" + attributes.getCompressionType();
+                        }
+                        if (appendQualityCheck.isSelected()) {
+                            namePrefix += "_quality-" + attributes.getQuality() + "%";
+                        }
                     }
                 }
                 namePrefix = namePrefix.replace(" ", "_");

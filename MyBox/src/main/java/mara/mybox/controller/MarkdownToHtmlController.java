@@ -99,7 +99,7 @@ public class MarkdownToHtmlController extends FilesBatchController {
     }
 
     @Override
-    public boolean makeBatchParameters() {
+    public boolean makeMoreParameters() {
         try {
             parserOptions = new MutableDataSet();
             parserOptions.setFrom(ParserEmulationProfile.valueOf(emulationSelector.getValue()));
@@ -125,7 +125,7 @@ public class MarkdownToHtmlController extends FilesBatchController {
             return false;
         }
 
-        return super.makeBatchParameters();
+        return super.makeMoreParameters();
     }
 
     @Override
@@ -141,7 +141,7 @@ public class MarkdownToHtmlController extends FilesBatchController {
     @Override
     public String handleFile(File srcFile, File targetPath) {
         try {
-            showHandling(srcFile);
+            countHandling(srcFile);
             File target = makeTargetFile(srcFile, targetPath);
             if (target == null) {
                 return AppVariables.message("Skip");
@@ -159,8 +159,10 @@ public class MarkdownToHtmlController extends FilesBatchController {
             html = HtmlTools.html(titleInput.getText(), style, html);
 
             FileTools.writeFile(target, html);
-            updateLogs(MessageFormat.format(message("ConvertSuccessfully"),
-                    srcFile.getAbsolutePath(), target.getAbsolutePath()));
+            if (verboseCheck == null || verboseCheck.isSelected()) {
+                updateLogs(MessageFormat.format(message("ConvertSuccessfully"),
+                        srcFile.getAbsolutePath(), target.getAbsolutePath()));
+            }
             targetFileGenerated(target);
             return AppVariables.message("Successful");
         } catch (Exception e) {

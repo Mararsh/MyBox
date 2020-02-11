@@ -184,10 +184,10 @@ public class ImageManufactureBatchReplaceColorController extends ImageManufactur
     }
 
     @Override
-    public boolean makeBatchParameters() {
+    public boolean makeMoreParameters() {
         originalColor = ImageColor.converColor((Color) originalRect.getFill());
         newColor = ImageColor.converColor((Color) newRect.getFill());
-        return super.makeBatchParameters();
+        return super.makeMoreParameters();
     }
 
     @Override

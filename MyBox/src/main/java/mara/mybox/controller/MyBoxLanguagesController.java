@@ -22,6 +22,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.stage.Modality;
@@ -52,7 +53,7 @@ public class MyBoxLanguagesController extends BaseController {
     @FXML
     protected Label langLabel;
     @FXML
-    protected Button useButton;
+    protected Button useButton, copyEnglishButton;
 
     public MyBoxLanguagesController() {
         baseTitle = AppVariables.message("ManageLanguages");
@@ -77,6 +78,7 @@ public class MyBoxLanguagesController extends BaseController {
                     row.setValue(t.getNewValue());
                 }
             });
+            valueColumn.getStyleClass().add("editable-column");
 
             tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
             tableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
@@ -114,6 +116,44 @@ public class MyBoxLanguagesController extends BaseController {
         }
     }
 
+    @Override
+    public void controlHandler(KeyEvent event) {
+        super.controlHandler(event);
+        if (!event.isControlDown()) {
+            return;
+        }
+        String key = event.getText();
+        if (key == null || key.isEmpty()) {
+            return;
+        }
+        switch (key) {
+            case "e":
+            case "E":
+                copyEnglish();
+                return;
+
+        }
+    }
+
+    @Override
+    public void altHandler(KeyEvent event) {
+        super.altHandler(event);
+        if (!event.isAltDown()) {
+            return;
+        }
+        String key = event.getText();
+        if (key == null || key.isEmpty()) {
+            return;
+        }
+        switch (key) {
+            case "e":
+            case "E":
+                copyEnglish();
+                return;
+
+        }
+    }
+
     protected void checkListSelected() {
         if (isSettingValues) {
             return;
@@ -139,9 +179,9 @@ public class MyBoxLanguagesController extends BaseController {
         }
         LanguageItem selected = tableView.getSelectionModel().getSelectedItem();
         if (selected == null) {
-            copyButton.setDisable(true);
+            copyEnglishButton.setDisable(true);
         } else {
-            copyButton.setDisable(false);
+            copyEnglishButton.setDisable(false);
         }
     }
 
@@ -248,7 +288,7 @@ public class MyBoxLanguagesController extends BaseController {
         stage.setAlwaysOnTop(true);
         stage.toFront();
         Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == buttonCancel) {
+        if (result.get() != buttonSure) {
             return;
         }
         for (String name : selected) {
@@ -258,12 +298,13 @@ public class MyBoxLanguagesController extends BaseController {
         isSettingValues = true;
         listView.getItems().removeAll(selected);
         isSettingValues = false;
+        langName = null;
+        langLabel.setText("");
         checkListSelected();
     }
 
     @FXML
-    @Override
-    public void copyAction() {
+    public void copyEnglish() {
         List<LanguageItem> selected = tableView.getSelectionModel().getSelectedItems();
         if (selected == null || selected.isEmpty()) {
             return;
@@ -312,7 +353,7 @@ public class MyBoxLanguagesController extends BaseController {
                             if (!listView.getItems().contains(langName)) {
                                 listView.getItems().add(0, langName);
                             }
-                            popSuccessul();
+                            popSuccessful();
                         } else {
                             popError(error);
                         }

@@ -18,7 +18,7 @@ public class MatrixTools {
             return null;
         }
         double[] column = new double[m.length];
-        for (int i = 0; i < m.length; i++) {
+        for (int i = 0; i < m.length; ++i) {
             column[i] = m[i][columnNumber];
         }
         return column;
@@ -34,7 +34,7 @@ public class MatrixTools {
 
     public static double[][] columnVector(double[] v) {
         double[][] rv = new double[v.length][1];
-        for (int i = 0; i < v.length; i++) {
+        for (int i = 0; i < v.length; ++i) {
             rv[i][0] = v[i];
         }
         return rv;
@@ -47,7 +47,7 @@ public class MatrixTools {
         int h = m.length;
         int w = m[0].length;
         float[] a = new float[w * h];
-        for (int j = 0; j < h; j++) {
+        for (int j = 0; j < h; ++j) {
             System.arraycopy(m[j], 0, a, j * w, w);
         }
         return a;
@@ -62,8 +62,8 @@ public class MatrixTools {
             return null;
         }
         float[][] m = new float[h][w];
-        for (int j = 0; j < h; j++) {
-            for (int i = 0; i < w; i++) {
+        for (int j = 0; j < h; ++j) {
+            for (int i = 0; i < w; ++i) {
                 m[j][i] = a[j * w + i];
             }
         }
@@ -77,7 +77,7 @@ public class MatrixTools {
             }
             int rowA = matrix.length, columnA = matrix[0].length;
             double[][] result = new double[rowA][columnA];
-            for (int i = 0; i < rowA; i++) {
+            for (int i = 0; i < rowA; ++i) {
                 System.arraycopy(matrix[i], 0, result[i], 0, columnA);
             }
             return result;
@@ -97,9 +97,9 @@ public class MatrixTools {
             }
 
             int row = matrix.length, column = matrix[0].length;
-            for (int i = 0; i < row; i++) {
+            for (int i = 0; i < row; ++i) {
                 s += p;
-                for (int j = 0; j < column; j++) {
+                for (int j = 0; j < column; ++j) {
                     double d = DoubleTools.scale(matrix[i][j], scale);
                     s += d + t;
                 }
@@ -120,8 +120,8 @@ public class MatrixTools {
             }
             int rows = matrixA.length;
             int columns = matrixA[0].length;
-            for (int i = 0; i < rows; i++) {
-                for (int j = 0; j < columns; j++) {
+            for (int i = 0; i < rows; ++i) {
+                for (int j = 0; j < columns; ++j) {
                     if (scale < 0) {
                         if (matrixA[i][j] != matrixB[i][j]) {
                             return false;
@@ -147,8 +147,8 @@ public class MatrixTools {
                 return null;
             }
             int[][] result = new int[n][n];
-            for (int i = 0; i < n; i++) {
-                for (int j = 0; j < n; j++) {
+            for (int i = 0; i < n; ++i) {
+                for (int j = 0; j < n; ++j) {
                     if (i == j) {
                         result[i][j] = 1;
                     }
@@ -166,8 +166,8 @@ public class MatrixTools {
                 return null;
             }
             double[][] result = new double[n][n];
-            for (int i = 0; i < n; i++) {
-                for (int j = 0; j < n; j++) {
+            for (int i = 0; i < n; ++i) {
+                for (int j = 0; j < n; ++j) {
                     if (i == j) {
                         result[i][j] = 1;
                     }
@@ -190,8 +190,8 @@ public class MatrixTools {
             }
             double[][] result = new double[m][n];
             Random r = new Random();
-            for (int i = 0; i < m; i++) {
-                for (int j = 0; j < n; j++) {
+            for (int i = 0; i < m; ++i) {
+                for (int j = 0; j < n; ++j) {
                     result[i][j] = r.nextDouble();
                 }
             }
@@ -210,10 +210,10 @@ public class MatrixTools {
             int rowsA = matrixA.length, rowsB = matrixB.length;
             int columns = matrixA[0].length;
             double[][] result = new double[rowsA + rowsB][columns];
-            for (int i = 0; i < rowsA; i++) {
+            for (int i = 0; i < rowsA; ++i) {
                 System.arraycopy(matrixA[i], 0, result[i], 0, columns);
             }
-            for (int i = 0; i < rowsB; i++) {
+            for (int i = 0; i < rowsB; ++i) {
                 System.arraycopy(matrixB[i], 0, result[i + rowsA], 0, columns);
             }
             return result;
@@ -232,7 +232,7 @@ public class MatrixTools {
             int columnsA = matrixA[0].length, columnsB = matrixB[0].length;
             int columns = columnsA + columnsB;
             double[][] result = new double[rows][columns];
-            for (int i = 0; i < rows; i++) {
+            for (int i = 0; i < rows; ++i) {
                 System.arraycopy(matrixA[i], 0, result[i], 0, columnsA);
                 System.arraycopy(matrixB[i], 0, result[i], columnsA, columnsB);
             }
@@ -250,10 +250,10 @@ public class MatrixTools {
                 return null;
             }
             double[][] result = new double[matrixA.length][matrixA[0].length];
-            for (int i = 0; i < matrixA.length; i++) {
+            for (int i = 0; i < matrixA.length; ++i) {
                 double[] rowA = matrixA[i];
                 double[] rowB = matrixB[i];
-                for (int j = 0; j < rowA.length; j++) {
+                for (int j = 0; j < rowA.length; ++j) {
                     result[i][j] = rowA[j] + rowB[j];
                 }
             }
@@ -271,10 +271,10 @@ public class MatrixTools {
                 return null;
             }
             double[][] result = new double[matrixA.length][matrixA[0].length];
-            for (int i = 0; i < matrixA.length; i++) {
+            for (int i = 0; i < matrixA.length; ++i) {
                 double[] rowA = matrixA[i];
                 double[] rowB = matrixB[i];
-                for (int j = 0; j < rowA.length; j++) {
+                for (int j = 0; j < rowA.length; ++j) {
                     result[i][j] = rowA[j] - rowB[j];
                 }
             }
@@ -292,8 +292,8 @@ public class MatrixTools {
                 return null;
             }
             double[][] result = new double[rowA][columnB];
-            for (int i = 0; i < rowA; i++) {
-                for (int j = 0; j < columnB; j++) {
+            for (int i = 0; i < rowA; ++i) {
+                for (int j = 0; j < columnB; ++j) {
                     result[i][j] = 0;
                     for (int k = 0; k < columnA; k++) {
                         result[i][j] += matrixA[i][k] * matrixB[k][j];
@@ -312,10 +312,10 @@ public class MatrixTools {
             return null;
         }
         double[] outputs = new double[matrix.length];
-        for (int i = 0; i < matrix.length; i++) {
+        for (int i = 0; i < matrix.length; ++i) {
             double[] row = matrix[i];
             outputs[i] = 0d;
-            for (int j = 0; j < Math.min(row.length, columnVector.length); j++) {
+            for (int j = 0; j < Math.min(row.length, columnVector.length); ++j) {
                 outputs[i] += row[j] * columnVector[j];
             }
         }
@@ -329,8 +329,8 @@ public class MatrixTools {
             }
             int rowA = matrix.length, columnA = matrix[0].length;
             double[][] result = new double[columnA][rowA];
-            for (int i = 0; i < rowA; i++) {
-                for (int j = 0; j < columnA; j++) {
+            for (int i = 0; i < rowA; ++i) {
+                for (int j = 0; j < columnA; ++j) {
                     result[j][i] = matrix[i][j];
                 }
             }
@@ -348,16 +348,16 @@ public class MatrixTools {
             int rowA = matrix.length, columnA = matrix[0].length;
             double[][] result = new double[rowA][columnA];
             double sum = 0;
-            for (int i = 0; i < rowA; i++) {
-                for (int j = 0; j < columnA; j++) {
+            for (int i = 0; i < rowA; ++i) {
+                for (int j = 0; j < columnA; ++j) {
                     sum += matrix[i][j];
                 }
             }
             if (sum == 0) {
                 return null;
             }
-            for (int i = 0; i < rowA; i++) {
-                for (int j = 0; j < columnA; j++) {
+            for (int i = 0; i < rowA; ++i) {
+                for (int j = 0; j < columnA; ++j) {
                     result[i][j] = matrix[i][j] / sum;
                 }
             }
@@ -374,8 +374,8 @@ public class MatrixTools {
             }
             int rowA = matrix.length, columnA = matrix[0].length;
             double[][] result = new double[rowA][columnA];
-            for (int i = 0; i < rowA; i++) {
-                for (int j = 0; j < columnA; j++) {
+            for (int i = 0; i < rowA; ++i) {
+                for (int j = 0; j < columnA; ++j) {
                     result[i][j] = Math.round(matrix[i][j]);
                 }
             }
@@ -392,8 +392,8 @@ public class MatrixTools {
             }
             int rowA = matrix.length, columnA = matrix[0].length;
             double[][] result = new double[rowA][columnA];
-            for (int i = 0; i < rowA; i++) {
-                for (int j = 0; j < columnA; j++) {
+            for (int i = 0; i < rowA; ++i) {
+                for (int j = 0; j < columnA; ++j) {
                     result[i][j] = DoubleTools.scale(matrix[i][j], scale);
                 }
             }
@@ -410,8 +410,8 @@ public class MatrixTools {
             }
             int rowA = matrix.length, columnA = matrix[0].length;
             double[][] result = new double[rowA][columnA];
-            for (int i = 0; i < rowA; i++) {
-                for (int j = 0; j < columnA; j++) {
+            for (int i = 0; i < rowA; ++i) {
+                for (int j = 0; j < columnA; ++j) {
                     result[i][j] = matrix[i][j] * p;
                 }
             }
@@ -428,8 +428,8 @@ public class MatrixTools {
             }
             int rowA = matrix.length, columnA = matrix[0].length;
             double[][] result = new double[rowA][columnA];
-            for (int i = 0; i < rowA; i++) {
-                for (int j = 0; j < columnA; j++) {
+            for (int i = 0; i < rowA; ++i) {
+                for (int j = 0; j < columnA; ++j) {
                     result[i][j] = matrix[i][j] / p;
                 }
             }
@@ -478,8 +478,8 @@ public class MatrixTools {
             }
             double[][] inverse = new double[row][column];
             double[][] adjoint = adjoint(matrix);
-            for (int i = 0; i < row; i++) {
-                for (int j = 0; j < column; j++) {
+            for (int i = 0; i < row; ++i) {
+                for (int j = 0; j < column; ++j) {
                     inverse[i][j] = adjoint[i][j] / det;
                 }
             }
@@ -503,14 +503,14 @@ public class MatrixTools {
                 return null;
             }
             double[][] augmented = new double[rows][columns * 2];
-            for (int i = 0; i < rows; i++) {
+            for (int i = 0; i < rows; ++i) {
                 System.arraycopy(matrix[i], 0, augmented[i], 0, columns);
                 augmented[i][i + columns] = 1;
             }
             augmented = reducedRowEchelonForm(augmented);
             double[][] inverse = new double[rows][columns];
-            for (int i = 0; i < rows; i++) {
-                for (int j = 0; j < columns; j++) {
+            for (int i = 0; i < rows; ++i) {
+                for (int j = 0; j < columns; ++j) {
                     inverse[i][j] = augmented[i][j + columns];
                 }
             }
@@ -533,12 +533,12 @@ public class MatrixTools {
             }
             double[][] minor = new double[rows - 1][columns - 1];
             int minorRow = 0, minorColumn;
-            for (int i = 0; i < rows; i++) {
+            for (int i = 0; i < rows; ++i) {
                 if (i == rowIndex) {
                     continue;
                 }
                 minorColumn = 0;
-                for (int j = 0; j < columns; j++) {
+                for (int j = 0; j < columns; ++j) {
                     if (j == columnIndex) {
                         continue;
                     }
@@ -567,8 +567,8 @@ public class MatrixTools {
                 adjoint[0][0] = matrix[0][0];
                 return adjoint;
             }
-            for (int i = 0; i < row; i++) {
-                for (int j = 0; j < column; j++) {
+            for (int i = 0; i < row; ++i) {
+                for (int j = 0; j < column; ++j) {
                     adjoint[j][i] = Math.pow(-1, i + j) * determinantByComplementMinor(complementMinor(matrix, i, j));
                 }
             }
@@ -599,7 +599,7 @@ public class MatrixTools {
                 return matrix[0][0] * matrix[1][1] - matrix[1][0] * matrix[0][1];
             }
             double v = 0;
-            for (int j = 0; j < column; j++) {
+            for (int j = 0; j < column; ++j) {
                 double[][] minor = complementMinor(matrix, 0, j);
                 v += matrix[0][j] * Math.pow(-1, j) * determinantByComplementMinor(minor);
             }
@@ -625,7 +625,7 @@ public class MatrixTools {
                 return 0;
             }
             double det = 1;
-            for (int i = 0; i < rows; i++) {
+            for (int i = 0; i < rows; ++i) {
                 det *= ref[i][i];
             }
             return det;
@@ -644,8 +644,8 @@ public class MatrixTools {
                 return null;
             }
             double[][] result = new double[rowA][columnA];
-            for (int i = 0; i < rowA; i++) {
-                for (int j = 0; j < columnA; j++) {
+            for (int i = 0; i < rowA; ++i) {
+                for (int j = 0; j < columnA; ++j) {
                     result[i][j] = matrixA[i][j] * matrixB[i][j];
                 }
             }
@@ -661,8 +661,8 @@ public class MatrixTools {
             int rowsA = matrixA.length, columnsA = matrixA[0].length;
             int rowsB = matrixB.length, columnsB = matrixB[0].length;
             double[][] result = new double[rowsA * rowsB][columnsA * columnsB];
-            for (int i = 0; i < rowsA; i++) {
-                for (int j = 0; j < columnsA; j++) {
+            for (int i = 0; i < rowsA; ++i) {
+                for (int j = 0; j < columnsA; ++j) {
                     for (int m = 0; m < rowsB; m++) {
                         for (int n = 0; n < columnsB; n++) {
                             result[i * rowsB + m][j * columnsB + n] = matrixA[i][j] * matrixB[m][n];
@@ -681,7 +681,7 @@ public class MatrixTools {
         try {
             int rows = matrix.length, columns = matrix[0].length;
             double[][] result = clone(matrix);
-            for (int i = 0; i < Math.min(rows, columns); i++) {
+            for (int i = 0; i < Math.min(rows, columns); ++i) {
                 if (result[i][i] == 0) {
                     int row = -1;
                     for (int k = i + 1; k < rows; k++) {
@@ -693,7 +693,7 @@ public class MatrixTools {
                     if (row < 0) {
                         break;
                     }
-                    for (int j = i; j < columns; j++) {
+                    for (int j = i; j < columns; ++j) {
                         double temp = result[row][j];
                         result[row][j] = result[i][j];
                         result[i][j] = temp;
@@ -704,7 +704,7 @@ public class MatrixTools {
                         continue;
                     }
                     double ratio = result[k][i] / result[i][i];
-                    for (int j = i; j < columns; j++) {
+                    for (int j = i; j < columns; ++j) {
                         result[k][j] -= ratio * result[i][j];
                     }
                 }
@@ -720,18 +720,18 @@ public class MatrixTools {
         try {
             int rows = matrix.length, columns = matrix[0].length;
             double[][] result = rowEchelonForm(matrix);
-            for (int i = Math.min(rows - 1, columns - 1); i >= 0; i--) {
+            for (int i = Math.min(rows - 1, columns - 1); i >= 0; --i) {
                 double dd = result[i][i];
                 if (dd == 0) {
                     continue;
                 }
                 for (int k = i - 1; k >= 0; k--) {
                     double ratio = result[k][i] / dd;
-                    for (int j = k; j < columns; j++) {
+                    for (int j = k; j < columns; ++j) {
                         result[k][j] -= ratio * result[i][j];
                     }
                 }
-                for (int j = i; j < columns; j++) {
+                for (int j = i; j < columns; ++j) {
                     result[i][j] = result[i][j] / dd;
                 }
             }
@@ -751,7 +751,7 @@ public class MatrixTools {
             int rows = matrix.length, columns = matrix[0].length;
             double[][] d = clone(matrix);
             int i = 0;
-            for (i = 0; i < Math.min(rows, columns); i++) {
+            for (i = 0; i < Math.min(rows, columns); ++i) {
                 if (d[i][i] == 0) {
                     int row = -1;
                     for (int k = i + 1; k < rows; k++) {
@@ -763,7 +763,7 @@ public class MatrixTools {
                     if (row < 0) {
                         break;
                     }
-                    for (int j = i; j < columns; j++) {
+                    for (int j = i; j < columns; ++j) {
                         double temp = d[row][j];
                         d[row][j] = d[i][j];
                         d[i][j] = temp;
@@ -774,7 +774,7 @@ public class MatrixTools {
                         continue;
                     }
                     double ratio = d[k][i] / d[i][i];
-                    for (int j = i; j < columns; j++) {
+                    for (int j = i; j < columns; ++j) {
                         d[k][j] -= ratio * d[i][j];
                     }
                 }
@@ -789,7 +789,7 @@ public class MatrixTools {
 
     public static double[][] swapRow(double matrix[][], int a, int b) {
         try {
-            for (int j = 0; j < matrix[0].length; j++) {
+            for (int j = 0; j < matrix[0].length; ++j) {
                 double temp = matrix[a][j];
                 matrix[a][j] = matrix[b][j];
                 matrix[b][j] = temp;

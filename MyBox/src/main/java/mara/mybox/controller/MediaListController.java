@@ -119,7 +119,7 @@ public class MediaListController extends BaseController {
         tableData.clear();
         tableData.addAll(TableMediaList.read());
         if (selectName != null) {
-            for (int i = 0; i < tableData.size(); i++) {
+            for (int i = 0; i < tableData.size(); ++i) {
                 MediaList list = tableData.get(i);
                 if (list.getName().equals(selectName)) {
                     tableView.getSelectionModel().select(list);
@@ -173,7 +173,7 @@ public class MediaListController extends BaseController {
             }
         }
         if (TableMediaList.set(newName, selected.getMedias())) {
-            popSuccessul();
+            popSuccessful();
             tableData.add(MediaList.create().setName(newName).setMedias(selected.getMedias()));
         } else {
             popFailed();
@@ -190,7 +190,7 @@ public class MediaListController extends BaseController {
             return;
         }
         isSettingValues = true;
-        for (int i = selected.size() - 1; i >= 0; i--) {
+        for (int i = selected.size() - 1; i >= 0; --i) {
             int index = selected.get(i);
             if (index < 0 || index > tableData.size() - 1) {
                 continue;
@@ -208,7 +208,7 @@ public class MediaListController extends BaseController {
     public void update(String name) {
         List<MediaInformation> medias = new ArrayList();
         medias.addAll(tableController.tableData);
-        for (int i = 0; i < tableData.size(); i++) {
+        for (int i = 0; i < tableData.size(); ++i) {
             MediaList list = tableData.get(i);
             if (list.getName().equals(name)) {
                 list.setMedias(medias);

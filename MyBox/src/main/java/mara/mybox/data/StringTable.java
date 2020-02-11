@@ -3,6 +3,7 @@ package mara.mybox.data;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.tools.HtmlTools;
+import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -80,63 +81,68 @@ public class StringTable {
     }
 
     public static String tableDiv(StringTable table) {
-        if (table == null || table.getData() == null) {
-            return "";
-        }
-        StringBuilder s = new StringBuilder();
-        String title = table.getTitle();
-        if (title != null && !title.trim().isEmpty()) {
-            s.append(indent).append(indent).append("<H2 class=\"center\">").append(title).append("</H2>\n");
-        }
-        s.append(indent).append(indent).append("<DIV align=\"center\">\n");
-        s.append(indent).append(indent).append(indent).append("<TABLE >\n");
-        List<String> names = table.getNames();
-        List<Integer> colorIndices = table.getColorIndices();
-        if (names != null) {
-            s.append(indent).append(indent).append(indent).append(indent).
-                    append("<TR  style=\"font-weight:bold; \">");
-            for (int i = 0; i < names.size(); i++) {
-                String name = names.get(i);
-                s.append("<TH>").append(name).append("</TH>");
-                if (colorIndices != null && colorIndices.contains(i)) {
-                    s.append("<TH>").append(name).append(" - RGBA</TH>");
-                    s.append("<TH>").append(name).append(" - RGB</TH>");
-                }
+        try {
+            if (table == null || table.getData() == null) {
+                return "";
             }
-            s.append("</TR>\n");
-        }
-        for (List<String> row : table.getData()) {
-            s.append(indent).append(indent).append(indent).append(indent).append("<TR>");
-            for (int i = 0; i < row.size(); i++) {
-                String value = row.get(i);
-                if (colorIndices != null && colorIndices.contains(i)) {
-                    String rgb = "#" + value.substring(2, 8);                  // Color column should be RGBA from color.toString()
-                    s.append("<TD align=\"center\"><DIV style=\"width: 50px;  background-color:").
-                            append(rgb).append("; \">&nbsp;&nbsp;&nbsp;</DIV></TD>");
-                    s.append("<TD>").append(value).append(" </TD>");
-                    s.append("<TD>").append(rgb).append(" </TD>");
-                } else {
-                    s.append("<TD>").append(value).append("</TD>");
-                }
+            StringBuilder s = new StringBuilder();
+            String title = table.getTitle();
+            if (title != null && !title.trim().isEmpty()) {
+                s.append(indent).append(indent).append("<H2 class=\"center\">").append(title).append("</H2>\n");
             }
-            s.append("</TR>\n");
-        }
-        if (names != null && table.getData().size() > 15) {
-            s.append(indent).append(indent).append(indent).append(indent).
-                    append("<TR  style=\"font-weight:bold; \">");
-            for (int i = 0; i < names.size(); i++) {
-                String name = names.get(i);
-                s.append("<TH>").append(name).append("</TH>");
-                if (colorIndices != null && colorIndices.contains(i)) {
-                    s.append("<TH>").append(name).append(" - RGBA</TH>");
-                    s.append("<TH>").append(name).append(" - RGB</TH>");
+            s.append(indent).append(indent).append("<DIV align=\"center\">\n");
+            s.append(indent).append(indent).append(indent).append("<TABLE >\n");
+            List<String> names = table.getNames();
+            List<Integer> colorIndices = table.getColorIndices();
+            if (names != null) {
+                s.append(indent).append(indent).append(indent).append(indent).
+                        append("<TR  style=\"font-weight:bold; \">");
+                for (int i = 0; i < names.size(); ++i) {
+                    String name = names.get(i);
+                    s.append("<TH>").append(name).append("</TH>");
+                    if (colorIndices != null && colorIndices.contains(i)) {
+                        s.append("<TH>").append(name).append(" - RGBA</TH>");
+                        s.append("<TH>").append(name).append(" - RGB</TH>");
+                    }
                 }
+                s.append("</TR>\n");
             }
-            s.append("</TR>\n");
+            for (List<String> row : table.getData()) {
+                s.append(indent).append(indent).append(indent).append(indent).append("<TR>");
+                for (int i = 0; i < row.size(); ++i) {
+                    String value = row.get(i);
+                    if (colorIndices != null && colorIndices.contains(i)) {
+                        String rgb = "#" + value.substring(2, 8);                  // Color column should be RGBA from color.toString()
+                        s.append("<TD align=\"center\"><DIV style=\"width: 50px;  background-color:").
+                                append(rgb).append("; \">&nbsp;&nbsp;&nbsp;</DIV></TD>");
+                        s.append("<TD>").append(value).append(" </TD>");
+                        s.append("<TD>").append(rgb).append(" </TD>");
+                    } else {
+                        s.append("<TD>").append(value).append("</TD>");
+                    }
+                }
+                s.append("</TR>\n");
+            }
+            if (names != null && table.getData().size() > 15) {
+                s.append(indent).append(indent).append(indent).append(indent).
+                        append("<TR  style=\"font-weight:bold; \">");
+                for (int i = 0; i < names.size(); ++i) {
+                    String name = names.get(i);
+                    s.append("<TH>").append(name).append("</TH>");
+                    if (colorIndices != null && colorIndices.contains(i)) {
+                        s.append("<TH>").append(name).append(" - RGBA</TH>");
+                        s.append("<TH>").append(name).append(" - RGB</TH>");
+                    }
+                }
+                s.append("</TR>\n");
+            }
+            s.append(indent).append(indent).append(indent).append("</TABLE>\n");
+            s.append(indent).append(indent).append("</DIV>\n");
+            return s.toString();
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
         }
-        s.append(indent).append(indent).append(indent).append("</TABLE>\n");
-        s.append(indent).append(indent).append("</DIV>\n");
-        return s.toString();
     }
 
 

@@ -11,9 +11,9 @@ Self-contain packages include all files and need not java env and installation. 
  
 | Platform | Link | Size | Launcher |    
 | --- | --- | ---  | ---  |    
-| win | [MyBox-6.0-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.0/MyBox-6.0-win-exe.zip)  | 242MB | MyBox.exe |       
-| linux | [MyBox-6.0-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.0/MyBox-6.0-linux.tar.gz)  | 201MB  | bin/MyBox  |     
-| mac | [MyBox-6.0-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.0/MyBox-6.0-mac.dmg)  | 203MB  |  MyBox-6.0.app   |   
+| win | [MyBox-6.1-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.1/MyBox-6.1-win-exe.zip)  | 242MB | MyBox.exe |       
+| linux | [MyBox-6.1-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.1/MyBox-6.1-linux.tar.gz)  | 201MB  | bin/MyBox  |     
+| mac | [MyBox-6.1-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.1/MyBox-6.1-mac.dmg)  | 203MB  |  MyBox-6.1.app   |   
 
 User can double click the launcher to start MyBox or run it by command line. The default "Open Method" of image/text/PDF files can be associated to MyBox and a file can be opened directly by MyBox by double clicking the file's name.
 (File with name including non-ascii can not be opened by double clicking currently)
@@ -23,16 +23,16 @@ When JRE or JDK 13 or higher(`Oracle jdk` or `open jdk`) is installed, jar can r
   
 | Platform | Link | Size | Requirements |   
 | --- | --- | ---  | ---  |    
-| win | [MyBox-6.0-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.0/MyBox-6.0-win-jar.zip)  | 129MB | Java 13.0.1 or higher |    
-| linux | [MyBox-6.0-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.0/MyBox-6.0-linux-jar.zip)  | 135MB  | Java 13.0.1 or higher |    
-| mac | [MyBox-6.0-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.0/MyBox-6.0-mac-jar.zip)  |  132MB  | Java 13.0.1 or higher |    
+| win | [MyBox-6.1-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.1/MyBox-6.1-win-jar.zip)  | 129MB | Java 13.0.1 or higher |    
+| linux | [MyBox-6.1-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.1/MyBox-6.1-linux-jar.zip)  | 135MB  | Java 13.0.1 or higher |    
+| mac | [MyBox-6.1-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.1/MyBox-6.1-mac-jar.zip)  |  132MB  | Java 13.0.1 or higher |    
  
     
 Run following command to launch this program with Jar package: 
-<PRE><CODE>     java   -jar   MyBox-6.0.jar</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-6.1.jar</CODE></PRE>
 	
 A file path can follow the command as argument to be opened directly by MyBox. Example, following command will open the image:    
-<PRE><CODE>     java   -jar   MyBox-6.0.jar   /tmp/a1.jpg</CODE></PRE>   
+<PRE><CODE>     java   -jar   MyBox-6.1.jar   /tmp/a1.jpg</CODE></PRE>   
 
 ### Other addresses to download   
 Download from cloud storage: https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F   
@@ -71,7 +71,7 @@ sourceforge: https://sourceforge.net/projects/mara-mybox/files/
 | User Guide - Network Tools | 5.0 | 2019-4-16 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-NetworkTools-en.pdf) |
 | Development Guide | 2.0 | 2019-11-18 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-DevGuide-2.0-en.pdf) |
 | Shortcuts | 5.9 | 2019-12-21 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts_en.html) |
-| Development Logs | 6.0 | 2020-1-2 | [html](#devLog) |
+| Development Logs | 6.1 | 2020-1-2 | [html](#devLog) |
 
 # Implementation
 
@@ -110,7 +110,7 @@ MyBox is based on following open sources softwares:
 
  
 # Current Version
-Current version is 6.0. Its features are mentioned below in summary:   
+Current version is 6.1. Its features are mentioned below in summary:   
  
 * [Cross platforms](#Cross-platform)
 * [Internationalized](#Internationalized)
@@ -120,6 +120,7 @@ Current version is 6.0. Its features are mentioned below in summary:
     - [Browse Images](#browserImage)
     - [Analyse Image](#ImageData)  
     - [Manufacture Image](#imageManufacture)
+    - [Color Management](#ColorManagement)
     - [Color Palette](#ColorPalette)
     - [Convert Image](#imageConvert)
     - [Recognize Texts in Image](#imageOCR)
@@ -134,6 +135,11 @@ Current version is 6.0. Its features are mentioned below in summary:
     - [Create Barcodes](#createBarcodes)
     - [Decode Barcodes](#decodeBarcodes)
     - [Message Digest](#messageDigest)
+    - [Location in Map](#locationInMap)
+    - [Geography Codes](#geographyCode)
+    - [Location Data](#locationData)
+    - [Location Data in Map](#locationDataInMap)
+    - [Epidemic Reports](#epidemicReport)
  * [File Tools](#fileTools)
     - [Edit Text](#editText)
     - [Edit Bytes](#editBytes)
@@ -276,6 +282,15 @@ Recognizing texts in image/PDF(OCR) works only on Windows currently.
 21. Image Manufacture in batch.
 22. Demo: One clicking to show examples of kinds of image manufacture about "Color", "Effect", and "Enhancement".
 
+
+### Color Management<a id="ColorManagement" />   
+1. Add/Delete/Edit any colors in color library. 139 named colors can be added automatically. 
+2. Name colors. 
+3. Add/Remove colors in palette.  
+4. Display colors in simple/all columns.   
+5. Display colors in merged/separated columns.   
+6. Exaport all or selected data as html.
+
 ### Color Palette <a id="ColorPalette"></a>     
 
 1. Any colors can be saved. 139 named colors can be added automatically.
@@ -295,7 +310,7 @@ Recognizing texts in image/PDF(OCR) works only on Windows currently.
 
 ### Image Conversion <a id="imageConvert"></a>     
 
-1. Formats of image file: png, jpg, bmp, tif, gif, wbmp, pnm, pcx, raw.
+1. Formats of image file: png, jpg, bmp, tif, gif, ico, wbmp, pnm, pcx, raw.
 2. Color spaces: sRGB, Linear sRGB, ECI RGB, Adobe RGB, Apple RGB, Color Match RGB, ECI CMYK, Adobe CMYK(several), Gray, Binary
 3. Color space based on external ICC profile.
 4. Option to embed ICC profile.
@@ -353,7 +368,7 @@ Recognizing texts in image/PDF(OCR) works only on Windows currently.
 6. Some operations, like splitting and subsampling, can be handled by reading part of image data and writing-while-reading, so they are suitable for big images. Sampled image is displayed while original image is handled.
 
 ### Others <a id="imageOthers"></a>     
-1. Supported image formats include png, jpg, bmp, tif, gif, wbmp, pnm, pcx.	Adobe YCCK/CMYK jpg file can be decoded.
+1. Supported image formats include png, jpg, bmp, tif, gif, ico, wbmp, pnm, pcx.	Adobe YCCK/CMYK jpg file can be decoded.
 2. Pixels calculator
 3. Convolution Kernels Manager
 
@@ -429,6 +444,46 @@ Recognizing texts in image/PDF(OCR) works only on Windows currently.
 2. Support MD2, MD5, SHA-1, SHA-224, SHA-256, SHA-384, SHA-512/224, SHA-512/256, SHA3-224, SHA3-256, SHA3-384, SHA3-512.    
 
 
+### General Management Base of Data Table<a id="dataManage" />    
+1. Add/Delete/Edit/Clear/Refresh
+2. Pagination
+3. Export/Import
+4. Export as html     
+
+### Location in Map<a id="locationInMap" />      
+1. Base on GaoDe Map.
+2. Query and display location data by clicking map, inputting address, or inputting coordinate. 
+3. Set markers as: point(bubble), circle, or any image. Markers size can be set.  
+4. Set texts as: none, coordinate, or address.
+5. Pop detailed location information when put mouse upon marker. Geography code is supported only for addesses in China.
+6. Map layers: standard, satellite, roadnet, traffic.  Roadnet layer and traffic layer are only supported for China. Satellite layer is supported for part of foreign addresses. Opacity can be set for each map layer.  
+7. Set map language as:  Chinese, English, Chinese and English.        
+
+### Geography Code<a id="geographyCode" />      
+1. Query and display location in map.
+2. Example: all countries and Chinese provinces.          
+
+### Location Data<a id="locationData" />      
+1. Attributes: data set, data label, address, longitude, latitude, altitude, precision, speed, data value, data size, data time, data image, data comments. Time of BC is supported.   
+2. Example:  China Earlier Cultures(incomplete).       
+
+### Location Data in Map<a id="locationDataInMap" />      
+1. Display data distribution in map. Data values can be used as map markers/texts/pops.
+2. Set markers as: point(bubble), circle, any image, or data image.  
+3. Set texts as: none, coordinate, address, data label, data value, data size, data time.
+4. Pop information: ：coordinate, address, data label, data value, data size, data time, data comments, data image.          
+
+### Epidemic Reports<a id="epidemicReport" />      
+1. Attributes: data set, data label, country, province, city,  longitude, latitude, confirmed, suspected, healed, dead, time, comments.    
+2. Button "Epidemic Reports of Chinese Provinces": display sheet to input data of Chinese provinces for specific data set and specific time. 
+3. Button "Epidemic Reports of Global": display sheet to input data of global for specific data set and specific time. 
+4. Data analysis based on dimensions of time and location.  Time direction includes Global and China. Location direction includes countries and Chinese provinces. 
+5. Charts: Number Bar Charts, Ratio Bar Charts, Pie Charts, and Numbers in Map based on location dimension; Number Line Charts, Ratio Line Charts, and Dynamic Numbers in Map based on time dimension.  
+6. Data and charts can be saved as html.  Dynamic Numbers in Map is saved as dynamic gif.
+7. Example: "New Coronavirus Pneumonia". These data are incomplete and may include wrong values. You can finish and fix it. 
+Notice: If you generate these example data in English interface, then watch them in English interface; if you generate these example data in Chinese interface, then watch them in Chinese interface.      
+
+
 ## File Tools <a id="fileTools"></a>     
 
 ### Edit Texts <a id="editText"></a>     
@@ -470,7 +525,8 @@ Recognizing texts in image/PDF(OCR) works only on Windows currently.
 1. Find, Delete, Copy, Move, Rename.
 2. Sychronize directories, with options like whether copy sub-directories or new files, whether only copy modified files after specific date time, whether keep attributes of original files, or whther delete non-existed files/directories under original directory.
 3. Arrange files and reorganize them under new directories by modifed time. This tool can be used to handle lots of files which need be archived according to time, like photoes, screenshots of games, or system logs.
-
+4. Delete all empty sub-directories under directory.
+5. Delete "infinite-nested directory" which is created by bug of some softwares, like MyBox v6.0, and can not be deleted by normal way.         
 
 ### Archive/Compress/Decompress/Unarchive<a id="archiveCompress" />  
 1. Archiving is the process to collect multiple files/directories as single file. Some archive formats like zip and 7z implement compression too. Unarchiving is the inverse process of archiving.    
@@ -529,12 +585,16 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 9. Read information of ffmpeg, like version, supported formats/codecs/filters, and query with customized parameters.    
 Notice: This set of functions is based on ffmpeg, and user need download ffmpeg by yourself. (Suggest to use static version)
 
-### Game-Elimination<a id="gameElimination" />
+### Game-Elimination<a id="gameElimination" />     
 1. Options about chesses images, number, size, effects like dropshadow or arc.     
-2. select sound: praise from GuaiGuai, praise from BenBen, 3-conection from Ben and others from Guai, or mute.     
-3. Select counted chesses: Make scores only when eliminate selected types of chesses.       
-4. Customize rulers that how to give score when eliminate different type of connection.       
-
+2. Chesses can be predefined images, user defined images, or colors.
+3. Sound: praise from GuaiGuai, praise from BenBen, 3-conection from Ben and others from Guai, mute, or any mp3/wav file.     
+4. Counted chesses: Make scores only when eliminate selected types of chesses.       
+5. Customize rulers that how to give score when eliminate different type of connection.       
+6. Set strategy when deadlock happens: keep score and renew game, make chance of elimination, or pop alert to have user chooce.
+7. Options: speed of automation, times of flush when eliminate, whether pop scores.
+8. Button "Help Me": prompt valid step. 
+9. Button "Play Automatically": click to play by compute and click again to stop it.      
 
 ### Others<a id="mediaOthers" />
 1. Monitor images in system clipboard and have user save/view them. Lossless or compression type can be selected.
@@ -582,7 +642,7 @@ Notice: This set of functions is based on ffmpeg, and user need download ffmpeg 
 Notice: Some downloads look standstill at 0% but they are actually dragging data hardly from net, and finally they are 100% suddenly. Do not know why...       
 
 ### Weibo Snaping Tool <a id="weiboSnap"></a>     
-1. Save Weibo pages of any months of any Weibo accounts automatically.
+1. Save Weibo pages of any months of any Weibo accounts automatically. Pages which the account liked can be snapped and saved too.   
 2. Set the months range.
 3. Make sure whole page contents loaded. Can expand the comments and pictures in the pages.
 4. Save the pages as local html files which can not be loaded normally due to dynamic loading of WeiBo contents. They can be used to extract texts in the pages.
@@ -648,6 +708,27 @@ Developers need notice: JavaFx screen is not same as physical screen and has dif
 
 
 # Development Logs <a id="devLog"></a>       
+2020-2-11 v6.1  Location in Map: Query and diaplay location data by clicking map, inputting address, or inputting coordinate. Map options like marker, text, layers, and language.      
+General management base of data table: Add/Delete/Edit data; pagination; export/import; export as html.      
+Manage geography codes: Query and display location in map; example of countries and Chinese provinces.      
+Manage location data: Attribues of location and data set/label/value/size/time/image/comments. Support time of BC. Example of "China earlier cultures"(incomplete).      
+Location data in map: Display data distribution in map. Data values can be used as map markers/texts/pops.      
+Epidemic Reports: Attributes of location and epidemic data. Example of "New Coronavirus Pneumonia"(incomplete and may include wrong values). Data analysis based on dimensions of time and location. 
+Time direction includes Global and China. Location direction includes countries and Chinese provinces. 
+Charts: Number Bar Charts, Ratio Bar Charts, Pie Charts, and Numbers in Map based on location dimension; Number Line Charts, Ratio Line Charts, and Dynamic Numbers in Map based on time dimension.  
+Data and charts can be saved as html.        
+Ico file can be read/written/converted.       
+Dynamic gif: More meta data are explained; display each frame in actual intervals; intervals can be set separately for each frame when edit.         
+Manage colors: maintain colors library; add /remove colors in palette; display colors in simple/all columns; merged/separated columns.        
+Weibo Snap tool: Pages which the account liked can be snapped and saved.       
+File Tools: Delete all empty sub-directories under directory; delete "infinite-nested directory" which is created by bug of some softwares, like MyBox v6.0.        
+Improve game Elimination: Chesses can be any pictures or colors; sound can be any mp3/wav file; better algorithm; button "help me" to prompt valid step; can play game automatically.          
+Solved problems: "infinite-nested directory" may be generated; in "Merge images as video", durations less than 1 second are handled wrongly, and multiple-frames image is handled wrongly;
+in "Edit html", snapshots are incomplete for high dpi screen; Markdown file can not be opened when run MyBox first time.      
+This version is for China and her children, who are fighting against the evil disease. Looking forward to spring and flowers!      
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.1)         
+
+
 2020-1-2 v6.0  Pop large image in Images Browser.    
 Support translating MyBox online. Provide table with English as comparison. New language file can be shared with others. Put resource files under data path and MyBox will 
 be aware of new languages.     
@@ -948,7 +1029,7 @@ This tool might fail to work when weibo would change the accessing channel of pa
 
 ![Snapshot 9](https://mararsh.github.io/MyBox/9-en.jpg)
 
-
+![Snapshot 10](https://mararsh.github.io/MyBox/mapSnap-en.gif)
 
 
 

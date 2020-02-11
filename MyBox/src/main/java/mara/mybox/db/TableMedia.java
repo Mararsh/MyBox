@@ -94,7 +94,7 @@ public class TableMedia extends DerbyBase {
         }
         try {
             String inStr = "( '" + addresses.get(0) + "'";
-            for (int i = 1; i < addresses.size(); i++) {
+            for (int i = 1; i < addresses.size(); ++i) {
                 inStr += ", '" + addresses.get(i) + "'";
             }
             inStr += " )";
@@ -201,7 +201,7 @@ public class TableMedia extends DerbyBase {
         }
         try {
             String inStr = "( '" + addresses.get(0) + "'";
-            for (int i = 1; i < addresses.size(); i++) {
+            for (int i = 1; i < addresses.size(); ++i) {
                 inStr += ", '" + addresses.get(i) + "'";
             }
             inStr += " )";

@@ -72,18 +72,19 @@ public class FilesMergeController extends FilesBatchController {
     }
 
     @Override
-    public boolean makeBatchParameters() {
+    public boolean makeMoreParameters() {
         try {
             outputStream = new BufferedOutputStream(new FileOutputStream(targetFile));
         } catch (Exception e) {
             return false;
         }
-        return super.makeBatchParameters();
+        return super.makeMoreParameters();
     }
 
     @Override
     public String handleFile(File file) {
         try {
+            countHandling(file);
             if (!match(file)) {
                 return AppVariables.message("Skip");
             }

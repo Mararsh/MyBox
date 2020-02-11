@@ -13,8 +13,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.data.FileInformation;
 import mara.mybox.fxml.FxmlControl;
-import mara.mybox.fxml.TableFileSizeCell;
 import mara.mybox.fxml.TableDateCell;
+import mara.mybox.fxml.TableFileSizeCell;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
@@ -29,7 +29,8 @@ import static mara.mybox.value.AppVariables.message;
 public class FilesFindController extends FilesBatchController {
 
     protected ObservableList<FileInformation> filesList;
-    protected long totalChecked, totalMatched;
+    protected long totalMatched;
+    protected String done;
 
     @FXML
     protected TableView<FileInformation> filesView;
@@ -52,6 +53,8 @@ public class FilesFindController extends FilesBatchController {
             tableController.listButton.setVisible(false);
             openTargetButton.setVisible(false);
             openCheck.setVisible(false);
+
+            done = AppVariables.message("Done");
 
         } catch (Exception e) {
             logger.debug(e.toString());
@@ -99,11 +102,11 @@ public class FilesFindController extends FilesBatchController {
     }
 
     @Override
-    public boolean makeBatchParameters() {
+    public boolean makeMoreParameters() {
         filesList.clear();
         filesView.refresh();
-        totalChecked = totalMatched = 0;
-        return super.makeBatchParameters();
+        totalFilesHandled = totalMatched = 0;
+        return super.makeMoreParameters();
     }
 
     @Override
@@ -112,18 +115,28 @@ public class FilesFindController extends FilesBatchController {
         batchTabPane.getSelectionModel().select(targetTab);
     }
 
+    public void countHandling(File file) {
+        if (file == null) {
+            return;
+        }
+        totalFilesHandled++;
+        if (totalFilesHandled % 100 == 0) {
+            updateStatusLabel(message("Checked") + ": " + totalFilesHandled);
+        }
+    }
+
     @Override
     public String handleFile(File file) {
         try {
-            totalChecked++;
+            countHandling(file);
             if (!match(file)) {
-                return AppVariables.message("Done");
+                return done;
             }
             totalMatched++;
             filesList.add(new FileInformation(file));
-            return AppVariables.message("Done");
+            return done;
         } catch (Exception e) {
-            return AppVariables.message("Done");
+            return done;
         }
     }
 
@@ -131,15 +144,18 @@ public class FilesFindController extends FilesBatchController {
     public String handleDirectory(File directory) {
         try {
             if (directory == null || !directory.isDirectory()) {
-                return AppVariables.message("Done");
+                return done;
             }
             File[] files = directory.listFiles();
+            if (files == null) {
+                return done;
+            }
             for (File srcFile : files) {
                 if (task == null || task.isCancelled()) {
-                    return AppVariables.message("Done");
+                    return done;
                 }
                 if (srcFile.isFile()) {
-                    totalChecked++;
+                    countHandling(srcFile);
                     if (!match(srcFile)) {
                         continue;
                     }
@@ -149,18 +165,15 @@ public class FilesFindController extends FilesBatchController {
                     handleDirectory(srcFile);
                 }
             }
-            return AppVariables.message("Done");
+            return done;
         } catch (Exception e) {
             logger.error(e.toString());
-            return AppVariables.message("Done");
+            return done;
         }
     }
 
     @Override
     public void showCost() {
-        if (operationBarController.getStatusLabel() == null) {
-            return;
-        }
         long cost = new Date().getTime() - processStartTime.getTime();
         String s;
         if (paused) {
@@ -169,18 +182,18 @@ public class FilesFindController extends FilesBatchController {
             s = message(currentParameters.status);
         }
         s += ".  "
-                + message("TotalCheckedFiles") + ": " + totalChecked + "   "
+                + message("TotalCheckedFiles") + ": " + totalFilesHandled + "   "
                 + message("TotalMatched") + ": " + totalMatched + ".   "
                 + message("Cost") + ": " + DateTools.showTime(cost) + ". "
                 + message("StartTime") + ": " + DateTools.datetimeToString(processStartTime) + ", "
                 + message("EndTime") + ": " + DateTools.datetimeToString(new Date());
-        operationBarController.getStatusLabel().setText(s);
+        statusLabel.setText(s);
     }
 
     @Override
     public void donePost() {
         showCost();
-        if (operationBarController.miaoCheck.isSelected()) {
+        if (miaoCheck.isSelected()) {
             FxmlControl.miao3();
         }
     }

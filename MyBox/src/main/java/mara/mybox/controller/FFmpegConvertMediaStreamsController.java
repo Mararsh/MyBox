@@ -4,7 +4,6 @@ import com.github.kokorin.jaffree.ffmpeg.UrlInput;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.Date;
-import mara.mybox.data.FileInformation;
 import mara.mybox.data.MediaInformation;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
@@ -21,25 +20,6 @@ public class FFmpegConvertMediaStreamsController extends FFmpegConvertMediaFiles
     public FFmpegConvertMediaStreamsController() {
         baseTitle = AppVariables.message("FFmpegConvertMediaStreams");
 
-    }
-
-    @Override
-    public boolean makeBatchParameters() {
-        if (tableData == null || tableData.isEmpty()) {
-            actualParameters = null;
-            return false;
-        }
-        for (int i = 0; i < tableData.size(); i++) {
-            FileInformation d = tableController.fileInformation(i);
-            if (d == null) {
-                continue;
-            }
-            d.setHandled("");
-        }
-        initLogs();
-        totalFilesHandled = 0;
-        processStartTime = new Date();
-        return true;
     }
 
     @Override
@@ -123,12 +103,14 @@ public class FFmpegConvertMediaStreamsController extends FFmpegConvertMediaFiles
         try {
             MediaInformation info = (MediaInformation) tableData.get(currentParameters.currentIndex);
             String address = info.getAddress();
-            showHandling(address);
+            countHandling(address);
             tableController.markFileHandling(currentParameters.currentIndex);
-            updateLogs(MessageFormat.format(message("HandlingObject"), address), true);
+            if (verboseCheck == null || verboseCheck.isSelected()) {
+                updateLogs(MessageFormat.format(message("HandlingObject"), address), true);
+                updateLogs(info.getInfo(), true);
+            }
 //            String s = message("Duration") + ": " + DateTools.showDuration(info.getDuration());
 //            s += "  " + info.getResolution() + "  " + info.getVideoEncoding() + "  " + info.getAudioEncoding();
-            updateLogs(info.getInfo(), true);
 
             String prefix, suffix;
             File file = new File(address);
@@ -160,7 +142,9 @@ public class FFmpegConvertMediaStreamsController extends FFmpegConvertMediaFiles
             if (target == null) {
                 result = AppVariables.message("Skip");
             } else {
-                updateLogs(message("TargetFile") + ": " + target, true);
+                if (verboseCheck == null || verboseCheck.isSelected()) {
+                    updateLogs(message("TargetFile") + ": " + target, true);
+                }
                 convert(address, target, info.getDuration());
                 targetFileGenerated(target);
                 result = AppVariables.message("Successful");

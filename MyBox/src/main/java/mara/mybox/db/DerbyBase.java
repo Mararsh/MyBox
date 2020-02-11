@@ -3,16 +3,23 @@ package mara.mybox.db;
 import java.net.InetAddress;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.layout.Region;
+import javafx.stage.Stage;
 import mara.mybox.data.ConvolutionKernel;
 import mara.mybox.tools.ConfigTools;
 import mara.mybox.tools.NetworkTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.DerbyFailAsked;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
@@ -31,13 +38,14 @@ public class DerbyBase {
     public static String host = "localhost";
     public static int port = 1527;
     public static String driver, protocol;
-    protected static final String clientDriver = "org.apache.derby.jdbc.ClientDriver";
+    protected static final String ClientDriver = "org.apache.derby.jdbc.ClientDriver";
     protected static final String embeddedDriver = "org.apache.derby.jdbc.EmbeddedDriver";
     protected static final String create = ";user=" + CommonValues.AppDerbyUser + ";password="
             + CommonValues.AppDerbyPassword + ";create=true";
     public static final String login = ";user=" + CommonValues.AppDerbyUser + ";password="
             + CommonValues.AppDerbyPassword + ";create=false";
     public static DerbyStatus status;
+    public static long lastRetry = 0;
 
     public enum DerbyStatus {
         Embedded, Nerwork, Starting, NotConnected, EmbeddedFailed, NerworkFailed
@@ -70,6 +78,36 @@ public class DerbyBase {
             failed(e);
 //            // logger.debug(e.toString());
             return false;
+        }
+    }
+
+    public ResultSet query(String sql) {
+        try {
+            ResultSet resultSet;
+            try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                     Statement statement = conn.createStatement()) {
+                resultSet = statement.executeQuery(sql);
+            }
+            return resultSet;
+        } catch (Exception e) {
+            failed(e);
+//            // logger.debug(e.toString());
+            return null;
+        }
+    }
+
+    public int update(String sql) {
+        try {
+            int ret;
+            try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                     Statement statement = conn.createStatement()) {
+                ret = statement.executeUpdate(sql);
+            }
+            return ret;
+        } catch (Exception e) {
+            failed(e);
+//            // logger.debug(e.toString());
+            return -1;
         }
     }
 
@@ -131,36 +169,6 @@ public class DerbyBase {
         }
     }
 
-    public ResultSet query(String sql) {
-        try {
-            ResultSet resultSet;
-            try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                     Statement statement = conn.createStatement()) {
-                resultSet = statement.executeQuery(sql);
-            }
-            return resultSet;
-        } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
-            return null;
-        }
-    }
-
-    public int update(String sql) {
-        try {
-            int ret;
-            try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                     Statement statement = conn.createStatement()) {
-                ret = statement.executeUpdate(sql);
-            }
-            return ret;
-        } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
-            return -1;
-        }
-    }
-
     public List<String> tables(Statement statement) {
         List<String> tables = new ArrayList<>();
         try {
@@ -197,7 +205,7 @@ public class DerbyBase {
     public static String startDerby() {
         try {
             Class.forName(embeddedDriver).getDeclaredConstructors()[0].newInstance();
-            Class.forName(clientDriver).getDeclaredConstructors()[0].newInstance();
+            Class.forName(ClientDriver).getDeclaredConstructors()[0].newInstance();
             if ("client".equals(readMode())) {
                 return networkMode();
             } else {
@@ -244,7 +252,7 @@ public class DerbyBase {
             }
             String lang = Locale.getDefault().getLanguage().toLowerCase();
             if (startDerbyServer()) {
-                driver = clientDriver;
+                driver = ClientDriver;
                 protocol = "jdbc:derby://" + host + ":" + port + "/";
                 mode = "client";
                 status = DerbyStatus.Nerwork;
@@ -367,9 +375,6 @@ public class DerbyBase {
                  Statement statement = conn.createStatement()) {
             List<String> tables = new DerbyBase().tables(statement);
 //            logger.debug(tables);
-            if (!tables.contains("SRGB")) {
-                new TableSRGB().init(statement);
-            }
             if (!tables.contains("String_Values".toUpperCase())) {
                 new TableStringValues().init(statement);
             }
@@ -409,6 +414,18 @@ public class DerbyBase {
             if (!tables.contains("Browser_Bypass_SSL".toUpperCase())) {
                 new TableBrowserBypassSSL().init(statement);
             }
+            if (!tables.contains("Color_Data".toUpperCase())) {
+                new TableColorData().init(statement);
+            }
+            if (!tables.contains("Geography_Code".toUpperCase())) {
+                new TableGeographyCode().init(statement);
+            }
+            if (!tables.contains("Location".toUpperCase())) {
+                new TableLocation().init(statement);
+            }
+            if (!tables.contains("Epidemic_Report".toUpperCase())) {
+                new TableEpidemicReport().init(statement);
+            }
             return true;
         } catch (Exception e) {
 //            logger.debug(e.toString());
@@ -428,11 +445,13 @@ public class DerbyBase {
             new TableVisitHistory().drop(statement);
             new TableImageScope().drop(statement);
             new TableStringValues().drop(statement);
-            new TableSRGB().drop(statement);
             new TableMediaList().drop(statement);
             new TableMedia().drop(statement);
             new TableBrowserHistory().drop(statement);
             new TableBrowserBypassSSL().drop(statement);
+            new TableColorData().drop(statement);
+            new TableLocation().drop(statement);
+            new TableEpidemicReport().drop(statement);
             return true;
         } catch (Exception e) {
 //            // logger.debug(e.toString());
@@ -451,11 +470,13 @@ public class DerbyBase {
             new TableVisitHistory().clear(statement);
             new TableImageScope().clear(statement);
             new TableStringValues().clear(statement);
-            new TableSRGB().clear(statement);
             new TableMediaList().clear(statement);
             new TableMedia().clear(statement);
             new TableBrowserHistory().clear(statement);
             new TableBrowserBypassSSL().clear(statement);
+            new TableColorData().clear(statement);
+            new TableLocation().clear(statement);
+            new TableEpidemicReport().clear(statement);
             return true;
         } catch (Exception e) {
 //            // logger.debug(e.toString());
@@ -465,6 +486,8 @@ public class DerbyBase {
 
     public static boolean checkUpdates() {
         try {
+            TableStringValues.add("InstalledVersions", CommonValues.AppVersion);
+
             if (!AppVariables.getSystemConfigBoolean("UpdatedTables4.2", false)) {
                 logger.info("Updating tables in 4.2...");
                 List<ConvolutionKernel> records = TableConvolutionKernel.read();
@@ -512,7 +535,7 @@ public class DerbyBase {
                 AppVariables.setSystemConfigValue("UpdatedTables5.4", true);
             }
 
-            if (!AppVariables.getSystemConfigBoolean("UpdatedTables5.9", false)) {
+            if (!AppVariables.getSystemConfigBoolean("UpdatedTables5.9b", false)) {
                 logger.info("Updating tables in 5.8...");
                 DerbyBase t = new DerbyBase();
                 String sql = "ALTER TABLE SRGB  add  column  palette_index  INT";
@@ -520,13 +543,13 @@ public class DerbyBase {
 
                 List<String> saveColors = TableStringValues.read("ColorPalette");
                 if (saveColors != null && !saveColors.isEmpty()) {
-                    TableSRGB.updatePalette(saveColors);
+                    TableColorData.updatePalette(saveColors);
                 }
                 TableStringValues.clear("ColorPalette");
                 AppVariables.setSystemConfigValue("UpdatedTables5.9", true);
             }
 
-            if (!AppVariables.getSystemConfigBoolean("UpdatedTables5.9a", false)) {
+            if (!AppVariables.getSystemConfigBoolean("UpdatedTables5.9ab", false)) {
                 logger.info("Updating tables in 5.9...");
                 DerbyBase t = new DerbyBase();
                 String sql = "DROP TABLE Browser_URLs";
@@ -534,7 +557,12 @@ public class DerbyBase {
                 AppVariables.setSystemConfigValue("UpdatedTables5.9a", true);
             }
 
-            TableStringValues.add("InstalledVersions", CommonValues.AppVersion);
+            if (!AppVariables.getSystemConfigBoolean("UpdatedTables6.1", false)) {
+                logger.info("Updating tables in 6.1...");
+                if (TableColorData.migrate()) {
+                }
+                AppVariables.setSystemConfigValue("UpdatedTables6.1", true);
+            }
 
             return true;
         } catch (Exception e) {
@@ -549,10 +577,92 @@ public class DerbyBase {
                 return;
             }
             if (exception.toString().contains("java.sql.SQLNonTransientConnectionException")) {
+//                logger.debug(exception.toString());
                 status = DerbyStatus.NotConnected;
-                startDerby();
+//                long now = new Date().getTime();
+//                if (now - lastRetry > 3000) {
+//                    lastRetry = new Date().getTime();
+//                    startDerby();
+//                }
+                if (DerbyFailAsked) {
+                    return;
+                }
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("MyBox");
+                alert.setContentText(MessageFormat.format(message("DerbyNotAvalibale"), AppVariables.MyBoxDerbyPath));
+                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                ButtonType buttonRetry = new ButtonType(AppVariables.message("Retry"));
+                ButtonType buttonISee = new ButtonType(AppVariables.message("ISee"));
+                alert.getButtonTypes().setAll(buttonRetry, buttonISee);
+                Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+                stage.setAlwaysOnTop(true);
+                stage.toFront();
+                DerbyFailAsked = true;
+
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == buttonRetry) {
+                    startDerby();
+                }
             }
         } catch (Exception e) {
+
+        }
+    }
+
+    public static int size(String table) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                 Statement statement = conn.createStatement()) {
+            String sql = " SELECT count(*) FROM " + table;
+            ResultSet results = statement.executeQuery(sql);
+            if (results.next()) {
+                return results.getInt(1);
+            } else {
+                return 0;
+            }
+        } catch (Exception e) {
+            failed(e);
+            return 0;
+        }
+    }
+
+//    CALL SYSCS_UTIL.SYSCS_EXPORT_TABLE ('MARA', 'GEOGRAPHY_CODE', 'D:\MyBox\src\main\resources\data\db\GeographyCodes_zh.del', null, null,  'UTF-8');
+//    CALL SYSCS_UTIL.SYSCS_EXPORT_TABLE ('MARA', 'EPIDEMIC_REPORT', 'D:\MyBox\src\main\resources\data\db\EpidemicReport_zh.del', null, null,  'UTF-8');
+//    CALL SYSCS_UTIL.SYSCS_EXPORT_TABLE ('MARA', 'LOCATION', 'D:\MyBox\src\main\resources\data\db\Location.del_zh', null, null,  'UTF-8');
+//    CALL SYSCS_UTIL.SYSCS_EXPORT_TABLE ('MARA', 'GEOGRAPHY_CODE', 'D:\MyBox\src\main\resources\data\db\GeographyCodes_en.del', null, null,  'UTF-8');
+//    CALL SYSCS_UTIL.SYSCS_EXPORT_TABLE ('MARA', 'EPIDEMIC_REPORT', 'D:\MyBox\src\main\resources\data\db\EpidemicReport_en.del', null, null,  'UTF-8');
+//    CALL SYSCS_UTIL.SYSCS_EXPORT_TABLE ('MARA', 'LOCATION', 'D:\MyBox\src\main\resources\data\db\Location.del_en', null, null,  'UTF-8');
+    public static void exportData(String table, String file) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);) {
+            PreparedStatement ps = conn.prepareStatement("CALL SYSCS_UTIL.SYSCS_EXPORT_TABLE (?,?,?,?,?,?)");
+            ps.setString(1, null);
+            ps.setString(2, table.toUpperCase());
+            ps.setString(3, file);
+            ps.setString(4, null);
+            ps.setString(5, null);
+            ps.setString(6, "UTF-8");
+            ps.execute();
+        } catch (Exception e) {
+            failed(e);
+
+        }
+    }
+
+//    CALL SYSCS_UTIL.SYSCS_IMPORT_TABLE ('MARA', 'GEOGRAPHY_CODE', 'D:\MyBox\src\main\resources\data\db\GeographyCodes.del',null, null,  'UTF-8', 1);
+//    CALL SYSCS_UTIL.SYSCS_IMPORT_TABLE ('MARA', 'EPIDEMIC_REPORT', 'D:\MyBox\src\main\resources\data\db\EpidemicReport.del',null, null,  'UTF-8', 1);
+//    CALL SYSCS_UTIL.SYSCS_IMPORT_TABLE ('MARA', 'LOCATION', 'D:\MyBox\src\main\resources\data\db\Location.del',null, null,  'UTF-8', 1);
+    public static void importData(String table, String file, boolean replace) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);) {
+            PreparedStatement ps = conn.prepareStatement("CALL SYSCS_UTIL.SYSCS_IMPORT_TABLE (?,?,?,?,?,?,?)");
+            ps.setString(1, null);
+            ps.setString(2, table.toUpperCase());
+            ps.setString(3, file);
+            ps.setString(4, null);
+            ps.setString(5, null);
+            ps.setString(6, "UTF-8");
+            ps.setInt(7, replace ? 1 : 0);
+            ps.execute();
+        } catch (Exception e) {
+            failed(e);
 
         }
     }

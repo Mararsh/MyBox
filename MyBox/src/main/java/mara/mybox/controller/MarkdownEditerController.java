@@ -24,6 +24,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TitledPane;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.web.WebEngine;
@@ -70,6 +71,8 @@ public class MarkdownEditerController extends TextEditerController {
     protected TextField titleInput;
     @FXML
     protected HBox mdBox, htmlBox, textBox;
+    @FXML
+    protected TitledPane conversionPane;
 
     public MarkdownEditerController() {
         baseTitle = AppVariables.message("MarkdownEditer");
@@ -89,7 +92,7 @@ public class MarkdownEditerController extends TextEditerController {
         sourceExtensionFilter = CommonFxValues.MarkdownExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
 
-        AppVariables.setUserConfigInt(PageSizeKey, Integer.MAX_VALUE); // All in one page
+        AppVariables.setUserConfigInt(PageSizeKey, 200000000); // All in one page
     }
 
     @Override
@@ -101,6 +104,7 @@ public class MarkdownEditerController extends TextEditerController {
             initCharsetTab();
             initLocateTab();
             initReplaceTab();
+            initInputPane();
 
             initMainArea();
             initHtmlTab();
@@ -155,13 +159,20 @@ public class MarkdownEditerController extends TextEditerController {
 
     protected void initConversionOptions() {
         try {
+            conversionPane.expandedProperty().addListener(
+                    (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
+                        AppVariables.setUserConfigValue(baseName + "ConversionPane", conversionPane.isExpanded());
+                    });
+            conversionPane.setExpanded(AppVariables.getUserConfigBoolean(baseName + "ConversionPane", true));
+
             emulationSelector.getItems().addAll(Arrays.asList(
                     "GITHUB", "MARKDOWN", "GITHUB_DOC", "COMMONMARK", "KRAMDOWN", "PEGDOWN",
                     "FIXED_INDENT", "MULTI_MARKDOWN", "PEGDOWN_STRICT"
             ));
             emulationSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                public void changed(ObservableValue ov, String oldValue,
+                        String newValue) {
                     makeConverter();
                 }
             });
@@ -172,7 +183,8 @@ public class MarkdownEditerController extends TextEditerController {
             ));
             indentSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                public void changed(ObservableValue ov, String oldValue,
+                        String newValue) {
                     try {
                         int v = Integer.parseInt(newValue);
                         if (v >= 0) {
@@ -187,25 +199,29 @@ public class MarkdownEditerController extends TextEditerController {
 
             trimCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                public void changed(ObservableValue ov, Boolean oldValue,
+                        Boolean newValue) {
                     makeConverter();
                 }
             });
             appendCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                public void changed(ObservableValue ov, Boolean oldValue,
+                        Boolean newValue) {
                     makeConverter();
                 }
             });
             discardCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                public void changed(ObservableValue ov, Boolean oldValue,
+                        Boolean newValue) {
                     makeConverter();
                 }
             });
             linesCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                public void changed(ObservableValue ov, Boolean oldValue,
+                        Boolean newValue) {
                     makeConverter();
                 }
             });
@@ -215,11 +231,25 @@ public class MarkdownEditerController extends TextEditerController {
             ));
             styleSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                public void changed(ObservableValue ov, String oldValue,
+                        String newValue) {
                     makeConverter();
                 }
             });
             styleSelector.getSelectionModel().select(0);
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    protected void initInputPane() {
+        try {
+            inputPane.expandedProperty().addListener(
+                    (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
+                        AppVariables.setUserConfigValue(baseName + "InputPane", inputPane.isExpanded());
+                    });
+            inputPane.setExpanded(AppVariables.getUserConfigBoolean(baseName + "InputPane", true));
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -788,6 +818,11 @@ public class MarkdownEditerController extends TextEditerController {
         htmlArea.setText("");
         webEngine.loadContent("");
         textArea.setText("");
+    }
+
+    @Override
+    protected void afterSaveExisted() {
+        updateInterface(false);
     }
 
 }

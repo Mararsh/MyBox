@@ -135,7 +135,8 @@ public class PdfViewController extends ImageViewerController {
             percentBox.getItems().addAll(Arrays.asList("100", "75", "50", "125", "150", "200", "80", "25", "30", "15"));
             percentBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                public void changed(ObservableValue ov, String oldValue,
+                        String newValue) {
                     if (isSettingValues) {
                         return;
                     }
@@ -157,7 +158,8 @@ public class PdfViewController extends ImageViewerController {
 
             pageInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                public void changed(ObservableValue ov, String oldValue,
+                        String newValue) {
                     if (isSettingValues) {
                         return;
                     }
@@ -180,7 +182,8 @@ public class PdfViewController extends ImageViewerController {
 
             bookmarksCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                public void changed(ObservableValue ov, Boolean oldValue,
+                        Boolean newValue) {
                     checkOutline();
                     AppVariables.setUserConfigValue("PDFBookmarks", bookmarksCheck.isSelected());
                 }
@@ -189,7 +192,8 @@ public class PdfViewController extends ImageViewerController {
 
             thumbCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                public void changed(ObservableValue ov, Boolean oldValue,
+                        Boolean newValue) {
                     checkThumbs();
                     AppVariables.setUserConfigValue("PDFThumbnails", thumbCheck.isSelected());
                 }
@@ -198,7 +202,8 @@ public class PdfViewController extends ImageViewerController {
 
             thumbScrollPane.vvalueProperty().addListener(new ChangeListener<Number>() {
                 @Override
-                public void changed(ObservableValue ov, Number oldValue, Number newValue) {
+                public void changed(ObservableValue ov, Number oldValue,
+                        Number newValue) {
                     loadThumbs();
                 }
             });
@@ -214,6 +219,7 @@ public class PdfViewController extends ImageViewerController {
             initFilePane();
             initViewPane();
             initSaveAsPane();
+            initTipsPane();
             initOperationBox();
             initMainPane();
             initImageView();
@@ -229,13 +235,13 @@ public class PdfViewController extends ImageViewerController {
     @Override
     protected void initViewPane() {
         try {
-            if (viewPane != null && imageView != null) {
-                viewPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
-            }
+            super.initViewPane();
+
             if (transparentBackgroundCheck != null) {
                 transparentBackgroundCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
-                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    public void changed(ObservableValue ov, Boolean oldValue,
+                            Boolean newValue) {
                         isTransparent = transparentBackgroundCheck.isSelected();
                         loadPage();
                     }
@@ -247,7 +253,8 @@ public class PdfViewController extends ImageViewerController {
                 dpiBox.getItems().addAll(Arrays.asList("96", "72", "120", "160", "240", "300", "400", "600"));
                 dpiBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                     @Override
-                    public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    public void changed(ObservableValue ov, String oldValue,
+                            String newValue) {
                         if (isSettingValues) {
                             return;
                         }
@@ -313,7 +320,8 @@ public class PdfViewController extends ImageViewerController {
 
             tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
                 @Override
-                public void changed(ObservableValue ov, Tab oldValue, Tab newValue) {
+                public void changed(ObservableValue ov, Tab oldValue,
+                        Tab newValue) {
                     if (!ocrTab.equals(newValue) || orcPage == currentPage
                             || imageView.getImage() == null) {
                         return;
@@ -359,6 +367,8 @@ public class PdfViewController extends ImageViewerController {
                 protected boolean handle() {
                     try {
                         ITesseract instance = new Tesseract();
+                        instance.setTessVariable("user_defined_dpi", "96");
+                        instance.setTessVariable("debug_file", "/dev/null");
                         String path = AppVariables.getUserConfigValue("TessDataPath", null);
                         if (path != null) {
                             instance.setDatapath(path);
@@ -711,7 +721,8 @@ public class PdfViewController extends ImageViewerController {
         }
     }
 
-    protected void loadOutlineItem(PDOutlineNode parentOutlineItem, TreeItem parentTreeItem) {
+    protected void loadOutlineItem(PDOutlineNode parentOutlineItem,
+            TreeItem parentTreeItem) {
         try {
             PDOutlineItem childOutlineItem = parentOutlineItem.getFirstChild();
             while (childOutlineItem != null) {
@@ -753,7 +764,7 @@ public class PdfViewController extends ImageViewerController {
             return;
         }
         if (thumbBox.getChildren().isEmpty()) {
-            for (int i = 0; i < pdfInformation.getNumberOfPages(); i++) {
+            for (int i = 0; i < pdfInformation.getNumberOfPages(); ++i) {
                 ImageView view = new ImageView();
                 view.setFitHeight(50);
                 view.setPreserveRatio(true);
@@ -783,7 +794,7 @@ public class PdfViewController extends ImageViewerController {
                             PDFRenderer renderer = new PDFRenderer(doc);
                             images = new HashMap<>();
                             end = Math.min(pos + 20, pdfInformation.getNumberOfPages());
-                            for (int i = pos; i < end; i++) {
+                            for (int i = pos; i < end; ++i) {
                                 ImageView view = (ImageView) thumbBox.getChildren().get(2 * i);
                                 if (view.getImage() != null) {
                                     continue;
@@ -816,7 +827,7 @@ public class PdfViewController extends ImageViewerController {
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
-                                for (int i = pos; i < end; i++) {
+                                for (int i = pos; i < end; ++i) {
                                     ImageView view = (ImageView) thumbBox.getChildren().get(2 * i);
                                     if (view.getImage() != null) {
                                         continue;

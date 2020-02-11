@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -8,14 +9,12 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
-import javafx.util.Callback;
 import javafx.util.converter.IntegerStringConverter;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.data.VisitHistory;
@@ -34,7 +33,7 @@ import thridparty.TableAutoCommitCell;
  * @Description
  * @License Apache License Version 2.0
  */
-public class PDFsTableController extends BatchTableController<PdfInformation> {
+public class PdfsTableController extends BatchTableController<PdfInformation> {
 
     @FXML
     protected TableColumn<PdfInformation, String> userPasswordColumn, ownerPasswordColumn;
@@ -43,15 +42,15 @@ public class PDFsTableController extends BatchTableController<PdfInformation> {
     @FXML
     protected TextField passwordInput, fromInput, toInput;
     @FXML
-    protected Button setAllButton;
+    protected Button setAllOrSelectedButton;
     @FXML
-    protected FlowPane selectPane, setPDFPane;
+    protected FlowPane setPDFPane;
     @FXML
     protected HBox fromToBox;
     @FXML
     protected Label tableCommentsLabel;
 
-    public PDFsTableController() {
+    public PdfsTableController() {
         SourceFileType = VisitHistory.FileType.PDF;
         SourcePathType = VisitHistory.FileType.PDF;
         TargetPathType = VisitHistory.FileType.PDF;
@@ -67,55 +66,59 @@ public class PDFsTableController extends BatchTableController<PdfInformation> {
 
     @Override
     public void initTable() {
-        super.initTable();
+        try {
+            super.initTable();
 
-        FxmlControl.setTooltip(passwordInput, new Tooltip(message("UserPassword")));
+            FxmlControl.setTooltip(passwordInput, new Tooltip(message("UserPassword")));
 
-        fromInput.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable,
-                    String oldValue, String newValue) {
-                try {
-                    Integer.parseInt(newValue);
-                    fromInput.setStyle(null);
-                } catch (Exception e) {
-                    fromInput.setStyle(badStyle);
-                }
-            }
-        });
-
-        toInput.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable,
-                    String oldValue, String newValue) {
-                try {
-                    if (newValue == null || newValue.trim().isEmpty()) {
-                        toInput.setStyle(null);
-                        return;
+            fromInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable,
+                        String oldValue, String newValue) {
+                    try {
+                        Integer.parseInt(newValue);
+                        fromInput.setStyle(null);
+                    } catch (Exception e) {
+                        fromInput.setStyle(badStyle);
                     }
-                    Integer.parseInt(newValue);
-                    toInput.setStyle(null);
-                } catch (Exception e) {
-                    toInput.setStyle(badStyle);
                 }
-            }
-        });
-        FxmlControl.setTooltip(toInput, new Tooltip(message("ToPageComments")));
+            });
 
-        setAllButton.disableProperty().bind(fromInput.styleProperty().isEqualTo(badStyle)
-                .or(toInput.styleProperty().isEqualTo(badStyle))
-        );
+            toInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable,
+                        String oldValue, String newValue) {
+                    try {
+                        if (newValue == null || newValue.trim().isEmpty()) {
+                            toInput.setStyle(null);
+                            return;
+                        }
+                        Integer.parseInt(newValue);
+                        toInput.setStyle(null);
+                    } catch (Exception e) {
+                        toInput.setStyle(badStyle);
+                    }
+                }
+            });
+            FxmlControl.setTooltip(toInput, new Tooltip(message("ToPageComments")));
 
-        tableSubdirCheck.setSelected(AppVariables.getUserConfigBoolean("PDFTableSubDir", true));
-        tableSubdirCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                AppVariables.setUserConfigValue("PDFTableSubDir", tableSubdirCheck.isSelected());
-            }
-        });
+            setAllOrSelectedButton.disableProperty().bind(fromInput.styleProperty().isEqualTo(badStyle)
+                    .or(toInput.styleProperty().isEqualTo(badStyle))
+            );
 
-        moreButton.setSelected(AppVariables.getUserConfigBoolean("PDFTableMore", true));
-        moreAction();
+            tableSubdirCheck.setSelected(AppVariables.getUserConfigBoolean("PDFTableSubDir", true));
+            tableSubdirCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                    AppVariables.setUserConfigValue("PDFTableSubDir", tableSubdirCheck.isSelected());
+                }
+            });
+
+            moreButton.setSelected(AppVariables.getUserConfigBoolean("PDFTableMore", true));
+            moreAction();
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
     }
 
     @Override
@@ -135,6 +138,7 @@ public class PDFsTableController extends BatchTableController<PdfInformation> {
                     row.setUserPassword(t.getNewValue());
                 }
             });
+            userPasswordColumn.getStyleClass().add("editable-column");
 
             ownerPasswordColumn.setCellValueFactory(new PropertyValueFactory<>("ownerPassword"));
             ownerPasswordColumn.setCellFactory(TableAutoCommitCell.forTableColumn());
@@ -148,37 +152,33 @@ public class PDFsTableController extends BatchTableController<PdfInformation> {
                     row.setOwnerPassword(t.getNewValue());
                 }
             });
+            ownerPasswordColumn.getStyleClass().add("editable-column");
 
             fromColumn.setCellValueFactory(new PropertyValueFactory<>("fromPage"));
-            fromColumn.setCellFactory(new Callback<TableColumn<PdfInformation, Integer>, TableCell<PdfInformation, Integer>>() {
-                @Override
-                public TableCell<PdfInformation, Integer> call(TableColumn<PdfInformation, Integer> param) {
-                    TableAutoCommitCell<PdfInformation, Integer> cell
-                            = new TableAutoCommitCell<PdfInformation, Integer>(new IntegerStringConverter()) {
-                        @Override
-                        public void commitEdit(Integer val) {
-                            if (val <= 0) {
-                                cancelEdit();
-                            } else {
-                                super.commitEdit(val);
-                            }
+            fromColumn.setCellFactory((TableColumn<PdfInformation, Integer> param) -> {
+                TableAutoCommitCell<PdfInformation, Integer> cell
+                        = new TableAutoCommitCell<PdfInformation, Integer>(new IntegerStringConverter()) {
+                    @Override
+                    public void commitEdit(Integer val) {
+                        if (val <= 0) {
+                            cancelEdit();
+                        } else {
+                            super.commitEdit(val);
                         }
-                    };
-                    return cell;
+                    }
+                };
+                return cell;
+            });
+            fromColumn.setOnEditCommit((TableColumn.CellEditEvent<PdfInformation, Integer> t) -> {
+                if (t == null) {
+                    return;
+                }
+                if (t.getNewValue() > 0) {
+                    PdfInformation row = t.getRowValue();
+                    row.setFromPage(t.getNewValue());
                 }
             });
-            fromColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<PdfInformation, Integer>>() {
-                @Override
-                public void handle(TableColumn.CellEditEvent<PdfInformation, Integer> t) {
-                    if (t == null) {
-                        return;
-                    }
-                    if (t.getNewValue() > 0) {
-                        PdfInformation row = t.getRowValue();
-                        row.setFromPage(t.getNewValue());
-                    }
-                }
-            });
+            fromColumn.getStyleClass().add("editable-column");
 
             toColumn.setCellValueFactory(new PropertyValueFactory<>("toPage"));
             toColumn.setCellFactory(TableAutoCommitCell.forTableColumn(new IntegerStringConverter()));
@@ -192,6 +192,7 @@ public class PDFsTableController extends BatchTableController<PdfInformation> {
                     row.setToPage(t.getNewValue());
                 }
             });
+            toColumn.getStyleClass().add("editable-column");
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -206,6 +207,9 @@ public class PDFsTableController extends BatchTableController<PdfInformation> {
 
     @FXML
     protected void setAction(ActionEvent event) {
+        if (tableData.isEmpty()) {
+            return;
+        }
         String password;
         int fromPage, toPage;
         String p = passwordInput.getText();
@@ -248,7 +252,11 @@ public class PDFsTableController extends BatchTableController<PdfInformation> {
         }
         boolean userPassword = tableView.getColumns().contains(userPasswordColumn);
         boolean ownerPassword = tableView.getColumns().contains(ownerPasswordColumn);
-        for (PdfInformation info : tableData) {
+        List<PdfInformation> rows = tableView.getSelectionModel().getSelectedItems();
+        if (rows == null || rows.isEmpty()) {
+            rows = tableData;
+        }
+        for (PdfInformation info : rows) {
             if (userPassword) {
                 info.setUserPassword(password);
             }
@@ -309,11 +317,11 @@ public class PDFsTableController extends BatchTableController<PdfInformation> {
     }
 
     public Button getSetAllButton() {
-        return setAllButton;
+        return setAllOrSelectedButton;
     }
 
-    public void setSetAllButton(Button setAllButton) {
-        this.setAllButton = setAllButton;
+    public void setSetAllButton(Button setAllOrSelectedButton) {
+        this.setAllOrSelectedButton = setAllOrSelectedButton;
     }
 
     public FlowPane getSelectPane() {

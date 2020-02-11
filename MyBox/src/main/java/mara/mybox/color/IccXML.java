@@ -260,7 +260,7 @@ public class IccXML {
 
                             case S15Fixed16Array: {
                                 double[] values = (double[]) tag.getValue();
-                                for (int i = 0; i < values.length; i++) {
+                                for (int i = 0; i < values.length; ++i) {
                                     if (i % 3 == 0) {
                                         s.append(Indent).append(Indent).append(Indent);
                                         if (i > 0 && i < values.length - 1) {

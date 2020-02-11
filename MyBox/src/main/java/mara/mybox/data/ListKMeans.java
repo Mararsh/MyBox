@@ -83,7 +83,7 @@ public class ListKMeans<T> {
         }
         if (data.size() < k) {
             clusters = new ArrayList[data.size()];
-            for (int i = 0; i < data.size(); i++) {
+            for (int i = 0; i < data.size(); ++i) {
                 clusters[i] = new ArrayList<>();
                 clusters[i].add(i);
             }
@@ -93,14 +93,14 @@ public class ListKMeans<T> {
         try {
 //            logger.debug("data: " + data.size());
             while (loopCount++ < maxIteration) {
-                for (int i = 0; i < k; i++) {
+                for (int i = 0; i < k; ++i) {
                     clusters[i] = new ArrayList<>();
                 }
-                for (int i = 0; i < data.size(); i++) {
+                for (int i = 0; i < data.size(); ++i) {
                     T p = data.get(i);
                     double min = Double.MAX_VALUE;
                     int index = 0;
-                    for (int j = 0; j < centers.size(); j++) {
+                    for (int j = 0; j < centers.size(); ++j) {
                         T center = centers.get(j);
                         double dist = distance(center, p);
                         if (dist < min) {
@@ -112,7 +112,7 @@ public class ListKMeans<T> {
                 }
 
                 boolean centerchange = false;
-                for (int i = 0; i < k; i++) {
+                for (int i = 0; i < k; ++i) {
                     T newCenter = calculateCenters(clusters[i]);
                     T oldCenter = centers.get(i);
                     if (!equal(newCenter, oldCenter)) {
@@ -138,8 +138,8 @@ public class ListKMeans<T> {
             return false;
         }
         dataMap = new HashMap<>();
-//        for (int i = 0; i < data.size(); i++) {
-//            for (int j = 0; j < clusters.length; j++) {
+//        for (int i = 0; i < data.size(); ++i) {
+//            for (int j = 0; j < clusters.length; ++j) {
 //                List<Integer> cluster = clusters[j];
 //                if (cluster.contains(i)) {
 //                    dataMap.put(data.get(i), centers.get(j));
@@ -147,7 +147,7 @@ public class ListKMeans<T> {
 //                }
 //            }
 //        }
-        for (int i = 0; i < clusters.length; i++) {
+        for (int i = 0; i < clusters.length; ++i) {
             List<Integer> cluster = clusters[i];
             T centerData = centers.get(i);
             for (Integer index : cluster) {

@@ -141,7 +141,7 @@ public class TableBrowserHistory extends DerbyBase {
         }
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
-            String sql = "DELETE FROM Browser_History WHERE WHERE address='" + address.trim() + "'　"
+            String sql = "DELETE FROM Browser_History WHERE address='" + address.trim() + "'　"
                     + " AND　visit_time='" + DateTools.datetimeToString(time) + "' ";
             statement.executeUpdate(sql);
             return true;
@@ -167,7 +167,7 @@ public class TableBrowserHistory extends DerbyBase {
                  Statement statement = conn.createStatement()) {
             conn.setAutoCommit(false);
             for (BrowserHistory h : his) {
-                String sql = "DELETE FROM Browser_History WHERE WHERE address='" + h.getAddress() + "'　"
+                String sql = "DELETE FROM Browser_History WHERE address='" + h.getAddress() + "'　"
                         + " AND　visit_time='" + DateTools.datetimeToString(h.getVisitTime()) + "' ";
                 statement.executeUpdate(sql);
             }

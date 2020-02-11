@@ -7,8 +7,6 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ListChangeListener;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
@@ -28,17 +26,19 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import mara.mybox.color.SRGB;
+import javafx.stage.Modality;
+import mara.mybox.data.ColorData;
 import mara.mybox.data.StringTable;
-import mara.mybox.db.TableSRGB;
+import mara.mybox.db.TableColorData;
 import mara.mybox.fxml.FxmlColor;
-import static mara.mybox.fxml.FxmlColor.colorName;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.blueText;
 import static mara.mybox.fxml.FxmlControl.darkRedText;
+import mara.mybox.image.ImageColor;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -49,7 +49,6 @@ import static mara.mybox.value.AppVariables.message;
 public class ColorPaletteController extends BaseController {
 
     public Control control;
-    protected List<Color> colors;
     protected int rectSize = 15;
     protected Rectangle clickedRect, enteredRect;
     protected DropShadow shadowEffect;
@@ -60,9 +59,9 @@ public class ColorPaletteController extends BaseController {
     @FXML
     protected HBox barBox, closeBox;
     @FXML
-    protected ScrollPane colorsPane;
+    protected ScrollPane scrollPane;
     @FXML
-    protected FlowPane colorsBox;
+    protected FlowPane colorsPane;
     @FXML
     public ColorPicker colorPicker;
     @FXML
@@ -86,23 +85,14 @@ public class ColorPaletteController extends BaseController {
     public void initControls() {
         try {
             super.initControls();
-
             shadowEffect = new DropShadow();
-
-            colorsBox.getChildren().addListener(new ListChangeListener<Node>() {
-                @Override
-                public void onChanged(Change<? extends Node> c) {
-                    int size = colorsBox.getChildren().size();
-                    sizeLabel.setText(AppVariables.message("Count") + ": " + size);
-                    sizeLabel.setStyle(blueText);
-                    htmlButton.setDisable(size == 0);
-                }
-            });
-            htmlButton.setDisable(true);
-
             colorPicker.valueProperty().addListener(new ChangeListener<Color>() {
                 @Override
-                public void changed(ObservableValue<? extends Color> ov, Color oldVal, Color newVal) {
+                public void changed(ObservableValue<? extends Color> ov,
+                        Color oldVal, Color newVal) {
+                    if (isSettingValues) {
+                        return;
+                    }
                     setColor(newVal);
                 }
             });
@@ -119,6 +109,7 @@ public class ColorPaletteController extends BaseController {
             saveButton.disableProperty().bind(Bindings.isEmpty(nameInput.textProperty())
                     .or(Bindings.isEmpty(selectedArea.textProperty()))
             );
+            htmlButton.disableProperty().bind(Bindings.isEmpty(colorsPane.getChildren()));
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -130,9 +121,10 @@ public class ColorPaletteController extends BaseController {
     public void toFront() {
         baseHeight = headerBox.getHeight() + barBox.getHeight()
                 + promptLabel.getHeight() + closeBox.getHeight() + 110;
-        colorsBox.heightProperty().addListener(new ChangeListener<Number>() {
+        colorsPane.heightProperty().addListener(new ChangeListener<Number>() {
             @Override
-            public void changed(ObservableValue<? extends Number> ov, Number oldVal, Number newVal) {
+            public void changed(ObservableValue<? extends Number> ov,
+                    Number oldVal, Number newVal) {
                 if (!isSettingValues && Math.abs(newVal.doubleValue() - oldVal.doubleValue()) > 10) {
                     Platform.runLater(new Runnable() {
                         @Override
@@ -143,20 +135,8 @@ public class ColorPaletteController extends BaseController {
                 }
             }
         });
-        isSettingValues = true;
-        colors = new ArrayList<>();
-        List<SRGB> saveColors = TableSRGB.readPalette();
-        for (SRGB srgb : saveColors) {
-            try {
-                String value = srgb.getColorValue();
-                Color color = Color.web(value);
-                addColor(color, false);
-            } catch (Exception e) {
-                logger.error(e.toString());
-            }
-        }
-        isSettingValues = false;
 
+        load();
         adjustHeight();
         super.toFront();
     }
@@ -164,7 +144,7 @@ public class ColorPaletteController extends BaseController {
     protected void adjustHeight() {
         try {
             isSettingValues = true;
-            myStage.setHeight(baseHeight + colorsPane.getHeight());
+            myStage.setHeight(baseHeight + scrollPane.getHeight());
             isSettingValues = false;
         } catch (Exception e) {
             logger.error(e.toString());
@@ -172,7 +152,54 @@ public class ColorPaletteController extends BaseController {
 
     }
 
-    public void init(BaseController parent, Control control, String title, boolean pickColor) {
+    public void load() {
+        colorsPane.getChildren().clear();
+        synchronized (this) {
+            if (task != null) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+
+                protected List<ColorData> colors;
+
+                @Override
+                protected boolean handle() {
+                    colors = TableColorData.readPalette();
+                    return true;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    isSettingValues = true;
+                    for (ColorData data : colors) {
+                        try {
+                            addColor(data, false);
+                        } catch (Exception e) {
+                            logger.error(e.toString());
+                        }
+                    }
+                    isSettingValues = false;
+                    checkPane();
+                }
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
+    }
+
+    public void checkPane() {
+        if (isSettingValues) {
+            return;
+        }
+        int size = colorsPane.getChildren().size();
+        sizeLabel.setText(AppVariables.message("Count") + ": " + size);
+        sizeLabel.setStyle(blueText);
+    }
+
+    public void init(BaseController parent, Control control, String title,
+            boolean pickColor) {
         parentController = parent;
         this.control = control;
 //        logger.debug(control.getClass() + " " + control.getId());
@@ -198,7 +225,8 @@ public class ColorPaletteController extends BaseController {
             isPickingColor.bind(pickColorButton.selectedProperty());
             isPickingColor.addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
+                public void changed(ObservableValue<? extends Boolean> ov,
+                        Boolean oldVal, Boolean newVal) {
                     if (newVal) {
                         promptLabel.setText(AppVariables.message("PickingColorsNow"));
                     } else {
@@ -217,117 +245,138 @@ public class ColorPaletteController extends BaseController {
         if (isSettingValues) {
             return false;
         }
-        Rectangle rect = addColor(color, true);
+        Rectangle rect = findRect(color);
+        if (rect == null) {
+            rect = addColor(color, true);
+        }
         if (rect != null) {
             FxmlControl.fireMouseClicked(rect);
             return true;
-        } else {
-            Rectangle find = findRect(color);
-            if (find != null) {
-                FxmlControl.fireMouseClicked(find);
-                return true;
-            }
-            selectedArea.setText("");
-            selectedRect.setFill(null);
-            return false;
         }
+        selectedArea.setText("");
+        selectedRect.setFill(null);
+        return false;
+
     }
 
     public Rectangle findRect(Color color) {
-        int pos = colors.indexOf(color);
-        if (pos < 0) {
-            return null;
+        int colorValue = ImageColor.getRGB(color);
+        for (Node node : colorsPane.getChildren()) {
+            try {
+                ColorData data = (ColorData) node.getUserData();
+                if (data.getColorValue() == colorValue) {
+                    return (Rectangle) node;
+                }
+            } catch (Exception e) {
+            }
         }
-        return (Rectangle) colorsBox.getChildren().get(pos);
+        return null;
+    }
+
+    public Rectangle findRect(ColorData data) {
+        for (Node node : colorsPane.getChildren()) {
+            try {
+                ColorData nodeData = (ColorData) node.getUserData();
+                if (nodeData.getColorValue() == data.getColorValue()) {
+                    return (Rectangle) node;
+                }
+            } catch (Exception e) {
+            }
+        }
+        return null;
     }
 
     protected Rectangle addColor(Color color, boolean ahead) {
         try {
-            if (color == null || colors.contains(color)) {
+            if (color == null) {
+                return null;
+            }
+            ColorData data;
+            if (ahead) {
+                data = TableColorData.frontPalette(color);
+            } else {
+                data = TableColorData.endPalette(color);
+            }
+            return addColor(data, ahead);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    protected Rectangle addColor(ColorData data, boolean ahead) {
+        try {
+            if (data == null) {
                 return null;
             }
             Rectangle rect = new Rectangle(rectSize, rectSize);
+            rect.setUserData(data);
+            FxmlControl.setTooltip(rect, new Tooltip(data.display()));
+            Color color = data.getColor();
             rect.setFill(color);
             rect.setStroke(Color.BLACK);
-            rect.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (parentController != null) {
-                                parentController.setColor(control, color);
-                            }
-                            if (saveCloseCheck.isSelected()) {
-                                closeStage();
-
-                            } else {
-                                Rectangle rect = (Rectangle) event.getSource();
-                                isSettingValues = true;
-                                if (clickedRect != null) {
-                                    clickedRect.setEffect(null);
-                                    clickedRect.setWidth(15);
-                                    clickedRect.setHeight(15);
-                                }
-                                rect.setEffect(shadowEffect);
-                                rect.setWidth(25);
-                                rect.setHeight(25);
-                                clickedRect = rect;
-                                selectedRect.setFill(color);
-                                String name = FxmlColor.colorName(color);
-                                String display = FxmlColor.colorDisplay(color);
-                                nameInput.setText(name);
-                                if (name == null) {
-                                    selectedArea.setText(display);
-                                } else {
-                                    selectedArea.setText(name + "\n" + display);
-                                }
-                                isSettingValues = false;
-                            }
+            rect.setOnMouseClicked((MouseEvent event) -> {
+                Platform.runLater(() -> {
+                    isSettingValues = true;
+                    colorPicker.setValue(data.getColor());
+                    isSettingValues = false;
+                    if (parentController != null) {
+                        parentController.setColor(control, color);
+                        if (saveCloseCheck.isSelected()) {
+                            closeStage();
                         }
-                    });
+                    }
+                    Rectangle rect1 = (Rectangle) event.getSource();
+                    isSettingValues = true;
+                    if (clickedRect != null) {
+                        clickedRect.setEffect(null);
+                        clickedRect.setWidth(15);
+                        clickedRect.setHeight(15);
+                    }
+                    rect1.setEffect(shadowEffect);
+                    rect1.setWidth(25);
+                    rect1.setHeight(25);
+                    clickedRect = rect1;
+                    selectedRect.setFill(color);
+                    selectedRect.setUserData(rect1.getUserData());
+                    try {
+                        ColorData data1 = (ColorData) rect1.getUserData();
+                        nameInput.setText(data1.getColorName());
+                        selectedArea.setText(data1.display());
+                    } catch (Exception e) {
+                    }
+                    isSettingValues = false;
 
-                }
+                });
             });
-            rect.setOnMouseEntered(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            Rectangle rect = (Rectangle) event.getSource();
-                            if (rect.equals(enteredRect) || rect.equals(clickedRect)) {
-                                return;
-                            }
-                            isSettingValues = true;
-                            if (enteredRect != null && !enteredRect.equals(clickedRect)) {
-                                enteredRect.setEffect(null);
-                                enteredRect.setWidth(15);
-                                enteredRect.setHeight(15);
-                            }
-                            rect.setEffect(shadowEffect);
-                            rect.setWidth(20);
-                            rect.setHeight(20);
-                            enteredRect = rect;
-                            isSettingValues = false;
-                            FxmlControl.setTooltip(rect,
-                                    new Tooltip(FxmlColor.colorNameDisplay(color)));
-
+            rect.setOnMouseEntered((MouseEvent event) -> {
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        Rectangle rect = (Rectangle) event.getSource();
+                        if (rect.equals(enteredRect) || rect.equals(clickedRect)) {
+                            return;
                         }
-                    });
-                }
+                        isSettingValues = true;
+                        if (enteredRect != null && !enteredRect.equals(clickedRect)) {
+                            enteredRect.setEffect(null);
+                            enteredRect.setWidth(15);
+                            enteredRect.setHeight(15);
+                        }
+                        rect.setEffect(shadowEffect);
+                        rect.setWidth(20);
+                        rect.setHeight(20);
+                        enteredRect = rect;
+                        isSettingValues = false;
+                    }
+                });
             });
 
             if (ahead) {
-                colors.add(0, color);
-                colorsBox.getChildren().add(0, rect);
+                colorsPane.getChildren().add(0, rect);
             } else {
-                colors.add(color);
-                colorsBox.getChildren().add(rect);
+                colorsPane.getChildren().add(rect);
             }
-            if (!isSettingValues) {
-                TableSRGB.updatePaletteColor(colors);
-            }
+            checkPane();
             return rect;
         } catch (Exception e) {
             return null;
@@ -336,32 +385,57 @@ public class ColorPaletteController extends BaseController {
 
     @FXML
     public void commonColorsAction() {
-        try {
-            isSettingValues = true;
-            List<Color> commonColors = FxmlColor.commonColors();
-            for (Color color : commonColors) {
-                addColor(color, false);
+        synchronized (this) {
+            if (task != null) {
+                return;
             }
-            isSettingValues = false;
-            adjustHeight();
-            TableSRGB.updatePaletteColor(colors);
-        } catch (Exception e) {
-            logger.error(e.toString());
+            task = new SingletonTask<Void>() {
+
+                @Override
+                protected boolean handle() {
+                    List<Color> colors = new ArrayList<>();
+                    for (Node node : colorsPane.getChildren()) {
+                        Rectangle rect = (Rectangle) node;
+                        colors.add((Color) rect.getFill());
+                    }
+                    List<Color> commonColors = FxmlColor.commonColors();
+                    for (int i = commonColors.size() - 1; i >= 0; --i) {
+                        Color color = commonColors.get(i);
+                        if (!colors.contains(color)) {
+                            colors.add(0, color);
+                        }
+                    }
+                    TableColorData.updatePaletteColor(colors);
+                    return true;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    load();
+                }
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
         }
     }
 
     @FXML
     @Override
     public void saveAction() {
-        if (nameInput.getText().isEmpty() || selectedRect.getFill() == null) {
+        String name = nameInput.getText().trim();
+        if (name.isEmpty() || selectedRect.getUserData() == null) {
             return;
         }
-        if (TableSRGB.setName(((Color) selectedRect.getFill()).toString(), nameInput.getText())) {
-            Color color = (Color) clickedRect.getFill();
-            String s = FxmlColor.colorNameDisplay(color);
+        ColorData data = (ColorData) clickedRect.getUserData();
+        if (TableColorData.setName(data.getRgba(), name)) {
+            data.setColorName(name);
+            data.setColorDisplay(null);
+            String s = data.display();
             selectedArea.setText(s);
             FxmlControl.setTooltip(clickedRect, s);
-            popSuccessul();
+            popSuccessful();
         } else {
             popFailed();
         }
@@ -373,27 +447,24 @@ public class ColorPaletteController extends BaseController {
     public void deleteAction() {
         try {
             isSettingValues = true;
-            Color c = (Color) selectedRect.getFill();
-            if (!colors.remove(c)) {
-                return;
-            }
+            TableColorData.removeFromPalette((Color) selectedRect.getFill());
             selectedRect.setFill(null);
             selectedArea.setText("");
             if (clickedRect != null) {
-                int pos = colorsBox.getChildren().indexOf(clickedRect);
+                int pos = colorsPane.getChildren().indexOf(clickedRect);
                 if (pos >= 0) {
-                    colorsBox.getChildren().remove(pos);
+                    colorsPane.getChildren().remove(pos);
                     clickedRect = null;
                 }
-                if (!pickColorButton.isVisible() && pos < colorsBox.getChildren().size()) {
-                    Rectangle rect = (Rectangle) colorsBox.getChildren().get(pos);
+                if (!pickColorButton.isVisible() && pos < colorsPane.getChildren().size()) {
+                    Rectangle rect = (Rectangle) colorsPane.getChildren().get(pos);
                     FxmlControl.fireMouseClicked(rect);
                 }
 
             }
             isSettingValues = false;
             adjustHeight();
-            TableSRGB.updatePaletteColor(colors);
+
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -404,22 +475,27 @@ public class ColorPaletteController extends BaseController {
     public void clearAction() {
         try {
             isSettingValues = true;
-            colors.clear();
-            colorsBox.getChildren().clear();
+            colorsPane.getChildren().clear();
             clickedRect = null;
             enteredRect = null;
             isSettingValues = false;
             adjustHeight();
-            TableSRGB.clearPalette();
+            TableColorData.clearPalette();
         } catch (Exception e) {
             logger.error(e.toString());
         }
     }
 
     @FXML
+    public void refreshAction() {
+        load();
+    }
+
+    @FXML
     public void htmlAction() {
         try {
-            if (colors == null || colors.isEmpty()) {
+            List<Node> nodes = colorsPane.getChildren();
+            if (nodes == null || nodes.isEmpty()) {
                 return;
             }
             List<String> names = new ArrayList<>();
@@ -429,12 +505,21 @@ public class ColorPaletteController extends BaseController {
             ));
             StringTable table = new StringTable(names, message("ColorPalette"), 2);
             int id = 1;
-            for (Color color : colors) {
+            for (Node node : nodes) {
+                ColorData data = null;
+                try {
+                    data = (ColorData) node.getUserData();
+                } catch (Exception e) {
+                }
+                if (data == null) {
+                    continue;
+                }
                 List<String> row = new ArrayList<>();
-                String name = colorName(color);
+                String name = data.getColorName();
                 if (name == null) {
                     name = "";
                 }
+                Color color = data.getColor();
                 int red = (int) Math.round(color.getRed() * 255);
                 int green = (int) Math.round(color.getGreen() * 255);
                 int blue = (int) Math.round(color.getBlue() * 255);
@@ -454,6 +539,11 @@ public class ColorPaletteController extends BaseController {
         } catch (Exception e) {
             logger.error(e.toString());
         }
+    }
+
+    @FXML
+    public void dataAction() {
+        openStage(CommonValues.ManageColorsFxml);
     }
 
     @FXML

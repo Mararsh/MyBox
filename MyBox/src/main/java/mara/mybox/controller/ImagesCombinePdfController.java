@@ -455,7 +455,7 @@ public class ImagesCombinePdfController extends ImagesListController {
             stage.toFront();
 
             Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == buttonCancel) {
+            if (result.get() != buttonSure) {
                 return;
             }
         }
@@ -513,7 +513,7 @@ public class ImagesCombinePdfController extends ImagesListController {
 
                 @Override
                 protected void whenSucceeded() {
-                    popSuccessul();
+                    popSuccessful();
                     if (viewCheck.isSelected()) {
                         view(file);
                     }

@@ -47,7 +47,7 @@ public class WeiboSnapController extends BaseController {
     private final String WeiboExpandPicturesKey, WeiboExpandCommentsKey, WeiboUseTempKey;
     private final String WeiboPdfKey, WeiboHtmlKey, WeiboPixKey, WeiboKeepPageKey, WeiboMiaoKey;
     final private String AuthorKey;
-    private int accessInterval, webWidth, categoryType, retry, startPage, snapInterval, dpi;
+    private int accessInterval, webWidth, categoryType, retry, startPage, snapInterval, dpi, likeStartPage;
     private boolean isImageSize;
     private String webAddress;
     private WeiboSnapParameters parameters;
@@ -65,13 +65,13 @@ public class WeiboSnapController extends BaseController {
     @FXML
     private TextField startMonthInput, endMonthInput, startPageInput, accessIntervalInput,
             snapIntervalInput, customWidthInput, customHeightInput, authorInput, thresholdInput,
-            headerInput;
+            headerInput, likeStartPageInput;
     @FXML
     private Button wowButton, recoverPassportButton;
     @FXML
     private CheckBox pdfCheck, htmlCheck, pixCheck, keepPageCheck, miaoCheck, ditherCheck,
             expandCommentsCheck, expandPicturesCheck, openPathCheck, closeWindowCheck,
-            bypassSSLCheck;
+            bypassSSLCheck, likeCheck, postsCheck;
     @FXML
     private RadioButton imageSizeRadio, monthsPathsRadio, pngRadio,
             pdfMem500MRadio, pdfMem1GRadio, pdfMem2GRadio, pdfMemUnlimitRadio;
@@ -115,7 +115,6 @@ public class WeiboSnapController extends BaseController {
     }
 
     private void initWebOptions() {
-
         addressList = TableStringValues.max("WeiBoAddress", 20);
         addressBox.getItems().addAll(addressList);
         addressBox.valueProperty().addListener(new ChangeListener<String>() {
@@ -130,9 +129,13 @@ public class WeiboSnapController extends BaseController {
                     public void run() {
                         try {
                             String s = newValue.trim();
-                            int pos = s.indexOf("?");
-                            if (pos > 0) {
-                                s = s.substring(0, pos);
+                            int pos1 = s.indexOf("http");
+                            if (pos1 > 0) {
+                                s = s.substring(pos1);
+                            }
+                            int pos2 = s.indexOf('?');
+                            if (pos2 > 0) {
+                                s = s.substring(0, pos2);
                             }
                             if (s.endsWith("/profile")) {
                                 s = s.substring(0, s.length() - "/profile".length());
@@ -152,20 +155,28 @@ public class WeiboSnapController extends BaseController {
                                 webAddress = s;
                                 addressBox.getEditor().setStyle(null);
                                 AppVariables.setUserConfigValue(WeiboLastAddressKey, s);
-                                if (!addressList.contains(s)) {
+                                boolean in = false;
+                                for (String addr : addressList) {
+                                    if (addr.contains(webAddress)) {
+                                        in = true;
+                                        break;
+                                    }
+                                }
+                                if (!in) {
                                     TableStringValues.add("WeiBoAddress", s);
                                     addressList = TableStringValues.max("WeiBoAddress", 20);
                                 }
-
                             }
                         } catch (Exception e) {
                             addressBox.getEditor().setStyle(badStyle);
                             webAddress = "";
                         }
                     }
-                });
-
+                ;
             }
+        );
+
+        }
         });
         addressBox.getSelectionModel().select(0);
 
@@ -177,13 +188,17 @@ public class WeiboSnapController extends BaseController {
                 checkTimes();
             }
         });
-        startMonthInput.setText(AppVariables.getUserConfigValue("WeiboLastStartMonthKey", ""));
+        startMonthInput.setText(AppVariables.getUserConfigValue("WeiboPostsLastMonth", ""));
 
         startPage = 1;
         startPageInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable,
                     String oldValue, String newValue) {
+                if (!postsCheck.isSelected()) {
+                    startPageInput.setStyle(null);
+                    return;
+                }
                 try {
                     int v = Integer.valueOf(startPageInput.getText());
                     if (v >= 1) {
@@ -197,7 +212,31 @@ public class WeiboSnapController extends BaseController {
                 }
             }
         });
-        startPageInput.setText("1");
+        startPageInput.setText(AppVariables.getUserConfigValue("WeiboPostsLastPage", "1"));
+
+        likeStartPage = 1;
+        likeStartPageInput.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable,
+                    String oldValue, String newValue) {
+                if (!likeCheck.isSelected()) {
+                    likeStartPageInput.setStyle(null);
+                    return;
+                }
+                try {
+                    int v = Integer.valueOf(likeStartPageInput.getText());
+                    if (v >= 1) {
+                        likeStartPageInput.setStyle(null);
+                        likeStartPage = v;
+                    } else {
+                        likeStartPageInput.setStyle(badStyle);
+                    }
+                } catch (Exception e) {
+                    likeStartPageInput.setStyle(badStyle);
+                }
+            }
+        });
+        likeStartPageInput.setText(AppVariables.getUserConfigValue("WeiboLikeLastPage", "1"));
 
         endMonthInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -246,6 +285,11 @@ public class WeiboSnapController extends BaseController {
     }
 
     private void checkTimes() {
+        if (!postsCheck.isSelected()) {
+            startMonthInput.setStyle(null);
+            endMonthInput.setStyle(null);
+            return;
+        }
         Date weiboStart = DateTools.parseMonth("2009-08");
         Date thisMonth = DateTools.thisMonth();
         try {
@@ -266,6 +310,7 @@ public class WeiboSnapController extends BaseController {
                     startMonthInput.setStyle(null);
                 }
             }
+            AppVariables.setUserConfigValue("WeiboLastStartMonthKey", startMonthInput.getText());
         } catch (Exception e) {
             startMonthInput.setStyle(badStyle);
             return;
@@ -299,8 +344,16 @@ public class WeiboSnapController extends BaseController {
 
         List<String> dpiValues = new ArrayList();
         dpiValues.addAll(Arrays.asList("96", "120", "160", "300"));
-        dpiValues.add(0, Toolkit.getDefaultToolkit().getScreenResolution() + "");
-        dpiValues.add(Screen.getPrimary().getDpi() + "");
+        String sValue = Toolkit.getDefaultToolkit().getScreenResolution() + "";
+        if (dpiValues.contains(sValue)) {
+            dpiValues.remove(sValue);
+        }
+        dpiValues.add(0, sValue);
+        sValue = (int) Screen.getPrimary().getDpi() + "";
+        if (dpiValues.contains(sValue)) {
+            dpiValues.remove(sValue);
+        }
+        dpiValues.add(sValue);
         dpiSelector.getItems().addAll(dpiValues);
         dpiSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -392,7 +445,8 @@ public class WeiboSnapController extends BaseController {
 
         thresholdInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+            public void changed(ObservableValue<? extends String> observable,
+                    String oldValue, String newValue) {
                 checkThreshold();
             }
         });
@@ -534,13 +588,15 @@ public class WeiboSnapController extends BaseController {
 
         customWidthInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+            public void changed(ObservableValue<? extends String> observable,
+                    String oldValue, String newValue) {
                 checkCustomValues();
             }
         });
         customHeightInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+            public void changed(ObservableValue<? extends String> observable,
+                    String oldValue, String newValue) {
                 checkCustomValues();
             }
         });
@@ -591,7 +647,8 @@ public class WeiboSnapController extends BaseController {
 
         authorInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+            public void changed(ObservableValue<? extends String> observable,
+                    String oldValue, String newValue) {
                 AppVariables.setUserConfigValue(AuthorKey, newValue);
             }
         });
@@ -1036,6 +1093,7 @@ public class WeiboSnapController extends BaseController {
             parameters.setUseTempFiles(true);
             parameters.setSnapInterval(snapInterval);
             parameters.setDpi(dpi);
+            parameters.setLikeStartPage(likeStartPage);
             return parameters;
         } catch (Exception e) {
             parameters = null;
@@ -1051,13 +1109,26 @@ public class WeiboSnapController extends BaseController {
                 return;
             }
 
-            WeiboSnapRunController controller = (WeiboSnapRunController) openStage(CommonValues.WeiboSnapRunFxml);
-            controller.start(parameters);
-            if (closeWindowCheck.isSelected()) {
-                controller.setParent(null);
-                closeStage();
-            } else {
-                controller.setParent(this);
+            if (postsCheck.isSelected()) {
+                WeiboSnapPostsController pageController = (WeiboSnapPostsController) openStage(CommonValues.WeiboSnapPostsFxml);
+                pageController.start(parameters);
+                if (closeWindowCheck.isSelected()) {
+                    pageController.setParent(null);
+                    closeStage();
+                } else {
+                    pageController.setParent(this);
+                }
+            }
+
+            if (likeCheck.isSelected()) {
+                WeiboSnapLikeController likeController = (WeiboSnapLikeController) openStage(CommonValues.WeiboSnapLikeFxml);
+                likeController.start(parameters);
+                if (closeWindowCheck.isSelected()) {
+                    likeController.setParent(null);
+                    closeStage();
+                } else {
+                    likeController.setParent(this);
+                }
             }
 
         } catch (Exception e) {

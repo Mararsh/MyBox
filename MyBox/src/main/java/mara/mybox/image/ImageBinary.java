@@ -183,8 +183,8 @@ public class ImageBinary extends PixelsOperation {
             int height = grayImage.getHeight();
 
             int[] grayNumber = new int[256];
-            for (int i = 0; i < width; i++) {
-                for (int j = 0; j < height; j++) {
+            for (int i = 0; i < width; ++i) {
+                for (int j = 0; j < height; ++j) {
 //                    int r = 0xFF & grayImage.getRGB(i, j);
                     int gray = ImageColor.grayPixel2GrayValue(grayImage.getRGB(i, j));
                     grayNumber[gray]++;
@@ -193,7 +193,7 @@ public class ImageBinary extends PixelsOperation {
 
             float pixelTotal = width * height;
             float[] grayRadio = new float[256];
-            for (int i = 0; i < 256; i++) {
+            for (int i = 0; i < 256; ++i) {
                 grayRadio[i] = grayNumber[i] / pixelTotal;
             }
 
@@ -205,7 +205,7 @@ public class ImageBinary extends PixelsOperation {
                 foregroundNumber = 0;
                 backgoundValue = 0;
                 foregroundValue = 0;
-                for (int i = 0; i < 256; i++) {
+                for (int i = 0; i < 256; ++i) {
                     if (i <= gray) {
                         backgroundNumber += grayRadio[i];
                         backgoundValue += i * grayRadio[i];

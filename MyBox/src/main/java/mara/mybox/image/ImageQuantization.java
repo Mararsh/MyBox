@@ -489,7 +489,7 @@ public class ImageQuantization extends PixelsOperation {
             }
             Color mappedColor = null;
             Color regionColor = regionQuantization.map(color);
-            for (int i = 0; i < regions.size(); i++) {
+            for (int i = 0; i < regions.size(); ++i) {
                 PopularityRegion region = regions.get(i);
                 if (region.regionColor.equals(regionColor)) {
                     mappedColor = region.averageColor;
@@ -499,7 +499,7 @@ public class ImageQuantization extends PixelsOperation {
             if (mappedColor == null) {
                 int minDistance = Integer.MAX_VALUE;
                 PopularityRegion nearestRegion = regions.get(0);
-                for (int i = 0; i < regions.size(); i++) {
+                for (int i = 0; i < regions.size(); ++i) {
                     PopularityRegion region = regions.get(i);
                     int distance = ImageColor.calculateColorDistance2(region.averageColor, color);
                     if (distance < minDistance) {
@@ -594,7 +594,7 @@ public class ImageQuantization extends PixelsOperation {
             // Create the root node.
             rootNode = new Node(0, colors);
             // Add all source colors to it.
-            for (int i = 0; i < colors.length; i++) {
+            for (int i = 0; i < colors.length; ++i) {
                 rootNode.AddColor(i);
             }
         }
@@ -616,8 +616,8 @@ public class ImageQuantization extends PixelsOperation {
 
             public Node() {
                 // precalculate every possible distance
-                for (int i = 0; i < 256; i++) {
-                    for (int j = 0; j < 256; j++) {
+                for (int i = 0; i < 256; ++i) {
+                    for (int j = 0; j < 256; ++j) {
                         Distance[i][j] = ((i - j) * (i - j));
                     }
                 }
@@ -709,8 +709,8 @@ public class ImageQuantization extends PixelsOperation {
 
             rootNode = new OctreeNode();
             rootNode.afterSetParam();
-            for (int i = 0; i < image.getWidth(); i++) {
-                for (int j = 0; j < image.getHeight(); j++) {
+            for (int i = 0; i < image.getWidth(); ++i) {
+                for (int j = 0; j < image.getHeight(); ++j) {
                     int colorValue = image.getRGB(i, j);
                     if (colorValue == 0) {    // transparency is not involved
                         continue;
@@ -743,7 +743,7 @@ public class ImageQuantization extends PixelsOperation {
                 int g = colorValue >> 8 & 0xFF;
                 int b = colorValue & 0xFF;
                 OctreeNode proNode = this;
-                for (int i = 7; i >= speed; i--) {
+                for (int i = 7; i >= speed; --i) {
                     int item = ((r >> i & 1) << 2) + ((g >> i & 1) << 1) + (b >> i & 1);
                     OctreeNode child = proNode.getChild(item);
                     if (child == null) {
@@ -776,7 +776,7 @@ public class ImageQuantization extends PixelsOperation {
             }
 
             public OctreeNode getDepestNode() {
-                for (int i = 7; i > 0; i--) {
+                for (int i = 7; i > 0; --i) {
                     List<OctreeNode> levelList = this.levelMapping.get(i);
                     if (!levelList.isEmpty()) {
                         return levelList.remove(levelList.size() - 1);
@@ -801,7 +801,7 @@ public class ImageQuantization extends PixelsOperation {
             public void afterSetParam() {
                 if (this.getParent() == null && this.level == 0) {
                     levelMapping = new HashMap<>();
-                    for (int i = 1; i <= 8; i++) {
+                    for (int i = 1; i <= 8; ++i) {
                         levelMapping.put(i, new ArrayList<>());
                     }
                 }

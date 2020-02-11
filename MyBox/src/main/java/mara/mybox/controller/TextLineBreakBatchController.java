@@ -57,13 +57,12 @@ public class TextLineBreakBatchController extends TextEncodingBatchController {
     @Override
     public String handleFile(File srcFile, File targetPath) {
         try {
-            showHandling(srcFile);
+            countHandling(srcFile);
             File target = makeTargetFile(srcFile, targetPath);
             if (target == null) {
                 return AppVariables.message("Skip");
             }
             sourceInformation.setFile(srcFile);
-            logger.debug(srcFile);
             sourceInformation.setLineBreak(TextTools.checkLineBreak(srcFile));
             sourceInformation.setLineBreakValue(TextTools.lineBreakValue(sourceInformation.getLineBreak()));
             if (autoDetermine) {
@@ -74,7 +73,6 @@ public class TextLineBreakBatchController extends TextEncodingBatchController {
 
             }
             targetInformation.setFile(target);
-            logger.debug(target);
             targetInformation.setCharset(sourceInformation.getCharset());
             if (TextTools.convertLineBreak(sourceInformation, targetInformation)) {
                 targetFileGenerated(target);

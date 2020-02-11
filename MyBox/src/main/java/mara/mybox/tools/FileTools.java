@@ -1,5 +1,6 @@
 package mara.mybox.tools;
 
+import java.awt.Desktop;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -134,6 +135,15 @@ public class FileTools {
         while (file.exists()) {
             file = new File(getTempFileName() + suffix);
         }
+        return file;
+    }
+
+    public static File getTempDirectory() {
+        File file = new File(getTempFileName() + File.separator);
+        while (file.exists()) {
+            file = new File(getTempFileName() + File.separator);
+        }
+        file.mkdirs();
         return file;
     }
 
@@ -316,7 +326,8 @@ public class FileTools {
         }
     }
 
-    public static void sortFileInformations(List<FileInformation> files, FileSortMode sortMode) {
+    public static void sortFileInformations(List<FileInformation> files,
+            FileSortMode sortMode) {
         if (files == null || files.isEmpty() || sortMode == null) {
             return;
         }
@@ -463,7 +474,8 @@ public class FileTools {
         }
     }
 
-    public static FileSynchronizeAttributes copyWholeDirectory(File sourcePath, File targetPath) {
+    public static FileSynchronizeAttributes copyWholeDirectory(File sourcePath,
+            File targetPath) {
         FileSynchronizeAttributes attr = new FileSynchronizeAttributes();
         copyWholeDirectory(sourcePath, targetPath, attr);
         return attr;
@@ -491,6 +503,9 @@ public class FileTools {
                 targetPath.mkdirs();
             }
             File[] files = sourcePath.listFiles();
+            if (files == null) {
+                return false;
+            }
             for (File file : files) {
                 File targetFile = new File(targetPath + File.separator + file.getName());
                 if (file.isFile()) {
@@ -514,7 +529,8 @@ public class FileTools {
         }
     }
 
-    public static boolean copyFile(File sourceFile, File targetFile, FileSynchronizeAttributes attr) {
+    public static boolean copyFile(File sourceFile, File targetFile,
+            FileSynchronizeAttributes attr) {
         if (attr == null) {
             attr = new FileSynchronizeAttributes();
         }
@@ -524,11 +540,13 @@ public class FileTools {
     public static boolean clearDir(File dir) {
         if (dir.isDirectory()) {
             File[] files = dir.listFiles();
-            for (File file : files) {
-                if (file.isFile()) {
-                    file.delete();
-                } else if (file.isDirectory()) {
-                    deleteDir(file);
+            if (files != null) {
+                for (File file : files) {
+                    if (file.isFile()) {
+                        file.delete();
+                    } else if (file.isDirectory()) {
+                        deleteDir(file);
+                    }
                 }
             }
         }
@@ -538,26 +556,105 @@ public class FileTools {
     public static boolean deleteDir(File dir) {
         if (dir.isDirectory()) {
             File[] files = dir.listFiles();
-            for (File file : files) {
-                boolean success = deleteDir(file);
-                if (!success) {
-                    return false;
+            if (files != null) {
+                for (File file : files) {
+                    boolean success = deleteDir(file);
+                    if (!success) {
+                        return false;
+                    }
                 }
             }
         }
         return dir.delete();
     }
 
+    public static int deleteEmptyDir(File dir, boolean trash) {
+        return deleteEmptyDir(dir, 0, trash);
+    }
+
+    public static int deleteEmptyDir(File dir, int count, boolean trash) {
+        if (dir.isDirectory()) {
+            File[] files = dir.listFiles();
+            if (files == null || files.length == 0) {
+                if (trash) {
+                    Desktop.getDesktop().moveToTrash(dir);
+
+                } else {
+                    dir.delete();
+                }
+                return ++count;
+            }
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    count = deleteEmptyDir(file, count, trash);
+                }
+            }
+            files = dir.listFiles();
+            if (files == null || files.length == 0) {
+                if (trash) {
+                    Desktop.getDesktop().moveToTrash(dir);
+                } else {
+                    dir.delete();
+                }
+                return ++count;
+            }
+        }
+        return count;
+    }
+
+    public static void deleteNestedDir(File sourceDir) {
+        try {
+            File tmpDir = getTempDirectory();
+            deleteNestedDir(sourceDir, tmpDir);
+            tmpDir.delete();
+            sourceDir.delete();
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    public static void deleteNestedDir(File sourceDir, File tmpDir) {
+        try {
+            if (sourceDir.isDirectory()) {
+                File[] files = sourceDir.listFiles();
+                if (files == null || files.length == 0) {
+                    return;
+                }
+                for (File file : files) {
+                    if (file.isDirectory()) {
+                        File[] subfiles = file.listFiles();
+                        if (subfiles != null) {
+                            for (File subfile : subfiles) {
+                                if (subfile.isDirectory()) {
+                                    Files.move(Paths.get(subfile.getAbsolutePath()),
+                                            Paths.get(tmpDir.getAbsolutePath() + File.separator + subfile.getName()));
+                                } else {
+                                    subfile.delete();
+                                }
+                            }
+                        }
+                    }
+                    file.delete();
+                }
+                deleteNestedDir(tmpDir, sourceDir);
+            }
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
     public static boolean deleteDirExcept(File dir, File except) {
         if (dir.isDirectory()) {
             File[] files = dir.listFiles();
-            for (File file : files) {
-                if (file.equals(except)) {
-                    continue;
-                }
-                boolean success = deleteDirExcept(file, except);
-                if (!success) {
-                    return false;
+            if (files != null) {
+                for (File file : files) {
+                    if (file.equals(except)) {
+                        continue;
+                    }
+                    boolean success = deleteDirExcept(file, except);
+                    if (!success) {
+                        return false;
+                    }
                 }
             }
         }
@@ -608,8 +705,10 @@ public class FileTools {
             files.add(file);
         } else if (file.isDirectory()) {
             File[] dirFiles = file.listFiles();
-            for (File dirFile : dirFiles) {
-                files.addAll(allFiles(dirFile));
+            if (dirFiles != null) {
+                for (File dirFile : dirFiles) {
+                    files.addAll(allFiles(dirFile));
+                }
             }
         }
         return files;

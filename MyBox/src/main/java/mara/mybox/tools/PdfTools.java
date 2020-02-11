@@ -124,8 +124,10 @@ public class PdfTools {
     public static boolean writePage(PDDocument document, PDFont font,
             String sourceFormat, BufferedImage bufferedImage,
             int index, int total, PdfImageFormat targetFormat,
-            int threshold, int jpegQuality, boolean isImageSize, boolean pageNumber,
-            int pageWidth, int pageHeight, int marginSize, String header, boolean dithering) {
+            int threshold, int jpegQuality, boolean isImageSize,
+            boolean pageNumber,
+            int pageWidth, int pageHeight, int marginSize, String header,
+            boolean dithering) {
         try {
             PDImageXObject imageObject;
             switch (targetFormat) {
@@ -155,7 +157,7 @@ public class PdfTools {
             }
             PDPage page = new PDPage(pageSize);
             document.addPage(page);
-            try (PDPageContentStream content = new PDPageContentStream(document, page)) {
+            try ( PDPageContentStream content = new PDPageContentStream(document, page)) {
                 float w, h;
                 if (isImageSize) {
                     w = imageObject.getWidth();
@@ -196,11 +198,14 @@ public class PdfTools {
         }
     }
 
-    public static boolean htmlIntoPdf(List<Image> images, File targetFile, boolean isImageSize) {
-
+    public static boolean htmlIntoPdf(List<File> files, File targetFile,
+            boolean isImageSize) {
+        if (files == null || files.isEmpty()) {
+            return false;
+        }
         try {
             int count = 0;
-            try (PDDocument document = new PDDocument(AppVariables.pdfMemUsage)) {
+            try ( PDDocument document = new PDDocument(AppVariables.pdfMemUsage)) {
                 PDPageContentStream content;
                 PDFont font = PDType1Font.HELVETICA;
                 PDDocumentInformation info = new PDDocumentInformation();
@@ -209,12 +214,14 @@ public class PdfTools {
                 info.setProducer("MyBox v" + CommonValues.AppVersion);
                 document.setDocumentInformation(info);
                 document.setVersion(1.0f);
-                BufferedImage bufferedImage;
                 PDRectangle pageSize = new PDRectangle(PDRectangle.A4.getHeight(), PDRectangle.A4.getWidth());
-                int marginSize = 20, total = images.size();
-                for (Image image : images) {
+                int marginSize = 20, total = files.size();
+                for (File file : files) {
+                    BufferedImage bufferedImage = ImageFileReaders.readImage(file);
+                    if (bufferedImage == null) {
+                        continue;
+                    }
                     PDImageXObject imageObject;
-                    bufferedImage = FxmlImageManufacture.getBufferedImage(image);
                     imageObject = LosslessFactory.createFromImage(document, bufferedImage);
                     if (isImageSize) {
                         pageSize = new PDRectangle(imageObject.getWidth() + marginSize * 2, imageObject.getHeight() + marginSize * 2);
@@ -244,7 +251,6 @@ public class PdfTools {
                     content.endText();
 
                     content.close();
-                    document.close();
                 }
 
                 PDPage page = document.getPage(0);
@@ -267,7 +273,8 @@ public class PdfTools {
 
     }
 
-    public static boolean imageInPdf(PDDocument document, BufferedImage bufferedImage,
+    public static boolean imageInPdf(PDDocument document,
+            BufferedImage bufferedImage,
             WeiboSnapParameters p, int pageNumber, int totalPage, PDFont font) {
         return writePage(document, font, "png", bufferedImage,
                 pageNumber, totalPage, p.getFormat(),
@@ -282,7 +289,7 @@ public class PdfTools {
                 return false;
             }
             int count = 0, total = images.size();
-            try (PDDocument document = new PDDocument(AppVariables.pdfMemUsage)) {
+            try ( PDDocument document = new PDDocument(AppVariables.pdfMemUsage)) {
                 PDDocumentInformation info = new PDDocumentInformation();
                 info.setCreationDate(Calendar.getInstance());
                 info.setModificationDate(Calendar.getInstance());
@@ -340,7 +347,7 @@ public class PdfTools {
                 return false;
             }
             int count = 0, total = files.size();
-            try (PDDocument document = new PDDocument(AppVariables.pdfMemUsage)) {
+            try ( PDDocument document = new PDDocument(AppVariables.pdfMemUsage)) {
                 PDDocumentInformation info = new PDDocumentInformation();
                 info.setCreationDate(Calendar.getInstance());
                 info.setModificationDate(Calendar.getInstance());
@@ -453,14 +460,15 @@ public class PdfTools {
         return font;
     }
 
-    public static List<PDImageXObject> getImageListFromPDF(PDDocument document, Integer startPage) throws Exception {
+    public static List<PDImageXObject> getImageListFromPDF(PDDocument document,
+            Integer startPage) throws Exception {
         List<PDImageXObject> imageList = new ArrayList<>();
         if (null != document) {
             PDPageTree pages = document.getPages();
             startPage = startPage == null ? 0 : startPage;
             int len = pages.getCount();
             if (startPage < len) {
-                for (int i = startPage; i < len; i++) {
+                for (int i = startPage; i < len; ++i) {
                     PDPage page = pages.get(i);
                     Iterable<COSName> objectNames = page.getResources().getXObjectNames();
                     for (COSName imageObjectName : objectNames) {
@@ -486,11 +494,14 @@ public class PdfTools {
 
     }
 
-    public static boolean writeSplitImages(String sourceFormat, String sourceFile,
-            ImageInformation imageInformation, List<Integer> rows, List<Integer> cols,
+    public static boolean writeSplitImages(String sourceFormat,
+            String sourceFile,
+            ImageInformation imageInformation, List<Integer> rows,
+            List<Integer> cols,
             ImageAttributes attributes, File targetFile,
             PdfImageFormat pdfFormat, String fontName, String author,
-            int threshold, int jpegQuality, boolean isImageSize, boolean pageNumber,
+            int threshold, int jpegQuality, boolean isImageSize,
+            boolean pageNumber,
             int pageWidth, int pageHeight, int marginSize, String header) {
         try {
             if (sourceFormat == null || sourceFile == null || imageInformation == null
@@ -499,7 +510,7 @@ public class PdfTools {
                 return false;
             }
             File tmpFile = FileTools.getTempFile();
-            try (PDDocument document = new PDDocument(AppVariables.pdfMemUsage)) {
+            try ( PDDocument document = new PDDocument(AppVariables.pdfMemUsage)) {
                 PDFont font = PdfTools.getFont(document, fontName);
                 PDDocumentInformation info = new PDDocumentInformation();
                 info.setCreationDate(Calendar.getInstance());
@@ -515,10 +526,10 @@ public class PdfTools {
                 }
                 int count = 0;
                 int total = (rows.size() - 1) * (cols.size() - 1);
-                for (int i = 0; i < rows.size() - 1; i++) {
+                for (int i = 0; i < rows.size() - 1; ++i) {
                     y1 = rows.get(i);
                     y2 = rows.get(i + 1);
-                    for (int j = 0; j < cols.size() - 1; j++) {
+                    for (int j = 0; j < cols.size() - 1; ++j) {
                         x1 = cols.get(j);
                         x2 = cols.get(j + 1);
                         BufferedImage target;
@@ -555,7 +566,7 @@ public class PdfTools {
     // page is 0-based
     public static BufferedImage page2image(File file, int page) {
         try {
-            try (PDDocument doc = PDDocument.load(file, null, AppVariables.pdfMemUsage)) {
+            try ( PDDocument doc = PDDocument.load(file, null, AppVariables.pdfMemUsage)) {
                 PDFRenderer renderer = new PDFRenderer(doc);
                 BufferedImage image = renderer.renderImage(page, 1, ImageType.ARGB);
                 doc.close();
@@ -570,7 +581,7 @@ public class PdfTools {
     public static BufferedImage page2image(File file, String password, int page,
             float scale, ImageType imageType) {
         try {
-            try (PDDocument doc = PDDocument.load(file, password, AppVariables.pdfMemUsage)) {
+            try ( PDDocument doc = PDDocument.load(file, password, AppVariables.pdfMemUsage)) {
                 PDFRenderer renderer = new PDFRenderer(doc);
                 BufferedImage image = renderer.renderImage(page, scale, imageType);
                 doc.close();
@@ -585,7 +596,7 @@ public class PdfTools {
     public static BufferedImage page2image(File file, String password, int page,
             int dpi, ImageType imageType) {
         try {
-            try (PDDocument doc = PDDocument.load(file, password, AppVariables.pdfMemUsage)) {
+            try ( PDDocument doc = PDDocument.load(file, password, AppVariables.pdfMemUsage)) {
                 PDFRenderer renderer = new PDFRenderer(doc);
                 BufferedImage image = renderer.renderImageWithDPI(page, dpi, imageType);
                 doc.close();
@@ -597,13 +608,14 @@ public class PdfTools {
         }
     }
 
-    public static boolean setAttributes(File file, String ownerPassword, PdfInformation info) {
+    public static boolean setAttributes(File file, String ownerPassword,
+            PdfInformation info) {
         try {
             if (file == null || info == null) {
                 return false;
             }
 
-            try (PDDocument doc = PDDocument.load(file, ownerPassword, AppVariables.pdfMemUsage)) {
+            try ( PDDocument doc = PDDocument.load(file, ownerPassword, AppVariables.pdfMemUsage)) {
                 PDDocumentInformation docInfo = doc.getDocumentInformation();
                 docInfo.setAuthor(info.getAuthor());
                 docInfo.setTitle(info.getTitle());

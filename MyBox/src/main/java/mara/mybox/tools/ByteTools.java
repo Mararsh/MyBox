@@ -80,7 +80,7 @@ public class ByteTools {
             return null;
         }
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < bytes.length; i++) {
+        for (int i = 0; i < bytes.length; ++i) {
             String hex = Integer.toHexString(bytes[i] & 0xFF);
             if (hex.length() < 2) {
                 sb.append(0);
@@ -100,7 +100,7 @@ public class ByteTools {
 
     public static String bytesToHexFormatWithCF(byte[] bytes, String newLineHex) {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < bytes.length; i++) {
+        for (int i = 0; i < bytes.length; ++i) {
             String hex = Integer.toHexString(bytes[i] & 0xFF);
             if (hex.length() < 2) {
                 sb.append(0);
@@ -121,7 +121,7 @@ public class ByteTools {
 //    }
     public static String bytesToHexFormat(byte[] bytes) {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < bytes.length; i++) {
+        for (int i = 0; i < bytes.length; ++i) {
             String hex = Integer.toHexString(bytes[i] & 0xFF);
             if (hex.length() < 2) {
                 sb.append(0);
@@ -136,7 +136,7 @@ public class ByteTools {
     public static String bytesToHexFormat(byte[] bytes, int newLineWidth) {
         StringBuilder sb = new StringBuilder();
         int count = 1;
-        for (int i = 0; i < bytes.length; i++) {
+        for (int i = 0; i < bytes.length; ++i) {
             String hex = Integer.toHexString(bytes[i] & 0xFF);
             if (hex.length() < 2) {
                 sb.append(0);
@@ -334,7 +334,7 @@ public class ByteTools {
     public static int lineIndex(String lineText, Charset charset, int offset) {
         int hIndex = 0;
         byte[] cBytes;
-        for (int i = 0; i < lineText.length(); i++) {
+        for (int i = 0; i < lineText.length(); ++i) {
             char c = lineText.charAt(i);
             cBytes = String.valueOf(c).getBytes(charset);
             int clen = cBytes.length * 3;

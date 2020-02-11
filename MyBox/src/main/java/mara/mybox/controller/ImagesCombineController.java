@@ -557,7 +557,7 @@ public class ImagesCombineController extends ImagesListController {
 
                 @Override
                 protected void whenSucceeded() {
-                    popSuccessul();
+                    popSuccessful();
                     openImageViewer(targetFile);
                 }
 

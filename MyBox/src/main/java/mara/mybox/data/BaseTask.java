@@ -50,16 +50,13 @@ public class BaseTask<P> extends Task<P> {
         super.succeeded();
         cost = new Date().getTime() - startTime;
         taskQuit();
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                if (ok) {
-                    whenSucceeded();
-                } else {
-                    whenFailed();
-                }
-                finalAction();
+        Platform.runLater(() -> {
+            if (ok) {
+                whenSucceeded();
+            } else {
+                whenFailed();
             }
+            finalAction();
         });
     }
 

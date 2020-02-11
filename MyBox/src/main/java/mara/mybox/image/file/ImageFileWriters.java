@@ -17,6 +17,7 @@ import mara.mybox.image.ImageManufacture;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonValues;
+import net.sf.image4j.codec.ico.ICOEncoder;
 
 /**
  * @Author Mara
@@ -64,7 +65,8 @@ public class ImageFileWriters {
         }
     }
 
-    public static boolean writeImageFile(BufferedImage image, String format, String outFile) {
+    public static boolean writeImageFile(BufferedImage image, String format,
+            String outFile) {
         if (image == null || outFile == null) {
             return false;
         }
@@ -123,6 +125,9 @@ public class ImageFileWriters {
 
         try {
             String targetFormat = attributes.getImageFormat().toLowerCase();
+            if ("ico".equals(targetFormat) || "icon".equals(targetFormat)) {
+                return writeIcon(image, attributes, new File(outFile));
+            }
             BufferedImage checked = ImageManufacture.checkAlpha(image, targetFormat);
             ImageWriter writer = getWriter(targetFormat);
             ImageWriteParam param = getWriterParam(attributes, writer);
@@ -152,6 +157,25 @@ public class ImageFileWriters {
             return false;
         }
 
+    }
+
+    public static boolean writeIcon(BufferedImage image,
+            ImageAttributes attributes, File targetFile) {
+        try {
+            if (image == null || targetFile == null || attributes == null) {
+                return false;
+            }
+            int width = attributes.getWidth();
+            if (width <= 0) {
+                width = Math.min(512, image.getWidth());
+            }
+            BufferedImage scaled = ImageManufacture.scaleImageWidthKeep(image, width);
+            ICOEncoder.write(scaled, targetFile);
+            return true;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return false;
+        }
     }
 
     public static ImageWriter getWriter(String targetFormat) {
@@ -188,7 +212,8 @@ public class ImageFileWriters {
         }
     }
 
-    public static ImageWriteParam getWriterParam(ImageAttributes attributes, ImageWriter writer) {
+    public static ImageWriteParam getWriterParam(ImageAttributes attributes,
+            ImageWriter writer) {
         try {
             ImageWriteParam param = writer.getDefaultWriteParam();
             if (param.canWriteCompressed()) {
@@ -215,7 +240,8 @@ public class ImageFileWriters {
     }
 
     public static IIOMetadata getWriterMetaData(String targetFormat,
-            ImageAttributes attributes, BufferedImage image, ImageWriter writer, ImageWriteParam param) {
+            ImageAttributes attributes, BufferedImage image, ImageWriter writer,
+            ImageWriteParam param) {
         try {
             IIOMetadata metaData;
             switch (targetFormat) {

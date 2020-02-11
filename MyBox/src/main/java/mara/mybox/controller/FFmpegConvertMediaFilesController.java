@@ -538,7 +538,7 @@ public class FFmpegConvertMediaFilesController extends FFmpegBaseController {
     @Override
     public String handleFile(File srcFile, File targetPath) {
         try {
-            showHandling(srcFile);
+            countHandling(srcFile);
             String ext = extensionInput.getText().trim();
             if (ext.isEmpty() || message("OriginalFormat").equals(ext)) {
                 ext = FileTools.getFileSuffix(srcFile.getName());
@@ -581,7 +581,9 @@ public class FFmpegConvertMediaFilesController extends FFmpegBaseController {
         final long duration;
         if (inDuration < 0) {
             final AtomicLong countedDuration = new AtomicLong();
-            updateLogs(message("CountingMediaDuration"), true);
+            if (verboseCheck == null || verboseCheck.isSelected()) {
+                updateLogs(message("CountingMediaDuration"), true);
+            }
             FFmpeg.atPath(executable.toPath().getParent())
                     .addInput(input)
                     .addOutput(new NullOutput())
@@ -594,7 +596,9 @@ public class FFmpegConvertMediaFilesController extends FFmpegBaseController {
                     })
                     .execute();
             duration = countedDuration.get();
-            updateLogs(message("Duration") + ": " + DateTools.showDuration(duration), true);
+            if (verboseCheck == null || verboseCheck.isSelected()) {
+                updateLogs(message("Duration") + ": " + DateTools.showDuration(duration), true);
+            }
         } else {
             duration = inDuration;
         }
@@ -613,8 +617,10 @@ public class FFmpegConvertMediaFilesController extends FFmpegBaseController {
                             if (duration > 0) {
                                 updateFileProgress(progress.getTimeMillis(), duration);
                             } else {
-                                updateLogs(message("Handled") + ":"
-                                        + DateTools.showSeconds(progress.getTimeMillis() / 1000), true);
+                                if (verboseCheck == null || verboseCheck.isSelected()) {
+                                    updateLogs(message("Handled") + ":"
+                                            + DateTools.showSeconds(progress.getTimeMillis() / 1000), true);
+                                }
                                 progressValue.setText(DateTools.showSeconds(progress.getTimeMillis() / 1000));
                             }
                             lastProgress = now;
@@ -685,7 +691,9 @@ public class FFmpegConvertMediaFilesController extends FFmpegBaseController {
             }
         }
 
-        updateLogs(message("ConvertingMedia") + "  " + message("TargetFile") + ":" + targetFile, true);
+        if (verboseCheck == null || verboseCheck.isSelected()) {
+            updateLogs(message("ConvertingMedia") + "  " + message("TargetFile") + ":" + targetFile, true);
+        }
         FFmpegResult result = ffmpeg.execute();
     }
 
@@ -712,12 +720,15 @@ public class FFmpegConvertMediaFilesController extends FFmpegBaseController {
             alert.setTitle(getMyStage().getTitle());
             alert.setContentText(AppVariables.message("TaskRunning"));
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+            ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
+            ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
+            alert.getButtonTypes().setAll(buttonSure, buttonCancel);
             Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
             stage.setAlwaysOnTop(true);
             stage.toFront();
 
             Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == ButtonType.OK) {
+            if (result.get() == buttonSure) {
                 if (encoderTask != null) {
                     encoderTask.cancel();
                     encoderTask = null;

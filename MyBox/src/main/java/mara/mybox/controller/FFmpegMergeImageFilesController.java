@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.charset.Charset;
+import java.util.List;
 import mara.mybox.data.FileInformation;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.image.file.ImageFileReaders;
@@ -31,7 +32,7 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
         try {
             imageFileString = new StringBuilder();
             lastFile = null;
-            for (int i = 0; i < tableData.size(); i++) {
+            for (int i = 0; i < tableData.size(); ++i) {
                 if (task == null || task.isCancelled()) {
                     updateLogs(message("TaskCancelled"), true);
                     return null;
@@ -80,18 +81,23 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
             }
             try {
                 totalFilesHandled++;
-                updateLogs(message("Handling") + ": " + file, true);
-                BufferedImage image = ImageFileReaders.readImage(file);
-                if (image == null) {
+                if (verboseCheck == null || verboseCheck.isSelected()) {
+                    updateLogs(message("Handling") + ": " + file, true);
+                }
+                List<BufferedImage> images = ImageFileReaders.readFrames(file);
+                if (images == null || images.isEmpty()) {
                     return AppVariables.message("Failed");
                 }
-                BufferedImage fitImage = ImageManufacture.fitSize(image, width, height);
-                File tmpFile = FileTools.getTempFile(".png");
-                if (ImageFileWriters.writeImageFile(fitImage, tmpFile) && tmpFile.exists()) {
-                    lastFile = tmpFile;
-                    imageFileString.append("file '").append(lastFile.getAbsolutePath()).append("'\n");
-                    imageFileString.append("duration  ").append(duration / 1000).append("\n");
+                for (int i = 0; i < images.size(); i++) {
+                    BufferedImage fitImage = ImageManufacture.fitSize(images.get(i), width, height);
+                    File tmpFile = FileTools.getTempFile(".png");
+                    if (ImageFileWriters.writeImageFile(fitImage, tmpFile) && tmpFile.exists()) {
+                        lastFile = tmpFile;
+                        imageFileString.append("file '").append(lastFile.getAbsolutePath()).append("'\n");
+                        imageFileString.append("duration  ").append(duration / 1000.00f).append("\n");
+                    }
                 }
+
             } catch (Exception e) {
 //                logger.debug(e.toString());
             }
@@ -107,6 +113,9 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
                 return AppVariables.message("Failed");
             }
             File[] files = directory.listFiles();
+            if (files == null) {
+                return AppVariables.message("Done");
+            }
             for (File srcFile : files) {
                 if (task == null || task.isCancelled()) {
                     return AppVariables.message("Canceled");

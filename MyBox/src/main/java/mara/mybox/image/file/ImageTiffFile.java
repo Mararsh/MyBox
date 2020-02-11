@@ -156,10 +156,10 @@ public class ImageTiffFile {
     public static Node findNode(Node nativeTree, String name) {
         try {
             NodeList nodes = nativeTree.getFirstChild().getChildNodes();
-            for (int i = 0; i < nodes.getLength(); i++) {
+            for (int i = 0; i < nodes.getLength(); ++i) {
                 Node node = nodes.item(i);
                 NamedNodeMap attrs = node.getAttributes();
-                for (int j = 0; j < attrs.getLength(); j++) {
+                for (int j = 0; j < attrs.getLength(); ++j) {
                     Node attr = attrs.item(j);
                     if ("name".equals(attr.getNodeName()) && name.equals(attr.getNodeValue())) {
                         return node;
@@ -297,7 +297,7 @@ public class ImageTiffFile {
                     }
                     String format = finfo.getImageFormat();
                     if (FrameByFrame) {
-                        for (int i = 0; i < finfo.getNumberOfImages(); i++) {
+                        for (int i = 0; i < finfo.getNumberOfImages(); ++i) {
                             BufferedImage bufferedImage = ImageFileReaders.readFrame(format, file, i);
                             if (bufferedImage == null) {
                                 continue;
@@ -359,10 +359,10 @@ public class ImageTiffFile {
                 if (!imageInformation.isIsSampled()) {
                     wholeSource = FxmlImageManufacture.getBufferedImage(imageInformation.getImage());
                 }
-                for (int i = 0; i < rows.size() - 1; i++) {
+                for (int i = 0; i < rows.size() - 1; ++i) {
                     y1 = rows.get(i);
                     y2 = rows.get(i + 1);
-                    for (int j = 0; j < cols.size() - 1; j++) {
+                    for (int j = 0; j < cols.size() - 1; ++j) {
                         x1 = cols.get(j);
                         x2 = cols.get(j + 1);
                         BufferedImage bufferedImage;
@@ -404,7 +404,7 @@ public class ImageTiffFile {
             NodeList nodes = nativeTree.getFirstChild().getChildNodes();
             BaselineTIFFTagSet tagsSet = BaselineTIFFTagSet.getInstance();
             int unit = -1, x = -1, y = -1;
-            for (int i = 0; i < nodes.getLength(); i++) {
+            for (int i = 0; i < nodes.getLength(); ++i) {
                 Node node = nodes.item(i);
                 TIFFField field = TIFFField.createFromMetadataNode(tagsSet, node);
                 String name = field.getTag().getName();
@@ -418,7 +418,7 @@ public class ImageTiffFile {
                     } catch (Exception e) {
                     }
                     List<String> values = new ArrayList<>();
-                    for (int j = 0; j < field.getCount(); j++) {
+                    for (int j = 0; j < field.getCount(); ++j) {
                         values.add(field.getValueAsString(j));
                     }
                     if (values.isEmpty()) {

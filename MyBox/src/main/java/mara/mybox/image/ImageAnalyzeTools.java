@@ -20,8 +20,8 @@ public class ImageAnalyzeTools {
             int[] blue = new int[256];
             int width = source.getWidth();
             int height = source.getHeight();
-            for (int j = 0; j < height; j++) {
-                for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; ++j) {
+                for (int i = 0; i < width; ++i) {
                     int color = source.getRGB(i, j);
                     Color c = new Color(color);
                     red[c.getRed()]++;

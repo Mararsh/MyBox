@@ -15,7 +15,7 @@ import mara.mybox.value.AppVariables;
 public class WeiboSnapParameters {
 
     private File targetPath;
-    private int webWidth, retry, startPage, loadInterval, snapInterval;
+    private int webWidth, retry, startPage, loadInterval, snapInterval, likeStartPage;
     private boolean imagePerScreen, isImageSize, addPageNumber, createPDF, createHtml, savePictures, keepPagePdf;
     private boolean miao, expandComments, expandPicture, fullScreen, openPathWhenStop, useTempFiles, dithering;
     private String webAddress, author, title, fontName;
@@ -338,6 +338,14 @@ public class WeiboSnapParameters {
 
     public void setDpi(int dpi) {
         this.dpi = dpi;
+    }
+
+    public int getLikeStartPage() {
+        return likeStartPage;
+    }
+
+    public void setLikeStartPage(int likeStartPage) {
+        this.likeStartPage = likeStartPage;
     }
 
 }

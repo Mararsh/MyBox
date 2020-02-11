@@ -73,8 +73,8 @@ public class TableConvolutionKernel extends DerbyBase {
                 int w = k.getWidth();
                 int h = k.getHeight();
                 float[][] matrix = new float[h][w];
-                for (int j = 0; j < h; j++) {
-                    for (int i = 0; i < w; i++) {
+                for (int j = 0; j < h; ++j) {
+                    for (int i = 0; i < w; ++i) {
                         sql = " SELECT * FROM Float_Matrix WHERE name='" + k.getName()
                                 + "' AND row=" + j + " AND col=" + i;
                         ResultSet mResult = statement.executeQuery(sql);
@@ -86,7 +86,8 @@ public class TableConvolutionKernel extends DerbyBase {
                 k.setMatrix(matrix);
             }
 
-        } catch (Exception e) {  failed(e);
+        } catch (Exception e) {
+            failed(e);
             // logger.debug(e.toString());
         }
         return records;
@@ -120,8 +121,8 @@ public class TableConvolutionKernel extends DerbyBase {
                     record.setModifyTime(DateTools.datetimeToString(t));
                 }
                 float[][] matrix = new float[h][w];
-                for (int j = 0; j < h; j++) {
-                    for (int i = 0; i < w; i++) {
+                for (int j = 0; j < h; ++j) {
+                    for (int i = 0; i < w; ++i) {
                         sql = " SELECT * FROM Float_Matrix WHERE name='" + name
                                 + "' AND row=" + j + " AND col=" + i;
                         ResultSet mResult = statement.executeQuery(sql);
@@ -137,8 +138,8 @@ public class TableConvolutionKernel extends DerbyBase {
                 int w = record.getWidth();
                 int h = record.getHeight();
                 float[][] matrix = new float[h][w];
-                for (int j = 0; j < h; j++) {
-                    for (int i = 0; i < w; i++) {
+                for (int j = 0; j < h; ++j) {
+                    for (int i = 0; i < w; ++i) {
                         sql = " SELECT * FROM Float_Matrix WHERE name='" + name
                                 + "' AND row=" + j + " AND col=" + i;
                         ResultSet mResult = statement.executeQuery(sql);
@@ -150,7 +151,8 @@ public class TableConvolutionKernel extends DerbyBase {
                 record.setMatrix(matrix);
             }
             return record;
-        } catch (Exception e) {  failed(e);
+        } catch (Exception e) {
+            failed(e);
             // logger.debug(e.toString());
             return record;
         }
@@ -185,7 +187,8 @@ public class TableConvolutionKernel extends DerbyBase {
             }
             statement.executeUpdate(sql);
             return true;
-        } catch (Exception e) {  failed(e);
+        } catch (Exception e) {
+            failed(e);
             // logger.debug(e.toString());
             return false;
         }
@@ -214,7 +217,8 @@ public class TableConvolutionKernel extends DerbyBase {
             }
             conn.commit();
             return true;
-        } catch (Exception e) {  failed(e);
+        } catch (Exception e) {
+            failed(e);
             // logger.debug(e.toString());
             return false;
         }
@@ -226,15 +230,16 @@ public class TableConvolutionKernel extends DerbyBase {
         }
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
-            String sql;
-            conn.setAutoCommit(false);
-            for (ConvolutionKernel a : records) {
-                sql = "DELETE FROM Convolution_Kernel WHERE name='" + a.getName() + "'";
-                statement.executeUpdate(sql);
+            String inStr = "( '" + records.get(0).getName() + "'";
+            for (int i = 1; i < records.size(); ++i) {
+                inStr += ", '" + records.get(i).getName() + "'";
             }
-            conn.commit();
+            inStr += " )";
+            String sql = "DELETE FROM Convolution_Kernel WHERE name IN " + inStr;
+            statement.executeUpdate(sql);
             return true;
-        } catch (Exception e) {  failed(e);
+        } catch (Exception e) {
+            failed(e);
             // logger.debug(e.toString());
             return false;
         }
@@ -246,15 +251,16 @@ public class TableConvolutionKernel extends DerbyBase {
         }
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
-            String sql;
-            conn.setAutoCommit(false);
-            for (String name : names) {
-                sql = "DELETE FROM Convolution_Kernel WHERE name='" + name + "'";
-                statement.executeUpdate(sql);
+            String inStr = "( '" + names.get(0) + "'";
+            for (int i = 1; i < names.size(); ++i) {
+                inStr += ", '" + names.get(i) + "'";
             }
-            conn.commit();
+            inStr += " )";
+            String sql = "DELETE FROM Convolution_Kernel WHERE name IN " + inStr;
+            statement.executeUpdate(sql);
             return true;
-        } catch (Exception e) {  failed(e);
+        } catch (Exception e) {
+            failed(e);
             // logger.debug(e.toString());
             return false;
         }

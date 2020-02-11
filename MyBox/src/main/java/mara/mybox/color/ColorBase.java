@@ -162,14 +162,14 @@ public class ColorBase {
     public static double[] clipRGB(double[] rgb) {
         double[] outputs = new double[rgb.length];
         System.arraycopy(rgb, 0, outputs, 0, rgb.length);
-//        for (int i = 0; i < outputs.length; i++) {
+//        for (int i = 0; i < outputs.length; ++i) {
 //            if (outputs[i] < 0) {
-//                for (int j = 0; j < outputs.length; j++) {
+//                for (int j = 0; j < outputs.length; ++j) {
 //                    outputs[j] = outputs[j] - outputs[i];
 //                }
 //            }
 //        }
-        for (int i = 0; i < outputs.length; i++) {
+        for (int i = 0; i < outputs.length; ++i) {
             if (outputs[i] < 0) {
                 outputs[i] = 0;
             }

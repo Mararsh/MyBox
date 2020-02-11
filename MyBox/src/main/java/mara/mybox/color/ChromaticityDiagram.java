@@ -118,14 +118,14 @@ public class ChromaticityDiagram {
 
             if (show.get(DataType.Grid)) {
                 g.setColor(gridColor);
-                for (int i = 0; i < grid; i++) {
+                for (int i = 0; i < grid; ++i) {
                     int h = startH + i * stepH;
                     g.drawLine(margins, h, endW, h);
                     int w = startW + i * stepW;
                     g.drawLine(w, margins, w, endH);
                 }
                 g.setColor(rulerColor);
-                for (int i = 0; i < ruler; i++) {
+                for (int i = 0; i < ruler; ++i) {
                     int h = margins + i * stepH * each;
                     g.drawLine(margins, h, endW, h);
                     int w = margins + i * stepW * each;
@@ -136,7 +136,7 @@ public class ChromaticityDiagram {
             g.setColor(textColor);
             g.drawLine(margins, margins, margins, endH);
             g.drawLine(margins, endH, endW, endH);
-            for (int i = 0; i < ruler; i++) {
+            for (int i = 0; i < ruler; ++i) {
                 int h = margins + (i + 1) * stepH * each;
                 g.drawString("0." + (9 - i), 10, h + 10);
                 int w = margins + i * stepW * each;

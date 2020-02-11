@@ -147,7 +147,7 @@ public class TableImageScope extends DerbyBase {
             switch (type) {
                 case Matting: {
                     String[] items = areaData.split(DataSeparator);
-                    for (int i = 0; i < items.length / 2; i++) {
+                    for (int i = 0; i < items.length / 2; ++i) {
                         int x = (int) Double.parseDouble(items[i * 2]);
                         int y = (int) Double.parseDouble(items[i * 2 + 1]);
                         scope.addPoint(x, y);
@@ -201,7 +201,7 @@ public class TableImageScope extends DerbyBase {
                 case PolygonColor: {
                     String[] items = areaData.split(DataSeparator);
                     DoublePolygon polygon = new DoublePolygon();
-                    for (int i = 0; i < items.length / 2; i++) {
+                    for (int i = 0; i < items.length / 2; ++i) {
                         int x = (int) Double.parseDouble(items[i * 2]);
                         int y = (int) Double.parseDouble(items[i * 2 + 1]);
                         polygon.add(x, y);

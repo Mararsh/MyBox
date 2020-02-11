@@ -14,8 +14,8 @@ import java.util.TimeZone;
  */
 public class CommonValues {
 
-    public static final String AppVersion = "6.0";
-    public static final String AppVersionDate = "2020-01-02";
+    public static final String AppVersion = "6.1";
+    public static final String AppVersionDate = "2020-02-11";
     public static final String AppDocVersion = "5.0";
 
     public static final String AppDerbyUser = "mara";
@@ -107,6 +107,7 @@ public class CommonValues {
     public static final String PixelsCalculatorFxml = "/fxml/PixelsCalculator.fxml";
     public static final String ConvolutionKernelManagerFxml = "/fxml/ConvolutionKernelManager.fxml";
     public static final String ColorPaletteFxml = "/fxml/ColorPalette.fxml";
+    public static final String ManageColorsFxml = "/fxml/ColorsManage.fxml";
     public static final String IccProfileEditorFxml = "/fxml/IccProfileEditor.fxml";
     public static final String ChromaticityDiagramFxml = "/fxml/ChromaticityDiagram.fxml";
     public static final String ChromaticAdaptationMatrixFxml = "/fxml/ChromaticAdaptationMatrix.fxml";
@@ -119,12 +120,15 @@ public class CommonValues {
     public static final String FilesRenameFxml = "/fxml/FilesRename.fxml";
     public static final String DirectorySynchronizeFxml = "/fxml/DirectorySynchronize.fxml";
     public static final String FilesArrangementFxml = "/fxml/FilesArrange.fxml";
+    public static final String FilesDeleteEmptyDirFxml = "/fxml/FilesDeleteEmptyDir.fxml";
+    public static final String FilesDeleteNestedDirFxml = "/fxml/FilesDeleteNestedDir.fxml";
     public static final String AlarmClockFxml = "/fxml/AlarmClock.fxml";
     public static final String AlarmClockRunFxml = "/fxml/AlarmClockRun.fxml";
     public static final String HtmlEditorFxml = "/fxml/HtmlEditor.fxml";
     public static final String HtmlViewerFxml = "/fxml/HtmlViewer.fxml";
     public static final String WeiboSnapFxml = "/fxml/WeiboSnap.fxml";
-    public static final String WeiboSnapRunFxml = "/fxml/WeiboSnapRun.fxml";
+    public static final String WeiboSnapPostsFxml = "/fxml/WeiboSnapPosts.fxml";
+    public static final String WeiboSnapLikeFxml = "/fxml/WeiboSnapLike.fxml";
     public static final String WeiboSnapingInfoFxml = "/fxml/WeiboSnapingInfo.fxml";
     public static final String TextEditerFxml = "/fxml/TextEditer.fxml";
     public static final String TextEncodingBatchFxml = "/fxml/TextEncodingBatch.fxml";
@@ -171,6 +175,16 @@ public class CommonValues {
     public static final String SecurityCertificatesBypassFxml = "/fxml/SecurityCertificatesBypass.fxml";
     public static final String DownloadFxml = "/fxml/Download.fxml";
     public static final String GameElimniationFxml = "/fxml/GameElimination.fxml";
+    public static final String GeographyCodeFxml = "/fxml/GeographyCode.fxml";
+    public static final String GeographyCodeEditFxml = "/fxml/GeographyCodeEdit.fxml";
+    public static final String LocationsDataFxml = "/fxml/LocationsData.fxml";
+    public static final String LocationsDataInMapFxml = "/fxml/LocationsDataInMap.fxml";
+    public static final String LocationEditFxml = "/fxml/LocationEdit.fxml";
+    public static final String LocationInMapFxml = "/fxml/LocationInMap.fxml";
+    public static final String EpidemicReportsFxml = "/fxml/EpidemicReports.fxml";
+    public static final String EpidemicReportEditFxml = "/fxml/EpidemicReportEdit.fxml";
+    public static final String EpidemicReportsChineseProvincesEditFxml = "/fxml/EpidemicReportsChineseProvincesEdit.fxml";
+    public static final String EpidemicReportsCountiresEditFxml = "/fxml/EpidemicReportsCountriesEdit.fxml";
 
     public static final Locale LocaleZhCN = new Locale("zh", "CN");
     public static final Locale LocaleEnUS = new Locale("en", "US");
@@ -186,18 +200,24 @@ public class CommonValues {
 //    public static final ResourceBundle BundleRuRU = ResourceBundle.getBundle("bundles/Messages", LocaleRuRU);
     public static final ResourceBundle BundleDefault = ResourceBundle.getBundle("bundles/Messages", Locale.getDefault());
 
-    public static final TimeZone zoneUTC = TimeZone.getTimeZone("GMT+0"); // 世界标准时,UTC
-    public static final TimeZone zoneZhCN = TimeZone.getTimeZone("GMT+8"); // 北京时区,东八区 UTC+0800
+    public static final TimeZone zoneUTC = TimeZone.getTimeZone("GMT+0"); // UTC
+    public static final TimeZone zoneZhCN = TimeZone.getTimeZone("GMT+8"); // Beijing zone, UTC+0800
     public static final String DatetimeFormat = "yyyy-MM-dd HH:mm:ss";
     public static final String DatetimeFormat2 = "yyyy-MM-dd HH:mm:ss.SSS";
     public static final String DatetimeFormat3 = "yyyy-MM-dd-HH-mm-ss-SSS";
     public static final String DatetimeFormat4 = "yyyyMMddHHmmssSSS";
+    public static final String DatetimeFormat5 = "yyyy-MM-dd G HH:mm:ss";
 
     public static String Indent = "    ";
 
     public static final int IOBufferLength = 8024;
 
     public static final String HttpsProtocal = "SSL";
+
+    // https://lbs.amap.com/dev/index
+    public static final String GaoDeJavasriptkey = "06b9e078a51325a843dfefd57ffd876c";
+    public static final String GaoDeMapVerison = "1.4.15";
+    public static final String GaoDeWebKey = "a389d47ae369e57e0c2c7e32e845d1b0";
 
     public static List<String> SupportedImages = new ArrayList<String>() {
         {
@@ -215,6 +235,8 @@ public class CommonValues {
             add("pcx");
             add("pnm");
             add("wbmp");
+            add("ico");
+            add("icon");
         }
     };
 
@@ -239,6 +261,8 @@ public class CommonValues {
             add("png");
             add("tif");
             add("tiff");
+            add("ico");
+            add("icon");
         }
     };
 

@@ -127,7 +127,7 @@ public class FilesCompressBatchController extends FilesBatchController {
     @Override
     public String handleFile(File srcFile, File targetPath) {
         try {
-            showHandling(srcFile);
+            countHandling(srcFile);
             targetFile = makeTargetFile(srcFile.getName(), extension, targetPath);
             if (targetFile == null) {
                 return AppVariables.message("Skip");
@@ -168,9 +168,9 @@ public class FilesCompressBatchController extends FilesBatchController {
 
             } else {
                 try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(srcFile));
-                         BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(tmpFile));
-                         CompressorOutputStream compressOut = new CompressorStreamFactory().
-                                createCompressorOutputStream(compressor, out)) {
+                      BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(tmpFile));
+                      CompressorOutputStream compressOut = new CompressorStreamFactory().
+                             createCompressorOutputStream(compressor, out)) {
                     IOUtils.copy(inputStream, compressOut);
                 }
             }
@@ -178,12 +178,14 @@ public class FilesCompressBatchController extends FilesBatchController {
                 targetFile.delete();
             }
             tmpFile.renameTo(targetFile);
-            updateLogs(MessageFormat.format(message("FileCompressedSuccessfully"),
-                    targetFile, FileTools.showFileSize(srcFile.length()),
-                    FileTools.showFileSize(targetFile.length()),
-                    (100 - targetFile.length() * 100 / srcFile.length()),
-                    DateTools.showTime(new Date().getTime() - s)
-            ));
+            if (verboseCheck == null || verboseCheck.isSelected()) {
+                updateLogs(MessageFormat.format(message("FileCompressedSuccessfully"),
+                        targetFile, FileTools.showFileSize(srcFile.length()),
+                        FileTools.showFileSize(targetFile.length()),
+                        (100 - targetFile.length() * 100 / srcFile.length()),
+                        DateTools.showTime(new Date().getTime() - s)
+                ));
+            }
             targetFileGenerated(targetFile);
             return AppVariables.message("Successful");
         } catch (Exception e) {

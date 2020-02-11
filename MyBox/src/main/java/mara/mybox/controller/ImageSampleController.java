@@ -223,7 +223,7 @@ public class ImageSampleController extends ImageViewerController {
 
                 @Override
                 protected void whenSucceeded() {
-                    popSuccessul();
+                    popSuccessful();
 //                    if (openSaveCheck.isSelected()) {
 //                        final ImageViewerController controller
 //                                = (ImageViewerController) openStage(CommonValues.ImageViewerFxml);

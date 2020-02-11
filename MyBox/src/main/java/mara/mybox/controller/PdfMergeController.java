@@ -62,45 +62,43 @@ public class PdfMergeController extends PdfBatchController {
         if (mergePdf == null || targetDoc == null) {
             return false;
         }
-        return makeBatchParameters();
+        return super.makeMoreParameters();
     }
 
     @Override
     public String handleFile(File srcFile, File targetPath) {
         int generated = 0;
         doc = null;
-        if (PdfTools.isPDF(srcFile)) {
-            try {
-                showHandling(srcFile);
-                currentParameters.currentSourceFile = srcFile;
-                PdfInformation info = tableData.get(currentParameters.currentIndex);
-                actualParameters.fromPage = info.getFromPage();
-                if (actualParameters.fromPage <= 0) {
-                    actualParameters.fromPage = 1;
-                }
-                actualParameters.toPage = info.getToPage();
-                actualParameters.password = info.getUserPassword();
-                try ( PDDocument pd = PDDocument.load(currentParameters.currentSourceFile,
-                        currentParameters.password, AppVariables.pdfMemUsage)) {
-                    doc = pd;
-                    if (currentParameters.toPage <= 0 || currentParameters.toPage > doc.getNumberOfPages()) {
-                        currentParameters.toPage = doc.getNumberOfPages();
-                    }
-                    currentParameters.currentTargetPath = targetPath;
-                    extractor = new PageExtractor(doc, currentParameters.fromPage, currentParameters.toPage);
-                    PDDocument subDoc = extractor.extract();
-                    if (subDoc != null) {
-                        mergePdf.appendDocument(targetDoc, subDoc);
-                        subDoc.close();
-                        generated = 1;
-                    }
-                    doc.close();
-                }
-
-                updateInterface("CompleteFile");
-            } catch (Exception e) {
-                logger.error(e.toString());
+        try {
+            countHandling(srcFile);
+            currentParameters.currentSourceFile = srcFile;
+            PdfInformation info = tableData.get(currentParameters.currentIndex);
+            actualParameters.fromPage = info.getFromPage();
+            if (actualParameters.fromPage <= 0) {
+                actualParameters.fromPage = 1;
             }
+            actualParameters.toPage = info.getToPage();
+            actualParameters.password = info.getUserPassword();
+            try ( PDDocument pd = PDDocument.load(currentParameters.currentSourceFile,
+                    currentParameters.password, AppVariables.pdfMemUsage)) {
+                doc = pd;
+                if (currentParameters.toPage <= 0 || currentParameters.toPage > doc.getNumberOfPages()) {
+                    currentParameters.toPage = doc.getNumberOfPages();
+                }
+                currentParameters.currentTargetPath = targetPath;
+                extractor = new PageExtractor(doc, currentParameters.fromPage, currentParameters.toPage);
+                PDDocument subDoc = extractor.extract();
+                if (subDoc != null) {
+                    mergePdf.appendDocument(targetDoc, subDoc);
+                    subDoc.close();
+                    generated = 1;
+                }
+                doc.close();
+            }
+
+            updateInterface("CompleteFile");
+        } catch (Exception e) {
+            logger.error(e.toString());
         }
         return MessageFormat.format(AppVariables.message("HandlePagesGenerateNumber"),
                 currentParameters.toPage - currentParameters.fromPage, generated);
@@ -117,7 +115,7 @@ public class PdfMergeController extends PdfBatchController {
                 if (deleteCheck.isSelected()) {
                     List<PdfInformation> sources = new ArrayList<>();
                     sources.addAll(tableData);
-                    for (int i = sources.size() - 1; i >= 0; i--) {
+                    for (int i = sources.size() - 1; i >= 0; --i) {
                         try {
                             PdfInformation source = sources.get(i);
                             source.getFile().delete();

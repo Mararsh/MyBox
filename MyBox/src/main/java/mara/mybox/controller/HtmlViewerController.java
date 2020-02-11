@@ -1,9 +1,6 @@
 package mara.mybox.controller;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
@@ -14,8 +11,11 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.web.WebView;
+import javafx.stage.Modality;
 import mara.mybox.data.StringTable;
 import mara.mybox.data.VisitHistory;
+import mara.mybox.fxml.FxmlStage;
+import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
@@ -206,33 +206,60 @@ public class HtmlViewerController extends BaseController {
     @FXML
     @Override
     public void saveAsAction() {
-        try {
-            if (html == null) {
-                return;
-            }
-            String name = title;
-            if (name != null) {
-                name += ".htm";
-            }
-            final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
-                    name, targetExtensionFilter, true);
-            if (file == null) {
-                return;
-            }
-            recordFileWritten(file);
-
-            try ( BufferedWriter out = new BufferedWriter(new FileWriter(file, Charset.forName("utf-8"), false))) {
-                out.write(html);
-                out.flush();
-            }
-
-            popSuccessul();
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-            popError(e.toString());
+        if (html == null) {
+            return;
         }
+        String name = title;
+        if (name != null) {
+            name += ".htm";
+        }
+        final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
+                name, targetExtensionFilter, true);
+        if (file == null) {
+            return;
+        }
+        recordFileWritten(file);
+        save(file, html, false);
 
+    }
+
+    @FXML
+    public void editAction() {
+        File file = FileTools.getTempFile(".html");
+        save(file, html, true);
+    }
+
+    public void save(File file, String txt, boolean isEdit) {
+        if (file == null) {
+            return;
+        }
+        synchronized (this) {
+            if (task != null) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+
+                @Override
+                protected boolean handle() {
+                    ok = FileTools.writeFile(file, txt) != null;
+                    return true;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    if (isEdit) {
+                        FxmlStage.openHtmlEditor(null, file);
+                    } else {
+                        popSuccessful();
+                    }
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
     }
 
 }

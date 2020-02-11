@@ -743,7 +743,7 @@ public class BytesEditInformation extends FileEditInformation {
                     pageText = ByteTools.formatHex(pageText, lineBreak, lineBreakWidth, lineBreakValue);
                     String[] lines = pageText.split("\n");
                     lineEnd = lineStart + lines.length - 1;
-                    for (int i = 0; i < lines.length; i++) {
+                    for (int i = 0; i < lines.length; ++i) {
                         lines[i] += " ";
                         if (isMatchFilters(lines[i])) {
                             if (recordLineNumbers) {

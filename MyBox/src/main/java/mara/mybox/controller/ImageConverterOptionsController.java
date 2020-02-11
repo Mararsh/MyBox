@@ -46,9 +46,10 @@ import mara.mybox.value.CommonValues;
 public class ImageConverterOptionsController extends BaseController {
 
     protected ImageAttributes attributes;
+    protected boolean includeDpi;
 
     @FXML
-    protected ComboBox<String> colorSpaceSelector, compressionSelector, qualitySelector, dpiSelector;
+    protected ComboBox<String> colorSpaceSelector, compressionSelector, qualitySelector, dpiSelector, icoWidthSelector;
     @FXML
     protected ToggleGroup formatGroup, alphaGroup, binaryGroup;
     @FXML
@@ -58,7 +59,7 @@ public class ImageConverterOptionsController extends BaseController {
     @FXML
     protected CheckBox embedProfileCheck, alphaCheck;
     @FXML
-    protected FlowPane formatPane, colorspacePane, profilePane, alphaPane, dpiPane, compressPane, qualityPane;
+    protected FlowPane formatPane, colorspacePane, profilePane, alphaPane, dpiPane, compressPane, qualityPane, icoPane;
     @FXML
     protected VBox csBox, compressBox, binaryBox;
     @FXML
@@ -88,7 +89,8 @@ public class ImageConverterOptionsController extends BaseController {
 
             colorSpaceSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue<? extends String> v, String oldV, String newV) {
+                public void changed(ObservableValue<? extends String> v,
+                        String oldV, String newV) {
                     checkColorSpace();
                 }
             });
@@ -96,14 +98,16 @@ public class ImageConverterOptionsController extends BaseController {
 
             embedProfileCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
+                public void changed(ObservableValue<? extends Boolean> v,
+                        Boolean oldV, Boolean newV) {
                     checkEmbed();
                 }
             });
 
             profileInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue<? extends String> ov, String oldv, String newv) {
+                public void changed(ObservableValue<? extends String> ov,
+                        String oldv, String newv) {
                     checkProfile();
                 }
             });
@@ -118,7 +122,8 @@ public class ImageConverterOptionsController extends BaseController {
 
             compressionSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue<? extends String> v, String oldV, String newV) {
+                public void changed(ObservableValue<? extends String> v,
+                        String oldV, String newV) {
                     checkCompression();
                 }
             });
@@ -128,7 +133,8 @@ public class ImageConverterOptionsController extends BaseController {
             ));
             qualitySelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue<? extends String> v, String oldV, String newV) {
+                public void changed(ObservableValue<? extends String> v,
+                        String oldV, String newV) {
                     checkQuality();
                 }
             });
@@ -143,17 +149,31 @@ public class ImageConverterOptionsController extends BaseController {
 
             thresholdInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue<? extends String> ov, String oldv, String newv) {
+                public void changed(ObservableValue<? extends String> ov,
+                        String oldv, String newv) {
                     checkThreshold();
                 }
             });
 
             ditherCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
+                public void changed(ObservableValue<? extends Boolean> v,
+                        Boolean oldV, Boolean newV) {
                     checkDither();
                 }
             });
+
+            icoWidthSelector.getItems().addAll(Arrays.asList(
+                    "45", "30", "50", "25", "80", "120", "24", "64", "128", "256", "512", "48", "96", "144"
+            ));
+            icoWidthSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> v,
+                        String oldV, String newV) {
+                    checkIcoWidth();
+                }
+            });
+            icoWidthSelector.getSelectionModel().select(getUserConfigValue("ImageConverterIcoWidth", "45"));
 
             isSettingValues = true;
             embedProfileCheck.setSelected(getUserConfigBoolean("ImageConverterEmbed", true));
@@ -169,13 +189,15 @@ public class ImageConverterOptionsController extends BaseController {
     }
 
     public void initDpiBox(boolean include) {
+        includeDpi = include;
         if (include) {
             dpiSelector.getItems().addAll(Arrays.asList(
                     "96", "72", "300", "160", "240", "120", "600", "400"
             ));
             dpiSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue<? extends String> v, String oldV, String newV) {
+                public void changed(ObservableValue<? extends String> v,
+                        String oldV, String newV) {
                     checkDpi();
                 }
             });
@@ -205,15 +227,34 @@ public class ImageConverterOptionsController extends BaseController {
             formatCommentsLabel.setStyle(null);
         }
 
-        List<String> csList = new ArrayList<>();
-        if ("wbmp".equals(format)) {
-            csList.add(message("BlackOrWhite"));
+        FxmlControl.setEditorNormal(dpiSelector);
+        FxmlControl.setEditorNormal(qualitySelector);
+        FxmlControl.setEditorNormal(icoWidthSelector);
+        if ("ico".equals(format)) {
+            thisPane.getChildren().clear();
+            thisPane.getChildren().addAll(formatPane, icoPane);
+            return;
         } else {
-            csList.addAll(ImageValue.RGBColorSpaces);
-            if ("raw".equals(format) || CommonValues.CMYKImages.contains(format)) {
-                csList.addAll(ImageValue.CMYKColorSpaces);
+            thisPane.getChildren().clear();
+            thisPane.getChildren().addAll(formatPane, colorspacePane, csBox, embedProfileCheck, alphaPane);
+            if (includeDpi) {
+                thisPane.getChildren().add(dpiPane);
             }
-            csList.addAll(Arrays.asList(message("Gray"), message("BlackOrWhite"), message("IccProfile")));
+            thisPane.getChildren().addAll(compressBox, binaryBox);
+        }
+
+        List<String> csList = new ArrayList<>();
+        switch (format) {
+            case "wbmp":
+                csList.add(message("BlackOrWhite"));
+                break;
+            default:
+                csList.addAll(ImageValue.RGBColorSpaces);
+                if ("raw".equals(format) || CommonValues.CMYKImages.contains(format)) {
+                    csList.addAll(ImageValue.CMYKColorSpaces);
+                }
+                csList.addAll(Arrays.asList(message("Gray"), message("BlackOrWhite"), message("IccProfile")));
+                break;
         }
         isSettingValues = true;
         colorSpaceSelector.getItems().clear();
@@ -260,6 +301,9 @@ public class ImageConverterOptionsController extends BaseController {
             return;
         }
         String colorSpace = colorSpaceSelector.getSelectionModel().getSelectedItem();
+        if (colorSpace == null) {
+            return;
+        }
         attributes.setColorSpaceName(colorSpace);
         attributes.setProfile(null);
         attributes.setProfileName(null);
@@ -426,8 +470,27 @@ public class ImageConverterOptionsController extends BaseController {
                 FxmlControl.setEditorBadStyle(qualitySelector);
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+//            logger.debug(e.toString());
             FxmlControl.setEditorBadStyle(qualitySelector);
+        }
+    }
+
+    public void checkIcoWidth() {
+        if (isSettingValues) {
+            return;
+        }
+        try {
+            int v = Integer.valueOf(icoWidthSelector.getValue());
+            if (v > 0) {
+                attributes.setWidth(v);
+                FxmlControl.setEditorNormal(icoWidthSelector);
+                setUserConfigValue("ImageConverterIcoWidth", v + "");
+            } else {
+                FxmlControl.setEditorBadStyle(icoWidthSelector);
+            }
+        } catch (Exception e) {
+//            logger.debug(e.toString());
+            FxmlControl.setEditorBadStyle(icoWidthSelector);
         }
     }
 

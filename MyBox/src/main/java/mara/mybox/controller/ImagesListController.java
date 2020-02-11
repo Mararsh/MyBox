@@ -30,6 +30,7 @@ public abstract class ImagesListController extends ImageViewerController {
 
     protected ObservableList<ImageInformation> tableData;
     protected TableView<ImageInformation> tableView;
+    protected boolean needDurationColumn = false;
 
     @FXML
     protected ImagesTableController tableController;
@@ -48,6 +49,7 @@ public abstract class ImagesListController extends ImageViewerController {
 
                 tableData = tableController.tableData;
                 tableView = tableController.tableView;
+
             }
         } catch (Exception e) {
             logger.debug(e.toString());

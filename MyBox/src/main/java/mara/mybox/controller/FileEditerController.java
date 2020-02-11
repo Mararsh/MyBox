@@ -307,7 +307,7 @@ public abstract class FileEditerController extends BaseController {
             }
             sourceFile = file;
             sourceInformation = FileEditInformation.newEditInformation(editType, file);
-            sourceInformation.setPageSize(AppVariables.getUserConfigLong(PageSizeKey, 100000));
+            sourceInformation.setPageSize(AppVariables.getUserConfigInt(PageSizeKey, 100000));
             sourceInformation.setCurrentPage(currentPage);
             if (fileCurrentFound >= 0) {
                 sourceInformation.setCurrentFound(fileCurrentFound);
@@ -388,7 +388,6 @@ public abstract class FileEditerController extends BaseController {
                 }
             }
             isSettingValues = false;
-
             mainArea.requestFocus();
 
         } catch (Exception e) {
@@ -414,7 +413,11 @@ public abstract class FileEditerController extends BaseController {
 
     protected void initLineBreakTab() {
         try {
-
+            breakLinePane.expandedProperty().addListener(
+                    (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
+                        AppVariables.setUserConfigValue(baseName + "BreakLinePane", breakLinePane.isExpanded());
+                    });
+            breakLinePane.setExpanded(AppVariables.getUserConfigBoolean(baseName + "BreakLinePane", false));
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -424,7 +427,8 @@ public abstract class FileEditerController extends BaseController {
         try {
             displayCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                public void changed(ObservableValue ov, Boolean oldValue,
+                        Boolean newValue) {
                     checkDisplay();
                 }
             });
@@ -441,20 +445,30 @@ public abstract class FileEditerController extends BaseController {
             encodeBox.getItems().addAll(setNames);
             encodeBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                public void changed(ObservableValue ov, String oldValue,
+                        String newValue) {
                     changeCurrentCharset();
                 }
             });
 
             scrollCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                public void changed(ObservableValue ov, Boolean oldValue,
+                        Boolean newValue) {
                     if (displayArea != null && newValue) {
                         displayArea.setScrollLeft(mainArea.getScrollLeft());
                         displayArea.setScrollTop(mainArea.getScrollTop());
                     }
                 }
             });
+
+            if (bytesPane != null) {
+                bytesPane.expandedProperty().addListener(
+                        (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
+                            AppVariables.setUserConfigValue(baseName + "BytesPane", bytesPane.isExpanded());
+                        });
+                bytesPane.setExpanded(AppVariables.getUserConfigBoolean(baseName + "BytesPane", true));
+            }
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -474,6 +488,11 @@ public abstract class FileEditerController extends BaseController {
 
     protected void initFilterTab() {
         try {
+            filterPane.expandedProperty().addListener(
+                    (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
+                        AppVariables.setUserConfigValue(baseName + "FilterPane", filterPane.isExpanded());
+                    });
+            filterPane.setExpanded(AppVariables.getUserConfigBoolean(baseName + "FilterPane", false));
 
             Tooltip tips = new Tooltip(AppVariables.message("FilterTypesComments"));
             tips.setFont(new Font(16));
@@ -492,7 +511,8 @@ public abstract class FileEditerController extends BaseController {
 
             filterInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                public void changed(ObservableValue ov, String oldValue,
+                        String newValue) {
                     if (!isSettingValues) {
                         checkFilterStrings();
                     }
@@ -502,7 +522,8 @@ public abstract class FileEditerController extends BaseController {
 
             filterLineNumberCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                public void changed(ObservableValue ov, Boolean oldValue,
+                        Boolean newValue) {
                     AppVariables.setUserConfigValue("FilterRecordLineNumber", filterLineNumberCheck.isSelected());
                 }
             });
@@ -516,10 +537,16 @@ public abstract class FileEditerController extends BaseController {
 
     protected void initLocateTab() {
         try {
+            locatePane.expandedProperty().addListener(
+                    (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
+                        AppVariables.setUserConfigValue(baseName + "LocatePane", locatePane.isExpanded());
+                    });
+            locatePane.setExpanded(AppVariables.getUserConfigBoolean(baseName + "LocatePane", false));
 
             lineInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                public void changed(ObservableValue ov, String oldValue,
+                        String newValue) {
                     try {
                         int v = Integer.valueOf(lineInput.getText());
                         if (v > 0 && v <= sourceInformation.getLinesNumber()) {
@@ -539,7 +566,8 @@ public abstract class FileEditerController extends BaseController {
 
             objectNumberInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                public void changed(ObservableValue ov, String oldValue,
+                        String newValue) {
                     try {
                         int v = Integer.valueOf(objectNumberInput.getText());
                         if (v > 0 && v <= sourceInformation.getObjectsNumber()) {
@@ -612,6 +640,12 @@ public abstract class FileEditerController extends BaseController {
 
     protected void initReplaceTab() {
         try {
+            findPane.expandedProperty().addListener(
+                    (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
+                        AppVariables.setUserConfigValue(baseName + "FindPane", findPane.isExpanded());
+                    });
+            findPane.setExpanded(AppVariables.getUserConfigBoolean(baseName + "FindPane", false));
+
             if (findGroup != null) {
                 findGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                     @Override
@@ -627,14 +661,16 @@ public abstract class FileEditerController extends BaseController {
 
             findInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                public void changed(ObservableValue ov, String oldValue,
+                        String newValue) {
                     checkFindInput();
                 }
             });
 
             replaceInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                public void changed(ObservableValue ov, String oldValue,
+                        String newValue) {
                     boolean invalid = !checkReplaceString(newValue);
                     replaceButton.setDisable(invalid);
                     replaceAllButton.setDisable(invalid);
@@ -685,13 +721,20 @@ public abstract class FileEditerController extends BaseController {
 
     protected void initPageinateTab() {
         try {
+            paginatePane.expandedProperty().addListener(
+                    (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
+                        AppVariables.setUserConfigValue(baseName + "PaginatePane", paginatePane.isExpanded());
+                    });
+            paginatePane.setExpanded(AppVariables.getUserConfigBoolean(baseName + "PaginatePane", false));
+
             pageSizeInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                public void changed(ObservableValue ov, String oldValue,
+                        String newValue) {
                     checkPageSize();
                 }
             });
-            long pageSize = AppVariables.getUserConfigLong(PageSizeKey, 100000);
+            int pageSize = AppVariables.getUserConfigInt(PageSizeKey, 100000);
             if (pageSize <= 0) {
                 pageSize = 100000;
             }
@@ -708,7 +751,8 @@ public abstract class FileEditerController extends BaseController {
 
             mainArea.textProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                public void changed(ObservableValue ov, String oldValue,
+                        String newValue) {
                     if (!isSettingValues) {
                         updateInterface(true);
                     }
@@ -716,7 +760,8 @@ public abstract class FileEditerController extends BaseController {
             });
             mainArea.scrollTopProperty().addListener(new ChangeListener<Number>() {
                 @Override
-                public void changed(ObservableValue ov, Number oldValue, Number newValue) {
+                public void changed(ObservableValue ov, Number oldValue,
+                        Number newValue) {
                     if (isSettingValues) {
                         return;
                     }
@@ -732,7 +777,8 @@ public abstract class FileEditerController extends BaseController {
             });
             mainArea.scrollLeftProperty().addListener(new ChangeListener<Number>() {
                 @Override
-                public void changed(ObservableValue ov, Number oldValue, Number newValue) {
+                public void changed(ObservableValue ov, Number oldValue,
+                        Number newValue) {
                     if (!isSettingValues && displayArea != null && scrollCheck.isSelected()) {
                         isSettingValues = true;
                         displayArea.setScrollLeft(newValue.doubleValue());
@@ -742,7 +788,8 @@ public abstract class FileEditerController extends BaseController {
             });
             mainArea.selectionProperty().addListener(new ChangeListener<IndexRange>() {
                 @Override
-                public void changed(ObservableValue ov, IndexRange oldValue, IndexRange newValue) {
+                public void changed(ObservableValue ov, IndexRange oldValue,
+                        IndexRange newValue) {
                     checkMainAreaSelection();
                 }
             });
@@ -778,7 +825,8 @@ public abstract class FileEditerController extends BaseController {
 
             pageInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                public void changed(ObservableValue ov, String oldValue,
+                        String newValue) {
                     checkCurrentPage();
                 }
             });
@@ -787,9 +835,9 @@ public abstract class FileEditerController extends BaseController {
         }
     }
 
-    private long checkPageSize() {
+    private int checkPageSize() {
         try {
-            long v = Long.valueOf(pageSizeInput.getText());
+            int v = Integer.valueOf(pageSizeInput.getText());
             if (v > 0) {
                 pageSizeInput.setStyle(null);
                 okButton.setDisable(false);
@@ -838,7 +886,8 @@ public abstract class FileEditerController extends BaseController {
                 displayArea.setEditable(false);
                 displayArea.scrollTopProperty().addListener(new ChangeListener<Number>() {
                     @Override
-                    public void changed(ObservableValue ov, Number oldValue, Number newValue) {
+                    public void changed(ObservableValue ov, Number oldValue,
+                            Number newValue) {
                         if (!isSettingValues && scrollCheck.isSelected()) {
                             isSettingValues = true;
                             mainArea.setScrollTop(newValue.doubleValue());
@@ -885,7 +934,7 @@ public abstract class FileEditerController extends BaseController {
             lineArea.clear();
         } else {
             StringBuilder lines = new StringBuilder();
-            for (long i = from; i <= to; i++) {
+            for (long i = from; i <= to; ++i) {
                 lines.append(i).append("\n");
             }
             lineArea.setText(lines.toString());
@@ -919,11 +968,11 @@ public abstract class FileEditerController extends BaseController {
         if (!checkBeforeNextAction()) {
             return;
         }
-        long pageSize = checkPageSize();
+        int pageSize = checkPageSize();
         if (pageSize <= 0) {
             return;
         }
-        AppVariables.setUserConfigValue(PageSizeKey, pageSize + "");
+        AppVariables.setUserConfigInt(PageSizeKey, pageSize);
         popInformation(AppVariables.message("Saved"), 3000);
         sourceInformation.setPageSize(pageSize);
         sourceInformation.setCurrentPage(1);
@@ -1430,7 +1479,7 @@ public abstract class FileEditerController extends BaseController {
             stage.toFront();
 
             Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == buttonCancel) {
+            if (result.get() != buttonSure) {
                 return;
             }
         }
@@ -1588,7 +1637,7 @@ public abstract class FileEditerController extends BaseController {
             mainArea.requestFocus();
             mainArea.deselect();
             int index = 0;
-            for (int i = 0; i < lineLocation - 1; i++) {
+            for (int i = 0; i < lineLocation - 1; ++i) {
                 index += lines[i].length() + 1;
             }
             if (editType == Edit_Type.Bytes) {
@@ -1608,7 +1657,7 @@ public abstract class FileEditerController extends BaseController {
                 mainArea.requestFocus();
                 mainArea.deselect();
                 int index = 0, end = (int) (lineLocation - sourceInformation.getCurrentPageLineStart());
-                for (int i = 0; i < end; i++) {
+                for (int i = 0; i < end; ++i) {
                     index += lines[i].length() + 1;
                 }
                 if (editType == Edit_Type.Bytes) {
@@ -1741,7 +1790,6 @@ public abstract class FileEditerController extends BaseController {
                     if (sourceInformation == null) {
                         return false;
                     }
-
                     sourceInformation.setLineBreak(TextTools.checkLineBreak(sourceFile));
                     sourceInformation.setLineBreakValue(TextTools.lineBreakValue(sourceInformation.getLineBreak()));
                     targetInformation.setLineBreak(sourceInformation.getLineBreak());
@@ -1795,7 +1843,6 @@ public abstract class FileEditerController extends BaseController {
                         targetInformation.setCharset(sourceInformation.getCharset());
                     }
                     isSettingValues = false;
-
                     loadPage();
 
                 }
@@ -1874,23 +1921,19 @@ public abstract class FileEditerController extends BaseController {
         if (sourceInformation == null || sourceFile == null) {
             return;
         }
-
         synchronized (this) {
             if (task != null) {
                 return;
             }
             bottomLabel.setText(AppVariables.message("ReadingFile"));
             checkFindType();
-
             task = new SingletonTask<Void>() {
 
                 private String text;
 
                 @Override
                 protected boolean handle() {
-
                     text = sourceInformation.readPage();
-
                     return true;
                 }
 
@@ -1925,7 +1968,6 @@ public abstract class FileEditerController extends BaseController {
                         }, 1000);
 
                     } else {
-
                         popFailed();
                     }
 
@@ -2106,7 +2148,7 @@ public abstract class FileEditerController extends BaseController {
                     && sourceInformation.getCurrentPageLineEnd() >= sourceInformation.getCurrentLine()) {
                 String[] lines = text.split("\n");
                 int index = 0, end = (int) (sourceInformation.getCurrentLine() - sourceInformation.getCurrentPageLineStart());
-                for (int i = 0; i < end; i++) {
+                for (int i = 0; i < end; ++i) {
                     index += lines[i].length() + 1;
                 }
                 if (editType == Edit_Type.Bytes) {
@@ -2177,7 +2219,7 @@ public abstract class FileEditerController extends BaseController {
 
                 @Override
                 protected void whenSucceeded() {
-                    popSuccessul();
+                    popSuccessful();
                     charsetByUser = false;
                     openFile(file);
                 }
@@ -2230,9 +2272,8 @@ public abstract class FileEditerController extends BaseController {
 
                 @Override
                 protected void whenSucceeded() {
-                    popSuccessul();
-                    openFile(sourceFile);
-                    updateInterface(false);
+                    popSuccessful();
+                    afterSaveExisted();
                 }
 
                 @Override
@@ -2247,6 +2288,11 @@ public abstract class FileEditerController extends BaseController {
             thread.setDaemon(true);
             thread.start();
         }
+    }
+
+    protected void afterSaveExisted() {
+        openFile(sourceFile);
+        updateInterface(false);
     }
 
     @FXML
@@ -2289,7 +2335,7 @@ public abstract class FileEditerController extends BaseController {
                         FileEditerController controller = openNewStage();
                         controller.openFile(file);
                     }
-                    popSuccessul();
+                    popSuccessful();
                 }
 
             };

@@ -71,7 +71,8 @@ public class PdfConvertImagesBatchController extends PdfBatchController {
 
             appendColorCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
+                public void changed(ObservableValue<? extends Boolean> v,
+                        Boolean oldV, Boolean newV) {
                     setUserConfigValue("PdfConverterAppendColor", appendColorCheck.isSelected());
                 }
             });
@@ -79,7 +80,8 @@ public class PdfConvertImagesBatchController extends PdfBatchController {
 
             appendCompressionCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
+                public void changed(ObservableValue<? extends Boolean> v,
+                        Boolean oldV, Boolean newV) {
                     setUserConfigValue("PdfConverterAppendCompression", appendCompressionCheck.isSelected());
                 }
             });
@@ -87,7 +89,8 @@ public class PdfConvertImagesBatchController extends PdfBatchController {
 
             appendQualityCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
+                public void changed(ObservableValue<? extends Boolean> v,
+                        Boolean oldV, Boolean newV) {
                     setUserConfigValue("PdfConverterAppendQuality", appendQualityCheck.isSelected());
                 }
             });
@@ -95,7 +98,8 @@ public class PdfConvertImagesBatchController extends PdfBatchController {
 
             appendDensityCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
+                public void changed(ObservableValue<? extends Boolean> v,
+                        Boolean oldV, Boolean newV) {
                     setUserConfigValue("PdfConverterAppendDensity", appendDensityCheck.isSelected());
                 }
             });
@@ -131,18 +135,29 @@ public class PdfConvertImagesBatchController extends PdfBatchController {
     @Override
     public int handleCurrentPage() {
         try {
+            File tFile = makeTargetFile();
             BufferedImage pageImage = renderer.renderImageWithDPI(currentParameters.currentPage - 1,
                     attributes.getDensity(), ImageType.ARGB);                              // 0-based
-            BufferedImage targetImage = ImageConvert.convertColorSpace(pageImage, attributes);
-            if (targetImage == null) {
-                return 0;
+            String targetFormat = attributes.getImageFormat();
+            if ("ico".equals(targetFormat) || "icon".equals(targetFormat)) {
+                if (ImageConvert.convertToIcon(pageImage, attributes, tFile)) {
+                    targetFileGenerated(tFile);
+                    return 1;
+                } else {
+                    return 0;
+                }
+            } else {
+                BufferedImage targetImage = ImageConvert.convertColorSpace(pageImage, attributes);
+                if (targetImage == null) {
+                    return 0;
+                }
+
+                if (!ImageFileWriters.writeImageFile(targetImage, attributes, tFile.getAbsolutePath())) {
+                    return 0;
+                }
+                targetFileGenerated(tFile);
+                return 1;
             }
-            File tFile = makeTargetFile();
-            if (!ImageFileWriters.writeImageFile(targetImage, attributes, tFile.getAbsolutePath())) {
-                return 0;
-            }
-            targetFileGenerated(tFile);
-            return 1;
         } catch (Exception e) {
             logger.error(e.toString());
             return 0;
@@ -153,23 +168,25 @@ public class PdfConvertImagesBatchController extends PdfBatchController {
         try {
             String namePrefix = FileTools.getFilePrefix(currentParameters.currentSourceFile.getName())
                     + "_page" + currentParameters.currentPage;
-            if (appendColorCheck.isSelected()) {
-                if (message("IccProfile").equals(attributes.getColorSpaceName())) {
-                    namePrefix += "_" + attributes.getProfileName();
-                } else {
-                    namePrefix += "_" + attributes.getColorSpaceName();
+            if (!"ico".equals(attributes.getImageFormat())) {
+                if (appendColorCheck.isSelected()) {
+                    if (message("IccProfile").equals(attributes.getColorSpaceName())) {
+                        namePrefix += "_" + attributes.getProfileName();
+                    } else {
+                        namePrefix += "_" + attributes.getColorSpaceName();
+                    }
                 }
-            }
-            if (attributes.getCompressionType() != null) {
-                if (appendCompressionCheck.isSelected()) {
-                    namePrefix += "_" + attributes.getCompressionType();
+                if (attributes.getCompressionType() != null) {
+                    if (appendCompressionCheck.isSelected()) {
+                        namePrefix += "_" + attributes.getCompressionType();
+                    }
+                    if (appendQualityCheck.isSelected()) {
+                        namePrefix += "_quality-" + attributes.getQuality() + "%";
+                    }
                 }
-                if (appendQualityCheck.isSelected()) {
-                    namePrefix += "_quality-" + attributes.getQuality() + "%";
+                if (appendDensityCheck.isSelected()) {
+                    namePrefix += "_" + attributes.getDensity();
                 }
-            }
-            if (appendDensityCheck.isSelected()) {
-                namePrefix += "_" + attributes.getDensity();
             }
             namePrefix = namePrefix.replace(" ", "_");
             String nameSuffix = "." + attributes.getImageFormat();

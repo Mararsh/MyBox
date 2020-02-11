@@ -170,7 +170,7 @@ public class FileFilterController extends FileEditerController {
                 protected void whenSucceeded() {
                     FileEditerController controller = openNewStage();
                     controller.openFile(file);
-                    popSuccessul();
+                    popSuccessful();
                     FxmlStage.closeStage(getMyStage());
 //                            sourceInformation.getFile().delete();
                 }

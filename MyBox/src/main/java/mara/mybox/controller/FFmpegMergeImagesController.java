@@ -17,7 +17,6 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import mara.mybox.data.MediaInformation;
 import mara.mybox.data.VisitHistory;
@@ -44,9 +43,9 @@ public class FFmpegMergeImagesController extends FFmpegConvertMediaStreamsContro
     protected ObservableList<MediaInformation> audiosData;
 
     @FXML
-    protected TabPane tabPane;
-    @FXML
     protected Tab imagesTab, audiosTab;
+    @FXML
+    protected ImagesTableController imagesTableController;
     @FXML
     protected FFmpegAudiosTableController audiosTableController;
     @FXML
@@ -215,20 +214,24 @@ public class FFmpegMergeImagesController extends FFmpegConvertMediaStreamsContro
         try {
             StringBuilder s = new StringBuilder();
             File lastFile = null;
-            for (int i = 0; i < tableData.size(); i++) {
+            for (int i = 0; i < tableData.size(); ++i) {
                 if (task == null || task.isCancelled()) {
                     updateLogs(message("TaskCancelled"), true);
                     return null;
                 }
                 ImageInformation info = (ImageInformation) tableData.get(i);
-                File file = info.getFile();
-                if (file == null) {
-                    continue;
-                }
                 totalFilesHandled++;
-                updateLogs(message("Handling") + ": " + file, true);
+                if (verboseCheck == null || verboseCheck.isSelected()) {
+                    if (info.getFile() != null) {
+                        if (info.getIndex() >= 0) {
+                            updateLogs(message("Handling") + ": " + info.getFile() + "-" + info.getIndex(), true);
+                        } else {
+                            updateLogs(message("Handling") + ": " + info.getFile(), true);
+                        }
+                    }
+                }
                 try {
-                    BufferedImage image = ImageFileReaders.readImage(file);
+                    BufferedImage image = ImageFileReaders.getBufferedImage(info);
                     if (image == null) {
                         continue;
                     }
@@ -237,7 +240,7 @@ public class FFmpegMergeImagesController extends FFmpegConvertMediaStreamsContro
                     if (ImageFileWriters.writeImageFile(fitImage, tmpFile) && tmpFile.exists()) {
                         lastFile = tmpFile;
                         s.append("file '").append(lastFile.getAbsolutePath()).append("'\n");
-                        s.append("duration  ").append(info.getDuration() / 1000).append("\n");
+                        s.append("duration  ").append(info.getDuration() / 1000.00f).append("\n");
                     }
                 } catch (Exception e) {
                     logger.debug(e.toString());
@@ -260,7 +263,7 @@ public class FFmpegMergeImagesController extends FFmpegConvertMediaStreamsContro
     protected File handleAudios() {
         try {
             StringBuilder s = new StringBuilder();
-            for (int i = 0; i < audiosData.size(); i++) {
+            for (int i = 0; i < audiosData.size(); ++i) {
                 if (task == null || task.isCancelled()) {
                     updateLogs(message("TaskCancelled"), true);
                     return null;
@@ -271,8 +274,14 @@ public class FFmpegMergeImagesController extends FFmpegConvertMediaStreamsContro
                     continue;
                 }
                 totalFilesHandled++;
-                updateLogs(message("Handling") + ": " + file, true);
+                if (verboseCheck == null || verboseCheck.isSelected()) {
+                    updateLogs(message("Handling") + ": " + file, true);
+                }
                 s.append("file '").append(file.getAbsolutePath()).append("'\n");
+            }
+            String ss = s.toString();
+            if (ss.isEmpty()) {
+                return null;
             }
             File audiosListFile = FileTools.getTempFile(".txt");
             FileTools.writeFile(audiosListFile, s.toString(), Charset.forName("utf-8"));
@@ -283,94 +292,108 @@ public class FFmpegMergeImagesController extends FFmpegConvertMediaStreamsContro
         }
     }
 
-    protected void merge(File imagesListFile, File audiosListFile, File videoFile)
-            throws Exception {
-        ProgressListener listener = new ProgressListener() {
-            private long lastProgress = System.currentTimeMillis();
-            private long lastStatus = System.currentTimeMillis();
+    protected void merge(File imagesListFile, File audiosListFile, File videoFile) {
+        if (imagesListFile == null || videoFile == null) {
+            return;
+        }
+        try {
+            ProgressListener listener = new ProgressListener() {
+                private long lastProgress = System.currentTimeMillis();
+                private long lastStatus = System.currentTimeMillis();
 
-            @Override
-            public void onProgress(FFmpegProgress progress) {
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        long now = System.currentTimeMillis();
-                        if (now > lastProgress + 500) {
-                            updateLogs(message("Handled") + ":"
-                                    + DateTools.showSeconds(progress.getTimeMillis() / 1000), true);
-                            progressValue.setText(DateTools.showSeconds(progress.getTimeMillis() / 1000));
-                            lastProgress = now;
+                @Override
+                public void onProgress(FFmpegProgress progress) {
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            long now = System.currentTimeMillis();
+                            if (now > lastProgress + 500) {
+                                if (verboseCheck == null || verboseCheck.isSelected()) {
+                                    updateLogs(message("Handled") + ":"
+                                            + DateTools.showSeconds(progress.getTimeMillis() / 1000), true);
+                                }
+                                progressValue.setText(DateTools.showSeconds(progress.getTimeMillis() / 1000));
+                                lastProgress = now;
+                            }
+                            if (now > lastStatus + 3000) {
+                                long cost = now - mediaStart;
+                                String s = message("Cost") + ": " + DateTools.showTime(cost);
+                                statusLabel.setText(s);
+                                lastStatus = now;
+                            }
                         }
-                        if (now > lastStatus + 3000) {
-                            long cost = now - mediaStart;
-                            String s = message("Cost") + ": " + DateTools.showTime(cost);
-                            statusLabel.setText(s);
-                            lastStatus = now;
-                        }
-                    }
-                });
+                    });
 
+                }
+            };
+            mediaStart = System.currentTimeMillis();
+            FFmpeg ffmpeg = FFmpeg.atPath(executable.toPath().getParent())
+                    .addArguments("-f", "concat")
+                    .addArguments("-safe", "0")
+                    .addArguments("-i", imagesListFile.getAbsolutePath());
+            if (audiosListFile != null) {
+                ffmpeg.addArguments("-f", "concat")
+                        .addArguments("-safe", "0")
+                        .addArguments("-i", audiosListFile.getAbsolutePath());
             }
-        };
-        mediaStart = System.currentTimeMillis();
-        FFmpeg ffmpeg = FFmpeg.atPath(executable.toPath().getParent())
-                .addArguments("-f", "concat")
-                .addArguments("-safe", "0")
-                .addArguments("-i", imagesListFile.getAbsolutePath())
-                .addArguments("-f", "concat")
-                .addArguments("-safe", "0")
-                .addArguments("-i", audiosListFile.getAbsolutePath())
-                .addArguments("-s", width + "x" + height)
-                .addArguments("-pix_fmt", "yuv420p")
-                .addArguments("-b:a", audioBitrateInput.getText())
-                .addOutput(UrlOutput.toPath(videoFile.toPath()))
-                .setProgressListener(listener)
-                .setOverwriteOutput(true);
-        if (disableVideo) {
-            ffmpeg.addArgument("-vn");
-        } else if (videoCodec != null) {
-            ffmpeg.addArguments("-vcodec", videoCodec);
-        }
-        if (disbaleAudio) {
-            ffmpeg.addArgument("-an");
-        } else if (audioCodec != null) {
-            ffmpeg.addArguments("-acodec", audioCodec);
-        }
-        if (disbaleSubtitle) {
-            ffmpeg.addArgument("-sn");
-        } else if (subtitleCodec != null) {
-            ffmpeg.addArguments("-scodec", subtitleCodec);
-        }
-        if (aspect != null) {
-            ffmpeg.addArguments("-aspect", aspect);
-        }
-        if (videoFrameRate > 0) {
-            ffmpeg.addArguments("-r", videoFrameRate + "");
-        }
-        String volumn = volumnInput.getText().trim();
-        if (!volumn.isBlank()) {
-            ffmpeg.addArguments("-af", "volume=" + volumn);
-        }
-        if (stopCheck.isSelected()) {
-            logger.debug("here");
-            ffmpeg.addArgument("-shortest");
-        }
+            ffmpeg.addArguments("-s", width + "x" + height)
+                    .addArguments("-pix_fmt", "yuv420p");
+            String ba = audioBitrateInput.getText().trim();
+            if (!ba.isEmpty()) {
+                ffmpeg.addArguments("-b:a", audioBitrateInput.getText());
+            }
+            ffmpeg.addOutput(UrlOutput.toPath(videoFile.toPath()))
+                    .setProgressListener(listener)
+                    .setOverwriteOutput(true);
+            if (disableVideo) {
+                ffmpeg.addArgument("-vn");
+            } else if (videoCodec != null) {
+                ffmpeg.addArguments("-vcodec", videoCodec);
+            }
+            if (disbaleAudio) {
+                ffmpeg.addArgument("-an");
+            } else if (audioCodec != null) {
+                ffmpeg.addArguments("-acodec", audioCodec);
+            }
+            if (disbaleSubtitle) {
+                ffmpeg.addArgument("-sn");
+            } else if (subtitleCodec != null) {
+                ffmpeg.addArguments("-scodec", subtitleCodec);
+            }
+            if (aspect != null) {
+                ffmpeg.addArguments("-aspect", aspect);
+            }
+            if (videoFrameRate > 0) {
+                ffmpeg.addArguments("-r", videoFrameRate + "");
+            }
+            String volumn = volumnInput.getText().trim();
+            if (!volumn.isBlank()) {
+                ffmpeg.addArguments("-af", "volume=" + volumn);
+            }
+            if (stopCheck.isSelected()) {
+                ffmpeg.addArgument("-shortest");
+            }
 
-        String more = moreInput.getText().trim();
-        if (!more.isBlank()) {
-            String[] args = StringTools.splitBySpace(more);
-            if (args != null && args.length > 0) {
-                for (String arg : args) {
-                    ffmpeg.addArgument(arg);
+            String more = moreInput.getText().trim();
+            if (!more.isBlank()) {
+                String[] args = StringTools.splitBySpace(more);
+                if (args != null && args.length > 0) {
+                    for (String arg : args) {
+                        ffmpeg.addArgument(arg);
+                    }
                 }
             }
+            if (verboseCheck == null || verboseCheck.isSelected()) {
+                updateLogs(message("ConvertingMedia") + "  " + message("TargetFile") + ":" + videoFile, true);
+            }
+            FFmpegResult result = ffmpeg.execute();
+            targetFileGenerated(videoFile);
+            if (verboseCheck == null || verboseCheck.isSelected()) {
+                updateLogs(message("Size") + ": " + FileTools.showFileSize(result.getVideoSize()), true);
+            }
+        } catch (Exception e) {
+            updateLogs(e.toString());
         }
-
-        updateLogs(message("ConvertingMedia") + "  " + message("TargetFile") + ":" + videoFile, true);
-        FFmpegResult result = ffmpeg.execute();
-
-        targetFileGenerated(videoFile);
-        updateLogs(message("Size") + ": " + FileTools.showFileSize(result.getVideoSize()), true);
     }
 
 }

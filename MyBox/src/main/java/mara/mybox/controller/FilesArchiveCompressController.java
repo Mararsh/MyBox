@@ -329,7 +329,7 @@ public class FilesArchiveCompressController extends FilesBatchController {
 
     public String addEntry(File file, String entryPath) {
         try {
-            showHandling(file);
+            countHandling(file);
             String name;
             if (archiver.equalsIgnoreCase(ArchiveStreamFactory.AR)) {
                 name = file.getName();
@@ -411,6 +411,9 @@ public class FilesArchiveCompressController extends FilesBatchController {
         }
         try {
             File[] files = sourcePath.listFiles();
+            if (files == null) {
+                return;
+            }
             for (File srcFile : files) {
                 if (task == null || task.isCancelled()) {
                     return;
@@ -453,9 +456,9 @@ public class FilesArchiveCompressController extends FilesBatchController {
             if (!message("None").equals(compressor)) {
                 File tmpFile = FileTools.getTempFile();
                 try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(archiveFile));
-                         BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(tmpFile));
-                         CompressorOutputStream compressOut = new CompressorStreamFactory().
-                                createCompressorOutputStream(compressor, out)) {
+                      BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(tmpFile));
+                      CompressorOutputStream compressOut = new CompressorStreamFactory().
+                             createCompressorOutputStream(compressor, out)) {
                     IOUtils.copy(inputStream, compressOut);
                 }
                 tmpFile.renameTo(targetFile);

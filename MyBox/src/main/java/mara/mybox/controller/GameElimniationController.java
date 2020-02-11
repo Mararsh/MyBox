@@ -1,5 +1,7 @@
 package mara.mybox.controller;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,47 +20,63 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.MoveTo;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.LineTo;
 import javafx.scene.shape.Path;
-import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.Duration;
 import javafx.util.converter.IntegerStringConverter;
+import javax.imageio.ImageIO;
+import mara.mybox.data.ImageItem;
 import mara.mybox.data.IntPoint;
+import mara.mybox.data.VisitHistory;
+import mara.mybox.db.TableStringValues;
 import mara.mybox.fxml.FxmlControl;
+import mara.mybox.fxml.ListImageCheckBoxCell;
+import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.tools.DateTools;
+import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
+import mara.mybox.value.CommonFxValues;
 import thridparty.TableAutoCommitCell;
 
 /**
@@ -68,40 +86,58 @@ import thridparty.TableAutoCommitCell;
  */
 public class GameElimniationController extends BaseController {
 
-    protected int boardSize, chessSize, eliminationSize = 3, totalScore;
+    protected int boardSize, chessSize, minimumAdjacent, totalScore, autoSpeed,
+            flushDuration, eliminateDelay, flushTimes;
     protected Map<String, VBox> chessBoard;
-    protected List<Integer> chessImageIndice, countedChesses;
-    protected List<String> imageNames, imageComments;
+    protected List<Integer> selectedChesses, countedChesses;
     protected IntPoint firstClick;
-    protected boolean countScore, isEliminating;
+    protected boolean countScore, isEliminating, autoPlaying, stopped;
     protected Random random;
     protected ObservableList<ScoreRuler> scoreRulersData;
     protected Map<Integer, Integer> scoreRulers;
     protected Map<Integer, Integer> scoreRecord;
     protected Date startTime;
+    protected Adjacent lastElimination, lastRandom;
+    protected String currentStyle, focusStyle, defaultStyle, arcStyle, shadowStyle;
+    protected File soundFile;
 
     @FXML
     protected TabPane tabPane;
     @FXML
-    protected Tab playTab, chessesTab, rulersTab, scoresTab;
+    protected Tab playTab, chessesTab, rulersTab, settingsTab;
     @FXML
     protected VBox chessboardPane;
     @FXML
-    protected Label chessesLabel, scoreLabel;
+    protected Label chessesLabel, scoreLabel, imageLabel;
     @FXML
-    protected ListView<String> chessesListView;
+    protected ListView<ImageItem> imagesListview;
     @FXML
-    protected FlowPane chessImagesPane, countedImagesPane;
+    protected FlowPane countedImagesPane;
     @FXML
-    protected CheckBox viewImageCheck, shadowCheck, arcCheck;
+    protected CheckBox shadowCheck, arcCheck, scoreCheck;
     @FXML
     protected ComboBox<String> chessSizeSelector;
     @FXML
     protected TableView<ScoreRuler> rulersTable;
     @FXML
-    protected TableColumn<ScoreRuler, Integer> linksColumn, scoreColumn;
+    protected TableColumn<ScoreRuler, Integer> numberColumn, scoreColumn;
     @FXML
-    protected RadioButton guaiRadio, benRadio, guaiBenRadio, muteRadio;
+    protected RadioButton guaiRadio, benRadio, guaiBenRadio, muteRadio, customizedSoundRadio,
+            deadRenewRadio, deadChanceRadio, deadPromptRadio,
+            speed1Radio, speed2Radio, speed3Radio, speed5Radio,
+            flush0Radio, flush1Radio, flush2Radio, flush3Radio;
+    @FXML
+    protected HBox selectSoundBox;
+    @FXML
+    protected Button helpMeButton;
+    @FXML
+    protected ToggleButton catButton;
+    @FXML
+    protected ScrollPane scrollPane;
+    @FXML
+    protected ImageView imageView;
+    @FXML
+    protected Label soundFileLabel;
 
     public GameElimniationController() {
         baseTitle = AppVariables.message("GameElimniation");
@@ -116,90 +152,157 @@ public class GameElimniationController extends BaseController {
             scoreRulers = new HashMap();
             scoreRecord = new HashMap();
             scoreRulersData = FXCollections.observableArrayList();
-            chessImageIndice = new ArrayList();
+            selectedChesses = new ArrayList();
             countedChesses = new ArrayList();
             random = new Random();
+            defaultStyle = "-fx-background-color: transparent; -fx-border-style: solid inside;"
+                    + "-fx-border-width: 2; -fx-border-radius: 3; -fx-border-color: transparent;";
+            arcStyle = "-fx-background-color: white; -fx-border-style: solid inside;"
+                    + "-fx-border-width: 2; -fx-border-radius: 10;-fx-background-radius: 10; -fx-border-color: transparent;";
+            shadowStyle = "-fx-background-color: white;-fx-border-style: solid inside;"
+                    + "-fx-border-width: 2; -fx-border-radius: 3; -fx-border-color: white;";
+            focusStyle = "-fx-border-style: solid inside;-fx-border-width: 2;"
+                    + "-fx-border-radius: 3;" + "-fx-border-color: blue;";
 
-            initChessesTab();
-            initRulersTab();
+            flushDuration = 200;
+            minimumAdjacent = 3;
+
+            catButton.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldVal,
+                        Boolean newVal) {
+                    autoPlaying = catButton.isSelected();
+                    if (autoPlaying) {
+                        findAdjacentAndEliminate();
+                    }
+                }
+            });
 
         } catch (Exception e) {
             logger.debug(e.toString());
         }
     }
 
-    protected void initChessesTab() {
+    @Override
+    public void keyHandler(KeyEvent event) {
+        super.keyHandler(event);
+        String text = event.getText();
+        if (text == null || text.isEmpty()) {
+            return;
+        }
+        switch (text) {
+            case "h":
+            case "H":
+                helpMeAction();
+        }
+    }
+
+    @Override
+    public void afterSceneLoaded() {
+        super.afterSceneLoaded();
+        synchronized (this) {
+            if (task != null) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+
+                private List<ImageItem> items;
+                private String defaultSelected;
+
+                @Override
+                protected boolean handle() {
+                    try {
+                        List<String> imageNames = new ArrayList();
+                        List<String> names = TableStringValues.read("GameEliminationImage");
+                        for (String name : names) {
+                            if (!name.startsWith("color:")) {
+                                File file = new File(name);
+                                if (!file.exists()) {
+                                    TableStringValues.delete("GameEliminationImage", name);
+                                }
+                            }
+                        }
+                        if (!names.isEmpty()) {
+                            imageNames.addAll(names);
+                        }
+
+                        imageNames.addAll(ImageItem.predefined().keySet());
+                        defaultSelected = imageNames.get(0);
+                        items = new ArrayList();
+                        for (int i = 0; i < imageNames.size(); ++i) {
+                            String name = imageNames.get(i);
+                            String comments = ImageItem.predefined().get(name);
+                            ImageItem item = new ImageItem(name, comments);
+                            item.getSelected().addListener(new ChangeListener<Boolean>() {
+                                @Override
+                                public void changed(ObservableValue ov,
+                                        Boolean t, Boolean t1) {
+                                    if (!isSettingValues) {
+                                        setChessImagesLabel();
+                                    }
+                                }
+                            });
+                            item.setIndex(i);
+                            items.add(item);
+                            if (i > 0 && i < 8) {
+                                defaultSelected += "," + name;
+                            }
+                        }
+                        return true;
+
+                    } catch (Exception e) {
+                        error = e.toString();
+                        return false;
+                    }
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    initChessesTab(items, defaultSelected);
+                    initRulersTab();
+                    initSettingsTab();
+
+                    FxmlControl.setTooltip(helpMeButton, message("HelpMeFindExchange") + "\nh / H");
+                    FxmlControl.setTooltip(catButton, message("AutoPlayGame"));
+
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
+
+    }
+
+    protected void initChessesTab(List<ImageItem> items, String defaultSelected) {
         try {
             isSettingValues = true;
-            imageNames = Arrays.asList(
-                    "img/About.png", "img/DataTools.png", "img/Settings.png",
-                    "img/RecentAccess.png", "img/FileTools.png", "img/ImageTools.png",
-                    "img/PdfTools.png", "img/MediaTools.png", "img/NetworkTools.png",
-                    "img/ww1.png", "img/ww2.png", "img/ww5.png",
-                    "img/ww3.png", "img/ww4.png", "img/ww6.png",
-                    "img/ww7.png", "img/ww8.png", "img/ww9.png",
-                    "img/jade.png", "img/zz1.png", "img/MyBox.png"
-            );
-            imageComments = Arrays.asList(
-                    "AboutImageTips", "DataToolsImageTips", "SettingsImageTips",
-                    "RecentAccessImageTips", "FileToolsImageTips", "ImageToolsImageTips",
-                    "PdfToolsImageTips", "MediaToolsImageTips", "NetworkToolsImageTips",
-                    "ww1ImageTips", "ww2ImageTips", "ww5ImageTips",
-                    "ww3ImageTips", "ww4ImageTips", "ww6ImageTips",
-                    "ww7ImageTips", "ww8ImageTips", "ww9ImageTips",
-                    "jadeImageTips", "zz1ImageTips", ""
-            );
+            imagesListview.setCellFactory((ListView<ImageItem> param) -> {
+                ListImageCheckBoxCell cell = new ListImageCheckBoxCell();
+                return cell;
+            });
+            imagesListview.getItems().addAll(items);
 
-            for (int i = 0; i < imageNames.size(); i++) {
-                String name = imageNames.get(i);
-                CheckBox cbox = new CheckBox();
-                ImageView view = new ImageView(name);
-                view.setPreserveRatio(true);
-                view.setFitWidth(40);
-                view.setUserData(i);
-                cbox.setGraphic(view);
-                cbox.setUserData(i);
-                cbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue ov, Boolean oldVal, Boolean newVal) {
-                        setChessImagesLabel();
-                    }
-                });
-                chessImagesPane.getChildren().add(cbox);
+            List<String> selected = Arrays.asList(AppVariables.getUserConfigValue("GameEliminationChessImages",
+                    defaultSelected).split(","));
+            if (selected.isEmpty()) {
+                selected = Arrays.asList(defaultSelected.split(","));
+            }
+            for (int i = 0; i < imagesListview.getItems().size(); ++i) {
+                ImageItem item = imagesListview.getItems().get(i);
+                if (selected.contains(item.getAddress())) {
+                    item.setSelected(true);
+                }
             }
 
-            viewImageCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            imagesListview.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+            imagesListview.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<ImageItem>() {
                 @Override
-                public void changed(ObservableValue ov, Boolean oldVal, Boolean newVal) {
-                    checkChessImagesTips();
-                }
-            });
-            viewImageCheck.setSelected(AppVariables.getUserConfigBoolean("GameEliminationChessImagesShow", true));
-            try {
-                List<Integer> selectedIndice = new ArrayList();
-                String selected = AppVariables.getUserConfigValue("GameEliminationChessImages", "0,1,2,3,4,5,6,7");
-                for (String s : selected.split(",")) {
-                    selectedIndice.add(Integer.valueOf(s));
-                }
-                int index = 0;
-                for (Node node : chessImagesPane.getChildren()) {
-                    CheckBox cbox = (CheckBox) node;
-                    cbox.setSelected(selectedIndice.contains(index++));
-                }
-            } catch (Exception e) {
-            }
-
-            shadowCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldVal, Boolean newVal) {
-//                    makeChessBoard();
-                }
-            });
-
-            arcCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldVal, Boolean newVal) {
-//                    makeChessBoard();
+                public void changed(ObservableValue ov, ImageItem oldVal,
+                        ImageItem newVal) {
+                    viewImage();
                 }
             });
 
@@ -207,30 +310,14 @@ public class GameElimniationController extends BaseController {
             chessSizeSelector.getItems().addAll(Arrays.asList(
                     "50", "40", "60", "30", "80"
             ));
-            chessSizeSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    try {
-                        int v = Integer.parseInt(newValue);
-                        if (v < 20) {
-                            v = 20;
-                        }
-                        chessSize = v;
-                    } catch (Exception e) {
-                        chessSize = 50;
-                    }
-                    AppVariables.setUserConfigValue("GameEliminationChessImageSize", chessSize + "");
-//                    makeChessBoard();
-                }
-            });
 
             shadowCheck.setSelected(AppVariables.getUserConfigBoolean("GameEliminationShadow", false));
             arcCheck.setSelected(AppVariables.getUserConfigBoolean("GameEliminationArc", false));
             chessSizeSelector.getSelectionModel().select(AppVariables.getUserConfigValue("GameEliminationChessImageSize", "50"));
             isSettingValues = false;
 
-            checkChessImagesTips();
             setChessImagesLabel();
+            imagesListview.getSelectionModel().select(0);
             okChessesAction();
 
         } catch (Exception e) {
@@ -252,11 +339,12 @@ public class GameElimniationController extends BaseController {
 
             rulersTable.setItems(scoreRulersData);
 
-            linksColumn.setCellValueFactory(new PropertyValueFactory<>("linksNumber"));
+            numberColumn.setCellValueFactory(new PropertyValueFactory<>("adjacentNumber"));
             scoreColumn.setCellValueFactory(new PropertyValueFactory<>("score"));
             scoreColumn.setCellFactory(new Callback<TableColumn<ScoreRuler, Integer>, TableCell<ScoreRuler, Integer>>() {
                 @Override
-                public TableCell<ScoreRuler, Integer> call(TableColumn<ScoreRuler, Integer> param) {
+                public TableCell<ScoreRuler, Integer> call(
+                        TableColumn<ScoreRuler, Integer> param) {
                     TableAutoCommitCell<ScoreRuler, Integer> cell
                             = new TableAutoCommitCell<ScoreRuler, Integer>(new IntegerStringConverter()) {
                         @Override
@@ -273,7 +361,8 @@ public class GameElimniationController extends BaseController {
             });
             scoreColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<ScoreRuler, Integer>>() {
                 @Override
-                public void handle(TableColumn.CellEditEvent<ScoreRuler, Integer> t) {
+                public void handle(
+                        TableColumn.CellEditEvent<ScoreRuler, Integer> t) {
                     if (t == null) {
                         return;
                     }
@@ -283,6 +372,264 @@ public class GameElimniationController extends BaseController {
                     }
                 }
             });
+            scoreColumn.getStyleClass().add("editable-column");
+
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+    protected void initSettingsTab() {
+        try {
+            isSettingValues = true;
+
+            guaiRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldVal,
+                        Boolean newVal) {
+                    if (isSettingValues) {
+                        return;
+                    }
+                    if (newVal) {
+                        AppVariables.setUserConfigValue("GameEliminationSound", "Guai");
+                    }
+                }
+            });
+            benRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldVal,
+                        Boolean newVal) {
+                    if (isSettingValues) {
+                        return;
+                    }
+                    if (newVal) {
+                        AppVariables.setUserConfigValue("GameEliminationSound", "Ben");
+                    }
+                }
+            });
+            guaiBenRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldVal,
+                        Boolean newVal) {
+                    if (isSettingValues) {
+                        return;
+                    }
+                    if (newVal) {
+                        AppVariables.setUserConfigValue("GameEliminationSound", "GuaiBen");
+                    }
+                }
+            });
+            muteRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldVal,
+                        Boolean newVal) {
+                    if (isSettingValues) {
+                        return;
+                    }
+                    if (newVal) {
+                        AppVariables.setUserConfigValue("GameEliminationSound", "Mute");
+                    }
+                }
+            });
+            customizedSoundRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldVal,
+                        Boolean newVal) {
+                    if (isSettingValues) {
+                        return;
+                    }
+                    if (newVal) {
+                        AppVariables.setUserConfigValue("GameEliminationSound", "Customized");
+                    }
+                }
+            });
+            String sound = AppVariables.getUserConfigValue("GameEliminationSound", "Guai");
+            switch (sound) {
+                case "Ben":
+                    benRadio.fire();
+                    break;
+                case "GuaiBen":
+                    guaiBenRadio.fire();
+                    break;
+                case "Mute":
+                    muteRadio.fire();
+                    break;
+                case "Customized":
+                    customizedSoundRadio.fire();
+                    break;
+                default:
+                    guaiRadio.fire();
+                    break;
+            }
+
+            deadRenewRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldVal,
+                        Boolean newVal) {
+                    if (isSettingValues) {
+                        return;
+                    }
+                    AppVariables.setUserConfigValue("GameEliminationDead", "Renew");
+                }
+            });
+            deadChanceRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldVal,
+                        Boolean newVal) {
+                    if (isSettingValues) {
+                        return;
+                    }
+                    AppVariables.setUserConfigValue("GameEliminationDead", "Chance");
+                }
+            });
+            deadPromptRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldVal,
+                        Boolean newVal) {
+                    if (isSettingValues) {
+                        return;
+                    }
+                    AppVariables.setUserConfigValue("GameEliminationDead", "Prompt");
+                }
+            });
+            String dead = AppVariables.getUserConfigValue("GameEliminationDead", "Renew");
+            switch (dead) {
+                case "Chance":
+                    deadChanceRadio.fire();
+                    break;
+                case "Prompt":
+                    deadPromptRadio.fire();
+                    break;
+                default:
+                    deadRenewRadio.fire();
+                    break;
+            }
+
+            speed1Radio.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldVal,
+                        Boolean newVal) {
+                    autoSpeed = 1000;
+                    AppVariables.setUserConfigValue("GameEliminationAutoSpeed", "1");
+                }
+            });
+            speed2Radio.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldVal,
+                        Boolean newVal) {
+                    autoSpeed = 2000;
+                    AppVariables.setUserConfigValue("GameEliminationAutoSpeed", "2");
+                }
+            });
+            speed3Radio.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldVal,
+                        Boolean newVal) {
+                    autoSpeed = 3000;
+                    AppVariables.setUserConfigValue("GameEliminationAutoSpeed", "3");
+                }
+            });
+            speed5Radio.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldVal,
+                        Boolean newVal) {
+                    autoSpeed = 5000;
+                    AppVariables.setUserConfigValue("GameEliminationAutoSpeed", "5");
+                }
+            });
+            autoSpeed = 2000;
+            String speed = AppVariables.getUserConfigValue("GameEliminationAutoSpeed", "2");
+            switch (speed) {
+                case "1":
+                    speed1Radio.fire();
+                    break;
+                case "3":
+                    speed3Radio.fire();
+                    break;
+                case "5":
+                    speed5Radio.fire();
+                    break;
+                default:
+                    speed2Radio.fire();
+                    break;
+            }
+
+            flush0Radio.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldVal,
+                        Boolean newVal) {
+                    flushTimes = 0;
+                    eliminateDelay = flushDuration * (2 * flushTimes + 1);
+                    AppVariables.setUserConfigValue("GameEliminationFlushTime", "0");
+                }
+            });
+            flush1Radio.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldVal,
+                        Boolean newVal) {
+                    flushTimes = 1;
+                    eliminateDelay = flushDuration * (2 * flushTimes + 1);
+                    AppVariables.setUserConfigValue("GameEliminationFlushTime", "1");
+                }
+            });
+            flush2Radio.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldVal,
+                        Boolean newVal) {
+                    flushTimes = 2;
+                    eliminateDelay = flushDuration * (2 * flushTimes + 1);
+                    AppVariables.setUserConfigValue("GameEliminationFlushTime", "2");
+                }
+            });
+            flush3Radio.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldVal,
+                        Boolean newVal) {
+                    flushTimes = 3;
+                    eliminateDelay = flushDuration * (2 * flushTimes + 1);
+                    AppVariables.setUserConfigValue("GameEliminationFlushTime", "3");
+                }
+            });
+            flushTimes = 2;
+            eliminateDelay = flushDuration * (2 * flushTimes + 1);
+            String flush = AppVariables.getUserConfigValue("GameEliminationFlushTime", "2");
+            switch (flush) {
+                case "1":
+                    flush1Radio.fire();
+                    break;
+                case "3":
+                    flush3Radio.fire();
+                    break;
+                case "0":
+                    flush0Radio.fire();
+                    break;
+                default:
+                    flush2Radio.fire();
+                    break;
+            }
+
+            scoreCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldVal,
+                        Boolean newVal) {
+                    AppVariables.setUserConfigValue("GameEliminationPopScores", scoreCheck.isSelected());
+                }
+            });
+            scoreCheck.setSelected(AppVariables.getUserConfigBoolean("GameEliminationPopScores", true));
+
+            selectSoundBox.disableProperty().bind(customizedSoundRadio.selectedProperty().not());
+
+            String sfile = AppVariables.getUserConfigValue("GameEliminationSoundFile", null);
+            if (sfile != null) {
+                soundFile = new File(sfile);
+                if (soundFile.exists()) {
+                    soundFileLabel.setText(soundFile.getAbsolutePath());
+                } else {
+                    soundFile = null;
+                }
+            }
+
+            isSettingValues = false;
 
         } catch (Exception e) {
             logger.debug(e.toString());
@@ -294,97 +641,88 @@ public class GameElimniationController extends BaseController {
             return;
         }
         int count = 0;
-        for (Node node : chessImagesPane.getChildren()) {
-            CheckBox cbox = (CheckBox) node;
-            if (cbox.isSelected()) {
+        for (ImageItem item : imagesListview.getItems()) {
+            if (item.isSelected()) {
                 count++;
             }
         }
         chessesLabel.setText(MessageFormat.format(message("SelectChesses"), count));
     }
 
-    public void checkChessImagesTips() {
+    public void viewImage() {
         if (isSettingValues) {
             return;
         }
-        boolean show = viewImageCheck.isSelected();
-        AppVariables.setUserConfigValue("GameEliminationChessImagesShow", show);
-        for (Node node : chessImagesPane.getChildren()) {
-            CheckBox cbox = (CheckBox) node;
-            int index = (Integer) cbox.getUserData();
-            if (show) {
-                VBox vbox = new VBox();
-                vbox.setPrefWidth(600);
-                vbox.setPrefHeight(600);
-                vbox.setAlignment(Pos.CENTER);
-                vbox.setStyle("-fx-background-color: white;");
-                ImageView tipView = new ImageView(imageNames.get(index));
-                tipView.setPreserveRatio(true);
-                tipView.setFitWidth(500);
-                vbox.getChildren().add(tipView);
-                Text text = new Text();
-                String com = imageComments.get(index);
-                if (!com.isBlank()) {
-                    text.setText(message(com));
+        imageView.setImage(null);
+        imageLabel.setText("");
+        ImageItem selected = imagesListview.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            return;
+        }
+        String address = selected.getAddress();
+        if (selected.isInternel()) {
+            imageView.setImage(new Image(address));
+            imageView.setPreserveRatio(true);
+            imageView.setFitHeight(Math.min(scrollPane.getHeight(), imageView.getImage().getHeight()));
+            imageLabel.setText(message(selected.getComments()));
+        } else if (selected.isColor()) {
+
+        } else {
+            try {
+                File file = new File(address);
+                if (file.exists()) {
+                    BufferedImage image = ImageIO.read(file);
+                    imageView.setImage(SwingFXUtils.toFXImage(image, null));
                 } else {
-                    text.setText("");
                 }
-                text.setStyle("-fx-font-size: 1.2em;");
-                vbox.getChildren().add(text);
-                vbox.setPadding(new Insets(10, 10, 10, 10));
-                FxmlControl.setTooltip(cbox, vbox);
-            } else {
-                FxmlControl.removeTooltip(cbox);
+            } catch (Exception e) {
             }
         }
     }
 
-    @FXML
-    protected void settingsAction() {
-        tabPane.getSelectionModel().select(chessesTab);
+    @Override
+    public void selectSourceFileDo(File file) {
+        if (file == null) {
+            return;
+        }
+        recordFileOpened(file);
+        addImageItem(file.getAbsolutePath());
+    }
+
+    @Override
+    public boolean setColor(Control control, Color color) {
+        if (color == null) {
+            return false;
+        }
+        String name = "color:" + color.toString();
+        addImageItem(name);
+        return true;
     }
 
     @FXML
     protected void okChessesAction() {
-        if (isSettingValues) {
-            return;
-        }
-        chessImageIndice.clear();
-        String s = "";
-        for (Node node : chessImagesPane.getChildren()) {
-            CheckBox cbox = (CheckBox) node;
-            if (cbox.isSelected()) {
-                int index = (Integer) cbox.getUserData();
-                chessImageIndice.add(index);
-                if (s.isBlank()) {
-                    s += index + "";
-                } else {
-                    s += "," + index;
-                }
-            }
-        }
-        AppVariables.setUserConfigValue("GameEliminationChessImages", s);
-        boardSize = chessImageIndice.size();
-        tabPane.getSelectionModel().select(playTab);
-        makeChessBoard();
-        makeRulers();
-        newGame();
+        makeChesses();
     }
 
     @FXML
     protected void okRulersAction() {
+        if (isSettingValues) {
+            return;
+        }
+        catButton.setSelected(false);
         try {
             countedChesses.clear();
             String s = "";
             for (Node node : countedImagesPane.getChildren()) {
                 CheckBox cbox = (CheckBox) node;
                 if (cbox.isSelected()) {
-                    int index = (Integer) cbox.getUserData();
+                    int index = (int) cbox.getUserData();
                     countedChesses.add(index);
+                    ImageItem item = getImageItem(index);
                     if (s.isBlank()) {
-                        s += index + "";
+                        s += item.getAddress();
                     } else {
-                        s += "," + index;
+                        s += "," + item.getAddress();
                     }
                 }
             }
@@ -393,11 +731,14 @@ public class GameElimniationController extends BaseController {
                 alert.setTitle(getBaseTitle());
                 alert.setContentText(AppVariables.message("SureNoScore"));
                 alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
+                ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
+                alert.getButtonTypes().setAll(buttonSure, buttonCancel);
                 Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
                 stage.setAlwaysOnTop(true);
                 stage.toFront();
                 Optional<ButtonType> result = alert.showAndWait();
-                if (result.get() != ButtonType.OK) {
+                if (result.get() != buttonSure) {
                     return;
                 }
             }
@@ -405,18 +746,18 @@ public class GameElimniationController extends BaseController {
 
             scoreRulers.clear();
             s = "";
-            for (int i = 0; i < scoreRulersData.size(); i++) {
+            for (int i = 0; i < scoreRulersData.size(); ++i) {
                 ScoreRuler r = scoreRulersData.get(i);
-                scoreRulers.put(r.linksNumber, r.score);
+                scoreRulers.put(r.adjacentNumber, r.score);
                 if (!s.isEmpty()) {
                     s += ",";
                 }
-                s += r.linksNumber + "," + r.score;
+                s += r.adjacentNumber + "," + r.score;
             }
             AppVariables.setUserConfigValue("GameElimniationScoreRulers", s);
 
             tabPane.getSelectionModel().select(playTab);
-            newGame();
+            newGame(true);
 
         } catch (Exception e) {
             logger.debug(e.toString());
@@ -425,17 +766,43 @@ public class GameElimniationController extends BaseController {
 
     @FXML
     protected void clearChessSelectionAction() {
+        if (isSettingValues) {
+            return;
+        }
         isSettingValues = true;
-        for (Node node : chessImagesPane.getChildren()) {
-            CheckBox cbox = (CheckBox) node;
-            cbox.setSelected(false);
+        for (ImageItem item : imagesListview.getItems()) {
+            item.setSelected(false);
         }
         isSettingValues = false;
         chessesLabel.setText(MessageFormat.format(message("SelectChesses"), 0));
+        imagesListview.refresh();
+    }
+
+    @FXML
+    protected void deleteChessesAction() {
+        if (isSettingValues) {
+            return;
+        }
+        catButton.setSelected(false);
+        isSettingValues = true;
+        List<ImageItem> selected = new ArrayList();
+        selected.addAll(imagesListview.getSelectionModel().getSelectedItems());
+        for (int i = 0; i < selected.size(); ++i) {
+            ImageItem item = selected.get(i);
+            if (!item.isPredefined()) {
+                imagesListview.getItems().remove(item);
+                TableStringValues.delete("GameEliminationImage", item.getAddress());
+            }
+        }
+        isSettingValues = false;
+        setChessImagesLabel();
     }
 
     @FXML
     protected void clearCountedImagesAction() {
+        if (isSettingValues) {
+            return;
+        }
         for (Node node : countedImagesPane.getChildren()) {
             CheckBox cbox = (CheckBox) node;
             cbox.setSelected(false);
@@ -444,10 +811,189 @@ public class GameElimniationController extends BaseController {
 
     @FXML
     protected void allCountedImagesAction() {
+        if (isSettingValues) {
+            return;
+        }
         for (Node node : countedImagesPane.getChildren()) {
             CheckBox cbox = (CheckBox) node;
             cbox.setSelected(true);
         }
+    }
+
+    @FXML
+    @Override
+    public void startAction() {
+        if (isSettingValues) {
+            return;
+        }
+        catButton.setSelected(false);
+        newGame(true);
+    }
+
+    @FXML
+    protected void settingsAction() {
+        tabPane.getSelectionModel().select(settingsTab);
+    }
+
+    @FXML
+    public void helpMeAction() {
+        if (isSettingValues || autoPlaying) {
+            return;
+        }
+        Adjacent adjacent = findValidExchange();
+        if (adjacent != null) {
+            flush(adjacent.exchangei1, adjacent.exchangej1);
+            flush(adjacent.exchangei2, adjacent.exchangej2);
+        } else {
+            promptDeadlock();
+        }
+    }
+
+    @FXML
+    public void selectSoundFile() {
+        try {
+            if (!checkBeforeNextAction()) {
+                return;
+            }
+            final FileChooser fileChooser = new FileChooser();
+            File path = AppVariables.getUserConfigPath("MusicPath");
+            if (path.exists()) {
+                fileChooser.setInitialDirectory(path);
+            }
+            fileChooser.getExtensionFilters().addAll(CommonFxValues.Mp3WavExtensionFilter);
+            File file = fileChooser.showOpenDialog(getMyStage());
+            if (file == null || !file.exists()) {
+                return;
+            }
+            selectSoundFile(file);
+        } catch (Exception e) {
+//            logger.error(e.toString());
+        }
+    }
+
+    public void selectSoundFile(File file) {
+        recordFileOpened(file);
+        String suffix = FileTools.getFileSuffix(file);
+        if (suffix == null
+                || (!"mp3".equals(suffix.toLowerCase()) && !"wav".equals(suffix.toLowerCase()))) {
+            alertError(message("OnlySupportMp3Wav"));
+            return;
+        }
+        soundFile = file;
+        AppVariables.setUserConfigValue("MusicPath", file.getParent());
+        AppVariables.setUserConfigValue("GameEliminationSoundFile", file.getAbsolutePath());
+        soundFileLabel.setText(file.getAbsolutePath());
+        FxmlControl.mp3(soundFile);
+    }
+
+    @FXML
+    public void popSoundFile(MouseEvent event) {
+        if (AppVariables.fileRecentNumber <= 0) {
+            return;
+        }
+        RecentVisitMenu menu = new RecentVisitMenu(this, event) {
+
+            @Override
+            public void handleSelect() {
+                selectSoundFile();
+            }
+
+            @Override
+            public void handleFile(String fname) {
+                File file = new File(fname);
+                if (!file.exists()) {
+                    selectSoundFile();
+                    return;
+                }
+                selectSoundFile(file);
+            }
+
+        };
+        menu.setSourceFileType(VisitHistory.FileType.Media)
+                .setSourcePathType(VisitHistory.FileType.Media)
+                .setSourceExtensionFilter(CommonFxValues.Mp3WavExtensionFilter)
+                .setSourcePathKey("MusicPath");
+        if (System.getProperty("os.name").toLowerCase().contains("windows")) {
+            menu.setDefaultPathKey("C:\\Windows\\media");
+        }
+        menu.pop();
+    }
+
+    public boolean addImageItem(String name) {
+        if (isSettingValues || name == null) {
+            return false;
+        }
+        for (ImageItem item : imagesListview.getItems()) {
+            if (item.getAddress().equals(name)) {
+                return false;
+            }
+        }
+        catButton.setSelected(false);
+        isSettingValues = true;
+        ImageItem item = new ImageItem(name, null);
+        item.getSelected().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue ov, Boolean t, Boolean t1) {
+                if (!isSettingValues) {
+                    setChessImagesLabel();
+                }
+            }
+        });
+        imagesListview.getItems().add(0, item);
+        imagesListview.scrollTo(0);
+        TableStringValues.add("GameEliminationImage", name);
+        isSettingValues = false;
+        return true;
+    }
+
+    protected void makeChesses() {
+        if (isSettingValues) {
+            return;
+        }
+        catButton.setSelected(false);
+        try {
+            chessSize = Integer.parseInt(chessSizeSelector.getValue());
+            if (chessSize < 20) {
+                chessSize = 20;
+            }
+        } catch (Exception e) {
+            chessSize = 50;
+        }
+        AppVariables.setUserConfigValue("GameEliminationChessImageSize", chessSize + "");
+        AppVariables.setUserConfigValue("GameEliminationShadow", shadowCheck.isSelected());
+        AppVariables.setUserConfigValue("GameEliminationArc", arcCheck.isSelected());
+
+        selectedChesses.clear();
+        String s = "";
+        for (int i = 0; i < imagesListview.getItems().size(); ++i) {
+            ImageItem item = imagesListview.getItems().get(i);
+            item.setIndex(i);
+            if (item.isSelected()) {
+                selectedChesses.add(i);
+                if (s.isBlank()) {
+                    s += item.getAddress() + "";
+                } else {
+                    s += "," + item.getAddress();
+                }
+            }
+        }
+        if (selectedChesses.size() <= minimumAdjacent) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle(getBaseTitle());
+            alert.setContentText(MessageFormat.format(message("ChessesNumberTooSmall"), minimumAdjacent + ""));
+            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+            stage.setAlwaysOnTop(true);
+            stage.toFront();
+            alert.showAndWait();
+            return;
+        }
+        AppVariables.setUserConfigValue("GameEliminationChessImages", s);
+        boardSize = selectedChesses.size();
+        tabPane.getSelectionModel().select(playTab);
+        makeChessBoard();
+        makeRulers();
+        newGame(true);
     }
 
     protected void makeChessBoard() {
@@ -457,35 +1003,34 @@ public class GameElimniationController extends BaseController {
         try {
             chessBoard.clear();
             chessboardPane.getChildren().clear();
-            chessboardPane.setPrefWidth((chessSize + 15) * boardSize);
+            chessboardPane.setPrefWidth((chessSize + 20) * boardSize);
             chessboardPane.setPrefHeight((chessSize + 20) * boardSize);
             DropShadow effect = new DropShadow();
             boolean shadow = shadowCheck.isSelected();
             boolean arc = arcCheck.isSelected();
-            for (int i = 1; i <= boardSize; i++) {
+            currentStyle = defaultStyle;
+            if (arc) {
+                currentStyle = arcStyle;
+            } else if (shadow) {
+                currentStyle = shadowStyle;
+            }
+            for (int i = 1; i <= boardSize; ++i) {
                 HBox line = new HBox();
                 line.setAlignment(Pos.CENTER);
                 line.setSpacing(10);
                 chessboardPane.getChildren().add(line);
                 VBox.setVgrow(line, Priority.NEVER);
                 HBox.setHgrow(line, Priority.NEVER);
-                for (int j = 1; j <= boardSize; j++) {
+                for (int j = 1; j <= boardSize; ++j) {
                     VBox vbox = new VBox();
                     vbox.setAlignment(Pos.CENTER);
                     VBox.setVgrow(vbox, Priority.NEVER);
                     HBox.setHgrow(vbox, Priority.NEVER);
-                    vbox.setSpacing(10);
-                    vbox.setUserData(i + "-" + j);
+                    vbox.setSpacing(6);
                     if (shadow) {
                         vbox.setEffect(effect);
                     }
-                    if (arc) {
-                        vbox.setStyle("-fx-background-color: white; -fx-border-radius: 10;-fx-background-radius: 10");
-                    } else {
-                        if (shadow) {
-                            vbox.setStyle("-fx-background-color: white;");
-                        }
-                    }
+                    vbox.setStyle(currentStyle);
                     final int x = i, y = j;
                     vbox.setOnMouseClicked(new EventHandler<MouseEvent>() {
                         @Override
@@ -497,26 +1042,6 @@ public class GameElimniationController extends BaseController {
                     chessBoard.put(i + "-" + j, vbox);
                 }
             }
-        } catch (Exception e) {
-            logger.debug(e.toString());
-        }
-    }
-
-    protected void newGame() {
-        if (isSettingValues) {
-            return;
-        }
-        try {
-            for (int i = 1; i <= boardSize; i++) {
-                for (int j = 1; j <= boardSize; j++) {
-                    setRandomImage(i, j);
-                }
-            }
-            totalScore = 0;
-            scoreLabel.setText("");
-            countScore = false;
-            eliminate();
-            startTime = new Date();
         } catch (Exception e) {
             logger.debug(e.toString());
         }
@@ -539,7 +1064,7 @@ public class GameElimniationController extends BaseController {
                 }
             } catch (Exception e) {
             }
-            for (int i = 3; i <= boardSize; i++) {
+            for (int i = 3; i <= boardSize; ++i) {
                 if (scoreRulers.get(i) == null) {
                     scoreRulers.put(i, (int) Math.pow(10, i - 3));
                 }
@@ -550,14 +1075,12 @@ public class GameElimniationController extends BaseController {
 
             countedChesses.clear();
             countedImagesPane.getChildren().clear();
-            for (int i = 0; i < chessImageIndice.size(); i++) {
-                int index = chessImageIndice.get(i);
+            for (int i = 0; i < selectedChesses.size(); ++i) {
+                int index = selectedChesses.get(i);
+                ImageItem item = getImageItem(index);
+                Node node = item.makeNode(50);
                 CheckBox cbox = new CheckBox();
-                ImageView view = new ImageView(imageNames.get(index));
-                view.setPreserveRatio(true);
-                view.setFitWidth(40);
-                view.setUserData(index);
-                cbox.setGraphic(view);
+                cbox.setGraphic(node);
                 cbox.setUserData(index);
                 countedImagesPane.getChildren().add(cbox);
                 countedChesses.add(index);
@@ -569,159 +1092,182 @@ public class GameElimniationController extends BaseController {
         }
     }
 
-    protected void chessClicked(int x, int y) {
+    protected void newGame(boolean reset) {
+        if (isSettingValues) {
+            return;
+        }
         try {
-//            if (isEliminating) {
-//                return;
-//            }
-            if (firstClick == null) {
-                firstClick = new IntPoint(x, y);
-                return;
+            for (int i = 1; i <= boardSize; ++i) {
+                for (int j = 1; j <= boardSize; ++j) {
+                    setRandomImage(i, j);
+
+                }
             }
-//            isEliminating = true;
+            if (reset) {
+                totalScore = 0;
+                scoreLabel.setText("");
+                startTime = new Date();
+            }
+            countScore = false;
+            findAdjacentAndEliminate();
             countScore = true;
-            chessClicked(x, y, firstClick.getX(), firstClick.getY());
-            firstClick = null;
-//            isEliminating = false;
         } catch (Exception e) {
             logger.debug(e.toString());
         }
     }
 
-    protected void chessClicked(int i1, int j1, int i2, int j2) {
+    protected void chessClicked(int i, int j) {
         try {
-            if (i1 == i2 && j1 == j2) {
+            if (isSettingValues || isEliminating || autoPlaying) {
                 return;
+            }
+            if (firstClick == null) {
+                firstClick = new IntPoint(i, j);
+                focusStyle(i, j);
+                return;
+            }
+            isEliminating = true;
+            countScore = true;
+            exchange(i, j, firstClick.getX(), firstClick.getY(), false);
+            firstClick = null;
+            isEliminating = false;
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+    protected Adjacent exchange(int i1, int j1, int i2, int j2,
+            boolean justCheck) {
+        if (isSettingValues) {
+            return null;
+        }
+        try {
+            recoverStyle(i1, j1);
+            recoverStyle(i2, j2);
+            if (i1 == i2 && j1 == j2) {
+                return null;
             }
             if (Math.abs(i1 - i2) > 1
                     || Math.abs(j1 - j2) > 1) {
-                return;
+                return null;
             }
 
             VBox vbox1 = chessBoard.get(i1 + "-" + j1);
-            ImageView view1 = (ImageView) (vbox1.getChildren().get(0));
+            Node node1 = vbox1.getChildren().get(0);
             VBox vbox2 = chessBoard.get(i2 + "-" + j2);
-            ImageView view2 = (ImageView) (vbox2.getChildren().get(0));
+            Node node2 = vbox2.getChildren().get(0);
             vbox1.getChildren().clear();
-            vbox1.getChildren().add(view2);
+            vbox1.getChildren().add(node2);
             vbox2.getChildren().clear();
-            vbox2.getChildren().add(view1);
+            vbox2.getChildren().add(node1);
 
-            IntRange range = horizontalSame(i1, j1);
-            if (range != null && range.getLength() >= eliminationSize) {
-                horizontalEliminate(i1, range.start, range.end);
-                return;
+            Adjacent adjacent;
+            adjacent = verticalCheck(i1, j1);
+            if (adjacent != null && adjacent.getLength() >= minimumAdjacent) {
+                adjacent.setExchange(i1, j1, i2, j2);
+                if (!justCheck) {
+                    verticalEliminate(adjacent);
+                } else {
+                    vbox1.getChildren().clear();
+                    vbox1.getChildren().add(node1);
+                    vbox2.getChildren().clear();
+                    vbox2.getChildren().add(node2);
+                }
+                return adjacent;
             }
 
-            range = verticalSame(i1, j1);
-            if (range != null && range.getLength() >= eliminationSize) {
-                verticalEliminate(range.start, range.end, j1);
-                return;
+            adjacent = horizontalCheck(i1, j1);
+            if (adjacent != null && adjacent.getLength() >= minimumAdjacent) {
+                adjacent.setExchange(i1, j1, i2, j2);
+                if (!justCheck) {
+                    horizontalEliminate(adjacent);
+                } else {
+                    vbox1.getChildren().clear();
+                    vbox1.getChildren().add(node1);
+                    vbox2.getChildren().clear();
+                    vbox2.getChildren().add(node2);
+                }
+                return adjacent;
             }
 
-            range = horizontalSame(i2, j2);
-            if (range != null && range.getLength() >= eliminationSize) {
-                horizontalEliminate(i2, range.start, range.end);
-                return;
+            adjacent = verticalCheck(i2, j2);
+            if (adjacent != null && adjacent.getLength() >= minimumAdjacent) {
+                adjacent.setExchange(i1, j1, i2, j2);
+                if (!justCheck) {
+                    verticalEliminate(adjacent);
+                } else {
+                    vbox1.getChildren().clear();
+                    vbox1.getChildren().add(node1);
+                    vbox2.getChildren().clear();
+                    vbox2.getChildren().add(node2);
+                }
+                return adjacent;
             }
 
-            range = verticalSame(i2, j2);
-            if (range != null && range.getLength() >= eliminationSize) {
-                verticalEliminate(range.start, range.end, j2);
-                return;
+            adjacent = horizontalCheck(i2, j2);
+            if (adjacent != null && adjacent.getLength() >= minimumAdjacent) {
+                adjacent.setExchange(i1, j1, i2, j2);
+                if (!justCheck) {
+                    horizontalEliminate(adjacent);
+                } else {
+                    vbox1.getChildren().clear();
+                    vbox1.getChildren().add(node1);
+                    vbox2.getChildren().clear();
+                    vbox2.getChildren().add(node2);
+                }
+                return adjacent;
             }
 
+            // No elimination, and reback.
             vbox1.getChildren().clear();
-            vbox1.getChildren().add(view1);
+            vbox1.getChildren().add(node1);
             vbox2.getChildren().clear();
-            vbox2.getChildren().add(view2);
-
+            vbox2.getChildren().add(node2);
+            return null;
         } catch (Exception e) {
             logger.debug(e.toString());
-        }
-    }
-
-    protected ImageView getImageView(int x, int y) {
-        try {
-            VBox vbox = chessBoard.get(x + "-" + y);
-            return (ImageView) (vbox.getChildren().get(0));
-        } catch (Exception e) {
             return null;
         }
     }
 
-    protected int getImageIndex(int x, int y) {
+    protected Adjacent exchange(Adjacent adjacent) {
         try {
-            ImageView view = getImageView(x, y);
-            return (int) (view.getUserData());
-        } catch (Exception e) {
-            return -1;
-        }
-    }
+            if (isSettingValues || adjacent == null
+                    || !adjacent.isValid() || adjacent.getLength() < minimumAdjacent) {
+                return null;
+            }
 
-    protected void setRandomImage(int i, int j) {
-        try {
-            int index = chessImageIndice.get(random.nextInt(boardSize));
-//            logger.debug(x + "," + y + ":" + index);
-            ImageView view = new ImageView(imageNames.get(index));
-            view.setPreserveRatio(true);
-            view.setFitWidth(chessSize);
-            view.setUserData(index);
-            VBox vbox = chessBoard.get(i + "-" + j);
-            vbox.getChildren().clear();
-            vbox.getChildren().add(view);
-        } catch (Exception e) {
-            logger.debug(e.toString());
-        }
-    }
+            VBox vbox1 = chessBoard.get(adjacent.exchangei1 + "-" + adjacent.exchangej1);
+            Node node1 = vbox1.getChildren().get(0);
+            VBox vbox2 = chessBoard.get(adjacent.exchangei2 + "-" + adjacent.exchangej2);
+            Node node2 = vbox2.getChildren().get(0);
+            vbox1.getChildren().clear();
+            vbox1.getChildren().add(node2);
+            vbox2.getChildren().clear();
+            vbox2.getChildren().add(node1);
 
-    protected void lightFlush(int i, int j) {
-        flush(i, j, 0.2f, 500, 1);
-    }
-
-    protected void darkFlush(int i, int j) {
-        flush(i, j, 0f, 200, 3);
-    }
-
-    protected void flush(int i, int j, float opacity, int duration, int times) {
-        try {
-            FadeTransition fade = new FadeTransition(Duration.millis(duration));
-            fade.setFromValue(1.0);
-            fade.setToValue(opacity);
-            fade.setCycleCount(times * 2);
-            fade.setAutoReverse(true);
-            fade.setNode(chessBoard.get(i + "-" + j));
-            fade.play();
+            if (adjacent.isVertical()) {
+                verticalEliminate(adjacent);
+            } else {
+                horizontalEliminate(adjacent);
+            }
+            return null;
         } catch (Exception e) {
             logger.debug(e.toString());
+            return null;
         }
     }
 
-    protected void move(int i1, int j1, int i2, int j2) {
-        try {
-            ImageView view = getImageView(i1, j1);
-            logger.debug(view != null);
-            VBox vbox = chessBoard.get(i2 + "-" + j2);
-            logger.debug(vbox != null);
-            Path path = new Path();
-            logger.debug(FxmlControl.getX(vbox) + ", " + FxmlControl.getY(vbox));
-            path.getElements().add(new MoveTo(FxmlControl.getX(vbox), FxmlControl.getY(vbox)));
-
-            PathTransition pathTransition = new PathTransition(Duration.millis(2000), path, view);
-//        pathTransition.setOrientation(OrientationType.ORTHOGONAL_TO_TANGENT);
-            pathTransition.play();
-        } catch (Exception e) {
-            logger.debug(e.toString());
+    protected Adjacent verticalCheck(int i, int j) {
+        if (isSettingValues) {
+            return null;
         }
-    }
-
-    protected IntRange verticalSame(int i, int j) {
         try {
             int imageIndex = getImageIndex(i, j);
             int i1 = i;
             while (i1 > 1) {
                 int moveIndex = getImageIndex(i1 - 1, j);
-                if (moveIndex != imageIndex) {
+                if (imageIndex != moveIndex) {
                     break;
                 }
                 i1--;
@@ -729,19 +1275,22 @@ public class GameElimniationController extends BaseController {
             int i2 = i;
             while (i2 < boardSize) {
                 int moveIndex = getImageIndex(i2 + 1, j);
-                if (moveIndex != imageIndex) {
+                if (imageIndex != moveIndex) {
                     break;
                 }
                 i2++;
             }
-            return new IntRange(i1, i2);
+            return new Adjacent(i1, j, i2, j);
         } catch (Exception e) {
             logger.debug(e.toString());
             return null;
         }
     }
 
-    protected IntRange horizontalSame(int i, int j) {
+    protected Adjacent horizontalCheck(int i, int j) {
+        if (isSettingValues) {
+            return null;
+        }
         try {
             int imageIndex = getImageIndex(i, j);
             int j1 = j;
@@ -760,7 +1309,7 @@ public class GameElimniationController extends BaseController {
                 }
                 j2++;
             }
-            return new IntRange(j1, j2);
+            return new Adjacent(i, j1, i, j2);
         } catch (Exception e) {
             logger.debug(e.toString());
             return null;
@@ -768,19 +1317,14 @@ public class GameElimniationController extends BaseController {
 
     }
 
-    protected void verticalEliminate(int i1, int i2, int j) {
-        if (isSettingValues) {
+    protected void verticalEliminate(Adjacent adjacent) {
+        if (isSettingValues || !adjacent.isValid() || !adjacent.isVertical()) {
             return;
         }
-        if (i1 < 1 || i1 > boardSize
-                || i2 < 1 || i2 > boardSize
-                || j < 1 || j > boardSize
-                || i1 > i2) {
-            return;
-        }
-        if (countScore) {
-            for (int row = i1; row <= i2; row++) {
-                darkFlush(row, j);
+
+        if (countScore && flushTimes > 0) {
+            for (int row = adjacent.starti; row <= adjacent.endi; row++) {
+                flush(row, adjacent.startj);
             }
             Timer vtimer = new Timer();
             vtimer.schedule(new TimerTask() {
@@ -789,61 +1333,48 @@ public class GameElimniationController extends BaseController {
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
-                            verticalEliminateDo(i1, i2, j);
+                            verticalEliminateDo(adjacent);
                         }
                     });
                 }
-            }, 1500);
+            }, eliminateDelay);
         } else {
-            verticalEliminateDo(i1, i2, j);
+            verticalEliminateDo(adjacent);
         }
     }
 
-    protected void verticalEliminateDo(int i1, int i2, int j) {
+    protected void verticalEliminateDo(Adjacent adjacent) {
+        if (isSettingValues) {
+            return;
+        }
         try {
-            ImageView view = getImageView(i1, j);
-            int imageIndex = (int) view.getUserData();
-            int offset = 1;
-            for (int row = i2; row >= i1; row--, offset++) {
-                if (i1 - offset < 1) {
-                    setRandomImage(row, j);
-//                    if (countScore) {
-//                        lightFlush(row, j);
-//                    }
-                } else {
-                    view = getImageView(i1 - offset, j);
-                    VBox vbox = chessBoard.get(row + "-" + j);
-                    vbox.getChildren().clear();
-                    vbox.getChildren().add(view);
-//                    if (countScore) {
-//                        lightFlush(row, j);
-//                    }
-                    setRandomImage(i1 - offset, j);
-//                    if (countScore) {
-//                        lightFlush(i1 - offset, j);
-//                    }
-                }
+            Node node = getImageNode(adjacent.starti, adjacent.startj);
+            int len = adjacent.getLength();
+            for (int row = adjacent.starti - 1; row > 0; row--) {
+                node = getImageNode(row, adjacent.startj);
+                VBox vbox = chessBoard.get((row + len) + "-" + adjacent.startj);
+                vbox.getChildren().clear();
+                vbox.getChildren().add(node);
             }
-            recordScore(imageIndex, i2 - i1 + 1);
-            eliminate();
+            for (int row = 1; row <= len; row++) {
+                setRandomImage(row, adjacent.startj);
+            }
+            lastElimination = adjacent;
+            lastRandom = new Adjacent(1, adjacent.startj, len, adjacent.startj);
+            afterElimination((int) node.getUserData(), adjacent.getLength());
+            findAdjacentAndEliminate();
         } catch (Exception e) {
             logger.debug(e.toString());
         }
     }
 
-    protected void horizontalEliminate(int i, int j1, int j2) {
-        if (isSettingValues) {
+    protected void horizontalEliminate(Adjacent adjacent) {
+        if (isSettingValues || !adjacent.isValid() || adjacent.isVertical()) {
             return;
         }
-        if (i < 1 || i > boardSize
-                || j1 < 1 || j1 > boardSize
-                || j2 < 1 || j2 > boardSize
-                || j1 > j2) {
-            return;
-        }
-        if (countScore) {
-            for (int col = j1; col <= j2; col++) {
-                darkFlush(i, col);
+        if (countScore && flushTimes > 0) {
+            for (int col = adjacent.startj; col <= adjacent.endj; col++) {
+                flush(adjacent.starti, col);
             }
             Timer htimer = new Timer();
             htimer.schedule(new TimerTask() {
@@ -852,50 +1383,89 @@ public class GameElimniationController extends BaseController {
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
-                            horizontalEliminateDo(i, j1, j2);
+                            horizontalEliminateDo(adjacent);
                         }
                     });
                 }
-            }, 1500);
+            }, eliminateDelay);
         } else {
-            horizontalEliminateDo(i, j1, j2);
+            horizontalEliminateDo(adjacent);
         }
     }
 
-    protected void horizontalEliminateDo(int i, int j1, int j2) {
+    protected void horizontalEliminateDo(Adjacent adjacent) {
+        if (isSettingValues) {
+            return;
+        }
         try {
-            ImageView view = getImageView(i, j1);
-            int imageIndex = (int) view.getUserData();
-            for (int row = i; row > 1; row--) {
-                for (int col = j1; col <= j2; col++) {
-                    view = getImageView(row - 1, col);
+            Node node = getImageNode(adjacent.starti, adjacent.startj);
+            for (int row = adjacent.starti; row > 1; row--) {
+                for (int col = adjacent.startj; col <= adjacent.endj; col++) {
+                    node = getImageNode(row - 1, col);
                     VBox vbox = chessBoard.get(row + "-" + col);
                     vbox.getChildren().clear();
-                    vbox.getChildren().add(view);
-//                    if (countScore) {
-//                        lightFlush(row, col);
-//                    }
+                    vbox.getChildren().add(node);
                 }
             }
-            for (int col = j1; col <= j2; col++) {
+            for (int col = adjacent.startj; col <= adjacent.endj; col++) {
                 setRandomImage(1, col);
-//                if (countScore) {
-//                    lightFlush(1, col);
-//                }
             }
-            recordScore(imageIndex, j2 - j1 + 1);
-            eliminate();
+            lastElimination = adjacent;
+            lastRandom = new Adjacent(1, adjacent.startj, 1, adjacent.endj);
+            afterElimination((int) node.getUserData(), adjacent.getLength());
+            findAdjacentAndEliminate();
         } catch (Exception e) {
             logger.debug(e.toString());
         }
     }
 
-    protected void recordScore(int imageIndex, int size) {
+    protected void findAdjacentAndEliminate() {
+        if (isSettingValues) {
+            return;
+        }
         try {
-            if (!countScore || !countedChesses.contains(imageIndex)) {
+            // Eliminate bottom in priority
+            for (int i = 1; i <= boardSize; ++i) {
+                int j = boardSize;
+                while (j > 0) {
+                    Adjacent adjacent = horizontalCheck(i, j);
+                    if (adjacent != null && adjacent.getLength() >= minimumAdjacent) {
+                        horizontalEliminate(adjacent);
+                        return;
+                    }
+                    if (adjacent != null && adjacent.getLength() > 0) {
+                        j = j - adjacent.getLength();
+                    } else {
+                        j = j - 1;
+                    }
+                }
+            }
+            for (int j = boardSize; j > 0; --j) {
+                int i = 1;
+                while (i <= boardSize) {
+                    Adjacent adjacent = verticalCheck(i, j);
+                    if (adjacent != null && adjacent.getLength() >= minimumAdjacent) {
+                        verticalEliminate(adjacent);
+                        return;
+                    }
+                    if (adjacent != null && adjacent.getLength() > 0) {
+                        i = i + adjacent.getLength();
+                    } else {
+                        i = i + 1;
+                    }
+                }
+            }
+            checkDeadlock();
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+    protected void afterElimination(int imageIndex, int size) {
+        try {
+            if (isSettingValues || !countScore || !countedChesses.contains(imageIndex)) {
                 return;
             }
-
             int add = scoreRulers.get(size);
             totalScore += add;
             long cost = new Date().getTime() - startTime.getTime();
@@ -903,31 +1473,33 @@ public class GameElimniationController extends BaseController {
                     + DateTools.showSeconds(cost / 1000));
 
             if (add > 0) {
-                Label popupLabel = new Label("+" + add);
-                popupLabel.setStyle("-fx-background-color:black;"
-                        + " -fx-text-fill: gold;"
-                        + " -fx-font-size: 3em;"
-                        + " -fx-padding: 10px;"
-                        + " -fx-background-radius: 10;");
-                final Popup scorePopup = new Popup();
-                scorePopup.setAutoFix(true);
-                scorePopup.setAutoHide(true);
-                scorePopup.getContent().add(popupLabel);
-                scorePopup.show(getMyStage());
+                if (scoreCheck.isSelected()) {
+                    Label popupLabel = new Label("+" + add);
+                    popupLabel.setStyle("-fx-background-color:black;"
+                            + " -fx-text-fill: gold;"
+                            + " -fx-font-size: 3em;"
+                            + " -fx-padding: 10px;"
+                            + " -fx-background-radius: 10;");
+                    final Popup scorePopup = new Popup();
+                    scorePopup.setAutoFix(true);
+                    scorePopup.setAutoHide(true);
+                    scorePopup.getContent().add(popupLabel);
+                    FxmlControl.locateUp(scoreLabel, scorePopup);
 
-                Timer stimer = new Timer();
-                stimer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                scorePopup.hide();
-                            }
-                        });
-                    }
-                }, 1500);
+                    Timer stimer = new Timer();
+                    stimer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            Platform.runLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    scorePopup.hide();
+                                }
+                            });
+                        }
+                    }, 1000);
 
+                }
                 if (guaiRadio.isSelected()) {
                     FxmlControl.GuaiAO();
                 } else if (benRadio.isSelected()) {
@@ -938,6 +1510,8 @@ public class GameElimniationController extends BaseController {
                     } else {
                         FxmlControl.GuaiAO();
                     }
+                } else if (customizedSoundRadio.isSelected() && soundFile != null && soundFile.exists()) {
+                    FxmlControl.mp3(soundFile);
                 }
             }
         } catch (Exception e) {
@@ -945,82 +1519,349 @@ public class GameElimniationController extends BaseController {
         }
     }
 
-    protected void eliminate() {
+    protected Adjacent findValidExchange() {
         if (isSettingValues) {
-            return;
+            return null;
         }
         try {
-            for (int i = 1; i <= boardSize; i++) {
-                int j = 1;
-                while (j <= boardSize) {
-                    IntRange range = horizontalSame(i, j);
-                    if (range != null && range.getLength() >= eliminationSize) {
-                        horizontalEliminate(i, range.start, range.end);
-                        return;
+            for (int i = boardSize; i > 0; --i) {
+                for (int j = 1; j <= boardSize; ++j) {
+                    if (j < boardSize) {
+                        Adjacent adjacent = exchange(i, j, i, j + 1, true);
+                        if (adjacent != null) {
+                            return adjacent;
+                        }
                     }
-                    if (range != null && range.getLength() > 0) {
-                        j = j + range.getLength();
-                    } else {
-                        j = j + 1;
-                    }
-                }
-            }
-            for (int j = 1; j <= boardSize; j++) {
-                int i = 1;
-                while (i <= boardSize) {
-                    IntRange range = verticalSame(i, j);
-                    if (range != null && range.getLength() >= eliminationSize) {
-                        verticalEliminate(range.start, range.end, j);
-                        return;
-                    }
-                    if (range != null && range.getLength() > 0) {
-                        i = i + range.getLength();
-                    } else {
-                        i = i + 1;
+                    if (i < boardSize) {
+                        Adjacent adjacent = exchange(i, j, i + 1, j, true);
+                        if (adjacent != null) {
+                            return adjacent;
+                        }
                     }
                 }
             }
         } catch (Exception e) {
             logger.debug(e.toString());
         }
+        return null;
     }
 
-    @FXML
+    protected void checkDeadlock() {
+        if (isSettingValues) {
+            return;
+        }
+        try {
+            firstClick = null;
+            Adjacent adjacent = findValidExchange();
+            if (adjacent != null) {
+                if (autoPlaying) {
+                    focusStyle(adjacent.exchangei1, adjacent.exchangej1);
+                    focusStyle(adjacent.exchangei2, adjacent.exchangej2);
+                    Timer vtimer = new Timer();
+                    vtimer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            Platform.runLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    recoverStyle(adjacent.exchangei1, adjacent.exchangej1);
+                                    recoverStyle(adjacent.exchangei2, adjacent.exchangej2);
+                                    exchange(adjacent);
+                                }
+                            });
+                        }
+                    }, autoSpeed);
+                }
+                return;
+            }
+
+            if (autoPlaying || deadRenewRadio.isSelected()) {
+                newGame(false);
+                popInformation(message("DeadlockDetectRenew"));
+            } else if (lastRandom == null || deadPromptRadio.isSelected()) {
+                promptDeadlock();
+            } else {
+                makeChance();
+                popInformation(message("DeadlockDetectChance"));
+            }
+
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+    protected void makeChance() {
+        if (isSettingValues) {
+            return;
+        }
+        try {
+            int imagei = 1, imagej = 1, seti1 = 1, seti2 = 1, setj1 = 1, setj2 = 1;
+            if (lastRandom.isVertical()) {
+                if (lastRandom.endi < boardSize) {
+                    imagei = lastRandom.endi + 1;
+                    imagej = lastRandom.startj;
+                    seti1 = lastRandom.endi - 1;
+                    seti2 = lastRandom.endi - 2;
+                    setj1 = setj2 = lastRandom.startj;
+                } else {
+                    imagei = lastRandom.starti - 1;
+                    imagej = lastRandom.startj;
+                    seti1 = lastRandom.starti + 1;
+                    seti2 = lastRandom.starti + 2;
+                    setj1 = setj2 = lastRandom.startj;
+                }
+            } else {
+                if (lastRandom.startj > 1) {
+                    imagei = lastRandom.starti;
+                    imagej = lastRandom.startj - 1;
+                    seti1 = seti2 = lastRandom.starti;
+                    setj1 = lastRandom.startj + 1;
+                    setj2 = lastRandom.startj + 2;
+
+                } else {
+                    imagei = lastRandom.starti;
+                    imagej = lastRandom.endj + 1;
+                    seti1 = seti2 = lastRandom.starti;
+                    setj1 = lastRandom.endj - 1;
+                    setj2 = lastRandom.endj - 2;
+                }
+            }
+            ImageItem item = getImageItem(imagei, imagej);
+            setImageNode(seti1, setj1, item);
+            setImageNode(seti2, setj2, item);
+            findAdjacentAndEliminate();
+
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+    protected void promptDeadlock() {
+        try {
+            FxmlControl.BenWu2();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle(getBaseTitle());
+            alert.setContentText(AppVariables.message("NoValidElimination"));
+            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+            ButtonType buttonRenew = new ButtonType(AppVariables.message("RenewGame"));
+            ButtonType buttonChance = new ButtonType(AppVariables.message("MakeChance"));
+            alert.getButtonTypes().setAll(buttonRenew, buttonChance);
+            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+            stage.setAlwaysOnTop(true);
+            stage.toFront();
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == buttonRenew) {
+                newGame(false);
+                popInformation(message("DeadlockDetectRenew"));
+            } else if (result.get() == buttonChance) {
+                makeChance();
+                popInformation(message("DeadlockDetectChance"));
+            }
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
     @Override
-    public void startAction() {
-        newGame();
+    public boolean checkBeforeNextAction() {
+        catButton.setSelected(false);
+        return true;
     }
 
-    public class IntRange {
 
-        protected int start, end; // both include
+    /*
+        utilities
+     */
+    protected VBox getBox(int i, int j) {
+        try {
+            VBox vbox = chessBoard.get(i + "-" + j);
+            return vbox;
+        } catch (Exception e) {
+            return null;
+        }
+    }
 
-        public IntRange(int start, int end) {
-            this.start = start;
-            this.end = end;
+    protected Node getImageNode(int i, int j) {
+        try {
+            VBox vbox = getBox(i, j);
+            return vbox.getChildren().get(0);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    protected int getImageIndex(int i, int j) {
+        try {
+            Node node = getImageNode(i, j);
+            return (int) (node.getUserData());
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return -1;
+        }
+    }
+
+    protected ImageItem getImageItem(int index) {
+        try {
+            return imagesListview.getItems().get(index);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    protected ImageItem getImageItem(int i, int j) {
+        try {
+            int index = getImageIndex(i, j);
+            return getImageItem(index);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    protected void setRandomImage(int i, int j) {
+        try {
+            int index = selectedChesses.get(random.nextInt(boardSize));
+            setImageNode(i, j, imagesListview.getItems().get(index));
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+    protected void setImageNode(int i, int j, ImageItem item) {
+        try {
+            Node node = item.makeNode(chessSize);
+            VBox vbox = getBox(i, j);
+            vbox.getChildren().clear();
+            vbox.getChildren().add(node);
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+    protected void flush(int i, int j) {
+        if (flushTimes < 1) {
+            return;
+        }
+        try {
+            FadeTransition fade = new FadeTransition(Duration.millis(flushDuration));
+            fade.setFromValue(1.0);
+            fade.setToValue(0f);
+            fade.setCycleCount(flushTimes * 2);
+            fade.setAutoReverse(true);
+            fade.setNode(chessBoard.get(i + "-" + j));
+            fade.play();
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+    protected void shake(int i1, int j1) {
+        try {
+            VBox vbox = chessBoard.get(i1 + "-" + j1);
+            double x = vbox.getLayoutX();
+            double y = vbox.getLayoutY();
+            Path path = new Path();
+            path.getElements().add(new LineTo(x - 20, y + 18));
+            path.getElements().add(new LineTo(x + 20, y + 18));
+            path.getElements().add(new LineTo(x - 20, y + 18));
+            path.getElements().add(new LineTo(x + 20, y + 18));
+            path.getElements().add(new LineTo(x, y));
+
+            PathTransition pathTransition = new PathTransition(Duration.millis(200), path, vbox);
+            pathTransition.setCycleCount(3);
+            pathTransition.setAutoReverse(true);
+            pathTransition.play();
+
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+    protected void focusStyle(int i, int j) {
+        try {
+            final VBox vbox1 = chessBoard.get(i + "-" + j);
+            vbox1.setStyle(focusStyle);
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+    protected void recoverStyle(int i, int j) {
+        try {
+            final VBox vbox1 = chessBoard.get(i + "-" + j);
+            vbox1.setStyle(currentStyle);
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+
+    /*
+        data
+     */
+    // Assume only veritical and horizontal
+    public class Adjacent {
+
+        protected int exchangei1, exchangej1, exchangei2, exchangej2;
+        protected int starti, startj, endi, endj;
+
+        public Adjacent(int starti, int startj, int endi, int endj) {
+            this.starti = starti;
+            this.startj = startj;
+            this.endi = endi;
+            this.endj = endj;
+        }
+
+        public void setExchange(int exchangei1, int exchangej1, int exchangei2,
+                int exchangej2) {
+            this.exchangei1 = exchangei1;
+            this.exchangej1 = exchangej1;
+            this.exchangei2 = exchangei2;
+            this.exchangej2 = exchangej2;
         }
 
         public int getLength() {
-            return end - start + 1;
+            if (starti == endi) {
+                return endj - startj + 1;
+            } else {
+                return endi - starti + 1;
+            }
+        }
+
+        public boolean isValid() {
+            if (starti < 1 || starti > boardSize
+                    || endi < 1 || endi > boardSize
+                    || startj < 1 || startj > boardSize
+                    || endj < 1 || endj > boardSize) {
+                return false;
+            }
+            return starti == endi || startj == endj;
+        }
+
+        public boolean isVertical() {
+            return starti != endi;
+        }
+
+        public void print() {
+            logger.debug(starti + "," + startj + " -- " + endi + "," + endj);
         }
 
     }
 
     public class ScoreRuler {
 
-        protected int linksNumber, score;
+        protected int adjacentNumber, score;
 
         public ScoreRuler(int linksNumber, int score) {
-            this.linksNumber = linksNumber;
+            this.adjacentNumber = linksNumber;
             this.score = score;
         }
 
-        public int getLinksNumber() {
-            return linksNumber;
+        public int getAdjacentNumber() {
+            return adjacentNumber;
         }
 
-        public void setLinksNumber(int linksNumber) {
-            this.linksNumber = linksNumber;
+        public void setAdjacentNumber(int adjacentNumber) {
+            this.adjacentNumber = adjacentNumber;
         }
 
         public int getScore() {

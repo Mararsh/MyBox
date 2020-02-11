@@ -90,7 +90,7 @@ public class FFmpegMediasTableController extends MediaTableController {
 
                             List<Stream> streams = probeResult.getStreams();
                             if (streams != null) {
-                                for (int i = 0; i < streams.size(); i++) {
+                                for (int i = 0; i < streams.size(); ++i) {
                                     Stream stream = streams.get(i);
                                     if (stream.getCodecType() == StreamType.VIDEO) {
                                         info.setVideoEncoding(stream.getCodecLongName());

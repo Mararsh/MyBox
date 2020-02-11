@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.scene.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.web.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.effect.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="750.0" prefWidth="1300.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ColorsManageController">
+    <top>
+        <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
+    </top>
+    <center>
+        <VBox fx:id="mainPane" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" BorderPane.alignment="CENTER">
+            <children>
+                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
+                    <children>
+                        <ColorPicker fx:id="colorPicker" />
+                        <Button fx:id="commonColorsButton" mnemonicParsing="false" onAction="#commonColorsAction">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconColor.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                        <Button fx:id="inButton" layoutX="1252.0" layoutY="10.0" mnemonicParsing="false" onAction="#inPaletteAction">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconSelect.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                        <Button fx:id="outButton" layoutX="364.0" layoutY="10.0" mnemonicParsing="false" onAction="#outPaletteAction">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconSelectNone.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                        <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteAction">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconDelete.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                        <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconClear.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                        <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconRefresh.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                        <CheckBox fx:id="mergeCheck" mnemonicParsing="false" text="%Merge" />
+                        <CheckBox fx:id="allColumnsCheck" mnemonicParsing="false" selected="true" text="%AllColumns" />
+                        <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="htmlButton" mnemonicParsing="false" onAction="#htmlAction">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconHtml.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                    </children>
+                </HBox>
+                <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="colorColumn" text="%Color" />
+                        <TableColumn fx:id="inPaletteColumn" prefWidth="100.0" text="%InColorPalette" />
+                        <TableColumn fx:id="colorNameColumn" prefWidth="150.0" text="%Name" />
+                        <TableColumn fx:id="rgbaColumn" prefWidth="100.0" text="RGBA" />
+                        <TableColumn fx:id="rgbColumn" prefWidth="100.0" text="RGB" />
+                        <TableColumn fx:id="colorValueColumn" prefWidth="100.0" text="%Value" />
+                        <TableColumn fx:id="sRGBColumn" prefWidth="150.0" text="sRGB" />
+                        <TableColumn fx:id="HSBColumn" prefWidth="140.0" text="HSB" />
+                        <TableColumn fx:id="AdobeRGBColumn" prefWidth="100.0" text="Adobe RGB" />
+                        <TableColumn fx:id="AppleRGBColumn" prefWidth="100.0" text="Apple RGB" />
+                        <TableColumn fx:id="ECIRGBColumn" prefWidth="100.0" text="ECI RGB" />
+                        <TableColumn fx:id="sRGBLinearColumn" prefWidth="100.0" text="sRGB Linear" />
+                        <TableColumn fx:id="AdobeRGBLinearColumn" prefWidth="100.0" text="Adobe RGB Linear" />
+                        <TableColumn fx:id="AppleRGBLinearColumn" prefWidth="100.0" text="Apple RGB Linear" />
+                        <TableColumn fx:id="CalculatedCMYKColumn" prefWidth="120.0" text="Calculated CMYK" />
+                        <TableColumn fx:id="ECICMYKColumn" prefWidth="120.0" text="ECI CMYK" />
+                        <TableColumn fx:id="AdobeCMYKColumn" prefWidth="120.0" text="Adobe CMYK" />
+                        <TableColumn fx:id="XYZColumn" prefWidth="240.0" text="XYZ" />
+                        <TableColumn fx:id="CIELabColumn" prefWidth="150.0" text="CIE-L*ab" />
+                        <TableColumn fx:id="LCHabColumn" prefWidth="150.0" text="LCH(ab)" />
+                        <TableColumn fx:id="CIELuvColumn" prefWidth="150.0" text="CIE-L*uv" />
+                        <TableColumn fx:id="LCHuvColumn" prefWidth="150.0" text="LCH(uv)" />
+                        <TableColumn fx:id="dataColumn" prefWidth="150.0" text="%Data" />
+                    </columns>
+                </TableView>
+            </children>
+            <BorderPane.margin>
+                <Insets />
+            </BorderPane.margin>
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            </padding>
+        </VBox>
+    </center>
+    <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+    </padding>
+    <bottom>
+        <HBox alignment="CENTER_LEFT" spacing="5.0">
+            <children>
+                <Label fx:id="dataSizeLabel" layoutX="10.0" layoutY="19.0" />
+                <Label fx:id="selectedLabel" layoutX="15.0" layoutY="19.0" />
+                <Label fx:id="bottomLabel" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%EditableColumnsComments" BorderPane.alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                    <BorderPane.margin>
+                        <Insets left="10.0" right="10.0" />
+                    </BorderPane.margin>
+                </Label>
+                <Label fx:id="pageLabel1" layoutX="1231.0" layoutY="19.0" text="%PageSize" />
+                <ComboBox fx:id="pageSizeSelector" editable="true" prefWidth="80.0" />
+                <Label text="%Page" />
+                <ComboBox fx:id="pageSelector" editable="true" layoutX="778.0" layoutY="10.0" prefWidth="80.0" />
+                <Label fx:id="pageLabel" />
+                <Button fx:id="firstButton" mnemonicParsing="false" onAction="#firstAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconFirst.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="lastButton" mnemonicParsing="false" onAction="#lastAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconLast.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="previousButton" mnemonicParsing="false" onAction="#previousAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconPrevious.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="nextButton" mnemonicParsing="false" onAction="#nextAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconNext.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            </children>
+        </HBox>
+    </bottom>
+</BorderPane>

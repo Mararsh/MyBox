@@ -257,7 +257,7 @@ public class WebBrowserBoxController extends BaseController {
                                 ButtonType buttonCancel = new ButtonType(AppVariables.message("ISee"));
                                 alert.getButtonTypes().setAll(buttonBypass, buttonCancel);
                                 Optional<ButtonType> result = alert.showAndWait();
-                                if (result.get() == buttonCancel) {
+                                if (result.get() != buttonBypass) {
                                     return;
                                 }
                                 TableBrowserBypassSSL.write(host);
@@ -269,7 +269,7 @@ public class WebBrowserBoxController extends BaseController {
                                 ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
                                 alert.getButtonTypes().setAll(buttonSure, buttonCancel);
                                 Optional<ButtonType> result = alert.showAndWait();
-                                if (result.get() == buttonCancel) {
+                                if (result.get() != buttonSure) {
                                     return;
                                 }
                                 String msg = NetworkTools.installCertificateByHost(host, host);
@@ -346,7 +346,7 @@ public class WebBrowserBoxController extends BaseController {
         ((EventTarget) el).addEventListener("click", listener, false);
 
         NodeList links = doc.getElementsByTagName("a");
-        for (int i = 0; i < links.getLength(); i++) {
+        for (int i = 0; i < links.getLength(); ++i) {
 //            Node node = links.item(i);
 //            String link = links.item(i).toString();
 //

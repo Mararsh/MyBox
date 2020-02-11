@@ -70,11 +70,13 @@ public class TableAlarmClock extends DerbyBase {
                 }
                 try {
                     new File(AppVariables.AlarmClocksFile).delete();
-                } catch (Exception e) {  failed(e);
+                } catch (Exception e) {
+                    failed(e);
                 }
             }
             return true;
-        } catch (Exception e) {  failed(e);
+        } catch (Exception e) {
+            failed(e);
 //            // logger.debug(e.toString());
             return false;
         }
@@ -103,7 +105,8 @@ public class TableAlarmClock extends DerbyBase {
                 a.setVolume(results.getFloat("volume"));
                 alarms.add(a);
             }
-        } catch (Exception e) {  failed(e);
+        } catch (Exception e) {
+            failed(e);
 //            // logger.debug(e.toString());
         }
         return alarms;
@@ -149,7 +152,8 @@ public class TableAlarmClock extends DerbyBase {
             }
             conn.commit();
             return true;
-        } catch (Exception e) {  failed(e);
+        } catch (Exception e) {
+            failed(e);
 //            // logger.debug(e.toString());
             return false;
         }
@@ -161,17 +165,16 @@ public class TableAlarmClock extends DerbyBase {
         }
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
-            String sql;
-            conn.setAutoCommit(false);
-
-            for (AlarmClock a : alarms) {
-                sql = "DELETE FROM Alarm_Clock ";
-                sql += " WHERE key_value=" + a.getKey();
-                statement.executeUpdate(sql);
+            String inStr = "( '" + alarms.get(0) + "'";
+            for (int i = 1; i < alarms.size(); ++i) {
+                inStr += ", '" + alarms.get(i) + "'";
             }
-            conn.commit();
+            inStr += " )";
+            String sql = "DELETE FROM Alarm_Clock WHERE key_value IN " + inStr;
+            statement.executeUpdate(sql);
             return true;
-        } catch (Exception e) {  failed(e);
+        } catch (Exception e) {
+            failed(e);
 //            // logger.debug(e.toString());
             return false;
         }

@@ -67,14 +67,14 @@ License:    Apache License Version 2.0
                 </HBox>
             </children>
         </VBox>
-        <ScrollPane fx:id="colorsPane" fitToHeight="true" fitToWidth="true" maxHeight="400.0" maxWidth="1.7976931348623157E308" onMouseExited="#exitPane" pannable="true" prefViewportWidth="400.0">
+        <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="400.0" maxWidth="1.7976931348623157E308" onMouseExited="#exitPane" pannable="true" prefViewportWidth="400.0">
             <content>
-                <FlowPane fx:id="colorsBox" hgap="2.0" maxWidth="1.7976931348623157E308" vgap="2.0" VBox.vgrow="NEVER" />
+                <FlowPane fx:id="colorsPane" hgap="2.0" maxWidth="1.7976931348623157E308" vgap="2.0" VBox.vgrow="NEVER" />
             </content>
         </ScrollPane>
         <HBox fx:id="barBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
             <children>
-                <Label fx:id="sizeLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+            <Label fx:id="sizeLabel1" layoutX="10.0" layoutY="19.0" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                 <ToggleButton fx:id="pickColorButton" mnemonicParsing="false">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -84,6 +84,15 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </ToggleButton>
+            <Button fx:id="dataButton" mnemonicParsing="false" onAction="#dataAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/iconDataImport.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
                 <Button fx:id="commonColorsButton" layoutX="160.0" layoutY="10.0" mnemonicParsing="false" onAction="#commonColorsAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -112,10 +121,20 @@ License:    Apache License Version 2.0
                     </graphic>
                 </Button>
                 <ColorPicker fx:id="colorPicker" />
+            <Button fx:id="refreshButton" layoutX="198.0" layoutY="10.0" mnemonicParsing="false" onAction="#refreshAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/iconRefresh.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
             </children>
         </HBox>
         <HBox fx:id="closeBox" alignment="CENTER_RIGHT" spacing="5.0" VBox.vgrow="NEVER">
             <children>
+                <Label fx:id="sizeLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
             <CheckBox fx:id="saveCloseCheck" mnemonicParsing="false">
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -145,7 +164,7 @@ License:    Apache License Version 2.0
                 </Button>
             </children>
         </HBox>
-        <Label fx:id="promptLabel" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER" />
+        <Label fx:id="promptLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" VBox.vgrow="NEVER" />
 
     </children>
     <padding>

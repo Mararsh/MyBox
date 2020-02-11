@@ -45,6 +45,11 @@ public class TextEditerController extends FileEditerController {
     }
 
     protected void initCharsetTab() {
+        encodePane.expandedProperty().addListener(
+                (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
+                    AppVariables.setUserConfigValue(baseName + "EncodePane", encodePane.isExpanded());
+                });
+        encodePane.setExpanded(AppVariables.getUserConfigBoolean(baseName + "EncodePane", true));
 
         Tooltip tips = new Tooltip(AppVariables.message("EncodeComments"));
         tips.setFont(new Font(16));
@@ -89,6 +94,7 @@ public class TextEditerController extends FileEditerController {
     @Override
     protected void initLineBreakTab() {
         try {
+            super.initLineBreakTab();
             lineBreakGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue<? extends Toggle> ov,

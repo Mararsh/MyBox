@@ -103,14 +103,16 @@ public class ImageInformation extends ImageFileInformation {
         return ImageInformation.loadImage(file, imageFileInformation);
     }
 
-    public static ImageInformation loadImage(File file, ImageFileInformation imageFileInformation) {
+    public static ImageInformation loadImage(File file,
+            ImageFileInformation imageFileInformation) {
         if (file == null || imageFileInformation == null || imageFileInformation.imageInformation == null) {
             return null;
         }
         return ImageInformation.loadImage(file, imageFileInformation.imageInformation.width, 0, imageFileInformation);
     }
 
-    public static ImageInformation loadImage(File file, int loadWidth, int frameIndex) {
+    public static ImageInformation loadImage(File file, int loadWidth,
+            int frameIndex) {
         ImageFileInformation imageFileInformation = ImageInformation.loadImageFileInformation(file);
         if (imageFileInformation == null) {
             return null;
@@ -118,7 +120,8 @@ public class ImageInformation extends ImageFileInformation {
         return ImageInformation.loadImage(file, loadWidth, frameIndex, imageFileInformation);
     }
 
-    public static ImageInformation loadImage(File file, int loadWidth, int frameIndex,
+    public static ImageInformation loadImage(File file, int loadWidth,
+            int frameIndex,
             ImageFileInformation imageFileInformation) {
         if (imageFileInformation == null || imageFileInformation.getImageInformation() == null) {
             return null;
@@ -127,7 +130,8 @@ public class ImageInformation extends ImageFileInformation {
         return ImageInformation.loadImage(file, loadWidth, frameIndex, imageFileInformation, needSampled);
     }
 
-    public static ImageInformation loadImage(File file, int loadWidth, int frameIndex,
+    public static ImageInformation loadImage(File file, int loadWidth,
+            int frameIndex,
             ImageFileInformation imageFileInformation, boolean needSampled) {
         if (imageFileInformation == null || imageFileInformation.getImageInformation() == null) {
             return null;
@@ -142,15 +146,20 @@ public class ImageInformation extends ImageFileInformation {
         } else {
             bufferImage = ImageFileReaders.readImage(file);
         }
-        boolean needScale = (loadWidth > 0 && loadWidth != bufferImage.getWidth());
-        if (needScale && !needSampled) {
-            bufferImage = ImageManufacture.scaleImageWidthKeep(bufferImage, loadWidth);
+        boolean needScale = false;
+        if (!"ico".equals(format) && !"icon".equals(format)) {
+            needScale = (loadWidth > 0 && loadWidth != bufferImage.getWidth());
+            if (needScale && !needSampled) {
+                bufferImage = ImageManufacture.scaleImageWidthKeep(bufferImage, loadWidth);
+            }
         }
         Image theImage = SwingFXUtils.toFXImage(bufferImage, null);
         imageInfo.setImage(theImage);
         imageInfo.setImageType(bufferImage.getType());
         imageInfo.setIsSampled(needSampled);
         imageInfo.setIsScaled(needScale);
+        imageInfo.setWidth(bufferImage.getWidth());
+        imageInfo.setHeight(bufferImage.getHeight());
 //        imageInfo.setIsMultipleFrames(imageFileInformation.getNumberOfImages() > 1);
         return imageInfo;
     }
@@ -162,7 +171,8 @@ public class ImageInformation extends ImageFileInformation {
         return imageFileInformation;
     }
 
-    public void setImageFileInformation(ImageFileInformation imageFileInformation) {
+    public void setImageFileInformation(
+            ImageFileInformation imageFileInformation) {
         this.imageFileInformation = imageFileInformation;
     }
 
@@ -226,7 +236,8 @@ public class ImageInformation extends ImageFileInformation {
         return metaData;
     }
 
-    public void setMetaData(Map<String, Map<String, List<Map<String, Object>>>> metaData) {
+    public void setMetaData(
+            Map<String, Map<String, List<Map<String, Object>>>> metaData) {
         this.metaData = metaData;
     }
 
@@ -381,7 +392,8 @@ public class ImageInformation extends ImageFileInformation {
         return nativeAttributes;
     }
 
-    public void setNativeAttributes(LinkedHashMap<String, Object> nativeAttributes) {
+    public void setNativeAttributes(
+            LinkedHashMap<String, Object> nativeAttributes) {
         this.nativeAttributes = nativeAttributes;
     }
 
@@ -785,7 +797,8 @@ public class ImageInformation extends ImageFileInformation {
         }
     }
 
-    public void setHorizontalPhysicalPixelSpacing(float HorizontalPhysicalPixelSpacing) {
+    public void setHorizontalPhysicalPixelSpacing(
+            float HorizontalPhysicalPixelSpacing) {
         standardAttributes.put("HorizontalPhysicalPixelSpacing", HorizontalPhysicalPixelSpacing);
     }
 
@@ -797,7 +810,8 @@ public class ImageInformation extends ImageFileInformation {
         }
     }
 
-    public void setVerticalPhysicalPixelSpacing(float VerticalPhysicalPixelSpacing) {
+    public void setVerticalPhysicalPixelSpacing(
+            float VerticalPhysicalPixelSpacing) {
         standardAttributes.put("VerticalPhysicalPixelSpacing", VerticalPhysicalPixelSpacing);
     }
 

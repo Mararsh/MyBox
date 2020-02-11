@@ -143,7 +143,7 @@ public class FilesRenameController extends FilesBatchController {
     }
 
     @Override
-    public boolean makeBatchParameters() {
+    public boolean makeMoreParameters() {
         switch (renameType) {
             case ReplaceSubString:
                 if (oldStringInput.getText().isBlank()) {
@@ -186,7 +186,7 @@ public class FilesRenameController extends FilesBatchController {
         }
 
         newNames = new HashMap<>();
-        return super.makeBatchParameters();
+        return super.makeMoreParameters();
 
     }
 
@@ -245,7 +245,7 @@ public class FilesRenameController extends FilesBatchController {
 
     @Override
     public String handleFile(File srcFile, File targetPath) {
-        showHandling(srcFile);
+        countHandling(srcFile);
         FileInformation d = tableController.data(currentParameters.currentIndex);
         String newName = renameFile(srcFile);
         if (newName != null) {
@@ -301,11 +301,15 @@ public class FilesRenameController extends FilesBatchController {
             return false;
         }
         try {
+            File[] srcFiles = sourcePath.listFiles();
+            if (srcFiles == null) {
+                return false;
+            }
             if (recountCheck.isSelected()) {
                 currentAccum = startNumber;
             }
             List<File> files = new ArrayList<>();
-            files.addAll(Arrays.asList(sourcePath.listFiles()));
+            files.addAll(Arrays.asList(srcFiles));
             if (renameType == RenameType.AddSequenceNumber) {
                 sortFiles(files);
                 int bdigit = (files.size() + "").length();

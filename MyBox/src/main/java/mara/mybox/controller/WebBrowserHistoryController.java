@@ -16,7 +16,7 @@ import static mara.mybox.value.AppVariables.logger;
  * @CreateDate 2019-12-1
  * @License Apache License Version 2.0
  */
-public class WebBrowserHistoryController extends TableController<BrowserHistory> {
+public class WebBrowserHistoryController extends TableManageController<BrowserHistory> {
 
     protected WebBrowserController parent;
 
