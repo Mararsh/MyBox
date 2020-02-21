@@ -112,7 +112,7 @@ MyBox is based on following open sources softwares:
 | DaoDe| Map | https://lbs.amap.com/api/javascript-api/summary |      
 | WeiXin | Materials| https://weibo.com/3876734080/InmB1aPiL?type=comment#_rnd1582211299665 |      
 | Baidu | Data| https://voice.baidu.com/act/newpneumonia/newpneumonia/?from=osari_pc_3 |      
-| TengXun |  | https://api.inews.qq.com/newsqa/v1/query/pubished/daily/list?province=湖北&city=武汉 |      
+| TengXun | Data | https://api.inews.qq.com/newsqa/v1/query/pubished/daily/list?province=湖北&city=武汉 |      
 
  
 # Current Version
@@ -510,7 +510,7 @@ Recognizing texts in image/PDF(OCR) works only on Windows currently.
 5. Delete Data:
 	-  Button "Delete": to delete selected rows in right data table.  
 	-  Button "Clear": to delete selected node in left tree. Example, when a date time is selected, then clearing is against all data of this node.    
-6. Data Statistic:
+6. Data Statistic:   
 	-  Calculating statistic may cost long time, so suggest to do statistic only when data are changed.     
 	-  Checkbox  "Statistic for each loading": if selected, statistic will be run once data is reloaded.    
 	-  Button "Statistic": to calculate statistic at once. Suggest click this button after data are changed.     
