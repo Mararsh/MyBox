@@ -108,9 +108,9 @@ MyBox基于以下开源软件：
 | image4j | 读ico格式 | https://github.com/imcdonagh/image4j |   
 | AutoCommitCell | 提交修改 | https://stackoverflow.com/questions/24694616 （Ogmios） |   
 | 高德 | 地图 | https://lbs.amap.com/api/javascript-api/summary |      
-|  | 素材 | https://weibo.com/3876734080/InmB1aPiL?type=comment#_rnd1582211299665 |      
-|  | 数据 | https://voice.baidu.com/act/newpneumonia/newpneumonia/?from=osari_pc_3 |      
-|  |  | https://api.inews.qq.com/newsqa/v1/query/pubished/daily/list?province=湖北&city=武汉 |      
+| 微信 | 素材 | https://weibo.com/3876734080/InmB1aPiL?type=comment#_rnd1582211299665 |      
+| 百度 | 数据 | https://voice.baidu.com/act/newpneumonia/newpneumonia/?from=osari_pc_3 |      
+| 腾讯 | 数据 | https://api.inews.qq.com/newsqa/v1/query/pubished/daily/list?province=湖北&city=武汉 |      
 
 
 # 当前版本

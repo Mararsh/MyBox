@@ -110,9 +110,9 @@ MyBox is based on following open sources softwares:
 | image4j | decode ico format | https://github.com/imcdonagh/image4j |   
 | AutoCommitCell | Submit updates | https://stackoverflow.com/questions/24694616 （Ogmios） |   
 | DaoDe| Map | https://lbs.amap.com/api/javascript-api/summary |      
-|  | Materials| https://weibo.com/3876734080/InmB1aPiL?type=comment#_rnd1582211299665 |      
-|  | Data| https://voice.baidu.com/act/newpneumonia/newpneumonia/?from=osari_pc_3 |      
-|  |  | https://api.inews.qq.com/newsqa/v1/query/pubished/daily/list?province=湖北&city=武汉 |      
+| WeiXin | Materials| https://weibo.com/3876734080/InmB1aPiL?type=comment#_rnd1582211299665 |      
+| Baidu | Data| https://voice.baidu.com/act/newpneumonia/newpneumonia/?from=osari_pc_3 |      
+| TengXun |  | https://api.inews.qq.com/newsqa/v1/query/pubished/daily/list?province=湖北&city=武汉 |      
 
  
 # Current Version
