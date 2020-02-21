@@ -75,17 +75,12 @@ License:    Apache License Version 2.0
                                         <Insets left="60.0" />
                                     </HBox.margin>
                                 </RadioButton>
-                                <RadioButton mnemonicParsing="false" text="%AllSetAs" toggleGroup="$sizeGroup">
+                                <RadioButton mnemonicParsing="false" text="%Width" toggleGroup="$sizeGroup">
                                     <HBox.margin>
                                         <Insets />
                                     </HBox.margin>
                                 </RadioButton>
                                 <TextField fx:id="widthInput" prefWidth="100.0" promptText="%Width">
-                                    <HBox.margin>
-                                        <Insets />
-                                    </HBox.margin>
-                                </TextField>
-                                <TextField fx:id="heightInput" prefWidth="100.0" promptText="%Height">
                                     <HBox.margin>
                                         <Insets />
                                     </HBox.margin>

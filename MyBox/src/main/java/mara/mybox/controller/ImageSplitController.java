@@ -146,7 +146,8 @@ public class ImageSplitController extends ImageViewerController {
 
         displaySizeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
-            public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+            public void changed(ObservableValue<? extends Boolean> ov,
+                    Boolean old_val, Boolean new_val) {
                 indicateSplit();
             }
         });
@@ -460,13 +461,15 @@ public class ImageSplitController extends ImageViewerController {
 
         customWidthInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+            public void changed(ObservableValue<? extends String> observable,
+                    String oldValue, String newValue) {
                 checkPdfCustomValues();
             }
         });
         customHeightInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+            public void changed(ObservableValue<? extends String> observable,
+                    String oldValue, String newValue) {
                 checkPdfCustomValues();
             }
         });
@@ -514,7 +517,8 @@ public class ImageSplitController extends ImageViewerController {
 
         authorInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+            public void changed(ObservableValue<? extends String> observable,
+                    String oldValue, String newValue) {
                 AppVariables.setUserConfigValue("AuthorKey", newValue);
             }
         });
@@ -993,7 +997,8 @@ public class ImageSplitController extends ImageViewerController {
         indicateSplit();
     }
 
-    private File validationBeforeSave(List<FileChooser.ExtensionFilter> ext, String diagTitle) {
+    private File validationBeforeSave(List<FileChooser.ExtensionFilter> ext,
+            String diagTitle) {
         if (image == null || !splitValid.getValue()
                 || rows == null || cols == null
                 || rows.size() < 1 || cols.size() < 1) {
@@ -1096,7 +1101,8 @@ public class ImageSplitController extends ImageViewerController {
                 return null;
             }
 
-            private void updateLabel(final String fileName, final int total, final int number) {
+            private void updateLabel(final String fileName, final int total,
+                    final int number) {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {

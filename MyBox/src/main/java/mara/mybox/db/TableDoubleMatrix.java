@@ -165,13 +165,17 @@ public class TableDoubleMatrix extends DerbyBase {
         ConvolutionKernel.makeExample();
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
+            conn.setAutoCommit(false);
             String sql;
             for (ConvolutionKernel k : ConvolutionKernel.ExampleKernels) {
                 String name = k.getName();
                 sql = " SELECT row FROM Double_Matrix WHERE name='" + name + "'";
-                if (!statement.executeQuery(sql).next()) {
+                boolean exist;
+                try ( ResultSet results = statement.executeQuery(sql)) {
+                    exist = results.next();
+                }
+                if (!exist) {
                     float[][] m = k.getMatrix();
-                    conn.setAutoCommit(false);
                     for (int j = 0; j < m.length; ++j) {
                         for (int i = 0; i < m[j].length; ++i) {
                             float v = m[j][i];
@@ -183,6 +187,7 @@ public class TableDoubleMatrix extends DerbyBase {
                     conn.commit();
                 }
             }
+            conn.commit();
             return true;
         } catch (Exception e) {
             failed(e);

@@ -1,19 +1,21 @@
 # [ReadMe in English](https://github.com/Mararsh/MyBox/tree/master/en)
 
 # MyBox：简易工具集
-这是利用JavaFx开发的图形化界面程序，目标是提供简单易用的功能。免费开源。  
+这是利用JavaFx开发的图形化界面程序，目标是提供简单易用的功能。免费开源。     
 
 ## 下载与运行
 每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases?)目录下（点击上面的`releases`页签）。       
+
+[新内容](#devLog)      
 
 ### 自包含程序包   
 自包含的程序包无需java环境、无需安装、解包可用。（解包的目录名不要包含汉字）  
   
 | 平台 | 链接 | 大小 | 启动文件 |    
 | --- | --- | --- |  --- |   
-| win | [MyBox-6.1-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.1/MyBox-6.1-win-exe.zip)  | 242MB | MyBox.exe |       
-| linux | [MyBox-6.1-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.1/MyBox-6.1-linux.tar.gz)  | 201MB  | bin/MyBox  |     
-| mac | [MyBox-6.1-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.1/MyBox-6.1-mac.dmg)  | 203MB  |  MyBox-6.1.app   |   
+| win | [MyBox-6.1.5-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.1.5/MyBox-6.1.5-win-exe.zip)  | 242MB | MyBox.exe |       
+| linux | [MyBox-6.1.5-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.1.5/MyBox-6.1.5-linux.tar.gz)  | 201MB  | bin/MyBox  |     
+| mac | [MyBox-6.1.5-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.1.5/MyBox-6.1.5-mac.dmg)  | 203MB  |  MyBox-6.1.5.app   |   
 
 双击或者用命令行执行包内的启动文件即可运行程序。可以把图片/文本/PDF文件的打开方式关联到MyBox，这样双击文件名就直接是用MyBox打开了。
 （目前无法双击打开路径包含汉字的文件） 
@@ -23,14 +25,14 @@
  
 | 平台 | 链接 | 大小 | 运行需要 |    
 | --- | --- | --- |  --- |   
-| win | [MyBox-6.1-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.1/MyBox-6.1-win-jar.zip)  | 129MB | Java 13.0.1或更高版本 |    
-| linux | [MyBox-6.1-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.1/MyBox-6.1-linux-jar.zip)  | 135MB  | Java 13.0.1或更高版本 |    
-| mac | [MyBox-6.1-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.1/MyBox-6.1-mac-jar.zip)  |  132MB  | Java 13.0.1或更高版本 |    
+| win | [MyBox-6.1.5-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.1.5/MyBox-6.1.5-win-jar.zip)  | 129MB | Java 13.0.1或更高版本 |    
+| linux | [MyBox-6.1.5-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.1.5/MyBox-6.1.5-linux-jar.zip)  | 135MB  | Java 13.0.1或更高版本 |    
+| mac | [MyBox-6.1.5-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.1.5/MyBox-6.1.5-mac-jar.zip)  |  132MB  | Java 13.0.1或更高版本 |    
     
 执行以下命令来启动程序：
-<PRE><CODE>     java   -jar   MyBox-6.1.jar</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-6.1.5.jar</CODE></PRE>
 程序可以跟一个文件名作为参数、以用MyBox直接打开此文件。例如以下命令是打开此图片：
-<PRE><CODE>     java   -jar   MyBox-6.1.jar   /tmp/a1.jpg</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-6.1.5.jar   /tmp/a1.jpg</CODE></PRE>
 
 ### 其它下载地址  
 从云盘下载：  https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F     
@@ -69,7 +71,7 @@ sourceforge:  https://sourceforge.net/projects/mara-mybox/files/
 | 用户手册-网络工具 | 5.0 |  2019-4-16 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-NetworkTools-zh.pdf) |
 | 开发指南 | 2.0 |  2019-11-18 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-DevGuide-2.0-zh.pdf) |
 | 快捷键 | 5.9 |  2019-12-21 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts.html) |
-| 开发日志 | 6.1 |  2020-2-11 | [html](#devLog) |
+| 开发日志 | 6.1.5 |  2020-2-21 | [html](#devLog) |
 
 
 # 实现基础
@@ -105,10 +107,14 @@ MyBox基于以下开源软件：
 | ffmpeg| 媒体转换/生成 | http://ffmpeg.org |   
 | image4j | 读ico格式 | https://github.com/imcdonagh/image4j |   
 | AutoCommitCell | 提交修改 | https://stackoverflow.com/questions/24694616 （Ogmios） |   
+| 高德 | 地图 | https://lbs.amap.com/api/javascript-api/summary |      
+|  | 素材 | https://weibo.com/3876734080/InmB1aPiL?type=comment#_rnd1582211299665 |      
+|  | 数据 | https://voice.baidu.com/act/newpneumonia/newpneumonia/?from=osari_pc_3 |      
+|  |  | https://api.inews.qq.com/newsqa/v1/query/pubished/daily/list?province=湖北&city=武汉 |      
 
 
 # 当前版本
-当前是版本6.1，已实现的特点概述如下:
+当前是版本6.1.5，已实现的特点概述如下:
 * [跨平台](#cross-platform)
 * [国际化](#international)
 * [PDF工具](#pdfTools)
@@ -136,6 +142,7 @@ MyBox基于以下开源软件：
     - [位置数据](#locationData)
     - [地图上的位置数据](#locationDataInMap)
     - [疫情报告](#epidemicReport)
+    - [读取“新型冠状病毒肺炎”的数据](#epidemicReportFetch)
 * [文件工具](#fileTools)
     - [编辑文本](#editText)
     - [编辑字节](#editBytes)
@@ -442,7 +449,8 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 
 ### 地理编码<a id="geographyCode" />
 1. 在地图上查询和显示定位。
-2. 示例：所有国家和中国省/直辖市/特别行政区。  
+2. 示例：所有国家和中国省/市/区。  
+3. 迁移。错误和残缺已修正。若用户在v6.1写入了一些数据，则这一版在这个界面初次打开时，MyBox将导出用户的数据，并打开文件路径。如果需要，用户可以导入上一版的数据。        
 
 ### 位置数据<a id="locationData" />
 1. 属性： 数据集、数据标签、地址、经度、纬度、高度、精度、速度、方向、数据值、数据规模、数据时间、说明、图像。数据时间支持“公元前”。  
@@ -455,14 +463,52 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 4. 弹出信息可包含：坐标、地址、数据标签、数据值、数据规模、数据时间、说明、数据图像。   
 
 ### 疫情报告<a id="epidemicReport" />
-1. 属性： 数据集、数据标签、国家、省、城市、经度、纬度、确认、疑似、治愈、死亡、时间、说明。  
-2. 按钮“中国省会的疫情报告”：显示表单，以便输入指定数据集、指定时间的中国省会的疫情数据。
-3. 按钮“全球的疫情报告”：显示表单，以便输入指定数据集、指定时间的全球疫情数据。
-4. 数据分析：维度包括时间和位置；时间分量为全球和中国；位置分量为国家和中国省会。
-5. 图示：基于位置分量的数值条图/比率条图/饼图/数值地图、基于时间分量的数值线图/比率线图/动态数值地图。
-6. 数据和图示可导出为html文件。动态数值地图被保存为动态gif。
-7. 示例：“新型冠状病毒肺炎”。这些数据不完整且可能包含错误值。你可以填写更多数据和修正错误。    
-注意：如果是在英文界面中生成示例数据，则应在英文界面中观察它们。如果是在中文界面中生成示例数据，则应在中文界面中观察它们。    
+1. 数据定义： 
+	-  基本属性：数据集、时间、级别、（数据标签、说明）。  
+	-  地理属性：国家、省、城市、经度、纬度。
+            数据处理时会参考表“地理代码”，但不依赖它。原则是：用数据冗余避免外键。
+	-  数值属性：确认、疑似、治愈、死亡。
+	-  统计属性：新增确认、新增疑似、新增治愈、新增死亡、治愈率、死亡率、中国总计值、全球总计值。  
+	-  统计数据：中国总计值、全球总计值。  
+2. 数据录入：
+	- 按钮“添加”、或双击数据行，可以填写一个数据的字段值。
+	- 按钮“中国省会的疫情报告”：显示表单，以便输入指定数据集、指定时间的中国省会的疫情数据。
+	- 按钮“全球的疫情报告”：显示表单，以便输入指定数据集、指定时间的全球疫情数据。
+	- 按钮“示例”：导入2020-1-20到2020-2-21的中国省份和市/区的数据以及部分国家的新型冠状病毒肺炎数据。
+	- 按钮“读取新型冠状病毒肺炎的数据”：从网络上获得最新数据和历史数据。
+	- 按钮“MyBox网络数据目录”：存放更新的数据，用户可以下载并导入。
+	- 按钮“导入”：将格式正确的表数据文件的内容写入数据表。
+	- 不要重复录入相同的数据。此表无法识别出数据是否一样，而总是当作新数据写入。
+3. 数据导出：
+ 	- 按钮“导出”：将当前数据表中所有内容写入一个外部文件。用户可以编辑导出的数据文件，然后用“导入”按钮写回。
+ 	- 按钮“显示为html”：将当前数据表内容、和当前所有图示保存为html文件。动态数值地图被保存为动态gif。可以设置截图的dpi。
+4. 数据分析：
+        - 维度包括数据集、时间、位置。
+        - 位置数据为四级：全球、国家、省、市/区。
+        - 当时间确定时，显示图示：基于位置序列的数值条图/增值条图/比率条图/饼图/数值地图。
+        - 当时间不定时，显示图示：基于时间序列的数值线图/增值线图/比率线图/动态数值地图。
+5. 数据删除：
+        - 按钮“删除”，用来删除右边数据表中被选中的多个数据行。
+        - 按钮“清除”，用来删除左边树上被选中的节点。例如，当一个日期节点被选中时，清除是针对这个日期的所有数据。
+6. 数据统计：
+        - 计算统计属性可能花费较长时间，因此建议只有当数据变化时才做统计。
+        - 复选框“每次加载都统计”：若选中，则每次加载或刷新数据时，都会先计算统计值。
+        - 按钮“统计”：对当前所有数据计算统计属性。建议每次数据变化时点击这个按钮。
+7. 语言：
+        - 录入“疫情报告”数据时，会参考表“地理代码”， 它们都与语言有关。因此应当用同一种语言导入它们的示例数据。   
+           例如，“地理代码”在英文界面下写入示例数据，则“疫情报告”也应在英文界面下写入示例数据。  
+        - 导入和观察“疫情报告”数据也应用同一种语言。   
+           例如，“疫情报告”的数据是在英文界面中生成的，则应在英文界面中观察它们。        
+8. 迁移。此数据表结构已改进。若用户在v6.1写入了一些数据，则这一版在这个界面初次打开时，MyBox将导出用户的数据，并打开文件路径。如果需要，用户可以导入上一版的数据。          
+
+### 读取“新型冠状病毒肺炎”的数据<a id="epidemicReportFetch" />
+1. 解析百度数据页面，读取当前最新实时数据（包含中国省/市/区以及其它国家的数据）。建议每天一次。   
+2. 调用腾讯查询接口，读取从2020-1-20起的中国省/市/区的历史数据。示例中已包含这些数据。 
+3. 地理属性被加到每个数据行中。 
+4. 数据被显示为三种格式：html、json、xml，并可以保存为文件。
+5. 按钮“导入”：把读取到的数据写入“疫情报告”表中。 
+注意：这两个数据源将来可能变动或失效。     
+
 
 ## 文件工具<a id="fileTools" />
 ### 编辑文本<a id="editText" />
@@ -679,6 +725,13 @@ Java 9以后已支持HiDPI，控件和字体都会适应当前清晰度配置。
 
 
 # 开发日志<a id="devLog" />  
+2020-2-21 版本6.1.5  读取“新型冠状病毒肺炎”的数据。解析百度数据页面，获得当前最新实时数据；调用腾讯查询接口，获得从2020-1-20起的中国省/市/区的历史数据。
+加入地理属性。数据写为html、json、xml，并可写入“疫情报告”表中。       
+完善疫情报告。位置分四级：全球、国家、省、市/区。统计属性“新增值”及其图示。示例包含2020-1-20到2020-2-21中国省和市区的数据以及部分国家的数据。     
+完善地理代码。修正错误和残缺。      
+解决问题：编辑器的过滤功能出现错误。          
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.1.5)         
+
 2020-2-11 版本6.1  地图上的位置：通过点击地图、输入地址、或输入坐标来查询和显示位置数据。可设置地图的标记、文字、图层、语言等。       
 通用的数据表管理基础：增/删/改数据；分页显示；导入/导出；全部或选择导出为html。    
 管理地理编码：在地图上查询和显示定位。示例：所有国家和中国省/直辖市/特别行政区。     

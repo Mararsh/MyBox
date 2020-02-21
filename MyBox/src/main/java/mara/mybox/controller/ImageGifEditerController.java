@@ -2,7 +2,6 @@ package mara.mybox.controller;
 
 import java.io.File;
 import javafx.beans.binding.Bindings;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
@@ -28,13 +27,13 @@ import mara.mybox.value.CommonValues;
  */
 public class ImageGifEditerController extends ImagesListController {
 
-    protected int currentIndex, width, height;
+    protected int currentIndex, width;
     private boolean keepSize;
 
     @FXML
     protected ToggleGroup sizeGroup;
     @FXML
-    protected TextField widthInput, heightInput;
+    protected TextField widthInput;
     @FXML
     private CheckBox loopCheck;
 
@@ -59,35 +58,20 @@ public class ImageGifEditerController extends ImagesListController {
             optionsBox.setDisable(true);
             tableBox.setDisable(true);
 
-            sizeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                @Override
-                public void changed(ObservableValue<? extends Toggle> ov,
-                        Toggle old_toggle, Toggle new_toggle) {
-                    checkSizeType();
-                }
-            });
+            sizeGroup.selectedToggleProperty().addListener(
+                    (ObservableValue<? extends Toggle> ov, Toggle old_toggle, Toggle new_toggle) -> {
+                        checkSizeType();
+                    });
             checkSizeType();
 
-            widthInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
-                    checkSize();
-                }
-            });
-
-            heightInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
-                    checkSize();
-                }
-            });
+            widthInput.textProperty().addListener(
+                    (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+                        checkSize();
+                    });
 
             saveButton.disableProperty().bind(
                     Bindings.isEmpty(tableData)
                             .or(widthInput.styleProperty().isEqualTo(badStyle))
-                            .or(heightInput.styleProperty().isEqualTo(badStyle))
             );
 
             saveAsButton.disableProperty().bind(
@@ -104,7 +88,6 @@ public class ImageGifEditerController extends ImagesListController {
         if (message("KeepImagesSize").equals(selected.getText())) {
             keepSize = true;
             widthInput.setStyle(null);
-            heightInput.setStyle(null);
         } else if (message("AllSetAs").equals(selected.getText())) {
             keepSize = false;
             checkSize();
@@ -124,18 +107,6 @@ public class ImageGifEditerController extends ImagesListController {
             widthInput.setStyle(badStyle);
         }
 
-        try {
-            int v = Integer.valueOf(heightInput.getText());
-            if (v > 0) {
-                height = v;
-                heightInput.setStyle(null);
-            } else {
-                heightInput.setStyle(badStyle);
-            }
-        } catch (Exception e) {
-            heightInput.setStyle(badStyle);
-        }
-
     }
 
     @Override
@@ -152,7 +123,7 @@ public class ImageGifEditerController extends ImagesListController {
                 @Override
                 protected boolean handle() {
                     ret = ImageGifFile.writeImages(tableData, outFile,
-                            loopCheck.isSelected(), keepSize, width, height);
+                            loopCheck.isSelected(), keepSize, width);
                     if (ret.isEmpty()) {
                         return true;
                     } else {

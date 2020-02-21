@@ -1,5 +1,6 @@
 package mara.mybox.db;
 
+import java.io.File;
 import java.net.InetAddress;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -54,11 +55,12 @@ public class DerbyBase {
     protected String Table_Name, Create_Table_Statement;
     protected List<String> Keys;
 
-    public boolean init(Statement statement) {
+    public boolean init(Connection conn) {
         try {
-            if (statement == null) {
+            if (conn == null) {
                 return false;
             }
+            Statement statement = conn.createStatement();
 //            logger.debug(Create_Table_Statement);
             statement.executeUpdate(Create_Table_Statement);
             return true;
@@ -106,16 +108,17 @@ public class DerbyBase {
             return ret;
         } catch (Exception e) {
             failed(e);
-//            // logger.debug(e.toString());
+//            logger.debug(e.toString());
             return -1;
         }
     }
 
-    public boolean drop(Statement statement) {
+    public boolean drop(Connection conn) {
         try {
-            if (statement == null) {
+            if (conn == null) {
                 return false;
             }
+            Statement statement = conn.createStatement();
             String sql = "DROP TABLE " + Table_Name;
             statement.executeUpdate(sql);
 //            logger.debug(Create_Table_Statement);
@@ -140,11 +143,12 @@ public class DerbyBase {
         }
     }
 
-    public boolean clear(Statement statement) {
+    public boolean clear(Connection conn) {
         try {
-            if (statement == null) {
+            if (conn == null) {
                 return false;
             }
+            Statement statement = conn.createStatement();
             String sql = "DELETE FROM " + Table_Name;
             statement.executeUpdate(sql);
 //            logger.debug(Create_Table_Statement);
@@ -169,9 +173,10 @@ public class DerbyBase {
         }
     }
 
-    public List<String> tables(Statement statement) {
+    public List<String> tables(Connection conn) {
         List<String> tables = new ArrayList<>();
         try {
+            Statement statement = conn.createStatement();
             String sql = "SELECT TABLENAME FROM SYS.SYSTABLES WHERE TABLETYPE='T'";
             ResultSet resultSet = statement.executeQuery(sql);
             while (resultSet.next()) {
@@ -373,58 +378,61 @@ public class DerbyBase {
         logger.debug("Protocol: " + protocol + dbHome());
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + create);
                  Statement statement = conn.createStatement()) {
-            List<String> tables = new DerbyBase().tables(statement);
+            List<String> tables = new DerbyBase().tables(conn);
 //            logger.debug(tables);
             if (!tables.contains("String_Values".toUpperCase())) {
-                new TableStringValues().init(statement);
+                new TableStringValues().init(conn);
             }
             if (!tables.contains("image_scope".toUpperCase())) {
-                new TableImageScope().init(statement);
+                new TableImageScope().init(conn);
             }
             if (!tables.contains("System_Conf".toUpperCase())) {
-                new TableSystemConf().init(statement);
+                new TableSystemConf().init(conn);
             }
             if (!tables.contains("User_Conf".toUpperCase())) {
-                new TableUserConf().init(statement);
+                new TableUserConf().init(conn);
             }
             if (!tables.contains("Alarm_Clock".toUpperCase())) {
-                new TableAlarmClock().init(statement);
+                new TableAlarmClock().init(conn);
             }
             if (!tables.contains("image_history".toUpperCase())) {
-                new TableImageHistory().init(statement);
+                new TableImageHistory().init(conn);
             }
             if (!tables.contains("Convolution_Kernel".toUpperCase())) {
-                new TableConvolutionKernel().init(statement);
+                new TableConvolutionKernel().init(conn);
             }
             if (!tables.contains("Float_Matrix".toUpperCase())) {
-                new TableFloatMatrix().init(statement);
+                new TableFloatMatrix().init(conn);
             }
             if (!tables.contains("visit_history".toUpperCase())) {
-                new TableVisitHistory().init(statement);
+                new TableVisitHistory().init(conn);
             }
             if (!tables.contains("media_list".toUpperCase())) {
-                new TableMediaList().init(statement);
+                new TableMediaList().init(conn);
             }
             if (!tables.contains("media".toUpperCase())) {
-                new TableMedia().init(statement);
+                new TableMedia().init(conn);
             }
             if (!tables.contains("Browser_History".toUpperCase())) {
-                new TableBrowserHistory().init(statement);
+                new TableBrowserHistory().init(conn);
             }
             if (!tables.contains("Browser_Bypass_SSL".toUpperCase())) {
-                new TableBrowserBypassSSL().init(statement);
+                new TableBrowserBypassSSL().init(conn);
             }
             if (!tables.contains("Color_Data".toUpperCase())) {
-                new TableColorData().init(statement);
+                new TableColorData().init(conn);
             }
             if (!tables.contains("Geography_Code".toUpperCase())) {
-                new TableGeographyCode().init(statement);
+                new TableGeographyCode().init(conn);
             }
             if (!tables.contains("Location".toUpperCase())) {
-                new TableLocation().init(statement);
+                new TableLocation().init(conn);
             }
             if (!tables.contains("Epidemic_Report".toUpperCase())) {
-                new TableEpidemicReport().init(statement);
+                new TableEpidemicReport().init(conn);
+            }
+            if (!tables.contains("Member".toUpperCase())) {
+                new TableMember().init(conn);
             }
             return true;
         } catch (Exception e) {
@@ -434,24 +442,24 @@ public class DerbyBase {
     }
 
     public static boolean dropTables() {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            new TableSystemConf().drop(statement);
-            new TableUserConf().drop(statement);
-            new TableAlarmClock().drop(statement);
-            new TableImageHistory().drop(statement);
-            new TableConvolutionKernel().drop(statement);
-            new TableFloatMatrix().drop(statement);
-            new TableVisitHistory().drop(statement);
-            new TableImageScope().drop(statement);
-            new TableStringValues().drop(statement);
-            new TableMediaList().drop(statement);
-            new TableMedia().drop(statement);
-            new TableBrowserHistory().drop(statement);
-            new TableBrowserBypassSSL().drop(statement);
-            new TableColorData().drop(statement);
-            new TableLocation().drop(statement);
-            new TableEpidemicReport().drop(statement);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            new TableSystemConf().drop(conn);
+            new TableUserConf().drop(conn);
+            new TableAlarmClock().drop(conn);
+            new TableImageHistory().drop(conn);
+            new TableConvolutionKernel().drop(conn);
+            new TableFloatMatrix().drop(conn);
+            new TableVisitHistory().drop(conn);
+            new TableImageScope().drop(conn);
+            new TableStringValues().drop(conn);
+            new TableMediaList().drop(conn);
+            new TableMedia().drop(conn);
+            new TableBrowserHistory().drop(conn);
+            new TableBrowserBypassSSL().drop(conn);
+            new TableColorData().drop(conn);
+            new TableLocation().drop(conn);
+            new TableEpidemicReport().drop(conn);
+            new TableMember().drop(conn);
             return true;
         } catch (Exception e) {
 //            // logger.debug(e.toString());
@@ -460,23 +468,23 @@ public class DerbyBase {
     }
 
     public static boolean clearData() {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            new TableUserConf().clear(statement);
-            new TableAlarmClock().clear(statement);
-            new TableImageHistory().clear(statement);
-            new TableConvolutionKernel().clear(statement);
-            new TableFloatMatrix().clear(statement);
-            new TableVisitHistory().clear(statement);
-            new TableImageScope().clear(statement);
-            new TableStringValues().clear(statement);
-            new TableMediaList().clear(statement);
-            new TableMedia().clear(statement);
-            new TableBrowserHistory().clear(statement);
-            new TableBrowserBypassSSL().clear(statement);
-            new TableColorData().clear(statement);
-            new TableLocation().clear(statement);
-            new TableEpidemicReport().clear(statement);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            new TableUserConf().clear(conn);
+            new TableAlarmClock().clear(conn);
+            new TableImageHistory().clear(conn);
+            new TableConvolutionKernel().clear(conn);
+            new TableFloatMatrix().clear(conn);
+            new TableVisitHistory().clear(conn);
+            new TableImageScope().clear(conn);
+            new TableStringValues().clear(conn);
+            new TableMediaList().clear(conn);
+            new TableMedia().clear(conn);
+            new TableBrowserHistory().clear(conn);
+            new TableBrowserBypassSSL().clear(conn);
+            new TableColorData().clear(conn);
+            new TableLocation().clear(conn);
+            new TableEpidemicReport().clear(conn);
+            new TableMember().clear(conn);
             return true;
         } catch (Exception e) {
 //            // logger.debug(e.toString());
@@ -535,7 +543,7 @@ public class DerbyBase {
                 AppVariables.setSystemConfigValue("UpdatedTables5.4", true);
             }
 
-            if (!AppVariables.getSystemConfigBoolean("UpdatedTables5.9b", false)) {
+            if (!AppVariables.getSystemConfigBoolean("UpdatedTables5.8", false)) {
                 logger.info("Updating tables in 5.8...");
                 DerbyBase t = new DerbyBase();
                 String sql = "ALTER TABLE SRGB  add  column  palette_index  INT";
@@ -546,15 +554,15 @@ public class DerbyBase {
                     TableColorData.updatePalette(saveColors);
                 }
                 TableStringValues.clear("ColorPalette");
-                AppVariables.setSystemConfigValue("UpdatedTables5.9", true);
+                AppVariables.setSystemConfigValue("UpdatedTables5.8", true);
             }
 
-            if (!AppVariables.getSystemConfigBoolean("UpdatedTables5.9ab", false)) {
+            if (!AppVariables.getSystemConfigBoolean("UpdatedTables5.9", false)) {
                 logger.info("Updating tables in 5.9...");
                 DerbyBase t = new DerbyBase();
                 String sql = "DROP TABLE Browser_URLs";
                 t.update(sql);
-                AppVariables.setSystemConfigValue("UpdatedTables5.9a", true);
+                AppVariables.setSystemConfigValue("UpdatedTables5.9", true);
             }
 
             if (!AppVariables.getSystemConfigBoolean("UpdatedTables6.1", false)) {
@@ -564,9 +572,16 @@ public class DerbyBase {
                 AppVariables.setSystemConfigValue("UpdatedTables6.1", true);
             }
 
+            if (!AppVariables.getSystemConfigBoolean("UpdatedTables6.1.5", false)) {
+                logger.info("Updating tables in 6.1.5...");
+                TableGeographyCode.migrate();
+                TableEpidemicReport.migrate();
+                AppVariables.setSystemConfigValue("UpdatedTables6.1.5", true);
+            }
+
             return true;
         } catch (Exception e) {
-//            // logger.debug(e.toString());
+            logger.debug(e.toString());
             return false;
         }
     }
@@ -632,6 +647,13 @@ public class DerbyBase {
 //    CALL SYSCS_UTIL.SYSCS_EXPORT_TABLE ('MARA', 'EPIDEMIC_REPORT', 'D:\MyBox\src\main\resources\data\db\EpidemicReport_en.del', null, null,  'UTF-8');
 //    CALL SYSCS_UTIL.SYSCS_EXPORT_TABLE ('MARA', 'LOCATION', 'D:\MyBox\src\main\resources\data\db\Location.del_en', null, null,  'UTF-8');
     public static void exportData(String table, String file) {
+        if (file == null) {
+            return;
+        }
+        File f = new File(file);
+        if (f.exists()) {
+            f.delete();
+        }
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);) {
             PreparedStatement ps = conn.prepareStatement("CALL SYSCS_UTIL.SYSCS_EXPORT_TABLE (?,?,?,?,?,?)");
             ps.setString(1, null);
@@ -647,10 +669,17 @@ public class DerbyBase {
         }
     }
 
-//    CALL SYSCS_UTIL.SYSCS_IMPORT_TABLE ('MARA', 'GEOGRAPHY_CODE', 'D:\MyBox\src\main\resources\data\db\GeographyCodes.del',null, null,  'UTF-8', 1);
+//    CALL SYSCS_UTIL.SYSCS_IMPORT_TABLE ('MARA', 'GEOGRAPHY_CODE', 'D:\MyBox\src\main\resources\data\db\Geography_Code_zh.del',null, null,  'UTF-8', 1);
 //    CALL SYSCS_UTIL.SYSCS_IMPORT_TABLE ('MARA', 'EPIDEMIC_REPORT', 'D:\MyBox\src\main\resources\data\db\EpidemicReport.del',null, null,  'UTF-8', 1);
 //    CALL SYSCS_UTIL.SYSCS_IMPORT_TABLE ('MARA', 'LOCATION', 'D:\MyBox\src\main\resources\data\db\Location.del',null, null,  'UTF-8', 1);
     public static void importData(String table, String file, boolean replace) {
+        if (file == null) {
+            return;
+        }
+        File f = new File(file);
+        if (!f.exists()) {
+            return;
+        }
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);) {
             PreparedStatement ps = conn.prepareStatement("CALL SYSCS_UTIL.SYSCS_IMPORT_TABLE (?,?,?,?,?,?,?)");
             ps.setString(1, null);

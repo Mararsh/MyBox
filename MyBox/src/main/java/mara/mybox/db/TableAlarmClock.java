@@ -47,11 +47,12 @@ public class TableAlarmClock extends DerbyBase {
     }
 
     @Override
-    public boolean init(Statement statement) {
+    public boolean init(Connection conn) {
         try {
-            if (statement == null) {
+            if (conn == null) {
                 return false;
             }
+            Statement statement = conn.createStatement();
             statement.executeUpdate(Create_Table_Statement);
             List<AlarmClock> values = AlarmClock.readAlarmClocksFromFile();
             if (values != null && !values.isEmpty()) {
@@ -116,13 +117,17 @@ public class TableAlarmClock extends DerbyBase {
         if (alarms == null || alarms.isEmpty()) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             conn.setAutoCommit(false);
             String sql;
             for (AlarmClock a : alarms) {
+                Statement statement = conn.createStatement();
                 sql = " SELECT alarm_type FROM Alarm_Clock WHERE key_value=" + a.getKey();
-                if (statement.executeQuery(sql).next()) {
+                boolean exist;
+                try ( ResultSet results = statement.executeQuery(sql)) {
+                    exist = results.next();
+                }
+                if (exist) {
                     sql = "UPDATE Alarm_Clock ";
                     sql += " SET description='" + a.getDescription() + "'";
                     sql += " , alarm_type=" + a.getAlarmType();

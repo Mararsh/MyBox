@@ -40,7 +40,7 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Label text="%FileFilterComments" />
+                                <Label text="%FileFilterComments" styleClass="blue-label" stylesheets="@../styles/MyBox.css" />
                             </items>
                         </ToolBar>
                     </children>

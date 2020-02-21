@@ -35,11 +35,12 @@ public class TableUserConf extends DerbyBase {
     }
 
     @Override
-    public boolean init(Statement statement) {
+    public boolean init(Connection conn) {
         try {
-            if (statement == null) {
+            if (conn == null) {
                 return false;
             }
+            Statement statement = conn.createStatement();
             statement.executeUpdate(Create_Table_Statement);
             Map<String, String> values = ConfigTools.readValues();
             if (values != null && !values.isEmpty()) {

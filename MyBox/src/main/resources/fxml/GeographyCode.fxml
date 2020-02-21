@@ -27,175 +27,177 @@ License:    Apache License Version 2.0
     <center>
         <VBox fx:id="contentBox" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" BorderPane.alignment="CENTER">
             <children>
-                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS">
-                    <children>
-                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
-                            <children>
-                                <Button fx:id="plusButton" mnemonicParsing="false" onAction="#addAction">
-                                    <graphic>
-                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/iconPlus.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                        <Button fx:id="examplesButton" mnemonicParsing="false" onAction="#examplesAction">
-                           <graphic>
-                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../buttons/iconExamples.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                        </Button>
-                        <Button fx:id="dataImportButton" layoutX="376.0" layoutY="10.0" mnemonicParsing="false" onAction="#importAction">
-                           <graphic>
-                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../buttons/iconDataImport.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                        </Button>
-                        <Button fx:id="dataExportButton" layoutX="437.0" layoutY="10.0" mnemonicParsing="false" onAction="#exportAction">
-                           <graphic>
-                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../buttons/iconDataExport.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                        </Button>
-                        <Button fx:id="editButton" disable="true" layoutX="71.0" layoutY="10.0" mnemonicParsing="false" onAction="#editAction">
-                           <graphic>
-                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../buttons/iconEdit.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                        </Button>
-                        <Button fx:id="locationButton" disable="true" mnemonicParsing="false" onAction="#locationAction">
-                           <graphic>
-                              <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../buttons/iconLocation.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                        </Button>
-                                <Button fx:id="viewButton" disable="true" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#viewAction">
-                                    <graphic>
-                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/iconView.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                                <Button fx:id="deleteButton" disable="true" mnemonicParsing="false" onAction="#deleteAction">
-                                    <graphic>
-                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/iconDelete.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                                <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
-                                    <graphic>
-                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/iconClear.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                                <Label fx:id="langLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                <Button fx:id="htmlButton" mnemonicParsing="false" onAction="#htmlAction">
-                                    <graphic>
-                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/iconHtml.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                            </children>
-                        </HBox>
-                        <TableView fx:id="tableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
-                            <columns>
-                                <TableColumn fx:id="addressColumn" editable="false" prefWidth="100.0" text="%Address" />
-                                <TableColumn fx:id="longtitudeColumn" editable="false" prefWidth="100.0" text="%Longitude" />
-                                <TableColumn fx:id="latitudeColumn" prefWidth="100.0" text="%Latitude" />
-                                <TableColumn fx:id="fullAddressColumn" prefWidth="150.0" text="%FullAddress" />
-                                <TableColumn fx:id="levelColumn" editable="false" prefWidth="100.0" text="%Level" />
-                                <TableColumn fx:id="countryColumn" editable="false" prefWidth="100.0" text="%Country" />
-                                <TableColumn fx:id="provinceColumn" editable="false" prefWidth="100.0" text="%Province" />
-                                <TableColumn fx:id="cityColumn" editable="false" prefWidth="100.0" text="%City" />
-                                <TableColumn fx:id="citycodeColumn" prefWidth="100.0" text="%Citycode" />
-                                <TableColumn fx:id="districtColumn" prefWidth="100.0" text="%District" />
-                                <TableColumn fx:id="townshipColumn" editable="false" prefWidth="100.0" text="%Township" />
-                                <TableColumn fx:id="neighborhoodColumn" editable="false" prefWidth="100.0" text="%Neighborhood" />
-                                <TableColumn fx:id="buildingColumn" prefWidth="150.0" text="%Building" />
-                                <TableColumn fx:id="administrativeCodeColumn" editable="false" prefWidth="100.0" text="%AdministrativeCode" />
-                                <TableColumn fx:id="streetColumn" prefWidth="150.0" text="%Street" />
-                                <TableColumn fx:id="numberColumn" editable="false" prefWidth="100.0" text="%Number" />
-                            </columns>
-                        </TableView>
-                        <HBox alignment="CENTER_LEFT" spacing="5.0">
-                            <children>
-                                <Label fx:id="dataSizeLabel" layoutX="10.0" layoutY="19.0" />
-                                <Label fx:id="selectedLabel" layoutX="15.0" layoutY="19.0" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                <Label fx:id="pageLabel1" layoutX="1231.0" layoutY="19.0" text="%PageSize" />
-                                <ComboBox fx:id="pageSizeSelector" editable="true" prefWidth="80.0" />
-                                <Label text="%Page" />
-                                <ComboBox fx:id="pageSelector" editable="true" layoutX="778.0" layoutY="10.0" prefWidth="80.0" />
-                                <Label fx:id="pageLabel" />
-                                <Button fx:id="firstButton" mnemonicParsing="false" onAction="#firstAction">
-                                    <graphic>
-                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/iconFirst.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                                <Button fx:id="lastButton" mnemonicParsing="false" onAction="#lastAction">
-                                    <graphic>
-                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/iconLast.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                                <Button fx:id="previousButton" mnemonicParsing="false" onAction="#previousAction">
-                                    <graphic>
-                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/iconPrevious.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                                <Button fx:id="nextButton" mnemonicParsing="false" onAction="#nextAction">
-                                    <graphic>
-                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/iconNext.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                            </children>
-                        </HBox>
-                    </children>
-                    <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                    </padding>
-                </VBox>
+                  <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
+                      <children>
+                          <Button fx:id="plusButton" mnemonicParsing="false" onAction="#addAction">
+                              <graphic>
+                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                      <image>
+                                          <Image url="@../buttons/iconPlus.png" />
+                                      </image>
+                                  </ImageView>
+                              </graphic>
+                          </Button>
+                  <Button fx:id="examplesButton" mnemonicParsing="false" onAction="#examplesAction">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/iconExamples.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Button fx:id="dataImportButton" layoutX="376.0" layoutY="10.0" mnemonicParsing="false" onAction="#importAction">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/iconDataImport.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Button fx:id="dataExportButton" layoutX="437.0" layoutY="10.0" mnemonicParsing="false" onAction="#exportAction">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/iconDataExport.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Button fx:id="editButton" disable="true" layoutX="71.0" layoutY="10.0" mnemonicParsing="false" onAction="#editAction">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/iconEdit.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Button fx:id="locationButton" disable="true" mnemonicParsing="false" onAction="#locationAction">
+                     <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/iconLocation.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                          <Button fx:id="viewButton" disable="true" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#viewAction">
+                              <graphic>
+                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                      <image>
+                                          <Image url="@../buttons/iconView.png" />
+                                      </image>
+                                  </ImageView>
+                              </graphic>
+                          </Button>
+                          <Button fx:id="deleteButton" disable="true" mnemonicParsing="false" onAction="#deleteAction">
+                              <graphic>
+                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                      <image>
+                                          <Image url="@../buttons/iconDelete.png" />
+                                      </image>
+                                  </ImageView>
+                              </graphic>
+                          </Button>
+                          <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
+                              <graphic>
+                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                      <image>
+                                          <Image url="@../buttons/iconClear.png" />
+                                      </image>
+                                  </ImageView>
+                              </graphic>
+                          </Button>
+                  <Button fx:id="refreshButton" layoutX="498.0" layoutY="10.0" mnemonicParsing="false" onAction="#refreshAction">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/iconRefresh.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                          <Label fx:id="langLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                          <Button fx:id="htmlButton" mnemonicParsing="false" onAction="#htmlAction">
+                              <graphic>
+                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                      <image>
+                                          <Image url="@../buttons/iconHtml.png" />
+                                      </image>
+                                  </ImageView>
+                              </graphic>
+                          </Button>
+                      </children>
+                  </HBox>
+                  <TableView fx:id="tableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+                      <columns>
+                          <TableColumn fx:id="addressColumn" editable="false" prefWidth="100.0" text="%Address" />
+                          <TableColumn fx:id="longtitudeColumn" editable="false" prefWidth="100.0" text="%Longitude" />
+                          <TableColumn fx:id="latitudeColumn" prefWidth="100.0" text="%Latitude" />
+                          <TableColumn fx:id="fullAddressColumn" prefWidth="150.0" text="%FullAddress" />
+                          <TableColumn fx:id="levelColumn" editable="false" prefWidth="100.0" text="%Level" />
+                          <TableColumn fx:id="countryColumn" editable="false" prefWidth="100.0" text="%Country" />
+                          <TableColumn fx:id="provinceColumn" editable="false" prefWidth="100.0" text="%Province" />
+                          <TableColumn fx:id="cityColumn" editable="false" prefWidth="100.0" text="%City" />
+                          <TableColumn fx:id="citycodeColumn" prefWidth="100.0" text="%Citycode" />
+                          <TableColumn fx:id="districtColumn" prefWidth="100.0" text="%District" />
+                          <TableColumn fx:id="townshipColumn" editable="false" prefWidth="100.0" text="%Township" />
+                          <TableColumn fx:id="neighborhoodColumn" editable="false" prefWidth="100.0" text="%Neighborhood" />
+                          <TableColumn fx:id="buildingColumn" prefWidth="150.0" text="%Building" />
+                          <TableColumn fx:id="administrativeCodeColumn" editable="false" prefWidth="100.0" text="%AdministrativeCode" />
+                          <TableColumn fx:id="streetColumn" prefWidth="150.0" text="%Street" />
+                          <TableColumn fx:id="numberColumn" editable="false" prefWidth="100.0" text="%Number" />
+                      </columns>
+                  </TableView>
+                  <HBox alignment="CENTER_LEFT" spacing="5.0">
+                      <children>
+                          <Label fx:id="dataSizeLabel" layoutX="10.0" layoutY="19.0" />
+                          <Label fx:id="selectedLabel" layoutX="15.0" layoutY="19.0" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                          <Label fx:id="pageLabel1" layoutX="1231.0" layoutY="19.0" text="%PageSize" />
+                          <ComboBox fx:id="pageSizeSelector" editable="true" prefWidth="80.0" />
+                          <Label text="%Page" />
+                          <ComboBox fx:id="pageSelector" editable="true" layoutX="778.0" layoutY="10.0" prefWidth="80.0" />
+                          <Label fx:id="pageLabel" />
+                          <Button fx:id="firstButton" mnemonicParsing="false" onAction="#firstAction">
+                              <graphic>
+                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                      <image>
+                                          <Image url="@../buttons/iconFirst.png" />
+                                      </image>
+                                  </ImageView>
+                              </graphic>
+                          </Button>
+                          <Button fx:id="lastButton" mnemonicParsing="false" onAction="#lastAction">
+                              <graphic>
+                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                      <image>
+                                          <Image url="@../buttons/iconLast.png" />
+                                      </image>
+                                  </ImageView>
+                              </graphic>
+                          </Button>
+                          <Button fx:id="previousButton" mnemonicParsing="false" onAction="#previousAction">
+                              <graphic>
+                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                      <image>
+                                          <Image url="@../buttons/iconPrevious.png" />
+                                      </image>
+                                  </ImageView>
+                              </graphic>
+                          </Button>
+                          <Button fx:id="nextButton" mnemonicParsing="false" onAction="#nextAction">
+                              <graphic>
+                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                      <image>
+                                          <Image url="@../buttons/iconNext.png" />
+                                      </image>
+                                  </ImageView>
+                              </graphic>
+                          </Button>
+                      </children>
+                  </HBox>
             </children>
             <BorderPane.margin>
                 <Insets />

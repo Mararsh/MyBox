@@ -14,8 +14,8 @@ import java.util.TimeZone;
  */
 public class CommonValues {
 
-    public static final String AppVersion = "6.1";
-    public static final String AppVersionDate = "2020-02-11";
+    public static final String AppVersion = "6.1.5";
+    public static final String AppVersionDate = "2020-02-21";
     public static final String AppDocVersion = "5.0";
 
     public static final String AppDerbyUser = "mara";
@@ -177,6 +177,8 @@ public class CommonValues {
     public static final String GameElimniationFxml = "/fxml/GameElimination.fxml";
     public static final String GeographyCodeFxml = "/fxml/GeographyCode.fxml";
     public static final String GeographyCodeEditFxml = "/fxml/GeographyCodeEdit.fxml";
+    public static final String GeographyRegionFxml = "/fxml/GeographyRegion.fxml";
+    public static final String GeographyRegionEditFxml = "/fxml/GeographyRegionEdit.fxml";
     public static final String LocationsDataFxml = "/fxml/LocationsData.fxml";
     public static final String LocationsDataInMapFxml = "/fxml/LocationsDataInMap.fxml";
     public static final String LocationEditFxml = "/fxml/LocationEdit.fxml";
@@ -184,7 +186,9 @@ public class CommonValues {
     public static final String EpidemicReportsFxml = "/fxml/EpidemicReports.fxml";
     public static final String EpidemicReportEditFxml = "/fxml/EpidemicReportEdit.fxml";
     public static final String EpidemicReportsChineseProvincesEditFxml = "/fxml/EpidemicReportsChineseProvincesEdit.fxml";
-    public static final String EpidemicReportsCountiresEditFxml = "/fxml/EpidemicReportsCountriesEdit.fxml";
+    public static final String EpidemicReportsCountriesEditFxml = "/fxml/EpidemicReportsCountriesEdit.fxml";
+    public static final String EpidemicReportsDingXiangYuanFxml = "/fxml/EpidemicReportsDingXiangYuan.fxml";
+    public static final String EpidemicReportsFetchNPCDataFxml = "/fxml/EpidemicReportsFetchNPCData.fxml";
 
     public static final Locale LocaleZhCN = new Locale("zh", "CN");
     public static final Locale LocaleEnUS = new Locale("en", "US");
@@ -207,6 +211,7 @@ public class CommonValues {
     public static final String DatetimeFormat3 = "yyyy-MM-dd-HH-mm-ss-SSS";
     public static final String DatetimeFormat4 = "yyyyMMddHHmmssSSS";
     public static final String DatetimeFormat5 = "yyyy-MM-dd G HH:mm:ss";
+    public static final String DatetimeFormat6 = "yyyy.MM.dd HH:mm:ss";
 
     public static String Indent = "    ";
 
@@ -218,6 +223,8 @@ public class CommonValues {
     public static final String GaoDeJavasriptkey = "06b9e078a51325a843dfefd57ffd876c";
     public static final String GaoDeMapVerison = "1.4.15";
     public static final String GaoDeWebKey = "a389d47ae369e57e0c2c7e32e845d1b0";
+
+    public static final String MyBoxInternetDataPath = "https://sourceforge.net/projects/mara-mybox/files/data/";
 
     public static List<String> SupportedImages = new ArrayList<String>() {
         {

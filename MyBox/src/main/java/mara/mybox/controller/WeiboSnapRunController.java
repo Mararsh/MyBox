@@ -55,6 +55,7 @@ import mara.mybox.tools.NetworkTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
@@ -78,7 +79,7 @@ public class WeiboSnapRunController extends BaseController {
     protected int savedHtmlCount, savedMonthPdfCount, savedPagePdfCount, completedMonthsCount, totalMonthsCount,
             savedPixCount, totalLikeCount;
     protected Timer loadTimer, snapTimer;
-    protected long loadStartTime, snapStartTime, startTime;
+    protected long loadStartTime, snapStartTime, startTime, maxMergedSize;
     protected boolean loadFailed, loadCompleted, mainCompleted,
             commentsLoaded, picturedsLoaded, startPageChecked, skipPage, parentOpened;
     protected WeiboSnapingInfoController loadingController;
@@ -332,6 +333,17 @@ public class WeiboSnapRunController extends BaseController {
             snapLoopInterval = parameters.getSnapInterval();
             dpi = parameters.getDpi();
 
+            String pdfSizeS = parameters.getMaxMergedSize();
+            if ("1G".equals(pdfSizeS)) {
+                maxMergedSize = 1024 * 1024 * 1024;
+            } else if ("2G".equals(pdfSizeS)) {
+                maxMergedSize = 2048 * 1024 * 1024;
+            } else if (message("Unlimit").equals(pdfSizeS)) {
+                maxMergedSize = -1;
+            } else {
+                maxMergedSize = 500 * 1024 * 1024;
+            }
+
 //            logger.debug(parameters.getWebAddress());
             if (parameters.getWebAddress() == null || parameters.getWebAddress().isEmpty()) {
                 closeStage();
@@ -480,6 +492,9 @@ public class WeiboSnapRunController extends BaseController {
                                                     if (posLast1 > 0) {
                                                         s = contents.substring(posLast1 + "&stat_date=".length());
                                                         int posLast2 = s.indexOf("&page=");
+                                                        if (posLast2 <= 0) {
+                                                            posLast2 = s.indexOf('\\');
+                                                        }
                                                         if (posLast2 > 0) {
                                                             try {
                                                                 s = s.substring(0, posLast2);
@@ -633,10 +648,18 @@ public class WeiboSnapRunController extends BaseController {
                 startPageChecked = true;
             }
             if (currentPage > currentMonthPageCount) {
+
+                if (snapType == SnapType.Like) {
+                    missCompleted();
+                    return;
+                }
                 completedMonthsCount++;
                 if (parameters.isCreatePDF()) {
                     mergeMonthPdf(pdfPath, currentMonthString, currentMonthPageCount);
                 }
+                FileTools.deleteEmptyDir(pdfPath, false);
+                FileTools.deleteEmptyDir(htmlPath, false);
+                FileTools.deleteEmptyDir(pixPath, false);
                 Calendar c = Calendar.getInstance();
                 c.setTime(currentMonth);
                 c.add(Calendar.MONTH, 1);
@@ -663,10 +686,6 @@ public class WeiboSnapRunController extends BaseController {
     }
 
     protected void missCompleted() {
-        if (openLoadingStage()) {
-            loadingController.setInfo(AppVariables.message("DeleteEmptyDirectories"));
-        }
-        FileTools.deleteEmptyDir(rootPath, false);
         if (parameters.isMiao()) {
             FxmlControl.miao3();
         }
@@ -1103,7 +1122,7 @@ public class WeiboSnapRunController extends BaseController {
 
     public void reloadPage() {
         retried = 0;
-        loadingController.getReloadButton().setDisable(true);
+//        loadingController.getReloadButton().setDisable(true);
         loadingController.showError("");
         loadPage(currentAddress);
     }
@@ -1130,7 +1149,7 @@ public class WeiboSnapRunController extends BaseController {
             }
             if (controller != null) {
                 controller.showError(errorString);
-                controller.getReloadButton().setDisable(false);
+//                controller.getReloadButton().setDisable(false);
             } else {
                 alertError(errorString);
                 endSnap();
@@ -1307,7 +1326,7 @@ public class WeiboSnapRunController extends BaseController {
                             totalSize += file.length();
                         }
                     }
-                    if (files.isEmpty() || totalSize > 500 * 1024 * 1024) {
+                    if (files.isEmpty() || totalSize > maxMergedSize) {
                         pdfs.remove(month);
                         savedPagePdfCount += files.size();
                         return null;
@@ -1382,6 +1401,10 @@ public class WeiboSnapRunController extends BaseController {
 
     public void endSnap() {
         try {
+            if (openLoadingStage()) {
+                loadingController.setInfo(AppVariables.message("DeleteEmptyDirectories"));
+            }
+            FileTools.deleteEmptyDir(rootPath, false);
             if (parent != null && snapType == SnapType.Posts) {
                 parent.setDuration(currentMonthString, "");
             }

@@ -47,11 +47,14 @@ public class FileFilterController extends FileEditerController {
             }
             filterTypeSelector.valueProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue<? extends String> ov, String oldv, String newv) {
+                public void changed(ObservableValue<? extends String> ov,
+                        String oldv, String newv) {
                     checkFilterType();
                 }
             });
             filterTypeSelector.getSelectionModel().select(0);
+
+            FxmlControl.setTooltip(filterTypeSelector, new Tooltip(AppVariables.message("FilterTypesComments")));
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -81,7 +84,8 @@ public class FileFilterController extends FileEditerController {
         }
     }
 
-    public void filterFile(final FileEditInformation sourceInfo, String initConditions,
+    public void filterFile(final FileEditInformation sourceInfo,
+            String initConditions,
             final boolean recordLineNumber) {
 
         if (sourceInfo == null || sourceInfo.getFile() == null

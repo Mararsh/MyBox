@@ -463,7 +463,8 @@ public class AppVariables {
         }
     }
 
-    public static boolean getSystemConfigBoolean(String key, boolean defaultValue) {
+    public static boolean getSystemConfigBoolean(String key,
+            boolean defaultValue) {
         try {
             boolean v;
             if (systemConfigValues.containsKey(key)) {

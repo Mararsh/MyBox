@@ -597,10 +597,15 @@ public class MyBoxController extends BaseController {
             loadScene(CommonValues.SecurityCertificatesFxml);
         });
 
+        MenuItem RestoreCheckingSSLCertifications = new MenuItem(AppVariables.message("RestoreCheckingSSLCertifications"));
+        RestoreCheckingSSLCertifications.setOnAction((ActionEvent event1) -> {
+            restoreCheckingSSL();
+        });
+
         popMenu = new ContextMenu();
         popMenu.setAutoHide(true);
         popMenu.getItems().addAll(
-                htmlEditor, webBrowserHtml, SecurityCertificates, new SeparatorMenuItem(),
+                htmlEditor, webBrowserHtml, SecurityCertificates, RestoreCheckingSSLCertifications, new SeparatorMenuItem(),
                 markdownEditor, htmlToMarkdown, markdownToHtml, new SeparatorMenuItem(),
                 DownloadManage, new SeparatorMenuItem(),
                 weiboSnap
@@ -932,6 +937,10 @@ public class MyBoxController extends BaseController {
             loadScene(CommonValues.GeographyCodeFxml);
         });
 
+//        MenuItem GeographyRegion = new MenuItem(AppVariables.message("GeographyRegion"));
+//        GeographyRegion.setOnAction((ActionEvent event1) -> {
+//            loadScene(CommonValues.GeographyRegionFxml);
+//        });
         MenuItem LocationsData = new MenuItem(AppVariables.message("LocationsData"));
         LocationsData.setOnAction((ActionEvent event1) -> {
             loadScene(CommonValues.LocationsDataFxml);
@@ -952,6 +961,11 @@ public class MyBoxController extends BaseController {
             loadScene(CommonValues.EpidemicReportsFxml);
         });
 
+        MenuItem FetchNPCData = new MenuItem(AppVariables.message("FetchNPCData"));
+        FetchNPCData.setOnAction((ActionEvent event1) -> {
+            loadScene(CommonValues.EpidemicReportsFetchNPCDataFxml);
+        });
+
         popMenu = new ContextMenu();
         popMenu.setAutoHide(true);
         popMenu.getItems().addAll(
@@ -960,7 +974,7 @@ public class MyBoxController extends BaseController {
                 barcodeCreator, barcodeDecoder, new SeparatorMenuItem(),
                 messageDigest, new SeparatorMenuItem(),
                 GeographyCode, LocationInMap, LocationsData, LocationsDataInMap, new SeparatorMenuItem(),
-                EpidemicReport
+                EpidemicReport, FetchNPCData
         );
 
         showMenu(dataBox, event);
@@ -1050,7 +1064,7 @@ public class MyBoxController extends BaseController {
     private void showAboutImage(MouseEvent event) {
         hideMenu(event);
 
-        view.setImage(new Image("img/About" + CommonValues.AppVersion + ".png"));
+        view.setImage(new Image("img/About.png"));
         text.setText(message("AboutImageTips"));
         locateImage(aboutBox, false);
     }

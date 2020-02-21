@@ -6,6 +6,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -13,6 +14,7 @@ import mara.mybox.data.VisitHistory;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 
 /**
@@ -31,6 +33,8 @@ public class FFmpegBaseController extends FilesBatchController {
     protected TextField executableInput;
     @FXML
     protected VBox functionBox;
+    @FXML
+    protected TextArea tipsArea;
 
     public FFmpegBaseController() {
         baseTitle = AppVariables.message("MediaInformation");
@@ -56,7 +60,8 @@ public class FFmpegBaseController extends FilesBatchController {
             if (executableInput != null) {
                 executableInput.textProperty().addListener(new ChangeListener<String>() {
                     @Override
-                    public void changed(ObservableValue observable, String oldValue, String newValue) {
+                    public void changed(ObservableValue observable,
+                            String oldValue, String newValue) {
                         checkExecutableInput();
                     }
                 });
@@ -67,6 +72,9 @@ public class FFmpegBaseController extends FilesBatchController {
                 functionBox.disableProperty().bind(executableInput.styleProperty().isEqualTo(badStyle));
             }
 
+            if (tipsArea != null) {
+                tipsArea.setText(message("FFmpegArgumentsTips"));
+            }
         } catch (Exception e) {
             logger.error(e.toString());
         }

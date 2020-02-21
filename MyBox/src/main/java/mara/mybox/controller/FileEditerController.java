@@ -87,7 +87,7 @@ public abstract class FileEditerController extends BaseController {
     }
 
     @FXML
-    protected VBox editBox;
+    protected VBox editBox, filtersTypeBox;
     @FXML
     protected TitledPane filePane, bytesPane, findPane, filterPane, locatePane,
             encodePane, breakLinePane, paginatePane, inputPane;
@@ -105,7 +105,7 @@ public abstract class FileEditerController extends BaseController {
     @FXML
     protected SplitPane contentSplitPane;
     @FXML
-    protected Label editLabel, bomLabel, pageLabel, charsetLabel, selectionLabel;
+    protected Label editLabel, bomLabel, pageLabel, charsetLabel, selectionLabel, filterCommentsLabel;
     @FXML
     protected Button pageFirstButton, pagePreviousButton, pageNextButton, pageLastButton,
             charactersButton, linesButton,
@@ -118,7 +118,7 @@ public abstract class FileEditerController extends BaseController {
     @FXML
     protected RadioButton crlfRadio, lfRadio, crRadio, wholeFileRadio, currentPageRadio;
     @FXML
-    protected HBox pageBox, findBox, filterBox, filterTypesBox;
+    protected HBox pageBox, findBox, filterBox;
     @FXML
     protected FlowPane find2Pane;
 
@@ -207,7 +207,9 @@ public abstract class FileEditerController extends BaseController {
         if (okButton != null) {
             FxmlControl.setTooltip(okButton, new Tooltip(message("OK") + "\nF1 / CTRL+g"));
         }
-
+        if (filtersTypeBox != null) {
+            FxmlControl.setTooltip(filtersTypeBox, new Tooltip(AppVariables.message("FilterTypesComments")));
+        }
     }
 
     @Override
@@ -488,15 +490,13 @@ public abstract class FileEditerController extends BaseController {
 
     protected void initFilterTab() {
         try {
-            filterPane.expandedProperty().addListener(
-                    (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                        AppVariables.setUserConfigValue(baseName + "FilterPane", filterPane.isExpanded());
-                    });
-            filterPane.setExpanded(AppVariables.getUserConfigBoolean(baseName + "FilterPane", false));
-
-            Tooltip tips = new Tooltip(AppVariables.message("FilterTypesComments"));
-            tips.setFont(new Font(16));
-            FxmlControl.setTooltip(filterTypesBox, tips);
+            if (filterPane != null) {
+                filterPane.expandedProperty().addListener(
+                        (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
+                            AppVariables.setUserConfigValue(baseName + "FilterPane", filterPane.isExpanded());
+                        });
+                filterPane.setExpanded(AppVariables.getUserConfigBoolean(baseName + "FilterPane", false));
+            }
 
             if (filterGroup != null) {
                 filterGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
@@ -621,7 +621,7 @@ public abstract class FileEditerController extends BaseController {
         String f = filterInput.getText();
         boolean invalid = f.isEmpty() || sourceFile == null || mainArea.getText().isEmpty();
         if (!invalid) {
-            if (f.length() >= sourceInformation.getPageSize()) {
+            if (sourceInformation != null && f.length() >= sourceInformation.getPageSize()) {
                 popError(AppVariables.message("FindStringLimitation"));
                 invalid = true;
             } else {
@@ -1959,13 +1959,14 @@ public abstract class FileEditerController extends BaseController {
                                         mainArea.setScrollLeft(currentScrollLeft);
                                         mainArea.setScrollTop(currentScrollTop);
                                         if (currentSelection != null) {
+//                                            logger.debug(currentSelection.getStart() + "  " + currentSelection.getEnd());
                                             mainArea.selectRange(currentSelection.getStart(), currentSelection.getEnd());
                                         }
                                         timer = null;
                                     }
                                 });
                             }
-                        }, 1000);
+                        }, 2000);
 
                     } else {
                         popFailed();
@@ -2186,6 +2187,7 @@ public abstract class FileEditerController extends BaseController {
         currentScrollLeft = mainArea.getScrollLeft();
         currentScrollTop = mainArea.getScrollTop();
         currentSelection = mainArea.getSelection();
+//        logger.debug(currentSelection.getStart() + "  " + currentSelection.getEnd());
         if (sourceFile == null) {
             saveNew();
         } else {

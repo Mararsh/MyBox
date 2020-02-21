@@ -18,7 +18,7 @@ public class WeiboSnapParameters {
     private int webWidth, retry, startPage, loadInterval, snapInterval, likeStartPage;
     private boolean imagePerScreen, isImageSize, addPageNumber, createPDF, createHtml, savePictures, keepPagePdf;
     private boolean miao, expandComments, expandPicture, fullScreen, openPathWhenStop, useTempFiles, dithering;
-    private String webAddress, author, title, fontName;
+    private String webAddress, author, title, fontName, maxMergedSize;
     private int marginSize, pageWidth, pageHeight, jpegQuality, threshold, maxMergeSize, category, pdfScale, dpi;
     private Date startMonth, endMonth;
     private float zoomScale;
@@ -346,6 +346,14 @@ public class WeiboSnapParameters {
 
     public void setLikeStartPage(int likeStartPage) {
         this.likeStartPage = likeStartPage;
+    }
+
+    public String getMaxMergedSize() {
+        return maxMergedSize;
+    }
+
+    public void setMaxMergedSize(String maxMergedSize) {
+        this.maxMergedSize = maxMergedSize;
     }
 
 }

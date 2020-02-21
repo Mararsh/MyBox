@@ -27,7 +27,6 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.Region;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -68,8 +67,6 @@ public class FFmpegConvertMediaFilesController extends FFmpegBaseController {
             subtitleEncoderSelector, aspectSelector, resolutionSelector, videoFrameRateSelector;
     @FXML
     protected TextField extensionInput, volumnInput, moreInput;
-    @FXML
-    protected ImageView argumentTipsView;
 
     public FFmpegConvertMediaFilesController() {
         baseTitle = AppVariables.message("FFmpegConvertMediaFiles");
@@ -100,7 +97,8 @@ public class FFmpegConvertMediaFilesController extends FFmpegBaseController {
 
             muxerSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                public void changed(ObservableValue ov, String oldValue,
+                        String newValue) {
                     if (newValue != null && !newValue.isEmpty()) {
                         AppVariables.setUserConfigValue("ffmpegDefaultMuter", newValue);
                     }
@@ -126,7 +124,8 @@ public class FFmpegConvertMediaFilesController extends FFmpegBaseController {
             });
             audioEncoderSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                public void changed(ObservableValue ov, String oldValue,
+                        String newValue) {
                     if (newValue != null && !newValue.isEmpty()) {
                         AppVariables.setUserConfigValue("ffmpegDefaultAudioEncoder", newValue);
                     }
@@ -155,7 +154,8 @@ public class FFmpegConvertMediaFilesController extends FFmpegBaseController {
             });
             videoEncoderSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                public void changed(ObservableValue ov, String oldValue,
+                        String newValue) {
                     if (newValue != null && !newValue.isEmpty()) {
                         AppVariables.setUserConfigValue("ffmpegDefaultVideoEncoder", newValue);
                     }
@@ -184,7 +184,8 @@ public class FFmpegConvertMediaFilesController extends FFmpegBaseController {
             });
             subtitleEncoderSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                public void changed(ObservableValue ov, String oldValue,
+                        String newValue) {
                     if (newValue != null && !newValue.isEmpty()) {
                         AppVariables.setUserConfigValue("ffmpegDefaultSubtitleEncoder", newValue);
                     }
@@ -218,7 +219,8 @@ public class FFmpegConvertMediaFilesController extends FFmpegBaseController {
             ));
             aspectSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                public void changed(ObservableValue ov, String oldValue,
+                        String newValue) {
                     if (newValue != null && !newValue.isEmpty()) {
                         AppVariables.setUserConfigValue("ffmpegDefaultAspect", newValue);
                     }
@@ -253,7 +255,8 @@ public class FFmpegConvertMediaFilesController extends FFmpegBaseController {
             ));
             resolutionSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                public void changed(ObservableValue ov, String oldValue,
+                        String newValue) {
                     if (newValue != null && !newValue.isEmpty()) {
                         AppVariables.setUserConfigValue("ffmpegDefaultResolution", newValue);
                     }
@@ -285,7 +288,8 @@ public class FFmpegConvertMediaFilesController extends FFmpegBaseController {
             ));
             videoFrameRateSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                public void changed(ObservableValue ov, String oldValue,
+                        String newValue) {
                     if (newValue != null && !newValue.isEmpty()) {
                         AppVariables.setUserConfigValue("ffmpegDefaultFrameRate", newValue);
                     }
@@ -314,12 +318,6 @@ public class FFmpegConvertMediaFilesController extends FFmpegBaseController {
         } catch (Exception e) {
             logger.error(e.toString());
         }
-    }
-
-    @Override
-    public void afterSceneLoaded() {
-        super.afterSceneLoaded();
-        FxmlControl.setTooltip(argumentTipsView, message("FFmpegArgumentsTips"));
     }
 
     @Override

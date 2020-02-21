@@ -339,7 +339,7 @@ public class EpidemicReportEditController extends LocationBaseController {
 
                 TableEpidemicReport.write(report);
 
-                return TableEpidemicReport.summary(dataset);
+                return true;
             }
 
             @Override

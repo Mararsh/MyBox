@@ -573,7 +573,7 @@ public class FileTools {
     }
 
     public static int deleteEmptyDir(File dir, int count, boolean trash) {
-        if (dir.isDirectory()) {
+        if (dir != null && dir.exists() && dir.isDirectory()) {
             File[] files = dir.listFiles();
             if (files == null || files.length == 0) {
                 if (trash) {

@@ -450,7 +450,7 @@ public class FxmlControl {
             return null;
         }
         try {
-            File path = new File(MyboxDataPath + File.separator + subPath);
+            File path = new File(MyboxDataPath + File.separator + subPath + File.separator);
             if (!path.exists()) {
                 path.mkdirs();
             }

@@ -337,8 +337,8 @@ public class LocationMapBaseController extends LocationBaseController {
                         isClicked = false;
                     }
                     String[] values = data.split(",");
-                    double longtitude = Double.valueOf(values[0]);
-                    double latitude = Double.valueOf(values[1]);
+                    longtitude = Double.valueOf(values[0]);
+                    latitude = Double.valueOf(values[1]);
                     if (isClicked) {
                         mapClicked(longtitude, latitude);
                     } else {
@@ -437,7 +437,7 @@ public class LocationMapBaseController extends LocationBaseController {
                 webEngine.getLoadWorker().cancel();
                 webEngine = null;
             }
-            NetworkTools.defaultSSL();
+//            NetworkTools.defaultSSL();
 
         } catch (Exception e) {
         }

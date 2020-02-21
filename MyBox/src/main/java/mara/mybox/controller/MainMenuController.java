@@ -1185,6 +1185,11 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
+    private void restoreCheckingSSLCertifications(ActionEvent event) {
+        restoreCheckingSSL();
+    }
+
+    @FXML
     private void openGameElimniation(ActionEvent event) {
         loadScene(CommonValues.GameElimniationFxml);
     }
@@ -1195,8 +1200,13 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
-    private void openDataGeographyCode(ActionEvent event) {
+    private void openGeographyCode(ActionEvent event) {
         loadScene(CommonValues.GeographyCodeFxml);
+    }
+
+    @FXML
+    private void openGeographyRegion(ActionEvent event) {
+        loadScene(CommonValues.GeographyRegionFxml);
     }
 
     @FXML
@@ -1212,6 +1222,11 @@ public class MainMenuController extends BaseController {
     @FXML
     private void openEpidemicReports(ActionEvent event) {
         loadScene(CommonValues.EpidemicReportsFxml);
+    }
+
+    @FXML
+    private void openFetchNPCData(ActionEvent event) {
+        loadScene(CommonValues.EpidemicReportsFetchNPCDataFxml);
     }
 
     @FXML

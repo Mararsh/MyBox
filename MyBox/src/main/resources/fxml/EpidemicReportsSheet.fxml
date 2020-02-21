@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.scene.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.web.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.effect.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<VBox fx:id="thisPane" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="650.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.EpidemicReportsChineseProvincesEditController">
+    <children>
+        <HBox alignment="CENTER" maxWidth="1.7976931348623157E308" spacing="5.0">
+            <children>
+                <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="%ChineseProvincesEpidemicReports" HBox.hgrow="ALWAYS" />
+            </children>
+        </HBox>
+        <HBox alignment="CENTER_LEFT" spacing="5.0">
+            <children>
+                <Label alignment="CENTER_RIGHT" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%DataSet" />
+                <ComboBox fx:id="datasetSelector" editable="true" prefWidth="400.0" />
+                <Label alignment="CENTER_RIGHT" text="%Time" />
+                <TextField fx:id="timeInput" prefWidth="200.0" />
+            </children>
+        </HBox>
+        <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="provinceColumn" editable="false" prefWidth="120.0" text="%Province" />
+                <TableColumn fx:id="confirmedColumn" prefWidth="100.0" text="%Confirmed" />
+                <TableColumn fx:id="suspectedColumn" prefWidth="100.0" text="%Suspected" />
+                <TableColumn fx:id="headledColumn" prefWidth="100.0" text="%Healed" />
+                <TableColumn fx:id="deadColumn" prefWidth="100.0" text="%Dead" />
+                <TableColumn fx:id="commentsColumn" prefWidth="200.0" text="%Comments" />
+            </columns>
+        </TableView>
+        <HBox fx:id="closeBox" alignment="CENTER_RIGHT" spacing="5.0">
+            <children>
+                <Label fx:id="tableCommentsLabel" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%EditableColumnsComments" wrapText="true" HBox.hgrow="ALWAYS" />
+                <CheckBox fx:id="saveCloseCheck" mnemonicParsing="false">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconFlower.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </CheckBox>
+                <CheckBox fx:id="topCheck" mnemonicParsing="false" selected="true" VBox.vgrow="NEVER">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconTop.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </CheckBox>
+                <Button fx:id="closeButton" mnemonicParsing="false" onAction="#closeAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconClose.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Save" />
+            </children>
+        </HBox>
+    </children>
+    <BorderPane.margin>
+        <Insets />
+    </BorderPane.margin>
+    <padding>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+    </padding>
+</VBox>

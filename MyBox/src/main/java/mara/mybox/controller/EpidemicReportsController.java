@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
@@ -8,7 +9,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import javafx.application.Platform;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
@@ -20,7 +24,11 @@ import javafx.scene.chart.BarChart;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -32,12 +40,14 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Transform;
-import javafx.scene.web.WebView;
 import javafx.stage.Modality;
+import javafx.stage.Screen;
+import javafx.stage.Stage;
 import mara.mybox.data.EpidemicReport;
 import mara.mybox.data.StringTable;
 import static mara.mybox.data.StringTable.tableDiv;
@@ -47,6 +57,7 @@ import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlStage.openScene;
 import mara.mybox.fxml.TableDateCell;
 import mara.mybox.fxml.TableDoubleCell;
+import mara.mybox.image.ImageManufacture;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.image.file.ImageGifFile;
 import mara.mybox.tools.DateTools;
@@ -68,17 +79,22 @@ import mara.mybox.value.CommonValues;
 public class EpidemicReportsController extends TableManageController<EpidemicReport> {
 
     protected ObservableList<String> dataSets;
-    protected String currentDataSet, currentDataQuery, currentSizeQuery, currentTitle;
+    protected String currentDataSet, currentLevel, currentTime, currentSizeQuery, currentDataQuery,
+            currentCountry, currentProvince, currentCity, currentDistrict, currentTownship,
+            currentNeighborhood, currentTitle, currentClearSQL, currentChartsSQL;
+    protected boolean currentNodeIsLeaf, allZero;
     protected ChartsType chartsType;
     protected File htmlFile;
     protected Tab currentTab;
+    protected SingletonTask treeTask;
+    protected int dpi;
 
     @FXML
     protected TreeView treeView;
     @FXML
     protected TabPane tabPane;
     @FXML
-    protected Tab numberTab, ratioTab, confirmedTab, healedTab, deadTab, mapTab;
+    protected Tab numberTab, increasedTab, ratioTab, confirmedTab, healedTab, deadTab, mapTab;
     @FXML
     protected TableColumn<EpidemicReport, Long> dataidColumn;
     @FXML
@@ -89,25 +105,28 @@ public class EpidemicReportsController extends TableManageController<EpidemicRep
     @FXML
     protected TableColumn<EpidemicReport, Date> timeColumn;
     @FXML
-    protected TableColumn<EpidemicReport, Integer> confirmedColumn, suspectedColumn, headledColumn, deadColumn;
+    protected TableColumn<EpidemicReport, Integer> confirmedColumn, headledColumn, deadColumn,
+            increasedConfirmedColumn, increasedHeadledColumn, increasedDeadColumn;
     @FXML
     protected TableColumn<EpidemicReport, Double> headledRatioColumn, deadRatioColumn;
     @FXML
-    protected Button examplesButton, chinaButton;
+    protected Button examplesButton, chinaButton, helpMeButton, catButton, statisticButton;
     @FXML
-    protected VBox numberChartBox, ratioChartBox;
+    protected VBox numberChartBox, increasedChartBox, ratioChartBox;
     @FXML
-    protected BarChart numberBarChart, ratioBarChart;
+    protected BarChart numberBarChart, increasedBarChart, ratioBarChart;
     @FXML
-    protected LineChart numberLineChart, ratioLineChart;
+    protected LineChart numberLineChart, increasedLineChart, ratioLineChart;
     @FXML
     protected PieChart deadPie, headledPie, confirmedPie;
-    @FXML
-    protected WebView mapView;
     @FXML
     protected Label nameLabel;
     @FXML
     protected EpidemicReportMapController mapController;
+    @FXML
+    protected CheckBox recountCheck;
+    @FXML
+    private ComboBox<String> dpiSelector;
 
     protected enum ChartsType {
         TimeBasedMap, LocationBased, TimeBasedNoMap, None
@@ -129,16 +148,37 @@ public class EpidemicReportsController extends TableManageController<EpidemicRep
             mapController.parent = this;
 
             dataSets = FXCollections.observableArrayList();
-            currentSizeQuery = " SELECT count(dataid) FROM Epidemic_Report "
-                    + " WHERE  country IS NULL AND province IS NULL ";
-            currentDataQuery = "SELECT * FROM Epidemic_Report "
-                    + " WHERE  country IS NULL AND province IS NULL "
-                    + " ORDER BY data_set, time, confirmed desc ";
-            currentTitle = message("EpidemicReport");
+            currentDataSet = null;
+            currentLevel = "All";
+
             chartsType = ChartsType.None;
-            loadTree();
 
             pageSizeSelector.setValue("200");
+
+            dpi = 96;
+            List<String> dpiValues = new ArrayList();
+            dpiValues.addAll(Arrays.asList("96", "120", "160", "300"));
+            String sValue = Toolkit.getDefaultToolkit().getScreenResolution() + "";
+            if (dpiValues.contains(sValue)) {
+                dpiValues.remove(sValue);
+            }
+            dpiValues.add(0, sValue);
+            sValue = (int) Screen.getPrimary().getDpi() + "";
+            if (dpiValues.contains(sValue)) {
+                dpiValues.remove(sValue);
+            }
+            dpiValues.add(sValue);
+            dpiSelector.getItems().addAll(dpiValues);
+            dpiSelector.getSelectionModel().selectedItemProperty().addListener(
+                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
+                        try {
+                            dpi = Integer.parseInt(newValue);
+                            AppVariables.setUserConfigValue("EpidemicReportDPI", dpi + "");
+                        } catch (Exception e) {
+                            dpi = 96;
+                        }
+                    });
+            dpiSelector.getSelectionModel().select(AppVariables.getUserConfigValue("EpidemicReportDPI", "96"));
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -156,10 +196,12 @@ public class EpidemicReportsController extends TableManageController<EpidemicRep
             provinceColumn.setCellValueFactory(new PropertyValueFactory<>("province"));
             cityColumn.setCellValueFactory(new PropertyValueFactory<>("city"));
             confirmedColumn.setCellValueFactory(new PropertyValueFactory<>("confirmed"));
-            suspectedColumn.setCellValueFactory(new PropertyValueFactory<>("suspected"));
+            increasedConfirmedColumn.setCellValueFactory(new PropertyValueFactory<>("increasedConfirmed"));
             headledColumn.setCellValueFactory(new PropertyValueFactory<>("healed"));
+            increasedHeadledColumn.setCellValueFactory(new PropertyValueFactory<>("increasedHealed"));
             headledRatioColumn.setCellValueFactory(new PropertyValueFactory<>("healedRatio"));
             deadColumn.setCellValueFactory(new PropertyValueFactory<>("dead"));
+            increasedDeadColumn.setCellValueFactory(new PropertyValueFactory<>("increasedDead"));
             deadRatioColumn.setCellValueFactory(new PropertyValueFactory<>("deadRatio"));
             commentsColumn.setCellValueFactory(new PropertyValueFactory<>("comments"));
             longtitudeColumn.setCellValueFactory(new PropertyValueFactory<>("longitude"));
@@ -176,44 +218,75 @@ public class EpidemicReportsController extends TableManageController<EpidemicRep
 
     @Override
     public void afterSceneLoaded() {
-        super.afterSceneLoaded();
-        FxmlControl.setTooltip(examplesButton, message("EpidemicReportsExamplesComments"));
-        FxmlControl.setTooltip(chinaButton, message("ChineseProvincesEpidemicReports"));
-        if (!AppVariables.getUserConfigBoolean("EpidemicReportExamples", false)) {
-            alertInformation(message("EpidemicReportsExamplesComments"));
-            AppVariables.setUserConfigValue("EpidemicReportExamples", true);
-            examplesAction();
+        try {
+            super.afterSceneLoaded();
+            FxmlControl.setTooltip(examplesButton, message("EpidemicReportsExamplesComments"));
+            FxmlControl.setTooltip(chinaButton, message("ChineseProvincesEpidemicReports"));
+            FxmlControl.setTooltip(helpMeButton, message("FetchNPCData"));
+            FxmlControl.setTooltip(clearButton, message("Clear") + "\nCTRL+g\n\n" + message("RelativeClearComments"));
+            FxmlControl.setTooltip(catButton, message("MyBoxInternetDataPath"));
+            FxmlControl.setTooltip(statisticButton, message("EpidemicReportStatisticComments"));
+            FxmlControl.setTooltip(recountCheck, message("EpidemicReportStatisticComments"));
+
+            String backFile = AppVariables.getSystemConfigValue("EpidemicReportBackup6.1.5", "");
+            if (!backFile.isBlank()) {
+                alertInformation(message("EpidemicReportBackup615Comments")
+                        + "\n\n" + backFile);
+                AppVariables.deleteSystemConfigValue("EpidemicReportBackup6.1.5");
+                examplesAction();
+            } else if (!AppVariables.getSystemConfigBoolean("EpidemicReportExamples6.1.5", false)) {
+                alertInformation(message("EpidemicReportsExamplesComments"));
+                AppVariables.setSystemConfigValue("EpidemicReportExamples6.1.5", true);
+                examplesAction();
+            } else {
+                loadTree();
+            }
+        } catch (Exception e) {
+            logger.debug(e.toString());
         }
     }
 
     protected void loadTree() {
+        loadTree(false);
+    }
+
+    protected void loadTree(boolean requireStatistic) {
         treeView.setRoot(null);
         synchronized (this) {
-            if (task != null) {
-                task.cancel();
+            if (treeTask != null) {
+                return;
             }
-            task = new SingletonTask<Void>() {
-                private List<String> datasets;
+            treeTask = new SingletonTask<Void>() {
+                private List<String> datasets, countries;
                 private Map<String, List<Date>> timesMap;
-                private Map<String, List<String>> countriesMap, provincesMap;
+                private Map<String, List<String>> provincesMap, citiesMap;
 
                 @Override
                 protected boolean handle() {
+                    if (requireStatistic || recountCheck.isSelected()) {
+                        TableEpidemicReport.statistic();
+                    }
+
                     datasets = TableEpidemicReport.datasets();
                     if (datasets == null || datasets.isEmpty()) {
                         return true;
                     }
                     timesMap = new HashMap<>();
-                    countriesMap = new HashMap<>();
                     provincesMap = new HashMap<>();
+                    citiesMap = new HashMap<>();
                     for (String dataset : datasets) {
-                        List<String> countries = TableEpidemicReport.countries(dataset);
+                        countries = TableEpidemicReport.countries(dataset);
                         if (countries != null && !countries.isEmpty()) {
-                            countriesMap.put(dataset, countries);
                             for (String country : countries) {
                                 List<String> provinces = TableEpidemicReport.provinces(dataset, country);
                                 if (provinces != null && !provinces.isEmpty()) {
-                                    provincesMap.put(dataset + country, provinces);
+                                    provincesMap.put(country, provinces);
+                                    for (String province : provinces) {
+                                        List<String> cities = TableEpidemicReport.cities(dataset, country, province);
+                                        if (cities != null && !cities.isEmpty()) {
+                                            citiesMap.put(country + province, cities);
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -222,192 +295,504 @@ public class EpidemicReportsController extends TableManageController<EpidemicRep
                             timesMap.put(dataset, times);
                         }
                     }
+                    Platform.runLater(() -> {
+                        writeTree();
+                    });
                     return true;
                 }
 
-                @Override
-                protected void whenSucceeded() {
+                protected void writeTree() {
                     if (datasets == null || datasets.isEmpty()) {
                         return;
                     }
                     isSettingValues = true;
                     Text allLink = new Text(message("All"));
                     allLink.setOnMouseClicked((MouseEvent event) -> {
-                        currentDataSet = null;
-                        currentSizeQuery = " SELECT count(dataid) FROM Epidemic_Report "
-                                + " WHERE  country IS NULL AND province IS NULL ";
-                        currentDataQuery = "SELECT * FROM Epidemic_Report "
-                                + " WHERE  country IS NULL AND province IS NULL "
-                                + " ORDER BY data_set, time, confirmed desc ";
-                        currentTitle = message("EpidemicReport");
-                        chartsType = ChartsType.None;
-                        loadReports();
+                        loadAll();
                     });
                     TreeItem root = new TreeItem<>(allLink);
                     root.setExpanded(true);
                     treeView.setRoot(root);
+
                     for (String dataset : datasets) {
                         Text datasetLink = new Text(dataset);
                         datasetLink.setOnMouseClicked((MouseEvent event) -> {
-                            currentDataSet = dataset;
-                            currentSizeQuery = "SELECT count(dataid) FROM Epidemic_Report "
-                                    + " WHERE data_set='" + dataset + "' AND country IS NULL AND province IS NULL";
-                            currentDataQuery = "SELECT * FROM Epidemic_Report "
-                                    + " WHERE data_set='" + dataset + "' AND country IS NULL AND province IS NULL "
-                                    + " ORDER BY  time , confirmed desc ";
-                            currentTitle = dataset;
-                            chartsType = ChartsType.TimeBasedNoMap;
-                            loadReports();
+                            loadDataset(dataset);
                         });
                         TreeItem<Text> datasetItem = new TreeItem<>(datasetLink);
                         datasetItem.setExpanded(true);
                         root.getChildren().add(datasetItem);
 
-                        List<Date> times = timesMap.get(dataset);
-                        if (times != null) {
-                            Text timesLink = new Text(message("Time"));
-                            timesLink.setOnMouseClicked((MouseEvent event) -> {
-                                currentDataSet = dataset;
-                                currentSizeQuery = "SELECT count(dataid) FROM Epidemic_Report "
-                                        + " WHERE data_set='" + dataset + "' AND country IS NULL AND province IS NULL";
-                                currentDataQuery = "SELECT * FROM Epidemic_Report "
-                                        + " WHERE data_set='" + dataset + "' AND  country IS NULL AND province IS NULL "
-                                        + " ORDER BY  time , confirmed desc ";
-                                currentTitle = dataset;
-                                chartsType = ChartsType.TimeBasedNoMap;
-                                loadReports();
-                            });
-                            TreeItem<Text> timesItem = new TreeItem<>(timesLink);
-                            timesItem.setExpanded(false);
-                            datasetItem.getChildren().add(timesItem);
+                        timeTree(datasetItem, dataset);
 
-                            for (Date time : times) {
-                                Text timeLink = new Text(DateTools.datetimeToString(time));
-                                TreeItem<Text> timeItem = new TreeItem<>(timeLink);
-                                timeItem.setExpanded(false);
-                                timesItem.getChildren().add(timeItem);
+                        Text countriesLink = new Text(message("Countries"));
+                        countriesLink.setOnMouseClicked((MouseEvent event) -> {
+                            loadCountries(dataset);
+                        });
+                        TreeItem<Text> countriesItem = new TreeItem<>(countriesLink);
+                        countriesItem.setExpanded(false);
+                        datasetItem.getChildren().add(countriesItem);
 
-                                Text globalLink = new Text(message("Global"));
-                                globalLink.setOnMouseClicked((MouseEvent event) -> {
-                                    currentDataSet = dataset;
-                                    currentSizeQuery = "SELECT count(dataid) FROM Epidemic_Report "
-                                            + " WHERE data_set='" + dataset + "' AND time='" + DateTools.datetimeToString(time)
-                                            + "' AND country IS NOT NULL AND province IS NULL";
-                                    currentDataQuery = "SELECT * FROM Epidemic_Report "
-                                            + " WHERE data_set='" + dataset + "' AND time='" + DateTools.datetimeToString(time)
-                                            + "' AND country IS NOT NULL AND province IS NULL"
-                                            + " ORDER BY  time , confirmed desc ";
-                                    currentTitle = dataset + " - " + message("Global") + " - " + DateTools.datetimeToString(time);
-                                    chartsType = ChartsType.LocationBased;
-                                    loadReports();
-                                });
-                                TreeItem<Text> globalItem = new TreeItem<>(globalLink);
-                                globalItem.setExpanded(false);
-                                timeItem.getChildren().add(globalItem);
+                        countrieTree(countriesItem, dataset, null);
+                    }
 
-                                Text chinaLink = new Text(message("China"));
-                                chinaLink.setOnMouseClicked((MouseEvent event) -> {
-                                    currentDataSet = dataset;
-                                    currentSizeQuery = "SELECT count(dataid) FROM Epidemic_Report "
-                                            + " WHERE data_set='" + dataset + "' AND country='" + message("China")
-                                            + "' AND time='" + DateTools.datetimeToString(time)
-                                            + "' AND province IS NOT NULL";
-                                    currentDataQuery = "SELECT * FROM Epidemic_Report "
-                                            + " WHERE data_set='" + dataset + "' AND country='" + message("China")
-                                            + "' AND time='" + DateTools.datetimeToString(time)
-                                            + "' AND province IS NOT NULL"
-                                            + " ORDER BY  time , confirmed desc ";
-                                    currentTitle = dataset + " - " + message("China") + " - " + DateTools.datetimeToString(time);
-                                    chartsType = ChartsType.LocationBased;
-                                    loadReports();
-                                });
-                                TreeItem<Text> chinaItem = new TreeItem<>(chinaLink);
-                                chinaItem.setExpanded(false);
-                                timeItem.getChildren().add(chinaItem);
+                    isSettingValues = false;
 
+                }
+
+                protected void timeTree(TreeItem parent, String dataset) {
+                    if (dataset == null) {
+                        return;
+                    }
+                    List<Date> times = timesMap.get(dataset);
+                    if (times == null || times.isEmpty()) {
+                        return;
+                    }
+                    Text timesLink = new Text(message("Time"));
+                    timesLink.setOnMouseClicked((MouseEvent event) -> {
+                        loadAllTime(dataset);
+                    });
+                    TreeItem<Text> timesItem = new TreeItem<>(timesLink);
+                    timesItem.setExpanded(false);
+                    parent.getChildren().add(timesItem);
+
+                    for (Date time : times) {
+                        String timeString = DateTools.datetimeToString(time);
+                        Text timeLink = new Text(timeString);
+                        timeLink.setOnMouseClicked((MouseEvent event) -> {
+                            loadTime(dataset, timeLink.getText());
+                        });
+                        TreeItem<Text> timeItem = new TreeItem<>(timeLink);
+                        timeItem.setExpanded(false);
+                        timesItem.getChildren().add(timeItem);
+                        countrieTree(timeItem, dataset, timeString);
+                    }
+
+                }
+
+                protected void countrieTree(TreeItem parent, String dataset,
+                        String time) {
+                    if (parent == null || countries == null || countries.isEmpty()) {
+                        return;
+                    }
+
+                    for (String country : countries) {
+                        if (country.isBlank()) {
+                            continue;
+                        }
+                        Text countryLink = new Text(country);
+                        TreeItem<Text> countryItem = new TreeItem<>(countryLink);
+                        countryItem.setExpanded(false);
+                        parent.getChildren().add(countryItem);
+                        countryLink.setOnMouseClicked((MouseEvent event) -> {
+                            if (countryItem.isLeaf()) {
+                                loadCountry(dataset, time, country);
+                            } else {
+                                loadCountryProvinces(dataset, time, country);
                             }
-                        }
+                        });
 
-                        List<String> countries = countriesMap.get(dataset);
-                        if (countries != null) {
-                            Text countriesLink = new Text(message("Countries"));
-                            countriesLink.setOnMouseClicked((MouseEvent event) -> {
-                                currentDataSet = dataset;
-                                currentSizeQuery = "SELECT count(dataid) FROM Epidemic_Report "
-                                        + " WHERE data_set='" + dataset + "' AND country IS NULL AND province IS NULL";
-                                currentDataQuery = "SELECT * FROM Epidemic_Report "
-                                        + " WHERE data_set='" + dataset + "' AND  country IS NULL AND province IS NULL "
-                                        + " ORDER BY  time , confirmed desc ";
-                                currentTitle = dataset;
-                                chartsType = ChartsType.TimeBasedNoMap;
-                                loadReports();
-                            });
-                            TreeItem<Text> countriesItem = new TreeItem<>(countriesLink);
-                            countriesItem.setExpanded(false);
-                            datasetItem.getChildren().add(countriesItem);
-
-                            for (String country : countries) {
-                                Text countryLink = new Text(country);
-                                countryLink.setOnMouseClicked((MouseEvent event) -> {
-                                    currentDataSet = dataset;
-                                    currentSizeQuery = "SELECT count(dataid) FROM Epidemic_Report WHERE "
-                                            + "data_set='" + dataset + "' AND country='" + country + "' AND province IS NULL";
-                                    currentDataQuery = "SELECT * FROM Epidemic_Report WHERE "
-                                            + "data_set='" + dataset + "' AND country='" + country + "' AND province IS NULL"
-                                            + " ORDER BY  time ,confirmed desc ";
-                                    currentTitle = dataset + " - " + country;
-                                    chartsType = ChartsType.TimeBasedMap;
-                                    loadReports();
-                                });
-                                TreeItem<Text> countryItem = new TreeItem<>(countryLink);
-                                countryItem.setExpanded(false);
-                                countriesItem.getChildren().add(countryItem);
-
-                                List<String> provinces = provincesMap.get(dataset + country);
-                                if (provinces != null) {
-                                    for (String province : provinces) {
-                                        Text provinceLink = new Text(province);
-                                        provinceLink.setOnMouseClicked((MouseEvent event) -> {
-                                            currentDataSet = dataset;
-                                            currentSizeQuery = "SELECT count(dataid) FROM Epidemic_Report WHERE "
-                                                    + "data_set='" + dataset + "' AND country='" + country
-                                                    + "' AND province='" + province + "'";
-                                            currentDataQuery = "SELECT * FROM Epidemic_Report WHERE "
-                                                    + "data_set='" + dataset + "' AND country='" + country
-                                                    + "' AND province='" + province + "'"
-                                                    + " ORDER BY   time ,confirmed desc";
-                                            currentTitle = dataset + " - " + country + " - " + province;
-                                            chartsType = ChartsType.TimeBasedMap;
-                                            loadReports();
-                                        });
-                                        TreeItem<Text> provinceItem = new TreeItem<>(provinceLink);
-                                        provinceItem.setExpanded(false);
-                                        countryItem.getChildren().add(provinceItem);
-                                    }
-                                }
-
-                            }
-                        }
-
-                        if (currentSizeQuery != null && currentDataQuery != null) {
-                            loadReports();
-                        }
+                        provincesTree(countryItem, dataset, country, time);
                     }
                 }
+
+                protected void provincesTree(TreeItem parent, String dataset,
+                        String country, String time) {
+                    if (parent == null || country == null) {
+                        return;
+                    }
+                    List<String> provinces = provincesMap.get(country);
+                    if (provinces == null || provinces.isEmpty()) {
+                        return;
+                    }
+                    for (String province : provinces) {
+                        if (province.isBlank()) {
+                            continue;
+                        }
+                        Text provinceLink = new Text(province);
+                        TreeItem<Text> provinceItem = new TreeItem<>(provinceLink);
+                        provinceItem.setExpanded(false);
+                        parent.getChildren().add(provinceItem);
+                        provinceLink.setOnMouseClicked((MouseEvent event) -> {
+                            if (provinceItem.isLeaf()) {
+                                loadProvince(dataset, time, country, province);
+                            } else {
+                                loadProvinceCities(dataset, time, country, province);
+                            }
+                        });
+
+                        citiesTree(provinceItem, dataset, country, province, time);
+                    }
+                }
+
+                protected void citiesTree(TreeItem parent, String dataset,
+                        String country, String province, String time) {
+                    if (parent == null || country == null || province == null) {
+                        return;
+                    }
+                    List<String> cities = citiesMap.get(country + province);
+                    if (cities == null || cities.isEmpty()) {
+                        return;
+                    }
+                    for (String city : cities) {
+                        if (city.isBlank()) {
+                            continue;
+                        }
+                        Text cityLink = new Text(city);
+                        cityLink.setOnMouseClicked((MouseEvent event) -> {
+                            loadCity(dataset, time, country, province, city);
+                        });
+                        TreeItem<Text> cityItem = new TreeItem<>(cityLink);
+                        cityItem.setExpanded(false);
+                        parent.getChildren().add(cityItem);
+                    }
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    load();
+                }
+
+                @Override
+                protected void taskQuit() {
+                    endTime = new Date().getTime();
+                    treeTask = null;
+                }
             };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
+            openHandlingStage(treeTask, Modality.WINDOW_MODAL, message("EpidemicReportsLoadingStatistic"));
+            Thread thread = new Thread(treeTask);
             thread.setDaemon(true);
             thread.start();
         }
     }
 
-    protected void loadReports() {
+    public void loadAll() {
+        currentDataSet = null;
+        currentLevel = "All";
+        currentTime = null;
+        load();
+    }
+
+    public void loadDataset(String dataset) {
+        currentDataSet = dataset;
+        currentLevel = "Dataset";
+        currentTime = null;
+        load();
+    }
+
+    public void loadCountries(String dataset) {
+        currentDataSet = dataset;
+        currentLevel = "Countries";
+        currentTime = null;
+        load();
+    }
+
+    public void loadAllTime(String dataset) {
+        currentDataSet = dataset;
+        currentLevel = "AllTime";
+        currentTime = null;
+        load();
+    }
+
+    public void loadTime(String dataset, String time) {
+        currentDataSet = dataset;
+        currentLevel = "Time";
+        currentTime = time;
+        load();
+    }
+
+    public void loadCountry(String dataset, String time, String country) {
+        currentDataSet = dataset;
+        currentLevel = "Country";
+        currentTime = time;
+        currentCountry = country;
+        load();
+    }
+
+    public void loadCountryProvinces(String dataset, String time, String country) {
+        currentDataSet = dataset;
+        currentLevel = "CountryProvinces";
+        currentTime = time;
+        currentCountry = country;
+        load();
+    }
+
+    public void loadProvince(String dataset, String time,
+            String country, String province) {
+        currentDataSet = dataset;
+        currentLevel = "Province";
+        currentTime = time;
+        currentCountry = country;
+        currentProvince = province;
+        load();
+    }
+
+    public void loadProvinceCities(String dataset, String time,
+            String country, String province) {
+        currentDataSet = dataset;
+        currentLevel = "ProvinceCities";
+        currentTime = time;
+        currentCountry = country;
+        currentProvince = province;
+        load();
+    }
+
+    public void loadCity(String dataset, String time,
+            String country, String province, String city) {
+        currentDataSet = dataset;
+        currentLevel = "City";
+        currentTime = time;
+        currentCountry = country;
+        currentProvince = province;
+        currentCity = city;
+        load();
+    }
+
+    @Override
+    public void load() {
         tableData.clear();
+        nameLabel.setText("");
+        currentTitle = message("EpidemicReport");
+        tableView.getColumns().clear();
+        if (!"All".equals(currentLevel)) {
+            if (currentDataSet == null) {
+                return;
+            }
+            currentTitle += " " + currentDataSet;
+            if (currentTime != null) {
+                currentTitle += " " + currentTime;
+            } else {
+                tableView.getColumns().add(timeColumn);
+            }
+        }
+        String where;
+        switch (currentLevel) {
+            case "All":
+                currentSizeQuery = " SELECT count(dataid) FROM Epidemic_Report ";
+                currentDataQuery = "SELECT * FROM Epidemic_Report "
+                        + " ORDER BY data_set, time desc, country, province, confirmed desc ";
+                currentTitle = message("EpidemicReport");
+                currentClearSQL = "DELETE FROM Epidemic_Report";
+                currentChartsSQL = null;
+                chartsType = ChartsType.None;
+                tableView.getColumns().addAll(datasetColumn, countryColumn, provinceColumn, cityColumn);
+                break;
+            case "Dataset":
+                where = " WHERE data_set='" + currentDataSet + "' ";
+                currentSizeQuery = "SELECT count(dataid) FROM Epidemic_Report " + where;
+                currentDataQuery = "SELECT * FROM Epidemic_Report " + where
+                        + " ORDER BY time desc, confirmed desc";
+                currentTitle += " " + message("Global");
+                currentClearSQL = "DELETE FROM Epidemic_Report " + where;
+                currentChartsSQL = "SELECT * FROM Epidemic_Report "
+                        + " WHERE data_set='" + currentDataSet + "' AND level='" + message("Global") + "'"
+                        + " ORDER BY time , confirmed desc";
+                chartsType = ChartsType.TimeBasedNoMap;
+                tableView.getColumns().addAll(countryColumn, provinceColumn, cityColumn);
+                break;
+            case "Countries":
+            case "AllTime":
+                where = " WHERE data_set='" + currentDataSet + "' "
+                        + " AND level='" + message("Country") + "' ";
+                currentSizeQuery = "SELECT count(dataid) FROM Epidemic_Report " + where;
+                currentDataQuery = "SELECT * FROM Epidemic_Report " + where
+                        + " ORDER BY time desc, confirmed desc";
+                currentTitle += " " + message("Global");
+                currentClearSQL = "DELETE FROM Epidemic_Report WHERE data_set='" + currentDataSet + "' ";
+                currentChartsSQL = "SELECT * FROM Epidemic_Report "
+                        + " WHERE data_set='" + currentDataSet + "' AND level='" + message("Global") + "'"
+                        + " ORDER BY time , confirmed desc";
+                chartsType = ChartsType.TimeBasedNoMap;
+                tableView.getColumns().addAll(countryColumn);
+                break;
+            case "Time":
+                if (currentTime == null) {
+                    return;
+                }
+                where = " WHERE data_set='" + currentDataSet + "' "
+                        + " AND level='" + message("Country") + "' "
+                        + " AND time='" + currentTime + "' ";
+                currentSizeQuery = "SELECT count(dataid) FROM Epidemic_Report " + where;
+                currentDataQuery = "SELECT * FROM Epidemic_Report " + where
+                        + " ORDER BY confirmed desc";
+                currentTitle += " " + message("Global");
+                currentClearSQL = "DELETE FROM Epidemic_Report WHERE data_set='"
+                        + currentDataSet + "' AND time='" + currentTime + "' ";
+                currentChartsSQL = "SELECT * FROM Epidemic_Report "
+                        + where + " ORDER BY confirmed desc";
+                chartsType = ChartsType.LocationBased;
+                tableView.getColumns().addAll(countryColumn);
+                break;
+            case "Country":
+                if (currentCountry == null) {
+                    return;
+                }
+                where = " WHERE data_set='" + currentDataSet + "' "
+                        + " AND country='" + currentCountry + "' "
+                        + " AND level='" + message("Country") + "' ";
+                if (currentTime == null) {
+                    currentChartsSQL = "SELECT * FROM Epidemic_Report "
+                            + where + " ORDER BY time, confirmed desc";
+                    chartsType = ChartsType.TimeBasedMap;
+                } else {
+                    where += " AND time='" + currentTime + "' ";
+                    tableView.getColumns().addAll(provinceColumn);
+                    currentChartsSQL = "SELECT * FROM Epidemic_Report "
+                            + where + " ORDER BY confirmed desc";
+                    chartsType = ChartsType.LocationBased;
+                }
+                currentSizeQuery = "SELECT count(dataid) FROM Epidemic_Report " + where;
+                currentDataQuery = "SELECT * FROM Epidemic_Report " + where
+                        + (currentTime == null ? " ORDER BY time desc, confirmed desc" : " ORDER BY confirmed desc");
+                currentTitle += " " + currentCountry;
+                currentClearSQL = "DELETE FROM Epidemic_Report WHERE data_set='"
+                        + currentDataSet + "' AND country='" + currentCountry + "' ";
+                if (currentTime != null) {
+                    currentClearSQL += " AND time='" + currentTime + "' ";
+                }
+                break;
+            case "CountryProvinces":
+                if (currentCountry == null) {
+                    return;
+                }
+                where = " WHERE data_set='" + currentDataSet + "' "
+                        + " AND country='" + currentCountry + "' ";
+                if (currentTime == null) {
+                    where += " AND level='" + message("Country") + "' ";
+                    currentChartsSQL = "SELECT * FROM Epidemic_Report "
+                            + where + " ORDER BY time, confirmed desc";
+                    chartsType = ChartsType.TimeBasedMap;
+                } else {
+                    where += " AND ( level='" + message("Province")
+                            + "' OR level='" + message("Country") + "') "
+                            + " AND time='" + currentTime + "' ";
+                    tableView.getColumns().addAll(provinceColumn);
+                    currentChartsSQL = "SELECT * FROM Epidemic_Report "
+                            + " WHERE data_set='" + currentDataSet + "' "
+                            + " AND country='" + currentCountry + "' "
+                            + " AND level='" + message("Province") + "' "
+                            + " AND time='" + currentTime + "' "
+                            + " ORDER BY confirmed desc";
+                    chartsType = ChartsType.LocationBased;
+                }
+                currentSizeQuery = "SELECT count(dataid) FROM Epidemic_Report " + where;
+                currentDataQuery = "SELECT * FROM Epidemic_Report " + where
+                        + (currentTime == null ? " ORDER BY time desc, confirmed desc" : " ORDER BY confirmed desc");
+                currentTitle += " " + currentCountry;
+                currentClearSQL = "DELETE FROM Epidemic_Report WHERE data_set='"
+                        + currentDataSet + "' AND country='" + currentCountry + "' ";
+                if (currentTime != null) {
+                    currentClearSQL += " AND time='" + currentTime + "' ";
+                }
+                break;
+            case "Province":
+                if (currentCountry == null || currentProvince == null) {
+                    return;
+                }
+                where = " WHERE  data_set='" + currentDataSet + "' "
+                        + " AND country='" + currentCountry + "' "
+                        + " AND province='" + currentProvince + "' "
+                        + " AND level='" + message("Province") + "' ";
+                if (currentTime == null) {
+                    currentChartsSQL = "SELECT * FROM Epidemic_Report "
+                            + where + " ORDER BY time, confirmed desc";
+                    chartsType = ChartsType.TimeBasedMap;
+                } else {
+                    where += " AND time='" + currentTime + "' ";
+                    currentChartsSQL = "SELECT * FROM Epidemic_Report "
+                            + where + " ORDER BY confirmed desc";
+                    chartsType = ChartsType.LocationBased;
+                    tableView.getColumns().addAll(cityColumn);
+                }
+                currentSizeQuery = "SELECT count(dataid) FROM Epidemic_Report " + where;
+                currentDataQuery = "SELECT * FROM Epidemic_Report " + where
+                        + (currentTime == null ? " ORDER BY time desc, confirmed desc" : " ORDER BY confirmed desc");
+                currentTitle += " " + currentCountry + " " + currentProvince;
+                currentClearSQL = "DELETE FROM Epidemic_Report WHERE data_set='"
+                        + currentDataSet + "' AND country='" + currentCountry + "' "
+                        + " AND province='" + currentProvince + "' ";
+                if (currentTime != null) {
+                    currentClearSQL += " AND time='" + currentTime + "' ";
+                }
+                break;
+            case "ProvinceCities":
+                if (currentCountry == null || currentProvince == null) {
+                    return;
+                }
+                where = " WHERE  data_set='" + currentDataSet + "' "
+                        + " AND country='" + currentCountry + "' "
+                        + " AND province='" + currentProvince + "' ";
+                if (currentTime == null) {
+                    where += " AND level='" + message("Province") + "' ";
+                    currentChartsSQL = "SELECT * FROM Epidemic_Report "
+                            + where + " ORDER BY time, confirmed desc";
+                    chartsType = ChartsType.TimeBasedMap;
+                } else {
+                    where += " AND NOT (level='" + message("Country") + "' ) "
+                            + " AND time='" + currentTime + "' ";
+                    currentChartsSQL = "SELECT * FROM Epidemic_Report "
+                            + " WHERE data_set='" + currentDataSet + "' "
+                            + " AND country='" + currentCountry + "' "
+                            + " AND province='" + currentProvince + "' "
+                            + " AND NOT (level='" + message("Country") + "' ) "
+                            + " AND NOT (level='" + message("Province") + "' ) "
+                            + " AND time='" + currentTime + "' "
+                            + " ORDER BY confirmed desc";
+                    chartsType = ChartsType.LocationBased;
+                    tableView.getColumns().addAll(cityColumn);
+                }
+                currentSizeQuery = "SELECT count(dataid) FROM Epidemic_Report " + where;
+                currentDataQuery = "SELECT * FROM Epidemic_Report " + where
+                        + (currentTime == null ? " ORDER BY time desc, confirmed desc" : " ORDER BY confirmed desc");
+                currentTitle += " " + currentCountry + " " + currentProvince;
+                currentClearSQL = "DELETE FROM Epidemic_Report WHERE data_set='"
+                        + currentDataSet + "' AND country='" + currentCountry + "' "
+                        + " AND province='" + currentProvince + "' ";
+                if (currentTime != null) {
+                    currentClearSQL += " AND time='" + currentTime + "' ";
+                }
+                break;
+            case "City":
+                if (currentCountry == null || currentProvince == null || currentCity == null) {
+                    return;
+                }
+                where = " WHERE data_set='" + currentDataSet + "' "
+                        + " AND country='" + currentCountry + "' "
+                        + " AND province='" + currentProvince + "' "
+                        + " AND city='" + currentCity + "' "
+                        + " AND NOT(level='" + message("Province") + "') ";
+                if (currentTime == null) {
+                    currentChartsSQL = "SELECT * FROM Epidemic_Report "
+                            + where + " ORDER BY time, confirmed desc";
+                    chartsType = ChartsType.TimeBasedMap;
+                } else {
+                    where += " AND time='" + currentTime + "' ";
+                    currentChartsSQL = "SELECT * FROM Epidemic_Report "
+                            + where + " ORDER BY confirmed desc";
+                    chartsType = ChartsType.LocationBased;
+                }
+                currentSizeQuery = "SELECT count(dataid) FROM Epidemic_Report " + where;
+                currentDataQuery = "SELECT * FROM Epidemic_Report " + where
+                        + (currentTime == null ? " ORDER BY time desc, confirmed desc" : " ORDER BY confirmed desc");
+                currentTitle += " " + currentCountry + " " + currentProvince + " " + currentCity;
+                currentClearSQL = "DELETE FROM Epidemic_Report WHERE data_set='"
+                        + currentDataSet + "' AND country='" + currentCountry + "' "
+                        + " AND province='" + currentProvince + "' "
+                        + " AND city='" + currentCity + "' ";
+                if (currentTime != null) {
+                    currentClearSQL += " AND time='" + currentTime + "' ";
+                }
+                break;
+        }
+        tableView.getColumns().addAll(confirmedColumn, increasedConfirmedColumn,
+                headledColumn, increasedHeadledColumn, headledRatioColumn,
+                deadColumn, increasedDeadColumn, deadRatioColumn,
+                longtitudeColumn, latitudeColumn);
+
         nameLabel.setText(currentTitle);
         synchronized (this) {
             if (task != null) {
-                task.cancel();
+                return;
             }
             task = new SingletonTask<Void>() {
                 private int total, pagesNumber;
@@ -415,7 +800,7 @@ public class EpidemicReportsController extends TableManageController<EpidemicRep
 
                 @Override
                 protected boolean handle() {
-                    total = TableEpidemicReport.sizeQuery(currentSizeQuery);
+                    total = readDataSize();
                     if (total <= pageSize) {
                         pagesNumber = 1;
                     } else {
@@ -429,9 +814,7 @@ public class EpidemicReportsController extends TableManageController<EpidemicRep
                     }
                     int start = pageSize * (currentPage - 1);
                     int end = Math.min(start + pageSize - 1, total);
-                    String sql = currentDataQuery
-                            + " OFFSET " + start + " ROWS FETCH NEXT " + (end - start + 1) + " ROWS ONLY";
-                    reports = TableEpidemicReport.dataQuery(sql);
+                    reports = readData(start, end - start + 1);
                     return true;
                 }
 
@@ -439,7 +822,7 @@ public class EpidemicReportsController extends TableManageController<EpidemicRep
                 protected void whenSucceeded() {
                     if (reports != null) {
                         isSettingValues = true;
-                        tableData.addAll(reports);
+                        tableData.setAll(reports);
                         isSettingValues = false;
                         tableView.refresh();
                     }
@@ -448,11 +831,25 @@ public class EpidemicReportsController extends TableManageController<EpidemicRep
                     drawCharts();
                 }
             };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
+            openHandlingStage(task, Modality.WINDOW_MODAL, message("EpidemicReportsLoadingStatistic"));
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
+    }
+
+    @Override
+    public int readDataSize() {
+//        logger.debug(currentSizeQuery);
+        return TableEpidemicReport.sizeQuery(currentSizeQuery);
+    }
+
+    @Override
+    public List<EpidemicReport> readData(int offset, int number) {
+//        logger.debug(currentDataQuery);
+        String sql = currentDataQuery
+                + " OFFSET " + offset + " ROWS FETCH NEXT " + number + " ROWS ONLY";
+        return TableEpidemicReport.dataQuery(sql);
     }
 
     protected void drawCharts() {
@@ -461,23 +858,27 @@ public class EpidemicReportsController extends TableManageController<EpidemicRep
         }
         numberChartBox.getChildren().clear();
         ratioChartBox.getChildren().clear();
+        increasedChartBox.getChildren().clear();
 
         if (chartsType == null || chartsType == ChartsType.None) {
-            tabPane.getTabs().removeAll(numberTab, ratioTab, confirmedTab, healedTab, deadTab, mapTab);
+            tabPane.getTabs().removeAll(numberTab, increasedTab, ratioTab,
+                    confirmedTab, healedTab, deadTab, mapTab);
             return;
         } else {
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
             tabPane.getTabs().removeAll(mapTab);
             if (!tabPane.getTabs().contains(numberTab)) {
-                tabPane.getTabs().addAll(numberTab, ratioTab);
+                tabPane.getTabs().addAll(numberTab, increasedTab, ratioTab);
             }
             if (chartsType == ChartsType.TimeBasedNoMap || chartsType == ChartsType.TimeBasedMap) {
                 tabPane.getTabs().removeAll(confirmedTab, healedTab, deadTab);
                 numberChartBox.getChildren().add(numberLineChart);
+                increasedChartBox.getChildren().add(increasedLineChart);
                 ratioChartBox.getChildren().add(ratioLineChart);
 
             } else if (chartsType == ChartsType.LocationBased) {
                 numberChartBox.getChildren().add(numberBarChart);
+                increasedChartBox.getChildren().add(increasedBarChart);
                 ratioChartBox.getChildren().add(ratioBarChart);
                 if (!tabPane.getTabs().contains(confirmedTab)) {
                     tabPane.getTabs().addAll(confirmedTab, healedTab, deadTab);
@@ -498,6 +899,12 @@ public class EpidemicReportsController extends TableManageController<EpidemicRep
         numberBarChart.getXAxis().setAnimated(false);  // X-Axis labels are messed if true
         numberBarChart.setTitle(currentTitle + " - " + message("Number"));
 
+        increasedBarChart.setAnimated(false);
+        increasedBarChart.getData().clear();
+        increasedBarChart.setAnimated(true);
+        increasedBarChart.getXAxis().setAnimated(false);  // X-Axis labels are messed if true
+        increasedBarChart.setTitle(currentTitle + " - " + message("Increased"));
+
         ratioBarChart.setAnimated(false);
         ratioBarChart.getData().clear();
         ratioBarChart.setAnimated(true);
@@ -509,6 +916,12 @@ public class EpidemicReportsController extends TableManageController<EpidemicRep
         numberLineChart.setAnimated(true);
         numberLineChart.getXAxis().setAnimated(false);  // X-Axis labels are messed if true
         numberLineChart.setTitle(currentTitle + " - " + message("Number"));
+
+        increasedLineChart.setAnimated(false);
+        increasedLineChart.getData().clear();
+        increasedLineChart.setAnimated(true);
+        increasedLineChart.getXAxis().setAnimated(false);  // X-Axis labels are messed if true
+        increasedLineChart.setTitle(currentTitle + " - " + message("Increased"));
 
         ratioLineChart.setAnimated(false);
         ratioLineChart.getData().clear();
@@ -534,27 +947,50 @@ public class EpidemicReportsController extends TableManageController<EpidemicRep
 
                 @Override
                 protected boolean handle() {
-                    reports = TableEpidemicReport.dataQuery(currentDataQuery);
+                    reports = TableEpidemicReport.dataQuery(currentChartsSQL);
                     return true;
                 }
 
                 @Override
                 protected void whenSucceeded() {
-                    if (chartsType == ChartsType.TimeBasedNoMap) {
-                        drawTimeBasedNumberLineChart(reports);
-                        drawTimeBasedRatioLineChart(reports);
+                    if (null == reports || reports.isEmpty()) {
+                        tabPane.getTabs().removeAll(numberTab, increasedTab, ratioTab, confirmedTab, healedTab, deadTab, mapTab);
+                        return;
+                    }
 
-                    } else if (chartsType == ChartsType.TimeBasedMap) {
-                        drawTimeBasedNumberLineChart(reports);
-                        drawTimeBasedRatioLineChart(reports);
-                        mapController.drawTimeBasedMap(reports);
-
-                    } else if (chartsType == ChartsType.LocationBased) {
-                        drawLocationBasedNumberBarChart(reports);
-                        drawLocationBasedNumberPieChart(reports);
-                        drawLocationBasedRatioBarChart(reports);
-                        mapController.drawLocationBasedMap(reports);
-
+                    allZero = true;
+                    for (EpidemicReport report : reports) {
+                        if (report.getIncreasedConfirmed() != 0) {
+                            allZero = false;
+                            break;
+                        }
+                    }
+                    if (allZero) {
+                        popInformation(message("EpidemicReportAllZeroComments"), 6000);
+                    }
+                    if (null != chartsType) {
+                        switch (chartsType) {
+                            case TimeBasedNoMap:
+                                drawTimeBasedNumberLineChart(reports);
+                                drawTimeBasedIncreasedLineChart(reports);
+                                drawTimeBasedRatioLineChart(reports);
+                                break;
+                            case TimeBasedMap:
+                                drawTimeBasedNumberLineChart(reports);
+                                drawTimeBasedIncreasedLineChart(reports);
+                                drawTimeBasedRatioLineChart(reports);
+                                mapController.drawTimeBasedMap(mapLevel(), reports);
+                                break;
+                            case LocationBased:
+                                drawLocationBasedNumberBarChart(reports);
+                                drawLocationBasedIncreasedBarChart(reports);
+                                drawLocationBasedNumberPieChart(reports);
+                                drawLocationBasedRatioBarChart(reports);
+                                mapController.drawLocationBasedMap(mapLevel(), reports);
+                                break;
+                            default:
+                                break;
+                        }
                     }
 
                 }
@@ -642,6 +1078,82 @@ public class EpidemicReportsController extends TableManageController<EpidemicRep
 
     }
 
+    protected void drawTimeBasedIncreasedLineChart(List<EpidemicReport> reports) {
+        try {
+            if (reports == null || reports.isEmpty()) {
+                return;
+            }
+
+            XYChart.Series confirmedSeries = new XYChart.Series();
+            for (EpidemicReport report : reports) {
+                String label = DateTools.datetimeToString(report.getTime());
+                XYChart.Data data = new XYChart.Data(label, report.getIncreasedConfirmed());
+                Tooltip.install(data.getNode(), new Tooltip(report.getIncreasedConfirmed() + ""));
+                confirmedSeries.getData().add(data);
+            }
+            confirmedSeries.setName(message("IncreasedConfirmed"));
+            increasedLineChart.getData().add(0, confirmedSeries);
+            String colorString = FxmlColor.rgb2Hex(Color.BLUE);
+            for (Node n
+                    : increasedLineChart.lookupAll(".default-color0.chart-series-line")) {
+                n.setStyle("-fx-stroke: " + colorString + "; ");
+            }
+
+            XYChart.Series healedSeries = new XYChart.Series();
+            for (EpidemicReport report : reports) {
+                String label = DateTools.datetimeToString(report.getTime());
+                XYChart.Data data = new XYChart.Data(label, report.getIncreasedHealed());
+                Tooltip.install(data.getNode(), new Tooltip(report.getIncreasedHealed() + ""));
+                healedSeries.getData().add(data);
+            }
+            healedSeries.setName(message("IncreasedHealed"));
+            increasedLineChart.getData().add(1, healedSeries);
+            colorString = FxmlColor.rgb2Hex(Color.RED);
+            for (Node n
+                    : increasedLineChart.lookupAll(".default-color1.chart-series-line")) {
+                n.setStyle("-fx-stroke: " + colorString + "; ");
+            }
+
+            XYChart.Series deadSeries = new XYChart.Series();
+            for (EpidemicReport report : reports) {
+                String label = DateTools.datetimeToString(report.getTime());
+                XYChart.Data data = new XYChart.Data(label, report.getIncreasedDead());
+                Tooltip.install(data.getNode(), new Tooltip(report.getIncreasedDead() + ""));
+                deadSeries.getData().add(data);
+            }
+            deadSeries.setName(message("IncreasedDead"));
+            increasedLineChart.getData().add(2, deadSeries);
+            colorString = FxmlColor.rgb2Hex(Color.BLACK);
+            for (Node n
+                    : increasedLineChart.lookupAll(".default-color2.chart-series-line")) {
+                n.setStyle("-fx-stroke: " + colorString + "; ");
+            }
+
+            increasedLineChart.setLegendVisible(true);
+            Set<Node> legendItems = increasedLineChart.lookupAll("Label.chart-legend-item");
+            if (legendItems.isEmpty()) {
+                return;
+            }
+            for (Node legendItem : legendItems) {
+                Label legendLabel = (Label) legendItem;
+                Node legend = legendLabel.getGraphic();
+                if (legend != null) {
+                    if (message("IncreasedDead").equals(legendLabel.getText())) {
+                        legend.setStyle("-fx-background-color: " + FxmlColor.rgb2Hex(Color.BLACK));
+                    } else if (message("IncreasedHealed").equals(legendLabel.getText())) {
+                        legend.setStyle("-fx-background-color: " + FxmlColor.rgb2Hex(Color.RED));
+                    } else if (message("IncreasedConfirmed").equals(legendLabel.getText())) {
+                        legend.setStyle("-fx-background-color: " + FxmlColor.rgb2Hex(Color.BLUE));
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+
+    }
+
     protected void drawTimeBasedRatioLineChart(List<EpidemicReport> reports) {
         try {
             if (reports == null || reports.isEmpty()) {
@@ -699,6 +1211,38 @@ public class EpidemicReportsController extends TableManageController<EpidemicRep
 
     }
 
+    protected String locationLabel(EpidemicReport report) {
+        if (message("City").equals(report.getLevel())) {
+            return report.getCity();
+        } else if (message("Province").equals(report.getLevel())) {
+            return report.getProvince();
+        } else if (message("Country").equals(report.getLevel())) {
+            return report.getCountry();
+        } else if (message("City").equals(report.getLevel())) {
+            return report.getCity();
+        } else {
+            return message("Global");
+        }
+    }
+
+    protected int mapLevel() {
+        switch (currentLevel) {
+            case "Time":
+                return 3;
+            case "Country":
+                return 3;
+            case "CountryProvinces":
+                return 5;
+            case "Province":
+                return 7;
+            case "ProvinceCities":
+                return 9;
+            case "City":
+                return 9;
+        }
+        return 3;
+    }
+
     protected void drawLocationBasedNumberBarChart(List<EpidemicReport> reports) {
         try {
             if (reports == null || reports.isEmpty()) {
@@ -707,16 +1251,8 @@ public class EpidemicReportsController extends TableManageController<EpidemicRep
 
             XYChart.Series confirmedSeries = new XYChart.Series();
             for (EpidemicReport report : reports) {
-                String label;
-                if (report.getCountry() != null) {
-                    label = report.getCountry();
-                } else {
-                    label = message("All");
-                }
-                if (report.getProvince() != null) {
-                    label += report.getProvince();
-                }
-                confirmedSeries.getData().add(new XYChart.Data(label, report.getConfirmed()));
+                confirmedSeries.getData().add(
+                        new XYChart.Data(locationLabel(report), report.getConfirmed()));
             }
             confirmedSeries.setName(message("Confirmed"));
             numberBarChart.getData().add(0, confirmedSeries);
@@ -728,16 +1264,8 @@ public class EpidemicReportsController extends TableManageController<EpidemicRep
 
             XYChart.Series healedSeries = new XYChart.Series();
             for (EpidemicReport report : reports) {
-                String label;
-                if (report.getCountry() != null) {
-                    label = report.getCountry();
-                } else {
-                    label = message("All");
-                }
-                if (report.getProvince() != null) {
-                    label += report.getProvince();
-                }
-                healedSeries.getData().add(new XYChart.Data(label, report.getHealed()));
+                healedSeries.getData().add(
+                        new XYChart.Data(locationLabel(report), report.getHealed()));
             }
             healedSeries.setName(message("Healed"));
             numberBarChart.getData().add(1, healedSeries);
@@ -749,16 +1277,8 @@ public class EpidemicReportsController extends TableManageController<EpidemicRep
 
             XYChart.Series deadSeries = new XYChart.Series();
             for (EpidemicReport report : reports) {
-                String label;
-                if (report.getCountry() != null) {
-                    label = report.getCountry();
-                } else {
-                    label = message("All");
-                }
-                if (report.getProvince() != null) {
-                    label += report.getProvince();
-                }
-                deadSeries.getData().add(new XYChart.Data(label, report.getDead()));
+                deadSeries.getData().add(
+                        new XYChart.Data(locationLabel(report), report.getDead()));
             }
             deadSeries.setName(message("Dead"));
             numberBarChart.getData().add(2, deadSeries);
@@ -792,6 +1312,75 @@ public class EpidemicReportsController extends TableManageController<EpidemicRep
 
     }
 
+    protected void drawLocationBasedIncreasedBarChart(
+            List<EpidemicReport> reports) {
+        try {
+            if (reports == null || reports.isEmpty()) {
+                return;
+            }
+            XYChart.Series confirmedSeries = new XYChart.Series();
+            for (EpidemicReport report : reports) {
+                confirmedSeries.getData().add(
+                        new XYChart.Data(locationLabel(report), report.getIncreasedConfirmed()));
+            }
+            confirmedSeries.setName(message("IncreasedConfirmed"));
+            increasedBarChart.getData().add(0, confirmedSeries);
+            String colorString = FxmlColor.rgb2Hex(Color.BLUE);
+            for (Node n
+                    : increasedBarChart.lookupAll(".default-color0.chart-bar")) {
+                n.setStyle("-fx-bar-fill: " + colorString + "; ");
+            }
+
+            XYChart.Series healedSeries = new XYChart.Series();
+            for (EpidemicReport report : reports) {
+                healedSeries.getData().add(
+                        new XYChart.Data(locationLabel(report), report.getIncreasedHealed()));
+            }
+            healedSeries.setName(message("IncreasedHealed"));
+            increasedBarChart.getData().add(1, healedSeries);
+            colorString = FxmlColor.rgb2Hex(Color.RED);
+            for (Node n
+                    : increasedBarChart.lookupAll(".default-color1.chart-bar")) {
+                n.setStyle("-fx-bar-fill: " + colorString + "; ");
+            }
+
+            XYChart.Series deadSeries = new XYChart.Series();
+            for (EpidemicReport report : reports) {
+                deadSeries.getData().add(
+                        new XYChart.Data(locationLabel(report), report.getIncreasedDead()));
+            }
+            deadSeries.setName(message("IncreasedDead"));
+            increasedBarChart.getData().add(2, deadSeries);
+            colorString = FxmlColor.rgb2Hex(Color.BLACK);
+            for (Node n
+                    : increasedBarChart.lookupAll(".default-color2.chart-bar")) {
+                n.setStyle("-fx-bar-fill: " + colorString + "; ");
+            }
+
+            increasedBarChart.setLegendVisible(true);
+            Set<Node> legendItems = increasedBarChart.lookupAll("Label.chart-legend-item");
+            if (legendItems.isEmpty()) {
+                return;
+            }
+            for (Node legendItem : legendItems) {
+                Label legendLabel = (Label) legendItem;
+                Node legend = legendLabel.getGraphic();
+                if (legend != null) {
+                    if (message("IncreasedDead").equals(legendLabel.getText())) {
+                        legend.setStyle("-fx-background-color: " + FxmlColor.rgb2Hex(Color.BLACK));
+                    } else if (message("IncreasedHealed").equals(legendLabel.getText())) {
+                        legend.setStyle("-fx-background-color: " + FxmlColor.rgb2Hex(Color.RED));
+                    } else if (message("IncreasedConfirmed").equals(legendLabel.getText())) {
+                        legend.setStyle("-fx-background-color: " + FxmlColor.rgb2Hex(Color.BLUE));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+
+    }
+
     protected void drawLocationBasedNumberPieChart(List<EpidemicReport> reports) {
         try {
             if (reports == null || reports.isEmpty()) {
@@ -806,17 +1395,10 @@ public class EpidemicReportsController extends TableManageController<EpidemicRep
             if (confirmed > 0) {
                 ObservableList<PieChart.Data> confirmedData = FXCollections.observableArrayList();
                 for (EpidemicReport report : reports) {
-                    String label;
-                    if (report.getCountry() != null) {
-                        label = report.getCountry();
-                    } else {
-                        label = message("All");
-                    }
-                    if (report.getProvince() != null) {
-                        label += " " + report.getProvince();
-                    }
-                    label += " " + DoubleTools.scale(report.getConfirmed() * 100.0d / confirmed, 1) + "%";
-                    confirmedData.add(new PieChart.Data(label + " " + report.getConfirmed(), report.getConfirmed()));
+                    String label = locationLabel(report) + " "
+                            + DoubleTools.scale(report.getConfirmed() * 100.0d / confirmed, 1) + "%"
+                            + " " + report.getConfirmed();
+                    confirmedData.add(new PieChart.Data(label, report.getConfirmed()));
                 }
                 confirmedPie.setData(confirmedData);
             }
@@ -824,17 +1406,10 @@ public class EpidemicReportsController extends TableManageController<EpidemicRep
             if (dead > 0) {
                 ObservableList<PieChart.Data> deadData = FXCollections.observableArrayList();
                 for (EpidemicReport report : reports) {
-                    String label;
-                    if (report.getCountry() != null) {
-                        label = report.getCountry();
-                    } else {
-                        label = message("All");
-                    }
-                    if (report.getProvince() != null) {
-                        label += " " + report.getProvince();
-                    }
-                    label += " " + DoubleTools.scale(report.getDead() * 100.0d / dead, 1) + "%";
-                    deadData.add(new PieChart.Data(label + " " + report.getDead(), report.getDead()));
+                    String label = locationLabel(report) + " "
+                            + DoubleTools.scale(report.getDead() * 100.0d / dead, 1) + "%"
+                            + " " + report.getDead();
+                    deadData.add(new PieChart.Data(label, report.getDead()));
                 }
                 deadPie.setData(deadData);
             }
@@ -842,17 +1417,10 @@ public class EpidemicReportsController extends TableManageController<EpidemicRep
             if (healed > 0) {
                 ObservableList<PieChart.Data> headedData = FXCollections.observableArrayList();
                 for (EpidemicReport report : reports) {
-                    String label;
-                    if (report.getCountry() != null) {
-                        label = report.getCountry();
-                    } else {
-                        label = message("All");
-                    }
-                    if (report.getProvince() != null) {
-                        label += " " + report.getProvince();
-                    }
-                    label += " " + DoubleTools.scale(report.getHealed() * 100.0d / healed, 1) + "%";
-                    headedData.add(new PieChart.Data(label + " " + report.getHealed(), report.getHealed()));
+                    String label = locationLabel(report) + " "
+                            + DoubleTools.scale(report.getHealed() * 100.0d / healed, 1) + "%"
+                            + " " + report.getHealed();
+                    headedData.add(new PieChart.Data(label, report.getHealed()));
                 }
                 headledPie.setData(headedData);
             }
@@ -871,16 +1439,8 @@ public class EpidemicReportsController extends TableManageController<EpidemicRep
 
             XYChart.Series healedRatioSeries = new XYChart.Series();
             for (EpidemicReport report : reports) {
-                String label;
-                if (report.getCountry() != null) {
-                    label = report.getCountry();
-                } else {
-                    label = message("All");
-                }
-                if (report.getProvince() != null) {
-                    label += report.getProvince();
-                }
-                healedRatioSeries.getData().add(new XYChart.Data(label, report.getHealedRatio()));
+                healedRatioSeries.getData().add(
+                        new XYChart.Data(locationLabel(report), report.getHealedRatio()));
             }
             healedRatioSeries.setName(message("HealedRatio"));
             ratioBarChart.getData().add(0, healedRatioSeries);
@@ -892,16 +1452,8 @@ public class EpidemicReportsController extends TableManageController<EpidemicRep
 
             XYChart.Series deadRatioSeries = new XYChart.Series();
             for (EpidemicReport report : reports) {
-                String label;
-                if (report.getCountry() != null) {
-                    label = report.getCountry();
-                } else {
-                    label = message("All");
-                }
-                if (report.getProvince() != null) {
-                    label += report.getProvince();
-                }
-                deadRatioSeries.getData().add(new XYChart.Data(label, report.getDeadRatio()));
+                deadRatioSeries.getData().add(
+                        new XYChart.Data(locationLabel(report), report.getDeadRatio()));
             }
             deadRatioSeries.setName(message("DeadRatio"));
             ratioBarChart.getData().add(1, deadRatioSeries);
@@ -972,7 +1524,7 @@ public class EpidemicReportsController extends TableManageController<EpidemicRep
         try {
             EpidemicReportsCountriesEditController controller
                     = (EpidemicReportsCountriesEditController) openScene(null,
-                            CommonValues.EpidemicReportsCountiresEditFxml);
+                            CommonValues.EpidemicReportsCountriesEditFxml);
             if (controller != null) {
                 controller.parent = this;
                 controller.load(currentDataSet);
@@ -1007,7 +1559,8 @@ public class EpidemicReportsController extends TableManageController<EpidemicRep
             return false;
         }
         if (TableEpidemicReport.deleteData(selected)) {
-            return TableEpidemicReport.summary();
+            loadTree(false);
+            return true;
         } else {
             return false;
         }
@@ -1051,7 +1604,8 @@ public class EpidemicReportsController extends TableManageController<EpidemicRep
     @FXML
     public void makeHtml(List<Image> mapImages) {
         try {
-            double scale = FxmlControl.dpiScale();
+            double scale = dpi / Screen.getPrimary().getDpi();
+            scale = scale > 1 ? scale : 1;
             SnapshotParameters snapPara = new SnapshotParameters();
             snapPara.setFill(Color.TRANSPARENT);
             snapPara.setTransform(Transform.scale(scale, scale));
@@ -1311,13 +1865,33 @@ public class EpidemicReportsController extends TableManageController<EpidemicRep
                                     s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"width:85%;\" ></div>\n");
                                 } else {
                                     List<BufferedImage> images = new ArrayList();
+                                    int width = 0;
                                     for (Image image : mapImages) {
                                         images.add(SwingFXUtils.fromFXImage(image, null));
+                                        if (image.getWidth() > width) {
+                                            width = (int) image.getWidth();
+                                        }
                                     }
                                     File outFile = new File(path + File.separator + "mapSnap.gif");
                                     ImageGifFile.writeImages(images, outFile, mapController.interval);
                                     String imageName = subPath + "/mapSnap.gif";
                                     s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"width:85%;\" ></div>\n");
+
+                                    if (width > 1000) {
+                                        List<BufferedImage> simages = new ArrayList();
+                                        for (BufferedImage image : images) {
+                                            if (image.getWidth() > 1000) {
+                                                simages.add(ImageManufacture.scaleImageWidthKeep(image, 1000));
+                                            } else {
+                                                simages.add(image);
+                                            }
+                                        }
+                                        outFile = new File(path + File.separator + "mapSnapSmall.gif");
+                                        ImageGifFile.writeImages(simages, outFile, mapController.interval);
+                                        imageName = subPath + "/mapSnapSmall.gif";
+                                        s.append("</br><div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"width:85%;\" ></div>\n");
+                                    }
+
                                 }
                                 if (task == null || isCancelled()) {
                                     return false;
@@ -1357,17 +1931,77 @@ public class EpidemicReportsController extends TableManageController<EpidemicRep
     @FXML
     @Override
     public void refreshAction() {
-        loadTree();
+        loadTree(false);
     }
 
     @Override
     public void loadExamples() {
-        EpidemicReport.writeNCPs();
+        EpidemicReport.importNCPs();
+//        EpidemicReport.writeNCPs();
+    }
+
+    @FXML
+    public void fetchAction() {
+        EpidemicReportsFetchNPCDataController controller
+                = (EpidemicReportsFetchNPCDataController) openStage(CommonValues.EpidemicReportsFetchNPCDataFxml);
+        controller.parent = this;
+    }
+
+    @FXML
+    @Override
+    public void clearAction() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(getBaseTitle());
+        alert.setContentText(AppVariables.message("SureClearConditions")
+                + "\n\n" + currentTitle + "\n\n" + currentClearSQL);
+        alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
+        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+        ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
+        ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
+        alert.getButtonTypes().setAll(buttonSure, buttonCancel);
+        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        stage.setAlwaysOnTop(true);
+        stage.toFront();
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() != buttonSure) {
+            return;
+        }
+        synchronized (this) {
+            if (task != null) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+
+                @Override
+                protected boolean handle() {
+                    return new TableEpidemicReport().update(currentClearSQL) >= 0;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    refreshAction();
+                }
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
+    }
+
+    @FXML
+    public void statisticAction() {
+        loadTree(true);
     }
 
     @Override
     public boolean leavingScene() {
         try {
+            if (treeTask != null) {
+                treeTask.cancel();
+                treeTask = null;
+            }
             mapController.leavingScene();
         } catch (Exception e) {
         }

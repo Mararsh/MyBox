@@ -29,6 +29,8 @@ public class StringTable {
     public StringTable(List<String> names, String title) {
         this.names = names;
         this.title = title;
+        colorIndices = new ArrayList<>();
+        data = new ArrayList<>();
     }
 
     public StringTable(List<String> names, String title, int colorIndex) {

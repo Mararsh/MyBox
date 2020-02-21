@@ -30,6 +30,7 @@ License:    Apache License Version 2.0
                 <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                 <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                 <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             </rowConstraints>
             <VBox.margin>
                 <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
@@ -55,6 +56,8 @@ License:    Apache License Version 2.0
                 <Hyperlink fx:id="userGuideLink" onAction="#link" text="https://mararsh.github.io/MyBox/MyBox-UserGuide.pdf" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="9" />
                 <Label text="%CloudStorage" GridPane.rowIndex="10" />
                 <Hyperlink fx:id="cloudLink" onAction="#link" text="https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+            <Label text="%MyBoxInternetDataPath" GridPane.rowIndex="11" />
+            <Hyperlink fx:id="cloudLink1" onAction="#link" text="https://sourceforge.net/projects/mara-mybox/files/data/" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="11" />
             </children>
         </GridPane>
     </children>

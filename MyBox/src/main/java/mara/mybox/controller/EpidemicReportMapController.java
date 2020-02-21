@@ -25,6 +25,7 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara
@@ -60,8 +61,7 @@ public class EpidemicReportMapController extends LocationMapBaseController {
                     (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
                         setInterval();
                     });
-            intervalSelector.getSelectionModel().select(
-                    AppVariables.getUserConfigInt("EpidemicReportMapInterval", 1000));
+            intervalSelector.setValue(AppVariables.getUserConfigValue("EpidemicReportMapInterval", "1000"));
 
             mapSize = 3;
             mapSizeSelector.getItems().addAll(Arrays.asList(
@@ -179,8 +179,24 @@ public class EpidemicReportMapController extends LocationMapBaseController {
 
     }
 
-    protected void drawLocationBasedMap(List<EpidemicReport> reports) {
+    protected String locationLabel(EpidemicReport report) {
+        if (message("City").equals(report.getLevel())) {
+            return report.getCity();
+        } else if (message("Province").equals(report.getLevel())) {
+            return report.getProvince();
+        } else if (message("Country").equals(report.getLevel())) {
+            return report.getCountry();
+        } else if (message("City").equals(report.getLevel())) {
+            return report.getCity();
+        } else {
+            return message("Global");
+        }
+    }
+
+    protected void drawLocationBasedMap(int mapLevel,
+            List<EpidemicReport> reports) {
         try {
+            this.mapSize = mapLevel;
             clearAction();
             intervalBox.setVisible(false);
             if (reports == null || reports.isEmpty()) {
@@ -189,14 +205,7 @@ public class EpidemicReportMapController extends LocationMapBaseController {
             for (EpidemicReport report : reports) {
                 if (report.getLongitude() >= -180 && report.getLongitude() <= 180
                         && report.getLatitude() >= -90 && report.getLatitude() <= 90) {
-                    String label;
-                    if (report.getProvince() != null) {
-                        label = "<div><font color=\"black\">" + report.getProvince() + "</font>";
-                    } else if (report.getCountry() != null) {
-                        label = "<div><font color=\"black\">" + report.getCountry() + "</font>";
-                    } else {
-                        continue;
-                    }
+                    String label = "<div><font color=\"black\">" + locationLabel(report) + "</font>";
                     if (report.getConfirmed() > 0) {
                         label += " <font color=\"blue\">" + report.getConfirmed() + "</font>";
                         if (report.getHealed() > 0) {
@@ -226,7 +235,8 @@ public class EpidemicReportMapController extends LocationMapBaseController {
         }
     }
 
-    protected void drawTimeBasedMap(List<EpidemicReport> reports) {
+    protected void drawTimeBasedMap(int mapLevel, List<EpidemicReport> reports) {
+        this.mapSize = mapLevel;
         this.reports = reports;
         drawTimeBasedMap();
     }
@@ -273,14 +283,8 @@ public class EpidemicReportMapController extends LocationMapBaseController {
                 return;
             }
 
-            String label = DateTools.datetimeToString(report.getTime()) + "</br>";
-            if (report.getProvince() != null) {
-                label += "<font color=\"black\">" + report.getProvince() + "</font></br>";
-            } else if (report.getCountry() != null) {
-                label += "<font color=\"black\">" + report.getCountry() + "</font></br>";
-            } else {
-                return;
-            }
+            String label = DateTools.datetimeToString(report.getTime()) + "</br>"
+                    + "<font color=\"black\">" + locationLabel(report) + "</font></br>";
             label += "<font color=\"blue\">" + AppVariables.message("Confirmed") + ": "
                     + report.getConfirmed() + "</font>"
                     + "<DIV style=\"width: " + (report.getConfirmed() * unit)

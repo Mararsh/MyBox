@@ -139,13 +139,13 @@ License:    Apache License Version 2.0
                                                     <children>
                                                         <Label text="%MoreArguments" />
                                                         <TextField fx:id="moreInput" maxWidth="1.7976931348623157E308" promptText="%SeparateBySpace" HBox.hgrow="ALWAYS" />
-                                                        <ImageView fx:id="argumentTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconTips.png" />
-                                                            </image>
-                                                        </ImageView>
                                                     </children>
                                                 </HBox>
+                                                <TextArea fx:id="tipsArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" promptText="%FFmpegArgumentsTips" styleClass="displayArea" stylesheets="@../styles/MyBox.css" wrapText="true">
+                                                    <padding>
+                                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                                    </padding>
+                                                </TextArea>
                                             </children>
                                             <padding>
                                                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

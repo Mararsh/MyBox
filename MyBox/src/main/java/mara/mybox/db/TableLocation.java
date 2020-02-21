@@ -385,7 +385,6 @@ public class TableLocation extends DerbyBase {
         }
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
-            conn.setAutoCommit(false);
             for (Location location : locations) {
                 if (location.getDataid() < 0) {
                     create(statement, location);
@@ -393,7 +392,6 @@ public class TableLocation extends DerbyBase {
                     update(statement, location);
                 }
             }
-            conn.commit();
             return true;
         } catch (Exception e) {
             failed(e);
@@ -465,7 +463,6 @@ public class TableLocation extends DerbyBase {
             return false;
         }
         try {
-            statement.setMaxRows(1);
             String sql = "UPDATE Location SET ";
             sql += "data_set='" + location.getDataSet() + "', ";
             if (location.getSource() != null) {

@@ -58,7 +58,7 @@ public class WeiboSnapController extends BaseController {
     private List<String> addressList;
 
     @FXML
-    private ToggleGroup sizeGroup, formatGroup, categoryGroup, pdfMemGroup;
+    private ToggleGroup sizeGroup, formatGroup, categoryGroup, pdfMemGroup, pdfSizeGroup;
     @FXML
     private ComboBox<String> addressBox, zoomBox, widthBox, retryBox, dpiSelector,
             MarginsBox, standardSizeBox, standardDpiBox, jpegBox, pdfScaleBox;
@@ -74,7 +74,8 @@ public class WeiboSnapController extends BaseController {
             bypassSSLCheck, likeCheck, postsCheck;
     @FXML
     private RadioButton imageSizeRadio, monthsPathsRadio, pngRadio,
-            pdfMem500MRadio, pdfMem1GRadio, pdfMem2GRadio, pdfMemUnlimitRadio;
+            pdfMem500MRadio, pdfMem1GRadio, pdfMem2GRadio, pdfMemUnlimitRadio,
+            pdfSize500MRadio, pdfSize1GRadio, pdfSize2GRadio, pdfSizeUnlimitRadio;
 
     public WeiboSnapController() {
         baseTitle = AppVariables.message("WeiboSnap");
@@ -654,6 +655,23 @@ public class WeiboSnapController extends BaseController {
         });
         authorInput.setText(AppVariables.getUserConfigValue(AuthorKey, System.getProperty("user.name")));
 
+        String pdfSize = AppVariables.getUserConfigValue("WeiBoSnapPdfSize", "500M");
+        if ("1G".equals(pdfSize)) {
+            pdfSize1GRadio.fire();
+        } else if ("2G".equals(pdfSize)) {
+            pdfSize2GRadio.fire();
+        } else if (message("Unlimit").equals(pdfSize)) {
+            pdfSizeUnlimitRadio.fire();
+        } else {
+            pdfSize500MRadio.fire();
+        }
+
+        pdfSizeGroup.selectedToggleProperty().addListener(
+                (ObservableValue<? extends Toggle> ov, Toggle old_toggle, Toggle new_toggle) -> {
+                    AppVariables.setUserConfigValue("WeiBoSnapPdfSize",
+                            ((RadioButton) pdfSizeGroup.getSelectedToggle()).getText());
+                });
+
         checkPdfMem();
 
     }
@@ -1094,6 +1112,7 @@ public class WeiboSnapController extends BaseController {
             parameters.setSnapInterval(snapInterval);
             parameters.setDpi(dpi);
             parameters.setLikeStartPage(likeStartPage);
+            parameters.setMaxMergedSize(((RadioButton) pdfSizeGroup.getSelectedToggle()).getText());
             return parameters;
         } catch (Exception e) {
             parameters = null;

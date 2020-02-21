@@ -142,12 +142,14 @@ License:    Apache License Version 2.0
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openMessageDigest" text="%MessageDigest" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
-                                <MenuItem mnemonicParsing="false" onAction="#openDataGeographyCode" text="%GeographyCode" />
+                                <MenuItem mnemonicParsing="false" onAction="#openGeographyCode" text="%GeographyCode" />
+                                <!--<MenuItem mnemonicParsing="false" onAction="#openGeographyRegion" text="%GeographyRegion" />-->
                                 <MenuItem mnemonicParsing="false" onAction="#openLocationInMap" text="%LocationInMap" />
                                 <MenuItem mnemonicParsing="false" onAction="#openLocationsData" text="%LocationsData" />
                                 <MenuItem mnemonicParsing="false" onAction="#openLocationsDataInMap" text="%LocationsDataInMap" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openEpidemicReports" text="%EpidemicReport" />
+                                <MenuItem mnemonicParsing="false" onAction="#openFetchNPCData" text="%FetchNPCData" />
                             </items>
                         </Menu>
                         <Menu mnemonicParsing="false" text="%File">
@@ -201,6 +203,7 @@ License:    Apache License Version 2.0
                                 <MenuItem mnemonicParsing="false" onAction="#openHtmlEditor" text="%HtmlEditor" />
                                 <MenuItem mnemonicParsing="false" onAction="#openWebBrowser" text="%WebBrowser" />
                                 <MenuItem mnemonicParsing="false" onAction="#openSecurityCertificates" text="%SecurityCertificates" />
+                                <MenuItem mnemonicParsing="false" onAction="#restoreCheckingSSLCertifications" text="%RestoreCheckingSSLCertifications" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openMarkdownEditer" text="%MarkdownEditer" />
                                 <MenuItem mnemonicParsing="false" onAction="#openHtmlToMarkdown" text="%HtmlToMarkdown" />

@@ -78,7 +78,7 @@ public class FFmpegInformationController extends FFmpegBaseController {
     protected ComboBox<String> querySelector;
 
     public FFmpegInformationController() {
-        baseTitle = AppVariables.message("MediaInformation");
+        baseTitle = AppVariables.message("FFmpegInformation");
 
     }
 
@@ -115,7 +115,8 @@ public class FFmpegInformationController extends FFmpegBaseController {
             ));
             querySelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                public void changed(ObservableValue ov, String oldValue,
+                        String newValue) {
                     checkQuery();
                 }
             });

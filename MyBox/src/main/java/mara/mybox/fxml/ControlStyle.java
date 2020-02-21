@@ -692,7 +692,22 @@ public class ControlStyle {
                 default:
                     return new ControlStyle(id, message("Delete"), "", "iconDelete.png");
             }
+        }
 
+        if (id.startsWith("dataImport")) {
+            return new ControlStyle(id, message("Import"), "", "iconDataImport.png");
+        }
+        if (id.startsWith("dataExport")) {
+            return new ControlStyle(id, message("Export"), "", "iconDataExport.png");
+        }
+        if (id.startsWith("saveAs")) {
+            switch (id) {
+                case "saveAsButton":
+                    return new ControlStyle(id, message("SaveAs"), "F11 / CTRL+f / ALT+f", "iconSaveAs.png");
+
+                default:
+                    return new ControlStyle(id, message("SaveAs"), "", "iconSaveAs.png");
+            }
         }
 
         switch (id) {
@@ -729,9 +744,6 @@ public class ControlStyle {
 
             case "saveButton":
                 return new ControlStyle("saveButton", message("Save"), "F2 / CTRL+s / ALT+s", "iconSave.png");
-
-            case "saveAsButton":
-                return new ControlStyle("saveAsButton", message("SaveAs"), "F11 / CTRL+f / ALT+f", "iconSaveAs.png");
 
             case "cropButton":
                 return new ControlStyle("cropButton", message("Crop"), "CTRL+x / ALT+x", "iconCrop.png");
@@ -1247,11 +1259,11 @@ public class ControlStyle {
             case "globalButton":
                 return new ControlStyle(id, message("Global"), "", "iconGlobal.png");
 
-            case "dataImportButton":
-                return new ControlStyle(id, message("Import"), "", "iconDataImport.png");
+            case "rowAddButton":
+                return new ControlStyle(id, message("Add"), "", "iconRowAdd.png");
 
-            case "dataExportButton":
-                return new ControlStyle(id, message("Export"), "", "iconDataExport.png");
+            case "rowDeleteButton":
+                return new ControlStyle(id, message("Delete"), "", "iconRowDelete.png");
 
             default:
                 return null;

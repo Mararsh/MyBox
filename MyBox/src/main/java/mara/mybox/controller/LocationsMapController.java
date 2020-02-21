@@ -112,7 +112,7 @@ public class LocationsMapController extends BaseController {
                                 bottomLabel.setText(AppVariables.message("Loading..."));
                                 break;
                             case SUCCEEDED:
-                                NetworkTools.defaultSSL();
+//                                NetworkTools.defaultSSL();
                                 break;
                             case CANCELLED:
                                 bottomLabel.setText(message("Canceled"));

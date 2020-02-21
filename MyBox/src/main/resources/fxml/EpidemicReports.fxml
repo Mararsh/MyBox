@@ -27,7 +27,7 @@ License:    Apache License Version 2.0
     <center>
         <VBox fx:id="contentBox" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" BorderPane.alignment="CENTER">
             <children>
-                <SplitPane fx:id="splitPane" dividerPositions="0.3" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                <SplitPane fx:id="splitPane" dividerPositions="0.4" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                     <items>
                         <ScrollPane fx:id="leftPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="611.0" prefViewportWidth="252.0">
                             <content>
@@ -44,6 +44,43 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </graphic>
                                                 </Button>
+                                                <Button fx:id="helpMeButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#fetchAction">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconCatFoot.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="catButton" layoutX="71.0" layoutY="10.0" mnemonicParsing="false" onAction="#myboxInternetDataPath">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconCat.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="dataImportButton" mnemonicParsing="false" onAction="#importAction">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconDataImport.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="dataExportButton" mnemonicParsing="false" onAction="#exportAction">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconDataExport.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                                 <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -53,7 +90,7 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </graphic>
                                                 </Button>
-                                                <Button fx:id="refreshButton" layoutX="71.0" layoutY="10.0" mnemonicParsing="false" onAction="#refreshAction">
+                                                <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
@@ -62,25 +99,21 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </graphic>
                                                 </Button>
+                                            </children>
+                                        </HBox>
+                                        <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="20.0" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                            <children>
                                                 <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                    <Button fx:id="dataImportButton" mnemonicParsing="false" onAction="#importAction">
-                                       <graphic>
-                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../buttons/iconDataImport.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                    </Button>
-                                    <Button fx:id="dataExportButton" mnemonicParsing="false" onAction="#exportAction">
-                                       <graphic>
-                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../buttons/iconDataExport.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                    </Button>
+                                                <CheckBox fx:id="recountCheck" mnemonicParsing="false" text="%CountStatisticEveryLoading" />
+                                                <Button fx:id="statisticButton" layoutX="468.0" layoutY="10.0" mnemonicParsing="false" onAction="#statisticAction">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconStatistic.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
                                             </children>
                                         </HBox>
                                         <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="200.0" prefViewportWidth="232.0" VBox.vgrow="ALWAYS">
@@ -104,12 +137,14 @@ License:    Apache License Version 2.0
                                                 <Image url="@../buttons/iconDoubleLeft.png" />
                                             </image>
                                         </ImageView>
-                                        <Label fx:id="nameLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                         <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
                                                 <Image url="@../buttons/iconTips.png" />
                                             </image>
                                         </ImageView>
+                                        <Label fx:id="nameLabel" maxWidth="1.7976931348623157E308" styleClass="bold-blue-label" stylesheets="@../styles/MyBox.css" HBox.hgrow="ALWAYS" />
+                              <Label text="dpi" />
+                              <ComboBox fx:id="dpiSelector" editable="true" prefWidth="100.0" />
                                         <Button fx:id="htmlButton" mnemonicParsing="false" onAction="#htmlAction">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -183,13 +218,15 @@ License:    Apache License Version 2.0
                                                                 <TableColumn fx:id="timeColumn" editable="false" prefWidth="100.0" text="%Time" />
                                                                 <TableColumn fx:id="countryColumn" editable="false" prefWidth="100.0" text="%Country" />
                                                                 <TableColumn fx:id="provinceColumn" prefWidth="100.0" text="%Province" />
-                                                                <TableColumn fx:id="cityColumn" editable="false" prefWidth="100.0" text="%City" visible="false" />
+                                                                <TableColumn fx:id="cityColumn" editable="false" prefWidth="100.0" text="%City" />
                                                                 <TableColumn fx:id="confirmedColumn" prefWidth="100.0" text="%Confirmed" />
-                                                                <TableColumn fx:id="suspectedColumn" prefWidth="100.0" text="%Suspected" visible="false" />
+                                                                <TableColumn fx:id="increasedConfirmedColumn" prefWidth="100.0" text="%IncreasedConfirmed" />
                                                                 <TableColumn fx:id="headledColumn" editable="false" prefWidth="100.0" text="%Healed" />
+                                                                <TableColumn fx:id="increasedHeadledColumn" editable="false" prefWidth="100.0" text="%IncreasedHealed" />
                                                                 <TableColumn fx:id="headledRatioColumn" editable="false" prefWidth="100.0" text="%HealedRatio" />
                                                                 <TableColumn fx:id="deadColumn" editable="false" prefWidth="100.0" text="%Dead" />
                                                                 <TableColumn fx:id="deadRatioColumn" editable="false" prefWidth="100.0" text="%DeadRatio" />
+                                                                <TableColumn fx:id="increasedDeadColumn" editable="false" prefWidth="100.0" text="%IncreasedDead" />
                                                                 <TableColumn fx:id="longtitudeColumn" editable="false" prefWidth="100.0" text="%Longitude" />
                                                                 <TableColumn fx:id="latitudeColumn" prefWidth="100.0" text="%Latitude" />
                                                                 <TableColumn fx:id="labelColumn" prefWidth="150.0" text="%Label" visible="false" />
@@ -253,7 +290,7 @@ License:    Apache License Version 2.0
                                                     <content>
                                                         <VBox fx:id="numberChartBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                             <children>
-                                                                <BarChart fx:id="numberBarChart" barGap="1.0" categoryGap="4.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                                                <BarChart fx:id="numberBarChart" barGap="1.0" categoryGap="4.0" legendSide="TOP" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                                                                     <xAxis>
                                                                         <CategoryAxis side="BOTTOM" tickLabelRotation="45.0" />
                                                                     </xAxis>
@@ -264,7 +301,7 @@ License:    Apache License Version 2.0
                                                                         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                                                                     </padding>
                                                                 </BarChart>
-                                                                <LineChart fx:id="numberLineChart" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                                                <LineChart fx:id="numberLineChart" legendSide="TOP" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                                                                     <xAxis>
                                                                         <CategoryAxis side="BOTTOM" />
                                                                     </xAxis>
@@ -278,11 +315,42 @@ License:    Apache License Version 2.0
                                                 </ScrollPane>
                                             </content>
                                         </Tab>
+                              <Tab fx:id="increasedTab" text="%Increased">
+                                 <content>
+                                    <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="491.0" prefViewportWidth="1030.0">
+                                       <content>
+                                          <VBox fx:id="increasedChartBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                             <children>
+                                                <BarChart fx:id="increasedBarChart" barGap="1.0" categoryGap="4.0" legendSide="TOP" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                                   <padding>
+                                                      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                                                   </padding>
+                                                   <xAxis>
+                                                      <CategoryAxis side="BOTTOM" tickLabelRotation="45.0" />
+                                                   </xAxis>
+                                                   <yAxis>
+                                                      <NumberAxis side="LEFT" />
+                                                   </yAxis>
+                                                </BarChart>
+                                                <LineChart fx:id="increasedLineChart" legendSide="TOP" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                                   <xAxis>
+                                                      <CategoryAxis side="BOTTOM" />
+                                                   </xAxis>
+                                                   <yAxis>
+                                                      <NumberAxis side="LEFT" />
+                                                   </yAxis>
+                                                </LineChart>
+                                             </children>
+                                          </VBox>
+                                       </content>
+                                    </ScrollPane>
+                                 </content>
+                              </Tab>
                                         <Tab fx:id="ratioTab" text="%Ratio">
                                             <content>
                                                 <VBox fx:id="ratioChartBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                     <children>
-                                                        <BarChart fx:id="ratioBarChart" barGap="1.0" categoryGap="4.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                                        <BarChart fx:id="ratioBarChart" barGap="1.0" categoryGap="4.0" legendSide="TOP" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                                                             <padding>
                                                                 <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                                                             </padding>
@@ -293,7 +361,7 @@ License:    Apache License Version 2.0
                                                                 <NumberAxis side="LEFT" />
                                                             </yAxis>
                                                         </BarChart>
-                                                        <LineChart fx:id="ratioLineChart" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                                        <LineChart fx:id="ratioLineChart" legendSide="TOP" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                                                             <xAxis>
                                                                 <CategoryAxis side="BOTTOM" />
                                                             </xAxis>
@@ -336,11 +404,11 @@ License:    Apache License Version 2.0
                                             <content>
                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                     <children>
-                                          <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
-                                             <content>
-                                                              <fx:include fx:id="map" source="EpidemicReportMap.fxml" />
-                                             </content>
-                                          </ScrollPane>
+                                                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+                                                            <content>
+                                                                <fx:include fx:id="map" source="EpidemicReportMap.fxml" />
+                                                            </content>
+                                                        </ScrollPane>
                                                     </children>
                                                 </VBox>
                                             </content>

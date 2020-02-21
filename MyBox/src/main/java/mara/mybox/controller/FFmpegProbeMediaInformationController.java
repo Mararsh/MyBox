@@ -65,7 +65,7 @@ public class FFmpegProbeMediaInformationController extends FFmpegBaseController 
             packetsStreamsInput, packetsIntervalInput;
 
     public FFmpegProbeMediaInformationController() {
-        baseTitle = AppVariables.message("MediaInformation");
+        baseTitle = AppVariables.message("FFmpegProbeMediaInformation");
 
     }
 

@@ -218,9 +218,11 @@ public class TableColorData extends DerbyBase {
         }
         try {
             String sql = " SELECT * FROM Color_Data WHERE rgba='" + rgba + "'";
-            statement.setMaxRows(1);
-            ResultSet results = statement.executeQuery(sql);
-            if (results.next()) {
+            boolean exist;
+            try ( ResultSet results = statement.executeQuery(sql)) {
+                exist = results.next();
+            }
+            if (exist) {
                 if (replace) {
                     ColorData data = new ColorData(rgba).calculate();
                     update(statement, data);
@@ -284,8 +286,11 @@ public class TableColorData extends DerbyBase {
         try {
             String sql = " SELECT * FROM Color_Data WHERE rgba='" + data.getRgba() + "'";
             statement.setMaxRows(1);
-            ResultSet results = statement.executeQuery(sql);
-            if (results.next()) {
+            boolean exist;
+            try ( ResultSet results = statement.executeQuery(sql)) {
+                exist = results.next();
+            }
+            if (exist) {
                 if (replace) {
                     update(statement, data);
                 } else {
@@ -436,12 +441,14 @@ public class TableColorData extends DerbyBase {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
             String sql = "SELECT MAX(palette_index) as maxp FROM Color_Data WHERE palette_index > -1";
-            ResultSet results = statement.executeQuery(sql);
-            double index = 1;
-            if (results.next()) {
-                try {
-                    index = results.getDouble("maxp") + 1;
-                } catch (Exception e) {
+            double index;
+            try ( ResultSet results = statement.executeQuery(sql)) {
+                index = 1;
+                if (results.next()) {
+                    try {
+                        index = results.getDouble("maxp") + 1;
+                    } catch (Exception e) {
+                    }
                 }
             }
             conn.setAutoCommit(false);
@@ -619,8 +626,8 @@ public class TableColorData extends DerbyBase {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
             String sql = "SELECT MIN(palette_index) as minp FROM Color_Data WHERE palette_index > -1";
-            ResultSet results = statement.executeQuery(sql);
             double index = 1;
+            ResultSet results = statement.executeQuery(sql);
             if (results.next()) {
                 try {
                     double min = results.getDouble("minp");
@@ -628,6 +635,7 @@ public class TableColorData extends DerbyBase {
                 } catch (Exception e) {
                 }
             }
+            results.close();
             data.setPaletteIndex(index);
             return write(statement, data, true);
         } catch (Exception e) {
@@ -712,10 +720,12 @@ public class TableColorData extends DerbyBase {
     public static boolean trimPalette(Statement statement) {
         try {
             String sql = " SELECT rgba, palette_index FROM Color_Data WHERE palette_index > -1 ORDER BY palette_index ASC";
-            ResultSet results = statement.executeQuery(sql);
-            List<String> values = new ArrayList<>();
-            while (results.next()) {
-                values.add(results.getString("rgba"));
+            List<String> values;
+            try ( ResultSet results = statement.executeQuery(sql)) {
+                values = new ArrayList<>();
+                while (results.next()) {
+                    values.add(results.getString("rgba"));
+                }
             }
             for (int i = 0; i < values.size(); i++) {
                 sql = "UPDATE Color_Data SET palette_index=" + i + " WHERE rgba='" + values.get(i) + "'";

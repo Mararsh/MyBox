@@ -4,19 +4,24 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Region;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
+import javafx.stage.Stage;
 import mara.mybox.db.DerbyBase;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlStage;
@@ -87,8 +92,6 @@ public class TableManageController<P> extends BaseController {
 
             initPagination();
 
-            load();
-
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -119,6 +122,12 @@ public class TableManageController<P> extends BaseController {
 //            }
 //        }
         checkSelected();
+    }
+
+    @Override
+    public void afterSceneLoaded() {
+        super.afterSceneLoaded();
+        load();
     }
 
     protected void checkSelected() {
@@ -309,6 +318,22 @@ public class TableManageController<P> extends BaseController {
     @FXML
     @Override
     public void clearAction() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(getBaseTitle());
+        alert.setContentText(AppVariables.message("SureClear"));
+        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+        ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
+        ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
+        alert.getButtonTypes().setAll(buttonSure, buttonCancel);
+        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        stage.setAlwaysOnTop(true);
+        stage.toFront();
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() != buttonSure) {
+            return;
+        }
+
         if (clearData()) {
             tableData.clear();
             tableView.refresh();

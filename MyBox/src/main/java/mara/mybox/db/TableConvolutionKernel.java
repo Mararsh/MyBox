@@ -202,11 +202,15 @@ public class TableConvolutionKernel extends DerbyBase {
     public static boolean write(List<ConvolutionKernel> records) {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
-            String sql;
             conn.setAutoCommit(false);
+            String sql;
             for (ConvolutionKernel k : records) {
                 sql = " SELECT width FROM Convolution_Kernel WHERE name='" + k.getName() + "'";
-                if (!statement.executeQuery(sql).next()) {
+                boolean exist;
+                try ( ResultSet results = statement.executeQuery(sql)) {
+                    exist = results.next();
+                }
+                if (!exist) {
                     sql = "INSERT INTO Convolution_Kernel(name, width , height, type, gray, edge, create_time, modify_time, description) VALUES('"
                             + k.getName() + "', " + k.getWidth() + ", " + k.getHeight() + ", "
                             + k.getType() + ", " + k.getGray() + ", " + k.getEdge() + ", '"

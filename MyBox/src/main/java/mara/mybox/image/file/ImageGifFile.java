@@ -398,7 +398,7 @@ public class ImageGifFile {
     // https://www.jianshu.com/p/df52f1511cf8
     // http://giflib.sourceforge.net/whatsinagif/index.html
     public static String writeImages(List<ImageInformation> imagesInfo,
-            File outFile, boolean loop, boolean keepSize, int width, int height) {
+            File outFile, boolean loop, boolean keepSize, int width) {
         try {
             if (imagesInfo == null || imagesInfo.isEmpty() || outFile == null) {
                 return "InvalidParameters";
@@ -417,7 +417,7 @@ public class ImageGifFile {
                     BufferedImage bufferedImage = ImageFileReaders.getBufferedImage(info);
                     if (bufferedImage != null) {
                         if (!keepSize) {
-                            bufferedImage = ImageManufacture.scaleImage(bufferedImage, width, height);
+                            bufferedImage = ImageManufacture.scaleImageWidthKeep(bufferedImage, width);
                         }
                         getParaMeta(info.getDuration(), loop, gifWriter, param, metaData);
                         gifWriter.writeToSequence(new IIOImage(bufferedImage, null, metaData), param);

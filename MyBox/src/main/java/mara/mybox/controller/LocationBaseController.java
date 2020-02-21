@@ -89,8 +89,10 @@ public class LocationBaseController extends BaseController {
                 @Override
                 protected boolean handle() {
                     countries = TableGeographyCode.countries();
-                    provinces = TableGeographyCode.provinces();
-                    cities = TableGeographyCode.cities();
+                    provinces = TableGeographyCode.provinces(countrySelector.getValue());
+                    cities = TableGeographyCode.cities(
+                            countrySelector.getValue(),
+                            provinceSelector.getValue());
                     levels = TableGeographyCode.levels();
                     return true;
                 }

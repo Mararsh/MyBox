@@ -308,7 +308,7 @@ public class EpidemicReportsEditController extends TableManageController<Epidemi
                 @Override
                 protected boolean handle() {
                     TableEpidemicReport.write(tableData);
-                    return TableEpidemicReport.summary(currentDataset);
+                    return true;
                 }
 
                 @Override

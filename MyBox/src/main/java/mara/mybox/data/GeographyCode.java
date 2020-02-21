@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -35,10 +37,19 @@ import org.w3c.dom.NodeList;
 public class GeographyCode {
 
     private static List<String> ChineseProvinces;
+    private static List<String> Countries;
+    private static Map<String, String> CountriesChineseKeys, CountriesEnglishKeys,
+            ChineseProvincesChineseKeys, ChineseProvincesEnglishKeys;
 
     protected String address, fullAddress, country, province, citycode, city, district, township,
             neighborhood, building, AdministrativeCode, street, number, level;
     protected double longitude = -200, latitude = -200;
+    protected BooleanProperty selected;
+    protected boolean isSettingValues;
+
+    public GeographyCode() {
+        selected = new SimpleBooleanProperty(false);
+    }
 
     public String geography(String lineBreak) {
         StringBuilder s = new StringBuilder();
@@ -160,14 +171,17 @@ public class GeographyCode {
                 }
             }
 
-            geographyCode.setCountry(message("China"));
-//            nodes = doc.getElementsByTagName("country");
-//            if (nodes != null && nodes.getLength() > 0) {
-//                geographyCode.setCountry(nodes.item(0).getTextContent());
-//
-//            } else {
-//                geographyCode.setCountry("");
-//            }
+            nodes = doc.getElementsByTagName("country");
+            if (nodes != null && nodes.getLength() > 0) {
+                String v = nodes.item(0).getTextContent();
+                if (message("zh", "China").equals(v)) {
+                    geographyCode.setCountry(message("China"));
+                } else {
+                    geographyCode.setCountry(v);
+                }
+            } else {
+                geographyCode.setCountry("");
+            }
             nodes = doc.getElementsByTagName("province");
             if (nodes != null && nodes.getLength() > 0) {
                 geographyCode.setProvince(nodes.item(0).getTextContent());
@@ -282,8 +296,8 @@ public class GeographyCode {
                         geographyCode.setLongitude(Double.valueOf(values[0].trim()));
                         geographyCode.setLatitude(Double.valueOf(values[1].trim()));
                     } else {
-                        geographyCode.setLongitude(-1);
-                        geographyCode.setLatitude(-1);
+                        geographyCode.setLongitude(-200);
+                        geographyCode.setLatitude(-200);
                     }
                 }
                 if (geographyCode.getAddress() == null) {
@@ -292,16 +306,22 @@ public class GeographyCode {
                 nodes = doc.getElementsByTagName("level");
                 if (nodes != null && nodes.getLength() > 0) {
                     String v = nodes.item(0).getTextContent();
-                    if (message("zh", "Province").equals(v)) {
+                    if (message("zh", "Country").equals(v)) {
+                        geographyCode.setLevel(message("Country"));
+                    } else if (message("zh", "Province").equals(v)) {
                         geographyCode.setLevel(message("Province"));
                     } else if (message("zh", "Country").equals(v)) {
                         geographyCode.setLevel(message("Country"));
                     } else if (message("zh", "City").equals(v)) {
                         geographyCode.setLevel(message("City"));
+                    } else if (message("zh", "District").equals(v)) {
+                        geographyCode.setLevel(message("District"));
                     } else if (message("zh", "Township").equals(v)) {
                         geographyCode.setLevel(message("Township"));
-                    } else if (message("zh", "Street").equals(v)) {
-                        geographyCode.setLevel(message("Street"));
+                    } else if (message("zh", "Neighborhood").equals(v)) {
+                        geographyCode.setLevel(message("Neighborhood"));
+                    } else if (message("zh", "PointOfInterest").equals(v)) {
+                        geographyCode.setLevel(message("PointOfInterest"));
                     } else {
                         geographyCode.setLevel(v);
                     }
@@ -309,6 +329,7 @@ public class GeographyCode {
                     geographyCode.setLevel("");
                 }
             }
+
             TableGeographyCode.write(geographyCode);
         } catch (Exception e) {
 //            logger.debug(e.toString());
@@ -316,12 +337,261 @@ public class GeographyCode {
         return geographyCode;
     }
 
+    public static List<String> Countries() {
+        if (Countries != null) {
+            return Countries;
+        }
+        Countries = new ArrayList();
+        Countries.add("China");
+        Countries.add("ProvinceHubei");
+        Countries.add("Angola");
+        Countries.add("Afghanistan");
+        Countries.add("Albania");
+        Countries.add("Algeria");
+        Countries.add("Andorra");
+        Countries.add("Anguilla");
+        Countries.add("Argentina");
+        Countries.add("Armenia");
+        Countries.add("Ascension");
+        Countries.add("Australia");
+        Countries.add("Austria");
+        Countries.add("Azerbaijan");
+        Countries.add("Bahamas");
+        Countries.add("Bahrain");
+        Countries.add("Bangladesh");
+        Countries.add("Barbados");
+        Countries.add("Belarus");
+        Countries.add("Belgium");
+        Countries.add("Belize");
+        Countries.add("Benin");
+        Countries.add("BermudaIs");
+        Countries.add("Bolivia");
+        Countries.add("Botswana");
+        Countries.add("Brazil");
+        Countries.add("Brunei");
+        Countries.add("Bulgaria");
+        Countries.add("Burkina-faso");
+        Countries.add("Burma");
+        Countries.add("Burundi");
+        Countries.add("Cameroon");
+        Countries.add("Canada");
+        Countries.add("CaymanIs");
+        Countries.add("CentralAfricanRepublic");
+        Countries.add("Chad");
+        Countries.add("Chile");
+        Countries.add("Colombia");
+        Countries.add("CookIs");
+        Countries.add("CostaRica");
+        Countries.add("Croatia");
+        Countries.add("Cuba");
+        Countries.add("Cyprus");
+        Countries.add("CzechRepublic");
+        Countries.add("Denmark");
+        Countries.add("Djibouti");
+        Countries.add("DominicaRep");
+        Countries.add("Ecuador");
+        Countries.add("Egypt");
+        Countries.add("EISalvador");
+        Countries.add("Estonia");
+        Countries.add("Ethiopia");
+        Countries.add("Fiji");
+        Countries.add("Finland");
+        Countries.add("France");
+        Countries.add("FrenchGuiana");
+        Countries.add("Gabon");
+        Countries.add("Gambia");
+        Countries.add("Georgia");
+        Countries.add("Germany");
+        Countries.add("Ghana");
+        Countries.add("Gibraltar");
+        Countries.add("Greece");
+        Countries.add("Grenada");
+        Countries.add("Guam");
+        Countries.add("Guatemala");
+        Countries.add("Guinea");
+        Countries.add("Guyana");
+        Countries.add("Haiti");
+        Countries.add("Honduras");
+        Countries.add("Hungary");
+        Countries.add("Iceland");
+        Countries.add("India");
+        Countries.add("Indonesia");
+        Countries.add("Iran");
+        Countries.add("Iraq");
+        Countries.add("Ireland");
+        Countries.add("Israel");
+        Countries.add("Italy");
+        Countries.add("IvoryCoast");
+        Countries.add("Japan");
+        Countries.add("Jordan");
+        Countries.add("Kampuchea");
+        Countries.add("Kazakstan");
+        Countries.add("Kenya");
+        Countries.add("Korea");
+        Countries.add("Kuwait");
+        Countries.add("Kyrgyzstan");
+        Countries.add("Laos");
+        Countries.add("Latvia");
+        Countries.add("Lebanon");
+        Countries.add("Lesotho");
+        Countries.add("Liberia");
+        Countries.add("Libya");
+        Countries.add("Liechtenstein");
+        Countries.add("Lithuania");
+        Countries.add("Luxembourg");
+        Countries.add("Madagascar");
+        Countries.add("Malawi");
+        Countries.add("Malaysia");
+        Countries.add("Maldives");
+        Countries.add("Mali");
+        Countries.add("Malta");
+        Countries.add("MarianaIs");
+        Countries.add("Martinique");
+        Countries.add("Mauritius");
+        Countries.add("Mexico");
+        Countries.add("Monaco");
+        Countries.add("Mongolia");
+        Countries.add("MontserratIs");
+        Countries.add("Morocco");
+        Countries.add("Mozambique");
+        Countries.add("Namibia");
+        Countries.add("Nauru");
+        Countries.add("Nepal");
+        Countries.add("NetheriAndsAntilles");
+        Countries.add("Netherlands");
+        Countries.add("NewZealand");
+        Countries.add("Nicaragua");
+        Countries.add("Niger");
+        Countries.add("Nigeria");
+        Countries.add("NorthKorea");
+        Countries.add("Oman");
+        Countries.add("Pakistan");
+        Countries.add("Panama");
+        Countries.add("PapuaNewCuinea");
+        Countries.add("Paraguay");
+        Countries.add("Peru");
+        Countries.add("Philippines");
+        Countries.add("Poland");
+        Countries.add("FrenchPolynesia");
+        Countries.add("Portugal");
+        Countries.add("PuertoRico");
+        Countries.add("Qatar");
+        Countries.add("Reunion");
+        Countries.add("Romania");
+        Countries.add("Russia");
+        Countries.add("SaintLueia");
+        Countries.add("SaintVincent");
+        Countries.add("SamoaEastern");
+        Countries.add("SamoaWestern");
+        Countries.add("SanMarino");
+        Countries.add("SaoTomeAndPrincipe");
+        Countries.add("SaudiArabia");
+        Countries.add("Senegal");
+        Countries.add("Seychelles");
+        Countries.add("SierraLeone");
+        Countries.add("Singapore");
+        Countries.add("Slovakia");
+        Countries.add("Slovenia");
+        Countries.add("SolomonIs");
+        Countries.add("Somali");
+        Countries.add("SouthAfrica");
+        Countries.add("Spain");
+        Countries.add("SriLanka");
+        Countries.add("St.Lucia");
+        Countries.add("St.Vincent");
+        Countries.add("Sudan");
+        Countries.add("Suriname");
+        Countries.add("Swaziland");
+        Countries.add("Sweden");
+        Countries.add("Switzerland");
+        Countries.add("Syria");
+        Countries.add("Tajikstan");
+        Countries.add("Thailand");
+        Countries.add("Togo");
+        Countries.add("Tonga");
+        Countries.add("TrinidadAndTobago");
+        Countries.add("Tunisia");
+        Countries.add("Turkey");
+        Countries.add("Turkmenistan");
+        Countries.add("Uganda");
+        Countries.add("Ukraine");
+        Countries.add("UnitedArabEmirates");
+        Countries.add("UAE");
+        Countries.add("UnitedKingdom");
+        Countries.add("UK");
+        Countries.add("UnitedStates");
+        Countries.add("Uruguay");
+        Countries.add("Uzbekistan");
+        Countries.add("Venezuela");
+        Countries.add("Vietnam");
+        Countries.add("Yemen");
+        Countries.add("Yugoslavia");
+        Countries.add("Zimbabwe");
+        Countries.add("Zaire");
+        Countries.add("Zambia");
+        return Countries;
+    }
+
+    public static Map<String, String> countriesChineseKey() {
+        if (CountriesChineseKeys != null) {
+            return CountriesChineseKeys;
+        }
+        CountriesChineseKeys = new HashMap<>();
+        for (String country : Countries()) {
+            CountriesChineseKeys.put(message("zh", country), country);
+        }
+        return CountriesChineseKeys;
+    }
+
+    public static String countryChineseKey(String chineseName) {
+        return countriesChineseKey().get(chineseName);
+    }
+
+    public static Map<String, String> countriesEnglishKey() {
+        if (CountriesEnglishKeys != null) {
+            return CountriesEnglishKeys;
+        }
+        CountriesEnglishKeys = new HashMap<>();
+        for (String country : Countries()) {
+            CountriesEnglishKeys.put(message("en", country), country);
+        }
+        return CountriesEnglishKeys;
+    }
+
+    public static String countryEnglishKey(String englishName) {
+        return countriesEnglishKey().get(englishName);
+    }
+
+    public static String countryKey(String name) {
+        if (AppVariables.getLanguage().startsWith("zh")) {
+            return countriesChineseKey().get(name);
+        } else {
+            return countriesEnglishKey().get(name);
+        }
+    }
+
+    public static String countryEnglish(String name) {
+        if (AppVariables.getLanguage().startsWith("zh")) {
+            return message("en", countriesChineseKey().get(name));
+        } else {
+            return name;
+        }
+    }
+
+    public static String countryChinese(String name) {
+        if (!AppVariables.getLanguage().startsWith("zh")) {
+            return message("zh", countriesEnglishKey().get(name));
+        } else {
+            return name;
+        }
+    }
+
     public static List<String> ChineseProvinces() {
         if (ChineseProvinces != null) {
             return ChineseProvinces;
         }
         ChineseProvinces = new ArrayList();
-        ChineseProvinces = new ArrayList();
+        ChineseProvinces.add("CityBeijing");
         ChineseProvinces.add("ProvinceHubei");
         ChineseProvinces.add("ProvinceZhejiang");
         ChineseProvinces.add("ProvinceGuangdong");
@@ -329,12 +599,9 @@ public class GeographyCode {
         ChineseProvinces.add("ProvinceHunan");
         ChineseProvinces.add("ProvinceAnhui");
         ChineseProvinces.add("ProvinceJiangxi");
-        ChineseProvinces.add("CityChongqing");
         ChineseProvinces.add("ProvinceJiangsu");
         ChineseProvinces.add("ProvinceSichuan");
         ChineseProvinces.add("ProvinceShandong");
-        ChineseProvinces.add("CityBeijing");
-        ChineseProvinces.add("CityShanghai");
         ChineseProvinces.add("ProvinceFujian");
         ChineseProvinces.add("ProvinceShanxi");
         ChineseProvinces.add("ProvinceGuangxi");
@@ -344,19 +611,75 @@ public class GeographyCode {
         ChineseProvinces.add("ProvinceLiaoning");
         ChineseProvinces.add("ProvinceHainan");
         ChineseProvinces.add("ProvinceShanxi2");
-        ChineseProvinces.add("CityTianjin");
         ChineseProvinces.add("ProvinceGansu");
         ChineseProvinces.add("ProvinceGuizhou");
         ChineseProvinces.add("ProvinceNingxia");
         ChineseProvinces.add("InnerMongolia");
         ChineseProvinces.add("ProvinceJiLin");
         ChineseProvinces.add("ProvinceXinjiang");
-        ChineseProvinces.add("HongKong");
-        ChineseProvinces.add("ProvinceQinghai");
-        ChineseProvinces.add("Taiwan");
-        ChineseProvinces.add("Macau");
         ChineseProvinces.add("ProvinceXizang");
+        ChineseProvinces.add("ProvinceQinghai");
+        ChineseProvinces.add("CityShanghai");
+        ChineseProvinces.add("CityChongqing");
+        ChineseProvinces.add("CityTianjin");
+        ChineseProvinces.add("Macau");
+        ChineseProvinces.add("HongKong");
+        ChineseProvinces.add("Taiwan");
         return ChineseProvinces;
+    }
+
+    public static Map<String, String> chineseProvincesChineseKey() {
+        if (ChineseProvincesChineseKeys != null) {
+            return ChineseProvincesChineseKeys;
+        }
+        ChineseProvincesChineseKeys = new HashMap<>();
+        for (String province : ChineseProvinces()) {
+            ChineseProvincesChineseKeys.put(message("zh", province), province);
+        }
+        return ChineseProvincesChineseKeys;
+    }
+
+    public static String chineseProvincesChineseKey(String chineseName) {
+        return chineseProvincesChineseKey().get(chineseName);
+    }
+
+    public static Map<String, String> chineseProvincesEnglishKey() {
+        if (ChineseProvincesEnglishKeys != null) {
+            return ChineseProvincesEnglishKeys;
+        }
+        ChineseProvincesEnglishKeys = new HashMap<>();
+        for (String province : ChineseProvinces()) {
+            ChineseProvincesEnglishKeys.put(message("en", province), province);
+        }
+        return ChineseProvincesEnglishKeys;
+    }
+
+    public static String chineseProvincesEnglishKey(String englishName) {
+        return chineseProvincesEnglishKey().get(englishName);
+    }
+
+    public static String chineseProvinceKey(String name) {
+        if (AppVariables.getLanguage().startsWith("zh")) {
+            return chineseProvincesChineseKey().get(name);
+        } else {
+            return chineseProvincesEnglishKey().get(name);
+        }
+    }
+
+    public static String chineseProvinceEnglish(String name) {
+        if (AppVariables.getLanguage().startsWith("zh")) {
+            return message("en", chineseProvincesChineseKey().get(name));
+        } else {
+            return name;
+        }
+    }
+
+    public static String chineseProvinceChinese(String name) {
+        if (!AppVariables.getLanguage().startsWith("zh")) {
+            return message("zh", chineseProvincesEnglishKey().get(name));
+        } else {
+            return name;
+        }
     }
 
     public static void initChineseProvincesCodes() {
@@ -579,15 +902,36 @@ public class GeographyCode {
     public static void importCodes() {
         File file;
         if ("zh".equals(AppVariables.getLanguage())) {
-            file = FxmlControl.getInternalFile("/data/db/GeographyCodes_zh.del",
-                    "AppTemp", "GeographyCodes_zh.del");
+            file = FxmlControl.getInternalFile("/data/db/Geography_Code_zh.del",
+                    "AppTemp", "Geography_Code_zh.del");
+            DerbyBase.importData("Geography_Code", file.getAbsolutePath(), false);
         } else {
-            file = FxmlControl.getInternalFile("/data/db/GeographyCodes_en.del",
-                    "AppTemp", "GeographyCodes_en.del");
+            file = FxmlControl.getInternalFile("/data/db/Geography_Code_en_countries.del",
+                    "AppTemp", "Geography_Code_en_countries.del");
+            DerbyBase.importData("Geography_Code", file.getAbsolutePath(), false);
+
+            file = FxmlControl.getInternalFile("/data/db/Geography_Code_en_chineseAddresses.del",
+                    "AppTemp", "Geography_Code_en_chineseAddresses.del");
+            DerbyBase.importData("Geography_Code", file.getAbsolutePath(), false);
         }
+    }
+
+    public static void importAllCodes() {
+        File file;
+        file = FxmlControl.getInternalFile("/data/db/Geography_Code_zh.del",
+                "AppTemp", "Geography_Code_zh.del");
+        DerbyBase.importData("Geography_Code", file.getAbsolutePath(), false);
+
+        file = FxmlControl.getInternalFile("/data/db/Geography_Code_en_countries.del",
+                "AppTemp", "Geography_Code_en_countries.del");
+        DerbyBase.importData("Geography_Code", file.getAbsolutePath(), false);
+
+        file = FxmlControl.getInternalFile("/data/db/Geography_Code_en_chineseAddresses.del",
+                "AppTemp", "Geography_Code_en_chineseAddresses.del");
         DerbyBase.importData("Geography_Code", file.getAbsolutePath(), false);
 
     }
+
 
     /*
         get/set
@@ -718,6 +1062,32 @@ public class GeographyCode {
 
     public void setBuilding(String building) {
         this.building = building;
+    }
+
+    public static List<String> getChineseProvinces() {
+        return ChineseProvinces;
+    }
+
+    public static void setChineseProvinces(List<String> ChineseProvinces) {
+        GeographyCode.ChineseProvinces = ChineseProvinces;
+    }
+
+    public BooleanProperty getSelectedProperty() {
+        return selected;
+    }
+
+    public boolean getSelected() {
+        return selected.get();
+    }
+
+    public void setSelected(boolean in) {
+        isSettingValues = true;
+        if (selected == null) {
+            selected = new SimpleBooleanProperty(in);
+        } else {
+            selected.set(in);
+        }
+        isSettingValues = false;
     }
 
 }

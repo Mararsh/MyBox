@@ -4,16 +4,18 @@
 This is GUI program based on JavaFx to provide simple and easy functions. It's free and open sources
 
 ## Download and Execution
-Packages of each version have been uploaded at [Releases](https://github.com/Mararsh/MyBox/releases?) directory now. You can find them by clicking `releases` tab in main page of this project.    
+Packages of each version have been uploaded at [Releases](https://github.com/Mararsh/MyBox/releases?) directory now. You can find them by clicking `releases` tab in main page of this project.      
+
+[What's new](#devLog)     
 
 ### Self-contain packages 
 Self-contain packages include all files and need not java env and installation.   (Please unpack it under path with pure-English name.)   
  
 | Platform | Link | Size | Launcher |    
 | --- | --- | ---  | ---  |    
-| win | [MyBox-6.1-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.1/MyBox-6.1-win-exe.zip)  | 242MB | MyBox.exe |       
-| linux | [MyBox-6.1-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.1/MyBox-6.1-linux.tar.gz)  | 201MB  | bin/MyBox  |     
-| mac | [MyBox-6.1-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.1/MyBox-6.1-mac.dmg)  | 203MB  |  MyBox-6.1.app   |   
+| win | [MyBox-6.1.5-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.1.5/MyBox-6.1.5-win-exe.zip)  | 242MB | MyBox.exe |       
+| linux | [MyBox-6.1.5-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.1.5/MyBox-6.1.5-linux.tar.gz)  | 201MB  | bin/MyBox  |     
+| mac | [MyBox-6.1.5-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.1.5/MyBox-6.1.5-mac.dmg)  | 203MB  |  MyBox-6.1.5.app   |   
 
 User can double click the launcher to start MyBox or run it by command line. The default "Open Method" of image/text/PDF files can be associated to MyBox and a file can be opened directly by MyBox by double clicking the file's name.
 (File with name including non-ascii can not be opened by double clicking currently)
@@ -23,16 +25,16 @@ When JRE or JDK 13 or higher(`Oracle jdk` or `open jdk`) is installed, jar can r
   
 | Platform | Link | Size | Requirements |   
 | --- | --- | ---  | ---  |    
-| win | [MyBox-6.1-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.1/MyBox-6.1-win-jar.zip)  | 129MB | Java 13.0.1 or higher |    
-| linux | [MyBox-6.1-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.1/MyBox-6.1-linux-jar.zip)  | 135MB  | Java 13.0.1 or higher |    
-| mac | [MyBox-6.1-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.1/MyBox-6.1-mac-jar.zip)  |  132MB  | Java 13.0.1 or higher |    
+| win | [MyBox-6.1.5-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.1.5/MyBox-6.1.5-win-jar.zip)  | 129MB | Java 13.0.1 or higher |    
+| linux | [MyBox-6.1.5-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.1.5/MyBox-6.1.5-linux-jar.zip)  | 135MB  | Java 13.0.1 or higher |    
+| mac | [MyBox-6.1.5-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.1.5/MyBox-6.1.5-mac-jar.zip)  |  132MB  | Java 13.0.1 or higher |    
  
     
 Run following command to launch this program with Jar package: 
-<PRE><CODE>     java   -jar   MyBox-6.1.jar</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-6.1.5.jar</CODE></PRE>
 	
 A file path can follow the command as argument to be opened directly by MyBox. Example, following command will open the image:    
-<PRE><CODE>     java   -jar   MyBox-6.1.jar   /tmp/a1.jpg</CODE></PRE>   
+<PRE><CODE>     java   -jar   MyBox-6.1.5.jar   /tmp/a1.jpg</CODE></PRE>   
 
 ### Other addresses to download   
 Download from cloud storage: https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F   
@@ -71,7 +73,7 @@ sourceforge: https://sourceforge.net/projects/mara-mybox/files/
 | User Guide - Network Tools | 5.0 | 2019-4-16 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-NetworkTools-en.pdf) |
 | Development Guide | 2.0 | 2019-11-18 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-DevGuide-2.0-en.pdf) |
 | Shortcuts | 5.9 | 2019-12-21 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts_en.html) |
-| Development Logs | 6.1 | 2020-2-11 | [html](#devLog) |
+| Development Logs | 6.1.5 | 2020-2-21 | [html](#devLog) |
 
 # Implementation
 
@@ -107,10 +109,14 @@ MyBox is based on following open sources softwares:
 | ffmpeg| convert/create medias | http://ffmpeg.org |   
 | image4j | decode ico format | https://github.com/imcdonagh/image4j |   
 | AutoCommitCell | Submit updates | https://stackoverflow.com/questions/24694616 （Ogmios） |   
+| DaoDe| Map | https://lbs.amap.com/api/javascript-api/summary |      
+|  | Materials| https://weibo.com/3876734080/InmB1aPiL?type=comment#_rnd1582211299665 |      
+|  | Data| https://voice.baidu.com/act/newpneumonia/newpneumonia/?from=osari_pc_3 |      
+|  |  | https://api.inews.qq.com/newsqa/v1/query/pubished/daily/list?province=湖北&city=武汉 |      
 
  
 # Current Version
-Current version is 6.1. Its features are mentioned below in summary:   
+Current version is 6.1.5. Its features are mentioned below in summary:   
  
 * [Cross platforms](#Cross-platform)
 * [Internationalized](#Internationalized)
@@ -140,6 +146,7 @@ Current version is 6.1. Its features are mentioned below in summary:
     - [Location Data](#locationData)
     - [Location Data in Map](#locationDataInMap)
     - [Epidemic Reports](#epidemicReport)
+    - [Fetch Data About "New Coronavirus Pneumonia"](#epidemicReportFetch)
  * [File Tools](#fileTools)
     - [Edit Text](#editText)
     - [Edit Bytes](#editBytes)
@@ -461,7 +468,9 @@ Recognizing texts in image/PDF(OCR) works only on Windows currently.
 
 ### Geography Code<a id="geographyCode" />      
 1. Query and display location in map.
-2. Example: all countries and Chinese provinces.          
+2. Example: all countries and Chinese provinces/citis/districts.      
+3. Migration. Errors and missed are fixed. If user wrote some data in v6.1, existed data will be exported when this interface is opened at first time, and the path will be opened. User can import previous data.              
+    
 
 ### Location Data<a id="locationData" />      
 1. Attributes: data set, data label, address, longitude, latitude, altitude, precision, speed, data value, data size, data time, data image, data comments. Time of BC is supported.   
@@ -474,15 +483,52 @@ Recognizing texts in image/PDF(OCR) works only on Windows currently.
 4. Pop information: ：coordinate, address, data label, data value, data size, data time, data comments, data image.          
 
 ### Epidemic Reports<a id="epidemicReport" />      
-1. Attributes: data set, data label, country, province, city,  longitude, latitude, confirmed, suspected, healed, dead, time, comments.    
-2. Button "Epidemic Reports of Chinese Provinces": display sheet to input data of Chinese provinces for specific data set and specific time. 
-3. Button "Epidemic Reports of Global": display sheet to input data of global for specific data set and specific time. 
-4. Data analysis based on dimensions of time and location.  Time direction includes Global and China. Location direction includes countries and Chinese provinces. 
-5. Charts: Number Bar Charts, Ratio Bar Charts, Pie Charts, and Numbers in Map based on location dimension; Number Line Charts, Ratio Line Charts, and Dynamic Numbers in Map based on time dimension.  
-6. Data and charts can be saved as html.  Dynamic Numbers in Map is saved as dynamic gif.
-7. Example: "New Coronavirus Pneumonia". These data are incomplete and may include wrong values. You can finish and fix it. 
-Notice: If you generate these example data in English interface, then watch them in English interface; if you generate these example data in Chinese interface, then watch them in Chinese interface.      
+1. Data definition:
+	-  Base attributes: data Set, time, level, (label, comments).
+	-  Geography attributes:  country, province, city,  longitude, latitude.     
+            Table "Geography Code" will be referred when data are handled, but it is not depended. The rule is avoiding foreign key by redundant data. 
+	-  Value attributes: confirmed, suspected, healed, dead.
+	-  Statistic attributes: increased confirmed, increased suspected, increased healed, increased dead, healed ratio, dead ratio .
+	-  Statistic data: total values of China, total values of global.
+2. Input Data:
+	-  Button "Add",  or double click row, to open form to fill in each field of one report.    
+	-  Button "Epidemic Reports of Chinese Provinces": to display sheet to input data of Chinese provinces for specific data set and specific time.  
+	-  Button "Epidemic Reports of Global": to display sheet to input data of global for specific data set and specific time.  
+	-  Button "Examples", to import  historical data of Chinese provinces/cities/districts and global between 2020-1-20 and 2020-2-21.
+	-  Button "Fetch Data About New Coronavirus Pneumonia",  to download latest data and historical data from internet.   
+	-  Button "MyBox Internet Data Path",  to download and import formatted data which will be updated.   
+	-  Button "Import",  to write the data of an external file into table.   
+	-  Do not input same data more than one time. This table can not judge whether the data are same and always write data as new ones.   
+3. Output Data:
+	-  Button "Export": to write all current data into an external file. User can edit the file and then import updated data back in table.
+	-  Button "html": to save current table rows and charts as a html file and open it. Dynamical map will be saved as animated gif. Snap dpi can be set.    
+4. Analyse Data:
+	-  Dimensions: data set, time, location.
+	-  Location data are in 4 levels: global, countries, provinces, cities/districts
+	-  When time is determined, locations-based charts are displayed, include: numbers bar charts, increased bar charts, ratios bar charts, pies charts, and numbers map. 
+	-  When time is not determined, time-based charts are displayed, include: numbers line charts, increased line charts, ratios line charts, and dynamical numbers map. 
+5. Delete Data:
+	-  Button "Delete": to delete selected rows in right data table.  
+	-  Button "Clear": to delete selected node in left tree. Example, when a date time is selected, then clearing is against all data of this node.    
+6. Data Statistic:
+	-  Calculating statistic may cost long time, so suggest to do statistic only when data are changed.     
+	-  Checkbox  "Statistic for each loading": if selected, statistic will be run once data is reloaded.    
+	-  Button "Statistic": to calculate statistic at once. Suggest click this button after data are changed.     
+7. Languages:
+	-  When write data of "Epidemic Reports", table "Geography Code" will be referred. Both of them are related to languages. So make sure importing their examples in same language interface.      
+           Example, example data of  "Geography Code" are imported in English interface, then example data of "Epidemic Reports" should be imported in English interface too.    
+	-  Watch data in same langauge interface as importing lanaguage.   
+            Examlpe,  example data of "Epidemic Reports" are generated in English interface, then watch the data in English interface.     
+8. Migration. This table is rewritten. If user wrote some data in v6.1, existed data will be exported when this interface is opened at first time, and the path will be opened. User can import previous data.          
 
+
+### Fetch Data About "New Coronavirus Pneumonia"<a id="epidemicReportFetch" />
+1. Extract data in Baidu page and get latest in-time data of chinese provinces/cities/districts and other countries. Suggest run it daily.  
+2. Query historical data of Chinese provinces/cities/districts since 2020-1-20 from TengXun api.  Example data includes data between 1-20 and 2-21.   
+3. Location attributes are added in each data row.
+4. Data are trimmed in 3 formated: html、json、xml，and can be saved as files.  
+5. Button "Import": to import the data into table "Epidemic Reports".   
+Notice: The 2 data sources may change or become invalid in future.       
 
 ## File Tools <a id="fileTools"></a>     
 
@@ -707,7 +753,15 @@ MyBox supports enable/disable dpi-aware on line, which will cause MyBox reboots 
 Developers need notice: JavaFx screen is not same as physical screen and has different dpi definition which considers X/Y scale ratio too.    
 
 
-# Development Logs <a id="devLog"></a>       
+# Development Logs <a id="devLog"></a>        
+2020-2-21 v6.1.5  Fetch Data About "New Coronavirus Pneumonia". Extract latest in-time Chinese and global data in Baidu page. Query historical data of Chinese data since 2020-1-20 from TengXun api.     
+Location attributes are added.  Data are trimmed in 3 formated: html、json、xml and can be imported in table "Epidemic Reports".       
+Improve "Epidemic Reports".  Location data are in 4 levels: global, countries, provinces, cities/districts.  Statistic attributes of increased values and their charts. 
+Examples data between 2020-1-20 and 2020-2-21.        
+Improve "Grography Codes". Errors and missed are fixed.           
+Solved problems: Filtering works incorrectly in editors.                   
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.1.5)         
+
 2020-2-11 v6.1  Location in Map: Query and diaplay location data by clicking map, inputting address, or inputting coordinate. Map options like marker, text, layers, and language.      
 General management base of data table: Add/Delete/Edit data; pagination; export/import; export as html.      
 Manage geography codes: Query and display location in map; example of countries and Chinese provinces.      

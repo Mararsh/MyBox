@@ -69,6 +69,7 @@ import mara.mybox.fxml.FxmlStage;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.image.ImageInformation;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.NetworkTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.MyboxDataPath;
 import static mara.mybox.value.AppVariables.getUserConfigValue;
@@ -1958,7 +1959,15 @@ public class BaseController implements Initializable {
     public void link(ActionEvent event) {
         try {
             Hyperlink link = (Hyperlink) event.getSource();
-            URL url = new URL(link.getText());
+            link(link.getText());
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    public void link(String urlString) {
+        try {
+            URL url = new URL(urlString);
             URI uri = new URI(url.getProtocol(), url.getHost(), url.getPath(), url.getQuery(), null);
             browseURI(uri);
         } catch (Exception e) {
@@ -2637,6 +2646,32 @@ public class BaseController implements Initializable {
     // pick color from outside
     public boolean setColor(Control control, Color color) {
         return true;
+    }
+
+    public void restoreCheckingSSL() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(getBaseTitle());
+        alert.setContentText(AppVariables.message("SureRestoreCheckingSSL"));
+        alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
+        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+        ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
+        ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
+        alert.getButtonTypes().setAll(buttonSure, buttonCancel);
+        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        stage.setAlwaysOnTop(true);
+        stage.toFront();
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() != buttonSure) {
+            return;
+        }
+        NetworkTools.myBoxSSL();
+        popSuccessful();
+    }
+
+    @FXML
+    public void myboxInternetDataPath() {
+        link(CommonValues.MyBoxInternetDataPath);
     }
 
     /*

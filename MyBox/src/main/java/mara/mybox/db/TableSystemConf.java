@@ -7,7 +7,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Map;
 import mara.mybox.tools.ConfigTools;
-import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -36,11 +35,12 @@ public class TableSystemConf extends DerbyBase {
     }
 
     @Override
-    public boolean init(Statement statement) {
+    public boolean init(Connection conn) {
         try {
-            if (statement == null) {
+            if (conn == null) {
                 return false;
             }
+            Statement statement = conn.createStatement();
             statement.executeUpdate(Create_Table_Statement);
             Map<String, String> values = ConfigTools.readValues();
             if (values != null && !values.isEmpty()) {
@@ -55,25 +55,27 @@ public class TableSystemConf extends DerbyBase {
                             break;
                         default:
                             try {
-                                int intv = Integer.valueOf(value);
-                                statement.executeUpdate("INSERT INTO System_Conf(key_Name, int_Value) VALUES('" + key + "', " + intv + " )");
-                            } catch (Exception e) {  failed(e);
-                                statement.executeUpdate("INSERT INTO System_Conf(key_Name, string_Value) VALUES('" + key + "', '" + value + "' )");
-                            }
-                            break;
+                            int intv = Integer.valueOf(value);
+                            statement.executeUpdate("INSERT INTO System_Conf(key_Name, int_Value) VALUES('" + key + "', " + intv + " )");
+                        } catch (Exception e) {
+                            failed(e);
+                            statement.executeUpdate("INSERT INTO System_Conf(key_Name, string_Value) VALUES('" + key + "', '" + value + "' )");
+                        }
+                        break;
                     }
                 }
             }
             return true;
-        } catch (Exception e) {  failed(e);
+        } catch (Exception e) {
+            failed(e);
 //            // logger.debug(e.toString());
             return false;
         }
     }
 
     public static int write(String keyName, String stringValue) {
-        try (Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                Statement statement = conn.createStatement()) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                 Statement statement = conn.createStatement()) {
             String sql = " SELECT string_Value FROM System_Conf WHERE key_Name='" + keyName + "'";
             ResultSet results = statement.executeQuery(sql);
             if (results.next()) {
@@ -93,15 +95,16 @@ public class TableSystemConf extends DerbyBase {
 //                logger.debug(sql);
                 return statement.executeUpdate(sql);
             }
-        } catch (Exception e) {  failed(e);
+        } catch (Exception e) {
+            failed(e);
 //            // logger.debug(e.toString());
             return -1;
         }
     }
 
     public static int write(String keyName, int intValue) {
-        try (Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                Statement statement = conn.createStatement()) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                 Statement statement = conn.createStatement()) {
             String sql = " SELECT int_Value FROM System_Conf WHERE key_Name='" + keyName + "'";
             ResultSet results = statement.executeQuery(sql);
             if (results.next()) {
@@ -117,7 +120,8 @@ public class TableSystemConf extends DerbyBase {
 //                logger.debug(sql);
                 return statement.executeUpdate(sql);
             }
-        } catch (Exception e) {  failed(e);
+        } catch (Exception e) {
+            failed(e);
             // logger.debug(e.toString());
             return -1;
         }
@@ -128,8 +132,8 @@ public class TableSystemConf extends DerbyBase {
     }
 
     public static String read(String keyName, String defaultValue) {
-        try (Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                Statement statement = conn.createStatement()) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                 Statement statement = conn.createStatement()) {
             ResultSet resultSet = statement.executeQuery("SELECT string_Value FROM System_Conf WHERE key_Name='" + keyName + "'");
             if (resultSet.next()) {
                 return resultSet.getString(1);
@@ -141,15 +145,16 @@ public class TableSystemConf extends DerbyBase {
                 }
                 return defaultValue;
             }
-        } catch (Exception e) {  failed(e);
+        } catch (Exception e) {
+            failed(e);
 //            // logger.debug(e.toString());
             return defaultValue;
         }
     }
 
     public static int readInt(String keyName, int defaultValue) {
-        try (Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                Statement statement = conn.createStatement()) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                 Statement statement = conn.createStatement()) {
             ResultSet resultSet = statement.executeQuery("SELECT int_Value FROM System_Conf WHERE key_Name='" + keyName + "'");
             if (resultSet.next()) {
                 return resultSet.getInt(1);
@@ -159,7 +164,8 @@ public class TableSystemConf extends DerbyBase {
                 statement.executeUpdate(sql);
                 return defaultValue;
             }
-        } catch (Exception e) {  failed(e);
+        } catch (Exception e) {
+            failed(e);
 //            // logger.debug(e.toString());
             return defaultValue;
         }
@@ -174,12 +180,13 @@ public class TableSystemConf extends DerbyBase {
         if (keyName == null || keyName.isEmpty()) {
             return false;
         }
-        try (Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                Statement statement = conn.createStatement()) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                 Statement statement = conn.createStatement()) {
             String sql = "DELETE FROM System_Conf WHERE key_Name='" + keyName + "'";
             statement.executeUpdate(sql);
             return true;
-        } catch (Exception e) {  failed(e);
+        } catch (Exception e) {
+            failed(e);
 //            // logger.debug(e.toString());
             return false;
         }

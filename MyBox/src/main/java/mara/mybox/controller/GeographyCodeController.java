@@ -11,6 +11,7 @@ import mara.mybox.data.StringTable;
 import mara.mybox.db.TableGeographyCode;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.HtmlTools;
+import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
@@ -41,22 +42,52 @@ public class GeographyCodeController extends TableManageController<GeographyCode
     @Override
     protected void initColumns() {
         try {
-            longtitudeColumn.setCellValueFactory(new PropertyValueFactory<>("longitude"));
-            latitudeColumn.setCellValueFactory(new PropertyValueFactory<>("latitude"));
             addressColumn.setCellValueFactory(new PropertyValueFactory<>("address"));
-            fullAddressColumn.setCellValueFactory(new PropertyValueFactory<>("fullAddress"));
-            countryColumn.setCellValueFactory(new PropertyValueFactory<>("country"));
-            provinceColumn.setCellValueFactory(new PropertyValueFactory<>("province"));
-            cityColumn.setCellValueFactory(new PropertyValueFactory<>("city"));
-            citycodeColumn.setCellValueFactory(new PropertyValueFactory<>("citycode"));
-            districtColumn.setCellValueFactory(new PropertyValueFactory<>("district"));
-            townshipColumn.setCellValueFactory(new PropertyValueFactory<>("township"));
-            neighborhoodColumn.setCellValueFactory(new PropertyValueFactory<>("neighborhood"));
-            buildingColumn.setCellValueFactory(new PropertyValueFactory<>("building"));
-            administrativeCodeColumn.setCellValueFactory(new PropertyValueFactory<>("AdministrativeCode"));
-            streetColumn.setCellValueFactory(new PropertyValueFactory<>("street"));
-            numberColumn.setCellValueFactory(new PropertyValueFactory<>("number"));
-            levelColumn.setCellValueFactory(new PropertyValueFactory<>("level"));
+            if (citycodeColumn != null) {
+                longtitudeColumn.setCellValueFactory(new PropertyValueFactory<>("longitude"));
+            }
+            if (citycodeColumn != null) {
+                latitudeColumn.setCellValueFactory(new PropertyValueFactory<>("latitude"));
+            }
+            if (citycodeColumn != null) {
+                fullAddressColumn.setCellValueFactory(new PropertyValueFactory<>("fullAddress"));
+            }
+            if (citycodeColumn != null) {
+                countryColumn.setCellValueFactory(new PropertyValueFactory<>("country"));
+            }
+            if (citycodeColumn != null) {
+                provinceColumn.setCellValueFactory(new PropertyValueFactory<>("province"));
+            }
+            if (citycodeColumn != null) {
+                cityColumn.setCellValueFactory(new PropertyValueFactory<>("city"));
+            }
+            if (citycodeColumn != null) {
+                citycodeColumn.setCellValueFactory(new PropertyValueFactory<>("citycode"));
+            }
+            if (citycodeColumn != null) {
+                districtColumn.setCellValueFactory(new PropertyValueFactory<>("district"));
+            }
+            if (citycodeColumn != null) {
+                townshipColumn.setCellValueFactory(new PropertyValueFactory<>("township"));
+            }
+            if (citycodeColumn != null) {
+                neighborhoodColumn.setCellValueFactory(new PropertyValueFactory<>("neighborhood"));
+            }
+            if (citycodeColumn != null) {
+                buildingColumn.setCellValueFactory(new PropertyValueFactory<>("building"));
+            }
+            if (citycodeColumn != null) {
+                administrativeCodeColumn.setCellValueFactory(new PropertyValueFactory<>("AdministrativeCode"));
+            }
+            if (citycodeColumn != null) {
+                streetColumn.setCellValueFactory(new PropertyValueFactory<>("street"));
+            }
+            if (citycodeColumn != null) {
+                numberColumn.setCellValueFactory(new PropertyValueFactory<>("number"));
+            }
+            if (citycodeColumn != null) {
+                levelColumn.setCellValueFactory(new PropertyValueFactory<>("level"));
+            }
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -67,6 +98,17 @@ public class GeographyCodeController extends TableManageController<GeographyCode
     public void afterSceneLoaded() {
         super.afterSceneLoaded();
         FxmlControl.setTooltip(examplesButton, message("GeographyCodeExamplesComments"));
+
+        String backFile = AppVariables.getSystemConfigValue("GeographyCodeBackup6.1.5", "");
+        if (!backFile.isBlank()) {
+            alertInformation(message("GeographyCodeBackup615Comments")
+                    + "\n\n" + backFile);
+            AppVariables.deleteSystemConfigValue("GeographyCodeBackup6.1.5");
+            examplesAction();
+        } else if (!AppVariables.getSystemConfigBoolean("GeographyCodeExamples6.1.5", false)) {
+            AppVariables.setSystemConfigValue("GeographyCodeExamples6.1.5", true);
+            examplesAction();
+        }
     }
 
     @Override
@@ -86,7 +128,9 @@ public class GeographyCodeController extends TableManageController<GeographyCode
         }
         super.checkSelected();
         int selection = tableView.getSelectionModel().getSelectedIndices().size();
-        locationButton.setDisable(selection == 0);
+        if (locationButton != null) {
+            locationButton.setDisable(selection == 0);
+        }
     }
 
     @Override
@@ -283,9 +327,25 @@ public class GeographyCodeController extends TableManageController<GeographyCode
 
     @Override
     public void loadExamples() {
+        GeographyCode.importCodes();
+
 //        GeographyCode.initChineseProvincesCodes();
 //        GeographyCode.initCountriesCodes();
-        GeographyCode.importCodes();
+//        try {
+//            StringBuilder s = new StringBuilder();
+//            try ( BufferedReader reader = new BufferedReader(
+//                    new FileReader("D:\\tmp\\0\\aa.txt", Charset.forName("utf-8")))) {
+//                String line;
+//                while ((line = reader.readLine()) != null) {
+//                    String a = line.trim();
+//                    if (!a.isEmpty()) {
+//                        GeographyCode.query(a);
+//                    }
+//                }
+//            }
+//        } catch (Exception e) {
+//
+//        }
     }
 
 }

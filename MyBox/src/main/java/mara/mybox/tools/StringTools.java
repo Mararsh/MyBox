@@ -104,7 +104,8 @@ public class StringTools {
         return String.format("%-" + nameLength + "s:" + value, name);
     }
 
-    public static String replaceAll(String string, String oldString, String newString) {
+    public static String replaceAll(String string, String oldString,
+            String newString) {
         if (string == null || string.isEmpty()
                 || oldString == null || oldString.isEmpty()
                 || newString == null) {
@@ -122,7 +123,8 @@ public class StringTools {
         }
     }
 
-    public static Map<String, Object> lastAndCount(String string, String subString) {
+    public static Map<String, Object> lastAndCount(String string,
+            String subString) {
         Map<String, Object> results = new HashMap<>();
         results.put("count", 0);
         results.put("lastIndex", -1);
@@ -193,7 +195,8 @@ public class StringTools {
         }
     }
 
-    public static Map<String, Object> lastAndCountRegex(String string, String regex) {
+    public static Map<String, Object> lastAndCountRegex(String string,
+            String regex) {
         Map<String, Object> results = new HashMap<>();
         results.put("count", 0);
         results.put("lastIndex", -1);
@@ -254,6 +257,37 @@ public class StringTools {
             count++;
         }
         return count;
+    }
+
+    // https://blog.csdn.net/zx1749623383/article/details/79540748
+    public static String decodeUnicode(String unicode) {
+        if (unicode == null || "".equals(unicode)) {
+            return null;
+        }
+        StringBuilder sb = new StringBuilder();
+        int i, pos = 0;
+        while ((i = unicode.indexOf("\\u", pos)) != -1) {
+            sb.append(unicode.substring(pos, i));
+            if (i + 5 < unicode.length()) {
+                pos = i + 6;
+                sb.append((char) Integer.parseInt(unicode.substring(i + 2, i + 6), 16));
+            } else {
+                break;
+            }
+        }
+        return sb.toString();
+    }
+
+    public static String encodeUnicode(String string) {
+        if (string == null || "".equals(string)) {
+            return null;
+        }
+        StringBuilder unicode = new StringBuilder();
+        for (int i = 0; i < string.length(); i++) {
+            char c = string.charAt(i);
+            unicode.append("\\u").append(Integer.toHexString(c));
+        }
+        return unicode.toString();
     }
 
 }

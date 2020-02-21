@@ -172,18 +172,18 @@ License:    Apache License Version 2.0
                                                                         </ImageView>
                                                                     </graphic>
                                                                 </Button>
-                                                <CheckBox fx:id="replaceJumpCheck" mnemonicParsing="false" selected="true" text="%JumpNextAfterReplace" />
+                                                                <CheckBox fx:id="replaceJumpCheck" mnemonicParsing="false" selected="true" text="%JumpNextAfterReplace" />
                                                             </children>
                                                         </FlowPane>
-                                                          <Button fx:id="replaceAllButton" disable="true" mnemonicParsing="false" onAction="#replaceAllAction">
-                                                              <graphic>
-                                                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                      <image>
-                                                                          <Image url="@../buttons/iconReplaceAll.png" />
-                                                                      </image>
-                                                                  </ImageView>
-                                                              </graphic>
-                                                          </Button>
+                                                        <Button fx:id="replaceAllButton" disable="true" mnemonicParsing="false" onAction="#replaceAllAction">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/iconReplaceAll.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
                                                     </children>
                                                 </VBox>
                                             </content>
@@ -192,16 +192,20 @@ License:    Apache License Version 2.0
                                             <content>
                                                 <VBox spacing="5.0">
                                                     <children>
-                                                        <RadioButton fx:id="filterIncludeRadio1" mnemonicParsing="false" selected="true" text="%IncludeOne">
-                                                            <toggleGroup>
-                                                                <ToggleGroup fx:id="filterGroup" />
-                                                            </toggleGroup>
-                                                        </RadioButton>
-                                                        <RadioButton mnemonicParsing="false" text="%IncludeAll" toggleGroup="$filterGroup" />
-                                                        <RadioButton mnemonicParsing="false" text="%NotIncludeAll" toggleGroup="$filterGroup" />
-                                                        <RadioButton mnemonicParsing="false" text="%NotIncludeAny" toggleGroup="$filterGroup" />
-                                                        <RadioButton mnemonicParsing="false" text="%MatchRegularExpression" toggleGroup="$filterGroup" wrapText="true" />
-                                                        <RadioButton mnemonicParsing="false" text="%NotMatchRegularExpression" toggleGroup="$filterGroup" wrapText="true" />
+                                                        <VBox fx:id="filtersTypeBox" spacing="5.0"  VBox.vgrow="NEVER"  styleClass="focusBox" stylesheets="@../styles/MyBox.css" >
+                                                            <children>
+                                                                <RadioButton fx:id="filterIncludeRadio1" mnemonicParsing="false" selected="true" text="%IncludeOne">
+                                                                    <toggleGroup>
+                                                                        <ToggleGroup fx:id="filterGroup" />
+                                                                    </toggleGroup>
+                                                                </RadioButton>
+                                                                <RadioButton mnemonicParsing="false" text="%IncludeAll" toggleGroup="$filterGroup" />
+                                                                <RadioButton mnemonicParsing="false" text="%NotIncludeAll" toggleGroup="$filterGroup" />
+                                                                <RadioButton mnemonicParsing="false" text="%NotIncludeAny" toggleGroup="$filterGroup" />
+                                                                <RadioButton mnemonicParsing="false" text="%MatchRegularExpression" toggleGroup="$filterGroup" wrapText="true" />
+                                                                <RadioButton mnemonicParsing="false" text="%NotMatchRegularExpression" toggleGroup="$filterGroup" wrapText="true" />
+                                                            </children>
+                                                        </VBox>
                                                         <TextField fx:id="filterInput" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER" />
                                                         <Hyperlink fx:id="regexLink" onAction="#regexHelp" text="%RegularExpression" />
                                                         <CheckBox fx:id="filterLineNumberCheck" mnemonicParsing="false" selected="true" text="%LineNumber" />

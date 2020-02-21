@@ -87,7 +87,8 @@ public class TableMedia extends DerbyBase {
         return medias;
     }
 
-    public static List<MediaInformation> read(Statement statement, List<String> addresses) {
+    public static List<MediaInformation> read(Statement statement,
+            List<String> addresses) {
         List<MediaInformation> medias = new ArrayList();
         if (statement == null || addresses == null || addresses.isEmpty()) {
             return medias;
@@ -155,7 +156,8 @@ public class TableMedia extends DerbyBase {
         }
     }
 
-    public static boolean write(Statement statement, List<MediaInformation> medias) {
+    public static boolean write(Statement statement,
+            List<MediaInformation> medias) {
         if (statement == null || medias == null || medias.isEmpty()) {
             return false;
         }

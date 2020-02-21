@@ -44,6 +44,9 @@ public class ColorData {
     }
 
     public void bindInPalette() {
+        if (inPalette == null) {
+            inPalette = new SimpleBooleanProperty(false);
+        }
         inPalette.addListener((ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) -> {
             try {
                 if (isSettingValues) {

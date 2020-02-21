@@ -62,10 +62,10 @@ public class MainApp extends Application {
     }
 
     public void tmp() {
+
         // Uncomment this line to generate Icons automatically in different color styles
 //        makeIcons();
 //        testSSL();
-
     }
 
     @Override
@@ -92,7 +92,6 @@ public class MainApp extends Application {
                         if (!initPaths(stage)) {
                             return null;
                         }
-                        tmp();
 
                         Platform.runLater(() -> {
                             loadController.pathReady();
@@ -120,6 +119,8 @@ public class MainApp extends Application {
                         ImageValue.registrySupportedImageFormats();
                         ImageIO.setUseCache(true);
                         ImageIO.setCacheDirectory(AppVariables.MyBoxTempPath);
+
+                        tmp();
 
                     } catch (Exception e) {
 
