@@ -6,7 +6,8 @@ This is GUI program based on JavaFx to provide simple and easy functions. It's f
 ## Download and Execution
 Packages of each version have been uploaded at [Releases](https://github.com/Mararsh/MyBox/releases?) directory now. You can find them by clicking `releases` tab in main page of this project.      
 
-[What's new](#devLog)     
+[What's new](#devLog)       
+[数据目录](https://mararsh.github.io/MyBox/data/)       
 
 ### Self-contain packages 
 Self-contain packages include all files and need not java env and installation.   (Please unpack it under path with pure-English name.)   
@@ -107,9 +108,9 @@ MyBox is based on following open sources softwares:
 | XZ for Java | archive/compress | https://tukaani.org/xz/java.html |   
 | jaffree | warp ffmpeg | https://github.com/kokorin/Jaffree |   
 | ffmpeg| convert/create medias | http://ffmpeg.org |   
-| image4j | decode ico format | https://github.com/imcdonagh/image4j |   
+| image4j | ico format | https://github.com/imcdonagh/image4j |   
 | AutoCommitCell | Submit updates | https://stackoverflow.com/questions/24694616 （Ogmios） |   
-| DaoDe| Map | https://lbs.amap.com/api/javascript-api/summary |      
+| GaoDe | Map | https://lbs.amap.com/api/javascript-api/summary |      
 | WeiXin | Materials| https://weibo.com/3876734080/InmB1aPiL?type=comment#_rnd1582211299665 |      
 | Baidu | Data| https://voice.baidu.com/act/newpneumonia/newpneumonia/?from=osari_pc_3 |      
 | TengXun | Data | https://api.inews.qq.com/newsqa/v1/query/pubished/daily/list?province=湖北&city=武汉 |      
@@ -519,6 +520,7 @@ Recognizing texts in image/PDF(OCR) works only on Windows currently.
            Example, example data of  "Geography Code" are imported in English interface, then example data of "Epidemic Reports" should be imported in English interface too.    
 	-  Watch data in same langauge interface as importing lanaguage.   
             Examlpe,  example data of "Epidemic Reports" are generated in English interface, then watch the data in English interface.     
+	-  In location data, countries and provinces are Internationalized, that different values are written in different language interfaces. But cities are still in Chinese.   
 8. Migration. This table is rewritten. If user wrote some data in v6.1, existed data will be exported when this interface is opened at first time, and the path will be opened. User can import previous data.          
 
 
