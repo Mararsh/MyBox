@@ -7,7 +7,7 @@
 每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases?)目录下（点击上面的`releases`页签）。       
 
 [新内容](#devLog)        
-[数据目录](https://mararsh.github.io/MyBox/data/)       
+     
 
 ### 自包含程序包   
 自包含的程序包无需java环境、无需安装、解包可用。（解包的目录名不要包含汉字）  
