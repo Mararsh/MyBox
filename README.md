@@ -5,7 +5,7 @@
 
 ## 下载与运行
 每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases?)目录下（点击上面的`releases`页签）。[新内容](#devLog)        
-[“新型冠状病毒肺炎”的数据](#https://sourceforge.net/projects/mara-mybox/files/data/)           
+[“新型冠状病毒肺炎”的数据](https://sourceforge.net/projects/mara-mybox/files/data/)           
     
      
 
