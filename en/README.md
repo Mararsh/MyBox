@@ -4,9 +4,10 @@
 This is GUI program based on JavaFx to provide simple and easy functions. It's free and open sources
 
 ## Download and Execution
-Packages of each version have been uploaded at [Releases](https://github.com/Mararsh/MyBox/releases?) directory now. You can find them by clicking `releases` tab in main page of this project.      
+Packages of each version have been uploaded at [Releases](https://github.com/Mararsh/MyBox/releases?) directory now. You can find them by clicking `releases` tab in main page of this project. 
+[What's new](#devLog)  [Data about "New Coronavirus Pneumonia"](#https://sourceforge.net/projects/mara-mybox/files/data/)            
 
-[What's new](#devLog)       
+ 
      
 
 ### Self-contain packages 
