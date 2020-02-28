@@ -338,10 +338,10 @@ public class LocationEditController extends LocationBaseController {
             if (location.getAddress() != null) {
                 addressInput.setText(location.getAddress());
             }
-            if (location.getLongitude() > Double.MIN_VALUE) {
+            if (location.getLongitude() >= -180) {
                 longitudeInput.setText(location.getLongitude() + "");
             }
-            if (location.getLatitude() > Double.MIN_VALUE) {
+            if (location.getLatitude() >= -180) {
                 latitudeInput.setText(location.getLatitude() + "");
             }
             if (location.getAltitude() > Double.MIN_VALUE) {

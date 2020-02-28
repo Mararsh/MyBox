@@ -84,6 +84,8 @@ Red increase 151 -> pink                #de88c7         #ffdcfe
     -fx-border-radius: 3;
 }
 
+
+
 .grayArea, .grayArea:focused {
     -fx-background-color: transparent ;
     -fx-background-insets: 0px ;
@@ -95,6 +97,7 @@ Red increase 151 -> pink                #de88c7         #ffdcfe
     -fx-background-insets: 10px ;
     -fx-text-fill: gray;
 }
+
 
 .focusBox, .focusBox:focused {
     -fx-background-color: #E8E8E8;
@@ -114,6 +117,13 @@ Red increase 151 -> pink                #de88c7         #ffdcfe
 .column-header.editable-column > .label {
     -fx-text-fill: darkblue;
     -fx-font-weight: bolder;
+}
+
+.small-label, .small-label:focused {
+    -fx-background-color: transparent ;
+    -fx-background-insets: 0px ;
+    -fx-font-size: 0.6em;
+    -fx-text-fill: #2e598a;
 }
 
 
@@ -146,8 +156,6 @@ Red increase 151 -> pink                #de88c7         #ffdcfe
     -fx-stroke: black;
     -fx-shape: "M0,4 L2,4 L4,8 L7,0 L9,0 L4,11 Z";
 }
-
-
 
 /*.table-view .column-header .label .editable{
     -fx-text-fill: #2e598a;

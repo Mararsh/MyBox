@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.data.EpidemicReport;
+import mara.mybox.data.NewCoronavirusPneumonia;
 import mara.mybox.db.TableEpidemicReport;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
@@ -27,7 +28,7 @@ public class EpidemicReportsCountriesEditController extends EpidemicReportsEditC
         List<String> countries = TableEpidemicReport.countries(currentDataset);
         countries.remove(message("China"));
         for (String name : countries) {
-            data.add(EpidemicReport.CountryReport(currentDataset, time.getTime(), name, 0, 0, 0, 0));
+            data.add(NewCoronavirusPneumonia.CountryReport(currentDataset, time.getTime(), name, 0, 0, 0, 0));
         }
         return data;
     }

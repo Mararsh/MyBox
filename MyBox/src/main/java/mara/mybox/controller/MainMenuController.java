@@ -1225,8 +1225,8 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
-    private void openFetchNPCData(ActionEvent event) {
-        loadScene(CommonValues.EpidemicReportsFetchNPCDataFxml);
+    private void openFetchNCPData(ActionEvent event) {
+        loadScene(CommonValues.EpidemicReportsFetchNCPDataFxml);
     }
 
     @FXML

@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import javafx.scene.paint.Color;
 import mara.mybox.color.SRGB;
@@ -277,6 +278,27 @@ public class FxmlColor {
                 (int) (color.getRed() * 255),
                 (int) (color.getGreen() * 255),
                 (int) (color.getBlue() * 255));
+    }
+
+    public static List<String> randomColorsHex(int size) {
+        Random random = new Random();
+        List<String> colors = new ArrayList<>();
+        if (size > 256 * 256 * 256 - 1) {
+            return null;
+        }
+        while (colors.size() < size) {
+            while (true) {
+                String color = String.format("#%02X%02X%02X",
+                        random.nextInt(256),
+                        random.nextInt(256),
+                        random.nextInt(256));
+                if (!"#FFFFFF".equals(color) && !colors.contains(color)) {
+                    colors.add(color);
+                    break;
+                }
+            }
+        }
+        return colors;
     }
 
     public static String rgb2AlphaHex(Color color) {

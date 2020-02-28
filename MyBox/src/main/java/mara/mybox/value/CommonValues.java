@@ -14,8 +14,8 @@ import java.util.TimeZone;
  */
 public class CommonValues {
 
-    public static final String AppVersion = "6.1.5";
-    public static final String AppVersionDate = "2020-02-21";
+    public static final String AppVersion = "6.2";
+    public static final String AppVersionDate = "2020-02-28";
     public static final String AppDocVersion = "5.0";
 
     public static final String AppDerbyUser = "mara";
@@ -188,7 +188,7 @@ public class CommonValues {
     public static final String EpidemicReportsChineseProvincesEditFxml = "/fxml/EpidemicReportsChineseProvincesEdit.fxml";
     public static final String EpidemicReportsCountriesEditFxml = "/fxml/EpidemicReportsCountriesEdit.fxml";
     public static final String EpidemicReportsDingXiangYuanFxml = "/fxml/EpidemicReportsDingXiangYuan.fxml";
-    public static final String EpidemicReportsFetchNPCDataFxml = "/fxml/EpidemicReportsFetchNPCData.fxml";
+    public static final String EpidemicReportsFetchNCPDataFxml = "/fxml/EpidemicReportsFetchNCPData.fxml";
 
     public static final Locale LocaleZhCN = new Locale("zh", "CN");
     public static final Locale LocaleEnUS = new Locale("en", "US");

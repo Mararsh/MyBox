@@ -1,5 +1,7 @@
 package mara.mybox.controller;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import javafx.beans.value.ObservableValue;
@@ -38,7 +40,7 @@ public class EpidemicReportEditController extends LocationBaseController {
     @FXML
     protected TextArea commentsArea;
     @FXML
-    protected ComboBox<String> datasetSelector;
+    protected ComboBox<String> datasetSelector, reportLevelSelector;
     @FXML
     protected Button locationButton;
 
@@ -56,6 +58,13 @@ public class EpidemicReportEditController extends LocationBaseController {
                     (ObservableValue<? extends String> ov, String oldv, String newv) -> {
                         checkDataset();
                     });
+
+            List<String> levels = new ArrayList<>();
+            levels.addAll(Arrays.asList(
+                    message("Country"), message("Province"), message("City"), message("Global")
+            ));
+            reportLevelSelector.getItems().addAll(levels);
+            reportLevelSelector.getSelectionModel().select(0);
 
             confirmedInput.textProperty().addListener(
                     (ObservableValue<? extends String> ov, String oldv, String newv) -> {
@@ -264,6 +273,7 @@ public class EpidemicReportEditController extends LocationBaseController {
             dataid = report.getDataid();
             dataidInput.setText(dataid + "");
             datasetSelector.setValue(report.getDataSet());
+            reportLevelSelector.setValue(report.getLevel());
             if (report.getDataLabel() != null) {
                 labelInput.setText(report.getDataLabel());
             }
@@ -280,10 +290,10 @@ public class EpidemicReportEditController extends LocationBaseController {
             suspectedInput.setText(report.getSuspected() + "");
             healedInput.setText(report.getHealed() + "");
             deadInput.setText(report.getDead() + "");
-            if (report.getLongitude() > Double.MIN_VALUE) {
+            if (report.getLongitude() >= -180) {
                 longitudeInput.setText(report.getLongitude() + "");
             }
-            if (report.getLatitude() > Double.MIN_VALUE) {
+            if (report.getLatitude() >= -180) {
                 latitudeInput.setText(report.getLatitude() + "");
             }
 
@@ -311,6 +321,7 @@ public class EpidemicReportEditController extends LocationBaseController {
                 report.setDataid(dataid);
                 String dataset = datasetSelector.getValue().trim();
                 report.setDataSet(dataset);
+                report.setLevel(reportLevelSelector.getValue());
                 report.setDataLabel(labelInput.getText().trim());
                 report.setCountry(countrySelector.getValue());
                 report.setProvince(provinceSelector.getValue());
@@ -335,7 +346,7 @@ public class EpidemicReportEditController extends LocationBaseController {
                     code.setLatitude(latitude);
                     code.setLevel(message("Country"));
                     TableGeographyCode.write(code);
-                };
+                }
 
                 TableEpidemicReport.write(report);
 

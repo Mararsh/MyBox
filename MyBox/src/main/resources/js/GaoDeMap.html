@@ -74,18 +74,36 @@
                 if (!multiple)
                     map.clearMap();
                 var marker;
-                marker = new AMap.Marker({
-                    content: '<img src="file:///' + image + '" width=' + markerSize + '>',
-                    position: [longtitude, latitude],
-                    offset: new AMap.Pixel(-markerSize / 2, -markerSize / 2)
-                });
-                if (label !== null && label.length > 0) {
-                    marker.setLabel({
-                        content: "<div style=\"font-size:16px\">" + label + "</div>",
-                        offset: new AMap.Pixel(-10, -10)
-//                        direction: 'top'
+                if (image === null) {
+                    marker = new AMap.CircleMarker({
+                        center: [longtitude, latitude],
+                        radius: markerSize, //3D视图下，CircleMarker半径不要超过64px
+                        strokeColor: 'white',
+                        strokeWeight: 2,
+                        strokeOpacity: 0.5,
+                        fillColor: label,
+                        fillOpacity: 0.5,
+                        zIndex: 10,
+                        bubble: true,
+                        cursor: 'pointer',
+                        clickable: true
                     });
+                } else {
+                    marker = new AMap.Marker({
+                        content: '<img src="file:///' + image + '" width=' + markerSize + '>',
+                        position: [longtitude, latitude],
+                        offset: new AMap.Pixel(-markerSize / 2, -markerSize / 2)
+                    });
+                    if (label !== null && label.length > 0) {
+                        marker.setLabel({
+                            content: "<div style=\"font-size:16px\">" + label + "</div>",
+                            offset: new AMap.Pixel(-10, -10)
+//                        direction: 'top'
+                        });
+                    }
                 }
+
+
                 marker.on('mousemove', function () {
                     infoWindow = new AMap.InfoWindow({
                         content: info
@@ -96,7 +114,6 @@
                     infoWindow.close();
                 });
                 map.add(marker);
-
                 if (zoom >= 3 && zoom <= 18) {
                     map.setZoom(zoom);
                     map.setCenter([longtitude, latitude]);
@@ -104,6 +121,8 @@
                     map.setFitView();
                 }
             }
+
+
 
             function hideStandardLayer() {
                 if (standardLayer !== undefined)

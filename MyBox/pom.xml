@@ -4,7 +4,7 @@
 
     <groupId>mara</groupId>
     <artifactId>MyBox</artifactId>
-    <version>6.1.5</version>
+    <version>6.2</version>
     <packaging>jar</packaging>
     <name>MyBox</name>
     <properties>
@@ -180,9 +180,19 @@
             <artifactId>image4j</artifactId>
             <version>0.7zensight1</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>4.1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>4.1.2</version>
+        </dependency>
     </dependencies>
 
-    <repositories>
+    <!--    <repositories>
         <repository>
             <id>central-repo</id>
             <name>Central Repository</name>
@@ -198,7 +208,7 @@
             <name>bintray</name>
             <url>http://jcenter.bintray.com</url>
         </repository>
-    </repositories>
+    </repositories>-->
 
     <build>
         <plugins>

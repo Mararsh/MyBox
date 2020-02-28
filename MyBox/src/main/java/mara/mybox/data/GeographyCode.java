@@ -49,6 +49,10 @@ public class GeographyCode {
 
     public GeographyCode() {
         selected = new SimpleBooleanProperty(false);
+        address = fullAddress = country = province = citycode = city = district = township
+                = neighborhood = building = AdministrativeCode = street = number = level = null;
+        longitude = latitude = -200;
+        isSettingValues = false;
     }
 
     public String geography(String lineBreak) {
@@ -330,7 +334,10 @@ public class GeographyCode {
                 }
             }
 
-            TableGeographyCode.write(geographyCode);
+            if (geographyCode.getLongitude() >= -180 && geographyCode.getLongitude() <= 180
+                    && geographyCode.getLatitude() >= -90 && geographyCode.getLatitude() <= 90) {
+                TableGeographyCode.write(geographyCode);
+            }
         } catch (Exception e) {
 //            logger.debug(e.toString());
         }
@@ -464,6 +471,8 @@ public class GeographyCode {
         Countries.add("Niger");
         Countries.add("Nigeria");
         Countries.add("NorthKorea");
+        Countries.add("NorthernMacedonia");
+        Countries.add("Norway");
         Countries.add("Oman");
         Countries.add("Pakistan");
         Countries.add("Panama");
@@ -828,6 +837,8 @@ public class GeographyCode {
             codes.add(countryCode("Niger", 8.08, 17.61));
             codes.add(countryCode("Nigeria", 8.68, 9.08));
             codes.add(countryCode("NorthKorea", 127.51, 40.34));
+            codes.add(countryCode("NorthernMacedonia", 21.26, 42.01));
+            codes.add(countryCode("Norway", 10.45, 59.55));
             codes.add(countryCode("Oman", 55.98, 21.47));
             codes.add(countryCode("Pakistan", 69.35, 30.38));
             codes.add(countryCode("Panama", -80.78, 8.54));
@@ -902,32 +913,24 @@ public class GeographyCode {
     public static void importCodes() {
         File file;
         if ("zh".equals(AppVariables.getLanguage())) {
-            file = FxmlControl.getInternalFile("/data/db/Geography_Code_zh.del",
-                    "AppTemp", "Geography_Code_zh.del");
+            file = FxmlControl.getInternalFile("/data/db/Geography_Code_zh_6.2.txt",
+                    "data", "Geography_Code_zh_6.2.txt");
             DerbyBase.importData("Geography_Code", file.getAbsolutePath(), false);
         } else {
-            file = FxmlControl.getInternalFile("/data/db/Geography_Code_en_countries.del",
-                    "AppTemp", "Geography_Code_en_countries.del");
-            DerbyBase.importData("Geography_Code", file.getAbsolutePath(), false);
-
-            file = FxmlControl.getInternalFile("/data/db/Geography_Code_en_chineseAddresses.del",
-                    "AppTemp", "Geography_Code_en_chineseAddresses.del");
+            file = FxmlControl.getInternalFile("/data/db/Geography_Code_en_6.2.txt",
+                    "data", "Geography_Code_en_6.2.txt");
             DerbyBase.importData("Geography_Code", file.getAbsolutePath(), false);
         }
     }
 
     public static void importAllCodes() {
         File file;
-        file = FxmlControl.getInternalFile("/data/db/Geography_Code_zh.del",
-                "AppTemp", "Geography_Code_zh.del");
+        file = FxmlControl.getInternalFile("/data/db/Geography_Code_zh.txt",
+                "AppTemp", "Geography_Code_zh.txt");
         DerbyBase.importData("Geography_Code", file.getAbsolutePath(), false);
 
-        file = FxmlControl.getInternalFile("/data/db/Geography_Code_en_countries.del",
-                "AppTemp", "Geography_Code_en_countries.del");
-        DerbyBase.importData("Geography_Code", file.getAbsolutePath(), false);
-
-        file = FxmlControl.getInternalFile("/data/db/Geography_Code_en_chineseAddresses.del",
-                "AppTemp", "Geography_Code_en_chineseAddresses.del");
+        file = FxmlControl.getInternalFile("/data/db/Geography_Code_en.txt",
+                "AppTemp", "Geography_Code_en.txt");
         DerbyBase.importData("Geography_Code", file.getAbsolutePath(), false);
 
     }

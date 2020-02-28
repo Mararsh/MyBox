@@ -149,7 +149,7 @@ License:    Apache License Version 2.0
                                 <MenuItem mnemonicParsing="false" onAction="#openLocationsDataInMap" text="%LocationsDataInMap" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openEpidemicReports" text="%EpidemicReport" />
-                                <MenuItem mnemonicParsing="false" onAction="#openFetchNPCData" text="%FetchNPCData" />
+                                <MenuItem mnemonicParsing="false" onAction="#openFetchNCPData" text="%FetchNCPData" />
                             </items>
                         </Menu>
                         <Menu mnemonicParsing="false" text="%File">

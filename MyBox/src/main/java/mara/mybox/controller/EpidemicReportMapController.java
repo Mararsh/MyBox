@@ -1,5 +1,7 @@
 package mara.mybox.controller;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -7,20 +9,23 @@ import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.ComboBox;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
-import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Transform;
 import javafx.stage.Modality;
+import javafx.stage.Screen;
 import mara.mybox.controller.EpidemicReportsController.ChartsType;
 import mara.mybox.data.EpidemicReport;
 import mara.mybox.data.GeographyCode;
+import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
+import mara.mybox.image.file.ImageGifFile;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
@@ -37,11 +42,10 @@ public class EpidemicReportMapController extends LocationMapBaseController {
     protected EpidemicReportsController parent;
     protected int showCount, interval, mapSize;
     protected List<EpidemicReport> reports;
+    protected boolean showLabel;
 
     @FXML
-    protected ComboBox<String> intervalSelector, mapSizeSelector;
-    @FXML
-    protected HBox intervalBox;
+    protected ComboBox<String> mapSizeSelector;
 
     public EpidemicReportMapController() {
         baseTitle = AppVariables.message("EpidemicReportMap");
@@ -52,17 +56,7 @@ public class EpidemicReportMapController extends LocationMapBaseController {
     public void initializeNext() {
         try {
             super.initializeNext();
-
             interval = 1000;
-            intervalSelector.getItems().addAll(Arrays.asList(
-                    "1000", "1500", "2000", "3000", "800", "500", "5000", "200", "300", "10000"
-            ));
-            intervalSelector.getSelectionModel().selectedItemProperty().addListener(
-                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                        setInterval();
-                    });
-            intervalSelector.setValue(AppVariables.getUserConfigValue("EpidemicReportMapInterval", "1000"));
-
             mapSize = 3;
             mapSizeSelector.getItems().addAll(Arrays.asList(
                     "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18"
@@ -74,26 +68,11 @@ public class EpidemicReportMapController extends LocationMapBaseController {
             mapSizeSelector.getSelectionModel().select(
                     AppVariables.getUserConfigValue("EpidemicReportMapSize", "3"));
 
+            controlRightPane();
+
         } catch (Exception e) {
             logger.error(e.toString());
         }
-    }
-
-    public void setInterval() {
-        try {
-            int v = Integer.valueOf(intervalSelector.getValue());
-            if (v > 0) {
-                interval = v;
-                AppVariables.setUserConfigInt(" EpidemicReportMapInterval", interval);
-                FxmlControl.setEditorNormal(intervalSelector);
-                drawTimeBasedMap();
-            } else {
-                FxmlControl.setEditorBadStyle(intervalSelector);
-            }
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-
     }
 
     @FXML
@@ -111,7 +90,8 @@ public class EpidemicReportMapController extends LocationMapBaseController {
         }
         parent.tabPane.getSelectionModel().select(parent.mapTab);
         List<Image> snapshots = new ArrayList();
-        double scale = FxmlControl.dpiScale();
+        double scale = parent.dpi / Screen.getPrimary().getDpi();
+        scale = scale > 1 ? scale : 1;
         SnapshotParameters snapPara = new SnapshotParameters();
         snapPara.setFill(Color.TRANSPARENT);
         snapPara.setTransform(Transform.scale(scale, scale));
@@ -129,14 +109,22 @@ public class EpidemicReportMapController extends LocationMapBaseController {
                 public void run() {
                     Platform.runLater(() -> {
                         snapshots.add(webView.snapshot(snapPara, new WritableImage(imageWidth, imageHeight)));
-                        parent.makeHtml(snapshots);
+                        List<BufferedImage> images = new ArrayList();
+                        for (Image image : snapshots) {
+                            images.add(SwingFXUtils.fromFXImage(image, null));
+                        }
+                        File mapSnapFile = new File(AppVariables.MyBoxTempPath + File.separator + "mapSnap.gif");
+                        ImageGifFile.writeImages(images, mapSnapFile, interval);
+
+                        parent.makeHtml(mapSnapFile);
                         loading.closeStage();
                         timer.cancel();
                     });
                 }
             }, 200);
 
-        } else if (parent.chartsType == ChartsType.TimeBasedMap) {
+        } else if (parent.chartsType == ChartsType.TimeBased
+                || parent.chartsType == ChartsType.TimeLocationBased) {
             if (reports.isEmpty()
                     || reports.get(reports.size() - 1).getConfirmed() <= 0) {
                 return;
@@ -149,11 +137,8 @@ public class EpidemicReportMapController extends LocationMapBaseController {
                     || reports.get(reports.size() - 1).getConfirmed() <= 0) {
                 return;
             }
-            intervalBox.setVisible(true);
+
             showCount = 0;
-            if (interval <= 0) {
-                interval = 1000;
-            }
             float unit = 300f / reports.get(reports.size() - 1).getConfirmed();
             LoadingController loading = parent.openHandlingStage(Modality.WINDOW_MODAL);
             timer = new Timer();
@@ -167,20 +152,34 @@ public class EpidemicReportMapController extends LocationMapBaseController {
                         snapshots.add(webView.snapshot(snapPara, new WritableImage(imageWidth, imageHeight)));
                         showCount++;
                         if (showCount >= reports.size()) {
-                            loading.closeStage();
-                            parent.makeHtml(snapshots);
                             timer.cancel();
+                            timer = null;
+
+                            List<BufferedImage> images = new ArrayList();
+                            for (Image image : snapshots) {
+                                images.add(SwingFXUtils.fromFXImage(image, null));
+                            }
+                            snapshots.clear();
+                            File mapSnapFile = new File(AppVariables.MyBoxTempPath + File.separator + "mapSnap.gif");
+                            ImageGifFile.writeImages(images, mapSnapFile, interval);
+                            images.clear();
+
+                            loading.closeStage();
+                            parent.makeHtml(mapSnapFile);
+
                             drawTimeBasedMap();
                         }
                     });
                 }
-            }, 0, 200);
+            }, 0, 1000);
         }
 
     }
 
     protected String locationLabel(EpidemicReport report) {
-        if (message("City").equals(report.getLevel())) {
+        if (message("Global").equals(report.getLevel())) {
+            return message("Global");
+        } else if (message("City").equals(report.getLevel())) {
             return report.getCity();
         } else if (message("Province").equals(report.getLevel())) {
             return report.getProvince();
@@ -193,29 +192,66 @@ public class EpidemicReportMapController extends LocationMapBaseController {
         }
     }
 
-    protected void drawLocationBasedMap(int mapLevel,
+    @Override
+    public String locationImage() {
+        String path = "/" + ControlStyle.getIconPath();
+        return FxmlControl.getInternalFile(path + "iconCircle.png", "map",
+                AppVariables.ControlColor.name() + "Circle.png").getAbsolutePath();
+    }
+
+    protected int markSize(int value) {
+        if (value > 50000) {
+            markerSize = 60;
+        } else if (value > 30000) {
+            markerSize = 50;
+        } else if (value > 20000) {
+            markerSize = 48;
+        } else if (value > 10000) {
+            markerSize = 40;
+        } else if (value > 5000) {
+            markerSize = 36;
+        } else if (value > 1000) {
+            markerSize = 24;
+        } else if (value > 500) {
+            markerSize = 20;
+        } else if (value > 200) {
+            markerSize = 16;
+        } else if (value > 100) {
+            markerSize = 12;
+        } else if (value > 50) {
+            markerSize = 10;
+        } else {
+            markerSize = 6;
+        }
+        return markerSize;
+    }
+
+    protected void drawLocationBasedMap(int mapLevel, boolean showLabel,
             List<EpidemicReport> reports) {
         try {
             this.mapSize = mapLevel;
+            this.showLabel = showLabel;
             clearAction();
-            intervalBox.setVisible(false);
             if (reports == null || reports.isEmpty()) {
                 return;
             }
             for (EpidemicReport report : reports) {
                 if (report.getLongitude() >= -180 && report.getLongitude() <= 180
                         && report.getLatitude() >= -90 && report.getLatitude() <= 90) {
-                    String label = "<div><font color=\"black\">" + locationLabel(report) + "</font>";
-                    if (report.getConfirmed() > 0) {
-                        label += " <font color=\"blue\">" + report.getConfirmed() + "</font>";
-                        if (report.getHealed() > 0) {
-                            label += " <font color=\"red\">" + report.getHealed() + "</font> ";
+                    String label = null;
+                    if (showLabel) {
+                        label = "<div><font color=\"black\">" + locationLabel(report) + "</font>";
+                        if (report.getConfirmed() > 0) {
+                            label += " <font color=\"blue\">" + report.getConfirmed() + "</font>";
+                            if (report.getHealed() > 0) {
+                                label += " <font color=\"red\">" + report.getHealed() + "</font> ";
+                            }
+                            if (report.getDead() > 0) {
+                                label += " <font color=\"black\">" + report.getDead() + "</font> ";
+                            }
                         }
-                        if (report.getDead() > 0) {
-                            label += " <font color=\"black\">" + report.getDead() + "</font> ";
-                        }
+                        label += "</div>";
                     }
-                    label += "</div>";
                     String image = StringTools.replaceAll(locationImage(), "\\", "/");
                     String info = label + "</br>";
                     GeographyCode code = GeographyCode.query(report.getLongitude(), report.getLatitude());
@@ -224,9 +260,16 @@ public class EpidemicReportMapController extends LocationMapBaseController {
                     } else {
                         info += report.getLongitude() + "," + report.getLatitude();
                     }
-                    webEngine.executeScript("addMarker(" + report.getLongitude() + "," + report.getLatitude()
-                            + ", " + 20 + ", '" + label + "', '" + info + "', '" + image + "', "
-                            + mapSize + ", true);");
+                    markerSize = markSize(report.getConfirmed());
+                    if (showLabel) {
+                        webEngine.executeScript("addMarker(" + report.getLongitude() + "," + report.getLatitude()
+                                + ", " + markerSize + ", '" + label + "', '" + info + "', '" + image + "', "
+                                + mapSize + ", true);");
+                    } else {
+                        webEngine.executeScript("addMarker(" + report.getLongitude() + "," + report.getLatitude()
+                                + ", " + markerSize + ", null, '" + info + "', '" + image + "', "
+                                + mapSize + ", true);");
+                    }
                 }
             }
 
@@ -235,25 +278,31 @@ public class EpidemicReportMapController extends LocationMapBaseController {
         }
     }
 
-    protected void drawTimeBasedMap(int mapLevel, List<EpidemicReport> reports) {
+    protected void drawTimeBasedMap(int interval, int mapLevel,
+            boolean showLabel,
+            List<EpidemicReport> reports) {
+        this.interval = interval;
         this.mapSize = mapLevel;
         this.reports = reports;
+        this.showLabel = showLabel;
         drawTimeBasedMap();
     }
 
     protected void drawTimeBasedMap() {
         try {
             clearAction();
-            if (reports == null || reports.isEmpty()
-                    || reports.get(reports.size() - 1).getConfirmed() <= 0) {
+            if (reports == null || reports.isEmpty()) {
                 return;
             }
-            intervalBox.setVisible(true);
+            int maxConfirmed = reports.get(reports.size() - 1).getConfirmed();
+            if (maxConfirmed <= 0) {
+                return;
+            }
             showCount = 0;
             if (interval <= 0) {
                 interval = 1000;
             }
-            float unit = 300f / reports.get(reports.size() - 1).getConfirmed();
+            float unit = 300f / maxConfirmed;
             timer = new Timer();
             timer.schedule(new TimerTask() {
 
@@ -275,14 +324,14 @@ public class EpidemicReportMapController extends LocationMapBaseController {
         }
     }
 
-    protected void drawTimeBasedMap(EpidemicReport report, float unit) {
+    protected void drawTimeBasedMap(EpidemicReport report,
+            float unit) {
         try {
             if (report == null
                     || report.getLongitude() < -180 || report.getLongitude() > 180
                     || report.getLatitude() < -90 || report.getLatitude() > 90) {
                 return;
             }
-
             String label = DateTools.datetimeToString(report.getTime()) + "</br>"
                     + "<font color=\"black\">" + locationLabel(report) + "</font></br>";
             label += "<font color=\"blue\">" + AppVariables.message("Confirmed") + ": "
@@ -306,10 +355,16 @@ public class EpidemicReportMapController extends LocationMapBaseController {
             } else {
                 info += report.getLongitude() + "," + report.getLatitude();
             }
-            webEngine.executeScript("addMarker(" + report.getLongitude() + "," + report.getLatitude()
-                    + ", " + 20 + ", '" + label + "', '" + info + "', '" + image + "', "
-                    + mapSize + ", false);");
-
+            markerSize = markSize(report.getConfirmed());
+            if (showLabel) {
+                webEngine.executeScript("addMarker(" + report.getLongitude() + "," + report.getLatitude()
+                        + ", " + markerSize + ", '" + label + "', '" + info + "', '" + image + "', "
+                        + mapSize + ", false);");
+            } else {
+                webEngine.executeScript("addMarker(" + report.getLongitude() + "," + report.getLatitude()
+                        + ", " + markerSize + ", null, '" + info + "', '" + image + "', "
+                        + mapSize + ", false);");
+            }
         } catch (Exception e) {
             logger.debug(e.toString());
         }

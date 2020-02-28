@@ -1,4 +1,4 @@
-version=6.1.5
+version=6.2
 cd MyBox
 mvn clean
 mvn -P linux package

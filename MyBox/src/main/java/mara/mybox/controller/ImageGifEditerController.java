@@ -88,7 +88,7 @@ public class ImageGifEditerController extends ImagesListController {
         if (message("KeepImagesSize").equals(selected.getText())) {
             keepSize = true;
             widthInput.setStyle(null);
-        } else if (message("AllSetAs").equals(selected.getText())) {
+        } else {
             keepSize = false;
             checkSize();
         }
@@ -122,6 +122,7 @@ public class ImageGifEditerController extends ImagesListController {
 
                 @Override
                 protected boolean handle() {
+                    logger.debug(keepSize + " " + width);
                     ret = ImageGifFile.writeImages(tableData, outFile,
                             loopCheck.isSelected(), keepSize, width);
                     if (ret.isEmpty()) {

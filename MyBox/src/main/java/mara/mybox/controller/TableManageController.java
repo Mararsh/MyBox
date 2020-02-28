@@ -172,6 +172,7 @@ public class TableManageController<P> extends BaseController {
             }
 
             currentPage = 1;
+
             pageSelector.getSelectionModel().selectedItemProperty().addListener(
                     (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
                         if (isSettingValues || newValue == null) {
@@ -183,6 +184,7 @@ public class TableManageController<P> extends BaseController {
                                 pageSelector.getEditor().setStyle(badStyle);
                             } else {
                                 currentPage = v;
+                                pageSelector.getEditor().setStyle(null);
                                 load();
                             }
                         } catch (Exception e) {
@@ -195,12 +197,13 @@ public class TableManageController<P> extends BaseController {
             pageSizeSelector.getSelectionModel().selectedItemProperty().addListener(
                     (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
                         try {
-                            int v = Integer.parseInt(newValue);
+                            int v = Integer.parseInt(newValue.trim());
                             if (v <= 0) {
                                 pageSizeSelector.getEditor().setStyle(badStyle);
                             } else {
                                 pageSize = v;
                                 AppVariables.setUserConfigValue(baseName + "PageSize", pageSize + "");
+                                pageSizeSelector.getEditor().setStyle(null);
                                 load();
                             }
                         } catch (Exception e) {
@@ -208,6 +211,7 @@ public class TableManageController<P> extends BaseController {
                         }
                     });
             pageSizeSelector.getSelectionModel().select(AppVariables.getUserConfigValue(baseName + "PageSize", "50"));
+            pageSizeSelector.getEditor().setStyle(null);
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -264,32 +268,36 @@ public class TableManageController<P> extends BaseController {
     }
 
     protected void setPagination(int total, int pagesNumber) {
-        isSettingValues = true;
-        List<String> pages = new ArrayList<>();
-        for (int i = Math.max(1, currentPage - 20);
-                i <= Math.min(pagesNumber, currentPage + 20); i++) {
-            pages.add(i + "");
-        }
-        pageSelector.getItems().clear();
-        pageSelector.getItems().addAll(pages);
-        pageSelector.getSelectionModel().select(currentPage + "");
-        isSettingValues = false;
+        try {
+            isSettingValues = true;
+            List<String> pages = new ArrayList<>();
+            for (int i = Math.max(1, currentPage - 20);
+                    i <= Math.min(pagesNumber, currentPage + 20); i++) {
+                pages.add(i + "");
+            }
+            pageSelector.getItems().clear();
+            pageSelector.getItems().addAll(pages);
+            pageSelector.getSelectionModel().select(currentPage + "");
+            isSettingValues = false;
 
-        pageLabel.setText("/" + pagesNumber);
-        dataSizeLabel.setText(message("Data") + ": " + tableData.size() + "/" + total);
-        if (currentPage > 1) {
-            previousButton.setDisable(false);
-            firstButton.setDisable(false);
-        } else {
-            previousButton.setDisable(true);
-            firstButton.setDisable(true);
-        }
-        if (currentPage >= pagesNumber) {
-            nextButton.setDisable(true);
-            lastButton.setDisable(true);
-        } else {
-            nextButton.setDisable(false);
-            lastButton.setDisable(false);
+            pageLabel.setText("/" + pagesNumber);
+            dataSizeLabel.setText(message("Data") + ": " + tableData.size() + "/" + total);
+            if (currentPage > 1) {
+                previousButton.setDisable(false);
+                firstButton.setDisable(false);
+            } else {
+                previousButton.setDisable(true);
+                firstButton.setDisable(true);
+            }
+            if (currentPage >= pagesNumber) {
+                nextButton.setDisable(true);
+                lastButton.setDisable(true);
+            } else {
+                nextButton.setDisable(false);
+                lastButton.setDisable(false);
+            }
+        } catch (Exception e) {
+            logger.debug(e.toString());
         }
 
     }

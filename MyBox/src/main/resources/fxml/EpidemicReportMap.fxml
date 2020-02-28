@@ -28,12 +28,6 @@ License:    Apache License Version 2.0
                     <children>
                         <HBox fx:id="fileBox" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                             <children>
-                        <HBox fx:id="intervalBox" alignment="CENTER_LEFT" spacing="5.0">
-                           <children>
-                              <Label text="%IntervalMilliseconds" />
-                              <ComboBox fx:id="intervalSelector" editable="true" prefWidth="150.0" />
-                           </children>
-                        </HBox>
                                 <Label maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" HBox.hgrow="ALWAYS" />
                         <ImageView fx:id="rightPaneControl" fitHeight="20.0" fitWidth="20.0" onMouseClicked="#controlRightPane" pickOnBounds="true" preserveRatio="true">
                            <image>

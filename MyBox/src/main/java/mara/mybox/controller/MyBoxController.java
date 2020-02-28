@@ -961,9 +961,9 @@ public class MyBoxController extends BaseController {
             loadScene(CommonValues.EpidemicReportsFxml);
         });
 
-        MenuItem FetchNPCData = new MenuItem(AppVariables.message("FetchNPCData"));
-        FetchNPCData.setOnAction((ActionEvent event1) -> {
-            loadScene(CommonValues.EpidemicReportsFetchNPCDataFxml);
+        MenuItem FetchNCPData = new MenuItem(AppVariables.message("FetchNCPData"));
+        FetchNCPData.setOnAction((ActionEvent event1) -> {
+            loadScene(CommonValues.EpidemicReportsFetchNCPDataFxml);
         });
 
         popMenu = new ContextMenu();
@@ -974,7 +974,7 @@ public class MyBoxController extends BaseController {
                 barcodeCreator, barcodeDecoder, new SeparatorMenuItem(),
                 messageDigest, new SeparatorMenuItem(),
                 GeographyCode, LocationInMap, LocationsData, LocationsDataInMap, new SeparatorMenuItem(),
-                EpidemicReport, FetchNPCData
+                EpidemicReport, FetchNCPData
         );
 
         showMenu(dataBox, event);

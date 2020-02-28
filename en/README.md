@@ -13,9 +13,9 @@ Self-contain packages include all files and need not java env and installation. 
  
 | Platform | Link | Size | Launcher |    
 | --- | --- | ---  | ---  |    
-| win | [MyBox-6.1.5-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.1.5/MyBox-6.1.5-win-exe.zip)  | 242MB | MyBox.exe |       
-| linux | [MyBox-6.1.5-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.1.5/MyBox-6.1.5-linux.tar.gz)  | 201MB  | bin/MyBox  |     
-| mac | [MyBox-6.1.5-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.1.5/MyBox-6.1.5-mac.dmg)  | 203MB  |  MyBox-6.1.5.app   |   
+| win | [MyBox-6.2-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.2/MyBox-6.2-win-exe.zip)  | 258MB | MyBox.exe |       
+| linux | [MyBox-6.2-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.2/MyBox-6.2-linux.tar.gz)  | 217MB  | bin/MyBox  |     
+| mac | [MyBox-6.2-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.2/MyBox-6.2-mac.dmg)  | 218MB  |  MyBox-6.2.app   |   
 
 User can double click the launcher to start MyBox or run it by command line. The default "Open Method" of image/text/PDF files can be associated to MyBox and a file can be opened directly by MyBox by double clicking the file's name.
 (File with name including non-ascii can not be opened by double clicking currently)
@@ -25,16 +25,16 @@ When JRE or JDK 13 or higher(`Oracle jdk` or `open jdk`) is installed, jar can r
   
 | Platform | Link | Size | Requirements |   
 | --- | --- | ---  | ---  |    
-| win | [MyBox-6.1.5-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.1.5/MyBox-6.1.5-win-jar.zip)  | 129MB | Java 13.0.1 or higher |    
-| linux | [MyBox-6.1.5-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.1.5/MyBox-6.1.5-linux-jar.zip)  | 135MB  | Java 13.0.1 or higher |    
-| mac | [MyBox-6.1.5-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.1.5/MyBox-6.1.5-mac-jar.zip)  |  132MB  | Java 13.0.1 or higher |    
+| win | [MyBox-6.2-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.2/MyBox-6.2-win-jar.zip)  | 145MB | Java 13.0.1 or higher |    
+| linux | [MyBox-6.2-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.2/MyBox-6.2-linux-jar.zip)  | 152MB  | Java 13.0.1 or higher |    
+| mac | [MyBox-6.2-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.2/MyBox-6.2-mac-jar.zip)  |  148MB  | Java 13.0.1 or higher |    
  
     
 Run following command to launch this program with Jar package: 
-<PRE><CODE>     java   -jar   MyBox-6.1.5.jar</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-6.2.jar</CODE></PRE>
 	
 A file path can follow the command as argument to be opened directly by MyBox. Example, following command will open the image:    
-<PRE><CODE>     java   -jar   MyBox-6.1.5.jar   /tmp/a1.jpg</CODE></PRE>   
+<PRE><CODE>     java   -jar   MyBox-6.2.jar   /tmp/a1.jpg</CODE></PRE>   
 
 ### Other addresses to download   
 Download from cloud storage: https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F   
@@ -73,7 +73,7 @@ sourceforge: https://sourceforge.net/projects/mara-mybox/files/
 | User Guide - Network Tools | 5.0 | 2019-4-16 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-NetworkTools-en.pdf) |
 | Development Guide | 2.0 | 2019-11-18 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-DevGuide-2.0-en.pdf) |
 | Shortcuts | 5.9 | 2019-12-21 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts_en.html) |
-| Development Logs | 6.1.5 | 2020-2-21 | [html](#devLog) |
+| Development Logs | 6.2 | 2020-2-28 | [html](#devLog) |
 
 # Implementation
 
@@ -113,10 +113,10 @@ MyBox is based on following open sources softwares:
 | WeiXin | Materials| https://weibo.com/3876734080/InmB1aPiL?type=comment#_rnd1582211299665 |      
 | Baidu | Data| https://voice.baidu.com/act/newpneumonia/newpneumonia/?from=osari_pc_3 |      
 | TengXun | Data | https://api.inews.qq.com/newsqa/v1/query/pubished/daily/list?province=湖北&city=武汉 |      
-
+| poi | Excel | https://poi.apache.org |  
  
 # Current Version
-Current version is 6.1.5. Its features are mentioned below in summary:   
+Current version is 6.2. Its features are mentioned below in summary:   
  
 * [Cross platforms](#Cross-platform)
 * [Internationalized](#Internationalized)
@@ -497,19 +497,28 @@ Recognizing texts in image/PDF(OCR) works only on Windows currently.
 	-  Button "Examples", to import  historical data of Chinese provinces/cities/districts and global between 2020-1-20 and 2020-2-21.
 	-  Button "Fetch Data About New Coronavirus Pneumonia",  to download latest data and historical data from internet.   
 	-  Button "MyBox Internet Data Path",  to download and import formatted data which will be updated.   
-	-  Button "Import",  to write the data of an external file into table.   
+	-  Button "Import",  to write the data of an external file into table.  (Exported txt file can be imported directly or after edited)      
+           Data file can include the auto-increased field "dataid" or not.     
+	-  Button "Fill in data holes", to add missed data as previous days automatically.
 	-  Do not input same data more than one time. This table can not judge whether the data are same and always write data as new ones.   
-3. Output Data:
-	-  Button "Export": to write all current data into an external file. User can edit the file and then import updated data back in table.
-	-  Button "html": to save current table rows and charts as a html file and open it. Dynamical map will be saved as animated gif. Snap dpi can be set.    
-4. Analyse Data:
-	-  Dimensions: data set, time, location.
-	-  Location data are in 4 levels: global, countries, provinces, cities/districts
-	-  When time is determined, locations-based charts are displayed, include: numbers bar charts, increased bar charts, ratios bar charts, pies charts, and numbers map. 
-	-  When time is not determined, time-based charts are displayed, include: numbers line charts, increased line charts, ratios line charts, and dynamical numbers map. 
-5. Delete Data:
-	-  Button "Delete": to delete selected rows in right data table.  
+3. Analyse Data:
+	-  Query Tree. Include 3 dimensions: data set, time, location. And Location data are in 4 levels: global, countries, provinces, cities/districts.
+	-  Click node in Query Tree, then reports will be shown in "Data" table in the right, while reports in charts are shown in "Charts Data" table. 
+            SQL statements are displayed above the 2 tables.
+	-  When time is determined, locations-based charts are displayed, including: bar charts, pies charts, and map. 
+	-  When time is not determined, time-based charts are displayed, including: line charts, dynamical bar charts, and dynamical map. 
+	-  Checkbox "Lable", to set whether display values in the charts. 
+	-  "Interval", to set duration of frames in dynamical charts and dynamical map. 
+4. Delete Data:
+	-  Button "Delete": to delete selected rows in right "data" table.  
 	-  Button "Clear": to delete selected node in left tree. Example, when a date time is selected, then clearing is against all data of this node.    
+5. Output Data:
+	-  Button "Export": to write current reports of "data" table into external files, in formats txt/html/json/xml/xlsx(Excel2007).    
+            Format in txt can be imported directly or after edited.        
+            The exported data do not include the auto-increased field "dataid".       
+ 	-  Button "html": to save current reports in "Charts Data" table and all current charts as a html file, and open it.      
+            Dynamical charts and map will be saved as animated gif.         
+            Snap dpi can be set.  Lots of memory may cost when high dpi is set. 96 dpi is enough for common screen.      
 6. Data Statistic:   
 	-  Calculating statistic may cost long time, so suggest to do statistic only when data are changed.     
 	-  Checkbox  "Statistic for each loading": if selected, statistic will be run once data is reloaded.    
@@ -527,8 +536,8 @@ Recognizing texts in image/PDF(OCR) works only on Windows currently.
 1. Extract data in Baidu page and get latest in-time data of chinese provinces/cities/districts and other countries. Suggest run it daily.  
 2. Query historical data of Chinese provinces/cities/districts since 2020-1-20 from TengXun api.  Example data includes data between 1-20 and 2-21.   
 3. Location attributes are added in each data row.
-4. Data are trimmed in 3 formated: html、json、xml，and can be saved as files.  
-5. Button "Import": to import the data into table "Epidemic Reports".   
+4. Data are trimmed in 3 formated: html、json、xml，and can be saved as files.  Saved formats include xlsx(Excel2007).    
+5. Button "Import": to import the data into table "Epidemic Reports".       
 Notice: The 2 data sources may change or become invalid in future.       
 
 ## File Tools <a id="fileTools"></a>     
@@ -754,7 +763,14 @@ MyBox supports enable/disable dpi-aware on line, which will cause MyBox reboots 
 Developers need notice: JavaFx screen is not same as physical screen and has different dpi definition which considers X/Y scale ratio too.    
 
 
-# Development Logs <a id="devLog"></a>        
+# Development Logs <a id="devLog"></a>     
+2020-2-28 v6.2  Improve "Epidemic Reports".  "Fill in data holes", to add missed data as previous days automatically.       
+Dynamical charts. Option to set whether display values in charts. Frames duration can be set for dynamical charts/map.      
+Export formats include xlsx(Excel2007) now. Auto-increased field is not exported and does not affect import.       
+Solved problems. Negative coordinates are shown as empty. Statistic of Epidemic Reports are updated incorrectly. 
+"Level" is missed in editor of Epidemic Report. Width setting is handled wrongly in Editor of animated gif.      
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.2)         
+    
 2020-2-21 v6.1.5  Fetch Data About "New Coronavirus Pneumonia". Extract latest in-time Chinese and global data in Baidu page. Query historical data of Chinese data since 2020-1-20 from TengXun api.     
 Location attributes are added.  Data are trimmed in 3 formated: html、json、xml and can be imported in table "Epidemic Reports".       
 Improve "Epidemic Reports".  Location data are in 4 levels: global, countries, provinces, cities/districts.  Statistic attributes of increased values and their charts. 
@@ -1080,11 +1096,11 @@ This tool might fail to work when weibo would change the accessing channel of pa
 
 ![Snapshot 7](https://mararsh.github.io/MyBox/7-en.jpg)
 
-![Snapshot 8](https://mararsh.github.io/MyBox/8-en.jpg)
+![Snapshot 8](https://mararsh.github.io/MyBox/8-en.gif)
 
 ![Snapshot 9](https://mararsh.github.io/MyBox/9-en.jpg)
 
-![Snapshot 10](https://mararsh.github.io/MyBox/mapSnap-en.gif)
+![Snapshot 10](https://mararsh.github.io/MyBox/10-en.gif)
 
 
 

@@ -22,6 +22,10 @@ import mara.mybox.value.CommonValues;
  */
 public class DateTools {
 
+    public static String nowFileString() {
+        return datetimeToString(new Date()).replaceAll(":", "-");
+    }
+
     public static String nowString() {
         return datetimeToString(new Date());
     }

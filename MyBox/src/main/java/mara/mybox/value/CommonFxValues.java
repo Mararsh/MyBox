@@ -1,6 +1,3 @@
-/*
- * Apache License Version 2.0
- */
 package mara.mybox.value;
 
 import java.awt.Color;

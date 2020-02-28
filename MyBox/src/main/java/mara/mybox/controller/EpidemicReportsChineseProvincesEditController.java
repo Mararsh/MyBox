@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.data.EpidemicReport;
 import mara.mybox.data.GeographyCode;
+import mara.mybox.data.NewCoronavirusPneumonia;
 import mara.mybox.value.AppVariables;
 
 /**
@@ -24,7 +25,7 @@ public class EpidemicReportsChineseProvincesEditController extends EpidemicRepor
         }
         List<EpidemicReport> data = new ArrayList();
         for (String name : GeographyCode.ChineseProvinces()) {
-            data.add(EpidemicReport.ChinaProvinceReport(currentDataset, time.getTime(), name, 0, 0, 0, 0));
+            data.add(NewCoronavirusPneumonia.ChinaProvinceReport(currentDataset, time.getTime(), name, 0, 0, 0, 0));
         }
         return data;
     }

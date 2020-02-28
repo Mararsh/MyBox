@@ -710,6 +710,10 @@ public class ControlStyle {
             }
         }
 
+        if (id.startsWith("fill")) {
+            return new ControlStyle(id, message("Fill"), "", "iconButterfly.png");
+        }
+
         switch (id) {
 
             case "selectButton":

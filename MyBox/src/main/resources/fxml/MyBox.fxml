@@ -212,6 +212,9 @@ License:    Apache License Version 2.0
                                     </font>
                                 </Label>
                             </children>
+                     <cursor>
+                        <Cursor fx:constant="OPEN_HAND" />
+                     </cursor>
                         </VBox>
                     </children>
                 </HBox>

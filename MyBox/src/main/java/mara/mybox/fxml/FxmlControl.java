@@ -19,6 +19,9 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.SnapshotParameters;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.PieChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Control;
@@ -797,6 +800,86 @@ public class FxmlControl {
             return null;
         }
 
+    }
+
+    // This can set more than 8 colors. javafx only supports 8 colors defined in css
+    // This should be called after data have been assigned to pie
+    public static void setPieColors(PieChart pie) {
+        List<String> palette = FxmlColor.randomColorsHex(pie.getData().size());
+        setPieColors(pie, palette);
+    }
+
+    public static void setPieColors(PieChart pie, List<String> palette) {
+        if (pie == null || palette == null
+                || pie.getData() == null
+                || pie.getData().size() > palette.size()) {
+            return;
+        }
+        for (int i = 0; i < pie.getData().size(); i++) {
+            PieChart.Data data = pie.getData().get(i);
+            data.getNode().setStyle(
+                    "-fx-pie-color: " + palette.get(i) + ";"
+            );
+        }
+        pie.setLegendVisible(true);
+        Set<Node> legendItems = pie.lookupAll("Label.chart-legend-item");
+        if (legendItems.isEmpty()) {
+            return;
+        }
+        for (Node legendItem : legendItems) {
+            Label legendLabel = (Label) legendItem;
+            Node legend = legendLabel.getGraphic();
+            if (legend != null) {
+                for (int i = 0; i < pie.getData().size(); i++) {
+                    if (pie.getData().get(i).getName().equals(legendLabel.getText())) {
+                        legend.setStyle("-fx-background-color: " + palette.get(i));
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    // This can set more than 8 colors. javafx only supports 8 colors defined in css
+    // This should be called after data have been assigned to chart
+    public static void setLineChartColors(LineChart chart) {
+        List<String> palette = FxmlColor.randomColorsHex(chart.getData().size());
+        setLineChartColors(chart, palette);
+    }
+
+    public static void setLineChartColors(LineChart chart, List<String> palette) {
+        if (chart == null || palette == null) {
+            return;
+        }
+        List<XYChart.Series> seriesList = chart.getData();
+        if (seriesList == null
+                || seriesList.size() > palette.size()) {
+            return;
+        }
+        for (int i = 0; i < seriesList.size(); i++) {
+            XYChart.Series series = seriesList.get(i);
+            Node node = series.getNode().lookup(".chart-series-line");
+            if (node != null) {
+                node.setStyle("-fx-stroke: " + palette.get(i) + ";");
+            }
+        }
+        chart.setLegendVisible(true);
+        Set<Node> legendItems = chart.lookupAll("Label.chart-legend-item");
+        if (legendItems.isEmpty()) {
+            return;
+        }
+        for (Node legendItem : legendItems) {
+            Label legendLabel = (Label) legendItem;
+            Node legend = legendLabel.getGraphic();
+            if (legend != null) {
+                for (int i = 0; i < seriesList.size(); i++) {
+                    if (seriesList.get(i).getName().equals(legendLabel.getText())) {
+                        legend.setStyle("-fx-background-color: " + palette.get(i));
+                        break;
+                    }
+                }
+            }
+        }
     }
 
 }

@@ -1,15 +1,17 @@
 package mara.mybox.data;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import mara.mybox.db.DerbyBase;
-import mara.mybox.db.TableEpidemicReport;
-import mara.mybox.db.TableGeographyCode;
-import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
-import mara.mybox.value.AppVariables;
+import mara.mybox.tools.ExcelTools;
+import mara.mybox.tools.FileTools;
+import static mara.mybox.tools.FileTools.charset;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -22,433 +24,322 @@ public class EpidemicReport {
     protected long dataid = -1;
     protected String dataSet, dataLabel, comments, country, province, city,
             district, township, neighborhood, level;
-    protected double longitude = -200, latitude = -200, healedRatio, deadRatio;
+    protected double longitude, latitude, healedRatio, deadRatio;
     protected int confirmed, suspected, healed, dead,
             increasedConfirmed, increasedSuspected, increasedHealed, increasedDead;
     protected long time = -1;
+
+    public EpidemicReport() {
+        dataid = -1;
+        dataSet = dataLabel = comments = country = province = city
+                = district = township = neighborhood = level = null;
+        longitude = latitude = -200;
+        healedRatio = deadRatio = 0;
+        confirmed = suspected = healed = dead = increasedConfirmed
+                = increasedSuspected = increasedHealed = increasedDead = 0;
+        time = -1;
+    }
 
     public static EpidemicReport create() {
         return new EpidemicReport();
     }
 
-    public static List<EpidemicReport> writeNCPs() {
-        if (TableGeographyCode.read(message("China")) == null) {
-            GeographyCode.importCodes();
+    public static boolean validCoordinate(EpidemicReport report) {
+        return report.getLongitude() >= -180 && report.getLongitude() <= 180
+                && report.getLatitude() >= -90 && report.getLatitude() <= 90;
+    }
+
+    public static List<EpidemicReport> readTxt(File file) {
+        List<EpidemicReport> reports = new ArrayList<>();
+        if (file == null || !file.exists()) {
+            return reports;
         }
+        try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset(file)))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.startsWith("//")) {
+                    continue;
+                }
+                String[] values = line.split(",");
+                if (values.length != 21 && values.length != 22) {
+                    continue;
+                }
+                try {
+                    int offset = values.length == 22 ? 1 : 0;
+                    EpidemicReport report = new EpidemicReport();
+                    report.setDataSet(readTxtString(values[offset + 0]));
+                    report.setDataLabel(readTxtString(values[offset + 1]));
+                    report.setLongitude(Double.valueOf(values[offset + 2]));
+                    report.setLatitude(Double.valueOf(values[offset + 3]));
+                    report.setLevel(readTxtString(values[offset + 4]));
+                    report.setCountry(readTxtString(values[offset + 5]));
+                    report.setProvince(readTxtString(values[offset + 6]));
+                    report.setCity(readTxtString(values[offset + 7]));
+                    report.setDistrict(readTxtString(values[offset + 8]));
+                    report.setTownship(readTxtString(values[offset + 9]));
+                    report.setNeighborhood(readTxtString(values[offset + 10]));
+                    report.setConfirmed(Integer.valueOf(values[offset + 11]));
+                    report.setSuspected(Integer.valueOf(values[offset + 12]));
+                    report.setHealed(Integer.valueOf(values[offset + 13]));
+                    report.setDead(Integer.valueOf(values[offset + 14]));
+                    report.setIncreasedConfirmed(Integer.valueOf(values[offset + 15]));
+                    report.setIncreasedSuspected(Integer.valueOf(values[offset + 16]));
+                    report.setIncreasedHealed(Integer.valueOf(values[offset + 17]));
+                    report.setIncreasedDead(Integer.valueOf(values[offset + 18]));
+                    report.setComments(readTxtString(values[offset + 19]));
+                    report.setTime(DateTools.stringToDatetime(values[offset + 20].substring(1, 20)).getTime());
+                    reports.add(report);
 
-        List<EpidemicReport> data = new ArrayList<>();
-        data.addAll(NCP20200101());
-        data.addAll(NCP20200103());
-        data.addAll(NCP20200110());
-        data.addAll(NCP20200207());
-        data.addAll(NCP20200208());
-        data.addAll(NCP20200209());
-        data.addAll(NCP20200210());
-        data.addAll(NCP20200211());
-        data.addAll(NCP20200213());
-        data.addAll(NCP20200218());
-        data.addAll(NCP20200219());
+                } catch (Exception e) {
+                    logger.debug(e.toString());
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+        return reports;
+    }
 
-        if (TableEpidemicReport.write(data)) {
-//            TableEpidemicReport.statistic(message("NewCoronavirusPneumonia"));
-            return data;
-        } else {
+    private static String readTxtString(String value) {
+        if (value == null || value.isBlank() || !value.startsWith("\"")) {
+            return value;
+        }
+        return value.substring(1, value.length() - 1);
+    }
+
+    public static void writeTxt(File file, List<EpidemicReport> reports) {
+        try {
+            if (file == null || reports == null || reports.isEmpty()) {
+                return;
+            }
+            StringBuilder s = new StringBuilder();
+            s.append("//").append(message("DataSet")).append(",")
+                    .append(message("Label")).append(",")
+                    .append(message("Longitude")).append(",").append(message("Latitude")).append(",").
+                    append(message("Level")).append(",").append(message("Country")).append(",").
+                    append(message("Province")).append(",").append(message("City")).append(",")
+                    .append(message("District")).append(",").append(message("Township")).append(",")
+                    .append(message("Neighborhood")).append(",").
+                    append(message("Confirmed")).append(",").append(message("Suspected")).append(",")
+                    .append(message("Healed")).append(",").append(message("Dead")).append(",").
+                    append(message("IncreasedConfirmed")).append(",").append(message("IncreasedSuspected")).append(",")
+                    .append(message("IncreasedHealed")).append(",").append(message("IncreasedDead")).append(",").
+                    append(message("Comments")).append(",").append(message("Time")).append("\n");
+
+            for (EpidemicReport report : reports) {
+                s.append("\"").append(report.getDataSet()).append("\",")
+                        .append(report.getDataLabel() != null ? "\"" + report.getDataLabel() + "\"" : "").append(",")
+                        .append(report.getLongitude()).append(",").append(report.getLatitude()).append(",")
+                        .append(report.getLevel() != null ? "\"" + report.getLevel() + "\"" : "").append(",")
+                        .append(report.getCountry() != null ? "\"" + report.getCountry() + "\"" : "").append(",")
+                        .append(report.getProvince() != null ? "\"" + report.getProvince() + "\"" : "").append(",")
+                        .append(report.getCity() != null ? "\"" + report.getCity() + "\"" : "").append(",")
+                        .append(report.getDistrict() != null ? "\"" + report.getDistrict() + "\"" : "").append(",")
+                        .append(report.getTownship() != null ? "\"" + report.getTownship() + "\"" : "").append(",")
+                        .append(report.getNeighborhood() != null ? "\"" + report.getNeighborhood() + "\"" : "").append(",")
+                        .append(report.getConfirmed()).append(",")
+                        .append(report.getSuspected()).append(",")
+                        .append(report.getHealed()).append(",")
+                        .append(report.getDead()).append(",")
+                        .append(report.getIncreasedConfirmed()).append(",")
+                        .append(report.getIncreasedSuspected()).append(",")
+                        .append(report.getIncreasedHealed()).append(",")
+                        .append(report.getIncreasedDead()).append(",")
+                        .append(report.getComments() != null ? "\"" + report.getComments() + "\"" : "").append(",\"")
+                        .append(DateTools.datetimeToString(report.getTime())).append("\"\n");
+            }
+            FileTools.writeFile(file, s.toString());
+
+        } catch (Exception e) {
+
+        }
+    }
+
+    public static void writeExcel(File file, List<EpidemicReport> reports) {
+        try {
+            if (file == null || reports == null || reports.isEmpty()) {
+                return;
+            }
+            List<String> columns = new ArrayList<>();
+            columns.addAll(Arrays.asList(
+                    //                    message("Dataid"),
+                    message("DataSet"), message("Time"),
+                    message("Level"), message("Country"), message("Province"), message("City"),
+                    message("Confirmed"),
+                    message("IncreasedConfirmed"),
+                    message("Healed"),
+                    message("IncreasedHealed"),
+                    message("HealedRatio"),
+                    message("Dead"),
+                    message("IncreasedDead"),
+                    message("DeadRatio"),
+                    message("Longitude"), message("Latitude")
+            ));
+            List<List<String>> rows = new ArrayList<>();
+            for (EpidemicReport report : reports) {
+                List<String> row = new ArrayList<>();
+                boolean valid = validCoordinate(report);
+                row.addAll(Arrays.asList(
+                        //                        report.getDataid() + "",
+                        report.getDataSet(), DateTools.datetimeToString(report.getTime()),
+                        (report.getLevel() == null ? "" : report.getLevel()),
+                        (report.getCountry() == null ? "" : report.getCountry()),
+                        (report.getProvince() == null ? "" : report.getProvince()),
+                        (report.getCity() == null ? "" : report.getCity()),
+                        (report.getConfirmed() + ""),
+                        (report.getIncreasedConfirmed() + ""),
+                        (report.getHealed() + ""),
+                        (report.getIncreasedHealed() + ""),
+                        (report.getHealedRatio() + ""),
+                        (report.getDead() + ""),
+                        (report.getIncreasedDead() + ""),
+                        (report.getDeadRatio() + ""),
+                        (valid ? report.getLongitude() + "" : ""),
+                        (valid ? report.getLatitude() + "" : "")
+                )
+                );
+                rows.add(row);
+            }
+            ExcelTools.createXLSX(file, columns, rows);
+
+        } catch (Exception e) {
+
+        }
+    }
+
+    public static void writeJson(File file, List<EpidemicReport> reports) {
+        try {
+            if (file == null || reports == null || reports.isEmpty()) {
+                return;
+            }
+            StringBuilder s = new StringBuilder();
+            String indent = "    ";
+            s.append("{\"EpidemicReports\": [\n");
+            for (EpidemicReport report : reports) {
+                s.append(indent).append("{\"dataset\":\"").append(report.getDataSet()).append("\",")
+                        .append("\"time\":\"").append(DateTools.datetimeToString(report.getTime())).append("\",")
+                        .append("\"level\":\"").append(report.getLevel()).append("\"");
+                if (report.getCountry() != null) {
+                    s.append(",\"country\":\"").append(report.getCountry()).append("\"");
+                }
+                if (report.getProvince() != null) {
+                    s.append(",\"province\":\"").append(report.getProvince()).append("\"");
+                }
+                if (report.getCity() != null) {
+                    s.append(",\"city\":\"").append(report.getCity()).append("\"");
+                }
+                s.append(",\"confirmed\":").append(report.getConfirmed())
+                        .append(",\"increasedConfirmed\":").append(report.getIncreasedConfirmed())
+                        .append(",\"healed\":").append(report.getHealed())
+                        .append(",\"increasedHealed\":").append(report.getIncreasedHealed())
+                        .append(",\"healedRatio\":").append(report.getHealedRatio())
+                        .append(",\"increasedDead\":").append(report.getIncreasedDead())
+                        .append(",\"deadRatio\":").append(report.getDeadRatio());
+                if (report.getLongitude() >= -180) {
+                    s.append(",\"longtitude\":").append(report.getLongitude())
+                            .append(",\"latitude\":").append(report.getLatitude());
+                }
+                s.append(indent).append("}\n");
+            }
+            s.append("]}");
+            FileTools.writeFile(file, s.toString());
+        } catch (Exception e) {
+        }
+    }
+
+    public static void writeXml(File file, List<EpidemicReport> reports) {
+        try {
+            if (file == null || reports == null || reports.isEmpty()) {
+                return;
+            }
+            StringBuilder s = new StringBuilder();
+            String indent = "    ";
+            s.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n").
+                    append("<EpidemicReports>\n");
+            for (EpidemicReport report : reports) {
+                s.append(indent).append("<EpidemicReport ")
+                        .append(" dataset=\"").append(report.getDataSet()).append("\" ")
+                        .append(" time=\"").append(DateTools.datetimeToString(report.getTime())).append("\" ")
+                        .append(" level=\"").append(report.getLevel()).append("\" ");
+                if (report.getCountry() != null) {
+                    s.append(" country=\"").append(report.getCountry()).append("\" ");
+                }
+                if (report.getProvince() != null) {
+                    s.append(" province=\"").append(report.getProvince()).append("\" ");
+                }
+                if (report.getCity() != null) {
+                    s.append(" city=\"").append(report.getCity()).append("\" ");
+                }
+                s.append(" confirmed=").append(report.getConfirmed())
+                        .append(" increasedConfirmed=").append(report.getIncreasedConfirmed())
+                        .append(" healed=").append(report.getHealed())
+                        .append(" increasedHealed=").append(report.getIncreasedHealed())
+                        .append(" healedRatio=").append(report.getHealedRatio())
+                        .append(" increasedDead=").append(report.getIncreasedDead())
+                        .append(" deadRatio=").append(report.getDeadRatio());
+                if (report.getLongitude() >= -180) {
+                    s.append(" longtitude=").append(report.getLongitude())
+                            .append(" latitude=").append(report.getLatitude());
+                }
+                s.append(indent).append(" />\n");
+            }
+            s.append("</EpidemicReports>\n");
+            FileTools.writeFile(file, s.toString());
+        } catch (Exception e) {
+        }
+    }
+
+    public static void writeHtml(File file, List<EpidemicReport> reports) {
+        try {
+            if (file == null || reports == null || reports.isEmpty()) {
+                return;
+            }
+            List<String> names = new ArrayList<>();
+            String title = message("EpidemicReport") + " " + message("NewCoronavirusPneumonia");
+            names.addAll(Arrays.asList(
+                    message("Dataset"), message("Time"), message("Level"),
+                    message("Country"), message("Province"), message("City"),
+                    message("Confirmed"), message("IncreasedConfirmed"),
+                    message("Healed"), message("IncreasedHealed"), message("HealedRatio"),
+                    message("Dead"), message("IncreasedDead"), message("DeadRatio"),
+                    message("Longitude"), message("Latitude")
+            ));
+            StringTable table = new StringTable(names, title);
+            for (EpidemicReport report : reports) {
+                List<String> row = new ArrayList<>();
+                row.addAll(Arrays.asList(
+                        report.getDataSet(), report.getLevel(), DateTools.datetimeToString(report.getTime()),
+                        report.getCountry() != null ? report.getCountry() : "",
+                        report.getProvince() != null ? report.getProvince() : "",
+                        report.getCity() != null ? report.getCity() : "",
+                        report.getConfirmed() + "", report.getIncreasedConfirmed() + "",
+                        report.getHealed() + "", report.getIncreasedHealed() + "", report.getHealedRatio() + "",
+                        report.getDead() + "", report.getIncreasedDead() + "", report.getDeadRatio() + "",
+                        report.getLongitude() >= -180 ? report.getLongitude() + "" : "",
+                        report.getLatitude() >= -90 ? report.getLatitude() + "" : ""
+                ));
+                table.add(row);
+            }
+            FileTools.writeFile(file, StringTable.tableHtml(table));
+        } catch (Exception e) {
+        }
+    }
+
+    // Only copy base attributes.
+    public EpidemicReport copy() {
+        try {
+            EpidemicReport cloned = EpidemicReport.create()
+                    .setDataSet(dataSet).setLevel(level).
+                    setCountry(country).setProvince(province).setCity(city)
+                    .setDistrict(district).setTownship(township).setNeighborhood(neighborhood)
+                    .setLongitude(longitude).setLatitude(latitude)
+                    .setConfirmed(confirmed).setSuspected(suspected).setHealed(healed).setDead(dead)
+                    .setTime(time).setDataLabel(dataLabel).setComments(comments);
+            return cloned;
+        } catch (Exception e) {
             return null;
         }
-    }
-
-    public static EpidemicReport ChinaProvinceReport(
-            String dataset, long time, String province,
-            int confirmed, int suspected, int healed, int dead) {
-        GeographyCode code = GeographyCode.query(province);
-        EpidemicReport report = create().setDataSet(dataset)
-                .setCountry(message("China")).setProvince(message(province))
-                .setLevel(message("Province"))
-                .setConfirmed(confirmed).setSuspected(suspected)
-                .setHealed(healed).setDead(dead)
-                .setTime(time);
-        if (code != null) {
-            report.setLongitude(code.longitude).setLatitude(code.latitude);
-        } else {
-            report.setLongitude(-200).setLatitude(-200); // GaoDe Map only supports geography codes of China
-        }
-        return report;
-    }
-
-    public static EpidemicReport CountryReport(
-            String dataset, long time, String country,
-            int confirmed, int suspected, int healed, int dead) {
-        GeographyCode code = TableGeographyCode.read(message(country));
-        EpidemicReport report = create().setDataSet(dataset)
-                .setCountry(message(country)).setLevel(message("Country"))
-                .setConfirmed(confirmed).setSuspected(suspected)
-                .setHealed(healed).setDead(dead)
-                .setTime(time);
-        if (code != null) {
-            report.setLongitude(code.longitude).setLatitude(code.latitude);
-        } else {
-            report.setLongitude(-200).setLatitude(-200); // GaoDe Map only supports geography codes of China
-        }
-        return report;
-    }
-
-    public static List<EpidemicReport> NCP20200101() {
-        String dataset = message("NewCoronavirusPneumonia");
-        long time = DateTools.stringToDatetime("2020-01-01 11:50:00").getTime();
-        //        List<EpidemicReport> data = TableEpidemicReport.read(dataset, time, 1);
-//        if (data != null && !data.isEmpty()) {
-//            return data;
-//        }
-
-        List<EpidemicReport> data = new ArrayList<>();
-        data.add(ChinaProvinceReport(dataset, time, "ProvinceHubei", 27, 0, 0, 0));
-        return data;
-    }
-
-    public static List<EpidemicReport> NCP20200103() {
-        String dataset = message("NewCoronavirusPneumonia");
-        long time = DateTools.stringToDatetime("2020-01-03 17:00:00").getTime();
-        //        List<EpidemicReport> data = TableEpidemicReport.read(dataset, time, 1);
-//        if (data != null && !data.isEmpty()) {
-//            return data;
-//        }
-
-        List<EpidemicReport> data = new ArrayList<>();
-        data.add(ChinaProvinceReport(dataset, time, "ProvinceHubei", 44, 0, 0, 0));
-        return data;
-    }
-
-    public static List<EpidemicReport> NCP20200110() {
-        String dataset = message("NewCoronavirusPneumonia");
-        long time = DateTools.stringToDatetime("2020-01-10 23:00:00").getTime();
-        //        List<EpidemicReport> data = TableEpidemicReport.read(dataset, time, 1);
-//        if (data != null && !data.isEmpty()) {
-//            return data;
-//        }
-
-        List<EpidemicReport> data = new ArrayList<>();
-        data.add(ChinaProvinceReport(dataset, time, "ProvinceHubei", 41, 0, 2, 1));
-        return data;
-    }
-
-    public static List<EpidemicReport> NCP20200207() {
-        String dataset = message("NewCoronavirusPneumonia");
-        long time = DateTools.stringToDatetime("2020-02-07 13:00:00").getTime();
-        //        List<EpidemicReport> data = TableEpidemicReport.read(dataset, time, 1);
-//        if (data != null && !data.isEmpty()) {
-//            return data;
-//        }
-
-        List<EpidemicReport> data = new ArrayList<>();
-
-        data.add(CountryReport(dataset, time, "Japan", 86, 0, 1, 0));
-        data.add(CountryReport(dataset, time, "Korea", 24, 0, 1, 0));
-        data.add(CountryReport(dataset, time, "Singapore", 33, 0, 2, 0));
-        data.add(CountryReport(dataset, time, "Thailand", 25, 0, 8, 0));
-        data.add(CountryReport(dataset, time, "Australia", 15, 0, 3, 0));
-        data.add(CountryReport(dataset, time, "Malaysia", 15, 0, 1, 0));
-        data.add(CountryReport(dataset, time, "Germany", 13, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Vietnam", 12, 0, 3, 0));
-        data.add(CountryReport(dataset, time, "UnitedStates", 12, 0, 1, 0));
-        data.add(CountryReport(dataset, time, "France", 6, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "UnitedArabEmirates", 5, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Canada", 5, 0, 1, 0));
-        data.add(CountryReport(dataset, time, "UnitedKingdom", 3, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Italy", 3, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "India", 3, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Philippines", 3, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Russia", 2, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Belgium", 1, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Spain", 1, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Sweden", 1, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Finland", 1, 0, 1, 0));
-        data.add(CountryReport(dataset, time, "SriLanka", 1, 0, 1, 0));
-        data.add(CountryReport(dataset, time, "Kampuchea", 1, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Nepal", 1, 0, 0, 0));
-
-        return data;
-    }
-
-    public static List<EpidemicReport> NCP20200208() {
-        String dataset = message("NewCoronavirusPneumonia");
-        long time = DateTools.stringToDatetime("2020-02-08 13:00:00").getTime();
-        //        List<EpidemicReport> data = TableEpidemicReport.read(dataset, time, 1);
-//        if (data != null && !data.isEmpty()) {
-//            return data;
-//        }
-
-        List<EpidemicReport> data = new ArrayList<>();
-
-        data.add(CountryReport(dataset, time, "Japan", 89, 0, 1, 0));
-        data.add(CountryReport(dataset, time, "Korea", 24, 0, 2, 0));
-        data.add(CountryReport(dataset, time, "Singapore", 33, 0, 2, 0));
-        data.add(CountryReport(dataset, time, "Thailand", 32, 0, 8, 0));
-        data.add(CountryReport(dataset, time, "Australia", 15, 0, 3, 0));
-        data.add(CountryReport(dataset, time, "Malaysia", 16, 0, 1, 0));
-        data.add(CountryReport(dataset, time, "Germany", 13, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Vietnam", 13, 0, 3, 0));
-        data.add(CountryReport(dataset, time, "UnitedStates", 12, 0, 3, 0));
-        data.add(CountryReport(dataset, time, "France", 11, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "UnitedArabEmirates", 7, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Canada", 5, 0, 1, 0));
-        data.add(CountryReport(dataset, time, "UnitedKingdom", 3, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Italy", 3, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "India", 3, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Philippines", 3, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Russia", 2, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Belgium", 1, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Spain", 1, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Sweden", 1, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Finland", 1, 0, 1, 0));
-        data.add(CountryReport(dataset, time, "SriLanka", 1, 0, 1, 0));
-        data.add(CountryReport(dataset, time, "Kampuchea", 1, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Nepal", 1, 0, 0, 0));
-
-        return data;
-    }
-
-    public static List<EpidemicReport> NCP20200209() {
-        String dataset = message("NewCoronavirusPneumonia");
-        long time = DateTools.stringToDatetime("2020-02-09 13:00:00").getTime();
-        //        List<EpidemicReport> data = TableEpidemicReport.read(dataset, time, 1);
-//        if (data != null && !data.isEmpty()) {
-//            return data;
-//        }
-
-        List<EpidemicReport> data = new ArrayList<>();
-        data.add(CountryReport(dataset, time, "Japan", 89, 0, 1, 0));
-        data.add(CountryReport(dataset, time, "Korea", 27, 0, 3, 0));
-        data.add(CountryReport(dataset, time, "Singapore", 40, 0, 2, 0));
-        data.add(CountryReport(dataset, time, "Thailand", 32, 0, 8, 0));
-        data.add(CountryReport(dataset, time, "Australia", 15, 0, 3, 0));
-        data.add(CountryReport(dataset, time, "Malaysia", 17, 0, 2, 0));
-        data.add(CountryReport(dataset, time, "Germany", 14, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Vietnam", 14, 0, 3, 0));
-        data.add(CountryReport(dataset, time, "UnitedStates", 12, 0, 3, 0));
-        data.add(CountryReport(dataset, time, "France", 11, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "UnitedArabEmirates", 7, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Canada", 7, 0, 1, 0));
-        data.add(CountryReport(dataset, time, "UnitedKingdom", 4, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Italy", 3, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "India", 3, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Philippines", 3, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Russia", 2, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Belgium", 1, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Spain", 2, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Sweden", 1, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Finland", 1, 0, 1, 0));
-        data.add(CountryReport(dataset, time, "SriLanka", 1, 0, 1, 0));
-        data.add(CountryReport(dataset, time, "Kampuchea", 1, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Nepal", 1, 0, 0, 0));
-
-        return data;
-    }
-
-    public static List<EpidemicReport> NCP20200210() {
-        String dataset = message("NewCoronavirusPneumonia");
-        long time = DateTools.stringToDatetime("2020-02-10 13:00:00").getTime();
-        //        List<EpidemicReport> data = TableEpidemicReport.read(dataset, time, 1);
-//        if (data != null && !data.isEmpty()) {
-//            return data;
-//        }
-
-        List<EpidemicReport> data = new ArrayList<>();
-        data.add(CountryReport(dataset, time, "Japan", 162, 0, 1, 0));
-        data.add(CountryReport(dataset, time, "Korea", 27, 0, 3, 0));
-        data.add(CountryReport(dataset, time, "Singapore", 45, 0, 7, 0));
-        data.add(CountryReport(dataset, time, "Thailand", 32, 0, 10, 0));
-        data.add(CountryReport(dataset, time, "Australia", 15, 0, 3, 0));
-        data.add(CountryReport(dataset, time, "Malaysia", 18, 0, 2, 0));
-        data.add(CountryReport(dataset, time, "Germany", 14, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Vietnam", 14, 0, 6, 0));
-        data.add(CountryReport(dataset, time, "UnitedStates", 12, 0, 3, 0));
-        data.add(CountryReport(dataset, time, "France", 11, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "UnitedArabEmirates", 7, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Canada", 7, 0, 1, 0));
-        data.add(CountryReport(dataset, time, "UnitedKingdom", 8, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Italy", 3, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "India", 3, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Philippines", 3, 0, 0, 1));
-        data.add(CountryReport(dataset, time, "Russia", 2, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Brazil", 1, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Belgium", 1, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Spain", 2, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Sweden", 1, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Finland", 1, 0, 1, 0));
-        data.add(CountryReport(dataset, time, "SriLanka", 1, 0, 1, 0));
-        data.add(CountryReport(dataset, time, "Kampuchea", 1, 0, 1, 0));
-        data.add(CountryReport(dataset, time, "Nepal", 1, 0, 0, 0));
-
-        return data;
-    }
-
-    public static List<EpidemicReport> NCP20200211() {
-        String dataset = message("NewCoronavirusPneumonia");
-        long time = DateTools.stringToDatetime("2020-02-11 13:00:00").getTime();
-//        List<EpidemicReport> data = TableEpidemicReport.read(dataset, time, 1);
-//        if (data != null && !data.isEmpty()) {
-//            return data;
-//        }
-
-        List<EpidemicReport> data = new ArrayList<>();
-        data.add(CountryReport(dataset, time, "Japan", 162, 0, 1, 0));
-        data.add(CountryReport(dataset, time, "Korea", 28, 0, 3, 0));
-        data.add(CountryReport(dataset, time, "Singapore", 45, 0, 7, 0));
-        data.add(CountryReport(dataset, time, "Thailand", 32, 0, 10, 0));
-        data.add(CountryReport(dataset, time, "Australia", 15, 0, 3, 0));
-        data.add(CountryReport(dataset, time, "Malaysia", 18, 0, 3, 0));
-        data.add(CountryReport(dataset, time, "Germany", 14, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Vietnam", 15, 0, 6, 0));
-        data.add(CountryReport(dataset, time, "UnitedStates", 13, 0, 3, 0));
-        data.add(CountryReport(dataset, time, "France", 11, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "UnitedArabEmirates", 8, 0, 1, 0));
-        data.add(CountryReport(dataset, time, "Canada", 7, 0, 1, 0));
-        data.add(CountryReport(dataset, time, "UnitedKingdom", 8, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Italy", 3, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "India", 3, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Philippines", 3, 0, 0, 1));
-        data.add(CountryReport(dataset, time, "Russia", 2, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Brazil", 1, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Belgium", 1, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Spain", 2, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Sweden", 1, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Finland", 1, 0, 1, 0));
-        data.add(CountryReport(dataset, time, "SriLanka", 1, 0, 1, 0));
-        data.add(CountryReport(dataset, time, "Kampuchea", 1, 0, 1, 0));
-        data.add(CountryReport(dataset, time, "Nepal", 1, 0, 0, 0));
-
-        return data;
-    }
-
-    public static List<EpidemicReport> NCP20200213() {
-        String dataset = message("NewCoronavirusPneumonia");
-        long time = DateTools.stringToDatetime("2020-02-13 13:00:00").getTime();
-//        List<EpidemicReport> data = TableEpidemicReport.read(dataset, time, 1);
-//        if (data != null && !data.isEmpty()) {
-//            return data;
-//        }
-
-        List<EpidemicReport> data = new ArrayList<>();
-        data.add(CountryReport(dataset, time, "Japan", 251, 0, 1, 1));
-        data.add(CountryReport(dataset, time, "Korea", 28, 0, 7, 0));
-        data.add(CountryReport(dataset, time, "Singapore", 58, 0, 15, 0));
-        data.add(CountryReport(dataset, time, "Thailand", 33, 0, 10, 0));
-        data.add(CountryReport(dataset, time, "Australia", 15, 0, 5, 0));
-        data.add(CountryReport(dataset, time, "Malaysia", 19, 0, 3, 0));
-        data.add(CountryReport(dataset, time, "Germany", 16, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Vietnam", 16, 0, 7, 0));
-        data.add(CountryReport(dataset, time, "UnitedStates", 14, 0, 3, 0));
-        data.add(CountryReport(dataset, time, "France", 11, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "UnitedArabEmirates", 8, 0, 1, 0));
-        data.add(CountryReport(dataset, time, "Canada", 7, 0, 1, 0));
-        data.add(CountryReport(dataset, time, "UnitedKingdom", 9, 0, 1, 0));
-        data.add(CountryReport(dataset, time, "Italy", 3, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "India", 3, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Philippines", 3, 0, 1, 1));
-        data.add(CountryReport(dataset, time, "Russia", 2, 0, 2, 0));
-        data.add(CountryReport(dataset, time, "Brazil", 1, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Belgium", 1, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Spain", 2, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Sweden", 1, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Finland", 1, 0, 1, 0));
-        data.add(CountryReport(dataset, time, "SriLanka", 1, 0, 1, 0));
-        data.add(CountryReport(dataset, time, "Kampuchea", 1, 0, 1, 0));
-        data.add(CountryReport(dataset, time, "Nepal", 1, 0, 1, 0));
-
-        return data;
-    }
-
-    public static List<EpidemicReport> NCP20200218() {
-        String dataset = message("NewCoronavirusPneumonia");
-        long time = DateTools.stringToDatetime("2020-02-18 13:00:00").getTime();
-//        List<EpidemicReport> data = TableEpidemicReport.read(dataset, time, 1);
-//        if (data != null && !data.isEmpty()) {
-//            return data;
-//        }
-
-        List<EpidemicReport> data = new ArrayList<>();
-        data.add(CountryReport(dataset, time, "Japan", 616, 0, 1, 1));
-        data.add(CountryReport(dataset, time, "Korea", 31, 0, 12, 0));
-        data.add(CountryReport(dataset, time, "Singapore", 81, 0, 29, 0));
-        data.add(CountryReport(dataset, time, "Thailand", 33, 0, 10, 0));
-        data.add(CountryReport(dataset, time, "Australia", 15, 0, 5, 0));
-        data.add(CountryReport(dataset, time, "Malaysia", 22, 0, 9, 0));
-        data.add(CountryReport(dataset, time, "Germany", 16, 0, 9, 0));
-        data.add(CountryReport(dataset, time, "Vietnam", 16, 0, 9, 0));
-        data.add(CountryReport(dataset, time, "UnitedStates", 15, 0, 3, 0));
-        data.add(CountryReport(dataset, time, "France", 12, 0, 4, 1));
-        data.add(CountryReport(dataset, time, "UnitedArabEmirates", 9, 0, 4, 0));
-        data.add(CountryReport(dataset, time, "Canada", 8, 0, 1, 0));
-        data.add(CountryReport(dataset, time, "UnitedKingdom", 9, 0, 8, 0));
-        data.add(CountryReport(dataset, time, "Italy", 3, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "India", 3, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Philippines", 3, 0, 1, 1));
-        data.add(CountryReport(dataset, time, "Russia", 2, 0, 2, 0));
-        data.add(CountryReport(dataset, time, "Brazil", 1, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Belgium", 1, 0, 1, 0));
-        data.add(CountryReport(dataset, time, "Spain", 2, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Sweden", 1, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Finland", 1, 0, 1, 0));
-        data.add(CountryReport(dataset, time, "SriLanka", 1, 0, 1, 0));
-        data.add(CountryReport(dataset, time, "Kampuchea", 1, 0, 1, 0));
-        data.add(CountryReport(dataset, time, "Nepal", 1, 0, 1, 0));
-
-        return data;
-    }
-
-    public static List<EpidemicReport> NCP20200219() {
-        String dataset = message("NewCoronavirusPneumonia");
-        long time = DateTools.stringToDatetime("2020-02-19 13:00:00").getTime();
-//        List<EpidemicReport> data = TableEpidemicReport.read(dataset, time, 1);
-//        if (data != null && !data.isEmpty()) {
-//            return data;
-//        }
-
-        List<EpidemicReport> data = new ArrayList<>();
-        data.add(CountryReport(dataset, time, "Japan", 621, 0, 1, 1));
-        data.add(CountryReport(dataset, time, "Singapore", 84, 0, 29, 0));
-        data.add(CountryReport(dataset, time, "Korea", 51, 0, 12, 0));
-        data.add(CountryReport(dataset, time, "Thailand", 33, 0, 10, 0));
-        data.add(CountryReport(dataset, time, "Australia", 15, 0, 5, 0));
-        data.add(CountryReport(dataset, time, "Malaysia", 22, 0, 15, 0));
-        data.add(CountryReport(dataset, time, "Germany", 16, 0, 9, 0));
-        data.add(CountryReport(dataset, time, "Vietnam", 16, 0, 9, 0));
-        data.add(CountryReport(dataset, time, "UnitedStates", 15, 0, 3, 0));
-        data.add(CountryReport(dataset, time, "France", 12, 0, 4, 1));
-        data.add(CountryReport(dataset, time, "UnitedArabEmirates", 9, 0, 4, 0));
-        data.add(CountryReport(dataset, time, "Canada", 8, 0, 1, 0));
-        data.add(CountryReport(dataset, time, "UnitedKingdom", 9, 0, 8, 0));
-        data.add(CountryReport(dataset, time, "Italy", 3, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "India", 3, 0, 3, 0));
-        data.add(CountryReport(dataset, time, "Philippines", 3, 0, 1, 1));
-        data.add(CountryReport(dataset, time, "Russia", 2, 0, 2, 0));
-        data.add(CountryReport(dataset, time, "Brazil", 1, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Belgium", 1, 0, 1, 0));
-        data.add(CountryReport(dataset, time, "Spain", 2, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Sweden", 1, 0, 0, 0));
-        data.add(CountryReport(dataset, time, "Finland", 1, 0, 1, 0));
-        data.add(CountryReport(dataset, time, "SriLanka", 1, 0, 1, 0));
-        data.add(CountryReport(dataset, time, "Kampuchea", 1, 0, 1, 0));
-        data.add(CountryReport(dataset, time, "Nepal", 1, 0, 1, 0));
-
-        return data;
-    }
-
-    public static void importNCPs() {
-        if (TableGeographyCode.read(message("China")) == null) {
-            GeographyCode.importCodes();
-        }
-        File file;
-        if ("zh".equals(AppVariables.getLanguage())) {
-            file = FxmlControl.getInternalFile("/data/db/Epidemic_Report_zh.del",
-                    "AppTemp", "EpidemicReport_zh.del");
-        } else {
-            file = FxmlControl.getInternalFile("/data/db/Epidemic_Report_en.del",
-                    "AppTemp", "Epidemic_Report_en.del");
-        }
-        DerbyBase.importData("Epidemic_Report", file.getAbsolutePath(), false);
-        TableEpidemicReport.moveDataid();
-
     }
 
     /*

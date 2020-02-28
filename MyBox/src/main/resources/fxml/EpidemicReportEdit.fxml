@@ -49,6 +49,12 @@ License:    Apache License Version 2.0
                                 </HBox>
                                 <HBox alignment="CENTER" layoutX="10.0" layoutY="300.0" spacing="5.0">
                                     <children>
+                                        <Label alignment="CENTER_RIGHT" prefWidth="200.0" text="%Level" />
+                                        <ComboBox fx:id="reportLevelSelector" editable="false" prefWidth="400.0" />
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER" layoutX="10.0" layoutY="300.0" spacing="5.0">
+                                    <children>
                                         <Label alignment="CENTER_RIGHT" prefWidth="200.0" text="%Country" />
                                         <ComboBox fx:id="countrySelector" editable="true" prefWidth="400.0" />
                                     </children>

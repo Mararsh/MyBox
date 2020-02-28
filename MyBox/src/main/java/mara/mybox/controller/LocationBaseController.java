@@ -234,7 +234,7 @@ public class LocationBaseController extends BaseController {
         try {
             LocationInMapController controller = (LocationInMapController) openStage(CommonValues.LocationInMapFxml);
             controller.locationController = this;
-            if (longtitude > Double.MIN_VALUE && latitude > Double.MIN_VALUE) {
+            if (longtitude >= -180 && latitude >= -180) {
                 controller.load(longtitude, latitude, 3);
             }
             controller.getMyStage().setAlwaysOnTop(true);

@@ -27,11 +27,12 @@ public class TableDoubleCell<T, C> extends TableCell<T, C>
                     return;
                 }
                 Double v = (Double) item;
-                if (v > Double.MIN_VALUE) {
-                    setText(v + "");
-                } else {
-                    setText(null);
-                }
+                setText(v + "");
+//                if (v > Double.MIN_VALUE) {
+//                    setText(v + "");
+//                } else {
+//                    setText(null);
+//                }
             }
         };
         return cell;

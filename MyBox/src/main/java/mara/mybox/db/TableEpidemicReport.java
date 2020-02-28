@@ -7,7 +7,9 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import mara.mybox.data.EpidemicReport;
 import static mara.mybox.db.DerbyBase.dbHome;
 import static mara.mybox.db.DerbyBase.failed;
@@ -199,7 +201,10 @@ public class TableEpidemicReport extends DerbyBase {
                     + " ORDER BY country";
             ResultSet results = statement.executeQuery(sql);
             while (results.next()) {
-                countries.add(results.getString("country"));
+                String c = results.getString("country");
+                if (c != null && !c.trim().isBlank()) {
+                    countries.add(c);
+                }
             }
             if (countries.contains(message("China"))) {
                 countries.remove(message("China"));
@@ -226,7 +231,10 @@ public class TableEpidemicReport extends DerbyBase {
                     + " ORDER BY province";
             ResultSet results = statement.executeQuery(sql);
             while (results.next()) {
-                provinces.add(results.getString("province"));
+                String c = results.getString("province");
+                if (c != null && !c.trim().isBlank()) {
+                    provinces.add(c);
+                }
             }
             return provinces;
         } catch (Exception e) {
@@ -238,9 +246,9 @@ public class TableEpidemicReport extends DerbyBase {
 
     public static List<String> cities(String dataset, String country,
             String province) {
-        List<String> provinces = new ArrayList<>();
+        List<String> cities = new ArrayList<>();
         if (dataset == null) {
-            return provinces;
+            return cities;
         }
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
@@ -252,9 +260,12 @@ public class TableEpidemicReport extends DerbyBase {
 
             ResultSet results = statement.executeQuery(sql);
             while (results.next()) {
-                provinces.add(results.getString("city"));
+                String c = results.getString("city");
+                if (c != null && !c.trim().isBlank()) {
+                    cities.add(c);
+                }
             }
-            return provinces;
+            return cities;
         } catch (Exception e) {
             failed(e);
             logger.debug(e.toString());
@@ -270,7 +281,7 @@ public class TableEpidemicReport extends DerbyBase {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
             statement.setMaxRows(max);
-            String sql = "SELECT * FROM Epidemic_Report WHERE data_set='" + dataset + "'";
+            String sql = "SELECT * FROM Epidemic_Report WHERE data_set='" + dataset + "' AND confirmed > 0 ";
             ResultSet results = statement.executeQuery(sql);
             while (results.next()) {
                 EpidemicReport location = read(results);
@@ -292,7 +303,8 @@ public class TableEpidemicReport extends DerbyBase {
                  Statement statement = conn.createStatement()) {
             statement.setMaxRows(max);
             String sql = "SELECT * FROM Epidemic_Report WHERE "
-                    + "data_set='" + dataset + "' AND time='" + DateTools.datetimeToString(time) + "'";
+                    + "data_set='" + dataset + "'  AND confirmed > 0  AND time='"
+                    + DateTools.datetimeToString(time) + "'";
             ResultSet results = statement.executeQuery(sql);
             while (results.next()) {
                 EpidemicReport location = read(results);
@@ -345,7 +357,7 @@ public class TableEpidemicReport extends DerbyBase {
     }
 
     public static boolean write(EpidemicReport report) {
-        if (report == null) {
+        if (report == null || report.getConfirmed() <= 0) {
             return false;
         }
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
@@ -369,416 +381,18 @@ public class TableEpidemicReport extends DerbyBase {
         }
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
-            conn.setAutoCommit(true);
+            conn.setAutoCommit(false);
             for (EpidemicReport report : reports) {
+                if (report.getConfirmed() <= 0) {
+                    continue;
+                }
                 if (report.getDataid() < 0) {
                     create(statement, report);
                 } else {
                     update(statement, report);
                 }
             }
-            return true;
-        } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
-            return false;
-        }
-    }
-
-    public static boolean statistic() {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            List<String> datasets = new ArrayList();
-            String sql = " SELECT DISTINCT data_set FROM Epidemic_Report";
-            ResultSet datasetsResults = statement.executeQuery(sql);
-            while (datasetsResults.next()) {
-                datasets.add(datasetsResults.getString("data_set"));
-            }
-            for (String dataset : datasets) {
-                statistic(statement, dataset);
-            }
-            return true;
-        } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
-            return false;
-        }
-    }
-
-    public static boolean statistic(String dataset) {
-        if (dataset == null) {
-            return false;
-        }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            statistic(statement, dataset);
-            return true;
-        } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
-            return false;
-        }
-    }
-
-    public static boolean statistic(Statement statement, String dataset) {
-        if (dataset == null || statement == null) {
-            return false;
-        }
-        try {
-
-            List<String> countries = new ArrayList<>();
-            String sql = " SELECT DISTINCT country FROM Epidemic_Report WHERE"
-                    + " data_set='" + dataset + "' AND country IS NOT NULL";
-            ResultSet countriesResults = statement.executeQuery(sql);
-            while (countriesResults.next()) {
-                String c = countriesResults.getString("country");
-                if (c != null) {
-                    countries.add(c);
-                }
-            }
-
-            List<Date> times = new ArrayList<>();
-            sql = " SELECT DISTINCT time FROM Epidemic_Report WHERE data_set='" + dataset + "'";
-            ResultSet timesResults = statement.executeQuery(sql);
-            while (timesResults.next()) {
-                Date d = timesResults.getTimestamp("time");
-                if (d != null) {
-                    times.add(d);
-                }
-            }
-
-            statisticCountries(statement, dataset, times, countries);
-            statisticGlobal(statement, dataset, times);
-
-            statisticCitiesIncreased(statement, dataset);
-            statisticProvincesIncreased(statement, dataset);
-            statisticCountriesIncreased(statement, dataset);
-            statisticGlobalIncreased(statement, dataset);
-
-            return true;
-        } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
-            return false;
-        }
-    }
-
-    public static boolean statisticGlobal(Statement statement, String dataset,
-            List<Date> times) {
-        try {
-
-            int confirmed, healed, suspected, dead;
-            for (Date d : times) {
-                String sql = " SELECT sum(confirmed) FROM Epidemic_Report WHERE data_set='"
-                        + dataset + "' AND time='" + DateTools.datetimeToString(d) + "' "
-                        + " AND country IS NOT NULL AND level='" + message("Country") + "'";
-                try ( ResultSet confirmedResults = statement.executeQuery(sql)) {
-                    if (confirmedResults.next()) {
-                        confirmed = confirmedResults.getInt(1);
-                    } else {
-                        confirmed = 0;
-                    }
-                    if (confirmed == 0) {
-                        continue;
-                    }
-                }
-
-                sql = " SELECT sum(suspected) FROM Epidemic_Report WHERE data_set='"
-                        + dataset + "' AND time='" + DateTools.datetimeToString(d) + "' "
-                        + " AND country IS NOT NULL AND level='" + message("Country") + "'";
-                try ( ResultSet suspectedResults = statement.executeQuery(sql)) {
-                    if (suspectedResults.next()) {
-                        suspected = suspectedResults.getInt(1);
-                    } else {
-                        suspected = 0;
-                    }
-                }
-
-                sql = " SELECT sum(healed) FROM Epidemic_Report WHERE data_set='"
-                        + dataset + "' AND time='" + DateTools.datetimeToString(d) + "' "
-                        + " AND country IS NOT NULL AND level='" + message("Country") + "'";
-                ResultSet healedResults = statement.executeQuery(sql);
-                if (healedResults.next()) {
-                    healed = healedResults.getInt(1);
-                } else {
-                    healed = 0;
-                }
-
-                sql = " SELECT sum(dead) FROM Epidemic_Report WHERE data_set='"
-                        + dataset + "' AND time='" + DateTools.datetimeToString(d) + "' "
-                        + " AND country IS NOT NULL AND level='" + message("Country") + "'";
-                try ( ResultSet deadResults = statement.executeQuery(sql)) {
-                    if (deadResults.next()) {
-                        dead = deadResults.getInt(1);
-                    } else {
-                        dead = 0;
-                    }
-                }
-
-                EpidemicReport report = EpidemicReport.create().setDataSet(dataset)
-                        .setLevel(message("Global"))
-                        .setConfirmed(confirmed).setSuspected(suspected)
-                        .setHealed(healed).setDead(dead)
-                        .setTime(d.getTime());
-                sql = " SELECT dataid FROM Epidemic_Report WHERE data_set='"
-                        + dataset + "' AND time='" + DateTools.datetimeToString(d) + "' "
-                        + " AND level='" + message("Global") + "'";
-                ResultSet allResults = statement.executeQuery(sql);
-                if (allResults.next()) {
-                    update(statement, report);
-                } else {
-                    create(statement, report);
-                }
-            }
-            return true;
-        } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
-            return false;
-        }
-    }
-
-    public static boolean statisticCountries(Statement statement, String dataset,
-            List<Date> times, List<String> countries) {
-        try {
-            for (String country : countries) {
-                statisticCountry(statement, dataset, times, country);
-            }
-            return true;
-        } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
-            return false;
-        }
-    }
-
-    public static boolean statisticCountry(Statement statement, String dataset,
-            List<Date> times, String country) {
-        try {
-
-            String sql = "SELECT count(dataid) FROM Epidemic_Report WHERE country='" + country + "' "
-                    + " AND level='" + message("Province") + "'";
-            try ( ResultSet pcount = statement.executeQuery(sql)) {
-                if (pcount.next()) {
-                    int count = pcount.getInt(1);
-                    if (count == 0) {
-                        return false;
-                    }
-                }
-            }
-
-            double longitude = -200;
-            double latitude = -200;
-            sql = "SELECT * FROM Geography_Code WHERE address='" + country + "' "
-                    + " AND level='" + message("Country") + "'";
-            try ( ResultSet codeResults = statement.executeQuery(sql)) {
-                if (codeResults.next()) {
-                    longitude = codeResults.getDouble("longitude");
-                    latitude = codeResults.getDouble("latitude");
-                }
-            }
-
-            int confirmed = 0, healed = 0, suspected = 0, dead = 0;
-            for (Date d : times) {
-                sql = " SELECT sum(confirmed), sum(suspected),sum(healed), sum(dead) "
-                        + " FROM Epidemic_Report WHERE data_set='"
-                        + dataset + "' AND time='" + DateTools.datetimeToString(d) + "' "
-                        + " AND country='" + country + "' AND level='" + message("Province") + "'";
-                try ( ResultSet sumResults = statement.executeQuery(sql)) {
-                    if (sumResults.next()) {
-                        confirmed = sumResults.getInt(1);
-                        suspected = sumResults.getInt(2);
-                        healed = sumResults.getInt(3);
-                        dead = sumResults.getInt(4);
-                    } else {
-                        confirmed = suspected = healed = dead = 0;
-                    }
-                    if (confirmed == 0) {
-                        continue;
-                    }
-                }
-                EpidemicReport report = EpidemicReport.create().setDataSet(dataset)
-                        .setCountry(country).setLevel(message("Country"))
-                        .setConfirmed(confirmed).setSuspected(suspected)
-                        .setHealed(healed).setDead(dead)
-                        .setTime(d.getTime())
-                        .setLongitude(longitude).setLatitude(latitude);
-                sql = " SELECT dataid FROM Epidemic_Report WHERE data_set='"
-                        + dataset + "' AND time='" + DateTools.datetimeToString(d) + "' "
-                        + " AND country='" + country + "'  AND level='" + message("Country") + "'";
-                boolean exist = false;
-                try ( ResultSet allResults = statement.executeQuery(sql)) {
-                    if (allResults.next()) {
-                        exist = true;
-                    }
-                }
-                if (exist) {
-                    update(statement, report);
-                } else {
-                    create(statement, report);
-                }
-
-            }
-            return true;
-        } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
-            return false;
-        }
-    }
-
-    public static boolean statisticCitiesIncreased(Statement statement,
-            String dataset) {
-        try {
-            List<String> cities = new ArrayList<>();
-            String sql = "SELECT DISTINCT city FROM Epidemic_Report WHERE"
-                    + " data_set='" + dataset + "' AND city IS NOT NULL"
-                    + " AND level='" + message("City") + "'";
-            try ( ResultSet citiesResults = statement.executeQuery(sql)) {
-                while (citiesResults.next()) {
-                    String c = citiesResults.getString("city");
-                    if (c != null) {
-                        cities.add(c);
-                    }
-                }
-            }
-            for (String city : cities) {
-                sql = "SELECT * FROM Epidemic_Report WHERE "
-                        + "data_set='" + dataset + "' AND city='" + city + "'"
-                        + " AND level='" + message("City") + "' ORDER BY time desc";
-                List<EpidemicReport> citiesReports = new ArrayList<>();
-                try ( ResultSet results = statement.executeQuery(sql)) {
-                    while (results.next()) {
-                        citiesReports.add(read(results));
-                    }
-                }
-                for (int i = 0; i < citiesReports.size() - 1; i++) {
-                    EpidemicReport report = citiesReports.get(i);
-                    EpidemicReport reportLast = citiesReports.get(i + 1);
-                    report.setIncreasedConfirmed(report.getConfirmed() - reportLast.getConfirmed());
-                    report.setIncreasedHealed(report.getHealed() - reportLast.getHealed());
-                    report.setIncreasedSuspected(report.getSuspected() - reportLast.getSuspected());
-                    report.setIncreasedDead(report.getDead() - reportLast.getDead());
-                    update(statement, report);
-                }
-            }
-            return true;
-        } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
-            return false;
-        }
-    }
-
-    public static boolean statisticProvincesIncreased(Statement statement,
-            String dataset) {
-        try {
-
-            List<String> provinces = new ArrayList<>();
-            String sql = " SELECT DISTINCT province FROM Epidemic_Report WHERE"
-                    + " data_set='" + dataset + "' AND province IS NOT NULL"
-                    + " AND level='" + message("Province") + "'";
-            ResultSet provincesResults = statement.executeQuery(sql);
-            while (provincesResults.next()) {
-                String c = provincesResults.getString("province");
-                if (c != null) {
-                    provinces.add(c);
-                }
-            }
-            for (String province : provinces) {
-                sql = "SELECT * FROM Epidemic_Report WHERE "
-                        + "data_set='" + dataset + "' AND province='" + province + "'"
-                        + " AND level='" + message("Province") + "' ORDER BY time desc";
-                List<EpidemicReport> provincesReports = new ArrayList<>();
-                try ( ResultSet results = statement.executeQuery(sql)) {
-                    while (results.next()) {
-                        provincesReports.add(read(results));
-                    }
-                }
-                for (int i = 0; i < provincesReports.size() - 1; i++) {
-                    EpidemicReport report = provincesReports.get(i);
-                    EpidemicReport reportLast = provincesReports.get(i + 1);
-                    report.setIncreasedConfirmed(report.getConfirmed() - reportLast.getConfirmed());
-                    report.setIncreasedHealed(report.getHealed() - reportLast.getHealed());
-                    report.setIncreasedSuspected(report.getSuspected() - reportLast.getSuspected());
-                    report.setIncreasedDead(report.getDead() - reportLast.getDead());
-                    update(statement, report);
-                }
-            }
-            return true;
-        } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
-            return false;
-        }
-    }
-
-    public static boolean statisticCountriesIncreased(Statement statement,
-            String dataset) {
-        try {
-
-            List<String> countries = new ArrayList<>();
-            String sql = " SELECT DISTINCT country FROM Epidemic_Report WHERE"
-                    + " data_set='" + dataset + "' AND country IS NOT NULL"
-                    + " AND level='" + message("Country") + "'";
-            ResultSet countriesResults = statement.executeQuery(sql);
-            while (countriesResults.next()) {
-                String c = countriesResults.getString("country");
-                if (c != null) {
-                    countries.add(c);
-                }
-            }
-            for (String country : countries) {
-                sql = "SELECT * FROM Epidemic_Report WHERE "
-                        + "data_set='" + dataset + "' AND country='" + country + "'"
-                        + " AND level='" + message("Country") + "' ORDER BY time desc";
-                List<EpidemicReport> countriesReports = new ArrayList<>();
-                try ( ResultSet results = statement.executeQuery(sql)) {
-                    while (results.next()) {
-                        countriesReports.add(read(results));
-                    }
-                }
-                for (int i = 0; i < countriesReports.size() - 1; i++) {
-                    EpidemicReport report = countriesReports.get(i);
-                    EpidemicReport reportLast = countriesReports.get(i + 1);
-                    report.setIncreasedConfirmed(report.getConfirmed() - reportLast.getConfirmed());
-                    report.setIncreasedHealed(report.getHealed() - reportLast.getHealed());
-                    report.setIncreasedSuspected(report.getSuspected() - reportLast.getSuspected());
-                    report.setIncreasedDead(report.getDead() - reportLast.getDead());
-                    update(statement, report);
-                }
-            }
-
-            return true;
-        } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
-            return false;
-        }
-    }
-
-    public static boolean statisticGlobalIncreased(Statement statement,
-            String dataset) {
-        try {
-
-            String sql = "SELECT * FROM Epidemic_Report WHERE "
-                    + "data_set='" + dataset + "' "
-                    + " AND level='" + message("Global") + "' ORDER BY time desc";
-            List<EpidemicReport> globalReports = new ArrayList<>();
-            try ( ResultSet results = statement.executeQuery(sql)) {
-                while (results.next()) {
-                    globalReports.add(read(results));
-                }
-            }
-            for (int i = 0; i < globalReports.size() - 1; i++) {
-                EpidemicReport report = globalReports.get(i);
-                EpidemicReport reportLast = globalReports.get(i + 1);
-                report.setIncreasedConfirmed(report.getConfirmed() - reportLast.getConfirmed());
-                report.setIncreasedHealed(report.getHealed() - reportLast.getHealed());
-                report.setIncreasedSuspected(report.getSuspected() - reportLast.getSuspected());
-                report.setIncreasedDead(report.getDead() - reportLast.getDead());
-                update(statement, report);
-            }
+            conn.commit();
             return true;
         } catch (Exception e) {
             failed(e);
@@ -788,7 +402,7 @@ public class TableEpidemicReport extends DerbyBase {
     }
 
     public static boolean create(Statement statement, EpidemicReport report) {
-        if (statement == null || report == null) {
+        if (statement == null || report == null || report.getConfirmed() <= 0) {
             return false;
         }
         try {
@@ -858,6 +472,7 @@ public class TableEpidemicReport extends DerbyBase {
                 sql += "null ";
             }
             sql += " )";
+//            logger.debug(sql);
             statement.executeUpdate(sql);
             return true;
         } catch (Exception e) {
@@ -868,10 +483,12 @@ public class TableEpidemicReport extends DerbyBase {
     }
 
     public static boolean update(Statement statement, EpidemicReport report) {
-        if (statement == null || report == null || report.getDataid() < 0) {
+        if (statement == null || report == null
+                || report.getDataid() < 0 || report.getConfirmed() <= 0) {
             return false;
         }
         try {
+
             String sql = "UPDATE Epidemic_Report SET ";
             sql += "data_set='" + report.getDataSet() + "', ";
             if (report.getDataLabel() != null) {
@@ -881,6 +498,7 @@ public class TableEpidemicReport extends DerbyBase {
             }
             if (report.getLevel() != null) {
                 sql += "level='" + report.getLevel() + "', ";
+
             } else {
                 return false;
             }
@@ -936,6 +554,633 @@ public class TableEpidemicReport extends DerbyBase {
             }
             sql += "WHERE dataid=" + report.getDataid();
             statement.executeUpdate(sql);
+            return true;
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static List<String> datasets(Statement statement) {
+        List<String> datasets = new ArrayList();
+        if (statement == null) {
+            return datasets;
+        }
+        String sql = " SELECT DISTINCT data_set FROM Epidemic_Report";
+        try ( ResultSet datasetsResults = statement.executeQuery(sql)) {
+            while (datasetsResults.next()) {
+                String c = datasetsResults.getString("data_set");
+                if (c != null && !c.trim().isBlank()) {
+                    datasets.add(c);
+                }
+            }
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+        }
+        return datasets;
+    }
+
+    public static List<Date> timesASC(Statement statement, String dataset) {
+        List<Date> times = new ArrayList<>();
+        if (statement == null || dataset == null) {
+            return times;
+        }
+        String sql = " SELECT DISTINCT time FROM Epidemic_Report WHERE data_set='"
+                + dataset + "' ORDER BY time asc";
+        try ( ResultSet timesResults = statement.executeQuery(sql)) {
+            while (timesResults.next()) {
+                Date d = timesResults.getTimestamp("time");
+                if (d != null) {
+                    times.add(d);
+                }
+            }
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+        }
+        return times;
+    }
+
+    public static List<String> countries(Statement statement, String dataset) {
+        List<String> countries = new ArrayList<>();
+        if (statement == null || dataset == null) {
+            return countries;
+        }
+        String sql = " SELECT DISTINCT country FROM Epidemic_Report WHERE"
+                + " data_set='" + dataset + "' AND country IS NOT NULL";
+        try ( ResultSet countriesResults = statement.executeQuery(sql)) {
+            while (countriesResults.next()) {
+                String c = countriesResults.getString("country");
+                if (c != null && !c.trim().isBlank()) {
+                    countries.add(c);
+                }
+            }
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+        }
+        return countries;
+    }
+
+    public static List<String> provinces(Statement statement, String dataset) {
+        List<String> provinces = new ArrayList<>();
+        if (statement == null || dataset == null) {
+            return provinces;
+        }
+        String sql = "SELECT DISTINCT province FROM Epidemic_Report WHERE"
+                + " data_set='" + dataset + "' AND province IS NOT NULL"
+                + " AND level='" + message("Province") + "'";
+        try ( ResultSet provincesResults = statement.executeQuery(sql)) {
+            while (provincesResults.next()) {
+                String c = provincesResults.getString("province");
+                if (c != null && !c.trim().isBlank()) {
+                    provinces.add(c);
+                }
+            }
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+        }
+        return provinces;
+    }
+
+    public static List<String> cities(Statement statement, String dataset) {
+        List<String> cities = new ArrayList<>();
+        if (statement == null || dataset == null) {
+            return cities;
+        }
+        String sql = "SELECT DISTINCT city FROM Epidemic_Report WHERE"
+                + " data_set='" + dataset + "' AND city IS NOT NULL"
+                + " AND level='" + message("City") + "'";
+        try ( ResultSet citiesResults = statement.executeQuery(sql)) {
+            while (citiesResults.next()) {
+                String c = citiesResults.getString("city");
+                if (c != null && !c.trim().isBlank()) {
+                    cities.add(c);
+                }
+            }
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+        }
+        return cities;
+    }
+
+    public static boolean fillData() {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                 Statement statement = conn.createStatement()) {
+            List<String> datasets = datasets(statement);
+            for (String dataset : datasets) {
+                fillData(statement, dataset);
+            }
+            return true;
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean fillData(Statement statement, String dataset) {
+        if (dataset == null || statement == null) {
+            return false;
+        }
+        try {
+            List<Date> times = timesASC(statement, dataset);
+            if (!times.isEmpty()) {
+                fillCitiesData(statement, dataset, times);
+                fillProvincesData(statement, dataset, times);
+                fillCountriesData(statement, dataset, times);
+            }
+            return true;
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    // times is in asc
+    public static boolean fillCitiesData(Statement statement, String dataset,
+            List<Date> times) {
+        try {
+            List<String> cities = cities(statement, dataset);
+            List<EpidemicReport> filled = new ArrayList<>();
+            for (String city : cities) {
+                String sql = "SELECT * FROM Epidemic_Report WHERE "
+                        + "data_set='" + dataset + "' AND city='" + city + "'"
+                        + " AND level='" + message("City") + "'";
+                Map<Long, EpidemicReport> reports = new HashMap<>();
+                try ( ResultSet results = statement.executeQuery(sql)) {
+                    while (results.next()) {
+                        EpidemicReport report = read(results);
+                        if (report == null) {
+                            continue;
+                        }
+                        reports.put(report.getTime(), report);
+                    }
+                }
+                EpidemicReport thisreport, lastReport = null;
+                for (int i = 0; i < times.size(); i++) {
+                    long time = times.get(i).getTime();
+                    thisreport = reports.get(time);
+                    if (thisreport == null) {
+                        if (lastReport != null) {
+                            thisreport = lastReport.copy().setTime(time);
+                            filled.add(thisreport);
+                            logger.debug("Filled:" + DateTools.datetimeToString(time) + " " + city);
+                            lastReport = thisreport;
+                        }
+                    } else {
+                        logger.debug("Existed:" + DateTools.datetimeToString(time) + " " + city);
+                        lastReport = thisreport;
+                    }
+                }
+            }
+            if (!filled.isEmpty()) {
+                write(filled);
+            }
+
+            return true;
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean fillProvincesData(Statement statement, String dataset,
+            List<Date> times) {
+        try {
+            List<String> provinces = provinces(statement, dataset);
+            List<EpidemicReport> filled = new ArrayList<>();
+            for (String province : provinces) {
+                String sql = "SELECT * FROM Epidemic_Report WHERE "
+                        + "data_set='" + dataset + "' AND province='" + province + "'"
+                        + " AND level='" + message("Province") + "'";
+                Map<Long, EpidemicReport> reports = new HashMap<>();
+                try ( ResultSet results = statement.executeQuery(sql)) {
+                    while (results.next()) {
+                        EpidemicReport report = read(results);
+                        if (report == null) {
+                            continue;
+                        }
+                        reports.put(report.getTime(), report);
+                    }
+                }
+                EpidemicReport thisreport, lastReport = null;
+                for (int i = 0; i < times.size(); i++) {
+                    long time = times.get(i).getTime();
+                    thisreport = reports.get(time);
+                    if (thisreport == null) {
+                        if (lastReport != null) {
+                            thisreport = lastReport.copy().setTime(time);
+                            filled.add(thisreport);
+                            logger.debug("Filled:" + DateTools.datetimeToString(time) + " " + province);
+                            lastReport = thisreport;
+                        }
+                    } else {
+                        logger.debug("Existed:" + DateTools.datetimeToString(time) + " " + province);
+                        lastReport = thisreport;
+                    }
+                }
+            }
+            if (!filled.isEmpty()) {
+                write(filled);
+            }
+
+            return true;
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean fillCountriesData(Statement statement, String dataset,
+            List<Date> times) {
+        try {
+            List<String> countries = countries(statement, dataset);
+            List<EpidemicReport> filled = new ArrayList<>();
+            for (String country : countries) {
+                String sql = "SELECT * FROM Epidemic_Report WHERE "
+                        + "data_set='" + dataset + "' AND country='" + country + "'"
+                        + " AND level='" + message("Country") + "'";
+                Map<Long, EpidemicReport> reports = new HashMap<>();
+                try ( ResultSet results = statement.executeQuery(sql)) {
+                    while (results.next()) {
+                        EpidemicReport report = read(results);
+                        if (report == null) {
+                            continue;
+                        }
+                        reports.put(report.getTime(), report);
+                    }
+                }
+                EpidemicReport thisreport, lastReport = null;
+                for (int i = 0; i < times.size(); i++) {
+                    long time = times.get(i).getTime();
+                    thisreport = reports.get(time);
+                    if (thisreport == null) {
+                        if (lastReport != null) {
+                            thisreport = lastReport.copy().setTime(time);
+                            filled.add(thisreport);
+                            logger.debug("Filled:" + DateTools.datetimeToString(time) + " " + country);
+                            lastReport = thisreport;
+                        }
+                    } else {
+                        logger.debug("Existed:" + DateTools.datetimeToString(time) + " " + country);
+                        lastReport = thisreport;
+                    }
+                }
+            }
+            if (!filled.isEmpty()) {
+                write(filled);
+            }
+
+            return true;
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean statistic() {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                 Statement statement = conn.createStatement()) {
+            List<String> datasets = new ArrayList();
+//            String sql = " DELETE FROM Epidemic_Report WHERE confirmed <= 0";
+//            statement.executeUpdate(sql);
+            String sql = " SELECT DISTINCT data_set FROM Epidemic_Report";
+            ResultSet datasetsResults = statement.executeQuery(sql);
+            while (datasetsResults.next()) {
+                datasets.add(datasetsResults.getString("data_set"));
+            }
+            for (String dataset : datasets) {
+                statistic(statement, dataset);
+            }
+            return true;
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean statistic(String dataset) {
+        if (dataset == null) {
+            return false;
+        }
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                 Statement statement = conn.createStatement()) {
+            statistic(statement, dataset);
+            return true;
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean statistic(Statement statement, String dataset) {
+        if (dataset == null || statement == null) {
+            return false;
+        }
+        try {
+            List<Date> times = timesASC(statement, dataset);
+            if (!times.isEmpty()) {
+                statisticCountries(statement, dataset, times);
+                statisticGlobal(statement, dataset, times);
+            }
+
+            statisticCitiesIncreased(statement, dataset);
+            statisticProvincesIncreased(statement, dataset);
+            statisticCountriesIncreased(statement, dataset);
+            statisticGlobalIncreased(statement, dataset);
+            return true;
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean statisticGlobal(Statement statement, String dataset,
+            List<Date> times) {
+        try {
+            String sql = " DELETE FROM Epidemic_Report WHERE data_set='"
+                    + dataset + "' AND level='" + message("Global") + "'";
+            statement.executeUpdate(sql);
+
+            int confirmed, healed, suspected, dead;
+            for (Date d : times) {
+                sql = " SELECT sum(confirmed) FROM Epidemic_Report WHERE data_set='"
+                        + dataset + "' AND time='" + DateTools.datetimeToString(d) + "' "
+                        + " AND country IS NOT NULL AND level='" + message("Country") + "'";
+                try ( ResultSet confirmedResults = statement.executeQuery(sql)) {
+                    if (confirmedResults.next()) {
+                        confirmed = confirmedResults.getInt(1);
+                    } else {
+                        confirmed = 0;
+                    }
+                    if (confirmed == 0) {
+                        continue;
+                    }
+                }
+
+                sql = " SELECT sum(suspected) FROM Epidemic_Report WHERE data_set='"
+                        + dataset + "' AND time='" + DateTools.datetimeToString(d) + "' "
+                        + " AND country IS NOT NULL AND level='" + message("Country") + "'";
+                try ( ResultSet suspectedResults = statement.executeQuery(sql)) {
+                    if (suspectedResults.next()) {
+                        suspected = suspectedResults.getInt(1);
+                    } else {
+                        suspected = 0;
+                    }
+                }
+
+                sql = " SELECT sum(healed) FROM Epidemic_Report WHERE data_set='"
+                        + dataset + "' AND time='" + DateTools.datetimeToString(d) + "' "
+                        + " AND country IS NOT NULL AND level='" + message("Country") + "'";
+                ResultSet healedResults = statement.executeQuery(sql);
+                if (healedResults.next()) {
+                    healed = healedResults.getInt(1);
+                } else {
+                    healed = 0;
+                }
+
+                sql = " SELECT sum(dead) FROM Epidemic_Report WHERE data_set='"
+                        + dataset + "' AND time='" + DateTools.datetimeToString(d) + "' "
+                        + " AND country IS NOT NULL AND level='" + message("Country") + "'";
+                try ( ResultSet deadResults = statement.executeQuery(sql)) {
+                    if (deadResults.next()) {
+                        dead = deadResults.getInt(1);
+                    } else {
+                        dead = 0;
+                    }
+                }
+
+                EpidemicReport report = EpidemicReport.create()
+                        .setDataSet(dataset)
+                        .setLevel(message("Global"))
+                        .setCountry(null).setProvince(null).setCity(null)
+                        .setConfirmed(confirmed).setSuspected(suspected)
+                        .setHealed(healed).setDead(dead)
+                        .setLongitude(149.828481).setLatitude(23.206391)
+                        .setTime(d.getTime());
+                create(statement, report);
+
+            }
+            return true;
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean statisticCountries(Statement statement, String dataset,
+            List<Date> times) {
+        try {
+            List<String> countries = countries(statement, dataset);
+            for (String country : countries) {
+                statisticCountry(statement, dataset, times, country);
+            }
+            return true;
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean statisticCountry(Statement statement, String dataset,
+            List<Date> times, String country) {
+        try {
+            String sql = "SELECT count(dataid) FROM Epidemic_Report WHERE country='" + country + "' "
+                    + " AND level='" + message("Province") + "'";
+            try ( ResultSet pcount = statement.executeQuery(sql)) {
+                if (pcount.next()) {
+                    int count = pcount.getInt(1);
+                    if (count == 0) {
+                        return false;
+                    }
+                }
+            }
+
+            sql = " DELETE FROM Epidemic_Report WHERE data_set='"
+                    + dataset + "' AND country='" + country
+                    + "'  AND level='" + message("Country") + "'";
+            statement.executeUpdate(sql);
+
+            double longitude = -200;
+            double latitude = -200;
+            sql = "SELECT * FROM Geography_Code WHERE address='" + country + "' "
+                    + " AND level='" + message("Country") + "'";
+            try ( ResultSet codeResults = statement.executeQuery(sql)) {
+                if (codeResults.next()) {
+                    longitude = codeResults.getDouble("longitude");
+                    latitude = codeResults.getDouble("latitude");
+                }
+            }
+
+            int confirmed = 0, healed = 0, suspected = 0, dead = 0;
+            for (Date d : times) {
+                sql = " SELECT sum(confirmed), sum(suspected),sum(healed), sum(dead) "
+                        + " FROM Epidemic_Report WHERE data_set='"
+                        + dataset + "' AND time='" + DateTools.datetimeToString(d) + "' "
+                        + " AND country='" + country + "' AND level='" + message("Province") + "'";
+                try ( ResultSet sumResults = statement.executeQuery(sql)) {
+                    if (sumResults.next()) {
+                        confirmed = sumResults.getInt(1);
+                        suspected = sumResults.getInt(2);
+                        healed = sumResults.getInt(3);
+                        dead = sumResults.getInt(4);
+                    } else {
+                        confirmed = suspected = healed = dead = 0;
+                    }
+                    if (confirmed == 0) {
+                        continue;
+                    }
+                }
+
+                EpidemicReport report = EpidemicReport.create()
+                        .setDataSet(dataset)
+                        .setCountry(country).setLevel(message("Country"))
+                        .setConfirmed(confirmed).setSuspected(suspected)
+                        .setHealed(healed).setDead(dead)
+                        .setTime(d.getTime())
+                        .setLongitude(longitude).setLatitude(latitude);
+                create(statement, report);
+            }
+            return true;
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean statisticCitiesIncreased(Statement statement,
+            String dataset) {
+        try {
+            List<String> cities = cities(statement, dataset);
+            for (String city : cities) {
+                String sql = "SELECT * FROM Epidemic_Report WHERE "
+                        + "data_set='" + dataset + "' AND city='" + city + "'"
+                        + " AND level='" + message("City") + "' ORDER BY time desc";
+                List<EpidemicReport> citiesReports = new ArrayList<>();
+                try ( ResultSet results = statement.executeQuery(sql)) {
+                    while (results.next()) {
+                        citiesReports.add(read(results));
+                    }
+                }
+                for (int i = 0; i < citiesReports.size() - 1; i++) {
+                    EpidemicReport report = citiesReports.get(i);
+                    EpidemicReport reportLast = citiesReports.get(i + 1);
+                    report.setIncreasedConfirmed(report.getConfirmed() - reportLast.getConfirmed());
+                    report.setIncreasedHealed(report.getHealed() - reportLast.getHealed());
+                    report.setIncreasedSuspected(report.getSuspected() - reportLast.getSuspected());
+                    report.setIncreasedDead(report.getDead() - reportLast.getDead());
+                    update(statement, report);
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean statisticProvincesIncreased(Statement statement,
+            String dataset) {
+        try {
+            List<String> provinces = provinces(statement, dataset);
+            for (String province : provinces) {
+                String sql = "SELECT * FROM Epidemic_Report WHERE "
+                        + "data_set='" + dataset + "' AND province='" + province + "'"
+                        + " AND level='" + message("Province") + "' ORDER BY time desc";
+                List<EpidemicReport> provincesReports = new ArrayList<>();
+                try ( ResultSet results = statement.executeQuery(sql)) {
+                    while (results.next()) {
+                        provincesReports.add(read(results));
+                    }
+                }
+                for (int i = 0; i < provincesReports.size() - 1; i++) {
+                    EpidemicReport report = provincesReports.get(i);
+                    EpidemicReport reportLast = provincesReports.get(i + 1);
+                    report.setIncreasedConfirmed(report.getConfirmed() - reportLast.getConfirmed());
+                    report.setIncreasedHealed(report.getHealed() - reportLast.getHealed());
+                    report.setIncreasedSuspected(report.getSuspected() - reportLast.getSuspected());
+                    report.setIncreasedDead(report.getDead() - reportLast.getDead());
+                    update(statement, report);
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean statisticCountriesIncreased(Statement statement,
+            String dataset) {
+        try {
+            List<String> countries = countries(statement, dataset);
+            for (String country : countries) {
+                String sql = "SELECT * FROM Epidemic_Report WHERE "
+                        + "data_set='" + dataset + "' AND country='" + country + "'"
+                        + " AND level='" + message("Country") + "' ORDER BY time desc";
+                List<EpidemicReport> countriesReports = new ArrayList<>();
+                try ( ResultSet results = statement.executeQuery(sql)) {
+                    while (results.next()) {
+                        countriesReports.add(read(results));
+                    }
+                }
+                for (int i = 0; i < countriesReports.size() - 1; i++) {
+                    EpidemicReport report = countriesReports.get(i);
+                    EpidemicReport reportLast = countriesReports.get(i + 1);
+                    report.setIncreasedConfirmed(report.getConfirmed() - reportLast.getConfirmed());
+                    report.setIncreasedHealed(report.getHealed() - reportLast.getHealed());
+                    report.setIncreasedSuspected(report.getSuspected() - reportLast.getSuspected());
+                    report.setIncreasedDead(report.getDead() - reportLast.getDead());
+                    update(statement, report);
+                }
+            }
+
+            return true;
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean statisticGlobalIncreased(Statement statement,
+            String dataset) {
+        try {
+            String sql = "SELECT * FROM Epidemic_Report WHERE "
+                    + "data_set='" + dataset + "' "
+                    + " AND level='" + message("Global") + "' ORDER BY time desc";
+            List<EpidemicReport> globalReports = new ArrayList<>();
+            try ( ResultSet results = statement.executeQuery(sql)) {
+                while (results.next()) {
+                    globalReports.add(read(results));
+                }
+            }
+            for (int i = 0; i < globalReports.size() - 1; i++) {
+                EpidemicReport report = globalReports.get(i);
+                EpidemicReport reportLast = globalReports.get(i + 1);
+                report.setIncreasedConfirmed(report.getConfirmed() - reportLast.getConfirmed());
+                report.setIncreasedHealed(report.getHealed() - reportLast.getHealed());
+                report.setIncreasedSuspected(report.getSuspected() - reportLast.getSuspected());
+                report.setIncreasedDead(report.getDead() - reportLast.getDead());
+                update(statement, report);
+            }
             return true;
         } catch (Exception e) {
             failed(e);

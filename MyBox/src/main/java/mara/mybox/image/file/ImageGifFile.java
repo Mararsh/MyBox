@@ -415,6 +415,7 @@ public class ImageGifFile {
                 gifWriter.prepareWriteSequence(null);
                 for (ImageInformation info : imagesInfo) {
                     BufferedImage bufferedImage = ImageFileReaders.getBufferedImage(info);
+//                    bufferedImage = ImageManufacture.removeAlpha(bufferedImage);
                     if (bufferedImage != null) {
                         if (!keepSize) {
                             bufferedImage = ImageManufacture.scaleImageWidthKeep(bufferedImage, width);
@@ -463,6 +464,7 @@ public class ImageGifFile {
                 gifWriter.prepareWriteSequence(null);
                 for (BufferedImage bufferedImage : images) {
                     if (bufferedImage != null) {
+//                        bufferedImage = ImageManufacture.removeAlpha(bufferedImage);
                         getParaMeta(duration, true, gifWriter, param, metaData);
                         gifWriter.writeToSequence(new IIOImage(bufferedImage, null, metaData), param);
                     }
