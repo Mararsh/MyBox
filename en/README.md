@@ -113,7 +113,9 @@ MyBox is based on following open sources softwares:
 | WeiXin | Materials| https://weibo.com/3876734080/InmB1aPiL?type=comment#_rnd1582211299665 |      
 | Baidu | Data| https://voice.baidu.com/act/newpneumonia/newpneumonia/?from=osari_pc_3 |      
 | TengXun | Data | https://api.inews.qq.com/newsqa/v1/query/pubished/daily/list?province=湖北&city=武汉 |      
-| poi | Excel | https://poi.apache.org |  
+| poi | Excel | https://poi.apache.org |   
+| LabeledBarChart | values in charts | https://stackoverflow.com/questions/34286062/how-to-clear-text-added-in-a-javafx-barchart/41494789#41494789 (Roland) |      
+
  
 # Current Version
 Current version is 6.2. Its features are mentioned below in summary:   

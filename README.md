@@ -110,6 +110,7 @@ MyBox基于以下开源软件：
 | 百度 | 数据 | https://voice.baidu.com/act/newpneumonia/newpneumonia/?from=osari_pc_3 |      
 | 腾讯 | 数据 | https://api.inews.qq.com/newsqa/v1/query/pubished/daily/list?province=湖北&city=武汉 |      
 | poi | Excel | https://poi.apache.org |      
+| LabeledBarChart | 图示显示数值 | https://stackoverflow.com/questions/34286062/how-to-clear-text-added-in-a-javafx-barchart/41494789#41494789 (Roland) |      
 
 
 # 当前版本
