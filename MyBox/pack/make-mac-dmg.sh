@@ -1,4 +1,4 @@
-version=6.2
+version=6.2.1
 cd MyBox
 mvn clean
 mvn -P mac package

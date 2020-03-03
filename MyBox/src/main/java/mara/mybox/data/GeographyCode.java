@@ -36,8 +36,8 @@ import org.w3c.dom.NodeList;
  */
 public class GeographyCode {
 
-    private static List<String> ChineseProvinces;
-    private static List<String> Countries;
+    private static List<String> ChineseProvincesKeys;
+    private static List<String> CountriesKeys;
     private static Map<String, String> CountriesChineseKeys, CountriesEnglishKeys,
             ChineseProvincesChineseKeys, ChineseProvincesEnglishKeys;
 
@@ -344,244 +344,267 @@ public class GeographyCode {
         return geographyCode;
     }
 
-    public static List<String> Countries() {
-        if (Countries != null) {
-            return Countries;
+    public static List<String> countriesKeys() {
+        if (CountriesKeys != null) {
+            return CountriesKeys;
         }
-        Countries = new ArrayList();
-        Countries.add("China");
-        Countries.add("ProvinceHubei");
-        Countries.add("Angola");
-        Countries.add("Afghanistan");
-        Countries.add("Albania");
-        Countries.add("Algeria");
-        Countries.add("Andorra");
-        Countries.add("Anguilla");
-        Countries.add("Argentina");
-        Countries.add("Armenia");
-        Countries.add("Ascension");
-        Countries.add("Australia");
-        Countries.add("Austria");
-        Countries.add("Azerbaijan");
-        Countries.add("Bahamas");
-        Countries.add("Bahrain");
-        Countries.add("Bangladesh");
-        Countries.add("Barbados");
-        Countries.add("Belarus");
-        Countries.add("Belgium");
-        Countries.add("Belize");
-        Countries.add("Benin");
-        Countries.add("BermudaIs");
-        Countries.add("Bolivia");
-        Countries.add("Botswana");
-        Countries.add("Brazil");
-        Countries.add("Brunei");
-        Countries.add("Bulgaria");
-        Countries.add("Burkina-faso");
-        Countries.add("Burma");
-        Countries.add("Burundi");
-        Countries.add("Cameroon");
-        Countries.add("Canada");
-        Countries.add("CaymanIs");
-        Countries.add("CentralAfricanRepublic");
-        Countries.add("Chad");
-        Countries.add("Chile");
-        Countries.add("Colombia");
-        Countries.add("CookIs");
-        Countries.add("CostaRica");
-        Countries.add("Croatia");
-        Countries.add("Cuba");
-        Countries.add("Cyprus");
-        Countries.add("CzechRepublic");
-        Countries.add("Denmark");
-        Countries.add("Djibouti");
-        Countries.add("DominicaRep");
-        Countries.add("Ecuador");
-        Countries.add("Egypt");
-        Countries.add("EISalvador");
-        Countries.add("Estonia");
-        Countries.add("Ethiopia");
-        Countries.add("Fiji");
-        Countries.add("Finland");
-        Countries.add("France");
-        Countries.add("FrenchGuiana");
-        Countries.add("Gabon");
-        Countries.add("Gambia");
-        Countries.add("Georgia");
-        Countries.add("Germany");
-        Countries.add("Ghana");
-        Countries.add("Gibraltar");
-        Countries.add("Greece");
-        Countries.add("Grenada");
-        Countries.add("Guam");
-        Countries.add("Guatemala");
-        Countries.add("Guinea");
-        Countries.add("Guyana");
-        Countries.add("Haiti");
-        Countries.add("Honduras");
-        Countries.add("Hungary");
-        Countries.add("Iceland");
-        Countries.add("India");
-        Countries.add("Indonesia");
-        Countries.add("Iran");
-        Countries.add("Iraq");
-        Countries.add("Ireland");
-        Countries.add("Israel");
-        Countries.add("Italy");
-        Countries.add("IvoryCoast");
-        Countries.add("Japan");
-        Countries.add("Jordan");
-        Countries.add("Kampuchea");
-        Countries.add("Kazakstan");
-        Countries.add("Kenya");
-        Countries.add("Korea");
-        Countries.add("Kuwait");
-        Countries.add("Kyrgyzstan");
-        Countries.add("Laos");
-        Countries.add("Latvia");
-        Countries.add("Lebanon");
-        Countries.add("Lesotho");
-        Countries.add("Liberia");
-        Countries.add("Libya");
-        Countries.add("Liechtenstein");
-        Countries.add("Lithuania");
-        Countries.add("Luxembourg");
-        Countries.add("Madagascar");
-        Countries.add("Malawi");
-        Countries.add("Malaysia");
-        Countries.add("Maldives");
-        Countries.add("Mali");
-        Countries.add("Malta");
-        Countries.add("MarianaIs");
-        Countries.add("Martinique");
-        Countries.add("Mauritius");
-        Countries.add("Mexico");
-        Countries.add("Monaco");
-        Countries.add("Mongolia");
-        Countries.add("MontserratIs");
-        Countries.add("Morocco");
-        Countries.add("Mozambique");
-        Countries.add("Namibia");
-        Countries.add("Nauru");
-        Countries.add("Nepal");
-        Countries.add("NetheriAndsAntilles");
-        Countries.add("Netherlands");
-        Countries.add("NewZealand");
-        Countries.add("Nicaragua");
-        Countries.add("Niger");
-        Countries.add("Nigeria");
-        Countries.add("NorthKorea");
-        Countries.add("NorthernMacedonia");
-        Countries.add("Norway");
-        Countries.add("Oman");
-        Countries.add("Pakistan");
-        Countries.add("Panama");
-        Countries.add("PapuaNewCuinea");
-        Countries.add("Paraguay");
-        Countries.add("Peru");
-        Countries.add("Philippines");
-        Countries.add("Poland");
-        Countries.add("FrenchPolynesia");
-        Countries.add("Portugal");
-        Countries.add("PuertoRico");
-        Countries.add("Qatar");
-        Countries.add("Reunion");
-        Countries.add("Romania");
-        Countries.add("Russia");
-        Countries.add("SaintLueia");
-        Countries.add("SaintVincent");
-        Countries.add("SamoaEastern");
-        Countries.add("SamoaWestern");
-        Countries.add("SanMarino");
-        Countries.add("SaoTomeAndPrincipe");
-        Countries.add("SaudiArabia");
-        Countries.add("Senegal");
-        Countries.add("Seychelles");
-        Countries.add("SierraLeone");
-        Countries.add("Singapore");
-        Countries.add("Slovakia");
-        Countries.add("Slovenia");
-        Countries.add("SolomonIs");
-        Countries.add("Somali");
-        Countries.add("SouthAfrica");
-        Countries.add("Spain");
-        Countries.add("SriLanka");
-        Countries.add("St.Lucia");
-        Countries.add("St.Vincent");
-        Countries.add("Sudan");
-        Countries.add("Suriname");
-        Countries.add("Swaziland");
-        Countries.add("Sweden");
-        Countries.add("Switzerland");
-        Countries.add("Syria");
-        Countries.add("Tajikstan");
-        Countries.add("Thailand");
-        Countries.add("Togo");
-        Countries.add("Tonga");
-        Countries.add("TrinidadAndTobago");
-        Countries.add("Tunisia");
-        Countries.add("Turkey");
-        Countries.add("Turkmenistan");
-        Countries.add("Uganda");
-        Countries.add("Ukraine");
-        Countries.add("UnitedArabEmirates");
-        Countries.add("UAE");
-        Countries.add("UnitedKingdom");
-        Countries.add("UK");
-        Countries.add("UnitedStates");
-        Countries.add("Uruguay");
-        Countries.add("Uzbekistan");
-        Countries.add("Venezuela");
-        Countries.add("Vietnam");
-        Countries.add("Yemen");
-        Countries.add("Yugoslavia");
-        Countries.add("Zimbabwe");
-        Countries.add("Zaire");
-        Countries.add("Zambia");
-        return Countries;
+        CountriesKeys = new ArrayList();
+        CountriesKeys.add("China");
+        CountriesKeys.add("Angola");
+        CountriesKeys.add("Afghanistan");
+        CountriesKeys.add("Albania");
+        CountriesKeys.add("Algeria");
+        CountriesKeys.add("Andorra");
+        CountriesKeys.add("Anguilla");
+        CountriesKeys.add("Argentina");
+        CountriesKeys.add("Armenia");
+        CountriesKeys.add("Ascension");
+        CountriesKeys.add("Australia");
+        CountriesKeys.add("Austria");
+        CountriesKeys.add("Azerbaijan");
+        CountriesKeys.add("Bahamas");
+        CountriesKeys.add("Bahrain");
+        CountriesKeys.add("Bangladesh");
+        CountriesKeys.add("Barbados");
+        CountriesKeys.add("Belarus");
+        CountriesKeys.add("Belgium");
+        CountriesKeys.add("Belize");
+        CountriesKeys.add("Benin");
+        CountriesKeys.add("BermudaIs");
+        CountriesKeys.add("Bolivia");
+        CountriesKeys.add("Botswana");
+        CountriesKeys.add("Brazil");
+        CountriesKeys.add("Brunei");
+        CountriesKeys.add("Bulgaria");
+        CountriesKeys.add("Burkina-faso");
+        CountriesKeys.add("Burma");
+        CountriesKeys.add("Burundi");
+        CountriesKeys.add("Cameroon");
+        CountriesKeys.add("Canada");
+        CountriesKeys.add("CaymanIs");
+        CountriesKeys.add("CentralAfricanRepublic");
+        CountriesKeys.add("Chad");
+        CountriesKeys.add("Chile");
+        CountriesKeys.add("Colombia");
+        CountriesKeys.add("CookIs");
+        CountriesKeys.add("CostaRica");
+        CountriesKeys.add("Croatia");
+        CountriesKeys.add("Cuba");
+        CountriesKeys.add("Cyprus");
+        CountriesKeys.add("Czech");
+        CountriesKeys.add("Denmark");
+        CountriesKeys.add("Djibouti");
+        CountriesKeys.add("DominicaRep");
+        CountriesKeys.add("Ecuador");
+        CountriesKeys.add("Egypt");
+        CountriesKeys.add("EISalvador");
+        CountriesKeys.add("Estonia");
+        CountriesKeys.add("Ethiopia");
+        CountriesKeys.add("Fiji");
+        CountriesKeys.add("Finland");
+        CountriesKeys.add("France");
+        CountriesKeys.add("FrenchGuiana");
+        CountriesKeys.add("Gabon");
+        CountriesKeys.add("Gambia");
+        CountriesKeys.add("Georgia");
+        CountriesKeys.add("Germany");
+        CountriesKeys.add("Ghana");
+        CountriesKeys.add("Gibraltar");
+        CountriesKeys.add("Greece");
+        CountriesKeys.add("Grenada");
+        CountriesKeys.add("Guam");
+        CountriesKeys.add("Guatemala");
+        CountriesKeys.add("Guinea");
+        CountriesKeys.add("Guyana");
+        CountriesKeys.add("Haiti");
+        CountriesKeys.add("Honduras");
+        CountriesKeys.add("Hungary");
+        CountriesKeys.add("Iceland");
+        CountriesKeys.add("India");
+        CountriesKeys.add("Indonesia");
+        CountriesKeys.add("Iran");
+        CountriesKeys.add("Iraq");
+        CountriesKeys.add("Ireland");
+        CountriesKeys.add("Israel");
+        CountriesKeys.add("Italy");
+        CountriesKeys.add("IvoryCoast");
+        CountriesKeys.add("Japan");
+        CountriesKeys.add("Jordan");
+        CountriesKeys.add("Kampuchea");
+        CountriesKeys.add("Kazakstan");
+        CountriesKeys.add("Kenya");
+        CountriesKeys.add("Korea");
+        CountriesKeys.add("Kuwait");
+        CountriesKeys.add("Kyrgyzstan");
+        CountriesKeys.add("Laos");
+        CountriesKeys.add("Latvia");
+        CountriesKeys.add("Lebanon");
+        CountriesKeys.add("Lesotho");
+        CountriesKeys.add("Liberia");
+        CountriesKeys.add("Libya");
+        CountriesKeys.add("Liechtenstein");
+        CountriesKeys.add("Lithuania");
+        CountriesKeys.add("Luxembourg");
+        CountriesKeys.add("Madagascar");
+        CountriesKeys.add("Malawi");
+        CountriesKeys.add("Malaysia");
+        CountriesKeys.add("Maldives");
+        CountriesKeys.add("Mali");
+        CountriesKeys.add("Malta");
+        CountriesKeys.add("MarianaIs");
+        CountriesKeys.add("Martinique");
+        CountriesKeys.add("Mauritius");
+        CountriesKeys.add("Mexico");
+        CountriesKeys.add("Monaco");
+        CountriesKeys.add("Mongolia");
+        CountriesKeys.add("MontserratIs");
+        CountriesKeys.add("Morocco");
+        CountriesKeys.add("Mozambique");
+        CountriesKeys.add("Namibia");
+        CountriesKeys.add("Nauru");
+        CountriesKeys.add("Nepal");
+        CountriesKeys.add("NetheriAndsAntilles");
+        CountriesKeys.add("Netherlands");
+        CountriesKeys.add("NewZealand");
+        CountriesKeys.add("Nicaragua");
+        CountriesKeys.add("Niger");
+        CountriesKeys.add("Nigeria");
+        CountriesKeys.add("NorthKorea");
+        CountriesKeys.add("NorthernMacedonia");
+        CountriesKeys.add("Norway");
+        CountriesKeys.add("Oman");
+        CountriesKeys.add("Pakistan");
+        CountriesKeys.add("Panama");
+        CountriesKeys.add("PapuaNewCuinea");
+        CountriesKeys.add("Paraguay");
+        CountriesKeys.add("Peru");
+        CountriesKeys.add("Philippines");
+        CountriesKeys.add("Poland");
+        CountriesKeys.add("FrenchPolynesia");
+        CountriesKeys.add("Portugal");
+        CountriesKeys.add("PuertoRico");
+        CountriesKeys.add("Qatar");
+        CountriesKeys.add("Reunion");
+        CountriesKeys.add("Romania");
+        CountriesKeys.add("Russia");
+        CountriesKeys.add("SaintLueia");
+        CountriesKeys.add("SaintVincent");
+        CountriesKeys.add("SamoaEastern");
+        CountriesKeys.add("SamoaWestern");
+        CountriesKeys.add("SanMarino");
+        CountriesKeys.add("SaoTomeAndPrincipe");
+        CountriesKeys.add("SaudiArabia");
+        CountriesKeys.add("Senegal");
+        CountriesKeys.add("Seychelles");
+        CountriesKeys.add("SierraLeone");
+        CountriesKeys.add("Singapore");
+        CountriesKeys.add("Slovakia");
+        CountriesKeys.add("Slovenia");
+        CountriesKeys.add("SolomonIs");
+        CountriesKeys.add("Somali");
+        CountriesKeys.add("SouthAfrica");
+        CountriesKeys.add("Spain");
+        CountriesKeys.add("SriLanka");
+        CountriesKeys.add("St.Lucia");
+        CountriesKeys.add("St.Vincent");
+        CountriesKeys.add("Sudan");
+        CountriesKeys.add("Suriname");
+        CountriesKeys.add("Swaziland");
+        CountriesKeys.add("Sweden");
+        CountriesKeys.add("Switzerland");
+        CountriesKeys.add("Syria");
+        CountriesKeys.add("Tajikstan");
+        CountriesKeys.add("Thailand");
+        CountriesKeys.add("Togo");
+        CountriesKeys.add("Tonga");
+        CountriesKeys.add("TrinidadAndTobago");
+        CountriesKeys.add("Tunisia");
+        CountriesKeys.add("Turkey");
+        CountriesKeys.add("Turkmenistan");
+        CountriesKeys.add("Uganda");
+        CountriesKeys.add("Ukraine");
+        CountriesKeys.add("UnitedArabEmirates");
+        CountriesKeys.add("UAE");
+        CountriesKeys.add("UnitedKingdom");
+        CountriesKeys.add("UK");
+        CountriesKeys.add("UnitedStates");
+        CountriesKeys.add("Uruguay");
+        CountriesKeys.add("Uzbekistan");
+        CountriesKeys.add("Venezuela");
+        CountriesKeys.add("Vietnam");
+        CountriesKeys.add("Yemen");
+        CountriesKeys.add("Yugoslavia");
+        CountriesKeys.add("Zimbabwe");
+        CountriesKeys.add("Zaire");
+        CountriesKeys.add("Zambia");
+        return CountriesKeys;
     }
 
-    public static Map<String, String> countriesChineseKey() {
+    public static List<String> countriesChinese() {
+        List<String> countries = new ArrayList();
+        for (String key : countriesKeys()) {
+            countries.add(message("zh", key));
+        }
+        return countries;
+    }
+
+    public static List<String> countriesEnglish() {
+        List<String> countries = new ArrayList();
+        for (String key : countriesKeys()) {
+            countries.add(message("en", key));
+        }
+        return countries;
+    }
+
+    public static List<String> countries() {
+        if (AppVariables.getLanguage().startsWith("zh")) {
+            return countriesChinese();
+        } else {
+            return countriesEnglish();
+        }
+    }
+
+    public static Map<String, String> countriesChineseMap() {
         if (CountriesChineseKeys != null) {
             return CountriesChineseKeys;
         }
         CountriesChineseKeys = new HashMap<>();
-        for (String country : Countries()) {
+        for (String country : countriesKeys()) {
             CountriesChineseKeys.put(message("zh", country), country);
         }
         return CountriesChineseKeys;
     }
 
     public static String countryChineseKey(String chineseName) {
-        return countriesChineseKey().get(chineseName);
+        return countriesChineseMap().get(chineseName);
     }
 
-    public static Map<String, String> countriesEnglishKey() {
+    public static Map<String, String> countriesEnglishMap() {
         if (CountriesEnglishKeys != null) {
             return CountriesEnglishKeys;
         }
         CountriesEnglishKeys = new HashMap<>();
-        for (String country : Countries()) {
+        for (String country : countriesKeys()) {
             CountriesEnglishKeys.put(message("en", country), country);
         }
         return CountriesEnglishKeys;
     }
 
     public static String countryEnglishKey(String englishName) {
-        return countriesEnglishKey().get(englishName);
+        return countriesEnglishMap().get(englishName);
     }
 
     public static String countryKey(String name) {
         if (AppVariables.getLanguage().startsWith("zh")) {
-            return countriesChineseKey().get(name);
+            return countriesChineseMap().get(name);
         } else {
-            return countriesEnglishKey().get(name);
+            return countriesEnglishMap().get(name);
         }
     }
 
     public static String countryEnglish(String name) {
         if (AppVariables.getLanguage().startsWith("zh")) {
-            return message("en", countriesChineseKey().get(name));
+            return message("en", countriesChineseMap().get(name));
         } else {
             return name;
         }
@@ -589,95 +612,95 @@ public class GeographyCode {
 
     public static String countryChinese(String name) {
         if (!AppVariables.getLanguage().startsWith("zh")) {
-            return message("zh", countriesEnglishKey().get(name));
+            return message("zh", countriesEnglishMap().get(name));
         } else {
             return name;
         }
     }
 
-    public static List<String> ChineseProvinces() {
-        if (ChineseProvinces != null) {
-            return ChineseProvinces;
+    public static List<String> chineseProvincesKeys() {
+        if (ChineseProvincesKeys != null) {
+            return ChineseProvincesKeys;
         }
-        ChineseProvinces = new ArrayList();
-        ChineseProvinces.add("CityBeijing");
-        ChineseProvinces.add("ProvinceHubei");
-        ChineseProvinces.add("ProvinceZhejiang");
-        ChineseProvinces.add("ProvinceGuangdong");
-        ChineseProvinces.add("ProvinceHenan");
-        ChineseProvinces.add("ProvinceHunan");
-        ChineseProvinces.add("ProvinceAnhui");
-        ChineseProvinces.add("ProvinceJiangxi");
-        ChineseProvinces.add("ProvinceJiangsu");
-        ChineseProvinces.add("ProvinceSichuan");
-        ChineseProvinces.add("ProvinceShandong");
-        ChineseProvinces.add("ProvinceFujian");
-        ChineseProvinces.add("ProvinceShanxi");
-        ChineseProvinces.add("ProvinceGuangxi");
-        ChineseProvinces.add("ProvinceHebei");
-        ChineseProvinces.add("ProvinceYunnan");
-        ChineseProvinces.add("ProvinceHeilongjiang");
-        ChineseProvinces.add("ProvinceLiaoning");
-        ChineseProvinces.add("ProvinceHainan");
-        ChineseProvinces.add("ProvinceShanxi2");
-        ChineseProvinces.add("ProvinceGansu");
-        ChineseProvinces.add("ProvinceGuizhou");
-        ChineseProvinces.add("ProvinceNingxia");
-        ChineseProvinces.add("InnerMongolia");
-        ChineseProvinces.add("ProvinceJiLin");
-        ChineseProvinces.add("ProvinceXinjiang");
-        ChineseProvinces.add("ProvinceXizang");
-        ChineseProvinces.add("ProvinceQinghai");
-        ChineseProvinces.add("CityShanghai");
-        ChineseProvinces.add("CityChongqing");
-        ChineseProvinces.add("CityTianjin");
-        ChineseProvinces.add("Macau");
-        ChineseProvinces.add("HongKong");
-        ChineseProvinces.add("Taiwan");
-        return ChineseProvinces;
+        ChineseProvincesKeys = new ArrayList();
+        ChineseProvincesKeys.add("CityBeijing");
+        ChineseProvincesKeys.add("ProvinceHubei");
+        ChineseProvincesKeys.add("ProvinceZhejiang");
+        ChineseProvincesKeys.add("ProvinceGuangdong");
+        ChineseProvincesKeys.add("ProvinceHenan");
+        ChineseProvincesKeys.add("ProvinceHunan");
+        ChineseProvincesKeys.add("ProvinceAnhui");
+        ChineseProvincesKeys.add("ProvinceJiangxi");
+        ChineseProvincesKeys.add("ProvinceJiangsu");
+        ChineseProvincesKeys.add("ProvinceSichuan");
+        ChineseProvincesKeys.add("ProvinceShandong");
+        ChineseProvincesKeys.add("ProvinceFujian");
+        ChineseProvincesKeys.add("ProvinceShanxi");
+        ChineseProvincesKeys.add("ProvinceGuangxi");
+        ChineseProvincesKeys.add("ProvinceHebei");
+        ChineseProvincesKeys.add("ProvinceYunnan");
+        ChineseProvincesKeys.add("ProvinceHeilongjiang");
+        ChineseProvincesKeys.add("ProvinceLiaoning");
+        ChineseProvincesKeys.add("ProvinceHainan");
+        ChineseProvincesKeys.add("ProvinceShanxi2");
+        ChineseProvincesKeys.add("ProvinceGansu");
+        ChineseProvincesKeys.add("ProvinceGuizhou");
+        ChineseProvincesKeys.add("ProvinceNingxia");
+        ChineseProvincesKeys.add("InnerMongolia");
+        ChineseProvincesKeys.add("ProvinceJiLin");
+        ChineseProvincesKeys.add("ProvinceXinjiang");
+        ChineseProvincesKeys.add("ProvinceXizang");
+        ChineseProvincesKeys.add("ProvinceQinghai");
+        ChineseProvincesKeys.add("CityShanghai");
+        ChineseProvincesKeys.add("CityChongqing");
+        ChineseProvincesKeys.add("CityTianjin");
+        ChineseProvincesKeys.add("Macau");
+        ChineseProvincesKeys.add("HongKong");
+        ChineseProvincesKeys.add("Taiwan");
+        return ChineseProvincesKeys;
     }
 
-    public static Map<String, String> chineseProvincesChineseKey() {
+    public static Map<String, String> chineseProvincesChineseMap() {
         if (ChineseProvincesChineseKeys != null) {
             return ChineseProvincesChineseKeys;
         }
         ChineseProvincesChineseKeys = new HashMap<>();
-        for (String province : ChineseProvinces()) {
+        for (String province : chineseProvincesKeys()) {
             ChineseProvincesChineseKeys.put(message("zh", province), province);
         }
         return ChineseProvincesChineseKeys;
     }
 
     public static String chineseProvincesChineseKey(String chineseName) {
-        return chineseProvincesChineseKey().get(chineseName);
+        return chineseProvincesChineseMap().get(chineseName);
     }
 
-    public static Map<String, String> chineseProvincesEnglishKey() {
+    public static Map<String, String> chineseProvincesEnglishMap() {
         if (ChineseProvincesEnglishKeys != null) {
             return ChineseProvincesEnglishKeys;
         }
         ChineseProvincesEnglishKeys = new HashMap<>();
-        for (String province : ChineseProvinces()) {
+        for (String province : chineseProvincesKeys()) {
             ChineseProvincesEnglishKeys.put(message("en", province), province);
         }
         return ChineseProvincesEnglishKeys;
     }
 
     public static String chineseProvincesEnglishKey(String englishName) {
-        return chineseProvincesEnglishKey().get(englishName);
+        return chineseProvincesEnglishMap().get(englishName);
     }
 
     public static String chineseProvinceKey(String name) {
         if (AppVariables.getLanguage().startsWith("zh")) {
-            return chineseProvincesChineseKey().get(name);
+            return chineseProvincesChineseMap().get(name);
         } else {
-            return chineseProvincesEnglishKey().get(name);
+            return chineseProvincesEnglishMap().get(name);
         }
     }
 
     public static String chineseProvinceEnglish(String name) {
         if (AppVariables.getLanguage().startsWith("zh")) {
-            return message("en", chineseProvincesChineseKey().get(name));
+            return message("en", chineseProvincesChineseMap().get(name));
         } else {
             return name;
         }
@@ -685,7 +708,7 @@ public class GeographyCode {
 
     public static String chineseProvinceChinese(String name) {
         if (!AppVariables.getLanguage().startsWith("zh")) {
-            return message("zh", chineseProvincesEnglishKey().get(name));
+            return message("zh", chineseProvincesEnglishMap().get(name));
         } else {
             return name;
         }
@@ -693,7 +716,7 @@ public class GeographyCode {
 
     public static void initChineseProvincesCodes() {
         try {
-            for (String name : ChineseProvinces()) {
+            for (String name : chineseProvincesKeys()) {
                 query(name);
             }
         } catch (Exception e) {
@@ -811,7 +834,6 @@ public class GeographyCode {
             codes.add(countryCode("Liechtenstein", 9.56, 47.17));
             codes.add(countryCode("Lithuania", 23.88, 55.17));
             codes.add(countryCode("Luxembourg", 6.13, 49.82));
-            codes.add(countryCode("Macao", 113.54, 22.20));
             codes.add(countryCode("Madagascar", 46.87, -18.77));
             codes.add(countryCode("Malawi", 34.30, -13.25));
             codes.add(countryCode("Malaysia", 101.98, 4.21));
@@ -913,28 +935,15 @@ public class GeographyCode {
     public static void importCodes() {
         File file;
         if ("zh".equals(AppVariables.getLanguage())) {
-            file = FxmlControl.getInternalFile("/data/db/Geography_Code_zh_6.2.txt",
-                    "data", "Geography_Code_zh_6.2.txt");
+            file = FxmlControl.getInternalFile("/data/db/Geography_Code_zh_6.2.1.txt",
+                    "data", "Geography_Code_zh_6.2.1.txt");
             DerbyBase.importData("Geography_Code", file.getAbsolutePath(), false);
         } else {
-            file = FxmlControl.getInternalFile("/data/db/Geography_Code_en_6.2.txt",
-                    "data", "Geography_Code_en_6.2.txt");
+            file = FxmlControl.getInternalFile("/data/db/Geography_Code_en_6.2.1.txt",
+                    "data", "Geography_Code_en_6.2.1.txt");
             DerbyBase.importData("Geography_Code", file.getAbsolutePath(), false);
         }
     }
-
-    public static void importAllCodes() {
-        File file;
-        file = FxmlControl.getInternalFile("/data/db/Geography_Code_zh.txt",
-                "AppTemp", "Geography_Code_zh.txt");
-        DerbyBase.importData("Geography_Code", file.getAbsolutePath(), false);
-
-        file = FxmlControl.getInternalFile("/data/db/Geography_Code_en.txt",
-                "AppTemp", "Geography_Code_en.txt");
-        DerbyBase.importData("Geography_Code", file.getAbsolutePath(), false);
-
-    }
-
 
     /*
         get/set
@@ -1067,12 +1076,12 @@ public class GeographyCode {
         this.building = building;
     }
 
-    public static List<String> getChineseProvinces() {
-        return ChineseProvinces;
+    public static List<String> getChineseProvincesKeys() {
+        return ChineseProvincesKeys;
     }
 
-    public static void setChineseProvinces(List<String> ChineseProvinces) {
-        GeographyCode.ChineseProvinces = ChineseProvinces;
+    public static void setChineseProvincesKeys(List<String> ChineseProvincesKeys) {
+        GeographyCode.ChineseProvincesKeys = ChineseProvincesKeys;
     }
 
     public BooleanProperty getSelectedProperty() {

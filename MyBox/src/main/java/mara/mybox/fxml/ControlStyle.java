@@ -709,6 +709,9 @@ public class ControlStyle {
                     return new ControlStyle(id, message("SaveAs"), "", "iconSaveAs.png");
             }
         }
+        if (id.startsWith("sureButton")) {
+            return new ControlStyle(id, message("Sure"), "", "iconOK2.png");
+        }
 
         if (id.startsWith("fill")) {
             return new ControlStyle(id, message("Fill"), "", "iconButterfly.png");

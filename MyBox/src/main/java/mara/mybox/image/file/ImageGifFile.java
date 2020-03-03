@@ -446,6 +446,57 @@ public class ImageGifFile {
         }
     }
 
+    public static String writeImageFiles(List<File> srcFiles, File outFile,
+            int duration, boolean deleteSource) {
+        try {
+            if (srcFiles == null || srcFiles.isEmpty() || outFile == null) {
+                return "InvalidParameters";
+            }
+            GIFImageWriterSpi gifspi = new GIFImageWriterSpi();
+            GIFImageWriter gifWriter = new GIFImageWriter(gifspi);
+            ImageWriteParam param = gifWriter.getDefaultWriteParam();
+            GIFImageMetadata metaData = (GIFImageMetadata) gifWriter.getDefaultImageMetadata(
+                    ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_RGB), param);
+            File tmpFile = FileTools.getTempFile();
+            try ( ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
+                gifWriter.setOutput(out);
+
+                gifWriter.prepareWriteSequence(null);
+                for (File file : srcFiles) {
+                    BufferedImage bufferedImage = ImageFileReaders.readImage(file);
+                    if (bufferedImage != null) {
+//                        bufferedImage = ImageManufacture.removeAlpha(bufferedImage);
+                        getParaMeta(duration, true, gifWriter, param, metaData);
+                        gifWriter.writeToSequence(new IIOImage(bufferedImage, null, metaData), param);
+                    }
+                }
+                gifWriter.endWriteSequence();
+                out.flush();
+            }
+            gifWriter.dispose();
+
+            try {
+                if (outFile.exists()) {
+                    outFile.delete();
+                }
+                tmpFile.renameTo(outFile);
+            } catch (Exception e) {
+                return e.toString();
+            }
+            if (deleteSource) {
+                for (File file : srcFiles) {
+                    file.delete();
+                }
+            }
+
+            return "";
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return e.toString();
+        }
+    }
+
     public static String writeImages(List<BufferedImage> images, File outFile,
             int duration) {
         try {

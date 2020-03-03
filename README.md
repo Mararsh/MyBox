@@ -11,9 +11,9 @@
   
 | 平台 | 链接 | 大小 | 启动文件 |    
 | --- | --- | --- |  --- |   
-| win | [MyBox-6.2-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.2/MyBox-6.2-win-exe.zip)  | 258MB | MyBox.exe |       
-| linux | [MyBox-6.2-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.2/MyBox-6.2-linux.tar.gz)  | 217MB  | bin/MyBox  |     
-| mac | [MyBox-6.2-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.2/MyBox-6.2-mac.dmg)  | 218MB  |  MyBox-6.2.app   |   
+| win | [MyBox-6.2.1-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.2.1/MyBox-6.2.1-win-exe.zip)  | 258MB | MyBox.exe |       
+| linux | [MyBox-6.2.1-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.2.1/MyBox-6.2.1-linux.tar.gz)  | 217MB  | bin/MyBox  |     
+| mac | [MyBox-6.2.1-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.2.1/MyBox-6.2.1-mac.dmg)  | 218MB  |  MyBox-6.2.1.app   |   
 
 双击或者用命令行执行包内的启动文件即可运行程序。可以把图片/文本/PDF文件的打开方式关联到MyBox，这样双击文件名就直接是用MyBox打开了。
 （目前无法双击打开路径包含汉字的文件） 
@@ -23,14 +23,14 @@
  
 | 平台 | 链接 | 大小 | 运行需要 |    
 | --- | --- | --- |  --- |   
-| win | [MyBox-6.2-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.2/MyBox-6.2-win-jar.zip)  | 145MB | Java 13.0.1或更高版本 |    
-| linux | [MyBox-6.2-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.2/MyBox-6.2-linux-jar.zip)  | 152MB  | Java 13.0.1或更高版本 |    
-| mac | [MyBox-6.2-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.2/MyBox-6.2-mac-jar.zip)  |  148MB  | Java 13.0.1或更高版本 |    
+| win | [MyBox-6.2.1-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.2.1/MyBox-6.2.1-win-jar.zip)  | 145MB | Java 13.0.1或更高版本 |    
+| linux | [MyBox-6.2.1-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.2.1/MyBox-6.2.1-linux-jar.zip)  | 152MB  | Java 13.0.1或更高版本 |    
+| mac | [MyBox-6.2.1-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.2.1/MyBox-6.2.1-mac-jar.zip)  |  148MB  | Java 13.0.1或更高版本 |    
     
 执行以下命令来启动程序：
-<PRE><CODE>     java   -jar   MyBox-6.2.jar</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-6.2.1.jar</CODE></PRE>
 程序可以跟一个文件名作为参数、以用MyBox直接打开此文件。例如以下命令是打开此图片：
-<PRE><CODE>     java   -jar   MyBox-6.2.jar   /tmp/a1.jpg</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-6.2.1.jar   /tmp/a1.jpg</CODE></PRE>
 
 ### 其它下载地址  
 从云盘下载：  https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F     
@@ -69,7 +69,7 @@ sourceforge:  https://sourceforge.net/projects/mara-mybox/files/
 | 用户手册-网络工具 | 5.0 |  2019-4-16 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-NetworkTools-zh.pdf) |
 | 开发指南 | 2.0 |  2019-11-18 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-DevGuide-2.0-zh.pdf) |
 | 快捷键 | 5.9 |  2019-12-21 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts.html) |
-| 开发日志 | 6.2 |  2020-2-28 | [html](#devLog) |
+| 开发日志 | 6.2.1 |  2020-3-3 | [html](#devLog) |
 
 
 # 实现基础
@@ -114,7 +114,7 @@ MyBox基于以下开源软件：
 
 
 # 当前版本
-当前是版本6.2，已实现的特点概述如下:
+当前是版本6.2.1，已实现的特点概述如下:
 * [跨平台](#cross-platform)
 * [国际化](#international)
 * [PDF工具](#pdfTools)
@@ -450,7 +450,8 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 ### 地理编码<a id="geographyCode" />
 1. 在地图上查询和显示定位。
 2. 示例：所有国家和中国省/市/区。  
-3. 迁移。错误和残缺已修正。若用户在v6.1写入了一些数据，则这一版在这个界面初次打开时，MyBox将导出用户的数据，并打开文件路径。如果需要，用户可以导入上一版的数据。        
+3. 迁移。错误和残缺已修正。建议用户先导出自己数据、清除数据、然后加载示例数据、如果需要再把自己的数据导入。 更新了的示例数据对”疫情报告“很重要。   
+若用户在v6.1写入了一些数据，则这一版在这个界面初次打开时，MyBox将导出用户的数据，并打开文件路径。如果需要，用户可以导入上一版的数据。        
 
 ### 位置数据<a id="locationData" />
 1. 属性： 数据集、数据标签、地址、经度、纬度、高度、精度、速度、方向、数据值、数据规模、数据时间、说明、图像。数据时间支持“公元前”。  
@@ -474,20 +475,28 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 	- 按钮“添加”、或双击数据行，可以填写一个数据的字段值。
 	- 按钮“中国省会的疫情报告”：显示表单，以便输入指定数据集、指定时间的中国省会的疫情数据。
 	- 按钮“全球的疫情报告”：显示表单，以便输入指定数据集、指定时间的全球疫情数据。
-	- 按钮“示例”：导入2020-1-20到2020-2-28的中国省份和市/区的数据以及部分国家的新型冠状病毒肺炎数据。
+	- 按钮“示例”：导入2020-1-20到2020-3-3的中国省份和市/区的数据以及部分国家的新型冠状病毒肺炎数据。
 	- 按钮“读取新型冠状病毒肺炎的数据”：从网络上获得最新数据和历史数据。
 	- 按钮“MyBox网络数据目录”：存放更新的数据，用户可以下载并导入。
 	- 按钮“导入”：将格式正确的表数据文件的内容写入数据表。（导出的txt格式可以直接导入或编辑后导入）
            数据文件可以包含或不包含自增字段dataid。
-	- 按钮“填充数据空洞”：按前面的数据自动添加缺失的数据。
+	- 按钮“填充数据空洞”：按前面的数据自动添加缺失的数据。填充的数据用不同颜色显示。
 	- 不要重复录入相同的数据。此表无法识别出数据是否一样，而总是当作新数据写入。
 3. 数据分析：
- 	- 查询树：节点层次包括数据集、时间、位置；位置数据为四级：全球、国家、省、市/区。
- 	- 点击查询树的节点，则相应的数据显示在右边的“数据”表中，同时相应的图表数据也显示“图表数据”表中。SQL查询语句显示在表上方。
+ 	- 查询树：
+ 	  	- 节点层次包括数据集、时间、位置
+ 	  	- 位置数据为四级：全球、国家、省、市/区。支持不包含”省“级的”国家-城市“的结构（除中国以外的其它国家是这种行政层级）。
+ 	  	- 节点“除了中国"：查询和显示中国以外的数据
+ 	  	- 节点“填充的数据"：查询和显示中国以外的数据。用户可以编辑或者点击按钮”确认“来把填充数据改为正常状态。
+ 	- 点击查询树的节点：
+ 	  	- 相应的数据显示在右边的“数据”表中
+ 	  	- 相应的图表数据也显示“图表数据”表中
+ 	  	- SQL查询语句显示在表和地图上方。
  	- 当时间确定时，显示基于位置序列的条图/饼图/地图。
  	- 当时间不定时，显示基于时间序列的线图/动态条图/多位置线图/动态地图。
- 	- 复选框“标签”：是否在图示上显示数据值。
- 	- “间隔”：可以设置动态条图和动态地图的每帧时长。
+ 	- 复选框“标签”：是否在图上显示数据值。
+  	- 复选框“图例”：是否在图上显示图例。
+	- “间隔”：可以设置动态条图和动态地图的每帧时长。
 4. 数据删除：
  	- 按钮“删除”，用来删除右边“数据”表中被选中的多个数据行。
  	- 按钮“清除”，用来删除左边查询树上被选中的节点。例如，当一个日期节点被选中时，清除是针对这个日期的所有数据。
@@ -507,7 +516,8 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
  	- 导入和观察“疫情报告”数据也应用同一种语言。   
           例如，“疫情报告”的数据是在英文界面中生成的，则应在英文界面中观察它们。      
  	- 位置数据中，国家级和省级已经国际化（不同语言界面产生不同值），但是城市级仍是中文。  
-8. 迁移。此数据表结构已改进。若用户在v6.1写入了一些数据，则这一版在这个界面初次打开时，MyBox将导出用户的数据，并打开文件路径。如果需要，用户可以导入上一版的数据。          
+8. 迁移。此数据表结构已改进。建议用户先导出自己数据、清除数据、然后加载示例数据、如果需要再把自己的数据导入。    
+若用户在v6.1写入了一些数据，则这一版在这个界面初次打开时，MyBox将导出用户的数据，并打开文件路径。如果需要，用户可以导入上一版的数据。          
 
 ### 读取“新型冠状病毒肺炎”的数据<a id="epidemicReportFetch" />
 1. 解析百度数据页面，读取当前最新实时数据（包含中国省/市/区以及其它国家的数据）。建议每天一次。   
@@ -732,7 +742,13 @@ Java 9以后已支持HiDPI，控件和字体都会适应当前清晰度配置。
 开发者需要注意的是：JavaFx虚拟屏幕的dpi不同于物理屏幕的dpi，对于窗口元素尺寸的计算还要考虑伸缩比。   
 
 
-# 开发日志<a id="devLog" />  
+# 开发日志<a id="devLog" />     
+2020-3-3 版本6.2.1  完善疫情报告。节点“除了中国”：查询和显示中国以外的数据。      
+填充的数据用不同颜色显示。编辑填充的数据或点按钮”确认“以把填充数据改为正常状态。        
+支持不包含”省“级的”国家-城市“的结构（除中国以外的其它国家是这种行政层级）。      
+解决问题：”地理代码“和”疫情报告“的编辑界面没有正确处理。截图时可能内存溢出。           
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.2.1)              
+
 2020-2-28 版本6.2  完善疫情报告。“填充数据空洞”：按前面的数据自动添加缺失的数据。      
 动态条图和多位置时间序列线图。可选是否在图示上显示数据值。可以设置动态图的每帧时长。      
 数据导出格式添加xlsx(Excel2007)。自增字段不再被导出，且不影响导入。        

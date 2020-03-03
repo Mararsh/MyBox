@@ -804,12 +804,13 @@ public class FxmlControl {
 
     // This can set more than 8 colors. javafx only supports 8 colors defined in css
     // This should be called after data have been assigned to pie
-    public static void setPieColors(PieChart pie) {
+    public static void setPieColors(PieChart pie, boolean showLegend) {
         List<String> palette = FxmlColor.randomColorsHex(pie.getData().size());
-        setPieColors(pie, palette);
+        setPieColors(pie, palette, showLegend);
     }
 
-    public static void setPieColors(PieChart pie, List<String> palette) {
+    public static void setPieColors(PieChart pie, List<String> palette,
+            boolean showLegend) {
         if (pie == null || palette == null
                 || pie.getData() == null
                 || pie.getData().size() > palette.size()) {
@@ -821,19 +822,21 @@ public class FxmlControl {
                     "-fx-pie-color: " + palette.get(i) + ";"
             );
         }
-        pie.setLegendVisible(true);
-        Set<Node> legendItems = pie.lookupAll("Label.chart-legend-item");
-        if (legendItems.isEmpty()) {
-            return;
-        }
-        for (Node legendItem : legendItems) {
-            Label legendLabel = (Label) legendItem;
-            Node legend = legendLabel.getGraphic();
-            if (legend != null) {
-                for (int i = 0; i < pie.getData().size(); i++) {
-                    if (pie.getData().get(i).getName().equals(legendLabel.getText())) {
-                        legend.setStyle("-fx-background-color: " + palette.get(i));
-                        break;
+        pie.setLegendVisible(showLegend);
+        if (showLegend) {
+            Set<Node> legendItems = pie.lookupAll("Label.chart-legend-item");
+            if (legendItems.isEmpty()) {
+                return;
+            }
+            for (Node legendItem : legendItems) {
+                Label legendLabel = (Label) legendItem;
+                Node legend = legendLabel.getGraphic();
+                if (legend != null) {
+                    for (int i = 0; i < pie.getData().size(); i++) {
+                        if (pie.getData().get(i).getName().equals(legendLabel.getText())) {
+                            legend.setStyle("-fx-background-color: " + palette.get(i));
+                            break;
+                        }
                     }
                 }
             }
@@ -842,12 +845,13 @@ public class FxmlControl {
 
     // This can set more than 8 colors. javafx only supports 8 colors defined in css
     // This should be called after data have been assigned to chart
-    public static void setLineChartColors(LineChart chart) {
+    public static void setLineChartColors(LineChart chart, boolean showLegend) {
         List<String> palette = FxmlColor.randomColorsHex(chart.getData().size());
-        setLineChartColors(chart, palette);
+        setLineChartColors(chart, palette, showLegend);
     }
 
-    public static void setLineChartColors(LineChart chart, List<String> palette) {
+    public static void setLineChartColors(LineChart chart, List<String> palette,
+            boolean showLegend) {
         if (chart == null || palette == null) {
             return;
         }
@@ -863,19 +867,21 @@ public class FxmlControl {
                 node.setStyle("-fx-stroke: " + palette.get(i) + ";");
             }
         }
-        chart.setLegendVisible(true);
-        Set<Node> legendItems = chart.lookupAll("Label.chart-legend-item");
-        if (legendItems.isEmpty()) {
-            return;
-        }
-        for (Node legendItem : legendItems) {
-            Label legendLabel = (Label) legendItem;
-            Node legend = legendLabel.getGraphic();
-            if (legend != null) {
-                for (int i = 0; i < seriesList.size(); i++) {
-                    if (seriesList.get(i).getName().equals(legendLabel.getText())) {
-                        legend.setStyle("-fx-background-color: " + palette.get(i));
-                        break;
+        chart.setLegendVisible(showLegend);
+        if (showLegend) {
+            Set<Node> legendItems = chart.lookupAll("Label.chart-legend-item");
+            if (legendItems.isEmpty()) {
+                return;
+            }
+            for (Node legendItem : legendItems) {
+                Label legendLabel = (Label) legendItem;
+                Node legend = legendLabel.getGraphic();
+                if (legend != null) {
+                    for (int i = 0; i < seriesList.size(); i++) {
+                        if (seriesList.get(i).getName().equals(legendLabel.getText())) {
+                            legend.setStyle("-fx-background-color: " + palette.get(i));
+                            break;
+                        }
                     }
                 }
             }

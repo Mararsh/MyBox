@@ -72,15 +72,15 @@ License:    Apache License Version 2.0
                                                     </graphic>
                                                 </Button>
                                                 <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                    <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
-                                                        <graphic>
-                                                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                <image>
-                                                                    <Image url="@../buttons/iconClear.png" />
-                                                                </image>
-                                                            </ImageView>
-                                                        </graphic>
-                                                    </Button>
+                                                <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconClear.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
                                                 <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -105,15 +105,15 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </graphic>
                                                 </Button>
-                                    <Button fx:id="fillButton" layoutX="529.0" layoutY="10.0" mnemonicParsing="false" onAction="#fillAction">
-                                       <graphic>
-                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../buttons/iconButterfly.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                    </Button>
+                                                <Button fx:id="fillButton" layoutX="529.0" layoutY="10.0" mnemonicParsing="false" onAction="#fillAction">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconButterfly.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
                                             </children>
                                         </HBox>
                                         <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="200.0" prefViewportWidth="232.0" VBox.vgrow="ALWAYS">
@@ -147,7 +147,8 @@ License:    Apache License Version 2.0
                                         <ComboBox fx:id="dpiSelector" editable="true" prefWidth="80.0" />
                                         <Label text="%IntervalMilliseconds" />
                                         <ComboBox fx:id="intervalSelector" editable="true" prefWidth="100.0" />
-                                        <CheckBox fx:id="labelCheck" mnemonicParsing="false" selected="true" text="%Label" />
+                                        <CheckBox fx:id="valuesCheck" mnemonicParsing="false" selected="true" text="%Values" />
+                                        <CheckBox fx:id="legendCheck" layoutX="686.0" layoutY="18.0" mnemonicParsing="false" selected="true" text="%Legend" />
                                         <Button fx:id="htmlButton" mnemonicParsing="false" onAction="#htmlAction" onMouseEntered="#popSaveAs">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -166,8 +167,8 @@ License:    Apache License Version 2.0
                                             <content>
                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                     <children>
-                                                        <Label fx:id="dataSQLLabel" styleClass="small-label" stylesheets="@../styles/MyBox.css" wrapText="true">
-                                                        </Label>
+                                                        <TextField fx:id="dataSQLLabel" styleClass="small-label" stylesheets="@../styles/MyBox.css" >
+                                                        </TextField>
                                                         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
                                                             <children>
                                                                 <Button fx:id="chinaButton" mnemonicParsing="false" onAction="#ChineseProvincesReport">
@@ -215,6 +216,15 @@ License:    Apache License Version 2.0
                                                                         </ImageView>
                                                                     </graphic>
                                                                 </Button>
+                                                                <Button fx:id="sureButton" disable="true" layoutX="254.0" layoutY="10.0" mnemonicParsing="false" onAction="#sureAction">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/iconOK2.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
                                                                 <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                                                 <Button fx:id="dataExportButton" mnemonicParsing="false" onAction="#exportTableDataAction">
                                                                     <graphic>
@@ -231,6 +241,7 @@ License:    Apache License Version 2.0
                                                             <columns>
                                                                 <TableColumn fx:id="datasetColumn" prefWidth="150.0" text="%DataSet" />
                                                                 <TableColumn fx:id="timeColumn" editable="false" prefWidth="100.0" text="%Time" />
+                                                                <TableColumn fx:id="levelColumn" editable="false" prefWidth="100.0" text="%Level" />
                                                                 <TableColumn fx:id="countryColumn" editable="false" prefWidth="100.0" text="%Country" />
                                                                 <TableColumn fx:id="provinceColumn" prefWidth="100.0" text="%Province" />
                                                                 <TableColumn fx:id="cityColumn" editable="false" prefWidth="100.0" text="%City" />
@@ -244,6 +255,7 @@ License:    Apache License Version 2.0
                                                                 <TableColumn fx:id="increasedDeadColumn" editable="false" prefWidth="100.0" text="%IncreasedDead" />
                                                                 <TableColumn fx:id="longtitudeColumn" editable="false" prefWidth="100.0" text="%Longitude" />
                                                                 <TableColumn fx:id="latitudeColumn" prefWidth="100.0" text="%Latitude" />
+                                                                <TableColumn fx:id="commentsColumn" editable="false" prefWidth="100.0" text="%Comments" />
                                                             </columns>
                                                         </TableView>
                                                         <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
@@ -301,8 +313,8 @@ License:    Apache License Version 2.0
                                             <content>
                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                     <children>
-                                                        <Label fx:id="chartsSQLLabel" styleClass="small-label" stylesheets="@../styles/MyBox.css" wrapText="true">
-                                                        </Label>
+                                                        <TextField fx:id="chartsSQLLabel" styleClass="small-label" stylesheets="@../styles/MyBox.css" >
+                                                        </TextField>
                                                         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                             <children>
                                                                 <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
@@ -321,6 +333,7 @@ License:    Apache License Version 2.0
                                                             <columns>
                                                                 <TableColumn fx:id="chartsDatasetColumn" prefWidth="150.0" text="%DataSet" />
                                                                 <TableColumn fx:id="chartsTimeColumn" editable="false" prefWidth="100.0" text="%Time" />
+                                                                <TableColumn fx:id="chartsLevelColumn" editable="false" prefWidth="100.0" text="%Level" />
                                                                 <TableColumn fx:id="chartsCountryColumn" editable="false" prefWidth="100.0" text="%Country" />
                                                                 <TableColumn fx:id="chartsProvinceColumn" prefWidth="100.0" text="%Province" />
                                                                 <TableColumn fx:id="chartsCityColumn" editable="false" prefWidth="100.0" text="%City" />
@@ -334,6 +347,7 @@ License:    Apache License Version 2.0
                                                                 <TableColumn fx:id="chartsIncreasedDeadColumn" editable="false" prefWidth="100.0" text="%IncreasedDead" />
                                                                 <TableColumn fx:id="chartsLongtitudeColumn" editable="false" prefWidth="100.0" text="%Longitude" />
                                                                 <TableColumn fx:id="chartsLatitudeColumn" prefWidth="100.0" text="%Latitude" />
+                                                                <TableColumn fx:id="chartsCommentsColumn" editable="false" prefWidth="100.0" text="%Comments" />
                                                             </columns>
                                                         </TableView>
                                                         <Label fx:id="chartsSizeLabel" />
@@ -452,6 +466,7 @@ License:    Apache License Version 2.0
                                             <content>
                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                     <children>
+                                                        <TextField fx:id="mapSQLLabel" styleClass="small-label" stylesheets="@../styles/MyBox.css" />
                                                         <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
                                                             <content>
                                                                 <fx:include fx:id="map" source="EpidemicReportMap.fxml" />

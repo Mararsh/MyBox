@@ -298,7 +298,7 @@ public class EpidemicReportEditController extends LocationBaseController {
             }
 
             timeInput.setText(DateTools.datetimeToString(report.getTime()));
-            if (report.getComments() != null) {
+            if (report.getComments() != null && !"Filled".equals(report.getComments())) {
                 commentsArea.setText(report.getComments());
             }
             isSettingValues = false;

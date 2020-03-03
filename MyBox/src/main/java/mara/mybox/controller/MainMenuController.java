@@ -71,20 +71,14 @@ public class MainMenuController extends BaseController {
     @Override
     public void initializeNext() {
         try {
-            settingsMenu.setOnShowing(new EventHandler<Event>() {
-                @Override
-                public void handle(Event e) {
-                    checkSettings();
-                }
+            settingsMenu.setOnShowing((Event e) -> {
+                checkSettings();
             });
             checkSettings();
 
-            recentMenu.setOnShowing(new EventHandler<Event>() {
-                @Override
-                public void handle(Event e) {
-                    recentMenu.getItems().clear();
-                    recentMenu.getItems().addAll(getRecentMenu());
-                }
+            recentMenu.setOnShowing((Event e) -> {
+                recentMenu.getItems().clear();
+                recentMenu.getItems().addAll(getRecentMenu());
             });
 
 //            menuBar.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
@@ -116,7 +110,8 @@ public class MainMenuController extends BaseController {
         restoreStagesSizeCheck.setSelected(AppVariables.restoreStagesSize);
         popRecentCheck.setSelected(AppVariables.fileRecentNumber > 0);
         checkControlColor();
-
+        checkMemroyMonitor();
+        checkCpuMonitor();
     }
 
     protected void checkLanguage() {

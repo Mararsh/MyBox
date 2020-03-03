@@ -72,74 +72,154 @@ public class LocationBaseController extends BaseController {
                         });
             }
 
-            loadAddresses();
+            loadLevels();
+            loadCountries();
 
         } catch (Exception e) {
             logger.error(e.toString());
         }
     }
 
-    protected void loadAddresses() {
+    protected void loadLevels() {
+        if (levelSelector == null) {
+            return;
+        }
+        levelSelector.getItems().clear();
         synchronized (this) {
 
             BaseTask addressesTask = new BaseTask<Void>() {
 
-                private List<String> countries, provinces, cities, levels;
+                private List<String> levels;
 
                 @Override
                 protected boolean handle() {
-                    countries = TableGeographyCode.countries();
-                    provinces = TableGeographyCode.provinces(countrySelector.getValue());
-                    cities = TableGeographyCode.cities(
-                            countrySelector.getValue(),
-                            provinceSelector.getValue());
                     levels = TableGeographyCode.levels();
                     return true;
                 }
 
                 @Override
                 protected void whenSucceeded() {
+                    String v = levelSelector.getValue();
                     isSettingValues = true;
-
-                    if (countrySelector != null) {
-                        String v = countrySelector.getValue();
-                        countrySelector.getItems().clear();
-                        countrySelector.getItems().addAll(countries);
-                        if (v != null) {
-                            countrySelector.setValue(v);
-                        }
-                    }
-
-                    if (provinceSelector != null) {
-                        String v = provinceSelector.getValue();
-                        provinceSelector.getItems().clear();
-                        provinceSelector.getItems().addAll(provinces);
-                        if (v != null) {
-                            provinceSelector.setValue(v);
-                        }
-                    }
-
-                    if (citySelector != null) {
-                        String v = citySelector.getValue();
-                        citySelector.getItems().clear();
-                        citySelector.getItems().addAll(cities);
-                        if (v != null) {
-                            citySelector.setValue(v);
-                        }
-                    }
-
-                    if (levelSelector != null) {
-                        String v = levelSelector.getValue();
-                        levelSelector.getItems().clear();
-                        levelSelector.getItems().addAll(levels);
-                        if (v != null) {
-                            levelSelector.setValue(v);
-                        }
-                    }
-
+                    levelSelector.getItems().addAll(levels);
                     isSettingValues = false;
+                    levelSelector.setValue(v);
                 }
 
+            };
+            openHandlingStage(addressesTask, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(addressesTask);
+            thread.setDaemon(true);
+            thread.start();
+        }
+    }
+
+    protected void loadCountries() {
+        if (countrySelector == null) {
+            return;
+        }
+        countrySelector.getItems().clear();
+        synchronized (this) {
+
+            BaseTask addressesTask = new BaseTask<Void>() {
+
+                private List<String> countries;
+
+                @Override
+                protected boolean handle() {
+                    countries = GeographyCode.countries();
+                    return true;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    isSettingValues = true;
+                    String sc = countrySelector.getValue();
+                    countrySelector.getItems().addAll(countries);
+                    isSettingValues = false;
+                    if (sc != null) {
+                        countrySelector.setValue(sc);
+                    }
+                }
+            };
+            openHandlingStage(addressesTask, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(addressesTask);
+            thread.setDaemon(true);
+            thread.start();
+        }
+    }
+
+    protected void loadProvinces() {
+        if (provinceSelector == null) {
+            return;
+        }
+        provinceSelector.getItems().clear();
+        String country = countrySelector.getValue();
+        if (country == null || country.trim().isBlank()) {
+            return;
+        }
+        synchronized (this) {
+
+            BaseTask addressesTask = new BaseTask<Void>() {
+
+                private List<String> provinces;
+
+                @Override
+                protected boolean handle() {
+                    provinces = TableGeographyCode.provinces(country);
+                    return true;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    String v = provinceSelector.getValue();
+                    isSettingValues = true;
+                    provinceSelector.getItems().addAll(provinces);
+                    if (v != null) {
+                        provinceSelector.setValue(v);
+                    }
+                    isSettingValues = false;
+                }
+            };
+            openHandlingStage(addressesTask, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(addressesTask);
+            thread.setDaemon(true);
+            thread.start();
+        }
+    }
+
+    protected void loadCities() {
+        if (citySelector == null) {
+            return;
+        }
+        citySelector.getItems().clear();
+        String country = countrySelector.getValue();
+        String province = provinceSelector.getValue();
+        if (country == null || country.trim().isBlank()) {
+            return;
+        }
+        synchronized (this) {
+
+            BaseTask addressesTask = new BaseTask<Void>() {
+
+                private List<String> cities;
+
+                @Override
+                protected boolean handle() {
+                    cities = TableGeographyCode.cities(country, province);
+                    return true;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    String v = citySelector.getValue();
+                    isSettingValues = true;
+                    citySelector.getItems().addAll(cities);
+                    if (v != null) {
+                        citySelector.setValue(v);
+                    }
+                    isSettingValues = false;
+                }
             };
             openHandlingStage(addressesTask, Modality.WINDOW_MODAL);
             Thread thread = new Thread(addressesTask);
@@ -160,11 +240,10 @@ public class LocationBaseController extends BaseController {
             }
             longitudeInput.setText(code.getLongitude() + "");
             latitudeInput.setText(code.getLatitude() + "");
-            loadAddresses();
+            loadProvinces();
+            loadCities();
         } catch (Exception e) {
-
         }
-
     }
 
     protected void checkProvince() {
@@ -179,7 +258,7 @@ public class LocationBaseController extends BaseController {
             }
             longitudeInput.setText(code.getLongitude() + "");
             latitudeInput.setText(code.getLatitude() + "");
-            loadAddresses();
+            loadCities();
         } catch (Exception e) {
         }
     }
@@ -196,7 +275,6 @@ public class LocationBaseController extends BaseController {
             }
             longitudeInput.setText(code.getLongitude() + "");
             latitudeInput.setText(code.getLatitude() + "");
-            loadAddresses();
         } catch (Exception e) {
         }
     }
@@ -246,11 +324,9 @@ public class LocationBaseController extends BaseController {
 
     public void loadCode(GeographyCode code) {
         try {
-            loadAddresses();
             if (code == null) {
                 return;
             }
-            isSettingValues = true;
             if (countrySelector != null && code.getCountry() != null) {
                 countrySelector.setValue(code.getCountry());
             }
@@ -263,7 +339,6 @@ public class LocationBaseController extends BaseController {
             if (levelSelector != null && code.getLevel() != null) {
                 levelSelector.setValue(code.getLevel());
             }
-            isSettingValues = false;
 
             if (longitudeInput != null
                     && code.getLongitude() >= -180 && code.getLongitude() <= 180) {

@@ -24,7 +24,7 @@ public class EpidemicReportsChineseProvincesEditController extends EpidemicRepor
             return null;
         }
         List<EpidemicReport> data = new ArrayList();
-        for (String name : GeographyCode.ChineseProvinces()) {
+        for (String name : GeographyCode.chineseProvincesKeys()) {
             data.add(NewCoronavirusPneumonia.ChinaProvinceReport(currentDataset, time.getTime(), name, 0, 0, 0, 0));
         }
         return data;

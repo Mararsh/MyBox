@@ -155,7 +155,7 @@ public class NewCoronavirusPneumonia extends EpidemicReport {
             }
             GeographyCode code = TableGeographyCode.readArea(area);
             if (code == null && !(AppVariables.getLanguage().startsWith("zh"))) {
-                String key = GeographyCode.countriesChineseKey().get(area);
+                String key = GeographyCode.countriesChineseMap().get(area);
                 if (key != null) {
                     code = TableGeographyCode.readArea(message("en", key));
 //                    logger.debug(area + " " + key);
@@ -177,8 +177,8 @@ public class NewCoronavirusPneumonia extends EpidemicReport {
                     areaReport.setProvince(code.getAddress());
                 }
             } else {
-                areaReport.setCountry(message("China")).setProvince(area)
-                        .setLevel(message("Province"))
+                areaReport.setCountry(area)
+                        .setLevel(message("Country"))
                         .setLongitude(-200).setLatitude(-200);
 //                logger.debug(area + " " + areaReport.getLevel() + " " + areaReport.getCountry() + " " + areaReport.getProvince());
             }

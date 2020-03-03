@@ -966,10 +966,9 @@ public class FileTools {
             StringBuilder s = new StringBuilder();
             try ( BufferedReader reader = new BufferedReader(
                     new FileReader(file, charset(file)))) {
-                String line = reader.readLine();
-                while (line != null) {
+                String line;
+                while ((line = reader.readLine()) != null) {
                     s.append(line).append(System.lineSeparator());
-                    line = reader.readLine();
                 }
             }
             return s.toString();

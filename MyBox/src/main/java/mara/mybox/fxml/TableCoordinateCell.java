@@ -26,7 +26,7 @@ public class TableCoordinateCell<T, C> extends TableCell<T, C>
                     return;
                 }
                 Double v = (Double) item;
-                if (v >= -180) {
+                if (v >= -180 && v <= 180) {
                     setText(v + "");
                 } else {
                     setText(null);

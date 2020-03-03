@@ -13,9 +13,9 @@ Self-contain packages include all files and need not java env and installation. 
  
 | Platform | Link | Size | Launcher |    
 | --- | --- | ---  | ---  |    
-| win | [MyBox-6.2-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.2/MyBox-6.2-win-exe.zip)  | 258MB | MyBox.exe |       
-| linux | [MyBox-6.2-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.2/MyBox-6.2-linux.tar.gz)  | 217MB  | bin/MyBox  |     
-| mac | [MyBox-6.2-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.2/MyBox-6.2-mac.dmg)  | 218MB  |  MyBox-6.2.app   |   
+| win | [MyBox-6.2.1-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.2.1/MyBox-6.2.1-win-exe.zip)  | 258MB | MyBox.exe |       
+| linux | [MyBox-6.2.1-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.2.1/MyBox-6.2.1-linux.tar.gz)  | 217MB  | bin/MyBox  |     
+| mac | [MyBox-6.2.1-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.2.1/MyBox-6.2.1-mac.dmg)  | 218MB  |  MyBox-6.2.1.app   |   
 
 User can double click the launcher to start MyBox or run it by command line. The default "Open Method" of image/text/PDF files can be associated to MyBox and a file can be opened directly by MyBox by double clicking the file's name.
 (File with name including non-ascii can not be opened by double clicking currently)
@@ -25,16 +25,16 @@ When JRE or JDK 13 or higher(`Oracle jdk` or `open jdk`) is installed, jar can r
   
 | Platform | Link | Size | Requirements |   
 | --- | --- | ---  | ---  |    
-| win | [MyBox-6.2-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.2/MyBox-6.2-win-jar.zip)  | 145MB | Java 13.0.1 or higher |    
-| linux | [MyBox-6.2-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.2/MyBox-6.2-linux-jar.zip)  | 152MB  | Java 13.0.1 or higher |    
-| mac | [MyBox-6.2-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.2/MyBox-6.2-mac-jar.zip)  |  148MB  | Java 13.0.1 or higher |    
+| win | [MyBox-6.2.1-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.2.1/MyBox-6.2.1-win-jar.zip)  | 145MB | Java 13.0.1 or higher |    
+| linux | [MyBox-6.2.1-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.2.1/MyBox-6.2.1-linux-jar.zip)  | 152MB  | Java 13.0.1 or higher |    
+| mac | [MyBox-6.2.1-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.2.1/MyBox-6.2.1-mac-jar.zip)  |  148MB  | Java 13.0.1 or higher |    
  
     
 Run following command to launch this program with Jar package: 
-<PRE><CODE>     java   -jar   MyBox-6.2.jar</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-6.2.1.jar</CODE></PRE>
 	
 A file path can follow the command as argument to be opened directly by MyBox. Example, following command will open the image:    
-<PRE><CODE>     java   -jar   MyBox-6.2.jar   /tmp/a1.jpg</CODE></PRE>   
+<PRE><CODE>     java   -jar   MyBox-6.2.1.jar   /tmp/a1.jpg</CODE></PRE>   
 
 ### Other addresses to download   
 Download from cloud storage: https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F   
@@ -73,7 +73,7 @@ sourceforge: https://sourceforge.net/projects/mara-mybox/files/
 | User Guide - Network Tools | 5.0 | 2019-4-16 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-NetworkTools-en.pdf) |
 | Development Guide | 2.0 | 2019-11-18 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-DevGuide-2.0-en.pdf) |
 | Shortcuts | 5.9 | 2019-12-21 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts_en.html) |
-| Development Logs | 6.2 | 2020-2-28 | [html](#devLog) |
+| Development Logs | 6.2.1 | 2020-3-3 | [html](#devLog) |
 
 # Implementation
 
@@ -118,7 +118,7 @@ MyBox is based on following open sources softwares:
 
  
 # Current Version
-Current version is 6.2. Its features are mentioned below in summary:   
+Current version is 6.2.1. Its features are mentioned below in summary:   
  
 * [Cross platforms](#Cross-platform)
 * [Internationalized](#Internationalized)
@@ -471,7 +471,9 @@ Recognizing texts in image/PDF(OCR) works only on Windows currently.
 ### Geography Code<a id="geographyCode" />      
 1. Query and display location in map.
 2. Example: all countries and Chinese provinces/citis/districts.      
-3. Migration. Errors and missed are fixed. If user wrote some data in v6.1, existed data will be exported when this interface is opened at first time, and the path will be opened. User can import previous data.              
+3. Migration. Errors and missed are fixed.  Suggestion: Export your data, clear data, load exmaple data, and then import your data if need.         
+Updated example data of Geography Codes are important to table "Epidemic Reports".                       
+If user wrote some data in v6.1, existed data will be exported when this interface is opened at first time, and the path will be opened. User can import previous data.              
     
 
 ### Location Data<a id="locationData" />      
@@ -501,15 +503,23 @@ Recognizing texts in image/PDF(OCR) works only on Windows currently.
 	-  Button "MyBox Internet Data Path",  to download and import formatted data which will be updated.   
 	-  Button "Import",  to write the data of an external file into table.  (Exported txt file can be imported directly or after edited)      
            Data file can include the auto-increased field "dataid" or not.     
-	-  Button "Fill in data holes", to add missed data as previous days automatically.
+	-  Button "Fill in data holes", to add missed data as previous days automatically. Filled data are shown in different color.      
 	-  Do not input same data more than one time. This table can not judge whether the data are same and always write data as new ones.   
 3. Analyse Data:
-	-  Query Tree. Include 3 dimensions: data set, time, location. And Location data are in 4 levels: global, countries, provinces, cities/districts.
-	-  Click node in Query Tree, then reports will be shown in "Data" table in the right, while reports in charts are shown in "Charts Data" table. 
-            SQL statements are displayed above the 2 tables.
+	-  Query Tree: 
+ 	  	- Include 3 dimensions: data set, time, location.     
+ 	  	- Location data are in 4 levels: global, countries, provinces, cities/districts.       
+                   Support  structure of "Country-cities" which does not include province level and is used by countries other than China.      
+ 	  	- Node "Except for China": query and display data of countries other than China.     
+ 	  	- Node "Filled Data": Query and edit the filled data. Change them as normal status by editing or click button "Sure".    
+	-  Click node in Query Tree:
+ 	  	- Reports will be shown in "Data" table in the right
+ 	  	- Reports in charts are shown in "Charts Data" table
+ 	  	-  SQL statements are displayed above the 2 tables.
 	-  When time is determined, locations-based charts are displayed, including: bar charts, pies charts, and map. 
 	-  When time is not determined, time-based charts are displayed, including: line charts, dynamical bar charts, and dynamical map. 
-	-  Checkbox "Lable", to set whether display values in the charts. 
+	-  Checkbox "Label", to set whether display values in the charts. 
+	-  Checkbox "Legend", to set whether display legends in the charts. 
 	-  "Interval", to set duration of frames in dynamical charts and dynamical map. 
 4. Delete Data:
 	-  Button "Delete": to delete selected rows in right "data" table.  
@@ -531,7 +541,8 @@ Recognizing texts in image/PDF(OCR) works only on Windows currently.
 	-  Watch data in same langauge interface as importing lanaguage.   
             Examlpe,  example data of "Epidemic Reports" are generated in English interface, then watch the data in English interface.     
 	-  In location data, countries and provinces are Internationalized, that different values are written in different language interfaces. But cities are still in Chinese.   
-8. Migration. This table is rewritten. If user wrote some data in v6.1, existed data will be exported when this interface is opened at first time, and the path will be opened. User can import previous data.          
+8. Migration. This table is improved. Suggestion: Export your data, clear data, load exmaple data, and then import your data if need.        
+If user wrote some data in v6.1, existed data will be exported when this interface is opened at first time, and the path will be opened. User can import previous data.          
 
 
 ### Fetch Data About "New Coronavirus Pneumonia"<a id="epidemicReportFetch" />
@@ -765,7 +776,13 @@ MyBox supports enable/disable dpi-aware on line, which will cause MyBox reboots 
 Developers need notice: JavaFx screen is not same as physical screen and has different dpi definition which considers X/Y scale ratio too.    
 
 
-# Development Logs <a id="devLog"></a>     
+# Development Logs <a id="devLog"></a>       
+2020-3-3 v6.2.1  Improve "Epidemic Reports".  Node "Except for China": query and display data of countries other than China.            
+Filled Data are shown in different color.  Change filled data as normal status by editing or click button "Sure".      
+Support  structure of "Country-cities" which does not include province level and is used by countries other than China.      
+Solved problems. Editors of "Geography Codes" and "Epidemic Reports" work incorrectly.  May cost too much memroy when make snapshot.       
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.2.1)              
+            
 2020-2-28 v6.2  Improve "Epidemic Reports".  "Fill in data holes", to add missed data as previous days automatically.       
 Dynamical charts. Option to set whether display values in charts. Frames duration can be set for dynamical charts/map.      
 Export formats include xlsx(Excel2007) now. Auto-increased field is not exported and does not affect import.       

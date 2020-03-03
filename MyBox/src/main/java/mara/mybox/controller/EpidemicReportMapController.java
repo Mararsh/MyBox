@@ -14,7 +14,6 @@ import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.ComboBox;
-import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Transform;
@@ -25,8 +24,10 @@ import mara.mybox.data.EpidemicReport;
 import mara.mybox.data.GeographyCode;
 import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
+import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.image.file.ImageGifFile;
 import mara.mybox.tools.DateTools;
+import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
@@ -89,7 +90,7 @@ public class EpidemicReportMapController extends LocationMapBaseController {
             return;
         }
         parent.tabPane.getSelectionModel().select(parent.mapTab);
-        List<Image> snapshots = new ArrayList();
+        List<File> snapshots = new ArrayList();
         double scale = parent.dpi / Screen.getPrimary().getDpi();
         scale = scale > 1 ? scale : 1;
         SnapshotParameters snapPara = new SnapshotParameters();
@@ -100,7 +101,7 @@ public class EpidemicReportMapController extends LocationMapBaseController {
         int imageWidth = (int) Math.round(bounds.getWidth() * scale);
         int imageHeight = (int) Math.round(bounds.getHeight() * scale);
 
-        if (parent.chartsType == ChartsType.LocationBased) {
+        if (parent.currentChartsType == ChartsType.LocationBased) {
             LoadingController loading = parent.openHandlingStage(Modality.WINDOW_MODAL);
             timer = new Timer();
             timer.schedule(new TimerTask() {
@@ -108,13 +109,14 @@ public class EpidemicReportMapController extends LocationMapBaseController {
                 @Override
                 public void run() {
                     Platform.runLater(() -> {
-                        snapshots.add(webView.snapshot(snapPara, new WritableImage(imageWidth, imageHeight)));
-                        List<BufferedImage> images = new ArrayList();
-                        for (Image image : snapshots) {
-                            images.add(SwingFXUtils.fromFXImage(image, null));
-                        }
+                        File file = FileTools.getTempFile(".png");
+                        BufferedImage image = SwingFXUtils.fromFXImage(webView.snapshot(snapPara, new WritableImage(imageWidth, imageHeight)), null);
+                        ImageFileWriters.writeImageFile(image, "png", file.getAbsolutePath());
+                        snapshots.add(file);
+
                         File mapSnapFile = new File(AppVariables.MyBoxTempPath + File.separator + "mapSnap.gif");
-                        ImageGifFile.writeImages(images, mapSnapFile, interval);
+                        ImageGifFile.writeImageFiles(snapshots, mapSnapFile, interval, true);
+                        snapshots.clear();
 
                         parent.makeHtml(mapSnapFile);
                         loading.closeStage();
@@ -123,8 +125,8 @@ public class EpidemicReportMapController extends LocationMapBaseController {
                 }
             }, 200);
 
-        } else if (parent.chartsType == ChartsType.TimeBased
-                || parent.chartsType == ChartsType.TimeLocationBased) {
+        } else if (parent.currentChartsType == ChartsType.TimeBased
+                || parent.currentChartsType == ChartsType.TimeLocationBased) {
             if (reports.isEmpty()
                     || reports.get(reports.size() - 1).getConfirmed() <= 0) {
                 return;
@@ -149,20 +151,20 @@ public class EpidemicReportMapController extends LocationMapBaseController {
                     Platform.runLater(() -> {
                         EpidemicReport report = reports.get(showCount);
                         drawTimeBasedMap(report, unit);
-                        snapshots.add(webView.snapshot(snapPara, new WritableImage(imageWidth, imageHeight)));
+
+                        File file = FileTools.getTempFile(".png");
+                        BufferedImage image = SwingFXUtils.fromFXImage(webView.snapshot(snapPara, new WritableImage(imageWidth, imageHeight)), null);
+                        ImageFileWriters.writeImageFile(image, "png", file.getAbsolutePath());
+                        snapshots.add(file);
+
                         showCount++;
                         if (showCount >= reports.size()) {
                             timer.cancel();
                             timer = null;
 
-                            List<BufferedImage> images = new ArrayList();
-                            for (Image image : snapshots) {
-                                images.add(SwingFXUtils.fromFXImage(image, null));
-                            }
-                            snapshots.clear();
                             File mapSnapFile = new File(AppVariables.MyBoxTempPath + File.separator + "mapSnap.gif");
-                            ImageGifFile.writeImages(images, mapSnapFile, interval);
-                            images.clear();
+                            ImageGifFile.writeImageFiles(snapshots, mapSnapFile, interval, true);
+                            snapshots.clear();
 
                             loading.closeStage();
                             parent.makeHtml(mapSnapFile);

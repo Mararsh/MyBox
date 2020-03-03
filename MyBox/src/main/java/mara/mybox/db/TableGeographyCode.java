@@ -7,7 +7,10 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import mara.mybox.data.GeographyCode;
 import static mara.mybox.db.DerbyBase.dbHome;
 import static mara.mybox.db.DerbyBase.failed;
@@ -91,8 +94,8 @@ public class TableGeographyCode extends DerbyBase {
         List<String> countries = new ArrayList<>();
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
-            String sql = "SELECT DISTINCT country FROM Geography_Code WHERE "
-                    + " country IS NOT NULL AND level='" + message("Country") + "' ORDER BY country";
+            String sql = "SELECT DISTINCT address FROM Geography_Code WHERE "
+                    + " country IS NOT NULL AND level='" + message("Country") + "' ORDER BY address";
             ResultSet results = statement.executeQuery(sql);
             while (results.next()) {
                 countries.add(results.getString("country"));
@@ -110,7 +113,7 @@ public class TableGeographyCode extends DerbyBase {
                  Statement statement = conn.createStatement()) {
             String sql = "SELECT DISTINCT address FROM Geography_Code WHERE "
                     + ((country == null) ? "" : " country='" + country + "' AND ")
-                    + " province IS NOT NULL  ORDER BY address";
+                    + " level='" + message("Province") + "' ORDER BY address";
             ResultSet results = statement.executeQuery(sql);
             while (results.next()) {
                 provinces.add(results.getString("address"));
@@ -129,7 +132,7 @@ public class TableGeographyCode extends DerbyBase {
             String sql = "SELECT DISTINCT address FROM Geography_Code WHERE "
                     + ((country == null) ? "" : " country='" + country + "' AND ")
                     + ((province == null) ? "" : " province='" + province + "' AND")
-                    + " city IS NOT NULL  ORDER BY address";
+                    + " level='" + message("City") + "' ORDER BY address";
             ResultSet results = statement.executeQuery(sql);
             while (results.next()) {
                 cities.add(results.getString("address"));
@@ -327,27 +330,6 @@ public class TableGeographyCode extends DerbyBase {
         return null;
     }
 
-    public static GeographyCode readProvince(String country, String province) {
-        if (province == null || province.trim().isBlank()) {
-            return null;
-        }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            String sql = "SELECT * FROM Geography_Code WHERE "
-                    + " province IS NOT NULL AND level='" + message("Province") + "' "
-                    + " AND country='" + country + "' AND "
-                    + " address='" + province + "' OR full_address='" + province + "'";
-            ResultSet results = statement.executeQuery(sql);
-            if (results.next()) {
-                return read(results);
-            }
-        } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
-        }
-        return null;
-    }
-
     public static GeographyCode readChineseProvince(String province) {
         if (province == null || province.trim().isBlank()) {
             return null;
@@ -361,29 +343,6 @@ public class TableGeographyCode extends DerbyBase {
                     + " OR SUBSTR(province, 1, 2) = SUBSTR('" + province + "', 1, 2)  "
                     + " OR SUBSTR(full_address, 1, 2) = SUBSTR('" + province + "', 1, 2) ) ";
 //            logger.debug(sql);
-            ResultSet results = statement.executeQuery(sql);
-            if (results.next()) {
-                return read(results);
-            }
-        } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
-        }
-        return null;
-    }
-
-    public static GeographyCode readCity(String country, String province,
-            String city) {
-        if (city == null || city.trim().isBlank()) {
-            return null;
-        }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            String sql = "SELECT * FROM Geography_Code WHERE "
-                    + " city IS NOT NULL AND NOT(level='" + message("Province") + "') "
-                    + " AND country='" + country + "' "
-                    + " AND SUBSTR(province, 1, 2) = SUBSTR('" + province + "', 1, 2)  "
-                    + " (address='" + city + "' OR city like '" + city + "%') ";
             ResultSet results = statement.executeQuery(sql);
             if (results.next()) {
                 return read(results);
@@ -782,7 +741,7 @@ public class TableGeographyCode extends DerbyBase {
         }
     }
 
-    public static boolean migrate() {
+    public static boolean migrate615() {
         int size = TableGeographyCode.size();
         if (size > 0) {
             try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
@@ -807,6 +766,70 @@ public class TableGeographyCode extends DerbyBase {
         new TableGeographyCode().drop();
         new TableGeographyCode().init();
 
+        return true;
+    }
+
+    public static boolean migrate621() {
+        int size = TableGeographyCode.size();
+        if (size > 0) {
+            try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                     Statement statement = conn.createStatement()) {
+                Map<String, String> provincesMap = new HashMap<>();
+                String sql = "SELECT * FROM Geography_Code WHERE "
+                        + " level='" + message("zh", "Province") + "' "
+                        + " OR level='" + message("en", "Province") + "' ";
+                try ( ResultSet results = statement.executeQuery(sql)) {
+                    while (results.next()) {
+                        GeographyCode province = read(results);
+                        if (province.getFullAddress() != null) {
+                            provincesMap.put(province.getFullAddress(), province.getAddress());
+                        } else {
+                            provincesMap.put(province.getAddress(), province.getAddress());
+                        }
+                    }
+                }
+                Set<String> provinces = provincesMap.keySet();
+                provinces.remove("");
+                for (String fullAddress : provinces) {
+                    sql = "UPDATE Geography_Code "
+                            + " SET province='" + provincesMap.get(fullAddress) + "' "
+                            + " WHERE province='" + fullAddress + "'";
+                    statement.executeUpdate(sql);
+                }
+
+                Map<String, String> citiesMap = new HashMap<>();
+                sql = "SELECT * FROM Geography_Code WHERE "
+                        + " level='" + message("City") + "' ";
+                try ( ResultSet results = statement.executeQuery(sql)) {
+                    while (results.next()) {
+                        GeographyCode city = read(results);
+                        if (city.getCity() != null) {
+                            citiesMap.put(city.getCity(), city.getAddress());
+                        } else {
+                            citiesMap.put(city.getAddress(), city.getAddress());
+                        }
+                    }
+                }
+                Set<String> cities = citiesMap.keySet();
+                cities.remove("");
+                for (String fullAddress : cities) {
+                    sql = "UPDATE Geography_Code "
+                            + " SET city='" + citiesMap.get(fullAddress) + "' "
+                            + " WHERE city='" + fullAddress + "'";
+                    statement.executeUpdate(sql);
+                }
+
+                sql = "DELETE FROM Geography_Code "
+                        + " WHERE country='" + message("Macao")
+                        + "' OR country='" + message("Macau") + "'";
+                statement.executeUpdate(sql);
+            } catch (Exception e) {
+                logger.debug(e.toString());
+                failed(e);
+                return false;
+            }
+
+        }
         return true;
     }
 

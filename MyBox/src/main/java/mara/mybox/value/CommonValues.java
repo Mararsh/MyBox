@@ -14,8 +14,8 @@ import java.util.TimeZone;
  */
 public class CommonValues {
 
-    public static final String AppVersion = "6.2";
-    public static final String AppVersionDate = "2020-02-28";
+    public static final String AppVersion = "6.2.1";
+    public static final String AppVersionDate = "2020-3-3";
     public static final String AppDocVersion = "5.0";
 
     public static final String AppDerbyUser = "mara";

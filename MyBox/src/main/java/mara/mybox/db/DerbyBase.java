@@ -574,9 +574,16 @@ public class DerbyBase {
 
             if (!AppVariables.getSystemConfigBoolean("UpdatedTables6.1.5", false)) {
                 logger.info("Updating tables in 6.1.5...");
-                TableGeographyCode.migrate();
-                TableEpidemicReport.migrate();
+                TableGeographyCode.migrate615();
+                TableEpidemicReport.migrate615();
                 AppVariables.setSystemConfigValue("UpdatedTables6.1.5", true);
+            }
+
+            if (!AppVariables.getSystemConfigBoolean("UpdatedTables6.2.1a", false)) {
+                logger.info("Updating tables in 6.2.1...");
+                TableGeographyCode.migrate621();
+                TableEpidemicReport.migrate621();
+                AppVariables.setSystemConfigValue("UpdatedTables6.2.1", true);
             }
 
             return true;

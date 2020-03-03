@@ -426,7 +426,6 @@ public class EpidemicReportsFetchNCPDataController extends BaseController {
             String filePrefix = directory.getAbsolutePath() + File.separator
                     + message("NewCoronavirusPneumonia") + "_" + message("IntimeData") + "_"
                     + DateTools.datetimeToString(baiduReportTime.getTime()).replace(":", "-");
-            logger.debug(filePrefix);
 
             synchronized (this) {
                 if (task != null) {
@@ -513,7 +512,7 @@ public class EpidemicReportsFetchNCPDataController extends BaseController {
                         String indent = "    ";
 
                         for (String provinceKey
-                                : GeographyCode.ChineseProvinces()) {
+                                : GeographyCode.chineseProvincesKeys()) {
                             if (isCancelled()) {
                                 return false;
                             }
@@ -954,7 +953,7 @@ public class EpidemicReportsFetchNCPDataController extends BaseController {
             }
             recordFileWritten(directory);
 
-            String filePrefix = directory.getAbsolutePath() + File.pathSeparator
+            String filePrefix = directory.getAbsolutePath() + File.separator
                     + message("NewCoronavirusPneumonia") + "_" + message("HistoricalData")
                     + "_2020-01-20__" + DateTools.datetimeToString(new Date()).replace(":", "-");
 

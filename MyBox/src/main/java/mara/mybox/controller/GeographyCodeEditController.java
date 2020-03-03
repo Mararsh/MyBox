@@ -127,6 +127,7 @@ public class GeographyCodeEditController extends LocationBaseController {
             code.setAddress(addressInput.getText().trim());
             code.setLongitude(longtitude);
             code.setLatitude(latitude);
+            code.setFullAddress(fullInput.getText().trim());
             code.setCountry(countrySelector.getValue());
             code.setProvince(provinceSelector.getValue());
             code.setCity(citySelector.getValue());

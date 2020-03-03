@@ -254,10 +254,9 @@ public class TableEpidemicReport extends DerbyBase {
                  Statement statement = conn.createStatement()) {
             String sql = " SELECT DISTINCT city FROM Epidemic_Report WHERE "
                     + " data_set='" + dataset + "' AND country='" + country + "' "
-                    + " AND province='" + province + "' "
+                    + (province == null ? " " : " AND province='" + province + "' ")
                     + " AND city IS NOT NULL AND level='" + message("City") + "'"
                     + " ORDER BY city";
-
             ResultSet results = statement.executeQuery(sql);
             while (results.next()) {
                 String c = results.getString("city");
@@ -271,6 +270,27 @@ public class TableEpidemicReport extends DerbyBase {
             logger.debug(e.toString());
             return null;
         }
+    }
+
+    public static List<EpidemicReport> filled(String dataset, int max) {
+        List<EpidemicReport> locations = new ArrayList<>();
+        if (dataset == null) {
+            return locations;
+        }
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                 Statement statement = conn.createStatement()) {
+            statement.setMaxRows(max);
+            String sql = "SELECT * FROM Epidemic_Report WHERE data_set='" + dataset + "' AND confirmed > 0 ";
+            ResultSet results = statement.executeQuery(sql);
+            while (results.next()) {
+                EpidemicReport location = read(results);
+                locations.add(location);
+            }
+        } catch (Exception e) {
+            failed(e);
+            // logger.debug(e.toString());
+        }
+        return locations;
     }
 
     public static List<EpidemicReport> read(String dataset, int max) {
@@ -612,11 +632,9 @@ public class TableEpidemicReport extends DerbyBase {
                 + " data_set='" + dataset + "' AND country IS NOT NULL";
         try ( ResultSet countriesResults = statement.executeQuery(sql)) {
             while (countriesResults.next()) {
-                String c = countriesResults.getString("country");
-                if (c != null && !c.trim().isBlank()) {
-                    countries.add(c);
-                }
+                countries.add(countriesResults.getString("country"));
             }
+            countries.remove("");
         } catch (Exception e) {
             failed(e);
             logger.debug(e.toString());
@@ -634,11 +652,9 @@ public class TableEpidemicReport extends DerbyBase {
                 + " AND level='" + message("Province") + "'";
         try ( ResultSet provincesResults = statement.executeQuery(sql)) {
             while (provincesResults.next()) {
-                String c = provincesResults.getString("province");
-                if (c != null && !c.trim().isBlank()) {
-                    provinces.add(c);
-                }
+                provinces.add(provincesResults.getString("province"));
             }
+            provinces.remove("");
         } catch (Exception e) {
             failed(e);
             logger.debug(e.toString());
@@ -656,11 +672,9 @@ public class TableEpidemicReport extends DerbyBase {
                 + " AND level='" + message("City") + "'";
         try ( ResultSet citiesResults = statement.executeQuery(sql)) {
             while (citiesResults.next()) {
-                String c = citiesResults.getString("city");
-                if (c != null && !c.trim().isBlank()) {
-                    cities.add(c);
-                }
+                cities.add(citiesResults.getString("city"));
             }
+            cities.remove("");
         } catch (Exception e) {
             failed(e);
             logger.debug(e.toString());
@@ -668,42 +682,44 @@ public class TableEpidemicReport extends DerbyBase {
         return cities;
     }
 
-    public static boolean fillData() {
+    public static int fillData() {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
             List<String> datasets = datasets(statement);
+            int count = 0;
             for (String dataset : datasets) {
-                fillData(statement, dataset);
+                count += fillData(statement, dataset);
             }
-            return true;
+            return count;
         } catch (Exception e) {
             failed(e);
             logger.debug(e.toString());
-            return false;
+            return 0;
         }
     }
 
-    public static boolean fillData(Statement statement, String dataset) {
+    public static int fillData(Statement statement, String dataset) {
         if (dataset == null || statement == null) {
-            return false;
+            return 0;
         }
         try {
             List<Date> times = timesASC(statement, dataset);
+            int count = 0;
             if (!times.isEmpty()) {
-                fillCitiesData(statement, dataset, times);
-                fillProvincesData(statement, dataset, times);
-                fillCountriesData(statement, dataset, times);
+                count += fillCitiesData(statement, dataset, times);
+                count += fillProvincesData(statement, dataset, times);
+                count += fillCountriesData(statement, dataset, times);
             }
-            return true;
+            return count;
         } catch (Exception e) {
             failed(e);
             logger.debug(e.toString());
-            return false;
+            return 0;
         }
     }
 
     // times is in asc
-    public static boolean fillCitiesData(Statement statement, String dataset,
+    public static int fillCitiesData(Statement statement, String dataset,
             List<Date> times) {
         try {
             List<String> cities = cities(statement, dataset);
@@ -728,30 +744,32 @@ public class TableEpidemicReport extends DerbyBase {
                     thisreport = reports.get(time);
                     if (thisreport == null) {
                         if (lastReport != null) {
-                            thisreport = lastReport.copy().setTime(time);
+                            thisreport = lastReport.copy().setTime(time).setComments("Filled");
                             filled.add(thisreport);
-                            logger.debug("Filled:" + DateTools.datetimeToString(time) + " " + city);
+//                            logger.debug("Filled:" + DateTools.datetimeToString(time) + " " + city);
                             lastReport = thisreport;
                         }
                     } else {
-                        logger.debug("Existed:" + DateTools.datetimeToString(time) + " " + city);
+//                        logger.debug("Existed:" + DateTools.datetimeToString(time) + " " + city);
                         lastReport = thisreport;
                     }
                 }
             }
             if (!filled.isEmpty()) {
-                write(filled);
+                if (!write(filled)) {
+                    return 0;
+                }
             }
 
-            return true;
+            return filled.size();
         } catch (Exception e) {
             failed(e);
             logger.debug(e.toString());
-            return false;
+            return 0;
         }
     }
 
-    public static boolean fillProvincesData(Statement statement, String dataset,
+    public static int fillProvincesData(Statement statement, String dataset,
             List<Date> times) {
         try {
             List<String> provinces = provinces(statement, dataset);
@@ -776,34 +794,35 @@ public class TableEpidemicReport extends DerbyBase {
                     thisreport = reports.get(time);
                     if (thisreport == null) {
                         if (lastReport != null) {
-                            thisreport = lastReport.copy().setTime(time);
+                            thisreport = lastReport.copy().setTime(time).setComments("Filled");
                             filled.add(thisreport);
-                            logger.debug("Filled:" + DateTools.datetimeToString(time) + " " + province);
+//                            logger.debug("Filled:" + DateTools.datetimeToString(time) + " " + province);
                             lastReport = thisreport;
                         }
                     } else {
-                        logger.debug("Existed:" + DateTools.datetimeToString(time) + " " + province);
+//                        logger.debug("Existed:" + DateTools.datetimeToString(time) + " " + province);
                         lastReport = thisreport;
                     }
                 }
             }
             if (!filled.isEmpty()) {
-                write(filled);
+                if (!write(filled)) {
+                    return 0;
+                }
             }
-
-            return true;
+            return filled.size();
         } catch (Exception e) {
             failed(e);
             logger.debug(e.toString());
-            return false;
+            return 0;
         }
     }
 
-    public static boolean fillCountriesData(Statement statement, String dataset,
+    public static int fillCountriesData(Statement statement, String dataset,
             List<Date> times) {
         try {
-            List<String> countries = countries(statement, dataset);
             List<EpidemicReport> filled = new ArrayList<>();
+            List<String> countries = countries(statement, dataset);
             for (String country : countries) {
                 String sql = "SELECT * FROM Epidemic_Report WHERE "
                         + "data_set='" + dataset + "' AND country='" + country + "'"
@@ -824,25 +843,49 @@ public class TableEpidemicReport extends DerbyBase {
                     thisreport = reports.get(time);
                     if (thisreport == null) {
                         if (lastReport != null) {
-                            thisreport = lastReport.copy().setTime(time);
+                            thisreport = lastReport.copy().setTime(time).setComments("Filled");
                             filled.add(thisreport);
-                            logger.debug("Filled:" + DateTools.datetimeToString(time) + " " + country);
+//                            logger.debug("Filled:" + DateTools.datetimeToString(time) + " " + country);
                             lastReport = thisreport;
                         }
                     } else {
-                        logger.debug("Existed:" + DateTools.datetimeToString(time) + " " + country);
+//                        logger.debug("Existed:" + DateTools.datetimeToString(time) + " " + country);
                         lastReport = thisreport;
                     }
                 }
             }
             if (!filled.isEmpty()) {
-                write(filled);
+                if (!write(filled)) {
+                    return 0;
+                }
             }
-
-            return true;
+            return filled.size();
         } catch (Exception e) {
             failed(e);
             logger.debug(e.toString());
+            return 0;
+        }
+
+    }
+
+    public static boolean sure(List<EpidemicReport> reports) {
+        if (reports == null || reports.isEmpty()) {
+            return false;
+        }
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                 Statement statement = conn.createStatement()) {
+            String inStr = "( " + reports.get(0).getDataid();
+            for (int i = 1; i < reports.size(); ++i) {
+                inStr += ", " + reports.get(i).getDataid();
+            }
+            inStr += " )";
+            String sql = "UPDATE Epidemic_Report SET comments=null "
+                    + " WHERE comments='Filled' AND  dataid IN " + inStr;
+            statement.executeUpdate(sql);
+            return true;
+        } catch (Exception e) {
+            failed(e);
+//            // logger.debug(e.toString());
             return false;
         }
     }
@@ -1239,7 +1282,7 @@ public class TableEpidemicReport extends DerbyBase {
         }
     }
 
-    public static boolean migrate() {
+    public static boolean migrate615() {
         int size = TableEpidemicReport.size();
         if (size > 0) {
             try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
@@ -1298,6 +1341,31 @@ public class TableEpidemicReport extends DerbyBase {
 
         new TableEpidemicReport().drop();
         new TableEpidemicReport().init();
+        return true;
+    }
+
+    public static boolean migrate621() {
+        int size = TableGeographyCode.size();
+        if (size > 0) {
+            try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                     Statement statement = conn.createStatement()) {
+                String sql = "UPDATE Epidemic_Report SET level='" + message("Country")
+                        + "', country='" + message("Monaco") + "', province=null, city=null, "
+                        + " longitude=7.42, latitude=43.74 "
+                        + " WHERE province='摩纳哥'";
+                statement.executeUpdate(sql);
+
+                sql = "DELETE FROM Epidemic_Report "
+                        + " WHERE country='" + message("Macao")
+                        + "' OR country='" + message("Macau") + "'";
+                statement.executeUpdate(sql);
+            } catch (Exception e) {
+                logger.debug(e.toString());
+                failed(e);
+                return false;
+            }
+
+        }
         return true;
     }
 

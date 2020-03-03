@@ -236,10 +236,10 @@ public class EpidemicReportsEditController extends TableManageController<Epidemi
                         datasetSelector.getItems().addAll(datasets);
                     }
                     if (currentDataset != null && !currentDataset.trim().isBlank()) {
-                        datasetSelector.setValue(dataset);
+                        datasetSelector.getSelectionModel().select(dataset);
                         datasetSelector.getEditor().setStyle(null);
                     } else {
-                        datasetSelector.setValue(null);
+                        datasetSelector.getSelectionModel().select(null);
                         datasetSelector.getEditor().setStyle(badStyle);
                     }
 
@@ -307,6 +307,9 @@ public class EpidemicReportsEditController extends TableManageController<Epidemi
 
                 @Override
                 protected boolean handle() {
+                    for (EpidemicReport report : tableData) {
+                        report.setTime(time.getTime());
+                    }
                     TableEpidemicReport.write(tableData);
                     return true;
                 }

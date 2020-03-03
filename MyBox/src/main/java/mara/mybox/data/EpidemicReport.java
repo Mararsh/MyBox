@@ -202,6 +202,7 @@ public class EpidemicReport {
                 rows.add(row);
             }
             ExcelTools.createXLSX(file, columns, rows);
+            rows.clear();
 
         } catch (Exception e) {
 

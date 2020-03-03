@@ -29,7 +29,6 @@ Red increase 151 -> pink                #de88c7         #ffdcfe
     -fx-background-insets: 0px ;
 }
 
-
 .blue-label, .blue-label:focused {
     -fx-background-color: transparent ;
     -fx-background-insets: 0px ;

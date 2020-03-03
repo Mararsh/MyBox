@@ -105,9 +105,10 @@ public class GeographyCodeController extends TableManageController<GeographyCode
                     + "\n\n" + backFile);
             AppVariables.deleteSystemConfigValue("GeographyCodeBackup6.1.5");
             examplesAction();
-        } else if (!AppVariables.getSystemConfigBoolean("GeographyCodeExamples6.1.5", false)) {
-            AppVariables.setSystemConfigValue("GeographyCodeExamples6.1.5", true);
-            examplesAction();
+        } else if (!AppVariables.getSystemConfigBoolean("GeographyCodeExamples6.2.1", false)) {
+            alertInformation(message("GeographyCode621Comments"));
+            AppVariables.setSystemConfigValue("GeographyCodeExamples6.2.1", true);
+
         }
     }
 
