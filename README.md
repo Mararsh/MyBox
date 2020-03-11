@@ -3,8 +3,10 @@
 # MyBox：简易工具集
 这是利用JavaFx开发的图形化界面程序，目标是提供简单易用的功能。免费开源。     
 
+注意：正在开发的v6.3将重新设计“地理代码”和“疫情报告”。建议不要用现在的版本录入你自己的数据，因为这一次的新版本无法实现数据迁移。非常抱歉！   
+
 ## 下载与运行
-每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases?)目录下（点击上面的`releases`页签）。[新内容](#devLog)            
+每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases?)目录下（点击上面的`releases`页签）。[新内容](#devLog)         
 
 ### 自包含程序包   
 自包含的程序包无需java环境、无需安装、解包可用。（解包的目录名不要包含汉字）  
