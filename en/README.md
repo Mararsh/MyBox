@@ -3,8 +3,9 @@
 # MyBox: Set of Easy Tools
 This is GUI program based on JavaFx to provide simple and easy functions. It's free and open sources
 
-Notice: "Geography Code" and "Epdemic Report" will be redesigned in v6.3. 
-Please do not input your data of the 2 tables with current version, because this new version can not migrate data of current version. So sorry about this!        
+Notice: "Geography Code" and "Epidemic Report" will be redesigned in v6.3. 
+Please do not input your data of the 2 tables with current version, because this new version can not guarantee to migrate data of current version. 
+But MyBox will try best to help users to export data in new tables format. So sorry about this!        
 
 
 ## Download and Execution
