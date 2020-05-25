@@ -4,7 +4,7 @@
 This is desktop application based on JavaFx to provide simple and easy functions. It's free and open sources
 
 ## What's New
-2020-5-25 v6.3  Redesign  "Geography Codes" and "Epidemic Reports".        
+2020-5-25 v6.3  Redesign "Geography Codes" and "Epidemic Reports".        
 Provide selections of audio parameters in Audio/Vedio Convertor.           
 Provide Common Chinese Colors and Common Japanese Colors.      
 Solved problems.  Cursor should stay orginial location after saving in Text Editor. Option “Count dir size” may cause some batch operations fail.      
@@ -925,11 +925,11 @@ Developers need notice: JavaFx screen is not same as physical screen and has dif
 
 
 # Development Logs <a id="devLog"></a>       
-2020-5-25 v6.3  Redesign  "Geography Codes" and "Epidemic Reports".        
+2020-5-25 v6.3  Redesign "Geography Codes" and "Epidemic Reports".        
 Provide selections of audio parameters in Audio/Vedio Convertor.           
 Provide Common Chinese Colors and Common Japanese Colors.      
 Solved problems.  Cursor should stay orginial location after saving in Text Editor. Option “Count dir size” may cause some batch operations fail.      
-This version is for my mom. Wish all mothers loving and being loved.                    
+This version is for my mom. Wish all mothers loving and being loved.                     
 [Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3)        
 
 2020-3-3 v6.2.1  Improve "Epidemic Reports".  Node "Except for China": query and display data of countries other than China.            
