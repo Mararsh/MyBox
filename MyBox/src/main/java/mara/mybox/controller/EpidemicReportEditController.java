@@ -1,52 +1,50 @@
 package mara.mybox.controller;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
-import mara.mybox.data.BaseTask;
 import mara.mybox.data.EpidemicReport;
 import mara.mybox.data.GeographyCode;
 import mara.mybox.db.TableEpidemicReport;
-import mara.mybox.db.TableGeographyCode;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
  * @CreateDate 2020-2-2
  * @License Apache License Version 2.0
  */
-public class EpidemicReportEditController extends LocationBaseController {
+public class EpidemicReportEditController extends GeographyCodeUserController {
 
-    protected EpidemicReportsController parent;
-    protected int confirmed, suspected, dead, healed;
-    protected Date time;
-    protected long dataid = -1;
+    protected EpidemicReportsController reportsController;
+    protected long confirmed, dead, healed;
+    protected long epid, time;
+    protected EpidemicReport report;
 
     @FXML
-    protected TextField dataidInput, confirmedInput, suspectedInput, healedInput, deadInput, timeInput, labelInput;
+    protected TextField epidInput, confirmedInput, healedInput, deadInput,
+            locationInput, timeInput, labelInput;
     @FXML
     protected TextArea commentsArea;
     @FXML
-    protected ComboBox<String> datasetSelector, reportLevelSelector;
+    protected ComboBox<String> datasetSelector;
     @FXML
-    protected Button locationButton;
+    protected RadioButton inputtedRadio, predefinedRadio, filledRadio, statisticRadio;
 
     public EpidemicReportEditController() {
         baseTitle = AppVariables.message("EpidemicReport");
-
+        TipsLabelKey = "EpidemicReportEditComments";
     }
 
     @Override
@@ -54,26 +52,13 @@ public class EpidemicReportEditController extends LocationBaseController {
         try {
             super.initializeNext();
 
-            datasetSelector.getSelectionModel().selectedItemProperty().addListener(
-                    (ObservableValue<? extends String> ov, String oldv, String newv) -> {
-                        checkDataset();
-                    });
-
-            List<String> levels = new ArrayList<>();
-            levels.addAll(Arrays.asList(
-                    message("Country"), message("Province"), message("City"), message("Global")
-            ));
-            reportLevelSelector.getItems().addAll(levels);
-            reportLevelSelector.getSelectionModel().select(0);
+            selectedCode = null;
+            epid = -1;
+            time = -1;
 
             confirmedInput.textProperty().addListener(
                     (ObservableValue<? extends String> ov, String oldv, String newv) -> {
                         checkConfirmed();
-                    });
-
-            suspectedInput.textProperty().addListener(
-                    (ObservableValue<? extends String> ov, String oldv, String newv) -> {
-                        checkSuspected();
                     });
 
             healedInput.textProperty().addListener(
@@ -91,28 +76,41 @@ public class EpidemicReportEditController extends LocationBaseController {
                         checkTime();
                     });
             timeInput.setText(DateTools.nowString());
-            FxmlControl.setTooltip(timeInput, message("LocationDataTimeComments"));
 
-            saveButton.disableProperty().bind(datasetSelector.getEditor().styleProperty().isEqualTo(badStyle)
-                    .or(longitudeInput.styleProperty().isEqualTo(badStyle))
-                    .or(latitudeInput.styleProperty().isEqualTo(badStyle))
+            saveButton.disableProperty().bind(timeInput.styleProperty().isEqualTo(badStyle)
                     .or(confirmedInput.styleProperty().isEqualTo(badStyle))
-                    .or(suspectedInput.styleProperty().isEqualTo(badStyle))
                     .or(healedInput.styleProperty().isEqualTo(badStyle))
                     .or(deadInput.styleProperty().isEqualTo(badStyle))
-                    .or(timeInput.styleProperty().isEqualTo(badStyle))
             );
-
-            loadDatasets();
 
         } catch (Exception e) {
             logger.error(e.toString());
         }
     }
 
+    @Override
+    public void afterSceneLoaded() {
+        try {
+            super.afterSceneLoaded();
+            FxmlControl.setTooltip(timeInput, message("LocationDataTimeComments"));
+            FxmlControl.setTooltip(epidInput, message("AssignedByMyBox"));
+            FxmlControl.setTooltip(locationInput, message("ClickNodePickValue"));
+
+            loadDatasets();
+            locationController.loadTree(this);
+            confirmedInput.requestFocus();
+
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
     protected void loadDatasets() {
         synchronized (this) {
-            BaseTask datasetTask = new BaseTask<Void>() {
+            if (task != null) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
 
                 private List<String> datasets;
 
@@ -128,33 +126,18 @@ public class EpidemicReportEditController extends LocationBaseController {
                     String v = datasetSelector.getValue();
                     datasetSelector.getItems().clear();
                     datasetSelector.getItems().addAll(datasets);
-                    if (v != null) {
+                    if (v != null && !v.isBlank()) {
                         datasetSelector.setValue(v);
+                    } else if (datasets.size() > 0) {
+                        datasetSelector.getSelectionModel().select(0);
                     }
                     isSettingValues = false;
                 }
             };
-            openHandlingStage(datasetTask, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(datasetTask);
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
-        }
-    }
-
-    protected void checkDataset() {
-        if (isSettingValues) {
-            return;
-        }
-        try {
-            String value = datasetSelector.getValue();
-            if (value == null || value.trim().isBlank()) {
-                datasetSelector.getEditor().setStyle(badStyle);
-            } else {
-                datasetSelector.getEditor().setStyle(null);
-            }
-            loadDatasets();
-        } catch (Exception e) {
-            datasetSelector.getEditor().setStyle(badStyle);
         }
     }
 
@@ -175,26 +158,6 @@ public class EpidemicReportEditController extends LocationBaseController {
             }
         } catch (Exception e) {
             confirmedInput.setStyle(badStyle);
-        }
-    }
-
-    protected void checkSuspected() {
-        try {
-            String value = suspectedInput.getText().trim();
-            if (value.isBlank()) {
-                suspected = 0;
-                suspectedInput.setStyle(null);
-                return;
-            }
-            int v = Integer.valueOf(value);
-            if (v >= 0) {
-                suspected = v;
-                suspectedInput.setStyle(null);
-            } else {
-                suspectedInput.setStyle(badStyle);
-            }
-        } catch (Exception e) {
-            suspectedInput.setStyle(badStyle);
         }
     }
 
@@ -242,13 +205,13 @@ public class EpidemicReportEditController extends LocationBaseController {
         try {
             String value = timeInput.getText().trim();
             if (value.isBlank()) {
-                time = new Date();
+                time = new Date().getTime();
                 timeInput.setStyle(null);
                 return;
             }
             Date v = DateTools.stringToDatetime(value);
             if (v != null) {
-                time = v;
+                time = v.getTime();
                 timeInput.setStyle(null);
             } else {
                 timeInput.setStyle(badStyle);
@@ -259,48 +222,100 @@ public class EpidemicReportEditController extends LocationBaseController {
     }
 
     @Override
-    public void afterSceneLoaded() {
-        super.afterSceneLoaded();
-        FxmlControl.setTooltip(locationButton, message("CoordinateOnMap"));
+    public void codeSelected(GeographyCode code) {
+        try {
+            if (code == null) {
+                return;
+            }
+            selectedCode = code;
+            locationInput.setText(selectedCode.getFullName());
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
     }
 
     public void loadReport(EpidemicReport report) {
+        this.report = report;
+        loadReport();
+        FxmlControl.setTooltip(clearButton, message("Reset"));
+    }
+
+    public void loadReport() {
         try {
             if (report == null) {
                 return;
             }
             isSettingValues = true;
-            dataid = report.getDataid();
-            dataidInput.setText(dataid + "");
-            datasetSelector.setValue(report.getDataSet());
-            reportLevelSelector.setValue(report.getLevel());
-            if (report.getDataLabel() != null) {
-                labelInput.setText(report.getDataLabel());
-            }
-            if (report.getCountry() != null) {
-                countrySelector.setValue(report.getCountry());
-            }
-            if (report.getProvince() != null) {
-                provinceSelector.setValue(report.getProvince());
-            }
-            if (report.getCity() != null) {
-                citySelector.setValue(report.getCity());
-            }
-            confirmedInput.setText(report.getConfirmed() + "");
-            suspectedInput.setText(report.getSuspected() + "");
-            healedInput.setText(report.getHealed() + "");
-            deadInput.setText(report.getDead() + "");
-            if (report.getLongitude() >= -180) {
-                longitudeInput.setText(report.getLongitude() + "");
-            }
-            if (report.getLatitude() >= -180) {
-                latitudeInput.setText(report.getLatitude() + "");
-            }
+            epid = report.getEpid();
+            selectedCode = report.getLocation();
+            time = report.getTime();
+            confirmed = report.getConfirmed();
+            dead = report.getDead();
+            healed = report.getHealed();
 
-            timeInput.setText(DateTools.datetimeToString(report.getTime()));
-            if (report.getComments() != null && !"Filled".equals(report.getComments())) {
-                commentsArea.setText(report.getComments());
+            epidInput.setText(epid + "");
+            datasetSelector.setValue(report.getDataSet());
+            switch (report.getSource()) {
+                case 1:
+                    predefinedRadio.setSelected(true);
+                    break;
+                case 2:
+                    inputtedRadio.setSelected(true);
+                    break;
+                case 3:
+                    filledRadio.setSelected(true);
+                    break;
+                case 4:
+                    statisticRadio.setSelected(true);
+                    break;
+                default:
+                    inputtedRadio.setSelected(true);
+                    break;
             }
+            confirmedInput.setText(confirmed + "");
+            healedInput.setText(healed + "");
+            deadInput.setText(dead + "");
+            timeInput.setText(DateTools.datetimeToString(time));
+            if (selectedCode != null) {
+                locationInput.setText(selectedCode.getFullName());
+            } else {
+                locationInput.setText("");
+            }
+            isSettingValues = false;
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    @FXML
+    public void dataAction() {
+        openStage(CommonValues.GeographyCodeFxml);
+    }
+
+    @FXML
+    @Override
+    public void clearAction() {
+        try {
+            if (report != null) {
+                loadReport();
+                return;
+            }
+            isSettingValues = true;
+            epid = -1;
+            selectedCode = null;
+            time = new Date().getTime();
+            confirmed = 0;
+            dead = 0;
+            healed = 0;
+
+            epidInput.setText("");
+            datasetSelector.setValue("");
+            inputtedRadio.setSelected(true);
+            confirmedInput.setText("");
+            healedInput.setText("");
+            deadInput.setText("");
+            timeInput.setText(DateTools.datetimeToString(time));
+            locationInput.setText("");
             isSettingValues = false;
         } catch (Exception e) {
             logger.error(e.toString());
@@ -310,6 +325,23 @@ public class EpidemicReportEditController extends LocationBaseController {
     @FXML
     @Override
     public void saveAction() {
+        if (selectedCode == null) {
+            popError(message("MissLocation"));
+            return;
+        }
+        if (time <= 0) {
+            popError(message("MissTime"));
+            return;
+        }
+        String dataset = datasetSelector.getValue().trim();
+        if (dataset.isBlank()) {
+            popError(message("MissDataset"));
+            return;
+        }
+        if (confirmed <= 0 && healed <= 0 && dead <= 0) {
+            popError(message("ValuesShouldNotZero"));
+            return;
+        }
         if (task != null) {
             return;
         }
@@ -318,53 +350,40 @@ public class EpidemicReportEditController extends LocationBaseController {
             @Override
             protected boolean handle() {
                 EpidemicReport report = new EpidemicReport();
-                report.setDataid(dataid);
-                String dataset = datasetSelector.getValue().trim();
+                report.setEpid(epid);
                 report.setDataSet(dataset);
-                report.setLevel(reportLevelSelector.getValue());
-                report.setDataLabel(labelInput.getText().trim());
-                report.setCountry(countrySelector.getValue());
-                report.setProvince(provinceSelector.getValue());
-                report.setCity(citySelector.getValue());
+                report.setLocation(selectedCode);
                 report.setConfirmed(confirmed);
-                report.setSuspected(suspected);
                 report.setHealed(healed);
                 report.setDead(dead);
-                report.setLongitude(longtitude);
-                report.setLatitude(latitude);
-                report.setComments(commentsArea.getText().trim());
-                report.setTime(time.getTime());
-
-                if (countrySelector.getValue() != null
-                        && !message("China").equals(countrySelector.getValue())
-                        && longtitude >= -180 && longtitude <= 180
-                        && latitude >= -90 && latitude <= 90) {
-                    GeographyCode code = new GeographyCode();
-                    code.setAddress(countrySelector.getValue());
-                    code.setCountry(countrySelector.getValue());
-                    code.setLongitude(longtitude);
-                    code.setLatitude(latitude);
-                    code.setLevel(message("Country"));
-                    TableGeographyCode.write(code);
+                report.setTime(time);
+                if (predefinedRadio.isSelected()) {
+                    report.setSource(1);
+                } else if (inputtedRadio.isSelected()) {
+                    report.setSource(2);
+                } else if (filledRadio.isSelected()) {
+                    report.setSource(3);
+                } else if (statisticRadio.isSelected()) {
+                    report.setSource(4);
+                } else {
+                    report.setSource(2);
                 }
-
-                TableEpidemicReport.write(report);
-
-                return true;
+                return TableEpidemicReport.write(report);
             }
 
             @Override
             protected void whenSucceeded() {
-                popSuccessful();
-                if (parent != null) {
-                    parent.loadTree();
+                if (reportsController != null) {
+                    reportsController.loadTrees(true);
                 }
 
                 if (saveCloseCheck.isSelected()) {
                     closeStage();
-                    if (parent != null) {
-                        parent.getMyStage().toFront();
+                    if (reportsController != null) {
+                        reportsController.getMyStage().toFront();
                     }
+                } else {
+                    popInformation(message("Written"));
                 }
             }
         };

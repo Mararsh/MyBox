@@ -54,7 +54,7 @@ License:    Apache License Version 2.0
                                                         <Slider fx:id="volumeSlider" prefWidth="100.0" value="100.0" />
                                                         <Label text="%Speed" />
                                                         <ComboBox fx:id="speedSelector" editable="true" prefWidth="80.0" />
-                                          <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                        <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                                         <Button fx:id="playButton" mnemonicParsing="false" onAction="#playAction">
                                                             <graphic>
                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -153,55 +153,55 @@ License:    Apache License Version 2.0
                                                                         <CheckBox fx:id="randomCheck" mnemonicParsing="false" text="%RandomOrder" />
                                                                     </children>
                                                                 </FlowPane>
-                                                            </children> 
+                                                            </children>
                                                             <padding>
                                                                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                                             </padding>
                                                         </VBox>
                                                     </content>
                                                 </TitledPane>
-                                                <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%VideosAudios" VBox.vgrow="ALWAYS">
-                                       <content>
-                                          <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                             <children>
-                                                <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
-                                                   <children>
-                                                      <Button fx:id="dataButton" mnemonicParsing="false" onAction="#dataAction">
-                                                         <graphic>
-                                                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                               <image>
-                                                                  <Image url="@../buttons/iconDataImport.png" />
-                                                               </image>
-                                                            </ImageView>
-                                                         </graphic>
-                                                      </Button>
-                                                      <Button fx:id="catButton" mnemonicParsing="false" onAction="#catAction">
-                                                         <graphic>
-                                                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                               <image>
-                                                                  <Image url="@../buttons/iconCat.png" />
-                                                               </image>
-                                                            </ImageView>
-                                                         </graphic>
-                                                      </Button>
-                                                      <ImageView fx:id="supportTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../buttons/iconTips.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                   </children>
-                                                </HBox>
-                                                <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true">
-                                                   <columns>
-                                                      <TableColumn fx:id="tableIndexColumn" editable="false" maxWidth="1.7976931348623157E308" prefWidth="60.0" text="%Item" />
-                                                      <TableColumn fx:id="durationColumn" prefWidth="120.0" text="%DurationMillisecondsWrap" />
-                                                      <TableColumn fx:id="imageColumn" editable="false" prefWidth="120.0" text="%SourceImage" />
-                                                      <TableColumn fx:id="pixelsColumn" editable="false" prefWidth="120.0" text="%Pixels" />
-                                                   </columns>
-                                                </TableView>
-                                             </children>
-                                          </VBox>
-                                       </content>
+                                                <TitledPane  maxWidth="1.7976931348623157E308" text="%VideosAudios" VBox.vgrow="ALWAYS">
+                                                    <content>
+                                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                            <children>
+                                                                <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                                                                    <children>
+                                                                        <Button fx:id="dataButton" mnemonicParsing="false" onAction="#dataAction">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/iconDataImport.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </Button>
+                                                                        <Button fx:id="catButton" mnemonicParsing="false" onAction="#catAction">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/iconCat.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </Button>
+                                                                        <ImageView fx:id="supportTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/iconTips.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </children>
+                                                                </HBox>
+                                                                <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true">
+                                                                    <columns>
+                                                                        <TableColumn fx:id="tableIndexColumn" editable="false" maxWidth="1.7976931348623157E308" prefWidth="60.0" text="%Item" />
+                                                                        <TableColumn fx:id="durationColumn" prefWidth="120.0" text="%DurationMillisecondsWrap" />
+                                                                        <TableColumn fx:id="imageColumn" editable="false" prefWidth="120.0" text="%SourceImage" />
+                                                                        <TableColumn fx:id="pixelsColumn" editable="false" prefWidth="120.0" text="%Pixels" />
+                                                                    </columns>
+                                                                </TableView>
+                                                            </children>
+                                                        </VBox>
+                                                    </content>
                                                 </TitledPane>
                                             </children>
                                         </VBox>

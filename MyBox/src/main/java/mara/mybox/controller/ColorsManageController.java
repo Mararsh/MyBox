@@ -1,20 +1,31 @@
 package mara.mybox.controller;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import mara.mybox.data.ColorData;
 import mara.mybox.data.StringTable;
+import static mara.mybox.db.DerbyBase.dbHome;
+import static mara.mybox.db.DerbyBase.login;
+import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.TableColorData;
 import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
@@ -44,7 +55,7 @@ public class ColorsManageController extends TableManageController<ColorData> {
     @FXML
     protected TableColumn<ColorData, Boolean> inPaletteColumn;
     @FXML
-    protected Button htmlButton, inButton, outButton;
+    protected Button htmlButton, inButton, outButton, commonColorsButton;
     @FXML
     protected ColorPicker colorPicker;
     @FXML
@@ -129,12 +140,12 @@ public class ColorsManageController extends TableManageController<ColorData> {
 
             allColumnsCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) -> {
                 checkColumns();
-                load();
+                loadTableData();
             });
 
             mergeCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) -> {
                 checkColumns();
-                load();
+                loadTableData();
             });
 
             checkColumns();
@@ -177,6 +188,9 @@ public class ColorsManageController extends TableManageController<ColorData> {
         super.afterSceneLoaded();
         FxmlControl.setTooltip(inButton, message("PutInColorPalette"));
         FxmlControl.setTooltip(outButton, message("RemoveFromColorPalette"));
+        FxmlControl.removeTooltip(commonColorsButton);
+
+        loadTableData();
     }
 
     public void scrollTo(Color color) {
@@ -196,8 +210,8 @@ public class ColorsManageController extends TableManageController<ColorData> {
     }
 
     @Override
-    public List<ColorData> readData(int offset, int number) {
-        return TableColorData.read(offset, number);
+    public List<ColorData> readPageData() {
+        return TableColorData.read(currentPageStart, currentPageSize);
     }
 
     @Override
@@ -212,7 +226,50 @@ public class ColorsManageController extends TableManageController<ColorData> {
     }
 
     @FXML
-    protected void commonColorsAction() {
+    protected void popCommonColorsMenu(MouseEvent mouseEvent) {
+        try {
+            if (popMenu != null && popMenu.isShowing()) {
+                popMenu.hide();
+            }
+            popMenu = new ContextMenu();
+            popMenu.setAutoHide(true);
+
+            MenuItem menu = new MenuItem(message("ImportWebCommonColors"));
+            menu.setOnAction((ActionEvent event) -> {
+                commonColors("web");
+            });
+            popMenu.getItems().add(menu);
+            popMenu.getItems().add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("ImportChineseTraditionalColors"));
+            menu.setOnAction((ActionEvent event) -> {
+                commonColors("chinese");
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ImportJapaneseTraditionalColors"));
+            menu.setOnAction((ActionEvent event) -> {
+                commonColors("japanese");
+            });
+            popMenu.getItems().add(menu);
+            popMenu.getItems().add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("MenuClose"));
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setOnAction((ActionEvent event) -> {
+                popMenu.hide();
+                popMenu = null;
+            });
+            popMenu.getItems().add(menu);
+
+            FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    protected void commonColors(String type) {
         synchronized (this) {
             if (task != null) {
                 return;
@@ -220,14 +277,45 @@ public class ColorsManageController extends TableManageController<ColorData> {
             task = new SingletonTask<Void>() {
                 @Override
                 protected boolean handle() {
-                    List<Color> commonColors = FxmlColor.commonColors();
-                    TableColorData.writeColors(commonColors, false);
+                    try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+                        conn.setAutoCommit(false);
+                        switch (type) {
+                            case "chinese":
+                                for (Color color
+                                        : FxmlColor.chineseColorValues()) {
+                                    String rgba = color.toString();
+                                    String name = FxmlColor.chineseColorNames().get(color);
+                                    TableColorData.write(conn, rgba, name, true);
+                                }
+                                break;
+                            case "japanese":
+                                for (Color color
+                                        : FxmlColor.japaneseColorValues()) {
+                                    String rgba = color.toString();
+                                    String name = FxmlColor.japaneseColorNames().get(color);
+                                    TableColorData.write(conn, rgba, name, true);
+                                }
+                                break;
+                            default:
+                                for (Color color : FxmlColor.webColorValues()) {
+                                    String rgba = color.toString();
+                                    String name = FxmlColor.webColorNames().get(color);
+                                    TableColorData.write(conn, rgba, name, true);
+                                }
+                                break;
+                        }
+                        conn.commit();
+                    } catch (Exception e) {
+                        error = e.toString();
+                        logger.debug(e.toString());
+                        return false;
+                    }
                     return true;
                 }
 
                 @Override
                 protected void whenSucceeded() {
-                    load();
+                    loadTableData();
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
@@ -256,7 +344,7 @@ public class ColorsManageController extends TableManageController<ColorData> {
 
                 @Override
                 protected void whenSucceeded() {
-                    load();
+                    loadTableData();
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
@@ -285,7 +373,7 @@ public class ColorsManageController extends TableManageController<ColorData> {
 
                 @Override
                 protected void whenSucceeded() {
-                    load();
+                    loadTableData();
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
@@ -312,7 +400,7 @@ public class ColorsManageController extends TableManageController<ColorData> {
     @FXML
     @Override
     public void refreshAction() {
-        load();
+        loadTableData();
     }
 
     @FXML

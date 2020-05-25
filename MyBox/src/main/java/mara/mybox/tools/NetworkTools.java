@@ -243,12 +243,9 @@ public class NetworkTools {
     }
 
     public static HostnameVerifier trustAllVerifier() {
-        HostnameVerifier allHostsValid = new HostnameVerifier() {
-            @Override
-            public boolean verify(String hostname, SSLSession session) {
-                logger.debug(hostname + "  " + session.getPeerHost() + "  " + session.getProtocol() + "  " + session.getCipherSuite());
-                return true;
-            }
+        HostnameVerifier allHostsValid = (String hostname, SSLSession session) -> {
+//            logger.debug(hostname + "  " + session.getPeerHost() + "  " + session.getProtocol() + "  " + session.getCipherSuite());
+            return true;
         };
         return allHostsValid;
     }
@@ -655,6 +652,31 @@ public class NetworkTools {
                 }
             }
             return validname;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
+    public static File httpsPage(String address) {
+        try {
+            URL url = new URL(address);
+            File pageFile = FileTools.getTempFile(".htm");
+            HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+            SSLContext sc = SSLContext.getInstance("SSL");
+            sc.init(null, trustAllManager(), new SecureRandom());
+            connection.setSSLSocketFactory(sc.getSocketFactory());
+            connection.setHostnameVerifier(trustAllVerifier());
+            connection.connect();
+            try ( BufferedInputStream inStream = new BufferedInputStream(connection.getInputStream());
+                     BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(pageFile))) {
+                byte[] buf = new byte[CommonValues.IOBufferLength];
+                int len;
+                while ((len = inStream.read(buf)) != -1) {
+                    outputStream.write(buf, 0, len);
+                }
+            }
+            return pageFile;
         } catch (Exception e) {
             logger.error(e.toString());
             return null;

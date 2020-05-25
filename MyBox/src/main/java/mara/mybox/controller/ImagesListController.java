@@ -284,7 +284,11 @@ public abstract class ImagesListController extends ImageViewerController {
         } catch (Exception e) {
             logger.error(e.toString());
         }
+    }
 
+    public void loadFiles(List<File> files) {
+        tableController.tableData.clear();
+        tableController.addFiles(0, files);
     }
 
     @Override

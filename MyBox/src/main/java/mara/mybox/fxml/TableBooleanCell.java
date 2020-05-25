@@ -18,7 +18,7 @@ public class TableBooleanCell<T, Boolean> extends TableCell<T, Boolean>
 
     @Override
     public TableCell<T, Boolean> call(TableColumn<T, Boolean> param) {
-        final ImageView imageview = new ImageView(ControlStyle.getIcon("iconOK2.png"));
+        final ImageView imageview = new ImageView(ControlStyle.getIcon("iconYes.png"));
         imageview.setPreserveRatio(true);
         imageview.setFitWidth(AppVariables.iconSize);
         imageview.setFitHeight(AppVariables.iconSize);

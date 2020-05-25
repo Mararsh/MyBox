@@ -164,7 +164,7 @@ public class ImagesTableController extends BatchTableController<ImageInformation
                 d += m.getDuration();
             }
         }
-        String s = message("TotalPixels") + ": " + StringTools.formatData(pixels) + "  ";
+        String s = message("TotalPixels") + ": " + StringTools.format(pixels) + "  ";
         s += MessageFormat.format(message("TotalFilesNumberSize"),
                 totalFilesNumber, FileTools.showFileSize(totalFilesSize));
         if (viewFileButton != null) {

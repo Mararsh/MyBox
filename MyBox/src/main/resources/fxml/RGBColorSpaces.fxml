@@ -36,7 +36,7 @@ License:    Apache License Version 2.0
                                     <children>
                                         <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="20.0" spacing="5.0" VBox.vgrow="NEVER">
                                             <children>
-                                    <Hyperlink onAction="#aboutColor" text="%AboutColor" />
+                                                <Hyperlink onAction="#aboutColor" text="%AboutColor" />
                                                 <Label maxWidth="1.7976931348623157E308" text=" " HBox.hgrow="ALWAYS" />
                                                 <HBox alignment="CENTER_LEFT" spacing="5.0">
                                                     <children>
@@ -63,37 +63,37 @@ License:    Apache License Version 2.0
                                                 <Button fx:id="calculateButton" mnemonicParsing="false" onAction="#calculateAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Calculate" />
                                             </children>
                                         </HBox>
-                              <SplitPane dividerPositions="0.6" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-                                 <items>
-                                    <ScrollPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefViewportHeight="674.0" prefViewportWidth="1313.0">
-                                       <content>
-                                          <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                                             <children>
-                                                          <TitledPane text="%LinearRGB" VBox.vgrow="NEVER">
-                                                              <content>
-                                                                  <fx:include fx:id="rgb" source="RGBColorSpace.fxml" />
-                                                              </content>
-                                                          </TitledPane>
-                                                          <TitledPane text="%ReferenceWhite" VBox.vgrow="NEVER">
-                                                              <content>
-                                                                  <fx:include fx:id="white" source="WhitePoint.fxml" />
-                                                              </content>
-                                                          </TitledPane>
-                                             </children>
-                                          </VBox>
-                                       </content>
-                                    </ScrollPane>
-                                              <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Result">
-                                                  <content>
-                                                      <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                                                          <children>
-                                                              <TextArea fx:id="calculateArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
-                                                          </children>
-                                                      </VBox>
-                                                  </content>
-                                              </TitledPane>
-                                 </items>
-                              </SplitPane>
+                                        <SplitPane dividerPositions="0.6" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                            <items>
+                                                <ScrollPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefViewportHeight="674.0" prefViewportWidth="1313.0">
+                                                    <content>
+                                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                                            <children>
+                                                                <TitledPane text="%LinearRGB" VBox.vgrow="NEVER">
+                                                                    <content>
+                                                                        <fx:include fx:id="rgb" source="RGBColorSpace.fxml" />
+                                                                    </content>
+                                                                </TitledPane>
+                                                                <TitledPane text="%ReferenceWhite" VBox.vgrow="NEVER">
+                                                                    <content>
+                                                                        <fx:include fx:id="white" source="WhitePoint.fxml" />
+                                                                    </content>
+                                                                </TitledPane>
+                                                            </children>
+                                                        </VBox>
+                                                    </content>
+                                                </ScrollPane>
+                                                <TitledPane maxWidth="1.7976931348623157E308" text="%Result">
+                                                    <content>
+                                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                                            <children>
+                                                                <TextArea fx:id="calculateArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
+                                                            </children>
+                                                        </VBox>
+                                                    </content>
+                                                </TitledPane>
+                                            </items>
+                                        </SplitPane>
                                     </children>
                                     <padding>
                                         <Insets top="10.0" />
@@ -103,54 +103,54 @@ License:    Apache License Version 2.0
                         </Tab>
                         <Tab closable="false" text="%RGBPrimaries">
                             <content>
-                        <TabPane>
-                           <tabs>
-                              <Tab closable="false" text="%Table">
-                                 <content>
-                                            <TableView fx:id="primariesTableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
-                                                <columns>
-                                                    <TableColumn fx:id="csColumn" prefWidth="160.0" text="%ColorSpace" />
-                                                    <TableColumn fx:id="whiteColumn" prefWidth="140.0" text="%ReferenceWhite" />
-                                                    <TableColumn fx:id="algorithmColumn" prefWidth="180.0" text="%AdaptationAlgorithm" />
-                                                    <TableColumn fx:id="colorColumn" prefWidth="120.0" text="%PrimaryColor" />
-                                                    <TableColumn fx:id="nxcsColumn" minWidth="1.0" prefWidth="137.0" text="%NormalizedX" />
-                                                    <TableColumn fx:id="nycsColumn" minWidth="1.0" prefWidth="123.0" text="%NormalizedY" />
-                                                    <TableColumn fx:id="nzcsColumn" minWidth="1.0" prefWidth="128.0" text="%NormalizedZ" />
-                                                    <TableColumn fx:id="rxcsColumn" minWidth="1.0" prefWidth="135.0" text="%RelativeX" />
-                                                    <TableColumn fx:id="rycsColumn" minWidth="1.0" prefWidth="132.0" text="%RelativeY" />
-                                                    <TableColumn fx:id="rzcsColumn" minWidth="1.0" prefWidth="119.0" text="%RelativeZ" />
-                                                    <TableColumn fx:id="txcsColumn" minWidth="1.0" prefWidth="171.0" text="%TristimulusX" />
-                                                    <TableColumn fx:id="tycsColumn" minWidth="1.0" prefWidth="133.0" text="%TristimulusY" />
-                                                    <TableColumn fx:id="tzcsColumn" minWidth="1.0" prefWidth="133.0" text="%TristimulusZ" />
-                                                </columns>
-                                            </TableView>
-                                 </content>
-                              </Tab>
-                                    <Tab closable="false" text="%Texts">
-                                        <content>
-                                            <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                                                <children>
-                                                    <ToolBar VBox.vgrow="NEVER">
-                                                        <items>
-                                                            <Label maxWidth="1.7976931348623157E308" wrapText="true" HBox.hgrow="ALWAYS" />
-                                                            <Button fx:id="exportButton" mnemonicParsing="false" onAction="#exportAction" onMouseEntered="#popExportPath">
-                                                                <graphic>
-                                                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                        <image>
-                                                                            <Image url="@../buttons/iconExport.png" />
-                                                                        </image>
-                                                                    </ImageView>
-                                                                </graphic>
-                                                            </Button>
-                                                        </items>
-                                                    </ToolBar>
-                                                    <TextArea fx:id="primariesArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="displayArea" stylesheets="@../styles/MyBox.css" VBox.vgrow="ALWAYS" />
-                                                </children>
-                                            </VBox>
-                                        </content>
-                                    </Tab>
-                           </tabs>
-                        </TabPane>
+                                <TabPane>
+                                    <tabs>
+                                        <Tab closable="false" text="%Table">
+                                            <content>
+                                                <TableView fx:id="primariesTableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+                                                    <columns>
+                                                        <TableColumn fx:id="csColumn" prefWidth="160.0" text="%ColorSpace" />
+                                                        <TableColumn fx:id="whiteColumn" prefWidth="140.0" text="%ReferenceWhite" />
+                                                        <TableColumn fx:id="algorithmColumn" prefWidth="180.0" text="%AdaptationAlgorithm" />
+                                                        <TableColumn fx:id="colorColumn" prefWidth="120.0" text="%PrimaryColor" />
+                                                        <TableColumn fx:id="nxcsColumn" minWidth="1.0" prefWidth="137.0" text="%NormalizedX" />
+                                                        <TableColumn fx:id="nycsColumn" minWidth="1.0" prefWidth="123.0" text="%NormalizedY" />
+                                                        <TableColumn fx:id="nzcsColumn" minWidth="1.0" prefWidth="128.0" text="%NormalizedZ" />
+                                                        <TableColumn fx:id="rxcsColumn" minWidth="1.0" prefWidth="135.0" text="%RelativeX" />
+                                                        <TableColumn fx:id="rycsColumn" minWidth="1.0" prefWidth="132.0" text="%RelativeY" />
+                                                        <TableColumn fx:id="rzcsColumn" minWidth="1.0" prefWidth="119.0" text="%RelativeZ" />
+                                                        <TableColumn fx:id="txcsColumn" minWidth="1.0" prefWidth="171.0" text="%TristimulusX" />
+                                                        <TableColumn fx:id="tycsColumn" minWidth="1.0" prefWidth="133.0" text="%TristimulusY" />
+                                                        <TableColumn fx:id="tzcsColumn" minWidth="1.0" prefWidth="133.0" text="%TristimulusZ" />
+                                                    </columns>
+                                                </TableView>
+                                            </content>
+                                        </Tab>
+                                        <Tab closable="false" text="%Texts">
+                                            <content>
+                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                                    <children>
+                                                        <ToolBar VBox.vgrow="NEVER">
+                                                            <items>
+                                                                <Label maxWidth="1.7976931348623157E308" wrapText="true" HBox.hgrow="ALWAYS" />
+                                                                <Button fx:id="exportButton" mnemonicParsing="false" onAction="#exportAction" onMouseEntered="#popExportPath">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/iconExport.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
+                                                            </items>
+                                                        </ToolBar>
+                                                        <TextArea fx:id="primariesArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="displayArea" stylesheets="@../styles/MyBox.css" VBox.vgrow="ALWAYS" />
+                                                    </children>
+                                                </VBox>
+                                            </content>
+                                        </Tab>
+                                    </tabs>
+                                </TabPane>
                             </content>
                         </Tab>
                     </tabs>

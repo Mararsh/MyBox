@@ -6,7 +6,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
@@ -18,6 +17,7 @@ import mara.mybox.db.TableLocation;
 import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.DateTools;
+import mara.mybox.tools.LocationTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
@@ -28,7 +28,7 @@ import static mara.mybox.value.AppVariables.message;
  * @CreateDate 2020-1-24
  * @License Apache License Version 2.0
  */
-public class LocationsDataInMapController extends LocationMapBaseController {
+public class LocationsDataInMapController extends LocationsMapController {
 
     protected LocationEditController editor;
     protected String dataSet;
@@ -46,8 +46,6 @@ public class LocationsDataInMapController extends LocationMapBaseController {
     protected CheckBox orderDescCheck, linkCheck;
     @FXML
     protected Button displayButton;
-    @FXML
-    protected Label titleLabel;
 
     public LocationsDataInMapController() {
         baseTitle = AppVariables.message("LocationsDataInMap");
@@ -268,14 +266,11 @@ public class LocationsDataInMapController extends LocationMapBaseController {
                     String image;
                     for (Location location : locations) {
                         image = markerImage(location);
-                        if (image != null) {
-                            image = StringTools.replaceAll(markerImage(location), "\\", "/");
-                        }
-                        mapZoom = fitViewCheck.isSelected() ? 0 : 11;
-                        webEngine.executeScript("addMarker(" + +location.getLongitude() + "," + location.getLatitude()
-                                + ", " + markerSize + ", '" + markerLabel(location) + "', '" + markerInfo(location)
-                                + "', '" + image + "', " + mapZoom + ", true);");
-
+                        mapSize = fitViewCheck.isSelected() ? 0 : 11;
+                        LocationTools.addMarkerInGaoDeMap(webEngine,
+                                location.getLongitude(), location.getLatitude(),
+                                markerLabel(location), markerInfo(location),
+                                image, true, mapSize, markerSize, 14);
                     }
                 }
 
@@ -324,10 +319,10 @@ public class LocationsDataInMapController extends LocationMapBaseController {
                         if (image != null) {
                             image = StringTools.replaceAll(markerImage(location), "\\", "/");
                         }
-                        webEngine.executeScript("addMarker(" + +location.getLongitude() + "," + location.getLatitude()
-                                + ", " + markerSize + ", '" + markerLabel(location) + "', '" + markerInfo(location)
-                                + "', '" + image + "', " + fitViewCheck.isSelected() + ", true);");
-
+                        LocationTools.addMarkerInGaoDeMap(webEngine,
+                                location.getLongitude(), location.getLatitude(),
+                                markerLabel(location), markerInfo(location),
+                                image, true, mapSize, markerSize, 14);
                     }
                 }
 
@@ -342,9 +337,8 @@ public class LocationsDataInMapController extends LocationMapBaseController {
 
     @Override
     protected void mapLoaded() {
-        mapLoaded = true;
+        super.mapLoaded();
         rightPane.setDisable(false);
-        checkLanguage();
         if (dataSet != null) {
             displayAction();
         }

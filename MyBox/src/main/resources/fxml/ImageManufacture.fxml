@@ -36,7 +36,7 @@ License:    Apache License Version 2.0
                                     <content>
                                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                             <children>
-                                                <TitledPane fx:id="filePane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%File" textOverrun="CLIP">
+                                                <TitledPane fx:id="filePane"  maxWidth="1.7976931348623157E308" text="%File" textOverrun="CLIP">
                                                     <content>
                                                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="5.0">
                                                             <children>
@@ -89,53 +89,53 @@ License:    Apache License Version 2.0
                                                         </VBox>
                                                     </content>
                                                 </TitledPane>
-                                    <TitledPane fx:id="newPane" layoutX="10.0" layoutY="266.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Create">
-                                       <content>
-                                          <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="5.0">
-                                             <children>
-                                                <FlowPane hgap="5.0" vgap="5.0">
-                                                   <children>
-                                                      <Label text="%Width" />
-                                                      <TextField fx:id="newWidthInput" prefWidth="100.0" />
-                                                      <Label text="px" />
-                                                   </children>
-                                                </FlowPane>
-                                                <FlowPane hgap="5.0" layoutX="32.0" layoutY="32.0" vgap="5.0">
-                                                   <children>
-                                                      <Label text="%Height" />
-                                                      <TextField fx:id="newHeightInput" prefWidth="100.0" />
-                                                      <Label text="px" />
-                                                   </children>
-                                                </FlowPane>
-                                                <FlowPane hgap="5.0" layoutX="32.0" layoutY="90.0" vgap="5.0">
-                                                   <children>
-                                                      <Label text="%Background" />
-                                                      <Rectangle fx:id="bgRect" fill="#ffffff00" height="15.0" stroke="BLACK" strokeMiterLimit="0.0" strokeType="INSIDE" width="15.0" />
-                                                      <Button fx:id="paletteButton" mnemonicParsing="false" onAction="#showPalette">
-                                                         <graphic>
-                                                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                               <image>
-                                                                  <Image url="@../buttons/iconPalette.png" />
-                                                               </image>
-                                                            </ImageView>
-                                                         </graphic>
-                                                      </Button>
-                                                   </children>
-                                                </FlowPane>
-                                                                  <Button fx:id="createButton" mnemonicParsing="false" onAction="#createAction">
-                                                                      <graphic>
-                                                                          <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                              <image>
-                                                                                  <Image url="@../buttons/iconEdit.png" />
-                                                                              </image>
-                                                                          </ImageView>
-                                                                      </graphic>
-                                                                  </Button>
-                                             </children>
-                                          </VBox>
-                                       </content>
-                                    </TitledPane>
-                                                <TitledPane fx:id="saveAsPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%SaveAs">
+                                                <TitledPane fx:id="newPane" layoutX="10.0" layoutY="266.0"  maxWidth="1.7976931348623157E308" text="%Create">
+                                                    <content>
+                                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="5.0">
+                                                            <children>
+                                                                <FlowPane hgap="5.0" vgap="5.0">
+                                                                    <children>
+                                                                        <Label text="%Width" />
+                                                                        <TextField fx:id="newWidthInput" prefWidth="100.0" />
+                                                                        <Label text="px" />
+                                                                    </children>
+                                                                </FlowPane>
+                                                                <FlowPane hgap="5.0" layoutX="32.0" layoutY="32.0" vgap="5.0">
+                                                                    <children>
+                                                                        <Label text="%Height" />
+                                                                        <TextField fx:id="newHeightInput" prefWidth="100.0" />
+                                                                        <Label text="px" />
+                                                                    </children>
+                                                                </FlowPane>
+                                                                <FlowPane hgap="5.0" layoutX="32.0" layoutY="90.0" vgap="5.0">
+                                                                    <children>
+                                                                        <Label text="%Background" />
+                                                                        <Rectangle fx:id="bgRect" fill="#ffffff00" height="15.0" stroke="BLACK" strokeMiterLimit="0.0" strokeType="INSIDE" width="15.0" />
+                                                                        <Button fx:id="paletteButton" mnemonicParsing="false" onAction="#showPalette">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/iconPalette.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </Button>
+                                                                    </children>
+                                                                </FlowPane>
+                                                                <Button fx:id="createButton" mnemonicParsing="false" onAction="#createAction">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/iconEdit.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
+                                                            </children>
+                                                        </VBox>
+                                                    </content>
+                                                </TitledPane>
+                                                <TitledPane fx:id="saveAsPane"  maxWidth="1.7976931348623157E308" text="%SaveAs">
                                                     <content>
                                                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="5.0">
                                                             <children>
@@ -167,7 +167,7 @@ License:    Apache License Version 2.0
                                                                             <children>
                                                                                 <RadioButton fx:id="pcxRadio" mnemonicParsing="false" text="pcx" toggleGroup="$fileTypeGroup" />
                                                                                 <RadioButton mnemonicParsing="false" text="wbmp" toggleGroup="$fileTypeGroup" />
-<RadioButton mnemonicParsing="false" text="ico" toggleGroup="$fileTypeGroup" />
+                                                                                <RadioButton mnemonicParsing="false" text="ico" toggleGroup="$fileTypeGroup" />
                                                                             </children>
                                                                         </FlowPane>
                                                                     </children>
@@ -199,7 +199,7 @@ License:    Apache License Version 2.0
                                                         </VBox>
                                                     </content>
                                                 </TitledPane>
-                                                <TitledPane fx:id="browsePane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Browse">
+                                                <TitledPane fx:id="browsePane" expanded="false"  maxWidth="1.7976931348623157E308" text="%Browse">
                                                     <content>
                                                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                             <children>
@@ -259,7 +259,7 @@ License:    Apache License Version 2.0
                                                         </VBox>
                                                     </content>
                                                 </TitledPane>
-                                                <TitledPane fx:id="tipsPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Tips">
+                                                <TitledPane fx:id="tipsPane"  maxWidth="1.7976931348623157E308" text="%Tips">
                                                     <content>
                                                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                                             <children>

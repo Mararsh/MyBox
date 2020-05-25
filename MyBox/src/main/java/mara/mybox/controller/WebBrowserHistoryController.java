@@ -7,8 +7,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 import mara.mybox.data.BrowserHistory;
 import mara.mybox.db.TableBrowserHistory;
-import mara.mybox.fxml.TableImageFileCell;
 import mara.mybox.fxml.TableDateCell;
+import mara.mybox.fxml.TableImageFileCell;
 import static mara.mybox.value.AppVariables.logger;
 
 /**
@@ -18,7 +18,7 @@ import static mara.mybox.value.AppVariables.logger;
  */
 public class WebBrowserHistoryController extends TableManageController<BrowserHistory> {
 
-    protected WebBrowserController parent;
+    protected WebBrowserController browserConroller;
 
     @FXML
     protected TableColumn<BrowserHistory, String> iconColumn, titleColumn, addressColumn;
@@ -47,7 +47,13 @@ public class WebBrowserHistoryController extends TableManageController<BrowserHi
     }
 
     @Override
-    public void load() {
+    public void afterSceneLoaded() {
+        super.afterSceneLoaded();
+        loadTableData();
+    }
+
+    @Override
+    public void loadTableData() {
         tableData.clear();
         tableData.addAll(TableBrowserHistory.read());
     }
@@ -89,7 +95,7 @@ public class WebBrowserHistoryController extends TableManageController<BrowserHi
         if (parent == null || selected == null) {
             return;
         }
-        parent.newTabAction(selected.getAddress(), true);
+        browserConroller.newTabAction(selected.getAddress(), true);
     }
 
 }

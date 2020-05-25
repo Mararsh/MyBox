@@ -38,7 +38,7 @@ public abstract class FileEditInformation extends FileInformation {
     protected long currentFound, currentLine;
     protected Line_Break lineBreak;
     protected StringFilterType filterType;
-    protected int lineBreakWidth, currentPosition;
+    protected int lineBreakWidth, currentPosition, currentSelectionLength;
     protected String lineBreakValue;
 
     public enum Edit_Type {

@@ -43,6 +43,12 @@ public class ColorData {
         setRgba(rgba);
     }
 
+    public ColorData(String rgba, String name) {
+        inPalette = new SimpleBooleanProperty(false);
+        colorName = name;
+        setRgba(rgba);
+    }
+
     public void bindInPalette() {
         if (inPalette == null) {
             inPalette = new SimpleBooleanProperty(false);
@@ -70,7 +76,9 @@ public class ColorData {
         }
         rgb = FxmlColor.rgb2Hex(color);
         colorValue = ImageColor.getRGB(color);
-        colorName = FxmlColor.colorsName().get(color);
+        if (colorName == null || colorName.isBlank()) {
+            colorName = FxmlColor.colorName(color);
+        }
         if (colorName == null) {
             colorName = "";
         }

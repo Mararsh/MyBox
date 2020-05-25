@@ -36,7 +36,7 @@ License:    Apache License Version 2.0
                                         <Label maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%PickCoordinateComments" wrapText="true" HBox.hgrow="ALWAYS" />
                                         <ImageView fx:id="rightPaneControl" fitHeight="20.0" fitWidth="20.0" onMouseClicked="#controlRightPane" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                                <Image url="@../buttons/iconDoubleRight.png" />
+                                                <Image url="@../buttons/iconDoubleLeft.png" />
                                             </image>
                                         </ImageView>
                                     </children>
@@ -48,7 +48,7 @@ License:    Apache License Version 2.0
                             <content>
                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                     <children>
-                                        <TitledPane layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Locate" VBox.vgrow="ALWAYS">
+                                        <TitledPane layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" text="%Locate" VBox.vgrow="ALWAYS">
                                             <content>
                                                 <VBox maxWidth="1.7976931348623157E308" spacing="5.0">
                                                     <children>
@@ -89,6 +89,7 @@ License:    Apache License Version 2.0
                                                             </children>
                                                         </FlowPane>
                                                         <TextArea fx:id="dataArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="200.0" wrapText="true" VBox.vgrow="ALWAYS" />
+                                                <Label maxHeight="-Infinity" minHeight="-Infinity" styleClass="darkRed-label" stylesheets="@../styles/MyBox.css" text="%LocationMapNotice" wrapText="true" VBox.vgrow="NEVER" />
                                                     </children>
                                                 </VBox>
                                             </content>
@@ -97,68 +98,68 @@ License:    Apache License Version 2.0
                                             <content>
                                                 <VBox fx:id="mapOptionsBox" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                     <children>
-                                          <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-                                             <children>
-                                                <Label text="%Marker">
-                                                   <VBox.margin>
-                                                      <Insets top="5.0" />
-                                                   </VBox.margin>
-                                                </Label>
-                                                <FlowPane hgap="5.0" vgap="5.0">
-                                                   <children>
-                                                      <RadioButton fx:id="markerPointRadio" mnemonicParsing="false" selected="true" text="%Point">
-                                                         <toggleGroup>
-                                                            <ToggleGroup fx:id="markerGroup" />
-                                                         </toggleGroup>
-                                                      </RadioButton>
-                                                      <RadioButton fx:id="markerCircleRadio" mnemonicParsing="false" text="%Circle" toggleGroup="$markerGroup" />
-                                                   </children>
-                                                </FlowPane>
-                                                <FlowPane hgap="5.0" vgap="5.0">
-                                                   <children>
-                                                      <RadioButton fx:id="markerImageRadio" mnemonicParsing="false" text="%Image" toggleGroup="$markerGroup" />
-                                                      <TextField fx:id="sourceFileInput" prefWidth="160.0" />
-                                                      <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile">
-                                                         <graphic>
-                                                            <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                               <image>
-                                                                  <Image url="@../buttons/iconOpen.png" />
-                                                               </image>
-                                                            </ImageView>
-                                                         </graphic>
-                                                      </Button>
-                                                   </children>
-                                                </FlowPane>
-                                                <FlowPane hgap="5.0" layoutX="10.0" layoutY="96.0" vgap="5.0">
-                                                   <children>
-                                                      <Label text="%MarkerSize" />
-                                                      <ComboBox fx:id="markerSizeSelector" editable="true" prefWidth="80.0" />
-                                                      <Label text="px" />
-                                                   </children>
-                                                </FlowPane>
-                                             </children>
-                                          </VBox>
-                                          <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-                                             <children>
-                                                <Label text="%Text">
-                                                   <VBox.margin>
-                                                      <Insets top="5.0" />
-                                                   </VBox.margin>
-                                                </Label>
-                                                <FlowPane hgap="5.0" vgap="5.0">
-                                                   <children>
-                                                      <RadioButton fx:id="textNoneRadio" mnemonicParsing="false" selected="true" text="%None">
-                                                         <toggleGroup>
-                                                            <ToggleGroup fx:id="textGroup" />
-                                                         </toggleGroup>
-                                                      </RadioButton>
-                                                      <RadioButton fx:id="textCoordinateRadio" mnemonicParsing="false" text="%Coordinate" toggleGroup="$textGroup" />
-                                                      <RadioButton fx:id="textAddressRadio" mnemonicParsing="false" text="%Address" toggleGroup="$textGroup" />
-                                                   </children>
-                                                </FlowPane>
-                                             </children>
-                                          </VBox>
-                                                          <Label maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%PutMouseMarkerPopData" wrapText="true" />
+                                                        <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                                            <children>
+                                                                <Label text="%Marker">
+                                                                    <VBox.margin>
+                                                                        <Insets top="5.0" />
+                                                                    </VBox.margin>
+                                                                </Label>
+                                                                <FlowPane hgap="5.0" vgap="5.0">
+                                                                    <children>
+                                                                        <RadioButton fx:id="markerPointRadio" mnemonicParsing="false" selected="true" text="%Point">
+                                                                            <toggleGroup>
+                                                                                <ToggleGroup fx:id="markerGroup" />
+                                                                            </toggleGroup>
+                                                                        </RadioButton>
+                                                                        <RadioButton fx:id="markerCircleRadio" mnemonicParsing="false" text="%Circle" toggleGroup="$markerGroup" />
+                                                                    </children>
+                                                                </FlowPane>
+                                                                <FlowPane hgap="5.0" vgap="5.0">
+                                                                    <children>
+                                                                        <RadioButton fx:id="markerImageRadio" mnemonicParsing="false" text="%Image" toggleGroup="$markerGroup" />
+                                                                        <TextField fx:id="sourceFileInput" prefWidth="160.0" />
+                                                                        <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/iconOpen.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </Button>
+                                                                    </children>
+                                                                </FlowPane>
+                                                                <FlowPane hgap="5.0" layoutX="10.0" layoutY="96.0" vgap="5.0">
+                                                                    <children>
+                                                                        <Label text="%MarkerSize" />
+                                                                        <ComboBox fx:id="markerSizeSelector" editable="true" prefWidth="80.0" />
+                                                                        <Label text="px" />
+                                                                    </children>
+                                                                </FlowPane>
+                                                            </children>
+                                                        </VBox>
+                                                        <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                                            <children>
+                                                                <Label text="%Text">
+                                                                    <VBox.margin>
+                                                                        <Insets top="5.0" />
+                                                                    </VBox.margin>
+                                                                </Label>
+                                                                <FlowPane hgap="5.0" vgap="5.0">
+                                                                    <children>
+                                                                        <RadioButton fx:id="textNoneRadio" mnemonicParsing="false" selected="true" text="%None">
+                                                                            <toggleGroup>
+                                                                                <ToggleGroup fx:id="textGroup" />
+                                                                            </toggleGroup>
+                                                                        </RadioButton>
+                                                                        <RadioButton fx:id="textCoordinateRadio" mnemonicParsing="false" text="%Coordinate" toggleGroup="$textGroup" />
+                                                                        <RadioButton fx:id="textAddressRadio" mnemonicParsing="false" text="%Address" toggleGroup="$textGroup" />
+                                                                    </children>
+                                                                </FlowPane>
+                                                            </children>
+                                                        </VBox>
+                                                        <Label maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%PutMouseMarkerPopData" wrapText="true" />
                                                         <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                                             <children>
                                                                 <Label text="%MapLayers" />
@@ -235,47 +236,42 @@ License:    Apache License Version 2.0
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
     </padding>
     <bottom>
-      <VBox>
-         <children>
-              <HBox alignment="CENTER_LEFT">
-                  <children>
-                      <Label fx:id="bottomLabel" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER_LEFT" HBox.hgrow="ALWAYS" />
-                      <Label styleClass="darkRed-label" stylesheets="@../styles/MyBox.css" text="%LocationMapNotice" />
-                  </children>
-              </HBox>
-            <HBox fx:id="closeBox" alignment="CENTER_RIGHT" spacing="5.0">
-               <children>
-                  <Label fx:id="sizeLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                  <CheckBox fx:id="saveCloseCheck" mnemonicParsing="false">
-                     <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../buttons/iconFlower.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </CheckBox>
-                  <CheckBox fx:id="topCheck" mnemonicParsing="false" selected="true" VBox.vgrow="NEVER">
-                     <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../buttons/iconTop.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </CheckBox>
-                  <Button fx:id="closeButton" mnemonicParsing="false" onAction="#closeAction">
-                     <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../buttons/iconClose.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
-               </children>
-            </HBox>
-         </children>
-      </VBox>
+        <VBox>
+            <children>
+                <HBox fx:id="closeBox" alignment="CENTER_RIGHT" spacing="5.0">
+                    <children>
+                        <Label fx:id="bottomLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                        <Label fx:id="sizeLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                        <CheckBox fx:id="saveCloseCheck" mnemonicParsing="false">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconFlower.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </CheckBox>
+                        <CheckBox fx:id="topCheck" mnemonicParsing="false" selected="true" VBox.vgrow="NEVER">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconTop.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </CheckBox>
+                        <Button fx:id="closeButton" mnemonicParsing="false" onAction="#closeAction">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconClose.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
     </bottom>
 </BorderPane>

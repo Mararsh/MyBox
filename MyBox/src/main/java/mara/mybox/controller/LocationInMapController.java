@@ -17,7 +17,7 @@ import mara.mybox.data.Location;
 import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.DoubleTools;
-import mara.mybox.tools.StringTools;
+import mara.mybox.tools.LocationTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
@@ -27,9 +27,10 @@ import static mara.mybox.value.AppVariables.message;
  * @CreateDate 2020-1-20
  * @License Apache License Version 2.0
  */
-public class LocationInMapController extends LocationMapBaseController {
+public class LocationInMapController extends LocationsMapController {
 
-    protected LocationBaseController locationController;
+    protected GeographyCodeEditController geographyCodeEditController;
+    protected LocationEditBaseController locationController;
 
     @FXML
     protected TextField locateInput;
@@ -60,7 +61,7 @@ public class LocationInMapController extends LocationMapBaseController {
 
             fitViewCheck.selectedProperty().addListener(
                     (ObservableValue<? extends Boolean> ov, Boolean oldv, Boolean newv) -> {
-                        mapZoom = fitViewCheck.isSelected() ? 0 : 11;
+//                        mapSize = fitViewCheck.isSelected() ? 0 : 11;
                         AppVariables.setUserConfigValue("LocationInMapFitView", newv);
                     });
             fitViewCheck.setSelected(AppVariables.getUserConfigBoolean("LocationInMapFitView", true));
@@ -83,13 +84,19 @@ public class LocationInMapController extends LocationMapBaseController {
         if (coordinateRadio.isSelected()) {
             FxmlControl.setTooltip(locateInput, message("InputCoordinateComments"));
             locateInput.setText("120.629974, 31.324224");
+            locateInput.setDisable(false);
+            startButton.setDisable(false);
         } else if (addressRadio.isSelected()) {
             FxmlControl.setTooltip(locateInput, message("GeographyCodeComments"));
             locateInput.setText("泰山");
+            locateInput.setDisable(false);
+            startButton.setDisable(false);
         } else {
             FxmlControl.setTooltip(locateInput, message("InputCoordinateComments"));
             locateInput.setStyle(null);
             locateInput.setText("");
+            locateInput.setDisable(true);
+            startButton.setDisable(true);
         }
     }
 
@@ -148,20 +155,20 @@ public class LocationInMapController extends LocationMapBaseController {
                     if (coordinateRadio.isSelected()) {
                         try {
                             String[] values = value.split(",");
-                            double longtitude = DoubleTools.scale6(Double.valueOf(values[0].trim()));
+                            double longitude = DoubleTools.scale6(Double.valueOf(values[0].trim()));
                             double latitude = DoubleTools.scale6(Double.valueOf(values[1].trim()));
-                            geographyCode = GeographyCode.query(longtitude, latitude);
+                            geographyCode = GeographyCode.query(longitude, latitude, true);
                         } catch (Exception e) {
-//                            logger.error(e.toString());
+                            logger.error(e.toString());
                             return false;
                         }
                     } else {
-                        geographyCode = GeographyCode.query(value);
+                        geographyCode = GeographyCode.geoCode(value);
                     }
                     if (geographyCode == null) {
                         return false;
                     }
-                    geoCode = geographyCode.geography("\n");
+                    geoCode = geographyCode.info("\n");
                     return geoCode != null;
                 }
 
@@ -169,20 +176,23 @@ public class LocationInMapController extends LocationMapBaseController {
                 protected void whenSucceeded() {
                     dataArea.setText(geoCode);
                     String image = markerImage();
-                    image = StringTools.replaceAll(image, "\\", "/");
                     String label = "";
                     if (textCoordinateRadio.isSelected()) {
                         label = geographyCode.getLongitude() + "," + geographyCode.getLatitude();
-
                     } else if (textAddressRadio.isSelected()) {
-                        label = geographyCode.getAddress();
+                        label = geographyCode.getName();
                     }
-                    webEngine.executeScript("addMarker("
-                            + geographyCode.getLongitude() + "," + geographyCode.getLatitude()
-                            + ", " + markerSize + ", '" + label + "', '"
-                            + geoCode.replaceAll("\n", "</br>") + "', '" + image + "', "
-                            + mapZoom + "," + multipleCheck.isSelected() + ");"
-                    );
+                    LocationTools.addMarkerInGaoDeMap(webEngine,
+                            geographyCode.getLongitude(), geographyCode.getLatitude(),
+                            label, geoCode.replaceAll("\n", "</br>"),
+                            image, multipleCheck.isSelected(),
+                            (fitViewCheck.isSelected() ? 0 : mapSize),
+                            markerSize, 14);
+
+                    if (isSettingValues) {
+                        isSettingValues = false;
+                        return;
+                    }
 
                     if (locationController != null) {
                         locationController.loadCode(geographyCode);
@@ -191,6 +201,15 @@ public class LocationInMapController extends LocationMapBaseController {
                             closeStage();
                         }
                     }
+                    if (geographyCodeEditController != null) {
+                        geographyCodeEditController.longitudeInput.setText(geographyCode.getLongitude() + "");
+                        geographyCodeEditController.latitudeInput.setText(geographyCode.getLatitude() + "");
+//                        locationController.getMyStage().toFront();
+                        if (saveCloseCheck.isSelected()) {
+                            closeStage();
+                        }
+                    }
+
                 }
 
             };
@@ -203,13 +222,13 @@ public class LocationInMapController extends LocationMapBaseController {
     }
 
     @Override
-    protected void mapClicked(double longtitude, double latitude) {
+    protected void mapClicked(double longitude, double latitude) {
         coordinateRadio.setSelected(true);
-        locateInput.setText(longtitude + ", " + latitude);
+        locateInput.setText(longitude + ", " + latitude);
         startAction();
     }
 
-    protected void load(double longtitude, double latitude, int zoom) {
+    protected void load(double longitude, double latitude, int zoom) {
         if (timer != null) {
             timer.cancel();
         }
@@ -219,13 +238,14 @@ public class LocationInMapController extends LocationMapBaseController {
             public void run() {
                 Platform.runLater(() -> {
                     if (mapLoaded) {
-                        timer.cancel();
-                        timer = null;
+                        if (timer != null) {
+                            timer.cancel();
+                            timer = null;
+                        }
                         isSettingValues = true;
                         coordinateRadio.setSelected(true);
-                        locateInput.setText(longtitude + ", " + latitude);
-                        isSettingValues = false;
-                        mapZoom = zoom;
+                        locateInput.setText(longitude + ", " + latitude);
+                        mapSize = zoom;
                         startAction();
                     }
                 });

@@ -7,7 +7,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
@@ -60,11 +59,8 @@ public abstract class RecentVisitMenu {
         popMenu.setAutoHide(true);
 
         MenuItem menu = new MenuItem(message("Select..."));
-        menu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                handleSelect();
-            }
+        menu.setOnAction((ActionEvent event1) -> {
+            handleSelect();
         });
         popMenu.getItems().add(menu);
 
@@ -77,11 +73,8 @@ public abstract class RecentVisitMenu {
             for (VisitHistory h : his) {
                 final String fname = h.getResourceValue();
                 menu = new MenuItem(fname);
-                menu.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        handleFile(fname);
-                    }
+                menu.setOnAction((ActionEvent event1) -> {
+                    handleFile(fname);
                 });
                 popMenu.getItems().add(menu);
             }
@@ -94,11 +87,8 @@ public abstract class RecentVisitMenu {
             popMenu.getItems().add(menu);
             for (String example : examples) {
                 menu = new MenuItem(example);
-                menu.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        handleFile(example);
-                    }
+                menu.setOnAction((ActionEvent event1) -> {
+                    handleFile(example);
                 });
                 popMenu.getItems().add(menu);
             }
@@ -112,11 +102,8 @@ public abstract class RecentVisitMenu {
             popMenu.getItems().add(menu);
             for (String path : paths) {
                 menu = new MenuItem(path);
-                menu.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        handlePath(path);
-                    }
+                menu.setOnAction((ActionEvent event1) -> {
+                    handlePath(path);
                 });
                 popMenu.getItems().add(menu);
             }
@@ -130,12 +117,9 @@ public abstract class RecentVisitMenu {
         popMenu.getItems().add(new SeparatorMenuItem());
         menu = new MenuItem(message("MenuClose"));
         menu.setStyle("-fx-text-fill: #2e598a;");
-        menu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                controller.getPopMenu().hide();
-                controller.setPopMenu(null);
-            }
+        menu.setOnAction((ActionEvent event1) -> {
+            controller.getPopMenu().hide();
+            controller.setPopMenu(null);
         });
         popMenu.getItems().add(menu);
 

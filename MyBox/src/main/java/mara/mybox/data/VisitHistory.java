@@ -289,7 +289,6 @@ public class VisitHistory {
     }
 
     public static boolean readPath(int fileType, String value) {
-
         if (fileType == FileType.MultipleFrames) {
             return TableVisitHistory.update(ResourceType.Path, FileType.Image, OperationType.Read, value);
         } else {
@@ -326,7 +325,6 @@ public class VisitHistory {
     }
 
     public static boolean readFile(int fileType, String value) {
-
         if (fileType == FileType.MultipleFrames || fileType == FileType.Image) {
             String v = value.toLowerCase();
             if (v.endsWith(".gif")) {

@@ -154,7 +154,7 @@ public class FilesRedundancyController extends FilesBatchController {
             showStatus(message("FindingFilesRedundancy"));
             updateTaskProgress(0, filesList.size());
             FileInformation f = filesList.get(0);
-            long size = f.getFileSize(), big = 50 * 1024 * 1024;
+            long size = f.getFileSize(), big = 50 * 1024 * 1024L;
             List<FileInformation> sameSize = new ArrayList();
             sameSize.add(f);
             updateTaskProgress(1, filesList.size());
@@ -190,7 +190,7 @@ public class FilesRedundancyController extends FilesBatchController {
     }
 
     protected void checkDigest(List<FileInformation> files) {
-        long big = 500 * 1024 * 1024;
+        long big = 500 * 1024 * 1024L;
         for (FileInformation f : files) {
             if (task == null || task.isCancelled()) {
                 return;

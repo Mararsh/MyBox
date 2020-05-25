@@ -41,7 +41,13 @@
             map.on('complete', loadComplete);
             map.on('click', showInfoClick);
             map.on('mousemove', showInfoMove);
+            map.on('zoomend', zoomSize);
 
+
+            var titleWindow = new AMap.InfoWindow({
+                position: map.getCenter(),
+                offset: new AMap.Pixel(100, -100)
+            });
 
             function loadComplete() {
                 alert("Loaded");
@@ -57,9 +63,17 @@
                 alert(text);
             }
 
+            function zoomSize(e) {
+                alert("zoomSize:" + map.getZoom());
+            }
+
 
             function setCenter(longtitude, latitude) {
                 map.setCenter(new AMap.LngLat(longtitude, latitude));
+            }
+
+            function setZoom(size) {
+                map.setZoom(size);
             }
 
             function setLanguage(language) {
@@ -70,7 +84,19 @@
                 map.clearMap();
             }
 
-            function addMarker(longtitude, latitude, markerSize, label, info, image, zoom, multiple) {
+
+            function setTitle(title) {
+                titleWindow.setContent(title);
+                titleWindow.open(map, map.getCenter());
+            }
+
+            function replaceAll(string, oldSub, newSub) {
+                if (string !== null && oldSub !== null && newSub !== null) {
+                    return string.replace(new RegExp(oldSub, 'gm'), newSub);
+                }
+            }
+
+            function addMarker(longtitude, latitude, label, info, image, multiple, mapSize, markerSize, textSize) {
                 if (!multiple)
                     map.clearMap();
                 var marker;
@@ -81,8 +107,8 @@
                         strokeColor: 'white',
                         strokeWeight: 2,
                         strokeOpacity: 0.5,
-                        fillColor: label,
-                        fillOpacity: 0.5,
+//                        fillColor: label,
+//                        fillOpacity: 0.5,
                         zIndex: 10,
                         bubble: true,
                         cursor: 'pointer',
@@ -96,28 +122,30 @@
                     });
                     if (label !== null && label.length > 0) {
                         marker.setLabel({
-                            content: "<div style=\"font-size:16px\">" + label + "</div>",
+                            content: "<div style=\"font-size:" + textSize + "px\">" + label.replace(new RegExp("##MyBox#", "gm"), "'") + "</div>",
                             offset: new AMap.Pixel(-10, -10)
 //                        direction: 'top'
                         });
                     }
                 }
 
-
-                marker.on('mousemove', function () {
-                    infoWindow = new AMap.InfoWindow({
-                        content: info
+                if (info !== null && info.length > 0) {
+                    marker.on('mousemove', function () {
+                        infoWindow = new AMap.InfoWindow({
+                            content: info.replace(new RegExp("##MyBox#", "gm"), "'")
+                        });
+                        infoWindow.open(map, [longtitude, latitude]);
                     });
-                    infoWindow.open(map, [longtitude, latitude]);
-                });
-                marker.on('mouseout', function () {
-                    infoWindow.close();
-                });
+                    marker.on('mouseout', function () {
+                        infoWindow.close();
+                    });
+                }
+
                 map.add(marker);
-                if (zoom >= 3 && zoom <= 18) {
-                    map.setZoom(zoom);
+                if (mapSize >= 3 && mapSize <= 18) {
+                    map.setZoom(mapSize);
                     map.setCenter([longtitude, latitude]);
-                } else {
+                } else if (mapSize > -9) {
                     map.setFitView();
                 }
             }

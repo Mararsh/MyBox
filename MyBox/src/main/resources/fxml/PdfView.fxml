@@ -170,7 +170,7 @@ License:    Apache License Version 2.0
                                                 </VBox>
                                             </content>
                                         </TitledPane>
-                                        <TitledPane fx:id="saveAsPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%SaveAs">
+                                        <TitledPane fx:id="saveAsPane"  maxWidth="1.7976931348623157E308" text="%SaveAs">
                                             <content>
                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="5.0">
                                                     <children>
@@ -202,7 +202,7 @@ License:    Apache License Version 2.0
                                                                     <children>
                                                                         <RadioButton fx:id="pcxRadio" mnemonicParsing="false" text="pcx" toggleGroup="$fileTypeGroup" />
                                                                         <RadioButton mnemonicParsing="false" text="wbmp" toggleGroup="$fileTypeGroup" />
-<RadioButton mnemonicParsing="false" text="ico" toggleGroup="$fileTypeGroup" />
+                                                                        <RadioButton mnemonicParsing="false" text="ico" toggleGroup="$fileTypeGroup" />
                                                                     </children>
                                                                 </FlowPane>
                                                             </children>
@@ -233,7 +233,7 @@ License:    Apache License Version 2.0
                                                 </VBox>
                                             </content>
                                         </TitledPane>
-                                        <TitledPane fx:id="tipsPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Tips">
+                                        <TitledPane fx:id="tipsPane" maxWidth="1.7976931348623157E308" text="%Tips">
                                             <content>
                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                                     <children>

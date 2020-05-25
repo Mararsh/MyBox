@@ -5,8 +5,6 @@ import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Optional;
-import java.util.Timer;
-import java.util.TimerTask;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
@@ -75,7 +73,7 @@ public abstract class FileEditerController extends BaseController {
     protected String filterConditions = "";
     protected StringFilterType filterType;
     protected Line_Break lineBreak;
-    protected int currentFound, lineBreakWidth;
+    protected int currentFound, lineBreakWidth, currentCaretPosition;
     protected double currentScrollTop, currentScrollLeft;
     protected IndexRange currentSelection;
     protected String lineBreakValue;
@@ -1714,16 +1712,17 @@ public abstract class FileEditerController extends BaseController {
 
     @FXML
     protected void locateObject() {
-
         if (sourceFile == null || sourceInformation.getPageSize() <= 1) {
             mainArea.requestFocus();
             mainArea.deselect();
             if (editType == Edit_Type.Bytes) {
                 int start = (int) ((objectLocation - 1) * 3);
                 mainArea.selectRange(start, start + 2);
+                sourceInformation.setCurrentPosition(start);
             } else {
                 int start = (int) (objectLocation - 1);
                 mainArea.selectRange(start, start + 1);
+                sourceInformation.setCurrentPosition(start);
             }
 
         } else {
@@ -1752,7 +1751,6 @@ public abstract class FileEditerController extends BaseController {
                 }
                 loadPage();
             }
-
         }
     }
 
@@ -1760,7 +1758,7 @@ public abstract class FileEditerController extends BaseController {
     public void sourceFileChanged(final File file) {
         super.sourceFileChanged(file);
         sourceFile = null;
-        currentScrollTop = currentScrollLeft = 0;
+        currentScrollTop = currentScrollLeft = currentCaretPosition = 0;
         openFile(file);
     }
 
@@ -1949,24 +1947,21 @@ public abstract class FileEditerController extends BaseController {
                         if (!sourceInformation.isTotalNumberRead()) {
                             loadTotalNumbers();
                         }
-                        timer = new Timer();
-                        timer.schedule(new TimerTask() {
-                            @Override
-                            public void run() {
-                                Platform.runLater(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        mainArea.setScrollLeft(currentScrollLeft);
-                                        mainArea.setScrollTop(currentScrollTop);
-                                        if (currentSelection != null) {
-//                                            logger.debug(currentSelection.getStart() + "  " + currentSelection.getEnd());
-                                            mainArea.selectRange(currentSelection.getStart(), currentSelection.getEnd());
-                                        }
-                                        timer = null;
-                                    }
-                                });
-                            }
-                        }, 2000);
+//                        logger.debug(sourceInformation.getCurrentPosition());
+//                        timer = new Timer();
+//                        timer.schedule(new TimerTask() {
+//                            @Override
+//                            public void run() {
+//                                Platform.runLater(() -> {
+//                                    mainArea.setScrollLeft(currentScrollLeft);
+//                                    mainArea.setScrollTop(currentScrollTop);
+////                                    logger.debug(currentAnchor + " " + currentCaretPosition);
+////                                    mainArea.selectRange(currentAnchor, currentCaretPosition);
+////                                    logger.debug(sourceInformation.getCurrentPosition());
+//                                    timer = null;
+//                                });
+//                            }
+//                        }, 500);
 
                     } else {
                         popFailed();
@@ -2133,16 +2128,22 @@ public abstract class FileEditerController extends BaseController {
         }
 
         setSecondArea(text);
+
+        if (currentScrollLeft >= 0) {
+            mainArea.setScrollLeft(currentScrollLeft);
+        }
+        if (currentScrollTop >= 0) {
+            mainArea.setScrollTop(currentScrollTop);
+        }
         if (sourceInformation.getCurrentPosition() >= 0) {
             mainArea.requestFocus();
             mainArea.deselect();
             int pLocation = sourceInformation.getCurrentPosition();
             if (editType == Edit_Type.Bytes) {
-                mainArea.selectRange(pLocation, sourceInformation.getCurrentPosition() + 2);
+                mainArea.selectRange(pLocation, currentCaretPosition > pLocation ? currentCaretPosition : pLocation + 2);
             } else {
-                mainArea.selectRange(pLocation, sourceInformation.getCurrentPosition() + 1);
+                mainArea.selectRange(pLocation, currentCaretPosition > pLocation ? currentCaretPosition : pLocation + 1);
             }
-            sourceInformation.setCurrentPosition(-1);
 
         } else if (sourceInformation.getCurrentLine() >= 1) {
             if (sourceInformation.getCurrentPageLineStart() <= sourceInformation.getCurrentLine()
@@ -2158,7 +2159,6 @@ public abstract class FileEditerController extends BaseController {
                     mainArea.selectRange(index, index + 1);
                 }
             }
-            sourceInformation.setCurrentLine(-1);
 
         } else if (currentFound >= 0) {
             mainArea.requestFocus();
@@ -2170,6 +2170,12 @@ public abstract class FileEditerController extends BaseController {
                 replaceButton.setDisable(false);
             }
         }
+
+        sourceInformation.setCurrentPosition(-1);
+        sourceInformation.setCurrentLine(-1);
+        currentCaretPosition = -1;
+        currentScrollLeft = -1;
+        currentScrollTop = -1;
 
     }
 
@@ -2187,7 +2193,8 @@ public abstract class FileEditerController extends BaseController {
         currentScrollLeft = mainArea.getScrollLeft();
         currentScrollTop = mainArea.getScrollTop();
         currentSelection = mainArea.getSelection();
-//        logger.debug(currentSelection.getStart() + "  " + currentSelection.getEnd());
+        sourceInformation.setCurrentPosition(mainArea.getAnchor());
+        currentCaretPosition = mainArea.getCaretPosition();
         if (sourceFile == null) {
             saveNew();
         } else {

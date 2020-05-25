@@ -5,11 +5,10 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
+import mara.mybox.color.ColorConversion.SpaceType;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
-import mara.mybox.color.ColorConversion.SpaceType;
-import static mara.mybox.value.AppVariables.message;
 import static mara.mybox.value.AppVariables.message;
 
 /**

@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.scene.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.web.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.effect.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.EpidemicReportsExportController">
+    <top>
+        <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
+    </top>
+    <center>
+        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
+            <children>
+                <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+                    <tabs>
+                        <Tab fx:id="sourceTab" text="%Data">
+                            <content>
+                                <SplitPane dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                    <items>
+                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                            <children>
+                                                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
+                                                    <children>
+                                                        <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                        <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteAction">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/iconDelete.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
+                                                    </children>
+                                                </HBox>
+                                                <ListView fx:id="listView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
+                                                <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="20.0" maxWidth="1.7976931348623157E308" spacing="5.0" />
+                                            </children>
+                                            <padding>
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                            </padding>
+                                        </VBox>
+                                        <VBox fx:id="inputBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                            <children>
+                                                <HBox alignment="CENTER_LEFT" VBox.vgrow="NEVER">
+                                                    <children>
+                                                        <Label fx:id="selectLabel1" layoutX="20.0" layoutY="60.0" maxWidth="1.7976931348623157E308" text="%TableDefinition" wrapText="true" HBox.hgrow="ALWAYS" />
+                                                        <Hyperlink onAction="#derbyHelp" text="%DerbyReferenceManual" />
+                                                    </children>
+                                                </HBox>
+                                                <TextArea fx:id="tableArea" editable="false" layoutX="20.0" layoutY="100.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="displayArea" stylesheets="@../styles/MyBox.css" wrapText="true" VBox.vgrow="ALWAYS" />
+                                                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                                    <children>
+                                                        <Label layoutX="20.0" layoutY="379.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Title" wrapText="true" />
+                                                        <TextField fx:id="titleInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                    </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                                    <children>
+                                                        <TextField fx:id="prefixInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                    </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                                    <children>
+                                                        <Label layoutX="20.0" layoutY="379.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="Where" wrapText="true" />
+                                                        <TextField fx:id="whereInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                    </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                                    <children>
+                                                        <Label layoutX="20.0" layoutY="379.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="Order By" wrapText="true" />
+                                                        <TextField fx:id="orderInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                    </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                                    <children>
+                                                        <Label layoutX="20.0" layoutY="379.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="Fetch" wrapText="true" />
+                                                        <TextField fx:id="fetchInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                    </children>
+                                                </HBox>
+                                                <HBox fx:id="topBox" alignment="CENTER_LEFT" spacing="5.0">
+                                                    <children>
+                                                        <Label layoutX="20.0" layoutY="379.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%NumberTopDataDaily" wrapText="true" />
+                                                        <TextField fx:id="topInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                    </children>
+                                                </HBox>
+                                            </children>
+                                            <padding>
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                            </padding>
+                                        </VBox>
+                                    </items>
+                                </SplitPane>
+                            </content>
+                        </Tab>
+                        <Tab fx:id="optionsTab" text="%Target">
+                            <content>
+                                <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="537.0" prefViewportWidth="418.0">
+                                    <content>
+                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
+                                            <padding>
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                            </padding>
+                                            <children>
+                                                <Label text="%DataFields" />
+                                                <VBox layoutX="20.0" layoutY="20.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                                    <children>
+                                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="NEVER">
+                                                            <children>
+                                                                <CheckBox fx:id="SourceCheck" mnemonicParsing="false" selected="true" text="%Source" />
+                                                                <CheckBox fx:id="IncreasedConfirmedCheck" mnemonicParsing="false" selected="true" text="%IncreasedConfirmed" />
+                                                                <CheckBox fx:id="IncreasedHealedCheck" layoutX="15.0" layoutY="338.0" mnemonicParsing="false" selected="true" text="%IncreasedHealed" />
+                                                                <CheckBox fx:id="IncreasedDeadCheck" mnemonicParsing="false" selected="true" text="%IncreasedDead" />
+                                                            </children>
+                                                        </HBox>
+                                                        <HBox alignment="CENTER_LEFT" layoutX="15.0" layoutY="109.0" maxWidth="1.7976931348623157E308" spacing="10.0">
+                                                            <children>
+                                                                <CheckBox fx:id="HealedConfirmedPermillageCheck" layoutX="15.0" layoutY="338.0" mnemonicParsing="false" selected="true" text="%HealedConfirmedPermillage" />
+                                                                <CheckBox fx:id="DeadConfirmedPermillageCheck" mnemonicParsing="false" selected="true" text="%DeadConfirmedPermillage" />
+                                                            </children>
+                                                        </HBox>
+                                                        <HBox alignment="CENTER_LEFT" layoutX="15.0" layoutY="156.0" maxWidth="1.7976931348623157E308" spacing="10.0">
+                                                            <children>
+                                                                <CheckBox fx:id="ConfirmedPopulationPermillageCheck" layoutX="15.0" layoutY="338.0" mnemonicParsing="false" selected="true" text="%ConfirmedPopulationPermillage" />
+                                                                <CheckBox fx:id="HealedPopulationPermillageCheck" mnemonicParsing="false" selected="true" text="%HealedPopulationPermillage" />
+                                                                <CheckBox fx:id="DeadPopulationPermillageCheck" mnemonicParsing="false" selected="true" text="%DeadPopulationPermillage" />
+                                                            </children>
+                                                        </HBox>
+                                                        <HBox alignment="CENTER_LEFT" layoutX="15.0" layoutY="109.0" maxWidth="1.7976931348623157E308" spacing="10.0">
+                                                            <children>
+                                                                <CheckBox fx:id="ConfirmedAreaPermillageCheck" layoutX="15.0" layoutY="338.0" mnemonicParsing="false" selected="true" text="%ConfirmedAreaPermillage" />
+                                                                <CheckBox fx:id="HealedAreaPermillageCheck" mnemonicParsing="false" selected="true" text="%HealedAreaPermillage" />
+                                                                <CheckBox fx:id="DeadAreaPermillageCheck" mnemonicParsing="false" selected="true" text="%DeadAreaPermillage" />
+                                                            </children>
+                                                        </HBox>
+                                                    </children>
+                                                </VBox>
+                                                <Label layoutX="20.0" layoutY="20.0" text="%Formats" />
+                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
+                                                    <children>
+                                                        <CheckBox fx:id="externalCheck" layoutX="15.0" layoutY="15.0" mnemonicParsing="false" selected="true" text="%MyBoxExternalCSVFormat" />
+                                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="NEVER">
+                                                            <children>
+                                                                <CheckBox layoutX="15.0" layoutY="338.0" mnemonicParsing="false" selected="true" text="xml" fx:id="xmlCheck" />
+                                                                <CheckBox fx:id="jsonCheck" mnemonicParsing="false" selected="true" text="json" />
+                                                                <CheckBox mnemonicParsing="false" selected="true" text="xlsx(Excel 2007)" fx:id="xlsxCheck" />
+                                                                <CheckBox fx:id="htmlCheck" mnemonicParsing="false" selected="true" text="html" />
+                                                            </children>
+                                                        </HBox>
+                                                    </children>
+                                                </VBox>
+                                                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="10.0">
+                                                    <children>
+                                                        <Label text="%FilesPath" />
+                                                        <TextField fx:id="targetPathInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                        <Button fx:id="selectPathTargetButton" mnemonicParsing="false" onAction="#selectTargetPath" onMouseEntered="#popTargetPath">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/iconFolder.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
+                                                    </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="10.0">
+                                                    <children>
+                                                        <Label text="%FileNamePrefix" />
+                                                        <TextField fx:id="targetNameInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                    </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="10.0">
+                                                    <children>
+                                                        <Label text="%SplitFilesSize" />
+                                                        <ComboBox fx:id="maxLinesSelector" editable="true" prefWidth="200.0" />
+                                                    </children>
+                                                </HBox>
+                                                <Label text="%ExportSplitComments" wrapText="true" />
+                                            </children>
+                                        </VBox>
+                                    </content>
+                                </ScrollPane>
+                            </content>
+                        </Tab>
+                        <Tab fx:id="logsTab" text="%Logs">
+                            <content>
+                                <VBox fx:id="logsBox1" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                    <children>
+                                        <TextArea fx:id="logsTextArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" VBox.vgrow="ALWAYS" />
+                                        <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="NEVER">
+                                            <children>
+                                                <Label text="%MaxLines" />
+                                                <TextField fx:id="maxLinesinput" prefWidth="80.0" text="5000" />
+                                                <CheckBox fx:id="verboseCheck" mnemonicParsing="false" text="%VerboseLogs" />
+                                                <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearLogs">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconClear.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                    <padding>
+                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                    </padding>
+                                </VBox>
+                            </content>
+                        </Tab>
+                    </tabs>
+                </TabPane>
+                <HBox fx:id="closeBox" alignment="CENTER_RIGHT" spacing="5.0" VBox.vgrow="NEVER">
+                    <children>
+                        <Label fx:id="sizeLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                  <Button fx:id="closeButton" mnemonicParsing="false" onAction="#closeAction">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/iconClose.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                        <Button fx:id="createButton" mnemonicParsing="false" onAction="#createAction">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconEdit.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                        <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconSave.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                        <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Export" HBox.hgrow="NEVER" />
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </center>
+    <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+    </padding>
+</BorderPane>

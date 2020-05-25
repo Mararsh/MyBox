@@ -36,7 +36,7 @@ License:    Apache License Version 2.0
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                                <Image url="@../buttons/iconOK2.png" />
+                                                <Image url="@../buttons/iconYes.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>

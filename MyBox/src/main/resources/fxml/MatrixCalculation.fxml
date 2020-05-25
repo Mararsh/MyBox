@@ -22,7 +22,7 @@ License:    Apache License Version 2.0
 
 <VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MatrixCalculationController">
     <children>
-        <TitledPane fx:id="editPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Edit" VBox.vgrow="ALWAYS">
+        <TitledPane fx:id="editPane" maxWidth="1.7976931348623157E308" text="%Edit" VBox.vgrow="ALWAYS">
             <content>
                 <VBox fx:id="editPBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                     <children>
@@ -69,7 +69,7 @@ License:    Apache License Version 2.0
                 </VBox>
             </content>
         </TitledPane>
-        <TitledPane fx:id="valuePane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Value" VBox.vgrow="ALWAYS">
+        <TitledPane fx:id="valuePane" maxWidth="1.7976931348623157E308" text="%Value" VBox.vgrow="ALWAYS">
             <content>
                 <VBox fx:id="valuePBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                     <children>

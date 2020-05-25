@@ -14,8 +14,8 @@ import java.util.TimeZone;
  */
 public class CommonValues {
 
-    public static final String AppVersion = "6.2.1";
-    public static final String AppVersionDate = "2020-3-3";
+    public static final String AppVersion = "6.3";
+    public static final String AppVersionDate = "2020-05-25";
     public static final String AppDocVersion = "5.0";
 
     public static final String AppDerbyUser = "mara";
@@ -177,18 +177,29 @@ public class CommonValues {
     public static final String GameElimniationFxml = "/fxml/GameElimination.fxml";
     public static final String GeographyCodeFxml = "/fxml/GeographyCode.fxml";
     public static final String GeographyCodeEditFxml = "/fxml/GeographyCodeEdit.fxml";
-    public static final String GeographyRegionFxml = "/fxml/GeographyRegion.fxml";
-    public static final String GeographyRegionEditFxml = "/fxml/GeographyRegionEdit.fxml";
+    public static final String GeographyCodeImportInternalCSVFxml = "/fxml/GeographyCodeImportInternalCSV.fxml";
+    public static final String GeographyCodeImportExternalCSVFxml = "/fxml/GeographyCodeImportExternalCSV.fxml";
+    public static final String GeographyCodeImportGeonamesFileFxml = "/fxml/GeographyCodeImportGeonamesFile.fxml";
+    public static final String GeographyCodeExportFxml = "/fxml/GeographyCodeExport.fxml";
+    public static final String GeographyCodeSelectortFxml = "/fxml/GeographyCodeSelector.fxml";
     public static final String LocationsDataFxml = "/fxml/LocationsData.fxml";
     public static final String LocationsDataInMapFxml = "/fxml/LocationsDataInMap.fxml";
     public static final String LocationEditFxml = "/fxml/LocationEdit.fxml";
     public static final String LocationInMapFxml = "/fxml/LocationInMap.fxml";
     public static final String EpidemicReportsFxml = "/fxml/EpidemicReports.fxml";
     public static final String EpidemicReportEditFxml = "/fxml/EpidemicReportEdit.fxml";
-    public static final String EpidemicReportsChineseProvincesEditFxml = "/fxml/EpidemicReportsChineseProvincesEdit.fxml";
-    public static final String EpidemicReportsCountriesEditFxml = "/fxml/EpidemicReportsCountriesEdit.fxml";
-    public static final String EpidemicReportsDingXiangYuanFxml = "/fxml/EpidemicReportsDingXiangYuan.fxml";
-    public static final String EpidemicReportsFetchNCPDataFxml = "/fxml/EpidemicReportsFetchNCPData.fxml";
+    public static final String EpidemicReportsEditFxml = "/fxml/EpidemicReportsEdit.fxml";
+    public static final String EpidemicReportsImportBaiduFxml = "/fxml/EpidemicReportsImportBaidu.fxml";
+    public static final String EpidemicReportsImportTecentFxml = "/fxml/EpidemicReportsImportTecent.fxml";
+    public static final String EpidemicReportsImportInternalCSVFxml = "/fxml/EpidemicReportsImportInternalCSV.fxml";
+    public static final String EpidemicReportsImportExternalCSVFxml = "/fxml/EpidemicReportsImportExternalCSV.fxml";
+    public static final String EpidemicReportsImport621ExternalFxml = "/fxml/EpidemicReportsImport621External.fxml";
+    public static final String EpidemicReportsImportJHUTimeSeriesFxml = "/fxml/EpidemicReportsImportJHUTimeSeries.fxml";
+    public static final String EpidemicReportsImportJHUDailyFxml = "/fxml/EpidemicReportsImportJHUDaily.fxml";
+    public static final String EpidemicReportsExportFxml = "/fxml/EpidemicReportsExport.fxml";
+    public static final String EpidemicReportsStatisticFxml = "/fxml/EpidemicReportsStatistic.fxml";
+    public static final String DataQueryFxml = "/fxml/DataQuery.fxml";
+    public static final String DataExportFxml = "/fxml/DataExport.fxml";
 
     public static final Locale LocaleZhCN = new Locale("zh", "CN");
     public static final Locale LocaleEnUS = new Locale("en", "US");
@@ -222,9 +233,11 @@ public class CommonValues {
     // https://lbs.amap.com/dev/index
     public static final String GaoDeJavasriptkey = "06b9e078a51325a843dfefd57ffd876c";
     public static final String GaoDeMapVerison = "1.4.15";
-    public static final String GaoDeWebKey = "a389d47ae369e57e0c2c7e32e845d1b0";
+    public static final String GaoDeWebKey = "d7444d9a7fae01fa850236d909ad4450";
 
-    public static final String MyBoxInternetDataPath = "https://sourceforge.net/projects/mara-mybox/files/data/";
+    public static final String MyBoxSeparator = "##MyBox#";
+
+    public static final String MyBoxInternetDataPath = "https://github.com/Mararsh/MyBox_data";
 
     public static List<String> SupportedImages = new ArrayList<String>() {
         {
@@ -300,7 +313,7 @@ public class CommonValues {
     };
 
     public static String[] TextFileSuffix = {"txt", "java", "fxml", "xml",
-        "json", "log", "js", "css",
+        "json", "log", "js", "css", "csv",
         "c", "cpp", "cxx", "cc", "c++", "h", "php", "py", "perl", "iml",
         "sh", "bat", "tcl", "mf", "md", "properties", "env", "cfg", "conf"};
 

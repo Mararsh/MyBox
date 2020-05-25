@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -58,13 +57,14 @@ public class FFmpegConvertMediaFilesController extends FFmpegBaseController {
     protected boolean disableVideo, disbaleAudio, disbaleSubtitle, mustSetResolution;
     protected long mediaStart;
     protected int width, height;
-    protected float videoFrameRate;
+    protected float videoFrameRate, videoBitrate, audioBitrate, audioSampleRate;
 
     @FXML
     protected TitledPane ffmpegPane, optionsPane;
     @FXML
     protected ComboBox<String> muxerSelector, audioEncoderSelector, videoEncoderSelector,
-            subtitleEncoderSelector, aspectSelector, resolutionSelector, videoFrameRateSelector;
+            subtitleEncoderSelector, aspectSelector, resolutionSelector, videoFrameRateSelector,
+            videoBitrateSelector, audioBitrateSelector, audioSampleRateSelector;
     @FXML
     protected TextField extensionInput, volumnInput, moreInput;
 
@@ -95,143 +95,128 @@ public class FFmpegConvertMediaFilesController extends FFmpegBaseController {
 
             optionsValid.bind(executableInput.styleProperty().isNotEqualTo(badStyle));
 
-            muxerSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue,
-                        String newValue) {
-                    if (newValue != null && !newValue.isEmpty()) {
-                        AppVariables.setUserConfigValue("ffmpegDefaultMuter", newValue);
-                    }
-                    if (newValue == null || newValue.isEmpty()
-                            || message("OriginalFormat").equals(newValue)
-                            || message("NotSetting").equals(newValue)) {
-                        extensionInput.setText(message("OriginalFormat"));
-                        muxer = null;
-                        return;
-                    }
-                    int pos = newValue.indexOf(' ');
-                    if (pos < 0) {
-                        muxer = newValue;
-                    } else {
-                        muxer = newValue.substring(0, pos);
-                    }
-                    if (muxer.equals("hls")) {
-                        extensionInput.setText("m3u8");
-                    } else {
-                        extensionInput.setText(muxer);
-                    }
-                }
-            });
-            audioEncoderSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue,
-                        String newValue) {
-                    if (newValue != null && !newValue.isEmpty()) {
-                        AppVariables.setUserConfigValue("ffmpegDefaultAudioEncoder", newValue);
-                    }
-                    disbaleAudio = false;
-                    if (newValue == null || newValue.isEmpty()
-                            || message("NotSetting").equals(newValue)) {
-                        audioCodec = null;
-                        return;
-                    }
-                    if (message("DisableAudio").equals(newValue)) {
-                        disbaleAudio = true;
-                        audioCodec = null;
-                        return;
-                    }
-                    if (message("CopyAudio").equals(newValue)) {
-                        audioCodec = "copy";
-                        return;
-                    }
-                    int pos = newValue.indexOf(' ');
-                    if (pos < 0) {
-                        audioCodec = newValue;
-                    } else {
-                        audioCodec = newValue.substring(0, pos);
-                    }
-                }
-            });
-            videoEncoderSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue,
-                        String newValue) {
-                    if (newValue != null && !newValue.isEmpty()) {
-                        AppVariables.setUserConfigValue("ffmpegDefaultVideoEncoder", newValue);
-                    }
-                    disableVideo = false;
-                    if (newValue == null || newValue.isEmpty()
-                            || message("NotSetting").equals(newValue)) {
-                        videoCodec = null;
-                        return;
-                    }
-                    if (message("DisableAudio").equals(newValue)) {
-                        disableVideo = true;
-                        videoCodec = null;
-                        return;
-                    }
-                    if (message("CopyVideo").equals(newValue)) {
-                        videoCodec = "copy";
-                        return;
-                    }
-                    int pos = newValue.indexOf(' ');
-                    if (pos < 0) {
-                        videoCodec = newValue;
-                    } else {
-                        videoCodec = newValue.substring(0, pos);
-                    }
-                }
-            });
-            subtitleEncoderSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue,
-                        String newValue) {
-                    if (newValue != null && !newValue.isEmpty()) {
-                        AppVariables.setUserConfigValue("ffmpegDefaultSubtitleEncoder", newValue);
-                    }
-                    disbaleSubtitle = false;
-                    if (newValue == null || newValue.isEmpty()
-                            || message("NotSetting").equals(newValue)) {
-                        subtitleCodec = null;
-                        return;
-                    }
-                    if (message("DisableAudio").equals(newValue)) {
-                        disbaleSubtitle = true;
-                        subtitleCodec = null;
-                        return;
-                    }
-                    if (message("CopySubtitle").equals(newValue)) {
-                        subtitleCodec = "copy";
-                        return;
-                    }
-                    int pos = newValue.indexOf(' ');
-                    if (pos < 0) {
-                        subtitleCodec = newValue;
-                    } else {
-                        subtitleCodec = newValue.substring(0, pos);
-                    }
-                }
-            });
+            muxerSelector.getSelectionModel().selectedItemProperty().addListener(
+                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
+                        if (newValue != null && !newValue.isEmpty()) {
+                            AppVariables.setUserConfigValue("ffmpegDefaultMuter", newValue);
+                        }
+                        if (newValue == null || newValue.isEmpty()
+                        || message("OriginalFormat").equals(newValue)
+                        || message("NotSetting").equals(newValue)) {
+                            extensionInput.setText(message("OriginalFormat"));
+                            muxer = null;
+                            return;
+                        }
+                        int pos = newValue.indexOf(' ');
+                        if (pos < 0) {
+                            muxer = newValue;
+                        } else {
+                            muxer = newValue.substring(0, pos);
+                        }
+                        if (muxer.equals("hls")) {
+                            extensionInput.setText("m3u8");
+                        } else {
+                            extensionInput.setText(muxer);
+                        }
+                    });
+            audioEncoderSelector.getSelectionModel().selectedItemProperty().addListener(
+                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
+                        if (newValue != null && !newValue.isEmpty()) {
+                            AppVariables.setUserConfigValue("ffmpegDefaultAudioEncoder", newValue);
+                        }
+                        disbaleAudio = false;
+                        if (newValue == null || newValue.isEmpty()
+                        || message("NotSetting").equals(newValue)) {
+                            audioCodec = null;
+                            return;
+                        }
+                        if (message("DisableAudio").equals(newValue)) {
+                            disbaleAudio = true;
+                            audioCodec = null;
+                            return;
+                        }
+                        if (message("CopyAudio").equals(newValue)) {
+                            audioCodec = "copy";
+                            return;
+                        }
+                        int pos = newValue.indexOf(' ');
+                        if (pos < 0) {
+                            audioCodec = newValue;
+                        } else {
+                            audioCodec = newValue.substring(0, pos);
+                        }
+                    });
+            videoEncoderSelector.getSelectionModel().selectedItemProperty().addListener(
+                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
+                        if (newValue != null && !newValue.isEmpty()) {
+                            AppVariables.setUserConfigValue("ffmpegDefaultVideoEncoder", newValue);
+                        }
+                        disableVideo = false;
+                        if (newValue == null || newValue.isEmpty()
+                        || message("NotSetting").equals(newValue)) {
+                            videoCodec = null;
+                            return;
+                        }
+                        if (message("DisableAudio").equals(newValue)) {
+                            disableVideo = true;
+                            videoCodec = null;
+                            return;
+                        }
+                        if (message("CopyVideo").equals(newValue)) {
+                            videoCodec = "copy";
+                            return;
+                        }
+                        int pos = newValue.indexOf(' ');
+                        if (pos < 0) {
+                            videoCodec = newValue;
+                        } else {
+                            videoCodec = newValue.substring(0, pos);
+                        }
+                    });
+            subtitleEncoderSelector.getSelectionModel().selectedItemProperty().addListener(
+                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
+                        if (newValue != null && !newValue.isEmpty()) {
+                            AppVariables.setUserConfigValue("ffmpegDefaultSubtitleEncoder", newValue);
+                        }
+                        disbaleSubtitle = false;
+                        if (newValue == null || newValue.isEmpty()
+                        || message("NotSetting").equals(newValue)) {
+                            subtitleCodec = null;
+                            return;
+                        }
+                        if (message("DisableAudio").equals(newValue)) {
+                            disbaleSubtitle = true;
+                            subtitleCodec = null;
+                            return;
+                        }
+                        if (message("CopySubtitle").equals(newValue)) {
+                            subtitleCodec = "copy";
+                            return;
+                        }
+                        int pos = newValue.indexOf(' ');
+                        if (pos < 0) {
+                            subtitleCodec = newValue;
+                        } else {
+                            subtitleCodec = newValue.substring(0, pos);
+                        }
+                    });
 
             aspect = null;
             aspectSelector.getItems().addAll(Arrays.asList(
                     message("NotSetting"), "4:3", "16:9"
             ));
-            aspectSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue,
-                        String newValue) {
-                    if (newValue != null && !newValue.isEmpty()) {
-                        AppVariables.setUserConfigValue("ffmpegDefaultAspect", newValue);
-                    }
-                    if (newValue == null || newValue.isEmpty()
-                            || message("NotSetting").equals(newValue)) {
-                        aspect = null;
-                        return;
-                    }
-                    aspect = newValue;
-                }
-            });
+            aspectSelector.getSelectionModel().selectedItemProperty().addListener(
+                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
+                        if (newValue != null && !newValue.isEmpty()) {
+                            AppVariables.setUserConfigValue("ffmpegDefaultAspect", newValue);
+                        }
+                        if (newValue == null || newValue.isEmpty()
+                        || message("NotSetting").equals(newValue)) {
+                            aspect = null;
+                            return;
+                        }
+                        aspect = newValue;
+                    });
             aspectSelector.getSelectionModel().select(
                     AppVariables.getUserConfigValue("ffmpegDefaultAspect", message("NotSetting")));
 
@@ -253,27 +238,24 @@ public class FFmpegConvertMediaFilesController extends FFmpegBaseController {
                     "nhd  640x360", "hqvga  240x160", "wqvga  400x240", "fwqvga  432x240", "hvga  480x320",
                     "qhd  960x540", "2kdci  2048x1080", "4kdci  4096x2160", "uhd2160  3840x2160", "uhd4320  7680x4320"
             ));
-            resolutionSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue,
-                        String newValue) {
-                    if (newValue != null && !newValue.isEmpty()) {
-                        AppVariables.setUserConfigValue("ffmpegDefaultResolution", newValue);
-                    }
-                    if (newValue == null || newValue.isEmpty()
-                            || message("NotSetting").equals(newValue)) {
-                        width = height = -1;
-                        return;
-                    }
-                    try {
-                        String value = newValue.substring(newValue.lastIndexOf(' ') + 1);
-                        int pos = value.indexOf('x');
-                        width = Integer.parseInt(value.substring(0, pos));
-                        height = Integer.parseInt(value.substring(pos + 1));
-                    } catch (Exception e) {
-                    }
-                }
-            });
+            resolutionSelector.getSelectionModel().selectedItemProperty().addListener(
+                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
+                        if (newValue != null && !newValue.isEmpty()) {
+                            AppVariables.setUserConfigValue("ffmpegDefaultResolution", newValue);
+                        }
+                        if (newValue == null || newValue.isEmpty()
+                        || message("NotSetting").equals(newValue)) {
+                            width = height = -1;
+                            return;
+                        }
+                        try {
+                            String value = newValue.substring(newValue.lastIndexOf(' ') + 1);
+                            int pos = value.indexOf('x');
+                            width = Integer.parseInt(value.substring(0, pos));
+                            height = Integer.parseInt(value.substring(pos + 1));
+                        } catch (Exception e) {
+                        }
+                    });
             String dres = AppVariables.getUserConfigValue("ffmpegDefaultResolution", "ntsc  720x480");
             if (mustSetResolution && message("NotSetting").equals(dres)) {
                 dres = "ntsc  720x480";
@@ -286,29 +268,154 @@ public class FFmpegConvertMediaFilesController extends FFmpegBaseController {
                     "ntsc  30000/1001", "pal  25/1", "qntsc  30000/1001", "qpal  25/1",
                     "sntsc  30000/1001", "spal  25/1", "film  24/1", "ntsc-film  24000/1001"
             ));
-            videoFrameRateSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue,
-                        String newValue) {
-                    if (newValue != null && !newValue.isEmpty()) {
-                        AppVariables.setUserConfigValue("ffmpegDefaultFrameRate", newValue);
-                    }
-                    if (newValue == null || newValue.isEmpty()
-                            || message("NotSetting").equals(newValue)) {
-                        videoFrameRate = -1;
-                        return;
-                    }
-                    try {
-                        String value = newValue.substring(newValue.lastIndexOf(' ') + 1);
-                        int pos = value.indexOf('/');
-                        videoFrameRate = Integer.parseInt(value.substring(0, pos)) * 1f
-                                / Integer.parseInt(value.substring(pos + 1));
-                    } catch (Exception e) {
-                    }
-                }
-            });
+            videoFrameRateSelector.getSelectionModel().selectedItemProperty().addListener(
+                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
+                        if (newValue != null && !newValue.isEmpty()) {
+                            AppVariables.setUserConfigValue("ffmpegDefaultFrameRate", newValue);
+                        }
+                        if (newValue == null || newValue.isEmpty()
+                        || message("NotSetting").equals(newValue)) {
+                            videoFrameRate = -1;
+                            return;
+                        }
+                        try {
+                            String value = newValue.substring(newValue.lastIndexOf(' ') + 1);
+                            int pos = value.indexOf('/');
+                            videoFrameRate = Integer.parseInt(value.substring(0, pos)) * 1f
+                            / Integer.parseInt(value.substring(pos + 1));
+                        } catch (Exception e) {
+                        }
+                    });
             videoFrameRateSelector.getSelectionModel().select(
                     AppVariables.getUserConfigValue("ffmpegDefaultFrameRate", message("NotSetting")));
+
+            videoBitrate = -1;
+            videoBitrateSelector.getItems().add(message("NotSetting"));
+            videoBitrateSelector.getItems().addAll(Arrays.asList(
+                    "1800kbps", "1600kbps", "1300kbps", "2400kbps", "1150kbps",
+                    "5mbps", "6mbps", "8mbps", "16mbps", "4mbps",
+                    "40mbps", "65mbps", "10mbps", "20mbps", "15mbps",
+                    "3500kbps", "3000kbps", "2000kbps", "1000kbps", "800kbps", "500kbps",
+                    "250kbps", "120kbps", "60kbps", "30kbps"
+            ));
+            videoBitrateSelector.getSelectionModel().selectedItemProperty().addListener(
+                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
+                        if (newValue != null && !newValue.isEmpty()) {
+                            AppVariables.setUserConfigValue("ffmpegDefaultVideoBitrate", newValue);
+                        }
+                        if (newValue == null || newValue.isEmpty()
+                        || message("NotSetting").equals(newValue)) {
+                            videoBitrate = -1;
+                            return;
+                        }
+                        try {
+                            int pos = newValue.indexOf("kbps");
+                            if (pos < 0) {
+                                pos = newValue.indexOf("mbps");
+                                if (pos < 0) {
+                                    videoBitrateSelector.getEditor().setStyle(badStyle);
+                                } else {
+                                    float f = Float.parseFloat(newValue.substring(0, pos).trim());
+                                    if (f > 0) {
+                                        videoBitrate = f * 1000;
+                                        videoBitrateSelector.getEditor().setStyle(null);
+                                    } else {
+                                        videoBitrateSelector.getEditor().setStyle(badStyle);
+                                    }
+                                }
+                            } else {
+                                float f = Float.parseFloat(newValue.substring(0, pos).trim());
+                                if (f > 0) {
+                                    videoBitrate = f;
+                                    videoBitrateSelector.getEditor().setStyle(null);
+                                } else {
+                                    videoBitrateSelector.getEditor().setStyle(badStyle);
+                                }
+                            }
+                        } catch (Exception e) {
+                            videoBitrateSelector.getEditor().setStyle(badStyle);
+                        }
+                    });
+            videoBitrateSelector.getSelectionModel().select(
+                    AppVariables.getUserConfigValue("ffmpegDefaultVideoBitrate", message("NotSetting")));
+
+            audioBitrate = -1;
+            audioBitrateSelector.getItems().add(message("NotSetting"));
+            audioBitrateSelector.getItems().addAll(Arrays.asList(
+                    message("192kbps"), message("128kbps"), message("96kbps"), message("64kbps"),
+                    message("256kbps"), message("320kbps"), message("32kbps"), message("1411.2kbps"),
+                    message("328kbps")
+            ));
+            audioBitrateSelector.getSelectionModel().selectedItemProperty().addListener(
+                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
+                        if (newValue != null && !newValue.isEmpty()) {
+                            AppVariables.setUserConfigValue("ffmpegDefaultAudioBitrate", newValue);
+                        }
+                        if (newValue == null || newValue.isEmpty()
+                        || message("NotSetting").equals(newValue)) {
+                            audioBitrate = -1;
+                            return;
+                        }
+                        try {
+                            int pos = newValue.indexOf("kbps");
+                            String value;
+                            if (pos < 0) {
+                                value = newValue;
+                            } else {
+                                value = newValue.substring(0, pos);
+                            }
+                            float v = Float.valueOf(value.trim());
+                            if (v > 0) {
+                                audioBitrate = v;
+                                audioBitrateSelector.getEditor().setStyle(null);
+                            } else {
+                                audioBitrateSelector.getEditor().setStyle(badStyle);
+                            }
+                        } catch (Exception e) {
+                            audioBitrateSelector.getEditor().setStyle(badStyle);
+                        }
+                    });
+            audioBitrateSelector.getSelectionModel().select(
+                    AppVariables.getUserConfigValue("ffmpegDefaultAudioBitrate", message("NotSetting")));
+
+            audioSampleRate = -1;
+            audioSampleRateSelector.getItems().add(message("NotSetting"));
+            audioSampleRateSelector.getItems().addAll(Arrays.asList(
+                    message("48000Hz"), message("44100Hz"), message("96000Hz"), message("8000Hz"),
+                    message("11025Hz"), message("22050Hz"), message("24000Hz"), message("32000Hz"),
+                    message("50000Hz"), message("47250Hz"), message("192000Hz")
+            ));
+            audioSampleRateSelector.getSelectionModel().selectedItemProperty().addListener(
+                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
+                        if (newValue != null && !newValue.isEmpty()) {
+                            AppVariables.setUserConfigValue("ffmpegDefaultAudioSampleRate", newValue);
+                        }
+                        if (newValue == null || newValue.isEmpty()
+                        || message("NotSetting").equals(newValue)) {
+                            audioSampleRate = -1;
+                            return;
+                        }
+                        try {
+                            int pos = newValue.indexOf("Hz");
+                            String value;
+                            if (pos < 0) {
+                                value = newValue;
+                            } else {
+                                value = newValue.substring(0, pos);
+                            }
+                            int v = Integer.parseInt(value.trim());
+                            if (v > 0) {
+                                audioSampleRate = v;
+                                audioSampleRateSelector.getEditor().setStyle(null);
+                            } else {
+                                audioSampleRateSelector.getEditor().setStyle(badStyle);
+                            }
+                        } catch (Exception e) {
+                            audioSampleRateSelector.getEditor().setStyle(badStyle);
+                        }
+                    });
+            audioSampleRateSelector.getSelectionModel().select(
+                    AppVariables.getUserConfigValue("ffmpegDefaultAudioSampleRate", message("NotSetting")));
 
             FxmlControl.setTooltip(volumnInput, message("ChangeVolumeComments"));
             FxmlControl.setTooltip(moreInput, message("SeparateBySpace"));
@@ -586,11 +693,8 @@ public class FFmpegConvertMediaFilesController extends FFmpegBaseController {
                     .addInput(input)
                     .addOutput(new NullOutput())
                     .setOverwriteOutput(true)
-                    .setProgressListener(new ProgressListener() {
-                        @Override
-                        public void onProgress(FFmpegProgress progress) {
-                            countedDuration.set(progress.getTimeMillis());
-                        }
+                    .setProgressListener((FFmpegProgress progress) -> {
+                        countedDuration.set(progress.getTimeMillis());
                     })
                     .execute();
             duration = countedDuration.get();
@@ -607,38 +711,34 @@ public class FFmpegConvertMediaFilesController extends FFmpegBaseController {
 
             @Override
             public void onProgress(FFmpegProgress progress) {
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        long now = System.currentTimeMillis();
-                        if (now > lastProgress + 500) {
-                            if (duration > 0) {
-                                updateFileProgress(progress.getTimeMillis(), duration);
-                            } else {
-                                if (verboseCheck == null || verboseCheck.isSelected()) {
-                                    updateLogs(message("Handled") + ":"
-                                            + DateTools.showSeconds(progress.getTimeMillis() / 1000), true);
-                                }
-                                progressValue.setText(DateTools.showSeconds(progress.getTimeMillis() / 1000));
+                Platform.runLater(() -> {
+                    long now = System.currentTimeMillis();
+                    if (now > lastProgress + 500) {
+                        if (duration > 0) {
+                            updateFileProgress(progress.getTimeMillis(), duration);
+                        } else {
+                            if (verboseCheck == null || verboseCheck.isSelected()) {
+                                updateLogs(message("Handled") + ":"
+                                        + DateTools.showSeconds(progress.getTimeMillis() / 1000), true);
                             }
-                            lastProgress = now;
+                            progressValue.setText(DateTools.showSeconds(progress.getTimeMillis() / 1000));
                         }
-                        if (now > lastStatus + 3000) {
-                            long cost = now - mediaStart;
-                            if (duration > 0) {
-                                double p = DoubleTools.scale2(progress.getTimeMillis() * 100.0d / duration);
-                                long left = Math.round(cost * (100 - p) / p);
-                                String s = message("Percentage") + ": " + p + "%  "
-                                        + message("Cost") + ": " + DateTools.showTime(cost) + "   "
-                                        + message("EstimatedLeft") + ": " + DateTools.showTime(left);
-                                statusLabel.setText(s);
-                            } else {
-                                String s = message("Cost") + ": " + DateTools.showTime(cost);
-                                statusLabel.setText(s);
-                            }
-                            lastStatus = now;
+                        lastProgress = now;
+                    }
+                    if (now > lastStatus + 3000) {
+                        long cost = now - mediaStart;
+                        if (duration > 0) {
+                            double p = DoubleTools.scale2(progress.getTimeMillis() * 100.0d / duration);
+                            long left = Math.round(cost * (100 - p) / p);
+                            String s = message("Percentage") + ": " + p + "%  "
+                                    + message("Cost") + ": " + DateTools.showTime(cost) + "   "
+                                    + message("EstimatedLeft") + ": " + DateTools.showTime(left);
+                            statusLabel.setText(s);
+                        } else {
+                            String s = message("Cost") + ": " + DateTools.showTime(cost);
+                            statusLabel.setText(s);
                         }
-
+                        lastStatus = now;
                     }
                 });
 
@@ -673,6 +773,15 @@ public class FFmpegConvertMediaFilesController extends FFmpegBaseController {
         }
         if (width > 0 && height > 0) {
             ffmpeg.addArguments("-s", width + "x" + height);
+        }
+        if (videoBitrate > 0) {
+            ffmpeg.addArguments("-b:v", videoBitrate + "k");
+        }
+        if (audioBitrate > 0) {
+            ffmpeg.addArguments("-b:a", audioBitrate + "k");
+        }
+        if (audioSampleRate > 0) {
+            ffmpeg.addArguments("-ar", audioSampleRate + "");
         }
         String volumn = volumnInput.getText().trim();
         if (!volumn.isBlank()) {

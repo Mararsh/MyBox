@@ -29,7 +29,7 @@ public class TableNumberCell<T, Long> extends TableCell<T, Long>
                     setGraphic(null);
                     return;
                 }
-                text.setText(StringTools.formatData((long) item));
+                text.setText(StringTools.format((long) item));
                 setGraphic(text);
             }
         };

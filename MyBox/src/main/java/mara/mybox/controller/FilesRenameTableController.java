@@ -22,7 +22,7 @@ public class FilesRenameTableController extends FilesTableController {
     @FXML
     protected TableColumn<FileInformation, String> newColumn;
     @FXML
-    protected Button recoveryAllButton, recoverySelectedButton, ok2Button;
+    protected Button recoveryAllButton, recoverySelectedButton, yesButton;
     @FXML
     protected Label commentsLabel;
 
@@ -35,7 +35,7 @@ public class FilesRenameTableController extends FilesTableController {
             super.initTable();
 
             newColumn.setCellValueFactory(new PropertyValueFactory<>("data"));
-            ok2Button.disableProperty().bind(tableView.itemsProperty().isNull());
+            yesButton.disableProperty().bind(tableView.itemsProperty().isNull());
 
         } catch (Exception e) {
             logger.error(e.toString());

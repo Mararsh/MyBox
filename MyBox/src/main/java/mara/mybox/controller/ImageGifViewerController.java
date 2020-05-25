@@ -323,12 +323,6 @@ public class ImageGifViewerController extends ImageViewerController {
     }
 
     @FXML
-    @Override
-    public void saveAsAction() {
-        extractAction();
-    }
-
-    @FXML
     public void extractAction() {
         try {
             if (sourceFile == null || images.length == 0
@@ -458,6 +452,51 @@ public class ImageGifViewerController extends ImageViewerController {
         }
         c.loadImage(sourceFile);
         return c;
+    }
+
+    @FXML
+    @Override
+    public void saveAsAction() {
+        if (sourceFile == null) {
+            return;
+        }
+        try {
+            final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
+                    "gif", CommonFxValues.GifExtensionFilter, true);
+            if (file == null) {
+                return;
+            }
+            recordFileWritten(file);
+
+            synchronized (this) {
+                if (task != null) {
+                    return;
+                }
+                task = new SingletonTask<Void>() {
+
+                    @Override
+                    protected boolean handle() {
+                        return FileTools.copyFile(sourceFile, file);
+                    }
+
+                    @Override
+                    protected void whenSucceeded() {
+                        popInformation(AppVariables.message("Saved"));
+                        ImageGifViewerController controller
+                                = (ImageGifViewerController) openStage(CommonValues.ImageGifViewerFxml);
+                        controller.loadImage(file.getAbsolutePath());
+                    }
+
+                };
+                openHandlingStage(task, Modality.WINDOW_MODAL);
+                Thread thread = new Thread(task);
+                thread.setDaemon(true);
+                thread.start();
+            }
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+
     }
 
 }

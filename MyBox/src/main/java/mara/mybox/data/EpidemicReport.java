@@ -1,18 +1,32 @@
 package mara.mybox.data;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.OutputStream;
+import java.nio.charset.Charset;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import mara.mybox.tools.DateTools;
-import mara.mybox.tools.DoubleTools;
-import mara.mybox.tools.ExcelTools;
 import mara.mybox.tools.FileTools;
-import static mara.mybox.tools.FileTools.charset;
+import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.csv.CSVRecord;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  * @Author Mara
@@ -21,305 +35,962 @@ import static mara.mybox.value.AppVariables.message;
  */
 public class EpidemicReport {
 
-    protected long dataid = -1;
-    protected String dataSet, dataLabel, comments, country, province, city,
-            district, township, neighborhood, level;
-    protected double longitude, latitude, healedRatio, deadRatio;
-    protected int confirmed, suspected, healed, dead,
-            increasedConfirmed, increasedSuspected, increasedHealed, increasedDead;
+    protected long epid = -1, locationid = -1;
+    protected String dataSet, locationFullName;
+    private GeographyCode location;
+    protected double healedConfirmedPermillage, deadConfirmedPermillage,
+            confirmedPopulationPermillage, deadPopulationPermillage, healedPopulationPermillage,
+            confirmedAreaPermillage, deadAreaPermillage, healedAreaPermillage;
+    protected long confirmed, healed, dead,
+            increasedConfirmed, increasedHealed, increasedDead;
     protected long time = -1;
+    protected int source;
+    protected String sourceName;
+    protected SourceType sourceType;
+    public static String COVID19JHU = "COVID-19_JHU";
+    public static String COVID19TIME = " 23:59:00";
+
+    public enum ValueName {
+        Confirmed, Healed, Dead,
+        IncreasedConfirmed, IncreasedHealed, IncreasedDead
+    }
+
+    // 1:predefined 2:inputted 3:filled 4:statistic others:unknown
+    public enum SourceType {
+        PredefinedData, InputtedData, FilledData, StatisticData, Unknown
+    }
 
     public EpidemicReport() {
-        dataid = -1;
-        dataSet = dataLabel = comments = country = province = city
-                = district = township = neighborhood = level = null;
-        longitude = latitude = -200;
-        healedRatio = deadRatio = 0;
-        confirmed = suspected = healed = dead = increasedConfirmed
-                = increasedSuspected = increasedHealed = increasedDead = 0;
+        epid = -1;
+        locationid = -1;
+        dataSet = null;
+        location = null;
+        healedConfirmedPermillage = deadConfirmedPermillage = 0;
+        confirmed = healed = dead = increasedConfirmed
+                = increasedHealed = increasedDead = 0;
+        healedConfirmedPermillage = deadConfirmedPermillage
+                = confirmedPopulationPermillage = deadPopulationPermillage = healedPopulationPermillage
+                = confirmedAreaPermillage = deadAreaPermillage = healedAreaPermillage = 0;
         time = -1;
+        source = 2;
+    }
+
+    public boolean isValid() {
+        return getLocationid() > 0
+                && (confirmed > 0 || healed > 0 || dead > 0);
     }
 
     public static EpidemicReport create() {
         return new EpidemicReport();
     }
 
-    public static boolean validCoordinate(EpidemicReport report) {
-        return report.getLongitude() >= -180 && report.getLongitude() <= 180
-                && report.getLatitude() >= -90 && report.getLatitude() <= 90;
+    // Only copy base attributes.
+    public EpidemicReport copy() {
+        try {
+            EpidemicReport cloned = EpidemicReport.create()
+                    .setDataSet(dataSet).setLocation(getLocation()).setLocationid(getLocationid())
+                    .setConfirmed(confirmed).setHealed(healed).setDead(dead)
+                    .setTime(time).setSource(source);
+            return cloned;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
-    public static List<EpidemicReport> readTxt(File file) {
-        List<EpidemicReport> reports = new ArrayList<>();
-        if (file == null || !file.exists()) {
-            return reports;
-        }
-        try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset(file)))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (line.startsWith("//")) {
-                    continue;
-                }
-                String[] values = line.split(",");
-                if (values.length != 21 && values.length != 22) {
-                    continue;
-                }
-                try {
-                    int offset = values.length == 22 ? 1 : 0;
-                    EpidemicReport report = new EpidemicReport();
-                    report.setDataSet(readTxtString(values[offset + 0]));
-                    report.setDataLabel(readTxtString(values[offset + 1]));
-                    report.setLongitude(Double.valueOf(values[offset + 2]));
-                    report.setLatitude(Double.valueOf(values[offset + 3]));
-                    report.setLevel(readTxtString(values[offset + 4]));
-                    report.setCountry(readTxtString(values[offset + 5]));
-                    report.setProvince(readTxtString(values[offset + 6]));
-                    report.setCity(readTxtString(values[offset + 7]));
-                    report.setDistrict(readTxtString(values[offset + 8]));
-                    report.setTownship(readTxtString(values[offset + 9]));
-                    report.setNeighborhood(readTxtString(values[offset + 10]));
-                    report.setConfirmed(Integer.valueOf(values[offset + 11]));
-                    report.setSuspected(Integer.valueOf(values[offset + 12]));
-                    report.setHealed(Integer.valueOf(values[offset + 13]));
-                    report.setDead(Integer.valueOf(values[offset + 14]));
-                    report.setIncreasedConfirmed(Integer.valueOf(values[offset + 15]));
-                    report.setIncreasedSuspected(Integer.valueOf(values[offset + 16]));
-                    report.setIncreasedHealed(Integer.valueOf(values[offset + 17]));
-                    report.setIncreasedDead(Integer.valueOf(values[offset + 18]));
-                    report.setComments(readTxtString(values[offset + 19]));
-                    report.setTime(DateTools.stringToDatetime(values[offset + 20].substring(1, 20)).getTime());
-                    reports.add(report);
+    public Number value(String name) {
+        try {
+            if (name == null || name.isBlank()) {
+                return null;
+            }
+            if (message("Confirmed").equals(name) || "confirmed".equals(name)) {
+                return getConfirmed();
 
+            } else if (message("Healed").equals(name) || "healed".equals(name)) {
+                return getHealed();
+
+            } else if (message("Dead").equals(name) || "dead".equals(name)) {
+                return getDead();
+
+            } else if (message("IncreasedConfirmed").equals(name) || "increased_confirmed".equals(name)) {
+                return getIncreasedConfirmed();
+
+            } else if (message("IncreasedHealed").equals(name) || "increased_healed".equals(name)) {
+                return getIncreasedHealed();
+
+            } else if (message("IncreasedDead").equals(name) || "increased_dead".equals(name)) {
+                return getIncreasedDead();
+
+            } else if (message("HealedConfirmedPermillage").equals(name) || "healed_confirmed_permillage".equals(name)) {
+                return getHealedConfirmedPermillage();
+
+            } else if (message("DeadConfirmedPermillage").equals(name) || "dead_confirmed_permillage".equals(name)) {
+                return getDeadConfirmedPermillage();
+
+            } else if (message("ConfirmedPopulationPermillage").equals(name) || "confirmed_population_permillage".equals(name)) {
+                return getConfirmedPopulationPermillage();
+
+            } else if (message("HealedPopulationPermillage").equals(name) || "healed_population_permillage".equals(name)) {
+                return getHealedPopulationPermillage();
+
+            } else if (message("DeadPopulationPermillage").equals(name) || "dead_population_permillage".equals(name)) {
+                return getDeadPopulationPermillage();
+
+            } else if (message("ConfirmedAreaPermillage").equals(name) || "confirmed_area_permillage".equals(name)) {
+                return getConfirmedAreaPermillage();
+
+            } else if (message("HealedAreaPermillage").equals(name) || "healed_area_permillage".equals(name)) {
+                return getHealedAreaPermillage();
+
+            } else if (message("DeadAreaPermillage").equals(name) || "dead_area_permillage".equals(name)) {
+                return getDeadAreaPermillage();
+
+            } else {
+                return null;
+            }
+
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return null;
+        }
+    }
+
+//    public String sourceAbbreviation() {
+//        switch (source) {
+//            case 1:
+//                return "P";
+//            case 2:
+//                return "I";
+//            case 3:
+//                return "F";
+//            case 4:
+//                return "S";
+//            default:
+//                return "U";
+//        }
+//    }
+//
+//    public static int abbreviationValue(String source) {
+//        switch (source) {
+//            case "P":
+//                return 1;
+//            case "I":
+//                return 2;
+//            case "F":
+//                return 3;
+//            case "S":
+//                return 4;
+//            default:
+//                return -1;
+//        }
+//    }
+
+    /*
+        Static methods
+     */
+    public static void sortAsTimeAscent(List<EpidemicReport> reports) {
+        if (reports == null || reports.isEmpty()) {
+            return;
+        }
+        Collections.sort(reports, (EpidemicReport r1, EpidemicReport r2) -> {
+            long diff = r1.getTime() - r2.getTime();
+            if (diff > 0) {
+                return 1;
+            } else if (diff < 0) {
+                return -1;
+            } else {
+                return 0;
+            }
+        });
+    }
+
+    public static SourceType sourceType(int value) {
+        switch (value) {
+            case 1:
+                return SourceType.PredefinedData;
+            case 2:
+                return SourceType.InputtedData;
+            case 3:
+                return SourceType.FilledData;
+            case 4:
+                return SourceType.StatisticData;
+            default:
+                return SourceType.Unknown;
+        }
+    }
+
+    public static String sourceName(int value) {
+        return sourceType(value).name();
+    }
+
+    public static int source(SourceType source) {
+        return sourceValue(source.name());
+    }
+
+    public static int sourceValue(String source) {
+        return sourceValue(AppVariables.getLanguage(), source);
+    }
+
+    public static int sourceValue(String lang, String source) {
+        if (message(lang, "PredefinedData").equals(source) || "PredefinedData".equals(source)) {
+            return 1;
+        } else if (message(lang, "InputtedData").equals(source) || "InputtedData".equals(source)) {
+            return 2;
+        } else if (message(lang, "FilledData").equals(source) || "FilledData".equals(source)) {
+            return 3;
+        } else if (message(lang, "StatisticData").equals(source) || "StatisticData".equals(source)) {
+            return 4;
+        } else {
+            return 0;
+        }
+    }
+
+    public static int PredefinedData() {
+        return source(SourceType.PredefinedData);
+    }
+
+    public static int InputtedData() {
+        return source(SourceType.InputtedData);
+    }
+
+    public static int FilledData() {
+        return source(SourceType.FilledData);
+    }
+
+    public static int StatisticData() {
+        return source(SourceType.StatisticData);
+    }
+
+    /*
+        import
+     */
+    // DataSet,Time,Locationid,Confirmed,Healed,Dead,IncreasedConfirmed,IncreasedHealed,IncreasedDead,DataSource
+    public static EpidemicReport readIntenalRecord(List<String> names, CSVRecord record) {
+        try {
+            EpidemicReport report = new EpidemicReport();
+            report.setDataSet(record.get("DataSet"));
+            report.setTime(DateTools.stringToDatetime(record.get("Time")).getTime());
+            report.setLocationid(Long.valueOf(record.get("Locationid")));
+            report.setConfirmed(Long.valueOf(record.get("Confirmed")));
+            report.setHealed(Long.valueOf(record.get("Healed")));
+            report.setDead(Long.valueOf(record.get("Dead")));
+            report.setIncreasedConfirmed(Long.valueOf(record.get("IncreasedConfirmed")));
+            report.setIncreasedHealed(Long.valueOf(record.get("IncreasedHealed")));
+            report.setIncreasedDead(Long.valueOf(record.get("IncreasedDead")));
+            report.setSource(Integer.valueOf(record.get("DataSource")));
+            return report;
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return null;
+        }
+    }
+
+    // Data Set,Time,Confirmed,Healed,Dead,Increased Confirmed,Increased Healed,Increased Dead,Data Source,
+    // Level,Continent,Country,Province,City,County,Town,Village,Building,Longitude,Latitude
+    // 数据集,时间,确认,治愈,死亡,新增确诊,新增治愈,新增死亡,数据源,级别,洲,国家,省,市,区县,乡镇,村庄,建筑物,经度,纬度
+    public static Map<String, Object> readExtenalRecord(Connection conn,
+            PreparedStatement geoInsert, String lang, List<String> names, CSVRecord record) {
+        Map<String, Object> ret = new HashMap<>();
+        try {
+            EpidemicReport report = new EpidemicReport();
+            if (names.contains("DataSet")) {
+                report.setDataSet(record.get("DataSet"));
+            } else if (names.contains(message(lang, "DataSet"))) {
+                report.setDataSet(record.get(message(lang, "DataSet")));
+            } else {
+                ret.put("message", "Miss DataSet");
+                return ret;
+            }
+            if (names.contains("Time")) {
+                try {
+                    report.setTime(DateTools.stringToDatetime(record.get("Time")).getTime());
                 } catch (Exception e) {
-                    logger.debug(e.toString());
-                    break;
+                    ret.put("message", "Miss Time1");
+                    return ret;
                 }
+            } else if (names.contains(message(lang, "Time"))) {
+                try {
+                    report.setTime(DateTools.stringToDatetime(record.get(message(lang, "Time"))).getTime());
+                } catch (Exception e) {
+                    ret.put("message", "Miss Time2");
+                    return ret;
+                }
+            } else {
+                ret.put("message", "Miss Time3");
+                return ret;
+            }
+            if (names.contains("Confirmed")) {
+                try {
+                    report.setConfirmed(Long.valueOf(record.get("Confirmed")));
+                } catch (Exception e) {
+                }
+            } else if (names.contains(message(lang, "Confirmed"))) {
+                try {
+                    report.setConfirmed(Long.valueOf(record.get(message(lang, "Confirmed"))));
+                } catch (Exception e) {
+                }
+            }
+            if (names.contains("Healed")) {
+                try {
+                    report.setHealed(Long.valueOf(record.get("Healed")));
+                } catch (Exception e) {
+                }
+            } else if (names.contains(message(lang, "Healed"))) {
+                try {
+                    report.setHealed(Long.valueOf(record.get(message(lang, "Healed"))));
+                } catch (Exception e) {
+                }
+            }
+            if (names.contains("Dead")) {
+                try {
+                    report.setDead(Long.valueOf(record.get("Dead")));
+                } catch (Exception e) {
+                }
+            } else if (names.contains(message(lang, "Dead"))) {
+                try {
+                    report.setDead(Long.valueOf(record.get(message(lang, "Dead"))));
+                } catch (Exception e) {
+                }
+            }
+            if (names.contains("IncreasedConfirmed")) {
+                try {
+                    report.setIncreasedConfirmed(Long.valueOf(record.get("IncreasedConfirmed")));
+                } catch (Exception e) {
+                }
+            } else if (names.contains(message(lang, "IncreasedConfirmed"))) {
+                try {
+                    report.setIncreasedConfirmed(Long.valueOf(record.get(message(lang, "IncreasedConfirmed"))));
+                } catch (Exception e) {
+                }
+            }
+            if (names.contains("IncreasedHealed")) {
+                try {
+                    report.setIncreasedHealed(Long.valueOf(record.get("IncreasedHealed")));
+                } catch (Exception e) {
+                }
+            } else if (names.contains(message(lang, "IncreasedHealed"))) {
+                try {
+                    report.setIncreasedHealed(Long.valueOf(record.get(message(lang, "IncreasedHealed"))));
+                } catch (Exception e) {
+                }
+            }
+            if (names.contains("IncreasedDead")) {
+                try {
+                    report.setIncreasedDead(Long.valueOf(record.get("IncreasedDead")));
+                } catch (Exception e) {
+                }
+            } else if (names.contains(message(lang, "IncreasedDead"))) {
+                try {
+                    report.setIncreasedDead(Long.valueOf(record.get(message(lang, "IncreasedDead"))));
+                } catch (Exception e) {
+                }
+            }
+            if (names.contains("DataSource")) {
+                try {
+                    report.setSource(sourceValue(lang, record.get("DataSource")));
+                } catch (Exception e) {
+                }
+            } else if (names.contains(message(lang, "DataSource"))) {
+                try {
+                    report.setSource(sourceValue(lang, record.get(message(lang, "DataSource"))));
+                } catch (Exception e) {
+                }
+            }
+            GeographyCodeLevel levelCode;
+            if (names.contains("Level")) {
+                levelCode = new GeographyCodeLevel(record.get("Level"));
+            } else if (names.contains(message(lang, "Level"))) {
+                levelCode = new GeographyCodeLevel(record.get(message(lang, "Level")));
+            } else {
+                ret.put("message", "Miss level");
+                return ret;
+            }
+            double longitude = -200;
+            if (names.contains("Longitude")) {
+                try {
+                    longitude = Double.valueOf(record.get("Longitude"));
+                } catch (Exception e) {
+                }
+            } else if (names.contains(message(lang, "Longitude"))) {
+                try {
+                    longitude = Double.valueOf(record.get(message(lang, "Longitude")));
+                } catch (Exception e) {
+                }
+            }
+            double latitude = -200;
+            if (names.contains("Latitude")) {
+                try {
+                    latitude = Double.valueOf(record.get("Latitude"));
+                } catch (Exception e) {
+                }
+            } else if (names.contains(message(lang, "Latitude"))) {
+                try {
+                    latitude = Double.valueOf(record.get(message(lang, "latitude")));
+                } catch (Exception e) {
+                }
+            }
+            String continent = names.contains(message(lang, "Continent")) ? record.get(message(lang, "Continent"))
+                    : (names.contains("Continent") ? record.get("Continent") : null);
+            String country = names.contains(message(lang, "Country")) ? record.get(message(lang, "Country"))
+                    : (names.contains("Country") ? record.get("Country") : null);
+            String province = names.contains(message(lang, "Province")) ? record.get(message(lang, "Province"))
+                    : (names.contains("Province") ? record.get("Province") : null);
+            String city = names.contains(message(lang, "City")) ? record.get(message(lang, "City"))
+                    : (names.contains("City") ? record.get("City") : null);
+            String county = names.contains(message(lang, "County")) ? record.get(message(lang, "County"))
+                    : (names.contains("County") ? record.get("County") : null);
+            String town = names.contains(message(lang, "Town")) ? record.get(message(lang, "Town"))
+                    : (names.contains("Town") ? record.get("Town") : null);
+            String village = names.contains(message(lang, "Village")) ? record.get(message(lang, "Village"))
+                    : (names.contains("Village") ? record.get("Village") : null);
+            String building = names.contains(message(lang, "Building")) ? record.get(message(lang, "Building"))
+                    : (names.contains("Building") ? record.get("Building") : null);
+            Map<String, Object> codeRet = GeographyCode.code(conn, geoInsert,
+                    levelCode.getLevel(), longitude, latitude, continent, country, province, city,
+                    county, town, village, building, true);
+            if (codeRet.get("message") != null) {
+                String msg = (String) codeRet.get("message");
+                if (!msg.trim().isBlank()) {
+                    ret.put("message", codeRet.get("message"));
+                }
+            }
+            if (codeRet.get("code") == null) {
+                return ret;
+            }
+            GeographyCode code = (GeographyCode) codeRet.get("code");
+            report.setLocationid(code.getGcid());
+            report.setLocation(code);
+            ret.put("report", report);
+            return ret;
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            ret.put("message", e.toString());
+            return ret;
+        }
+    }
+
+
+    /*
+        export
+     */
+    public static void writeInternalCSVHeader(CSVPrinter printer) {
+        try {
+            printer.printRecord("DataSet", "Time", "Locationid",
+                    "Confirmed", "Healed", "Dead",
+                    "IncreasedConfirmed", "IncreasedHealed", "IncreasedDead",
+                    "DataSource");
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+    public static void writeInternalCSV(CSVPrinter printer, EpidemicReport report) {
+        try {
+            printer.printRecord(report.getDataSet(),
+                    DateTools.datetimeToString(report.getTime()),
+                    report.getLocationid(),
+                    report.getConfirmed(),
+                    report.getHealed(),
+                    report.getDead(),
+                    report.getIncreasedConfirmed(),
+                    report.getIncreasedHealed(),
+                    report.getIncreasedDead(),
+                    report.getSource()
+            );
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+    public static void writeInternalCSV(File file, List<EpidemicReport> reports) {
+        try ( CSVPrinter printer = new CSVPrinter(new FileWriter(file, Charset.forName("utf-8")), CSVFormat.DEFAULT)) {
+            writeInternalCSVHeader(printer);
+            for (EpidemicReport report : reports) {
+                writeInternalCSV(printer, report);
             }
         } catch (Exception e) {
             logger.debug(e.toString());
         }
-        return reports;
     }
 
-    private static String readTxtString(String value) {
-        if (value == null || value.isBlank() || !value.startsWith("\"")) {
-            return value;
-        }
-        return value.substring(1, value.length() - 1);
-    }
-
-    public static void writeTxt(File file, List<EpidemicReport> reports) {
+    public static List<String> externalNames(List<String> extraFields) {
         try {
-            if (file == null || reports == null || reports.isEmpty()) {
-                return;
-            }
-            StringBuilder s = new StringBuilder();
-            s.append("//").append(message("DataSet")).append(",")
-                    .append(message("Label")).append(",")
-                    .append(message("Longitude")).append(",").append(message("Latitude")).append(",").
-                    append(message("Level")).append(",").append(message("Country")).append(",").
-                    append(message("Province")).append(",").append(message("City")).append(",")
-                    .append(message("District")).append(",").append(message("Township")).append(",")
-                    .append(message("Neighborhood")).append(",").
-                    append(message("Confirmed")).append(",").append(message("Suspected")).append(",")
-                    .append(message("Healed")).append(",").append(message("Dead")).append(",").
-                    append(message("IncreasedConfirmed")).append(",").append(message("IncreasedSuspected")).append(",")
-                    .append(message("IncreasedHealed")).append(",").append(message("IncreasedDead")).append(",").
-                    append(message("Comments")).append(",").append(message("Time")).append("\n");
-
-            for (EpidemicReport report : reports) {
-                s.append("\"").append(report.getDataSet()).append("\",")
-                        .append(report.getDataLabel() != null ? "\"" + report.getDataLabel() + "\"" : "").append(",")
-                        .append(report.getLongitude()).append(",").append(report.getLatitude()).append(",")
-                        .append(report.getLevel() != null ? "\"" + report.getLevel() + "\"" : "").append(",")
-                        .append(report.getCountry() != null ? "\"" + report.getCountry() + "\"" : "").append(",")
-                        .append(report.getProvince() != null ? "\"" + report.getProvince() + "\"" : "").append(",")
-                        .append(report.getCity() != null ? "\"" + report.getCity() + "\"" : "").append(",")
-                        .append(report.getDistrict() != null ? "\"" + report.getDistrict() + "\"" : "").append(",")
-                        .append(report.getTownship() != null ? "\"" + report.getTownship() + "\"" : "").append(",")
-                        .append(report.getNeighborhood() != null ? "\"" + report.getNeighborhood() + "\"" : "").append(",")
-                        .append(report.getConfirmed()).append(",")
-                        .append(report.getSuspected()).append(",")
-                        .append(report.getHealed()).append(",")
-                        .append(report.getDead()).append(",")
-                        .append(report.getIncreasedConfirmed()).append(",")
-                        .append(report.getIncreasedSuspected()).append(",")
-                        .append(report.getIncreasedHealed()).append(",")
-                        .append(report.getIncreasedDead()).append(",")
-                        .append(report.getComments() != null ? "\"" + report.getComments() + "\"" : "").append(",\"")
-                        .append(DateTools.datetimeToString(report.getTime())).append("\"\n");
-            }
-            FileTools.writeFile(file, s.toString());
-
-        } catch (Exception e) {
-
-        }
-    }
-
-    public static void writeExcel(File file, List<EpidemicReport> reports) {
-        try {
-            if (file == null || reports == null || reports.isEmpty()) {
-                return;
-            }
             List<String> columns = new ArrayList<>();
             columns.addAll(Arrays.asList(
-                    //                    message("Dataid"),
                     message("DataSet"), message("Time"),
-                    message("Level"), message("Country"), message("Province"), message("City"),
-                    message("Confirmed"),
-                    message("IncreasedConfirmed"),
-                    message("Healed"),
-                    message("IncreasedHealed"),
-                    message("HealedRatio"),
-                    message("Dead"),
-                    message("IncreasedDead"),
-                    message("DeadRatio"),
+                    message("Confirmed"), message("Healed"), message("Dead")
+            ));
+            if (extraFields != null) {
+                for (String name : extraFields) {
+                    if (null != name) {
+                        switch (name) {
+                            case "Source":
+                                columns.add(message("DataSource"));
+                                break;
+                            case "IncreasedConfirmed":
+                                columns.add(message("IncreasedConfirmed"));
+                                break;
+                            case "IncreasedHealed":
+                                columns.add(message("IncreasedHealed"));
+                                break;
+                            case "IncreasedDead":
+                                columns.add(message("IncreasedDead"));
+                                break;
+                            case "HealedConfirmedPermillage":
+                                columns.add(message("HealedConfirmedPermillage"));
+                                break;
+                            case "DeadConfirmedPermillage":
+                                columns.add(message("DeadConfirmedPermillage"));
+                                break;
+                            case "ConfirmedPopulationPermillage":
+                                columns.add(message("ConfirmedPopulationPermillage"));
+                                break;
+                            case "DeadPopulationPermillage":
+                                columns.add(message("DeadPopulationPermillage"));
+                                break;
+                            case "HealedPopulationPermillage":
+                                columns.add(message("HealedPopulationPermillage"));
+                                break;
+                            case "ConfirmedAreaPermillage":
+                                columns.add(message("ConfirmedAreaPermillage"));
+                                break;
+                            case "HealedAreaPermillage":
+                                columns.add(message("HealedAreaPermillage"));
+                                break;
+                            case "DeadAreaPermillage":
+                                columns.add(message("DeadAreaPermillage"));
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
+            }
+            columns.addAll(Arrays.asList(
+                    message("Level"), message("Continent"), message("Country"), message("Province"), message("City"),
+                    message("County"), message("Town"), message("Village"), message("Building"),
                     message("Longitude"), message("Latitude")
             ));
-            List<List<String>> rows = new ArrayList<>();
-            for (EpidemicReport report : reports) {
-                List<String> row = new ArrayList<>();
-                boolean valid = validCoordinate(report);
-                row.addAll(Arrays.asList(
-                        //                        report.getDataid() + "",
-                        report.getDataSet(), DateTools.datetimeToString(report.getTime()),
-                        (report.getLevel() == null ? "" : report.getLevel()),
-                        (report.getCountry() == null ? "" : report.getCountry()),
-                        (report.getProvince() == null ? "" : report.getProvince()),
-                        (report.getCity() == null ? "" : report.getCity()),
-                        (report.getConfirmed() + ""),
-                        (report.getIncreasedConfirmed() + ""),
-                        (report.getHealed() + ""),
-                        (report.getIncreasedHealed() + ""),
-                        (report.getHealedRatio() + ""),
-                        (report.getDead() + ""),
-                        (report.getIncreasedDead() + ""),
-                        (report.getDeadRatio() + ""),
-                        (valid ? report.getLongitude() + "" : ""),
-                        (valid ? report.getLatitude() + "" : "")
-                )
-                );
-                rows.add(row);
-            }
-            ExcelTools.createXLSX(file, columns, rows);
-            rows.clear();
+            return columns;
+        } catch (Exception e) {
+            return null;
+        }
+    }
 
+    public static List<String> values(EpidemicReport report, List<String> extraFields) {
+        GeographyCode gcode = report.getLocation();
+        boolean valid = gcode.validCoordinate();
+        List<String> row = new ArrayList<>();
+        row.addAll(Arrays.asList(
+                report.getDataSet(), DateTools.datetimeToString(report.getTime()),
+                (report.getConfirmed() + ""),
+                (report.getHealed() + ""),
+                (report.getDead() + "")
+        ));
+        if (extraFields != null) {
+            for (String name : extraFields) {
+                if (null != name) {
+                    switch (name) {
+                        case "Source":
+                            row.add(report.getSourceName());
+                            break;
+                        case "IncreasedConfirmed":
+                            row.add(report.getIncreasedConfirmed() + "");
+                            break;
+                        case "IncreasedHealed":
+                            row.add(report.getIncreasedHealed() + "");
+                            break;
+                        case "IncreasedDead":
+                            row.add(report.getIncreasedDead() + "");
+                            break;
+                        case "HealedConfirmedPermillage":
+                            row.add(report.getHealedConfirmedPermillage() + "");
+                            break;
+                        case "DeadConfirmedPermillage":
+                            row.add(report.getDeadConfirmedPermillage() + "");
+                            break;
+                        case "ConfirmedPopulationPermillage":
+                            row.add(report.getConfirmedPopulationPermillage() + "");
+                            break;
+                        case "DeadPopulationPermillage":
+                            row.add(report.getDeadPopulationPermillage() + "");
+                            break;
+                        case "HealedPopulationPermillage":
+                            row.add(report.getHealedPopulationPermillage() + "");
+                            break;
+                        case "ConfirmedAreaPermillage":
+                            row.add(report.getConfirmedAreaPermillage() + "");
+                            break;
+                        case "HealedAreaPermillage":
+                            row.add(report.getHealedAreaPermillage() + "");
+                            break;
+                        case "DeadAreaPermillage":
+                            row.add(report.getDeadAreaPermillage() + "");
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
+        row.addAll(Arrays.asList(
+                gcode.getLevelCode() != null ? gcode.getLevelCode().getName() : "",
+                gcode.getContinentName() != null ? gcode.getContinentName() : "",
+                gcode.getCountryName() != null ? gcode.getCountryName() : "",
+                gcode.getProvinceName() != null ? gcode.getProvinceName() : "",
+                gcode.getCityName() != null ? gcode.getCityName() : "",
+                gcode.getCountyName() != null ? gcode.getCountyName() : "",
+                gcode.getTownName() != null ? gcode.getTownName() : "",
+                gcode.getVillageName() != null ? gcode.getVillageName() : "",
+                gcode.getBuildingName() != null ? gcode.getBuildingName() : "",
+                (valid ? gcode.getLongitude() + "" : ""),
+                (valid ? gcode.getLatitude() + "" : "")
+        ));
+        return row;
+    }
+
+    public static void writeExternalCSVHeader(CSVPrinter printer, List<String> extraFields) {
+        try {
+            printer.printRecord(externalNames(extraFields));
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+    public static void writeExternalCSV(CSVPrinter printer, EpidemicReport report, List<String> extraFields) {
+        try {
+            printer.printRecord(values(report, extraFields));
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+    public static void writeExternalCSV(File file, List<EpidemicReport> reports, List<String> extraFields) {
+        try ( CSVPrinter printer = new CSVPrinter(new FileWriter(file, Charset.forName("utf-8")), CSVFormat.DEFAULT)) {
+            writeExternalCSVHeader(printer, extraFields);
+            for (EpidemicReport report : reports) {
+                writeExternalCSV(printer, report, extraFields);
+            }
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+    public static void writeExcel(File file, List<EpidemicReport> reports, List<String> extraFields) {
+        try {
+            if (file == null || reports == null || reports.isEmpty()) {
+                return;
+            }
+            XSSFWorkbook wb = new XSSFWorkbook();
+            XSSFSheet sheet = wb.createSheet("sheet1");
+            List<String> columns = writeExcelHeader(wb, sheet, extraFields);
+            for (int i = 0; i < reports.size(); i++) {
+                EpidemicReport report = reports.get(i);
+                writeExcel(sheet, i, report, extraFields);
+            }
+            for (int i = 0; i < columns.size(); i++) {
+                sheet.autoSizeColumn(i);
+            }
+            try ( OutputStream fileOut = new FileOutputStream(file)) {
+                wb.write(fileOut);
+            }
         } catch (Exception e) {
 
         }
     }
 
-    public static void writeJson(File file, List<EpidemicReport> reports) {
+    public static List<String> writeExcelHeader(XSSFWorkbook wb, XSSFSheet sheet, List<String> extraFields) {
         try {
-            if (file == null || reports == null || reports.isEmpty()) {
-                return;
+            List<String> columns = externalNames(extraFields);
+            sheet.setDefaultColumnWidth(20);
+            XSSFRow titleRow = sheet.createRow(0);
+            XSSFCellStyle horizontalCenter = wb.createCellStyle();
+            horizontalCenter.setAlignment(HorizontalAlignment.CENTER);
+            for (int i = 0; i < columns.size(); i++) {
+                XSSFCell cell = titleRow.createCell(i);
+                cell.setCellValue(columns.get(i));
+                cell.setCellStyle(horizontalCenter);
             }
+            return columns;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static void writeExcel(XSSFSheet sheet, int i, EpidemicReport report, List<String> extraFields) {
+        try {
+            List<String> row = values(report, extraFields);
+            XSSFRow sheetRow = sheet.createRow(i + 1);
+            for (int j = 0; j < row.size(); j++) {
+                XSSFCell cell = sheetRow.createCell(j);
+                cell.setCellValue(row.get(j));
+            }
+        } catch (Exception e) {
+        }
+    }
+
+    public static void writeJson(File file, List<EpidemicReport> reports, List<String> extraFields) {
+        if (file == null || reports == null || reports.isEmpty()) {
+            return;
+        }
+        String indent = "    ";
+        try ( FileWriter writer = new FileWriter(file, Charset.forName("utf-8"))) {
             StringBuilder s = new StringBuilder();
-            String indent = "    ";
             s.append("{\"EpidemicReports\": [\n");
-            for (EpidemicReport report : reports) {
-                s.append(indent).append("{\"dataset\":\"").append(report.getDataSet()).append("\",")
-                        .append("\"time\":\"").append(DateTools.datetimeToString(report.getTime())).append("\",")
-                        .append("\"level\":\"").append(report.getLevel()).append("\"");
-                if (report.getCountry() != null) {
-                    s.append(",\"country\":\"").append(report.getCountry()).append("\"");
+            writer.write(s.toString());
+            for (int i = 0; i < reports.size(); i++) {
+                EpidemicReport report = reports.get(i);
+                s = writeJson(writer, indent, report, extraFields);
+                if (i == reports.size() - 1) {
+                    s.append(indent).append("}\n");
+                } else {
+                    s.append(indent).append("},\n");
                 }
-                if (report.getProvince() != null) {
-                    s.append(",\"province\":\"").append(report.getProvince()).append("\"");
-                }
-                if (report.getCity() != null) {
-                    s.append(",\"city\":\"").append(report.getCity()).append("\"");
-                }
-                s.append(",\"confirmed\":").append(report.getConfirmed())
-                        .append(",\"increasedConfirmed\":").append(report.getIncreasedConfirmed())
-                        .append(",\"healed\":").append(report.getHealed())
-                        .append(",\"increasedHealed\":").append(report.getIncreasedHealed())
-                        .append(",\"healedRatio\":").append(report.getHealedRatio())
-                        .append(",\"increasedDead\":").append(report.getIncreasedDead())
-                        .append(",\"deadRatio\":").append(report.getDeadRatio());
-                if (report.getLongitude() >= -180) {
-                    s.append(",\"longtitude\":").append(report.getLongitude())
-                            .append(",\"latitude\":").append(report.getLatitude());
-                }
-                s.append(indent).append("}\n");
+                writer.write(s.toString());
             }
-            s.append("]}");
-            FileTools.writeFile(file, s.toString());
+            writer.write("]}\n");
         } catch (Exception e) {
+            logger.error(e.toString());
         }
     }
 
-    public static void writeXml(File file, List<EpidemicReport> reports) {
+    public static StringBuilder writeJson(FileWriter writer, String indent, EpidemicReport report, List<String> extraFields) {
         try {
-            if (file == null || reports == null || reports.isEmpty()) {
-                return;
-            }
+            GeographyCode gcode = report.getLocation();
+            boolean valid = gcode.validCoordinate();
             StringBuilder s = new StringBuilder();
-            String indent = "    ";
+            s.append(indent).append("{\"DataSet\":\"").append(report.getDataSet()).append("\"")
+                    .append(",\"Time\":\"").append(DateTools.datetimeToString(report.getTime())).append("\"")
+                    .append(",\"Confirmed\":").append(report.getConfirmed())
+                    .append(",\"Healed\":").append(report.getHealed())
+                    .append(",\"Dead\":").append(report.getDead());
+            if (extraFields != null) {
+                for (String name : extraFields) {
+                    if (null != name) {
+                        switch (name) {
+                            case "Source":
+                                s.append(",\"DataSource\":\"").append(report.getSourceName()).append("\"");
+                                break;
+                            case "IncreasedConfirmed":
+                                if (report.getIncreasedConfirmed() > 0) {
+                                    s.append(",\"IncreasedConfirmed\":").append(report.getIncreasedConfirmed());
+                                }
+                                break;
+                            case "IncreasedHealed":
+                                if (report.getIncreasedHealed() > 0) {
+                                    s.append(",\"IncreasedHealed\":").append(report.getIncreasedHealed());
+                                }
+                                break;
+                            case "IncreasedDead":
+                                if (report.getIncreasedDead() > 0) {
+                                    s.append(",\"IncreasedDead\":").append(report.getIncreasedDead());
+                                }
+                                break;
+                            case "HealedConfirmedPermillage":
+                                if (report.getHealedConfirmedPermillage() > 0) {
+                                    s.append(",\"HealedConfirmedPermillage\":").append(report.getHealedConfirmedPermillage());
+                                }
+                                break;
+                            case "DeadConfirmedPermillage":
+                                if (report.getDeadConfirmedPermillage() > 0) {
+                                    s.append(",\"DeadConfirmedPermillage\":").append(report.getDeadConfirmedPermillage());
+                                }
+                                break;
+                            case "ConfirmedPopulationPermillage":
+                                if (report.getConfirmedPopulationPermillage() > 0) {
+                                    s.append(",\"ConfirmedPopulationPermillage\":").append(report.getConfirmedPopulationPermillage());
+                                }
+                                break;
+                            case "DeadPopulationPermillage":
+                                if (report.getDeadPopulationPermillage() > 0) {
+                                    s.append(",\"DeadPopulationPermillage\":").append(report.getDeadPopulationPermillage());
+                                }
+                                break;
+                            case "HealedPopulationPermillage":
+                                if (report.getHealedPopulationPermillage() > 0) {
+                                    s.append(",\"HealedPopulationPermillage\":").append(report.getHealedPopulationPermillage());
+                                }
+                                break;
+                            case "ConfirmedAreaPermillage":
+                                if (report.getConfirmedAreaPermillage() > 0) {
+                                    s.append(",\"ConfirmedAreaPermillage\":").append(report.getConfirmedAreaPermillage());
+                                }
+                                break;
+                            case "HealedAreaPermillage":
+                                if (report.getHealedAreaPermillage() > 0) {
+                                    s.append(",\"HealedAreaPermillage\":").append(report.getHealedAreaPermillage());
+                                }
+                                break;
+                            case "DeadAreaPermillage":
+                                if (report.getDeadAreaPermillage() > 0) {
+                                    s.append(",\"DeadAreaPermillage\":").append(report.getDeadAreaPermillage());
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
+            }
+            if (gcode.getLevelCode() != null) {
+                s.append(",\"Level\":\"").append(gcode.getLevelCode().getName()).append("\"");
+            }
+            if (gcode.getContinentName() != null) {
+                s.append(",\"Continent\":\"").append(gcode.getContinentName()).append("\"");
+            }
+            if (gcode.getCountryName() != null) {
+                s.append(",\"Country\":\"").append(gcode.getCountryName()).append("\"");
+            }
+            if (gcode.getProvinceName() != null) {
+                s.append(",\"Province\":\"").append(gcode.getProvinceName()).append("\"");
+            }
+            if (gcode.getCityName() != null) {
+                s.append(",\"City\":\"").append(gcode.getCityName()).append("\"");
+            }
+            if (gcode.getCountyName() != null) {
+                s.append(",\"County\":\"").append(gcode.getCountyName()).append("\"");
+            }
+            if (gcode.getTownName() != null) {
+                s.append(",\"Town\":\"").append(gcode.getTownName()).append("\"");
+            }
+            if (gcode.getVillageName() != null) {
+                s.append(",\"Village\":\"").append(gcode.getVillageName()).append("\"");
+            }
+            if (gcode.getBuildingName() != null) {
+                s.append(",\"Building\":\"").append(gcode.getBuildingName()).append("\"");
+            }
+            if (valid) {
+                s.append(",\"Longitude\":\"").append(gcode.getLongitude()).append("\"");
+                s.append(",\"Latitude\":\"").append(gcode.getLatitude()).append("\"");
+            }
+            return s;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
+    public static void writeXml(File file, List<EpidemicReport> reports, List<String> extraFields) {
+        if (file == null || reports == null || reports.isEmpty()) {
+            return;
+        }
+        String indent = "    ";
+        try ( FileWriter writer = new FileWriter(file, Charset.forName("utf-8"))) {
+            StringBuilder s = new StringBuilder();
             s.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n").
                     append("<EpidemicReports>\n");
+            writer.write(s.toString());
             for (EpidemicReport report : reports) {
-                s.append(indent).append("<EpidemicReport ")
-                        .append(" dataset=\"").append(report.getDataSet()).append("\" ")
-                        .append(" time=\"").append(DateTools.datetimeToString(report.getTime())).append("\" ")
-                        .append(" level=\"").append(report.getLevel()).append("\" ");
-                if (report.getCountry() != null) {
-                    s.append(" country=\"").append(report.getCountry()).append("\" ");
-                }
-                if (report.getProvince() != null) {
-                    s.append(" province=\"").append(report.getProvince()).append("\" ");
-                }
-                if (report.getCity() != null) {
-                    s.append(" city=\"").append(report.getCity()).append("\" ");
-                }
-                s.append(" confirmed=").append(report.getConfirmed())
-                        .append(" increasedConfirmed=").append(report.getIncreasedConfirmed())
-                        .append(" healed=").append(report.getHealed())
-                        .append(" increasedHealed=").append(report.getIncreasedHealed())
-                        .append(" healedRatio=").append(report.getHealedRatio())
-                        .append(" increasedDead=").append(report.getIncreasedDead())
-                        .append(" deadRatio=").append(report.getDeadRatio());
-                if (report.getLongitude() >= -180) {
-                    s.append(" longtitude=").append(report.getLongitude())
-                            .append(" latitude=").append(report.getLatitude());
-                }
-                s.append(indent).append(" />\n");
+                writeXml(writer, indent, report, extraFields);
             }
-            s.append("</EpidemicReports>\n");
-            FileTools.writeFile(file, s.toString());
+            writer.write("</EpidemicReports>\n");
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    public static void writeXml(FileWriter writer, String indent, EpidemicReport report, List<String> extraFields) {
+        try {
+            GeographyCode gcode = report.getLocation();
+            boolean valid = gcode.validCoordinate();
+            StringBuilder s = new StringBuilder();
+            s.append(indent).append("<EpidemicReport ");
+            s.append(" DataSet=\"").append(report.getDataSet()).append("\"")
+                    .append(" Time=\"").append(DateTools.datetimeToString(report.getTime())).append("\"")
+                    .append(" Confirmed=\"").append(report.getConfirmed()).append("\"")
+                    .append(" Healed=\"").append(report.getHealed()).append("\"")
+                    .append(" Dead=\"").append(report.getDead()).append("\"");
+            if (extraFields != null) {
+                for (String name : extraFields) {
+                    if (null != name) {
+                        switch (name) {
+                            case "Source":
+                                s.append(" DataSource=\"").append(report.getSourceName()).append("\"");
+                                break;
+                            case "IncreasedConfirmed":
+                                s.append(" IncreasedConfirmed=\"").append(report.getIncreasedConfirmed()).append("\"");
+                                break;
+                            case "IncreasedHealed":
+                                s.append(" IncreasedHealed=\"").append(report.getIncreasedHealed()).append("\"");
+                                break;
+                            case "IncreasedDead":
+                                s.append(" IncreasedDead=\"").append(report.getIncreasedDead()).append("\"");
+                                break;
+                            case "HealedConfirmedPermillage":
+                                s.append(" HealedConfirmedPermillage=\"").append(report.getHealedConfirmedPermillage()).append("\"");
+                                break;
+                            case "DeadConfirmedPermillage":
+                                s.append(" DeadConfirmedPermillage=\"").append(report.getDeadConfirmedPermillage()).append("\"");
+                                break;
+                            case "ConfirmedPopulationPermillage":
+                                s.append(" ConfirmedPopulationPermillage=\"").append(report.getConfirmedPopulationPermillage()).append("\"");
+                                break;
+                            case "DeadPopulationPermillage":
+                                s.append(" DeadPopulationPermillage=\"").append(report.getDeadPopulationPermillage()).append("\"");
+                                break;
+                            case "HealedPopulationPermillage":
+                                s.append(" HealedPopulationPermillage=\"").append(report.getHealedPopulationPermillage()).append("\"");
+                                break;
+                            case "ConfirmedAreaPermillage":
+                                s.append(" ConfirmedAreaPermillage=\"").append(report.getConfirmedAreaPermillage()).append("\"");
+                                break;
+                            case "HealedAreaPermillage":
+                                s.append(" HealedAreaPermillage=\"").append(report.getHealedAreaPermillage()).append("\"");
+                                break;
+                            case "DeadAreaPermillage":
+                                s.append(" DeadAreaPermillage=\"").append(report.getDeadAreaPermillage()).append("\"");
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
+            }
+            if (gcode.getLevelCode() != null) {
+                s.append(" Level=\"").append(gcode.getLevelCode().getName()).append("\"");
+            }
+            if (gcode.getContinentName() != null) {
+                s.append(" Continent=\"").append(gcode.getContinentName()).append("\"");
+            }
+            if (gcode.getCountryName() != null) {
+                s.append(" Country=\"").append(gcode.getCountryName()).append("\"");
+            }
+            if (gcode.getProvinceName() != null) {
+                s.append(" Province=\"").append(gcode.getProvinceName()).append("\"");
+            }
+            if (gcode.getCityName() != null) {
+                s.append(" City=\"").append(gcode.getCityName()).append("\"");
+            }
+            if (gcode.getCountyName() != null) {
+                s.append(" County=\"").append(gcode.getCountyName()).append("\"");
+            }
+            if (gcode.getTownName() != null) {
+                s.append(" Town=\"").append(gcode.getTownName()).append("\"");
+            }
+            if (gcode.getVillageName() != null) {
+                s.append(" Village=\"").append(gcode.getVillageName()).append("\"");
+            }
+            if (gcode.getBuildingName() != null) {
+                s.append(" Building=\"").append(gcode.getBuildingName()).append("\"");
+            }
+            if (valid) {
+                s.append(" Longitude=\"").append(gcode.getLongitude()).append("\"");
+                s.append(" Latitude=\"").append(gcode.getLatitude()).append("\"");
+            }
+            s.append(" />\n");
+            writer.write(s.toString());
         } catch (Exception e) {
         }
     }
 
-    public static void writeHtml(File file, List<EpidemicReport> reports) {
+    public static void writeHtml(File file, String title, List<EpidemicReport> reports, List<String> extraFields) {
         try {
             if (file == null || reports == null || reports.isEmpty()) {
                 return;
             }
-            List<String> names = new ArrayList<>();
-            String title = message("EpidemicReport") + " " + message("NewCoronavirusPneumonia");
-            names.addAll(Arrays.asList(
-                    message("Dataset"), message("Time"), message("Level"),
-                    message("Country"), message("Province"), message("City"),
-                    message("Confirmed"), message("IncreasedConfirmed"),
-                    message("Healed"), message("IncreasedHealed"), message("HealedRatio"),
-                    message("Dead"), message("IncreasedDead"), message("DeadRatio"),
-                    message("Longitude"), message("Latitude")
-            ));
+            List<String> names = externalNames(extraFields);
             StringTable table = new StringTable(names, title);
             for (EpidemicReport report : reports) {
-                List<String> row = new ArrayList<>();
-                row.addAll(Arrays.asList(
-                        report.getDataSet(), report.getLevel(), DateTools.datetimeToString(report.getTime()),
-                        report.getCountry() != null ? report.getCountry() : "",
-                        report.getProvince() != null ? report.getProvince() : "",
-                        report.getCity() != null ? report.getCity() : "",
-                        report.getConfirmed() + "", report.getIncreasedConfirmed() + "",
-                        report.getHealed() + "", report.getIncreasedHealed() + "", report.getHealedRatio() + "",
-                        report.getDead() + "", report.getIncreasedDead() + "", report.getDeadRatio() + "",
-                        report.getLongitude() >= -180 ? report.getLongitude() + "" : "",
-                        report.getLatitude() >= -90 ? report.getLatitude() + "" : ""
-                ));
+                List<String> row = values(report, extraFields);
                 table.add(row);
             }
             FileTools.writeFile(file, StringTable.tableHtml(table));
@@ -327,31 +998,54 @@ public class EpidemicReport {
         }
     }
 
-    // Only copy base attributes.
-    public EpidemicReport copy() {
-        try {
-            EpidemicReport cloned = EpidemicReport.create()
-                    .setDataSet(dataSet).setLevel(level).
-                    setCountry(country).setProvince(province).setCity(city)
-                    .setDistrict(district).setTownship(township).setNeighborhood(neighborhood)
-                    .setLongitude(longitude).setLatitude(latitude)
-                    .setConfirmed(confirmed).setSuspected(suspected).setHealed(healed).setDead(dead)
-                    .setTime(time).setDataLabel(dataLabel).setComments(comments);
-            return cloned;
-        } catch (Exception e) {
-            return null;
+    /*
+        custmized get/set
+     */
+    public long getLocationid() {
+        if (locationid <= 0 && location != null) {
+            locationid = location.getGcid();
         }
+        return locationid;
+    }
+
+    public GeographyCode getLocation() {
+//        if (location == null && locationid > 0) {
+//            location = TableGeographyCode.readCode(locationid, false);
+//        }
+        return location;
+    }
+
+    public String getLocationFullName() {
+        if (locationFullName == null && getLocation() != null) {
+            locationFullName = location.getFullName();
+        }
+        return locationFullName;
+    }
+
+    public String getSourceName() {
+        sourceName = sourceName(source);
+        return message(sourceName);
+    }
+
+    public SourceType getSourceType() {
+        sourceType = sourceType(source);
+        return sourceType;
     }
 
     /*
         get/set
      */
-    public long getDataid() {
-        return dataid;
+    public long getEpid() {
+        return epid;
     }
 
-    public EpidemicReport setDataid(long dataid) {
-        this.dataid = dataid;
+    public EpidemicReport setEpid(long epid) {
+        this.epid = epid;
+        return this;
+    }
+
+    public EpidemicReport setLocationid(long locationid) {
+        this.locationid = locationid;
         return this;
     }
 
@@ -364,138 +1058,62 @@ public class EpidemicReport {
         return this;
     }
 
-    public String getCountry() {
-        return country;
-    }
-
-    public EpidemicReport setCountry(String country) {
-        this.country = country;
+    public EpidemicReport setLocation(GeographyCode location) {
+        this.location = location;
         return this;
     }
 
-    public String getProvince() {
-        return province;
-    }
-
-    public EpidemicReport setProvince(String province) {
-        this.province = province;
-        return this;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public EpidemicReport setCity(String city) {
-        this.city = city;
-        return this;
-    }
-
-    public String getDistrict() {
-        return district;
-    }
-
-    public EpidemicReport setDistrict(String district) {
-        this.district = district;
-        return this;
-    }
-
-    public String getTownship() {
-        return township;
-    }
-
-    public EpidemicReport setTownship(String township) {
-        this.township = township;
-        return this;
-    }
-
-    public String getNeighborhood() {
-        return neighborhood;
-    }
-
-    public EpidemicReport setNeighborhood(String neighborhood) {
-        this.neighborhood = neighborhood;
-        return this;
-    }
-
-    public String getLevel() {
-        return level;
-    }
-
-    public EpidemicReport setLevel(String level) {
-        this.level = level;
-        return this;
-    }
-
-    public String getDataLabel() {
-        return dataLabel;
-    }
-
-    public EpidemicReport setDataLabel(String dataLabel) {
-        this.dataLabel = dataLabel;
-        return this;
-    }
-
-    public String getComments() {
-        return comments;
-    }
-
-    public EpidemicReport setComments(String comments) {
-        this.comments = comments;
-        return this;
-    }
-
-    public double getLongitude() {
-        return longitude;
-    }
-
-    public EpidemicReport setLongitude(double longitude) {
-        this.longitude = longitude;
-        return this;
-    }
-
-    public double getLatitude() {
-        return latitude;
-    }
-
-    public EpidemicReport setLatitude(double latitude) {
-        this.latitude = latitude;
-        return this;
-    }
-
-    public int getConfirmed() {
+    public long getConfirmed() {
         return confirmed;
     }
 
-    public EpidemicReport setConfirmed(int confirmed) {
+    public EpidemicReport setConfirmed(long confirmed) {
         this.confirmed = confirmed;
         return this;
     }
 
-    public int getSuspected() {
-        return suspected;
-    }
-
-    public EpidemicReport setSuspected(int suspected) {
-        this.suspected = suspected;
-        return this;
-    }
-
-    public int getHealed() {
+    public long getHealed() {
         return healed;
     }
 
-    public EpidemicReport setHealed(int healed) {
+    public EpidemicReport setHealed(long healed) {
         this.healed = healed;
         return this;
     }
 
-    public int getDead() {
+    public long getDead() {
         return dead;
     }
 
-    public EpidemicReport setDead(int dead) {
+    public EpidemicReport setDead(long dead) {
         this.dead = dead;
+        return this;
+    }
+
+    public long getIncreasedConfirmed() {
+        return increasedConfirmed;
+    }
+
+    public EpidemicReport setIncreasedConfirmed(long increasedConfirmed) {
+        this.increasedConfirmed = increasedConfirmed;
+        return this;
+    }
+
+    public long getIncreasedHealed() {
+        return increasedHealed;
+    }
+
+    public EpidemicReport setIncreasedHealed(long increasedHealed) {
+        this.increasedHealed = increasedHealed;
+        return this;
+    }
+
+    public long getIncreasedDead() {
+        return increasedDead;
+    }
+
+    public EpidemicReport setIncreasedDead(long increasedDead) {
+        this.increasedDead = increasedDead;
         return this;
     }
 
@@ -508,64 +1126,90 @@ public class EpidemicReport {
         return this;
     }
 
-    public double getHealedRatio() {
-        if (confirmed <= 0) {
-            healedRatio = 0;
-        } else {
-            healedRatio = DoubleTools.scale(healed * 100.0d / confirmed, 2);
-        }
-        return healedRatio;
+    public void setLocationFullName(String locationFullName) {
+        this.locationFullName = locationFullName;
     }
 
-    public EpidemicReport setHealedRatio(double healedRatio) {
-        this.healedRatio = healedRatio;
+    public void setHealedConfirmedPermillage(double healedConfirmedPermillage) {
+        this.healedConfirmedPermillage = healedConfirmedPermillage;
+    }
+
+    public void setDeadConfirmedPermillage(double deadConfirmedPermillage) {
+        this.deadConfirmedPermillage = deadConfirmedPermillage;
+    }
+
+    public int getSource() {
+        return source;
+    }
+
+    public EpidemicReport setSource(int source) {
+        this.source = source;
         return this;
     }
 
-    public double getDeadRatio() {
-        if (confirmed <= 0) {
-            deadRatio = 0;
-        } else {
-            deadRatio = DoubleTools.scale(dead * 100.0d / confirmed, 2);
-        }
-        return deadRatio;
-    }
-
-    public EpidemicReport setDeadRatio(double deadRatio) {
-        this.deadRatio = deadRatio;
+    public EpidemicReport setSourceName(String sourceName) {
+        this.sourceName = sourceName;
         return this;
     }
 
-    public int getIncreasedConfirmed() {
-        return increasedConfirmed;
+    public void setSourceType(SourceType sourceType) {
+        this.sourceType = sourceType;
     }
 
-    public void setIncreasedConfirmed(int increasedConfirmed) {
-        this.increasedConfirmed = increasedConfirmed;
+    public void setConfirmedPopulationPermillage(double confirmedPopulationPermillage) {
+        this.confirmedPopulationPermillage = confirmedPopulationPermillage;
     }
 
-    public int getIncreasedSuspected() {
-        return increasedSuspected;
+    public void setDeadPopulationPermillage(double deadPopulationPermillage) {
+        this.deadPopulationPermillage = deadPopulationPermillage;
     }
 
-    public void setIncreasedSuspected(int increasedSuspected) {
-        this.increasedSuspected = increasedSuspected;
+    public void setHealedPopulationPermillage(double healedPopulationPermillage) {
+        this.healedPopulationPermillage = healedPopulationPermillage;
     }
 
-    public int getIncreasedHealed() {
-        return increasedHealed;
+    public void setConfirmedAreaPermillage(double confirmedAreaPermillage) {
+        this.confirmedAreaPermillage = confirmedAreaPermillage;
     }
 
-    public void setIncreasedHealed(int increasedHealed) {
-        this.increasedHealed = increasedHealed;
+    public void setDeadAreaPermillage(double deadAreaPermillage) {
+        this.deadAreaPermillage = deadAreaPermillage;
     }
 
-    public int getIncreasedDead() {
-        return increasedDead;
+    public void setHealedAreaPermillage(double healedAreaPermillage) {
+        this.healedAreaPermillage = healedAreaPermillage;
     }
 
-    public void setIncreasedDead(int increasedDead) {
-        this.increasedDead = increasedDead;
+    public double getHealedConfirmedPermillage() {
+        return healedConfirmedPermillage;
+    }
+
+    public double getDeadConfirmedPermillage() {
+        return deadConfirmedPermillage;
+    }
+
+    public double getConfirmedPopulationPermillage() {
+        return confirmedPopulationPermillage;
+    }
+
+    public double getDeadPopulationPermillage() {
+        return deadPopulationPermillage;
+    }
+
+    public double getHealedPopulationPermillage() {
+        return healedPopulationPermillage;
+    }
+
+    public double getConfirmedAreaPermillage() {
+        return confirmedAreaPermillage;
+    }
+
+    public double getDeadAreaPermillage() {
+        return deadAreaPermillage;
+    }
+
+    public double getHealedAreaPermillage() {
+        return healedAreaPermillage;
     }
 
 }

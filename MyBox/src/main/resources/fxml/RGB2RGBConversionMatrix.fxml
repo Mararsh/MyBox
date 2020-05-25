@@ -30,7 +30,7 @@ License:    Apache License Version 2.0
                                     <children>
                                         <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                                             <children>
-                                    <Hyperlink onAction="#aboutColor" text="%AboutColor" />
+                                                <Hyperlink onAction="#aboutColor" text="%AboutColor" />
                                                 <Label maxWidth="1.7976931348623157E308" text=" " HBox.hgrow="ALWAYS" />
                                                 <HBox alignment="CENTER_LEFT" spacing="5.0">
                                                     <children>
@@ -57,33 +57,33 @@ License:    Apache License Version 2.0
                                                 <Button fx:id="calculateButton" mnemonicParsing="false" onAction="#calculateAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Calculate" />
                                             </children>
                                         </HBox>
-                              <SplitPane dividerPositions="0.6" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-                                 <items>
-                                    <ScrollPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefViewportHeight="460.0" prefViewportWidth="911.0">
-                                       <content>
-                                          <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                                             <children>
-                                                          <TitledPane text="%Source" VBox.vgrow="NEVER">
-                                                              <content>
-                                                                  <fx:include fx:id="source" source="RGBColorSpace.fxml" />
-                                                              </content>
-                                                          </TitledPane>
-                                                          <TitledPane text="%Target" VBox.vgrow="NEVER">
-                                                              <content>
-                                                                  <fx:include fx:id="target" source="RGBColorSpace.fxml" />
-                                                              </content>
-                                                          </TitledPane>
-                                             </children>
-                                          </VBox>
-                                       </content>
-                                    </ScrollPane>
-                                              <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%LinearRGB2RGBMatrix">
-                                                  <content>
-                                                      <TextArea fx:id="calculateArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
-                                                  </content>
-                                              </TitledPane>
-                                 </items>
-                              </SplitPane>
+                                        <SplitPane dividerPositions="0.6" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                            <items>
+                                                <ScrollPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefViewportHeight="460.0" prefViewportWidth="911.0">
+                                                    <content>
+                                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                                            <children>
+                                                                <TitledPane text="%Source" VBox.vgrow="NEVER">
+                                                                    <content>
+                                                                        <fx:include fx:id="source" source="RGBColorSpace.fxml" />
+                                                                    </content>
+                                                                </TitledPane>
+                                                                <TitledPane text="%Target" VBox.vgrow="NEVER">
+                                                                    <content>
+                                                                        <fx:include fx:id="target" source="RGBColorSpace.fxml" />
+                                                                    </content>
+                                                                </TitledPane>
+                                                            </children>
+                                                        </VBox>
+                                                    </content>
+                                                </ScrollPane>
+                                                <TitledPane  maxWidth="1.7976931348623157E308" text="%LinearRGB2RGBMatrix">
+                                                    <content>
+                                                        <TextArea fx:id="calculateArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+                                                    </content>
+                                                </TitledPane>
+                                            </items>
+                                        </SplitPane>
                                     </children>
                                     <padding>
                                         <Insets top="10.0" />
@@ -116,7 +116,7 @@ License:    Apache License Version 2.0
                                                 <TableColumn fx:id="sourceCSColumn" editable="false" prefWidth="160.0" text="%SourceColorSpace" />
                                                 <TableColumn fx:id="sourceWhiteColumn" editable="false" prefWidth="200.0" text="%SourceReferenceWhite" />
                                                 <TableColumn fx:id="targetCSColumn" editable="false" prefWidth="160.0" text="%TargetColorSpace" />
-                                    <TableColumn fx:id="targetWhiteColumn" editable="false" prefWidth="200.0" text="%TargetReferenceWhite" />
+                                                <TableColumn fx:id="targetWhiteColumn" editable="false" prefWidth="200.0" text="%TargetReferenceWhite" />
                                                 <TableColumn fx:id="algorithmColumn" prefWidth="100.0" text="Algorithm" />
                                                 <TableColumn fx:id="source2targetColumn" prefWidth="320.0" text="%LinearRGB2RGBMatrix" />
                                             </columns>

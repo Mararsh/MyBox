@@ -308,7 +308,7 @@ public class ImageFileReaders {
             return false;
         }
         long availableMem, pixelsSize, requiredMem, totalRequiredMem;
-        pixelsSize = imageInfo.getHeight() * imageInfo.getWidth();
+        pixelsSize = imageInfo.getHeight() * imageInfo.getWidth() * 1L;
         if (imageInfo.getColorChannels() > 0) {
             pixelsSize = pixelsSize * imageInfo.getColorChannels();
         } else {
@@ -316,9 +316,9 @@ public class ImageFileReaders {
         }
         pixelsSize = pixelsSize / (1024 * 1024);
         Runtime r = Runtime.getRuntime();
-        long used = (r.totalMemory() - r.freeMemory()) / (1024 * 1024);
-        availableMem = r.maxMemory() / (1024 * 1024) - used;
-        requiredMem = pixelsSize * 5;
+        long used = (r.totalMemory() - r.freeMemory()) / (1024 * 1024L);
+        availableMem = r.maxMemory() / (1024 * 1024L) - used;
+        requiredMem = pixelsSize * 5L;
         totalRequiredMem = requiredMem * framesNumber + 200;
 
         Map<String, Long> sizes = new HashMap<>();
@@ -327,7 +327,7 @@ public class ImageFileReaders {
         sizes.put("requiredMem", requiredMem);
         sizes.put("totalRequiredMem", totalRequiredMem);
 
-        long maxSize = availableMem * 1014 * 1024 / (6 * framesNumber);
+        long maxSize = availableMem * 1014 * 1024L / (6 * framesNumber);
         double ratio = imageInfo.getHeight() * 1.0 / imageInfo.getWidth();
         long sampledWidth = (long) Math.sqrt(maxSize / (ratio * imageInfo.getColorChannels()));
         int max = AppVariables.getUserConfigInt("MaxImageSampleWidth", 4096);

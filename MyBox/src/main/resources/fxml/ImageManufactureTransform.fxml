@@ -12,18 +12,18 @@
         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER" />
         <Accordion fx:id="accordionPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" VBox.vgrow="ALWAYS">
             <panes>
-                 <TitledPane fx:id="viewPane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%View" />
- <TitledPane fx:id="clipboardPane"  expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Clipboard" />
-                <TitledPane fx:id="cropPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Crop" />
-                <TitledPane fx:id="scalePane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Scale2" />
-                <TitledPane fx:id="colorPane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Color" />
-                 <TitledPane fx:id="effectPane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Effects" />
-<TitledPane fx:id="enhancementPane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Enhancement" />
-                                <TitledPane fx:id="richTextPane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%RichText" />
-                <TitledPane fx:id="textPane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Text" />
-                <TitledPane fx:id="penPane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Pen" />
+                 <TitledPane fx:id="viewPane" expanded="false" maxWidth="1.7976931348623157E308" text="%View" />
+ <TitledPane fx:id="clipboardPane"  expanded="false"  maxWidth="1.7976931348623157E308" text="%Clipboard" />
+                <TitledPane fx:id="cropPane" maxWidth="1.7976931348623157E308"  text="%Crop" />
+                <TitledPane fx:id="scalePane" expanded="false"  maxWidth="1.7976931348623157E308"  text="%Scale2" />
+                <TitledPane fx:id="colorPane" expanded="false" maxWidth="1.7976931348623157E308"  text="%Color" />
+                 <TitledPane fx:id="effectPane" expanded="false" maxWidth="1.7976931348623157E308"  text="%Effects" />
+<TitledPane fx:id="enhancementPane" expanded="false" maxWidth="1.7976931348623157E308" text="%Enhancement" />
+                                <TitledPane fx:id="richTextPane" expanded="false" maxWidth="1.7976931348623157E308"  text="%RichText" />
+                <TitledPane fx:id="textPane" expanded="false" maxWidth="1.7976931348623157E308"  text="%Text" />
+                <TitledPane fx:id="penPane" expanded="false" maxWidth="1.7976931348623157E308"  text="%Pen" />
                
-                <TitledPane fx:id="transformPane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Transform">
+                <TitledPane fx:id="transformPane" expanded="false" maxWidth="1.7976931348623157E308"  text="%Transform">
                     <content>
                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="20.0">
                             <children>
@@ -109,9 +109,9 @@
                         </VBox>
                     </content>
                 </TitledPane>
-                <TitledPane fx:id="arcPane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Arc" />
-                <TitledPane fx:id="shadowPane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Shadow" />
-                <TitledPane fx:id="marginsPane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Margins" />
+                <TitledPane fx:id="arcPane" expanded="false" maxWidth="1.7976931348623157E308" text="%Arc" />
+                <TitledPane fx:id="shadowPane" expanded="false" maxWidth="1.7976931348623157E308" text="%Shadow" />
+                <TitledPane fx:id="marginsPane" expanded="false" maxWidth="1.7976931348623157E308" text="%Margins" />
             </panes>
         </Accordion>
     </children>

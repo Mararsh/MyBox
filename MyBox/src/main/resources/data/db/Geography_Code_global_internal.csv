@@ -1,0 +1,11 @@
+dataid,levelid,longitude,latitude,chinese_name,english_name,code1,code2,code3,code4,code5,alias1,alias2,alias3,alias4,alias5,area,population,continentid,countryid,provinceid,cityid,countyid,townid,villageid,buildingid,comments
+1,1,148.770017,27.499299,地球,Earth,,,,,,,,,,,,,1,,,,,,,,
+2,2,111.23125,33.47486,亚洲,Asia,AS,,,,,,,,,,,,2,,,,,,,,
+3,2,24.918,54.376174,欧洲,Europe,EU,,,,,,,,,,,,3,,,,,,,,
+4,2,27.118551,8.777388,非洲,Africa,AF,,,,,,,,,,,,4,,,,,,,,
+5,2,135.406058,-24.375757,大洋洲,Oceania,OC,,,,,,,,,,,,5,,,,,,,,
+6,2,33.643453,-74.561146,南极洲,Antarctica,AT,,,,,,,,,,,,6,,,,,,,,
+7,2,-104.695554,59.336138,北美洲,North America,NA,,,,,,,,,,,,7,,,,,,,,
+8,2,-60.396237,-16.81103,南美洲,South America,SA,,,,,,,,,,,,8,,,,,,,,
+9,2,149.828482,23.206392,其它,Others,,,,,,,,,,,,,9,,,,,,,,
+10,1,149.828483,23.206393,全球,Global,,,,,,,,,,,,,10,,,,,,,,

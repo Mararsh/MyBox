@@ -126,7 +126,8 @@ public class SystemTools {
     }
 
     public static void threadsStackTrace() {
-        for (Map.Entry<Thread, StackTraceElement[]> entry : Thread.getAllStackTraces().entrySet()) {
+        for (Map.Entry<Thread, StackTraceElement[]> entry
+                : Thread.getAllStackTraces().entrySet()) {
             Thread thread = entry.getKey();
             StackTraceElement[] stackTraceElements = entry.getValue();
             if (thread.equals(Thread.currentThread())) {
@@ -153,7 +154,7 @@ public class SystemTools {
     }
 
     public static long getAvaliableMemoryMB() {
-        return getAvaliableMemory() / (1024 * 1024);
+        return getAvaliableMemory() / (1024 * 1024L);
     }
 
     public static Point getMousePoint() {

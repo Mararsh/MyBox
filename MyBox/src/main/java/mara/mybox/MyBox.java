@@ -142,7 +142,7 @@ public class MyBox {
             // https://stackoverflow.com/questions/1004327/getting-rid-of-derby-log/1933310#1933310
             System.setProperty("derby.stream.error.file", AppVariables.MyboxDataPath
                     + File.separator + "mybox_derby" + File.separator + "derby.log");
-
+//            System.setProperty("derby.language.logQueryPlan", "true");
             System.setProperty("javax.net.ssl.trustStore", SystemTools.keystore());
             System.setProperty("javax.net.ssl.trustStorePassword", SystemTools.keystorePassword());
             System.setProperty("javax.net.ssl.keyStore", SystemTools.keystore());

@@ -164,7 +164,7 @@ public class ImageConverterOptionsController extends BaseController {
             });
 
             icoWidthSelector.getItems().addAll(Arrays.asList(
-                    "45", "30", "50", "25", "80", "120", "24", "64", "128", "256", "512", "48", "96", "144"
+                    "45", "40", "30", "50", "25", "80", "120", "24", "64", "128", "256", "512", "48", "96", "144"
             ));
             icoWidthSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override

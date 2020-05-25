@@ -1,0 +1,455 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.scene.shape.*?>
+<?import mara.mybox.fxml.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.web.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.effect.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.EpidemicReportsSettingsController">
+    <children>
+        <TabPane fx:id="tabsPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+            <tabs>
+                <Tab fx:id="sourcesColorsTab" text="%SourcesColors">
+                    <content>
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                            <children>
+                                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
+                                    <children>
+                                        <Button fx:id="defaultSourcesColorButton" mnemonicParsing="false" onAction="#defaultSourcesColors">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconDefault.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <Button fx:id="randomSourcesColorsButton" mnemonicParsing="false" onAction="#randomSourcesColor">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconRandom.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <Button fx:id="okSourcesColorsButton" mnemonicParsing="false" onAction="#applySourcesColors">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconOK.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="NEVER">
+                                    <children>
+                                        <Label text="%PredefinedData" />
+                                        <Rectangle fx:id="predefinedRect" fill="RED" height="15.0" stroke="BLACK" strokeMiterLimit="0.0" strokeType="INSIDE" width="15.0" />
+                                        <Button fx:id="palettePredefinedButton" mnemonicParsing="false" onAction="#palettePredefined">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconPalette.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="20.0" maxWidth="1.7976931348623157E308" spacing="10.0">
+                                    <children>
+                                        <Label text="%InputtedData" />
+                                        <Rectangle fx:id="inputtedRect" fill="RED" height="15.0" stroke="BLACK" strokeMiterLimit="0.0" strokeType="INSIDE" width="15.0" />
+                                        <Button fx:id="paletteInputtedButton" mnemonicParsing="false" onAction="#paletteInputted">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconPalette.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="136.0" maxWidth="1.7976931348623157E308" spacing="10.0">
+                                    <children>
+                                        <Label text="%FilledData" />
+                                        <Rectangle fx:id="filledRect" fill="RED" height="15.0" stroke="BLACK" strokeMiterLimit="0.0" strokeType="INSIDE" width="15.0" />
+                                        <Button fx:id="paletteFilledButton" mnemonicParsing="false" onAction="#paletteFilled">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconPalette.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="20.0" maxWidth="1.7976931348623157E308" spacing="10.0">
+                                    <children>
+                                        <Label text="%StatisticData" />
+                                        <Rectangle fx:id="statisticRect" fill="RED" height="15.0" stroke="BLACK" strokeMiterLimit="0.0" strokeType="INSIDE" width="15.0" />
+                                        <Button fx:id="paletteStatisticButton" mnemonicParsing="false" onAction="#paletteStatistic">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconPalette.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                    </children>
+                                </HBox>
+                            </children>
+                            <padding>
+                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                            </padding>
+                        </VBox>
+                    </content>
+                </Tab>
+                <Tab fx:id="valuesColorsTab" text="%ValuesColors">
+                    <content>
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                            <padding>
+                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                            </padding>
+                            <children>
+                                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                    <children>
+                                        <Button fx:id="defaultValuesColorsButton" mnemonicParsing="false" onAction="#defaultValuesColors">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconDefault.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <Button fx:id="randomValuesColorsButton" mnemonicParsing="false" onAction="#randomValuesColors">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconRandom.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <Button fx:id="okValuesColorsButton" mnemonicParsing="false" onAction="#applyValuesColors">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconOK.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="NEVER">
+                                    <children>
+                                        <Label text="%Confirmed" />
+                                        <Rectangle fx:id="confirmedRect" fill="RED" height="15.0" stroke="BLACK" strokeMiterLimit="0.0" strokeType="INSIDE" width="15.0" />
+                                        <Button fx:id="paletteConfirmedButton" mnemonicParsing="false" onAction="#paletteConfirmed">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconPalette.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="78.0" maxWidth="1.7976931348623157E308" spacing="10.0">
+                                    <children>
+                                        <Label text="%Healed" />
+                                        <Rectangle fx:id="healedRect" fill="RED" height="15.0" stroke="BLACK" strokeMiterLimit="0.0" strokeType="INSIDE" width="15.0" />
+                                        <Button fx:id="paletteHealedButton" mnemonicParsing="false" onAction="#paletteHealed">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconPalette.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="136.0" maxWidth="1.7976931348623157E308" spacing="10.0">
+                                    <children>
+                                        <Label text="%Dead" />
+                                        <Rectangle fx:id="deadRect" fill="RED" height="15.0" stroke="BLACK" strokeMiterLimit="0.0" strokeType="INSIDE" width="15.0" />
+                                        <Button fx:id="paletteDeadButton" mnemonicParsing="false" onAction="#paletteDead">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconPalette.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="194.0" maxWidth="1.7976931348623157E308" spacing="10.0">
+                                    <children> 
+                                        <Label text="%IncreasedConfirmed" />
+                                        <Rectangle fx:id="IncreasedConfirmedRect" fill="RED" height="15.0" stroke="BLACK" strokeMiterLimit="0.0" strokeType="INSIDE" width="15.0" />
+                                        <Button fx:id="paletteIncreasedConfirmedButton" mnemonicParsing="false" onAction="#paletteIncreasedConfirmed">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconPalette.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="194.0" maxWidth="1.7976931348623157E308" spacing="10.0">
+                                    <children>
+                                        <Label text="%IncreasedHealed" />
+                                        <Rectangle fx:id="IncreasedHealedRect" fill="RED" height="15.0" stroke="BLACK" strokeMiterLimit="0.0" strokeType="INSIDE" width="15.0" />
+                                        <Button fx:id="paletteIncreasedHealedButton" mnemonicParsing="false" onAction="#paletteIncreasedHealed">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconPalette.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="310.0" maxWidth="1.7976931348623157E308" spacing="10.0">
+                                    <children>
+                                        <Label text="%IncreasedDead" />
+                                        <Rectangle fx:id="IncreasedDeadRect" fill="RED" height="15.0" stroke="BLACK" strokeMiterLimit="0.0" strokeType="INSIDE" width="15.0" />
+                                        <Button fx:id="paletteIncreasedDeadButton" mnemonicParsing="false" onAction="#paletteIncreasedDead">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconPalette.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="252.0" maxWidth="1.7976931348623157E308" spacing="10.0">
+                                    <children>
+                                        <Label text="%HealedConfirmedPermillage" />
+                                        <Rectangle fx:id="HealedConfirmedPermillageRect" fill="RED" height="15.0" stroke="BLACK" strokeMiterLimit="0.0" strokeType="INSIDE" width="15.0" />
+                                        <Button fx:id="paletteHealedConfirmedPermillageButton" mnemonicParsing="false" onAction="#paletteHealedConfirmedPermillage">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconPalette.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="426.0" maxWidth="1.7976931348623157E308" spacing="10.0">
+                                    <children>
+                                        <Label text="%DeadConfirmedPermillage" />
+                                        <Rectangle fx:id="DeadConfirmedPermillageRect" fill="RED" height="15.0" stroke="BLACK" strokeMiterLimit="0.0" strokeType="INSIDE" width="15.0" />
+                                        <Button fx:id="paletteDeadConfirmedPermillageButton" mnemonicParsing="false" onAction="#paletteDeadConfirmedPermillage">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconPalette.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="368.0" maxWidth="1.7976931348623157E308" spacing="10.0">
+                                    <children>
+                                        <Label text="%ConfirmedPopulationPermillage" />
+                                        <Rectangle fx:id="ConfirmedPopulationPermillageRect" fill="RED" height="15.0" stroke="BLACK" strokeMiterLimit="0.0" strokeType="INSIDE" width="15.0" />
+                                        <Button fx:id="paletteConfirmedPopulationPermillageButton" mnemonicParsing="false" onAction="#paletteConfirmedPopulationPermillage">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconPalette.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="484.0" maxWidth="1.7976931348623157E308" spacing="10.0">
+                                    <children>
+                                        <Label text="%HealedPopulationPermillage" />
+                                        <Rectangle fx:id="HealedPopulationPermillageRect" fill="RED" height="15.0" stroke="BLACK" strokeMiterLimit="0.0" strokeType="INSIDE" width="15.0" />
+                                        <Button fx:id="paletteHealedPopulationPermillageButton" mnemonicParsing="false" onAction="#paletteHealedPopulationPermillage">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconPalette.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="542.0" maxWidth="1.7976931348623157E308" spacing="10.0">
+                                    <children>
+                                        <Label text="%DeadPopulationPermillage" />
+                                        <Rectangle fx:id="DeadPopulationPermillageRect" fill="RED" height="15.0" stroke="BLACK" strokeMiterLimit="0.0" strokeType="INSIDE" width="15.0" />
+                                        <Button fx:id="paletteDeadPopulationPermillageButton" mnemonicParsing="false" onAction="#paletteDeadPopulationPermillage">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconPalette.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="658.0" maxWidth="1.7976931348623157E308" spacing="10.0">
+                                    <children>
+                                        <Label text="%ConfirmedAreaPermillage" />
+                                        <Rectangle fx:id="ConfirmedAreaPermillageRect" fill="RED" height="15.0" stroke="BLACK" strokeMiterLimit="0.0" strokeType="INSIDE" width="15.0" />
+                                        <Button fx:id="paletteConfirmedAreaPermillageButton" mnemonicParsing="false" onAction="#paletteConfirmedAreaPermillage">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconPalette.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                    </children>
+                                </HBox>
+                        <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="542.0" maxWidth="1.7976931348623157E308" spacing="10.0">
+                           <children>
+                              <Label text="%HealedAreaPermillage" />
+                              <Rectangle fx:id="HealedAreaPermillageRect" fill="RED" height="15.0" stroke="BLACK" strokeMiterLimit="0.0" strokeType="INSIDE" width="15.0" />
+                              <Button fx:id="paletteHealedAreaPermillageButton" mnemonicParsing="false" onAction="#paletteHealedAreaPermillage">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/iconPalette.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="600.0" maxWidth="1.7976931348623157E308" spacing="10.0">
+                           <children>
+                              <Label text="%DeadAreaPermillage" />
+                              <Rectangle fx:id="DeadAreaPermillageRect" fill="RED" height="15.0" stroke="BLACK" strokeMiterLimit="0.0" strokeType="INSIDE" width="15.0" />
+                              <Button fx:id="paletteDeadAreaPermillageButton" mnemonicParsing="false" onAction="#paletteDeadAreaPermillage">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/iconPalette.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                           </children>
+                        </HBox>
+                            </children>
+                        </VBox>
+                    </content>
+                </Tab>
+                <Tab fx:id="locationsColorsTab" text="%LocationsColors">
+                    <content>
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                            <children>
+                                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                    <children>
+                                        <Button fx:id="randomLocationsColorsButton" mnemonicParsing="false" onAction="#randomLocationsDataColors">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconRandom.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <Button fx:id="okLocationsColorsButton" mnemonicParsing="false" onAction="#applyLocationsColors">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconOK.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                    </children>
+                                </HBox>
+                                <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="654.0" prefViewportWidth="723.0" VBox.vgrow="ALWAYS">
+                                    <content>
+                                        <VBox fx:id="locationColorsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" />
+                                    </content>
+                                </ScrollPane>
+                            </children>
+                            <padding>
+                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                            </padding>
+                        </VBox>
+                    </content>
+                </Tab>
+                <Tab fx:id="chartOptionsTab" text="%ChartOptions">
+                    <content>
+                        <VBox fx:id="optionsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                            <children>
+                                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                    <children>
+                                        <Label text="%SnapDPI" />
+                                        <ComboBox fx:id="dpiSelector" editable="true" prefWidth="80.0" />
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="151.0" spacing="5.0">
+                                    <children>
+                                        <Label text="%MaxDynamicalSnapWidth" />
+                                        <ComboBox fx:id="widthSelector" editable="true" prefWidth="100.0" />
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="257.0" spacing="5.0">
+                                    <children>
+                                        <Label text="%TimeLoadChart" />
+                                        <ComboBox fx:id="chartTimeSelector" editable="true" prefWidth="100.0" />
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" spacing="5.0" />
+                            </children>
+                            <padding>
+                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                            </padding>
+                        </VBox>
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
+    </children>
+</VBox>

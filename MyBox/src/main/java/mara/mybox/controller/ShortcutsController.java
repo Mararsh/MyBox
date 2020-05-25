@@ -65,11 +65,12 @@ public class ShortcutsController extends HtmlViewerController {
             );
             table = new StringTable(names, message("Shortcuts"));
 
-            key("F1", "", message("Start") + " / " + message("OK") + " / " + message("Set"), "CTRL+e / ALT+e");
+            key("F1", "", message("Start") + ", " + message("OK") + ", " + message("Set") + ", " + message("Query"), "CTRL+e / ALT+e, CTRL+q / ALT+q");
             key("F2", "", message("Save"), "CTRL+s / ALT+s");
-            key("F3", "", message("Recover"), "CTRL+r / ALT+r");
+            key("F3", "", message("Recover") + ", " + message("Export"), "CTRL+r / ALT+r, CTRL+e / ALT+e ");
             key("F4", "", message("CloseStage"), "");
             key("F5", "", message("RefreshStage"), "");
+            key("F6", "", message("ClosePopup"), "");
             key("F11", "", message("SaveAs"), "CTRL+f / ALT+f");
             key("F12", "", message("MoreControls"), "CTRL+m / ALT+m");
             key("DELETE", "", message("Delete"), "CTRL+d / ALT+d");
@@ -77,7 +78,7 @@ public class ShortcutsController extends HtmlViewerController {
             key("PAGE_DOWN", "", message("Next"), "ALT+PAGE_DOWN");
             key("ESCAPE", "", message("Cancel"), "");
 
-            key("CTRL", "e", message("Start") + " / " + message("OK") + " / " + message("Set"), "F1 / ALT+e");
+            key("CTRL", "e", message("Start") + "," + message("OK") + ", " + message("Set") + ", " + message("Export"), "F1 / ALT+e");
             key("CTRL", "c", message("Copy"), "ALT+c");
             key("CTRL", "v", message("Paste"), "ALT+v");
             key("CTRL", "z", message("Undo"), "ALT+z");
@@ -86,12 +87,13 @@ public class ShortcutsController extends HtmlViewerController {
             key("CTRL", "x", message("Crop"), "ALT+x");
             key("CTRL", "s", message("Save"), "F2 / ALT+s");
             key("CTRL", "f", message("SaveAs"), "F3 / ALT+f");
-            key("CTRL", "r", message("Recover"), "F11 / ALT+r");
+            key("CTRL", "r", message("Recover") + "," + message("Clear"), "F11 / ALT+r");
             key("CTRL", "m", message("MoreControls"), "F12 / ALT+m");
             key("CTRL", "n", message("Create"), "");
             key("CTRL", "a", message("SelectAll"), "ALT+a");
             key("CTRL", "g", message("Clear"), "ALT+g");
             key("CTRL", "p", message("Pop"), "ALT+p");
+            key("CTRL", "q", message("Query"), "ALT+q");
             key("CTRL", "1", message("OriginalSize") + " / " + message("First"), "");
             key("CTRL", "2", message("PaneSize") + " / " + message("Previous"), "");
             key("CTRL", "3", message("ZoomIn") + " / " + message("Next"), "");

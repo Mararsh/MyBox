@@ -102,16 +102,16 @@ License:    Apache License Version 2.0
                                                         <ComboBox fx:id="aspectSelector" prefWidth="300.0" />
                                                     </children>
                                                 </HBox>
+                                                <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="569.0" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                    <children>
+                                                        <Label text="%VideoBitrate" />
+                                                        <ComboBox fx:id="videoBitrateSelector" editable="true" prefWidth="200.0" />
+                                                    </children>
+                                                </HBox>
                                                 <HBox alignment="CENTER_LEFT" layoutX="32.0" layoutY="152.0" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                     <children>
                                                         <Label text="%VideoFrameRate" />
-                                                        <ComboBox fx:id="videoFrameRateSelector" prefWidth="150.0" />
-                                                    </children>
-                                                </HBox>
-                                                <HBox alignment="CENTER_LEFT" layoutX="32.0" layoutY="148.0" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                                    <children>
-                                                        <Label text="%SubtitleEncoder" />
-                                                        <ComboBox fx:id="subtitleEncoderSelector" prefWidth="300.0" />
+                                                        <ComboBox fx:id="videoFrameRateSelector" prefWidth="300.0" />
                                                     </children>
                                                 </HBox>
                                                 <HBox alignment="CENTER_LEFT" layoutX="32.0" layoutY="32.0" maxWidth="1.7976931348623157E308" spacing="5.0">
@@ -120,10 +120,28 @@ License:    Apache License Version 2.0
                                                         <ComboBox fx:id="audioEncoderSelector" prefWidth="300.0" />
                                                     </children>
                                                 </HBox>
+                                                <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="569.0" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                    <children>
+                                                        <Label text="%AudioBitrate" />
+                                                        <ComboBox fx:id="audioBitrateSelector" editable="true" prefWidth="200.0" />
+                                                    </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="821.0" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                    <children>
+                                                        <Label text="%AudioSampleRate" />
+                                                        <ComboBox fx:id="audioSampleRateSelector" editable="true" prefWidth="200.0" />
+                                                    </children>
+                                                </HBox>
                                                 <HBox alignment="CENTER_LEFT" layoutX="32.0" layoutY="478.0" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                     <children>
                                                         <Label text="%ChangeVolume" />
                                                         <TextField fx:id="volumnInput" maxWidth="1.7976931348623157E308" promptText="%ChangeVolumeComments" HBox.hgrow="ALWAYS" />
+                                                    </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER_LEFT" layoutX="32.0" layoutY="148.0" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                    <children>
+                                                        <Label text="%SubtitleEncoder" />
+                                                        <ComboBox fx:id="subtitleEncoderSelector" prefWidth="300.0" />
                                                     </children>
                                                 </HBox>
                                                 <HBox alignment="CENTER_LEFT" layoutX="32.0" layoutY="420.0" maxWidth="1.7976931348623157E308" spacing="5.0">
@@ -131,7 +149,7 @@ License:    Apache License Version 2.0
                                                         <Label text="%MoreArguments" />
                                                         <TextField fx:id="moreInput" maxWidth="1.7976931348623157E308" promptText="%SeparateBySpace" HBox.hgrow="ALWAYS" />
                                                     </children>
-                                                </HBox> 
+                                                </HBox>
                                                 <TextArea fx:id="tipsArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" promptText="%FFmpegArgumentsTips" styleClass="displayArea" stylesheets="@../styles/MyBox.css" wrapText="true">
                                                     <padding>
                                                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

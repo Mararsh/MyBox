@@ -16,7 +16,7 @@
                 </ImageView>
             </children>
         </HBox>
-        <TitledPane expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Clipboard" VBox.vgrow="ALWAYS">
+        <TitledPane expanded="false" maxWidth="1.7976931348623157E308"  text="%Clipboard" VBox.vgrow="ALWAYS">
             <content>
                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                     <children>
@@ -25,7 +25,7 @@
                 </VBox>
             </content>
         </TitledPane>
-        <TitledPane expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Crop" VBox.vgrow="ALWAYS">
+        <TitledPane expanded="false" maxWidth="1.7976931348623157E308"  text="%Crop" VBox.vgrow="ALWAYS">
             <content>
                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                     <children>
@@ -34,7 +34,7 @@
                 </VBox>
             </content>
         </TitledPane>
-        <TitledPane expanded="false" layoutX="10.0" layoutY="125.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Size">
+        <TitledPane expanded="false" layoutX="10.0" layoutY="125.0" maxWidth="1.7976931348623157E308"  text="%Size">
             <content>
                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                     <children>
@@ -43,7 +43,7 @@
                 </VBox>
             </content>
         </TitledPane>
-        <TitledPane expanded="false" layoutX="10.0" layoutY="185.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Color">
+        <TitledPane expanded="false" layoutX="10.0" layoutY="185.0" maxWidth="1.7976931348623157E308"  text="%Color">
             <content>
                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                     <children>
@@ -52,7 +52,7 @@
                 </VBox>
             </content>
         </TitledPane>
-        <TitledPane expanded="false" layoutX="10.0" layoutY="245.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Effects">
+        <TitledPane expanded="false" layoutX="10.0" layoutY="245.0"  maxWidth="1.7976931348623157E308"  text="%Effects">
             <content>
                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                     <children>
@@ -61,9 +61,9 @@
                 </VBox>
             </content>
         </TitledPane>
-        <TitledPane fx:id="enhancementPane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Enhancement" />
- 
-        <TitledPane expanded="false" layoutX="10.0" layoutY="305.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Text">
+        <TitledPane fx:id="enhancementPane" expanded="false" maxWidth="1.7976931348623157E308" text="%Enhancement" />
+
+        <TitledPane expanded="false" layoutX="10.0" layoutY="305.0"  maxWidth="1.7976931348623157E308"  text="%Text">
             <content>
                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                     <children>
@@ -72,7 +72,7 @@
                 </VBox>
             </content>
         </TitledPane>
-        <TitledPane expanded="false" layoutX="10.0" layoutY="365.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Pen">
+        <TitledPane expanded="false" layoutX="10.0" layoutY="365.0" maxWidth="1.7976931348623157E308" text="%Pen">
             <content>
                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                     <children>
@@ -81,7 +81,7 @@
                 </VBox>
             </content>
         </TitledPane>
-        <TitledPane expanded="false" layoutX="10.0" layoutY="425.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Mosaic">
+        <TitledPane expanded="false" layoutX="10.0" layoutY="425.0"  maxWidth="1.7976931348623157E308" text="%Mosaic">
             <content>
                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                     <children>
@@ -90,7 +90,7 @@
                 </VBox>
             </content>
         </TitledPane>
-        <TitledPane expanded="false" layoutX="10.0" layoutY="545.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Transform">
+        <TitledPane expanded="false" layoutX="10.0" layoutY="545.0"  maxWidth="1.7976931348623157E308"  text="%Transform">
             <content>
                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                     <children>
@@ -99,7 +99,7 @@
                 </VBox>
             </content>
         </TitledPane>
-        <TitledPane expanded="false" layoutX="10.0" layoutY="605.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Arc">
+        <TitledPane expanded="false" layoutX="10.0" layoutY="605.0"  maxWidth="1.7976931348623157E308"  text="%Arc">
             <content>
                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                     <children>
@@ -108,7 +108,7 @@
                 </VBox>
             </content>
         </TitledPane>
-        <TitledPane expanded="false" layoutX="10.0" layoutY="485.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Shadow">
+        <TitledPane expanded="false" layoutX="10.0" layoutY="485.0"  maxWidth="1.7976931348623157E308"  text="%Shadow">
             <content>
                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                     <children>
@@ -117,7 +117,7 @@
                 </VBox>
             </content>
         </TitledPane>
-        <TitledPane expanded="false" layoutX="10.0" layoutY="440.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Margins">
+        <TitledPane expanded="false" layoutX="10.0" layoutY="440.0"  maxWidth="1.7976931348623157E308" text="%Margins">
             <content>
                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                     <children>

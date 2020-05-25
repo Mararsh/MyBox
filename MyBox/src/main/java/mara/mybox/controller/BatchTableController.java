@@ -582,6 +582,14 @@ public abstract class BatchTableController<P> extends BaseController {
         }
     }
 
+    public void stopCountSize() {
+        if (backgroundTask != null) {
+            backgroundTask.cancel();
+            backgroundTask = null;
+            tableLabel.setText("");
+        }
+    }
+
     public void countSize() {
         if (backgroundTask != null) {
             backgroundTask.cancel();

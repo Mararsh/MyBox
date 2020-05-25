@@ -32,7 +32,7 @@ License:    Apache License Version 2.0
                     <items>
                         <VBox fx:id="tableBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                             <children>
-                                <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%SourceFiles" VBox.vgrow="ALWAYS">
+                                <TitledPane  maxWidth="1.7976931348623157E308" text="%SourceFiles" VBox.vgrow="ALWAYS">
                                     <content>
                                         <fx:include fx:id="table" source="FilesTable.fxml" />
                                     </content>
@@ -79,7 +79,7 @@ License:    Apache License Version 2.0
                             <children>
                                 <VBox fx:id="paraBox" minHeight="-Infinity" VBox.vgrow="NEVER">
                                     <children>
-                                        <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="10.0" text="%CompressionFormat" VBox.vgrow="ALWAYS">
+                                        <TitledPane  maxWidth="1.7976931348623157E308" text="%CompressionFormat" VBox.vgrow="ALWAYS">
                                             <content>
                                                 <VBox fx:id="compressBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                     <children>
@@ -125,7 +125,7 @@ License:    Apache License Version 2.0
                                         </TitledPane>
                                     </children>
                                 </VBox>
-                                <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="10.0" text="%Logs" VBox.vgrow="ALWAYS">
+                                <TitledPane  maxWidth="1.7976931348623157E308" text="%Logs" VBox.vgrow="ALWAYS">
                                     <content>
                                         <VBox fx:id="logsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                             <children>

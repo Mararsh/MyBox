@@ -30,7 +30,7 @@ License:    Apache License Version 2.0
                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
                     <children>
                         <ColorPicker fx:id="colorPicker" />
-                        <Button fx:id="commonColorsButton" mnemonicParsing="false" onAction="#commonColorsAction">
+                        <Button fx:id="commonColorsButton" mnemonicParsing="false" onMouseEntered="#popCommonColorsMenu">
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -39,6 +39,15 @@ License:    Apache License Version 2.0
                                 </ImageView>
                             </graphic>
                         </Button>
+                  <Button fx:id="paletteButton" mnemonicParsing="false" onAction="#showPalette">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/iconPalette.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
                         <Button fx:id="inButton" layoutX="1252.0" layoutY="10.0" mnemonicParsing="false" onAction="#inPaletteAction">
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

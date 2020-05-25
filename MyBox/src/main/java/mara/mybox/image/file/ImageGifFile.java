@@ -487,6 +487,7 @@ public class ImageGifFile {
                 for (File file : srcFiles) {
                     file.delete();
                 }
+                srcFiles.clear();
             }
 
             return "";

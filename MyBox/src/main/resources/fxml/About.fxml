@@ -57,7 +57,7 @@ License:    Apache License Version 2.0
                 <Label text="%CloudStorage" GridPane.rowIndex="10" />
                 <Hyperlink fx:id="cloudLink" onAction="#link" text="https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="10" />
             <Label text="%MyBoxInternetDataPath" GridPane.rowIndex="11" />
-            <Hyperlink fx:id="cloudLink1" onAction="#link" text="https://sourceforge.net/projects/mara-mybox/files/data/" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+            <Hyperlink fx:id="cloudLink1" onAction="#link" text="https://github.com/Mararsh/MyBox_data" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="11" />
             </children>
         </GridPane>
     </children>

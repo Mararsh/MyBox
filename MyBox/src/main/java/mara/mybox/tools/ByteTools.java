@@ -442,7 +442,7 @@ public class ByteTools {
                 unit = 1024 * 1024;
                 strV = strV.substring(0, strV.length() - 1);
             } else if (strV.endsWith("g")) {
-                unit = 1024 * 1024 * 1024;
+                unit = 1024 * 1024 * 1024L;
                 strV = strV.substring(0, strV.length() - 1);
             }
             long v = Integer.valueOf(strV.trim());
@@ -463,7 +463,7 @@ public class ByteTools {
     public static byte[] deflate(byte[] bytes) {
         try {
             ByteArrayOutputStream a = new ByteArrayOutputStream();
-            try (DeflaterOutputStream out = new DeflaterOutputStream(a)) {
+            try ( DeflaterOutputStream out = new DeflaterOutputStream(a)) {
                 out.write(bytes);
                 out.flush();
             }
@@ -480,7 +480,7 @@ public class ByteTools {
     public static byte[] inflate(byte[] bytes) {
         try {
             ByteArrayOutputStream a = new ByteArrayOutputStream();
-            try (InflaterOutputStream out = new InflaterOutputStream(a)) {
+            try ( InflaterOutputStream out = new InflaterOutputStream(a)) {
                 out.write(bytes);
                 out.flush();
             }
@@ -493,7 +493,7 @@ public class ByteTools {
     public static byte[] toBytes(Object object) {
         try {
             ByteArrayOutputStream a = new ByteArrayOutputStream();
-            try (ObjectOutputStream out = new ObjectOutputStream(a)) {
+            try ( ObjectOutputStream out = new ObjectOutputStream(a)) {
                 out.writeObject(object);
                 out.flush();
             }
@@ -506,7 +506,7 @@ public class ByteTools {
     public static Object toObject(byte[] bytes) {
         try {
             ByteArrayInputStream a = new ByteArrayInputStream(bytes);
-            try (ObjectInputStream in = new ObjectInputStream(a)) {
+            try ( ObjectInputStream in = new ObjectInputStream(a)) {
                 return in.readObject();
             }
         } catch (Exception e) {

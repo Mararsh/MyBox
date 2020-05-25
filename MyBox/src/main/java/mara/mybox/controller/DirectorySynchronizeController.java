@@ -374,7 +374,7 @@ public class DirectorySynchronizeController extends FilesBatchController {
         } else {
             s = message(currentStatus);
         }
-        s += ". " + message("HandledThisTime") + ": " + copyAttr.getCopiedFilesNumber() + " "
+        s += ". " + message("HandledFiles") + ": " + copyAttr.getCopiedFilesNumber() + " "
                 + message("Cost") + ": " + DateTools.showTime(cost) + ". "
                 + message("Average") + ": " + avg + " " + message("SecondsPerItem") + ". "
                 + message("StartTime") + ": " + DateTools.datetimeToString(processStartTime) + ", "

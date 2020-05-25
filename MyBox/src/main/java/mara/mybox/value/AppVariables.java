@@ -94,6 +94,10 @@ public class AppVariables {
         return lang != null ? lang : Locale.getDefault().getLanguage().toLowerCase();
     }
 
+    public static boolean isChinese() {
+        return AppVariables.getLanguage().startsWith("zh");
+    }
+
     public static ResourceBundle setLanguage(String lang) {
         if (lang == null) {
             lang = Locale.getDefault().getLanguage().toLowerCase();
@@ -199,11 +203,11 @@ public class AppVariables {
         switch (value) {
             case "1GB":
                 AppVariables.setUserConfigValue("PdfMemDefault", "1GB");
-                AppVariables.pdfMemUsage = MemoryUsageSetting.setupMixed(1024 * 1024 * 1024, -1);
+                AppVariables.pdfMemUsage = MemoryUsageSetting.setupMixed(1024 * 1024 * 1024L, -1);
                 break;
             case "2GB":
                 AppVariables.setUserConfigValue("PdfMemDefault", "2GB");
-                AppVariables.pdfMemUsage = MemoryUsageSetting.setupMixed(2048 * 1024 * 1024, -1);
+                AppVariables.pdfMemUsage = MemoryUsageSetting.setupMixed(2048 * 1024 * 1024L, -1);
                 break;
             case "Unlimit":
                 AppVariables.setUserConfigValue("PdfMemDefault", "Unlimit");
@@ -212,7 +216,7 @@ public class AppVariables {
             case "500MB":
             default:
                 AppVariables.setUserConfigValue("PdfMemDefault", "500MB");
-                AppVariables.pdfMemUsage = MemoryUsageSetting.setupMixed(500 * 1024 * 1024, -1);
+                AppVariables.pdfMemUsage = MemoryUsageSetting.setupMixed(500 * 1024 * 1024L, -1);
         }
         return AppVariables.pdfMemUsage;
     }
@@ -286,7 +290,7 @@ public class AppVariables {
             if (userConfigValues.containsKey(key)) {
                 value = userConfigValues.get(key);
             } else {
-                value = TableUserConf.read(key, defaultValue);
+                value = TableUserConf.readString(key, defaultValue);
                 userConfigValues.put(key, value);
             }
             return value;
@@ -318,7 +322,7 @@ public class AppVariables {
             if (userConfigValues.containsKey(key)) {
                 v = Long.valueOf(userConfigValues.get(key));
             } else {
-                String s = TableUserConf.read(key, defaultValue + "");
+                String s = TableUserConf.readString(key, defaultValue + "");
                 v = Long.valueOf(s);
                 userConfigValues.put(key, v + "");
             }
@@ -359,7 +363,7 @@ public class AppVariables {
             if (userConfigValues.containsKey(key)) {
                 pathString = userConfigValues.get(key);
             } else {
-                pathString = TableUserConf.read(key, defaultValue);
+                pathString = TableUserConf.readString(key, defaultValue);
             }
             if (pathString == null) {
                 pathString = defaultValue;
@@ -404,7 +408,7 @@ public class AppVariables {
     }
 
     public static boolean setUserConfigValue(String key, String value) {
-        if (TableUserConf.write(key, value) > 0) {
+        if (TableUserConf.writeString(key, value) > 0) {
             userConfigValues.put(key, value);
             return true;
         } else {
@@ -413,7 +417,7 @@ public class AppVariables {
     }
 
     public static boolean setUserConfigInt(String key, int value) {
-        if (TableUserConf.write(key, value) > 0) {
+        if (TableUserConf.writeInt(key, value) > 0) {
             userConfigValues.put(key, value + "");
             return true;
         } else {
@@ -422,7 +426,7 @@ public class AppVariables {
     }
 
     public static boolean setUserConfigValue(String key, boolean value) {
-        if (TableUserConf.write(key, value) > 0) {
+        if (TableUserConf.writeBoolean(key, value) > 0) {
             userConfigValues.put(key, value ? "true" : "false");
             return true;
         } else {
@@ -437,12 +441,12 @@ public class AppVariables {
             if (systemConfigValues.containsKey(key)) {
                 value = systemConfigValues.get(key);
             } else {
-                value = TableSystemConf.read(key, defaultValue);
+                value = TableSystemConf.readString(key, defaultValue);
                 systemConfigValues.put(key, value);
             }
             return value;
         } catch (Exception e) {
-            logger.error(e.toString());
+//            logger.error(e.toString());
             return null;
         }
     }
@@ -458,7 +462,7 @@ public class AppVariables {
             }
             return v;
         } catch (Exception e) {
-            logger.error(e.toString());
+//            logger.error(e.toString());
             return defaultValue;
         }
     }
@@ -475,7 +479,7 @@ public class AppVariables {
             }
             return v;
         } catch (Exception e) {
-            logger.error(e.toString());
+//            logger.error(e.toString());
             return defaultValue;
         }
     }
@@ -485,7 +489,7 @@ public class AppVariables {
     }
 
     public static boolean setSystemConfigValue(String key, String value) {
-        if (TableSystemConf.write(key, value) > 0) {
+        if (TableSystemConf.writeString(key, value) >= 0) {
             systemConfigValues.put(key, value);
             return true;
         } else {
@@ -494,7 +498,7 @@ public class AppVariables {
     }
 
     public static boolean setSystemConfigInt(String key, int value) {
-        if (TableSystemConf.write(key, value) > 0) {
+        if (TableSystemConf.writeInt(key, value) >= 0) {
             systemConfigValues.put(key, value + "");
             return true;
         } else {
@@ -503,7 +507,7 @@ public class AppVariables {
     }
 
     public static boolean setSystemConfigValue(String key, boolean value) {
-        if (TableSystemConf.write(key, value) > 0) {
+        if (TableSystemConf.writeBoolean(key, value) >= 0) {
             systemConfigValues.put(key, value ? "true" : "false");
             return true;
         } else {

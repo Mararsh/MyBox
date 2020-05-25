@@ -9,14 +9,19 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
-import mara.mybox.data.ConvolutionKernel;
+import mara.mybox.data.EpidemicReport;
+import mara.mybox.data.GeographyCode;
+import mara.mybox.data.GeographyCodeLevel;
+import mara.mybox.fxml.FxmlStage;
 import mara.mybox.tools.ConfigTools;
 import mara.mybox.tools.NetworkTools;
 import mara.mybox.value.AppVariables;
@@ -47,6 +52,7 @@ public class DerbyBase {
             + CommonValues.AppDerbyPassword + ";create=false";
     public static DerbyStatus status;
     public static long lastRetry = 0;
+    public static long BatchSize = 500;
 
     public enum DerbyStatus {
         Embedded, Nerwork, Starting, NotConnected, EmbeddedFailed, NerworkFailed
@@ -60,21 +66,19 @@ public class DerbyBase {
             if (conn == null) {
                 return false;
             }
-            Statement statement = conn.createStatement();
 //            logger.debug(Create_Table_Statement);
-            statement.executeUpdate(Create_Table_Statement);
+            conn.createStatement().executeUpdate(Create_Table_Statement);
             return true;
         } catch (Exception e) {
             failed(e);
-            logger.debug(e.toString());
+//            logger.debug(e.toString());
             return false;
         }
     }
 
     public boolean init() {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            statement.executeUpdate(Create_Table_Statement);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            conn.createStatement().executeUpdate(Create_Table_Statement);
             return true;
         } catch (Exception e) {
             failed(e);
@@ -86,9 +90,9 @@ public class DerbyBase {
     public ResultSet query(String sql) {
         try {
             ResultSet resultSet;
-            try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                     Statement statement = conn.createStatement()) {
-                resultSet = statement.executeQuery(sql);
+            try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+                conn.setReadOnly(true);
+                resultSet = conn.createStatement().executeQuery(sql);
             }
             return resultSet;
         } catch (Exception e) {
@@ -101,14 +105,14 @@ public class DerbyBase {
     public int update(String sql) {
         try {
             int ret;
-            try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                     Statement statement = conn.createStatement()) {
-                ret = statement.executeUpdate(sql);
+            try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+                ret = conn.createStatement().executeUpdate(sql);
             }
             return ret;
         } catch (Exception e) {
             failed(e);
-//            logger.debug(e.toString());
+            logger.debug(e.toString());
+            logger.debug(sql);
             return -1;
         }
     }
@@ -118,9 +122,8 @@ public class DerbyBase {
             if (conn == null) {
                 return false;
             }
-            Statement statement = conn.createStatement();
             String sql = "DROP TABLE " + Table_Name;
-            statement.executeUpdate(sql);
+            conn.createStatement().executeUpdate(sql);
 //            logger.debug(Create_Table_Statement);
             return true;
         } catch (Exception e) {
@@ -131,10 +134,9 @@ public class DerbyBase {
     }
 
     public boolean drop() {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             String sql = "DROP TABLE " + Table_Name;
-            statement.executeUpdate(sql);
+            conn.createStatement().executeUpdate(sql);
             return true;
         } catch (Exception e) {
             failed(e);
@@ -148,9 +150,8 @@ public class DerbyBase {
             if (conn == null) {
                 return false;
             }
-            Statement statement = conn.createStatement();
             String sql = "DELETE FROM " + Table_Name;
-            statement.executeUpdate(sql);
+            conn.createStatement().executeUpdate(sql);
 //            logger.debug(Create_Table_Statement);
             return true;
         } catch (Exception e) {
@@ -161,10 +162,9 @@ public class DerbyBase {
     }
 
     public boolean clear() {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             String sql = "DELETE FROM " + Table_Name;
-            statement.executeUpdate(sql);
+            conn.createStatement().executeUpdate(sql);
             return true;
         } catch (Exception e) {
             failed(e);
@@ -173,21 +173,6 @@ public class DerbyBase {
         }
     }
 
-    public List<String> tables(Connection conn) {
-        List<String> tables = new ArrayList<>();
-        try {
-            Statement statement = conn.createStatement();
-            String sql = "SELECT TABLENAME FROM SYS.SYSTABLES WHERE TABLETYPE='T'";
-            ResultSet resultSet = statement.executeQuery(sql);
-            while (resultSet.next()) {
-                tables.add(resultSet.getString("TABLENAME"));
-            }
-        } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
-        }
-        return tables;
-    }
 
     /*
         Static methods
@@ -374,11 +359,114 @@ public class DerbyBase {
         return started;
     }
 
+    public static List<String> tables(Connection conn) {
+        List<String> tables = new ArrayList<>();
+        String sql = "SELECT TABLENAME FROM SYS.SYSTABLES WHERE TABLETYPE='T'";
+        try ( Statement statement = conn.createStatement();
+                 ResultSet resultSet = statement.executeQuery(sql)) {
+            while (resultSet.next()) {
+                tables.add(resultSet.getString("TABLENAME"));
+            }
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+        }
+        return tables;
+    }
+
+    public static List<String> columns(Connection conn, String tablename) {
+        List<String> columns = new ArrayList<>();
+        String sql = "SELECT columnname, columndatatype FROM SYS.SYSTABLES t, SYS.SYSCOLUMNS c "
+                + " where t.TABLEID=c.REFERENCEID AND tablename='" + tablename.toUpperCase() + "'"
+                + " order by columnnumber";
+        try ( Statement statement = conn.createStatement();
+                 ResultSet resultSet = statement.executeQuery(sql)) {
+            while (resultSet.next()) {
+                columns.add(resultSet.getString("columnname").toLowerCase()
+                        + ", " + resultSet.getString("columndatatype"));
+            }
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+        }
+        return columns;
+    }
+
+    public static List<String> columnNames(Connection conn, String tablename) {
+        List<String> columns = new ArrayList<>();
+        String sql = "SELECT columnname  FROM SYS.SYSTABLES t, SYS.SYSCOLUMNS c "
+                + " where t.TABLEID=c.REFERENCEID AND tablename='" + tablename.toUpperCase() + "'"
+                + " order by columnnumber";
+        try ( Statement statement = conn.createStatement();
+                 ResultSet resultSet = statement.executeQuery(sql)) {
+            while (resultSet.next()) {
+                columns.add(resultSet.getString("columnname").toLowerCase());
+            }
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+        }
+        return columns;
+    }
+
+    public static String tableDefinition(Connection conn, String tablename) {
+        String s = "";
+        for (String column : columns(conn, tablename)) {
+            s += column + "\n";
+        }
+        return s;
+    }
+
+    public static String tableDefinition(String tablename) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + create)) {
+            String s = "";
+            for (String column : columns(conn, tablename)) {
+                s += column + "\n";
+            }
+            return s;
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return null;
+        }
+    }
+
+    public static List<String> indexes(Connection conn) {
+        List<String> indexes = new ArrayList<>();
+        String sql = "SELECT CONGLOMERATENAME FROM SYS.SYSCONGLOMERATES";
+        try ( Statement statement = conn.createStatement();
+                 ResultSet resultSet = statement.executeQuery(sql)) {
+            while (resultSet.next()) {
+                indexes.add(resultSet.getString("CONGLOMERATENAME"));
+            }
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+        }
+        return indexes;
+    }
+
+    public static List<String> views(Connection conn) {
+        List<String> tables = new ArrayList<>();
+        try {
+            String sql = "SELECT TABLENAME FROM SYS.SYSTABLES WHERE TABLETYPE='V'";
+            try ( Statement statement = conn.createStatement();
+                     ResultSet resultSet = statement.executeQuery(sql)) {
+                while (resultSet.next()) {
+                    tables.add(resultSet.getString("TABLENAME"));
+                }
+            }
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+        }
+        return tables;
+    }
+
     public static boolean initTables() {
         logger.debug("Protocol: " + protocol + dbHome());
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + create);
-                 Statement statement = conn.createStatement()) {
-            List<String> tables = new DerbyBase().tables(conn);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + create)) {
+            List<String> tables = tables(conn);
 //            logger.debug(tables);
             if (!tables.contains("String_Values".toUpperCase())) {
                 new TableStringValues().init(conn);
@@ -428,11 +516,34 @@ public class DerbyBase {
             if (!tables.contains("Location".toUpperCase())) {
                 new TableLocation().init(conn);
             }
-            if (!tables.contains("Epidemic_Report".toUpperCase())) {
-                new TableEpidemicReport().init(conn);
+
+            if (!tables.contains("Geography_Code".toUpperCase())) {
+                try {
+                    new TableGeographyCode().init(conn);
+                    conn.createStatement().executeUpdate(TableGeographyCode.Create_Index_levelIndex);
+                    conn.createStatement().executeUpdate(TableGeographyCode.Create_Index_codeIndex);
+                    conn.createStatement().executeUpdate(TableGeographyCode.Create_Index_gcidIndex);
+                } catch (Exception e) {
+                }
             }
-            if (!tables.contains("Member".toUpperCase())) {
-                new TableMember().init(conn);
+
+            if (!tables.contains("Epidemic_Report".toUpperCase())) {
+                try {
+                    new TableEpidemicReport().init(conn);
+
+                    conn.createStatement().executeUpdate(TableEpidemicReport.Create_Index_DatasetTimeDesc);
+                    conn.createStatement().executeUpdate(TableEpidemicReport.Create_Index_DatasetTimeAsc);
+                    conn.createStatement().executeUpdate(TableEpidemicReport.Create_Index_TimeAsc);
+                    conn.createStatement().executeUpdate(TableEpidemicReport.Create_View_StatisticView);
+                } catch (Exception e) {
+                }
+            }
+
+            if (!tables.contains("Query_Condition".toUpperCase())) {
+                new TableQueryCondition().init(conn);
+            }
+            if (!tables.contains("String_Value".toUpperCase())) {
+                new TableStringValue().init(conn);
             }
             return true;
         } catch (Exception e) {
@@ -458,8 +569,14 @@ public class DerbyBase {
             new TableBrowserBypassSSL().drop(conn);
             new TableColorData().drop(conn);
             new TableLocation().drop(conn);
+            try {
+                conn.createStatement().executeUpdate("DROP VIEW Epidemic_Report_Statistic_View");
+            } catch (Exception e) {
+            }
             new TableEpidemicReport().drop(conn);
-            new TableMember().drop(conn);
+            new TableGeographyCode().drop(conn);
+            new TableQueryCondition().drop(conn);
+            new TableStringValue().drop(conn);
             return true;
         } catch (Exception e) {
 //            // logger.debug(e.toString());
@@ -483,112 +600,14 @@ public class DerbyBase {
             new TableBrowserBypassSSL().clear(conn);
             new TableColorData().clear(conn);
             new TableLocation().clear(conn);
+            conn.createStatement().executeUpdate("DROP VIEW Epidemic_Report_Statistic_View");
             new TableEpidemicReport().clear(conn);
-            new TableMember().clear(conn);
+            new TableGeographyCode().clear(conn);
+            new TableQueryCondition().clear(conn);
+            new TableStringValue().clear(conn);
             return true;
         } catch (Exception e) {
 //            // logger.debug(e.toString());
-            return false;
-        }
-    }
-
-    public static boolean checkUpdates() {
-        try {
-            TableStringValues.add("InstalledVersions", CommonValues.AppVersion);
-
-            if (!AppVariables.getSystemConfigBoolean("UpdatedTables4.2", false)) {
-                logger.info("Updating tables in 4.2...");
-                List<ConvolutionKernel> records = TableConvolutionKernel.read();
-                TableConvolutionKernel t = new TableConvolutionKernel();
-                t.drop();
-                t.init();
-                if (TableConvolutionKernel.write(records)) {
-                    AppVariables.setSystemConfigValue("UpdatedTables4.2", true);
-                }
-            }
-
-            if (!AppVariables.getSystemConfigBoolean("UpdatedTables5.4", false)) {
-                logger.info("Updating tables in 5.4...");
-                DerbyBase t = new DerbyBase();
-                String sql = "ALTER TABLE User_Conf  alter  column  key_Name set data type VARCHAR(1024)";
-                t.update(sql);
-                sql = "ALTER TABLE User_Conf  alter  column  string_Value set data type VARCHAR(32672)";
-                t.update(sql);
-                sql = "ALTER TABLE User_Conf  alter  column  default_string_Value set data type VARCHAR(32672)";
-                t.update(sql);
-                sql = "ALTER TABLE System_Conf  alter  column  key_Name set data type VARCHAR(1024)";
-                t.update(sql);
-                sql = "ALTER TABLE System_Conf  alter  column  string_Value set data type VARCHAR(32672)";
-                t.update(sql);
-                sql = "ALTER TABLE System_Conf  alter  column  default_string_Value set data type VARCHAR(32672)";
-                t.update(sql);
-                sql = "ALTER TABLE image_history  add  column  temp VARCHAR(128)";
-                t.update(sql);
-                sql = "UPDATE image_history SET temp=CHAR(update_type)";
-                t.update(sql);
-                sql = "ALTER TABLE image_history drop column update_type";
-                t.update(sql);
-                sql = "RENAME COLUMN image_history.temp TO update_type";
-                t.update(sql);
-                sql = "ALTER TABLE image_history  add  column  object_type VARCHAR(128)";
-                t.update(sql);
-                sql = "ALTER TABLE image_history  add  column  op_type VARCHAR(128)";
-                t.update(sql);
-                sql = "ALTER TABLE image_history  add  column  scope_type  VARCHAR(128)";
-                t.update(sql);
-                sql = "ALTER TABLE image_history  add  column  scope_name  VARCHAR(1024)";
-                t.update(sql);
-                sql = "DROP TABLE image_init";
-                t.update(sql);
-                AppVariables.setSystemConfigValue("UpdatedTables5.4", true);
-            }
-
-            if (!AppVariables.getSystemConfigBoolean("UpdatedTables5.8", false)) {
-                logger.info("Updating tables in 5.8...");
-                DerbyBase t = new DerbyBase();
-                String sql = "ALTER TABLE SRGB  add  column  palette_index  INT";
-                t.update(sql);
-
-                List<String> saveColors = TableStringValues.read("ColorPalette");
-                if (saveColors != null && !saveColors.isEmpty()) {
-                    TableColorData.updatePalette(saveColors);
-                }
-                TableStringValues.clear("ColorPalette");
-                AppVariables.setSystemConfigValue("UpdatedTables5.8", true);
-            }
-
-            if (!AppVariables.getSystemConfigBoolean("UpdatedTables5.9", false)) {
-                logger.info("Updating tables in 5.9...");
-                DerbyBase t = new DerbyBase();
-                String sql = "DROP TABLE Browser_URLs";
-                t.update(sql);
-                AppVariables.setSystemConfigValue("UpdatedTables5.9", true);
-            }
-
-            if (!AppVariables.getSystemConfigBoolean("UpdatedTables6.1", false)) {
-                logger.info("Updating tables in 6.1...");
-                if (TableColorData.migrate()) {
-                }
-                AppVariables.setSystemConfigValue("UpdatedTables6.1", true);
-            }
-
-            if (!AppVariables.getSystemConfigBoolean("UpdatedTables6.1.5", false)) {
-                logger.info("Updating tables in 6.1.5...");
-                TableGeographyCode.migrate615();
-                TableEpidemicReport.migrate615();
-                AppVariables.setSystemConfigValue("UpdatedTables6.1.5", true);
-            }
-
-            if (!AppVariables.getSystemConfigBoolean("UpdatedTables6.2.1a", false)) {
-                logger.info("Updating tables in 6.2.1...");
-                TableGeographyCode.migrate621();
-                TableEpidemicReport.migrate621();
-                AppVariables.setSystemConfigValue("UpdatedTables6.2.1", true);
-            }
-
-            return true;
-        } catch (Exception e) {
-            logger.debug(e.toString());
             return false;
         }
     }
@@ -631,28 +650,44 @@ public class DerbyBase {
         }
     }
 
-    public static int size(String table) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            String sql = " SELECT count(*) FROM " + table;
-            ResultSet results = statement.executeQuery(sql);
-            if (results.next()) {
-                return results.getInt(1);
-            } else {
-                return 0;
-            }
+    public static int tableSize(String table) {
+        String sql = " SELECT count(*) FROM " + table;
+        return size(sql);
+    }
+
+    public static int size(String sql) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            conn.setReadOnly(true);
+            return size(conn, sql);
         } catch (Exception e) {
             failed(e);
             return 0;
         }
     }
 
-//    CALL SYSCS_UTIL.SYSCS_EXPORT_TABLE ('MARA', 'GEOGRAPHY_CODE', 'D:\MyBox\src\main\resources\data\db\GeographyCodes_zh.del', null, null,  'UTF-8');
-//    CALL SYSCS_UTIL.SYSCS_EXPORT_TABLE ('MARA', 'EPIDEMIC_REPORT', 'D:\MyBox\src\main\resources\data\db\EpidemicReport_zh.del', null, null,  'UTF-8');
-//    CALL SYSCS_UTIL.SYSCS_EXPORT_TABLE ('MARA', 'LOCATION', 'D:\MyBox\src\main\resources\data\db\Location.del_zh', null, null,  'UTF-8');
-//    CALL SYSCS_UTIL.SYSCS_EXPORT_TABLE ('MARA', 'GEOGRAPHY_CODE', 'D:\MyBox\src\main\resources\data\db\GeographyCodes_en.del', null, null,  'UTF-8');
-//    CALL SYSCS_UTIL.SYSCS_EXPORT_TABLE ('MARA', 'EPIDEMIC_REPORT', 'D:\MyBox\src\main\resources\data\db\EpidemicReport_en.del', null, null,  'UTF-8');
-//    CALL SYSCS_UTIL.SYSCS_EXPORT_TABLE ('MARA', 'LOCATION', 'D:\MyBox\src\main\resources\data\db\Location.del_en', null, null,  'UTF-8');
+    public static int size(Connection conn, String sql) {
+        int size = 0;
+        try ( ResultSet results = conn.createStatement().executeQuery(sql)) {
+            if (results.next()) {
+                size = results.getInt(1);
+            }
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            logger.debug(sql);
+        }
+        return size;
+
+    }
+
+    public static String stringValue(String value) {
+        if (value == null) {
+            return null;
+        }
+        return value.replaceAll("'", "''");
+    }
+
+//    CALL SYSCS_UTIL.SYSCS_EXPORT_TABLE ('MARA', 'LOCATION', 'D:\MyBox\src\main\resources\fetch\db\Location.del_en', null, null,  'UTF-8');
     public static void exportData(String table, String file) {
         if (file == null) {
             return;
@@ -676,9 +711,7 @@ public class DerbyBase {
         }
     }
 
-//    CALL SYSCS_UTIL.SYSCS_IMPORT_TABLE ('MARA', 'GEOGRAPHY_CODE', 'D:\MyBox\src\main\resources\data\db\Geography_Code_zh.del',null, null,  'UTF-8', 1);
-//    CALL SYSCS_UTIL.SYSCS_IMPORT_TABLE ('MARA', 'EPIDEMIC_REPORT', 'D:\MyBox\src\main\resources\data\db\EpidemicReport.del',null, null,  'UTF-8', 1);
-//    CALL SYSCS_UTIL.SYSCS_IMPORT_TABLE ('MARA', 'LOCATION', 'D:\MyBox\src\main\resources\data\db\Location.del',null, null,  'UTF-8', 1);
+//    CALL SYSCS_UTIL.SYSCS_IMPORT_TABLE ('MARA', 'LOCATION', 'D:\MyBox\src\main\resources\fetch\db\Location.del',null, null,  'UTF-8', 1);
     public static void importData(String table, String file, boolean replace) {
         if (file == null) {
             return;
@@ -701,6 +734,221 @@ public class DerbyBase {
             failed(e);
 
         }
+    }
+
+    public static boolean checkUpdates() {
+        AppVariables.setSystemConfigValue("CurrentVersion", CommonValues.AppVersion);
+        checkMigrateFrom621();
+        return true;
+    }
+
+    public static void checkMigrateFrom621() {
+        if (AppVariables.getSystemConfigBoolean("MigratedFrom621", false)) {
+            return;
+        }
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + create)) {
+            List<String> columns = columnNames(conn, "Epidemic_Report");
+            List<String> installed = TableStringValues.read(conn, "InstalledVersions");
+            if (installed.contains("6.2.1") && columns.contains("country")) {
+                migrateFrom621(conn);
+                return;
+            }
+            if (!installed.isEmpty() && !installed.contains("6.2.1")) {
+                Platform.runLater(() -> {
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.setContentText(AppVariables.message("Migrate621First"));
+                    alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                    ButtonType buttonDiscard = new ButtonType(AppVariables.message("DiscardOldData"));
+                    ButtonType buttonExit = new ButtonType(AppVariables.message("Exit"));
+                    alert.getButtonTypes().setAll(buttonDiscard, buttonExit);
+                    Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+                    stage.setAlwaysOnTop(true);
+                    stage.toFront();
+
+                    Optional<ButtonType> result = alert.showAndWait();
+                    if (result.get() == buttonDiscard) {
+                        dropTables();
+                        initTables();
+                        AppVariables.setSystemConfigValue("MigratedFrom621", true);
+                        TableStringValues.add("InstalledVersions", CommonValues.AppVersion);
+                    } else {
+                        FxmlStage.appExit();
+                    }
+                });
+            } else {
+                AppVariables.setSystemConfigValue("MigratedFrom621", true);
+                TableStringValues.add("InstalledVersions", CommonValues.AppVersion);
+            }
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+    private static void migrateFrom621(Connection conn) {
+        exportGeographyCode621(conn);
+        exportEpidemicReport621(conn);
+        try ( Statement statement = conn.createStatement()) {
+            try {
+                statement.executeUpdate("DROP TABLE Epidemic_Report");
+            } catch (Exception e) {
+                logger.debug(e.toString());
+            }
+            try {
+                statement.executeUpdate("DROP TABLE Geography_Code");
+            } catch (Exception e) {
+                logger.debug(e.toString());
+            }
+
+            new TableGeographyCode().init(conn);
+            statement.executeUpdate(TableGeographyCode.Create_Index_levelIndex);
+            statement.executeUpdate(TableGeographyCode.Create_Index_gcidIndex);
+            statement.executeUpdate(TableGeographyCode.Create_Index_codeIndex);
+
+            new TableEpidemicReport().init(conn);
+            statement.executeUpdate(TableEpidemicReport.Create_Index_DatasetTimeDesc);
+            statement.executeUpdate(TableEpidemicReport.Create_Index_DatasetTimeAsc);
+            statement.executeUpdate(TableEpidemicReport.Create_Index_TimeAsc);
+            statement.executeUpdate(TableEpidemicReport.Create_View_StatisticView);
+
+            AppVariables.setSystemConfigValue("MigratedFrom621", true);
+            TableStringValues.add("InstalledVersions", CommonValues.AppVersion);
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+    private static void exportGeographyCode621(Connection conn) {
+        try {
+            String sql = "SELECT * FROM Geography_Code ORDER BY level, country, province, city";
+            List<GeographyCode> codes = new ArrayList<>();
+            try ( ResultSet results = conn.createStatement().executeQuery(sql)) {
+                while (results.next()) {
+                    try {
+                        String address = results.getString("address");
+                        if (address == null) {
+                            break;
+                        }
+                        GeographyCode code = new GeographyCode();
+                        String level = results.getString("level");
+                        GeographyCodeLevel levelCode = new GeographyCodeLevel(level);
+                        code.setLevelCode(levelCode);
+                        code.setLongitude(results.getDouble("longitude"));
+                        code.setLatitude(results.getDouble("latitude"));
+                        if (AppVariables.isChinese()) {
+                            code.setChineseName(address);
+                        } else {
+                            code.setEnglishName(address);
+                        }
+                        code.setCountryName(results.getString("country"));
+                        code.setProvinceName(results.getString("province"));
+                        code.setCityName(results.getString("city"));
+                        code.setCode2(results.getString("citycode"));
+                        code.setCountyName(results.getString("district"));
+                        code.setTownName(results.getString("township"));
+                        code.setVillageName(results.getString("neighborhood"));
+                        code.setBuildingName(results.getString("building"));
+                        code.setCode1(results.getString("administrative_code"));
+                        code.setComments(results.getString("street"));
+                        codes.add(code);
+                    } catch (Exception e) {
+//                    logger.debug(e.toString());
+                        break;
+                    }
+                }
+            }
+            if (!codes.isEmpty()) {
+                File tmpFile = new File(AppVariables.MyboxDataPath + File.separator + "data"
+                        + File.separator + "GeographyCode6.2.1Exported.csv");
+                GeographyCode.writeExternalCSV(tmpFile, codes);
+                AppVariables.setSystemConfigValue("GeographyCode621Exported", tmpFile.getAbsolutePath());
+            }
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+    private static void exportEpidemicReport621(Connection conn) {
+        try {
+            String sql = "SELECT * FROM Epidemic_Report ORDER BY level, country, province, city";
+            List<EpidemicReport> reports = new ArrayList<>();
+            try ( ResultSet results = conn.createStatement().executeQuery(sql)) {
+                while (results.next()) {
+                    try {
+                        String levelValue = results.getString("level");
+                        if (levelValue == null) {
+                            break;
+                        }
+                        GeographyCodeLevel levelCode = new GeographyCodeLevel(levelValue);
+                        GeographyCode code = new GeographyCode();
+                        code.setLevelCode(levelCode);
+                        code.setCountryName(results.getString("country"));
+                        code.setProvinceName(results.getString("province"));
+                        code.setCityName(results.getString("city"));
+                        code.setCountyName(results.getString("district"));
+                        code.setTownName(results.getString("township"));
+                        code.setVillageName(results.getString("neighborhood"));
+                        code.setLongitude(results.getDouble("longitude"));
+                        code.setLatitude(results.getDouble("latitude"));
+
+                        EpidemicReport report = new EpidemicReport();
+                        report.setLocation(code);
+                        report.setDataSet(results.getString("data_set"));
+                        report.setConfirmed(results.getInt("confirmed"));
+                        report.setHealed(results.getInt("healed"));
+                        report.setDead(results.getInt("dead"));
+                        report.setIncreasedConfirmed(results.getInt("increased_confirmed"));
+                        report.setIncreasedHealed(results.getInt("increased_healed"));
+                        report.setIncreasedDead(results.getInt("increased_dead"));
+                        Date d = results.getTimestamp("time");
+                        if (d != null) {
+                            report.setTime(d.getTime());
+                        }
+                        report.setSource("Filled".equals(results.getString("comments")) ? 3 : 2);
+                        reports.add(report);
+
+                    } catch (Exception e) {
+//                    logger.debug(e.toString());
+                        break;
+                    }
+                }
+            }
+            if (!reports.isEmpty()) {
+                File tmpFile = new File(AppVariables.MyboxDataPath + File.separator + "data"
+                        + File.separator + "EpidemicReport6.2.1Exported.csv");
+                EpidemicReport.writeExternalCSV(tmpFile, reports, null);
+                AppVariables.setSystemConfigValue("EpidemicReport621Exported", tmpFile.getAbsolutePath());
+            }
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+
+    /*
+        get/set
+     */
+    public String getTable_Name() {
+        return Table_Name;
+    }
+
+    public void setTable_Name(String Table_Name) {
+        this.Table_Name = Table_Name;
+    }
+
+    public String getCreate_Table_Statement() {
+        return Create_Table_Statement;
+    }
+
+    public void setCreate_Table_Statement(String Create_Table_Statement) {
+        this.Create_Table_Statement = Create_Table_Statement;
+    }
+
+    public List<String> getKeys() {
+        return Keys;
+    }
+
+    public void setKeys(List<String> Keys) {
+        this.Keys = Keys;
     }
 
 }

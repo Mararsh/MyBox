@@ -343,6 +343,7 @@ public class WeiboSnapController extends BaseController {
 
     private void initSnapOptions() {
 
+        dpi = 120;
         List<String> dpiValues = new ArrayList();
         dpiValues.addAll(Arrays.asList("96", "120", "160", "300"));
         String sValue = Toolkit.getDefaultToolkit().getScreenResolution() + "";
@@ -356,19 +357,16 @@ public class WeiboSnapController extends BaseController {
         }
         dpiValues.add(sValue);
         dpiSelector.getItems().addAll(dpiValues);
-        dpiSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> ov,
-                    String oldValue, String newValue) {
-                try {
-                    dpi = Integer.parseInt(newValue);
-                    AppVariables.setUserConfigValue("WeiboSnapDPI", dpi + "");
-                } catch (Exception e) {
-                    dpi = 96;
-                }
-            }
-        });
-        dpiSelector.getSelectionModel().select(AppVariables.getUserConfigValue("WeiboSnapDPI", "96"));
+        dpiSelector.getSelectionModel().selectedItemProperty().addListener(
+                (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
+                    try {
+                        dpi = Integer.parseInt(newValue);
+                        AppVariables.setUserConfigValue("WeiboSnapDPI", dpi + "");
+                    } catch (Exception e) {
+                        dpi = 120;
+                    }
+                });
+        dpiSelector.getSelectionModel().select(AppVariables.getUserConfigValue("WeiboSnapDPI", "120"));
 
         zoomBox.getItems().addAll(Arrays.asList("1.0", "1.5", "2", "1.6", "1.8", "0.8"));
         zoomBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {

@@ -50,17 +50,27 @@ License:    Apache License Version 2.0
                                     <children>
                                         <TitledPane layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%LocationsData" VBox.vgrow="ALWAYS">
                                             <content>
-                                                <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="1032.0" prefViewportWidth="517.0">
+                                                <ScrollPane fitToHeight="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="1032.0" prefViewportWidth="517.0">
                                                     <content>
                                                         <VBox fx:id="displayBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                             <children>
                                                                 <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                                                                     <children>
+                                                                        <Button fx:id="displayButton" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#displayAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Display" />
                                                                         <Button fx:id="examplesButton" layoutX="10.0" layoutY="13.0" mnemonicParsing="false" onAction="#exampleAction">
                                                                             <graphic>
                                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                                     <image>
                                                                                         <Image url="@../buttons/iconExamples.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </Button>
+                                                                        <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/iconClear.png" />
                                                                                     </image>
                                                                                 </ImageView>
                                                                             </graphic>
@@ -74,17 +84,6 @@ License:    Apache License Version 2.0
                                                                                 </ImageView>
                                                                             </graphic>
                                                                         </Button>
-                                                                        <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                                        <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
-                                                                            <graphic>
-                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                    <image>
-                                                                                        <Image url="@../buttons/iconClear.png" />
-                                                                                    </image>
-                                                                                </ImageView>
-                                                                            </graphic>
-                                                                        </Button>
-                                                                        <Button fx:id="displayButton" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#displayAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Display" />
                                                                     </children>
                                                                 </HBox>
                                                                 <HBox alignment="CENTER_LEFT" spacing="5.0">
@@ -93,7 +92,7 @@ License:    Apache License Version 2.0
                                                                         <ComboBox fx:id="datasetSelector" editable="true" prefWidth="240.0" />
                                                                     </children>
                                                                 </HBox>
-                                                                <FlowPane hgap="5.0" layoutX="15.0" layoutY="136.0" vgap="5.0" VBox.vgrow="NEVER">
+                                                                <FlowPane hgap="5.0" layoutX="15.0" layoutY="136.0" prefWrapLength="300.0" vgap="5.0" VBox.vgrow="NEVER">
                                                                     <children>
                                                                         <RadioButton fx:id="distirbutionRadio" mnemonicParsing="false" selected="true" text="%DataDistribution">
                                                                             <toggleGroup>
@@ -105,7 +104,7 @@ License:    Apache License Version 2.0
                                                                 </FlowPane>
                                                                 <VBox fx:id="transitionBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
                                                                     <children>
-                                                                        <FlowPane hgap="5.0" layoutX="15.0" layoutY="218.0" vgap="5.0">
+                                                                        <FlowPane hgap="5.0" layoutX="15.0" layoutY="218.0" prefWrapLength="300.0" vgap="5.0">
                                                                             <children>
                                                                                 <Label text="%OrderBy">
                                                                                     <FlowPane.margin>
@@ -114,12 +113,13 @@ License:    Apache License Version 2.0
                                                                                 </Label>
                                                                             </children>
                                                                         </FlowPane>
-                                                                        <FlowPane hgap="5.0" vgap="5.0">
+                                                                        <FlowPane hgap="5.0" prefWrapLength="300.0" vgap="5.0">
                                                                             <children>
                                                                                 <RadioButton fx:id="orderLabelRadio" mnemonicParsing="false" selected="true" text="%DataLabel">
                                                                                     <toggleGroup>
                                                                                         <ToggleGroup fx:id="orderGroup" />
-                                                                                    </toggleGroup></RadioButton>
+                                                                                    </toggleGroup>
+                                                                                </RadioButton> 
                                                                                 <RadioButton fx:id="orderAddressRadio" layoutX="10.0" layoutY="51.0" mnemonicParsing="false" text="%Address" toggleGroup="$orderGroup" />
                                                                                 <RadioButton fx:id="orderValueRadio" mnemonicParsing="false" text="%DataValue" toggleGroup="$orderGroup" />
                                                                                 <RadioButton fx:id="orderSizeRadio" mnemonicParsing="false" text="%DataSize" toggleGroup="$orderGroup" />
@@ -127,7 +127,7 @@ License:    Apache License Version 2.0
                                                                             </children>
                                                                         </FlowPane>
                                                                         <CheckBox fx:id="orderDescCheck" mnemonicParsing="false" text="%Descent" />
-                                                                        <FlowPane hgap="5.0" vgap="5.0">
+                                                                        <FlowPane hgap="5.0" prefWrapLength="300.0" vgap="5.0">
                                                                             <children>
                                                                                 <Label text="%IntervalSeconds">
                                                                                     <FlowPane.margin>
@@ -137,7 +137,7 @@ License:    Apache License Version 2.0
                                                                                 <ComboBox fx:id="intervalSelector" editable="true" prefWidth="120.0" />
                                                                             </children>
                                                                         </FlowPane>
-                                                      <CheckBox fx:id="linkCheck" layoutX="15.0" layoutY="178.0" mnemonicParsing="false" selected="true" text="%Link" />
+                                                                        <CheckBox fx:id="linkCheck" layoutX="15.0" layoutY="178.0" mnemonicParsing="false" selected="true" text="%Link" />
                                                                     </children>
                                                                 </VBox>
                                                                 <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
@@ -213,7 +213,7 @@ License:    Apache License Version 2.0
                                                                                 <Insets top="5.0" />
                                                                             </VBox.margin>
                                                                         </Label>
-                                                                        <FlowPane hgap="5.0" vgap="5.0">
+                                                                        <FlowPane hgap="5.0" prefWrapLength="300.0" vgap="5.0">
                                                                             <children>
                                                                                 <CheckBox fx:id="popAddressCheck" layoutX="400.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%Address" />
                                                                                 <CheckBox fx:id="popCoordinateCheck" mnemonicParsing="false" selected="true" text="%Coordinate" />
@@ -229,6 +229,7 @@ License:    Apache License Version 2.0
                                                                     </children>
                                                                 </VBox>
                                                                 <CheckBox fx:id="fitViewCheck" mnemonicParsing="false" selected="true" text="%FitView" />
+                                                                <Label minHeight="-Infinity" styleClass="darkRed-label" stylesheets="@../styles/MyBox.css" text="%LocationMapNotice" wrapText="true" />
                                                             </children>
                                                             <padding>
                                                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -238,9 +239,9 @@ License:    Apache License Version 2.0
                                                 </ScrollPane>
                                             </content>
                                         </TitledPane>
-                                        <TitledPane expanded="false" maxWidth="1.7976931348623157E308" text="%MapOptions" VBox.vgrow="NEVER">
+                                        <TitledPane expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%MapOptions" VBox.vgrow="NEVER">
                                             <content>
-                                                <VBox fx:id="mapOptionsBox" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                <VBox fx:id="mapOptionsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                     <children>
                                                         <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                                             <children>
@@ -321,7 +322,6 @@ License:    Apache License Version 2.0
         <HBox alignment="CENTER_LEFT">
             <children>
                 <Label fx:id="bottomLabel" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER_LEFT" HBox.hgrow="ALWAYS" />
-                <Label styleClass="darkRed-label" stylesheets="@../styles/MyBox.css" text="%LocationMapNotice" />
             </children>
         </HBox>
     </bottom>

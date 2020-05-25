@@ -6,6 +6,7 @@ License:    Apache License Version 2.0
             http://www.apache.org/licenses/LICENSE-2.0
 -->
 
+<?import javafx.scene.image.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
@@ -18,12 +19,26 @@ License:    Apache License Version 2.0
                 <Insets bottom="20.0" top="10.0" />
             </VBox.margin>
         </ProgressIndicator>
-        <Label fx:id="timeLabel" />
-        <Label fx:id="infoLabel" text="..." />
+        <Label fx:id="timeLabel" wrapText="true" />
+        <Label fx:id="infoLabel" text="..." wrapText="true" VBox.vgrow="NEVER" />
         <HBox alignment="CENTER" spacing="20.0">
             <children>
-                <Button mnemonicParsing="false" onAction="#mybox" text="MyBox" />
-                <Button mnemonicParsing="false" onAction="#cancelAction" text="%Cancel" />
+                <Button fx:id="myboxBuuton" mnemonicParsing="false" onAction="#mybox">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/iconDefault.png" />
+                     </image>
+                  </ImageView>
+               </graphic></Button>
+                <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/iconCancel.png" />
+                     </image>
+                  </ImageView>
+               </graphic></Button>
             </children>
             <VBox.margin>
                 <Insets top="10.0" />

@@ -1,300 +1,185 @@
 package mara.mybox.controller;
 
-import java.awt.Toolkit;
-import java.awt.image.BufferedImage;
 import java.io.File;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Timer;
-import java.util.TimerTask;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.embed.swing.SwingFXUtils;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Bounds;
-import javafx.scene.SnapshotParameters;
-import javafx.scene.chart.BarChart;
-import javafx.scene.chart.LineChart;
-import javafx.scene.chart.PieChart;
-import javafx.scene.chart.XYChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SelectionMode;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
-import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
-import javafx.scene.transform.Transform;
-import javafx.stage.DirectoryChooser;
-import javafx.stage.FileChooser;
 import javafx.stage.Modality;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import mara.mybox.data.EpidemicReport;
-import mara.mybox.data.StringTable;
-import static mara.mybox.data.StringTable.tableDiv;
+import mara.mybox.data.GeographyCode;
+import mara.mybox.data.QueryCondition;
+import mara.mybox.db.DerbyBase;
+import static mara.mybox.db.DerbyBase.dbHome;
+import static mara.mybox.db.DerbyBase.login;
+import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.TableEpidemicReport;
+import mara.mybox.db.TableGeographyCode;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlStage.openScene;
-import mara.mybox.fxml.TableCoordinateCell;
 import mara.mybox.fxml.TableDateCell;
-import mara.mybox.image.file.ImageFileWriters;
-import mara.mybox.image.file.ImageGifFile;
-import mara.mybox.tools.DateTools;
-import static mara.mybox.tools.DateTools.datetimeToString;
-import mara.mybox.tools.DoubleTools;
-import mara.mybox.tools.FileTools;
-import mara.mybox.tools.HtmlTools;
+import mara.mybox.fxml.TableMessageCell;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
-import thridparty.LabeledBarChart;
 
 /**
  * @Author Mara
  * @CreateDate 2020-2-2
  * @License Apache License Version 2.0
  */
-public class EpidemicReportsController extends TableManageController<EpidemicReport> {
+public class EpidemicReportsController extends DataAnalysisController<EpidemicReport> {
 
-    protected String currentDataSet, currentTime, currentSizeQuery, currentDataQuery,
-            currentCountry, currentProvince, currentCity, currentDistrict, currentTownship,
-            currentNeighborhood, currentTitle, currentClearSQL, currentChartsSQL, currentMapSQL;
-    protected NodeType currentNodeLevel;
-    protected boolean currentNodeIsLeaf, allZero, isSnapping;
-    protected ChartsType currentChartsType;
-    protected SpecialType currentSpecialType;
-    protected File htmlFile;
-    protected Tab currentTab;
-    protected SingletonTask treeTask, dataTask, chartsTask, exportTask, importTask, htmlTask, clearTask;
-    protected int dpi, timeLocationIndex, timeLocationIndex2, interval;
-    protected ObservableList<EpidemicReport> chartsData;
-    protected List<String> datasets;
-    protected Map<String, List<Date>> timesMap;
-    protected Map<String, List<String>> countriesMap, provincesMap, citiesMap;
-    protected LabeledBarChart numberBarChart, increasedBarChart, ratioBarChart;
-    protected File numberSnapshotsFile, increasedSnapshotsFile, ratioSnapshotsFile;
+    protected String dataFetch;
+    protected LoadingController loading;
+    protected double maxValue;
+    protected List<String> datasets, dataTimes, orderNames;
+    protected Map<String, List<EpidemicReport>> timesReports;
+    protected Map<String, List<EpidemicReport>> locationsReports;
+    protected List<GeographyCode> dataLocations;
 
     @FXML
-    protected TreeView treeView;
+    protected EpidemicReportsSourceController sourceController;
     @FXML
-    protected TabPane tabPane;
+    protected TimeTreeController timeController;
     @FXML
-    protected Tab chartsDataTab, numberTab, increasedTab, ratioTab, confirmedTab, healedTab, deadTab, mapTab;
+    protected EpidemicReportsChartController chartController;
     @FXML
-    protected TableView<EpidemicReport> chartsTableView;
+    protected EpidemicReportsSettingsController settingsController;
     @FXML
-    protected TableColumn<EpidemicReport, String> datasetColumn, levelColumn,
-            countryColumn, provinceColumn, cityColumn, commentsColumn,
-            chartsDatasetColumn, chartsLevelColumn, chartsCountryColumn,
-            chartsProvinceColumn, chartsCityColumn, chartsCommentsColumn;
+    protected TabPane conditionTabsPane;
     @FXML
-    protected TableColumn<EpidemicReport, Double> longtitudeColumn, latitudeColumn,
-            chartsLongtitudeColumn, chartsLatitudeColumn;
+    protected Tab conditionOrderTab;
     @FXML
-    protected TableColumn<EpidemicReport, Date> timeColumn, chartsTimeColumn;
+    protected Tab chartsTab;
     @FXML
-    protected TableColumn<EpidemicReport, Integer> confirmedColumn, headledColumn, deadColumn,
-            increasedConfirmedColumn, increasedHeadledColumn, increasedDeadColumn,
-            chartsConfirmedColumn, chartsHeadledColumn, chartsDeadColumn,
-            chartsIncreasedConfirmedColumn, chartsIncreasedHeadledColumn, chartsIncreasedDeadColumn;
+    protected Button chinaButton, globalButton,
+            statisticButton, dataExportChartsButton, fillButton;
     @FXML
-    protected TableColumn<EpidemicReport, Double> headledRatioColumn, deadRatioColumn,
-            chartsHeadledRatioColumn, chartsDeadRatioColumn;
+    protected ComboBox<String> chartMaxSelector;
     @FXML
-    protected Button examplesButton, chinaButton, helpMeButton, catButton, statisticButton,
-            dataExportButton, dataExportChartsButton, fillButton, sureButton;
+    protected TableColumn<EpidemicReport, String> datasetColumn, locationColumn, sourceColumn;
     @FXML
-    protected VBox numberChartBox, increasedChartBox, ratioChartBox,
-            confirmedChartBox, healedChartBox, deadChartBox;
+    protected TableColumn<EpidemicReport, Double> longitudeColumn, latitudeColumn;
     @FXML
-    protected LineChart numberLineChart, increasedLineChart, ratioLineChart,
-            confirmedLineChart, healedLineChart, deadLineChart;
+    protected TableColumn<EpidemicReport, Date> timeColumn;
     @FXML
-    protected PieChart deadPie, healedPie, confirmedPie;
+    protected TableColumn<EpidemicReport, Long> confirmedColumn, headledColumn, deadColumn,
+            increasedConfirmedColumn, increasedHeadledColumn, increasedDeadColumn;
     @FXML
-    protected Label nameLabel, chartsSizeLabel;
+    protected TableColumn<EpidemicReport, Double> healedConfirmedPermillageColumn, deadConfirmedPermillageColumn,
+            confirmedPopulationPermillageColumn, deadPopulationPermillageColumn, healedPopulationPermillageColumn,
+            confirmedAreaPermillageColumn, deadAreaPermillageColumn, healedAreaPermillageColumn;
     @FXML
-    protected TextField chartsSQLLabel, dataSQLLabel, mapSQLLabel;
+    protected ListView orderByList;
     @FXML
-    protected EpidemicReportMapController mapController;
-    @FXML
-    protected CheckBox recountCheck, valuesCheck, legendCheck;
-    @FXML
-    private ComboBox<String> dpiSelector, intervalSelector;
+    protected Label timeOrderLabel;
 
-    protected enum NodeType {
-        None, All, DataSet, AllTime, Time, Countries, Provinces, Country,
-        Province, Cities, City
-    }
-
-    protected enum SpecialType {
-        None, ExceptChina, Filled
-    }
-
-    protected enum ChartsType {
-        TimeBased, LocationBased, TimeLocationBased, None
-    }
-
+//    orderByList
     public EpidemicReportsController() {
         baseTitle = message("EpidemicReport");
+        TipsLabelKey = "EpidemicReportTips";
 
+        baseName = "EpidemicReport";
         dataName = "Epidemic_Report";
 
-        TipsLabelKey = "EpidemicReportsChartColorComments";
+        prefixEditable = false;
+        supportTop = true;
     }
 
     @Override
     public void initializeNext() {
         try {
             super.initializeNext();
-            initChartsTable();
 
-            mapController.parent = this;
-            currentDataSet = null;
-            currentNodeLevel = null;
-            currentTime = null;
-            currentSpecialType = null;
+            datasets = new ArrayList<>();
+            dataTimes = new ArrayList<>();
+            timesReports = new HashMap<>();
+            dataLocations = new ArrayList<>();
+            locationsReports = new HashMap<>();
+            orderNames = new ArrayList<>();
 
-            dpi = 96;
-            List<String> dpiValues = new ArrayList();
-            dpiValues.addAll(Arrays.asList("96", "120", "160", "300"));
-            String sValue = Toolkit.getDefaultToolkit().getScreenResolution() + "";
-            if (dpiValues.contains(sValue)) {
-                dpiValues.remove(sValue);
-            }
-            dpiValues.add(0, sValue);
-            sValue = (int) Screen.getPrimary().getDpi() + "";
-            if (dpiValues.contains(sValue)) {
-                dpiValues.remove(sValue);
-            }
-            dpiValues.add(sValue);
-            dpiSelector.getItems().addAll(dpiValues);
-            dpiSelector.getSelectionModel().selectedItemProperty().addListener(
-                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                        try {
-                            dpi = Integer.parseInt(newValue);
-                            AppVariables.setUserConfigValue("EpidemicReportDPI", dpi + "");
-                        } catch (Exception e) {
-                            dpi = 96;
-                        }
-                    });
-            dpiSelector.getSelectionModel().select(AppVariables.getUserConfigValue("EpidemicReportDPI", "96"));
+            sourceController.setUserController(this);
+            geoController.setUserController(this);
+            timeController.setUserController(this);
+            chartController.setReportsController(this);
+            chartController.setSettingsController(settingsController);
+            settingsController.setReportsController(this);
+            settingsController.setChartController(chartController);
 
-            interval = 1000;
-            intervalSelector.getItems().addAll(Arrays.asList(
-                    "1000", "800", "500", "1500", "200", "2000", "3000", "5000", "300", "10000"
-            ));
-            intervalSelector.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                try {
-                    int v = Integer.valueOf(intervalSelector.getValue());
-                    if (v > 0) {
-                        interval = v;
-                        AppVariables.setUserConfigValue("EpidemicReportInterval", interval + "");
-                        FxmlControl.setEditorNormal(intervalSelector);
-                        if (isSettingValues) {
-                            return;
-                        }
-                        if (currentChartsType == ChartsType.TimeBased
-                                || currentChartsType == ChartsType.TimeLocationBased) {
-                            drawCharts();
-                        }
-                    } else {
-                        FxmlControl.setEditorBadStyle(intervalSelector);
-                    }
-                } catch (Exception e) {
-                    logger.error(e.toString());
-                }
-            });
-
-            valuesCheck.selectedProperty().addListener(
-                    (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                        if (isSettingValues) {
-                            return;
-                        }
-                        AppVariables.setUserConfigValue("EpidemicReportValues", newValue);
-                        drawCharts();
-                    });
-
-            legendCheck.selectedProperty().addListener(
-                    (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                        if (isSettingValues) {
-                            return;
-                        }
-                        AppVariables.setUserConfigValue("EpidemicReportLegend", newValue);
-                        drawCharts();
-                    });
-
-            isSettingValues = true;
-            valuesCheck.setSelected(AppVariables.getUserConfigBoolean("EpidemicReportValues", true));
-            legendCheck.setSelected(AppVariables.getUserConfigBoolean("EpidemicReportLegend", true));
-            intervalSelector.getSelectionModel().select(AppVariables.getUserConfigValue("EpidemicReportInterval", "1000"));
-            isSettingValues = false;
-
-            numberBarChart = LabeledBarChart.create().setIntValue(true)
-                    .setDisplayLabel(valuesCheck.isSelected()).style("/styles/EpidemicReportBarChart.css");
-            increasedBarChart = LabeledBarChart.create().setIntValue(true)
-                    .setDisplayLabel(valuesCheck.isSelected()).style("/styles/EpidemicReportBarChart.css");
-            ratioBarChart = LabeledBarChart.create().setIntValue(false)
-                    .setDisplayLabel(valuesCheck.isSelected()).style("/styles/EpidemicReportRatio.css");
+            initOptions();
 
         } catch (Exception e) {
             logger.error(e.toString());
         }
+    }
 
+    @Override
+    public void initSQL() {
+        queryPrefix = TableEpidemicReport.StatisticViewSelect;
+        sizePrefix = TableEpidemicReport.SizeSelectPrefix;
+        clearPrefix = TableEpidemicReport.ClearPrefix;
     }
 
     @Override
     protected void initColumns() {
         try {
             datasetColumn.setCellValueFactory(new PropertyValueFactory<>("dataSet"));
-            levelColumn.setCellValueFactory(new PropertyValueFactory<>("level"));
-            countryColumn.setCellValueFactory(new PropertyValueFactory<>("country"));
-            provinceColumn.setCellValueFactory(new PropertyValueFactory<>("province"));
-            cityColumn.setCellValueFactory(new PropertyValueFactory<>("city"));
-            confirmedColumn.setCellValueFactory(new PropertyValueFactory<>("confirmed"));
-            increasedConfirmedColumn.setCellValueFactory(new PropertyValueFactory<>("increasedConfirmed"));
-            headledColumn.setCellValueFactory(new PropertyValueFactory<>("healed"));
-            increasedHeadledColumn.setCellValueFactory(new PropertyValueFactory<>("increasedHealed"));
-            headledRatioColumn.setCellValueFactory(new PropertyValueFactory<>("healedRatio"));
-            deadColumn.setCellValueFactory(new PropertyValueFactory<>("dead"));
-            increasedDeadColumn.setCellValueFactory(new PropertyValueFactory<>("increasedDead"));
-            deadRatioColumn.setCellValueFactory(new PropertyValueFactory<>("deadRatio"));
-            longtitudeColumn.setCellValueFactory(new PropertyValueFactory<>("longitude"));
-            longtitudeColumn.setCellFactory(new TableCoordinateCell());
-            latitudeColumn.setCellValueFactory(new PropertyValueFactory<>("latitude"));
-            latitudeColumn.setCellFactory(new TableCoordinateCell());
+            locationColumn.setCellValueFactory(new PropertyValueFactory<>("locationFullName"));
             timeColumn.setCellValueFactory(new PropertyValueFactory<>("time"));
             timeColumn.setCellFactory(new TableDateCell());
-            commentsColumn.setCellValueFactory(new PropertyValueFactory<>("comments"));
+            sourceColumn.setCellValueFactory(new PropertyValueFactory<>("sourceName"));
+            sourceColumn.setCellFactory(new TableMessageCell());
+            confirmedColumn.setCellValueFactory(new PropertyValueFactory<>("confirmed"));
+            headledColumn.setCellValueFactory(new PropertyValueFactory<>("healed"));
+            deadColumn.setCellValueFactory(new PropertyValueFactory<>("dead"));
+            increasedConfirmedColumn.setCellValueFactory(new PropertyValueFactory<>("increasedConfirmed"));
+            increasedHeadledColumn.setCellValueFactory(new PropertyValueFactory<>("increasedHealed"));
+            increasedDeadColumn.setCellValueFactory(new PropertyValueFactory<>("increasedDead"));
+            healedConfirmedPermillageColumn.setCellValueFactory(new PropertyValueFactory<>("healedConfirmedPermillage"));
+            deadConfirmedPermillageColumn.setCellValueFactory(new PropertyValueFactory<>("deadConfirmedPermillage"));
+            confirmedPopulationPermillageColumn.setCellValueFactory(new PropertyValueFactory<>("confirmedPopulationPermillage"));
+            deadPopulationPermillageColumn.setCellValueFactory(new PropertyValueFactory<>("deadPopulationPermillage"));
+            healedPopulationPermillageColumn.setCellValueFactory(new PropertyValueFactory<>("healedPopulationPermillage"));
+            confirmedAreaPermillageColumn.setCellValueFactory(new PropertyValueFactory<>("confirmedAreaPermillage"));
+            deadAreaPermillageColumn.setCellValueFactory(new PropertyValueFactory<>("deadAreaPermillage"));
+            healedAreaPermillageColumn.setCellValueFactory(new PropertyValueFactory<>("healedAreaPermillage"));
 
             tableView.setRowFactory((TableView<EpidemicReport> param) -> {
-                return new FilledRow();
+                return new SourceRow();
             });
 
         } catch (Exception e) {
@@ -302,7 +187,7 @@ public class EpidemicReportsController extends TableManageController<EpidemicRep
         }
     }
 
-    protected class FilledRow extends TableRow<EpidemicReport> {
+    protected class SourceRow extends TableRow<EpidemicReport> {
 
         @Override
         protected void updateItem(EpidemicReport item, boolean empty) {
@@ -313,750 +198,204 @@ public class EpidemicReportsController extends TableManageController<EpidemicRep
                 setTextFill(null);
                 return;
             }
-            if ("Filled".equals(item.getComments())) {
-                setStyle("-fx-background-color: thistle");
-            } else {
-                setStyle(null);
+            if (this.isSelected()) {
+                setStyle("-fx-background-color:  #0096C9; -fx-text-background-color: white");
+            } else if (settingsController != null) {
+                switch (item.getSource()) {
+                    case 1:
+                        setStyle("-fx-background-color: " + settingsController.getPredefinedColor());
+                        break;
+                    case 2:
+                        setStyle("-fx-background-color: " + settingsController.getInputtedColor());
+                        break;
+                    case 3:
+                        setStyle("-fx-background-color: " + settingsController.getFilledColor());
+                        break;
+                    case 4:
+                        setStyle("-fx-background-color: " + settingsController.getStatisticColor());
+                        break;
+                    default:
+                        setStyle(null);
+                }
             }
         }
     };
 
-    protected void initChartsTable() {
+    protected void initOptions() {
         try {
-            chartsData = FXCollections.observableArrayList();
-            chartsTableView.setItems(chartsData);
-
-            chartsDatasetColumn.setCellValueFactory(new PropertyValueFactory<>("dataSet"));
-            chartsLevelColumn.setCellValueFactory(new PropertyValueFactory<>("level"));
-            chartsCountryColumn.setCellValueFactory(new PropertyValueFactory<>("country"));
-            chartsProvinceColumn.setCellValueFactory(new PropertyValueFactory<>("province"));
-            chartsCityColumn.setCellValueFactory(new PropertyValueFactory<>("city"));
-            chartsConfirmedColumn.setCellValueFactory(new PropertyValueFactory<>("confirmed"));
-            chartsIncreasedConfirmedColumn.setCellValueFactory(new PropertyValueFactory<>("increasedConfirmed"));
-            chartsHeadledColumn.setCellValueFactory(new PropertyValueFactory<>("healed"));
-            chartsIncreasedHeadledColumn.setCellValueFactory(new PropertyValueFactory<>("increasedHealed"));
-            chartsHeadledRatioColumn.setCellValueFactory(new PropertyValueFactory<>("healedRatio"));
-            chartsDeadColumn.setCellValueFactory(new PropertyValueFactory<>("dead"));
-            chartsIncreasedDeadColumn.setCellValueFactory(new PropertyValueFactory<>("increasedDead"));
-            chartsDeadRatioColumn.setCellValueFactory(new PropertyValueFactory<>("deadRatio"));
-            chartsLongtitudeColumn.setCellValueFactory(new PropertyValueFactory<>("longitude"));
-            chartsLongtitudeColumn.setCellFactory(new TableCoordinateCell());
-            chartsLatitudeColumn.setCellValueFactory(new PropertyValueFactory<>("latitude"));
-            chartsLatitudeColumn.setCellFactory(new TableCoordinateCell());
-            chartsTimeColumn.setCellValueFactory(new PropertyValueFactory<>("time"));
-            chartsTimeColumn.setCellFactory(new TableDateCell());
-            chartsCommentsColumn.setCellValueFactory(new PropertyValueFactory<>("comments"));
-
-            chartsTableView.setRowFactory((TableView<EpidemicReport> param) -> {
-                return new FilledRow();
+            topNumber = 10;
+            chartMaxSelector.getItems().addAll(Arrays.asList(
+                    "10", message("EpidemicReportsTopUnlimit"),
+                    "20", "30", "50", "8", "15", "25", "60", "5", "100", "200", "360"
+            ));
+            chartMaxSelector.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
+                try {
+                    if (message("EpidemicReportsTopUnlimit").equals(newValue)) {
+                        topNumber = -1;
+                        FxmlControl.setEditorNormal(chartMaxSelector);
+                        AppVariables.setUserConfigValue("EpidemicReportMaxChart", newValue);
+                        adjustOrderList();
+                        return;
+                    }
+                    int v = Integer.valueOf(chartMaxSelector.getValue());
+                    topNumber = v;
+                    AppVariables.setUserConfigValue("EpidemicReportMaxChart", topNumber + "");
+                    FxmlControl.setEditorNormal(chartMaxSelector);
+                    adjustOrderList();
+                } catch (Exception e) {
+                    logger.error(e.toString());
+                }
             });
 
+            orderByList.getItems().clear();
+            orderByList.getItems().addAll(Arrays.asList(
+                    message("ConfirmedDescending"), message("ConfirmedAscending"),
+                    message("HealedDescending"), message("HealedAscending"),
+                    message("DeadDescending"), message("DeadAscending"),
+                    message("IncreasedConfirmedDescending"), message("IncreasedConfirmedAscending"),
+                    message("IncreasedHealedDescending"), message("IncreasedHealedAscending"),
+                    message("IncreasedDeadDescending"), message("IncreasedDeadAscending"),
+                    message("HealedConfirmedPermillageDescending"), message("HealedConfirmedPermillageDescending"),
+                    message("DeadConfirmedPermillageDescending"), message("DeadConfirmedPermillageAscending"),
+                    message("ConfirmedPopulationPermillageDescending"), message("ConfirmedPopulationPermillageAscending"),
+                    message("DeadPopulationPermillageDescending"), message("DeadPopulationPermillageAscending"),
+                    message("HealedPopulationPermillageDescending"), message("HealedPopulationPermillageAscending"),
+                    message("ConfirmedAreaPermillageDescending"), message("ConfirmedAreaPermillageAscending"),
+                    message("HealedAreaPermillageDescending"), message("HealedAreaPermillageAscending"),
+                    message("DeadAreaPermillageDescending"), message("DeadAreaPermillageAscending")
+            ));
+            orderByList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+            orderByList.getSelectionModel().select(message("ConfirmedDescending"));
+
+            isSettingValues = true;
+            chartMaxSelector.getSelectionModel().select(AppVariables.getUserConfigValue("EpidemicReportMaxChart", "10"));
+            isSettingValues = false;
+            adjustOrderList();
         } catch (Exception e) {
             logger.error(e.toString());
         }
+    }
+
+    protected void adjustOrderList() {
+        if (topNumber > 0) {
+            timeOrderLabel.setText(message("TimeDescending"));
+            orderByList.getItems().removeAll(message("TimeDescending"), message("TimeAscending"));
+            orderByList.getSelectionModel().select(message("ConfirmedDescending"));
+        } else {
+            timeOrderLabel.setText("");
+            if (!orderByList.getItems().contains(message("TimeDescending"))) {
+                orderByList.getItems().add(0, message("TimeAscending"));
+                orderByList.getItems().add(0, message("TimeDescending"));
+            }
+            orderByList.getSelectionModel().select(message("TimeDescending"));
+            orderByList.getSelectionModel().select(message("ConfirmedDescending"));
+        }
+    }
+
+    @Override
+    protected DerbyBase dataTable() {
+        return new TableEpidemicReport();
+    }
+
+    @Override
+    protected String tableDefinition() {
+        return DerbyBase.tableDefinition("Epidemic_Report_Statistic_View");
     }
 
     @Override
     public void afterSceneLoaded() {
         try {
             super.afterSceneLoaded();
-            FxmlControl.setTooltip(examplesButton, message("EpidemicReportsExamplesComments"));
+
+            settingsController.afterSceneLoaded();
+            chartController.initSplitPanes();
+            chartController.controlRightPane();
+
+            setButtons();
             FxmlControl.setTooltip(chinaButton, message("ChineseProvincesEpidemicReports"));
-            FxmlControl.setTooltip(helpMeButton, message("FetchNCPData"));
-            FxmlControl.setTooltip(clearButton, message("Clear") + "\nCTRL+g\n\n" + message("RelativeClearComments"));
-            FxmlControl.setTooltip(catButton, message("MyBoxInternetDataPath"));
-            FxmlControl.setTooltip(statisticButton, message("EpidemicReportStatisticComments"));
-            FxmlControl.setTooltip(recountCheck, message("EpidemicReportStatisticComments"));
-            FxmlControl.setTooltip(dataExportButton, message("RelativeExportComments"));
-            FxmlControl.setTooltip(dataExportChartsButton, message("RelativeExportComments"));
-            FxmlControl.setTooltip(dpiSelector, message("SnapDpiComments"));
-            FxmlControl.setTooltip(fillButton, message("EpidemicReportsFillComments"));
-            FxmlControl.setTooltip(sureButton, message("SureFilledData"));
+            FxmlControl.setTooltip(globalButton, message("GlobalEpidemicReports"));
 
-            String backFile = AppVariables.getSystemConfigValue("EpidemicReportBackup6.1.5", "");
+            tabsPane.getTabs().clear();
+            tabsPane.getTabs().add(infoTab);
+            loadTrees(false);
+
+            String backFile = AppVariables.getSystemConfigValue("EpidemicReport621Exported", "");
             if (!backFile.isBlank()) {
-                alertInformation(message("EpidemicReportBackup615Comments")
-                        + "\n\n" + backFile);
-                AppVariables.deleteSystemConfigValue("EpidemicReportBackup6.1.5");
-                examplesAction();
-            } else if (!AppVariables.getSystemConfigBoolean("EpidemicReportExamples6.1.5", false)) {
-                alertInformation(message("EpidemicReportsExamplesComments"));
-                AppVariables.setSystemConfigValue("EpidemicReportExamples6.1.5", true);
-                examplesAction();
-            } else {
-                currentNodeLevel = NodeType.All;
-                currentDataSet = null;
-                currentTime = null;
-                currentSpecialType = SpecialType.None;
-                loadTree();
+                browseURI(new File(backFile).getParentFile().toURI());
+                alertInformation(message("DataExportedComments") + "\n\n" + backFile);
+                AppVariables.deleteSystemConfigValue("EpidemicReport621Exported");
             }
-
         } catch (Exception e) {
             logger.debug(e.toString());
         }
     }
 
-    protected void loadTree() {
-        loadTree(false);
-    }
+    public void loadTrees(boolean load) {
+        sourceController.clearTree();
+        timeController.clearTree();
+        chartController.clearChart();
+        if (load) {
+            tableData.clear();
+        }
 
-    protected void loadTree(boolean requireStatistic) {
-        treeView.setRoot(null);
         if (timer != null) {
             timer.cancel();
             timer = null;
         }
-        synchronized (this) {
-            if (treeTask != null) {
-                return;
-            }
-            treeTask = new SingletonTask<Void>() {
-
-                @Override
-                protected boolean handle() {
-                    try {
-                        if (requireStatistic || recountCheck.isSelected()) {
-                            TableEpidemicReport.statistic();
-                        }
-
-                        datasets = TableEpidemicReport.datasets();
-                        if (datasets == null || datasets.isEmpty()) {
-                            return true;
-                        }
-                        countriesMap = new HashMap<>();
-                        timesMap = new HashMap<>();
-                        provincesMap = new HashMap<>();
-                        citiesMap = new HashMap<>();
-                        for (String dataset : datasets) {
-                            List<String> countries = TableEpidemicReport.countries(dataset);
-                            if (countries != null && !countries.isEmpty()) {
-                                countriesMap.put(dataset, countries);
-                                for (String country : countries) {
-                                    List<String> provinces = TableEpidemicReport.provinces(dataset, country);
-                                    if (provinces != null && !provinces.isEmpty()) {
-                                        provincesMap.put(dataset + country, provinces);
-                                        for (String province : provinces) {
-                                            List<String> cities = TableEpidemicReport.cities(dataset, country, province);
-                                            if (cities != null && !cities.isEmpty()) {
-                                                citiesMap.put(dataset + country + province, cities);
-                                            }
-                                        }
-                                    } else {
-                                        List<String> cities = TableEpidemicReport.cities(dataset, country, null);
-                                        if (cities != null && !cities.isEmpty()) {
-                                            citiesMap.put(dataset + country, cities);
-                                        }
-                                    }
-                                }
-                            }
-                            List<Date> times = TableEpidemicReport.times(dataset);
-                            if (times != null && !times.isEmpty()) {
-                                timesMap.put(dataset, times);
-                            }
-                        }
-                        Platform.runLater(() -> {
-                            writeTree();
-                        });
-                        return true;
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                }
-
-                protected void writeTree() {
-                    if (datasets == null || datasets.isEmpty()) {
-                        return;
-                    }
-                    isSettingValues = true;
-                    Text allLink = new Text(message("All"));
-                    allLink.setOnMouseClicked((MouseEvent event) -> {
-                        currentNodeLevel = NodeType.All;
-                        currentDataSet = null;
-                        currentTime = null;
-                        currentSpecialType = SpecialType.None;
-                        load();
-                    });
-                    TreeItem root = new TreeItem<>(allLink);
-                    root.setExpanded(true);
-                    treeView.setRoot(root);
-
-                    for (String dataset : datasets) {
-                        Text datasetLink = new Text(dataset);
-                        datasetLink.setOnMouseClicked((MouseEvent event) -> {
-                            currentNodeLevel = NodeType.DataSet;
-                            currentDataSet = dataset;
-                            currentTime = null;
-                            currentSpecialType = SpecialType.None;
-                            load();
-                        });
-                        TreeItem<Text> datasetItem = new TreeItem<>(datasetLink);
-                        datasetItem.setExpanded(true);
-                        root.getChildren().add(datasetItem);
-                        datasetTree(datasetItem, dataset, SpecialType.None);
-
-                        Text exceptLink = new Text(message("ExceptChina"));
-                        exceptLink.setOnMouseClicked((MouseEvent event) -> {
-                            currentNodeLevel = NodeType.DataSet;
-                            currentDataSet = dataset;
-                            currentTime = null;
-                            currentSpecialType = SpecialType.ExceptChina;
-                            load();
-                        });
-                        TreeItem<Text> exceptItem = new TreeItem<>(exceptLink);
-                        exceptItem.setExpanded(false);
-                        datasetItem.getChildren().add(exceptItem);
-                        datasetTree(exceptItem, dataset, SpecialType.ExceptChina);
-
-                        Text filledLink = new Text(message("FilledData"));
-                        filledLink.setOnMouseClicked((MouseEvent event) -> {
-                            currentNodeLevel = NodeType.DataSet;
-                            currentDataSet = dataset;
-                            currentTime = null;
-                            currentSpecialType = SpecialType.Filled;
-                            load();
-                        });
-                        TreeItem<Text> filledItem = new TreeItem<>(filledLink);
-                        filledItem.setExpanded(false);
-                        datasetItem.getChildren().add(filledItem);
-                        datasetTree(filledItem, dataset, SpecialType.Filled);
-
-                    }
-
-                    isSettingValues = false;
-
-                }
-
-                protected void datasetTree(TreeItem parent, String dataset,
-                        SpecialType special) {
-                    Text timesLink = new Text(message("Time"));
-                    timesLink.setOnMouseClicked((MouseEvent event) -> {
-                        currentNodeLevel = NodeType.AllTime;
-                        currentDataSet = dataset;
-                        currentTime = null;
-                        currentSpecialType = special;
-                        load();
-                    });
-                    TreeItem<Text> timesItem = new TreeItem<>(timesLink);
-                    timesItem.setExpanded(false);
-                    parent.getChildren().add(timesItem);
-
-                    timeTree(timesItem, dataset, special);
-
-                    Text countriesLink = new Text(message("Countries"));
-                    countriesLink.setOnMouseClicked((MouseEvent event) -> {
-                        currentNodeLevel = NodeType.Countries;
-                        currentDataSet = dataset;
-                        currentTime = null;
-                        currentSpecialType = special;
-                        load();
-                    });
-                    TreeItem<Text> countriesItem = new TreeItem<>(countriesLink);
-                    countriesItem.setExpanded(false);
-                    parent.getChildren().add(countriesItem);
-
-                    countrieTree(countriesItem, dataset, null, special);
-                }
-
-                protected void timeTree(TreeItem parent, String dataset,
-                        SpecialType special) {
-                    if (dataset == null) {
-                        return;
-                    }
-                    List<Date> times = timesMap.get(dataset);
-                    if (times == null || times.isEmpty()) {
-                        return;
-                    }
-                    for (Date time : times) {
-                        String timeString = DateTools.datetimeToString(time);
-                        Text timeLink = new Text(timeString);
-                        timeLink.setOnMouseClicked((MouseEvent event) -> {
-                            currentNodeLevel = NodeType.Time;
-                            currentDataSet = dataset;
-                            currentTime = timeString;
-                            currentSpecialType = special;
-                            load();
-                        });
-                        TreeItem<Text> timeItem = new TreeItem<>(timeLink);
-                        timeItem.setExpanded(false);
-                        parent.getChildren().add(timeItem);
-                        countrieTree(timeItem, dataset, timeString, special);
-                    }
-
-                }
-
-                protected void countrieTree(TreeItem parent, String dataset,
-                        String time, SpecialType special) {
-                    if (parent == null || dataset == null) {
-                        return;
-                    }
-                    List<String> countries = countriesMap.get(dataset);
-                    for (String country : countries) {
-                        if (country.isBlank()) {
-                            continue;
-                        }
-                        Text countryLink = new Text(country);
-                        TreeItem<Text> countryItem = new TreeItem<>(countryLink);
-                        countryItem.setExpanded(false);
-                        parent.getChildren().add(countryItem);
-                        countryLink.setOnMouseClicked((MouseEvent event) -> {
-                            if (countryItem.isLeaf()) {
-                                currentNodeLevel = NodeType.Country;
-                            } else {
-                                List<String> provinces = provincesMap.get(dataset + country);
-                                if (provinces == null || provinces.isEmpty()) {
-                                    currentNodeLevel = NodeType.Cities;
-                                    currentProvince = null;
-                                } else {
-                                    currentNodeLevel = NodeType.Provinces;
-                                }
-                            }
-                            currentDataSet = dataset;
-                            currentTime = time;
-                            currentCountry = country;
-                            currentSpecialType = special;
-                            load();
-                        });
-
-                        provincesTree(countryItem, dataset, country, time, special);
-                    }
-                }
-
-                protected void provincesTree(TreeItem parent, String dataset,
-                        String country, String time, SpecialType special) {
-                    if (parent == null || country == null) {
-                        return;
-                    }
-                    List<String> provinces = provincesMap.get(dataset + country);
-                    if (provinces == null || provinces.isEmpty()) {
-                        citiesTree(parent, dataset, country, null, time, special);
-                        return;
-                    }
-                    for (String province : provinces) {
-                        if (province.isBlank()) {
-                            continue;
-                        }
-                        Text provinceLink = new Text(province);
-                        TreeItem<Text> provinceItem = new TreeItem<>(provinceLink);
-                        provinceItem.setExpanded(false);
-                        parent.getChildren().add(provinceItem);
-                        provinceLink.setOnMouseClicked((MouseEvent event) -> {
-                            if (provinceItem.isLeaf()) {
-                                currentNodeLevel = NodeType.Province;
-                            } else {
-                                currentNodeLevel = NodeType.Cities;
-                            }
-                            currentDataSet = dataset;
-                            currentTime = time;
-                            currentCountry = country;
-                            currentProvince = province;
-                            currentSpecialType = special;
-                            load();
-                        });
-
-                        citiesTree(provinceItem, dataset, country, province, time, special);
-                    }
-                }
-
-                protected void citiesTree(TreeItem parent, String dataset,
-                        String country, String province, String time,
-                        SpecialType special) {
-                    if (parent == null || country == null) {
-                        return;
-                    }
-                    List<String> cities;
-                    if (province == null) {
-                        cities = citiesMap.get(dataset + country);
-                    } else {
-                        cities = citiesMap.get(dataset + country + province);
-                    }
-                    if (cities == null || cities.isEmpty()) {
-                        return;
-                    }
-                    for (String city : cities) {
-                        if (city.isBlank()) {
-                            continue;
-                        }
-                        Text cityLink = new Text(city);
-                        cityLink.setOnMouseClicked((MouseEvent event) -> {
-                            currentNodeLevel = NodeType.City;
-                            currentDataSet = dataset;
-                            currentTime = time;
-                            currentCountry = country;
-                            currentProvince = province;
-                            currentCity = city;
-                            currentSpecialType = special;
-                            load();
-                        });
-                        TreeItem<Text> cityItem = new TreeItem<>(cityLink);
-                        cityItem.setExpanded(false);
-                        parent.getChildren().add(cityItem);
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    load();
-                }
-
-                @Override
-                protected void taskQuit() {
-                    endTime = new Date().getTime();
-                    treeTask = null;
-                }
-            };
-            openHandlingStage(treeTask, Modality.WINDOW_MODAL, message("EpidemicReportsLoadingStatistic"));
-            Thread thread = new Thread(treeTask);
-            thread.setDaemon(true);
-            thread.start();
-        }
-    }
-
-    @Override
-    public void load() {
-        if (timer != null) {
-            timer.cancel();
-            timer = null;
-        }
-        tableData.clear();
-        tableView.getColumns().clear();
-        chartsData.clear();
-        chartsTableView.getColumns().clear();
-        nameLabel.setText("");
-        chartsSQLLabel.setText("");
-        dataSQLLabel.setText("");
-        mapSQLLabel.setText("");
-
-        if (currentNodeLevel == null || currentNodeLevel == NodeType.None) {
-            return;
-        }
-
-        String dataWhere, dataOrder, chartsWhere, chartsOrder, mapWhere, mapOrder;
-        currentTitle = message("EpidemicReport");
-        if (currentNodeLevel != NodeType.All) {
-            if (currentDataSet == null) {
-                return;
-            }
-            currentTitle += " " + currentDataSet;
-            if (currentTime != null) {
-                tableView.getColumns().add(levelColumn);
-                chartsTableView.getColumns().add(chartsLevelColumn);
-                currentTitle += " " + currentTime;
-                dataOrder = " ORDER BY confirmed desc";
-                chartsOrder = mapOrder = " ORDER BY confirmed desc";
-            } else {
-                tableView.getColumns().addAll(timeColumn, levelColumn);
-                chartsTableView.getColumns().addAll(chartsTimeColumn, chartsLevelColumn);
-                dataOrder = " ORDER BY time desc, confirmed desc";
-                chartsOrder = mapOrder = " ORDER BY time asc , confirmed desc";
-            }
-        } else {
-            dataOrder = " ORDER BY data_set, time desc, country, province, city ";
-            chartsOrder = mapOrder = "";
-        }
-        switch (currentNodeLevel) {
-            case All:
-                currentTitle += " " + message("All");
-
-                dataWhere = "";
-                tableView.getColumns().addAll(datasetColumn, timeColumn, levelColumn,
-                        countryColumn, provinceColumn, cityColumn);
-
-                chartsWhere = mapWhere = null;
-                currentChartsType = ChartsType.None;
-                break;
-            case DataSet:
-                dataWhere = " WHERE data_set='" + currentDataSet + "' ";
-                tableView.getColumns().addAll(countryColumn, provinceColumn, cityColumn);
-
-                chartsWhere = mapWhere = dataWhere + " AND level='" + message("Global") + "' ";
-
-                currentChartsType = ChartsType.TimeBased;
-                break;
-            case Countries:
-                currentTitle += " " + message("Countries");
-
-                dataWhere = " WHERE data_set='" + currentDataSet + "'  ";
-                tableView.getColumns().addAll(countryColumn, provinceColumn, cityColumn);
-
-                chartsWhere = dataWhere + " AND level='" + message("Country") + "' "
-                        + " AND Country IS NOT NULL";
-                chartsTableView.getColumns().addAll(chartsCountryColumn);
-
-                mapWhere = dataWhere + " AND level='" + message("Global") + "' ";
-
-                currentChartsType = ChartsType.TimeLocationBased;
-                break;
-            case AllTime:
-                currentTitle += " " + message("Countries");
-
-                dataWhere = " WHERE data_set='" + currentDataSet + "'  ";
-                tableView.getColumns().addAll(countryColumn, provinceColumn, cityColumn);
-
-                chartsWhere = dataWhere + " AND level='" + message("Country") + "' "
-                        + " AND Country IS NOT NULL ";
-                chartsTableView.getColumns().addAll(chartsCountryColumn);
-
-                mapWhere = dataWhere + " AND level='" + message("Global") + "' ";
-
-                currentChartsType = ChartsType.TimeLocationBased;
-                break;
-            case Time:
-                if (currentTime == null) {
-                    return;
-                }
-                dataWhere = " WHERE data_set='" + currentDataSet + "'  "
-                        + " AND time='" + currentTime + "' ";
-                tableView.getColumns().addAll(countryColumn, provinceColumn, cityColumn);
-
-                chartsWhere = mapWhere = dataWhere + " AND level='" + message("Country") + "' ";
-                chartsTableView.getColumns().addAll(chartsCountryColumn);
-
-                currentChartsType = ChartsType.LocationBased;
-                break;
-            case Country:
-                if (currentCountry == null) {
-                    return;
-                }
-                currentTitle += " " + currentCountry;
-
-                dataWhere = " WHERE data_set='" + currentDataSet + "'  "
-                        + " AND country='" + currentCountry + "' ";
-                if (currentTime == null) {
-                    currentChartsType = ChartsType.TimeBased;
-                } else {
-                    dataWhere += " AND time='" + currentTime + "' ";
-                    currentChartsType = ChartsType.LocationBased;
-                }
-
-                chartsWhere = mapWhere = dataWhere + " AND level='" + message("Country") + "' ";
-                tableView.getColumns().addAll(provinceColumn, cityColumn);
-                break;
-            case Provinces:
-                if (currentCountry == null) {
-                    return;
-                }
-                currentTitle += " " + currentCountry;
-
-                dataWhere = " WHERE data_set='" + currentDataSet + "' "
-                        + " AND country='" + currentCountry + "' ";
-                tableView.getColumns().addAll(provinceColumn, cityColumn);
-
-                if (currentTime == null) {
-                    mapWhere = dataWhere + " AND level='" + message("Country") + "' ";
-                    currentChartsType = ChartsType.TimeLocationBased;
-                } else {
-                    dataWhere += " AND time='" + currentTime + "' ";
-                    mapWhere = dataWhere + " AND level='" + message("Province") + "' ";
-                    currentChartsType = ChartsType.LocationBased;
-                }
-
-                chartsWhere = dataWhere + " AND level='" + message("Province") + "' ";
-                chartsTableView.getColumns().addAll(chartsProvinceColumn);
-                break;
-            case Province:
-                if (currentCountry == null || currentProvince == null) {
-                    return;
-                }
-                currentTitle += " " + currentCountry + " " + currentProvince;
-
-                dataWhere = " WHERE  data_set='" + currentDataSet + "'  "
-                        + " AND country='" + currentCountry + "' "
-                        + " AND province='" + currentProvince + "' ";
-                if (currentTime == null) {
-                    currentChartsType = ChartsType.TimeBased;
-                } else {
-                    dataWhere += " AND time='" + currentTime + "' ";
-                    currentChartsType = ChartsType.LocationBased;
-                }
-                tableView.getColumns().addAll(cityColumn);
-
-                chartsWhere = mapWhere = dataWhere + " AND level='" + message("Province") + "' ";
-                chartsTableView.getColumns().addAll(chartsProvinceColumn);
-                break;
-            case Cities:
-                if (currentCountry == null) {
-                    return;
-                }
-                if (currentProvince == null) {      // Cities without province level
-                    currentTitle += " " + currentCountry;
-                    dataWhere = " WHERE  data_set='" + currentDataSet + "' "
-                            + " AND country='" + currentCountry + "' "
-                            + " AND level='" + message("City") + "' ";
-                    if (currentTime == null) {
-                        mapWhere = " WHERE  data_set='" + currentDataSet + "' "
-                                + " AND country='" + currentCountry + "' "
-                                + " AND level='" + message("Country") + "' ";
-                        currentChartsType = ChartsType.TimeLocationBased;
-                    } else {
-                        dataWhere += " AND time='" + currentTime + "' ";
-                        mapWhere = " WHERE  data_set='" + currentDataSet + "' "
-                                + " AND country='" + currentCountry + "' "
-                                + " AND time='" + currentTime + "' "
-                                + " AND level='" + message("Country") + "' ";
-                        currentChartsType = ChartsType.LocationBased;
-                    }
-                    tableView.getColumns().addAll(cityColumn);
-
-                    chartsWhere = dataWhere;
-                    chartsTableView.getColumns().addAll(chartsCityColumn);
-                } else {
-                    currentTitle += " " + currentCountry + " " + currentProvince;
-                    dataWhere = " WHERE  data_set='" + currentDataSet + "' "
-                            + " AND country='" + currentCountry + "' "
-                            + " AND province='" + currentProvince + "' ";
-                    if (currentTime == null) {
-                        mapWhere = dataWhere + " AND level='" + message("Province") + "' ";
-                        currentChartsType = ChartsType.TimeLocationBased;
-
-                    } else {
-                        dataWhere += " AND time='" + currentTime + "' ";
-                        mapWhere = dataWhere
-                                + " AND NOT (level='" + message("Country") + "' ) "
-                                + " AND NOT (level='" + message("Province") + "' ) ";
-                        currentChartsType = ChartsType.LocationBased;
-                    }
-                    tableView.getColumns().addAll(cityColumn);
-
-                    chartsWhere = dataWhere
-                            + " AND NOT (level='" + message("Country") + "' ) "
-                            + " AND NOT (level='" + message("Province") + "' ) ";
-                    chartsTableView.getColumns().addAll(chartsCityColumn);
-                }
-                break;
-            case City:
-                if (currentCountry == null || currentCity == null) {
-                    return;
-                }
-                if (currentProvince == null) {
-                    currentTitle += " " + currentCountry + " " + currentCity;
-                    dataWhere = " WHERE data_set='" + currentDataSet + "'  "
-                            + " AND country='" + currentCountry + "' "
-                            + " AND city='" + currentCity + "' "
-                            + " AND level='" + message("City") + "' ";
-                    if (currentTime == null) {
-                        currentChartsType = ChartsType.TimeBased;
-                    } else {
-                        dataWhere += " AND time='" + currentTime + "' ";
-                        currentChartsType = ChartsType.LocationBased;
-                    }
-
-                    chartsWhere = mapWhere = dataWhere;
-                } else {
-                    currentTitle += " " + currentCountry + " " + currentProvince + " " + currentCity;
-                    dataWhere = " WHERE data_set='" + currentDataSet + "'  "
-                            + " AND country='" + currentCountry + "' "
-                            + " AND province='" + currentProvince + "' "
-                            + " AND city='" + currentCity + "' "
-                            + " AND NOT (level='" + message("Country") + "' ) "
-                            + " AND NOT (level='" + message("Province") + "' ) ";
-                    if (currentTime == null) {
-                        currentChartsType = ChartsType.TimeBased;
-                    } else {
-                        dataWhere += " AND time='" + currentTime + "' ";
-                        currentChartsType = ChartsType.LocationBased;
-                    }
-
-                    chartsWhere = mapWhere = dataWhere;
-                }
-                break;
-            default:
-                return;
-        }
-
-        sureButton.setVisible(currentSpecialType == SpecialType.Filled);
-        switch (currentSpecialType) {
-            case Filled:
-                dataWhere += " AND comments='Filled' ";
-                chartsWhere = mapWhere = null;
-                currentChartsType = ChartsType.None;
-                currentTitle += " " + message("FilledData");
-                break;
-            case ExceptChina:
-                dataWhere += " AND ( country IS NULL OR country<>'" + message("China") + "' )";
-                chartsWhere += " AND ( country IS NULL OR country<>'" + message("China") + "' )";
-                mapWhere += " AND ( country IS NULL OR country<>'" + message("China") + "' )";
-                currentTitle += " " + message("ExceptChina");
-                break;
-        }
-
-        currentSizeQuery = "SELECT count(dataid) FROM Epidemic_Report " + dataWhere;
-        currentDataQuery = "SELECT * FROM Epidemic_Report " + dataWhere + dataOrder;
-        currentClearSQL = "DELETE FROM Epidemic_Report " + dataWhere;
-        dataSQLLabel.setText(currentDataQuery);
-
-        if (chartsWhere != null) {
-            currentChartsSQL = "SELECT * FROM Epidemic_Report " + chartsWhere + chartsOrder;
-            chartsSQLLabel.setText(currentChartsSQL);
-        } else {
-            currentChartsSQL = null;
-            chartsSQLLabel.setText("");
-        }
-        if (mapWhere != null) {
-            currentMapSQL = "SELECT * FROM Epidemic_Report " + mapWhere + mapOrder;
-            mapSQLLabel.setText(currentMapSQL);
-        } else {
-            currentMapSQL = null;
-            mapSQLLabel.setText("");
-        }
-        nameLabel.setText(currentTitle);
-
-        tableView.getColumns().addAll(confirmedColumn, increasedConfirmedColumn,
-                headledColumn, increasedHeadledColumn, headledRatioColumn,
-                deadColumn, increasedDeadColumn, deadRatioColumn,
-                longtitudeColumn, latitudeColumn, commentsColumn);
-        chartsTableView.getColumns().addAll(chartsConfirmedColumn, chartsIncreasedConfirmedColumn,
-                chartsHeadledColumn, chartsIncreasedHeadledColumn, chartsHeadledRatioColumn,
-                chartsDeadColumn, chartsIncreasedDeadColumn, chartsDeadRatioColumn,
-                chartsLongtitudeColumn, chartsLatitudeColumn, chartsCommentsColumn);
-
-        currentTab = tabPane.getSelectionModel().getSelectedItem();
-
         synchronized (this) {
             if (task != null) {
                 return;
             }
             task = new SingletonTask<Void>() {
-                private int total, pagesNumber;
-                private List<EpidemicReport> reports;
+
+                private List<String> datasets;
+                private List<Date> times;
 
                 @Override
                 protected boolean handle() {
-                    total = readDataSize();
-                    if (total <= pageSize) {
-                        pagesNumber = 1;
-                    } else {
-                        pagesNumber = total % pageSize == 0 ? total / pageSize : total / pageSize + 1;
+                    int count = 1;
+                    while (count++ < 5) {
+                        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+                            conn.setReadOnly(true);
+                            datasets = TableEpidemicReport.datasets(conn);
+                            times = TableEpidemicReport.times(conn);
+                            return true;
+                        } catch (Exception e) {
+                            logger.debug(count + "  " + e.toString());
+                            try {
+                                Thread.sleep(1000 * count);
+                            } catch (Exception ex) {
+                            }
+                        }
                     }
-                    if (currentPage <= 0) {
-                        currentPage = 1;
-                    }
-                    if (currentPage > pagesNumber) {
-                        currentPage = pagesNumber;
-                    }
-                    int start = pageSize * (currentPage - 1);
-                    int end = Math.min(start + pageSize - 1, total);
-                    reports = readData(start, end - start + 1);
-                    return true;
+                    return false;
                 }
 
                 @Override
                 protected void whenSucceeded() {
-                    if (reports != null) {
-                        isSettingValues = true;
-                        tableData.setAll(reports);
-                        isSettingValues = false;
-                        tableView.refresh();
-                    }
-                    checkSelected();
-                    setPagination(total, pagesNumber);
-                    drawCharts();
-                    if (tabPane.getTabs().contains(currentTab)) {
-                        tabPane.getSelectionModel().select(currentTab);
+                    sourceController.loadTree(datasets);
+                    timeController.loadTree(times);
+                    if (datasets == null || datasets.isEmpty()) {
+                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                        alert.setContentText(AppVariables.message("ImportEpidemicReportJHUPredefined") + " ?");
+                        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                        ButtonType buttonYes = new ButtonType(AppVariables.message("Yes"));
+                        ButtonType buttonNo = new ButtonType(AppVariables.message("No"));
+                        alert.getButtonTypes().setAll(buttonYes, buttonNo);
+                        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+                        stage.setAlwaysOnTop(true);
+                        stage.toFront();
+
+                        Optional<ButtonType> result = alert.showAndWait();
+                        if (result.get() == buttonYes) {
+                            predefined();
+                        }
+                    } else if (load) {
+                        queryData();
                     }
                 }
             };
-            openHandlingStage(task, Modality.WINDOW_MODAL, message("EpidemicReportsLoadingStatistic"));
+            openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -1064,1014 +403,450 @@ public class EpidemicReportsController extends TableManageController<EpidemicRep
     }
 
     @Override
-    public int readDataSize() {
-//        logger.debug(currentSizeQuery);
-        return TableEpidemicReport.sizeQuery(currentSizeQuery);
+    protected String checkWhere() {
+        geoController.check();
+        timeController.check();
+        sourceController.check();
+        String sourceConditions = sourceController.getFinalConditions();
+        String geoConditions = geoController.getFinalConditions();
+        String timeConditions = timeController.getFinalConditions();
+        if (sourceConditions == null) {
+            popError(message("MissDataset") + "\n" + message("SetConditionsComments"));
+            return null;
+        }
+        if (geoConditions == null) {
+            popError(message("MissLocation") + "\n" + message("SetConditionsComments"));
+            return null;
+        }
+        if (timeConditions == null) {
+            popError(message("MissTime") + "\n" + message("SetConditionsComments"));
+            return null;
+        }
+        sourceConditions = sourceConditions.trim();
+        geoConditions = geoConditions.trim();
+        timeConditions = timeConditions.trim();
+        String condition;
+        if (sourceConditions.isBlank()) {
+            if (geoConditions.isBlank()) {
+                condition = timeConditions.isBlank() ? "" : timeConditions;
+            } else {
+                condition = timeConditions.isBlank() ? geoConditions
+                        : "( " + geoConditions + ") AND (" + timeConditions + " )";
+            }
+        } else {
+            if (geoConditions.isBlank()) {
+                condition = timeConditions.isBlank() ? sourceConditions
+                        : "( " + sourceConditions + ") AND (" + timeConditions + " )";
+            } else {
+                condition = "( " + sourceConditions + ") AND (" + geoConditions + " )"
+                        + (timeConditions.isBlank() ? "" : " AND (" + timeConditions + " )");
+            }
+        }
+        return condition;
     }
 
     @Override
-    public List<EpidemicReport> readData(int offset, int number) {
-//        logger.debug(currentDataQuery);
-        String sql = currentDataQuery
-                + " OFFSET " + offset + " ROWS FETCH NEXT " + number + " ROWS ONLY";
-        return TableEpidemicReport.dataQuery(sql);
+    protected String checkTitle() {
+        return sourceController.getFinalTitle() + "\n"
+                + geoController.getFinalTitle() + "\n"
+                + timeController.getFinalTitle();
     }
 
-    protected void initCharts() {
-        if (isSettingValues) {
-            return;
-        }
-        if (timer != null) {
-            timer.cancel();
-            timer = null;
-        }
-        if (interval <= 0) {
-            interval = 1000;
-        }
-        numberChartBox.getChildren().clear();
-        ratioChartBox.getChildren().clear();
-        increasedChartBox.getChildren().clear();
-        confirmedChartBox.getChildren().clear();
-        healedChartBox.getChildren().clear();
-        deadChartBox.getChildren().clear();
-        chartsSizeLabel.setText("");
-
-        tabPane.getTabs().removeAll(chartsDataTab, numberTab, increasedTab, ratioTab,
-                confirmedTab, healedTab, deadTab, mapTab);
-
-        if (currentChartsType == null || currentChartsType == ChartsType.None) {
-            return;
-        }
-        Tab tab = tabPane.getSelectionModel().getSelectedItem();
-        if (!tabPane.getTabs().contains(numberTab)) {
-            tabPane.getTabs().addAll(chartsDataTab, numberTab, increasedTab, ratioTab);
-        }
-        switch (currentChartsType) {
-            case TimeBased:
-                tabPane.getTabs().removeAll(confirmedTab, healedTab, deadTab);
-                numberChartBox.getChildren().add(numberLineChart);
-                increasedChartBox.getChildren().add(increasedLineChart);
-                ratioChartBox.getChildren().add(ratioLineChart);
-
-                break;
-            case LocationBased:
-                numberChartBox.getChildren().add(numberBarChart);
-                increasedChartBox.getChildren().add(increasedBarChart);
-                ratioChartBox.getChildren().add(ratioBarChart);
-                if (!tabPane.getTabs().contains(confirmedTab)) {
-                    tabPane.getTabs().addAll(confirmedTab, healedTab, deadTab);
-                }
-                confirmedChartBox.getChildren().add(confirmedPie);
-                healedChartBox.getChildren().add(healedPie);
-                deadChartBox.getChildren().add(deadPie);
-                break;
-            case TimeLocationBased:
-                numberChartBox.getChildren().add(numberBarChart);
-                increasedChartBox.getChildren().add(increasedBarChart);
-                ratioChartBox.getChildren().add(ratioBarChart);
-                if (!tabPane.getTabs().contains(confirmedTab)) {
-                    tabPane.getTabs().addAll(confirmedTab, healedTab, deadTab);
-                }
-                confirmedChartBox.getChildren().add(confirmedLineChart);
-                healedChartBox.getChildren().add(healedLineChart);
-                deadChartBox.getChildren().add(deadLineChart);
-                break;
-            default:
-                break;
-        }
-        tabPane.getTabs().add(mapTab);
-        if (tabPane.getTabs().contains(tab)) {
-            tabPane.getSelectionModel().select(tab);
-        }
-
-        // https://stackoverflow.com/questions/29124723/javafx-chart-auto-scaling-wrong-with-low-numbers?r=SearchResults
-        numberBarChart.setAnimated(false);
-        numberBarChart.getData().clear();
-        numberBarChart.setAnimated(true);
-        numberBarChart.getXAxis().setAnimated(false);  // X-Axis labels are messed if true
-        numberBarChart.setTitle(currentTitle + " - " + message("Number"));
-        numberBarChart.setDisplayLabel(valuesCheck.isSelected());
-        numberBarChart.setLegendVisible(legendCheck.isSelected());
-
-        increasedBarChart.setAnimated(false);
-        increasedBarChart.getData().clear();
-        increasedBarChart.setAnimated(true);
-        increasedBarChart.getXAxis().setAnimated(false);  // X-Axis labels are messed if true
-        increasedBarChart.setTitle(currentTitle + " - " + message("Increased"));
-        increasedBarChart.setDisplayLabel(valuesCheck.isSelected());
-        increasedBarChart.setLegendVisible(legendCheck.isSelected());
-
-        ratioBarChart.setAnimated(false);
-        ratioBarChart.getData().clear();
-        ratioBarChart.setAnimated(true);
-        ratioBarChart.getXAxis().setAnimated(false);  // X-Axis labels are messed if true
-        ratioBarChart.setTitle(currentTitle + " - " + message("Ratio"));
-        ratioBarChart.setDisplayLabel(valuesCheck.isSelected());
-        ratioBarChart.setLegendVisible(legendCheck.isSelected());
-
-        numberLineChart.setAnimated(false);
-        numberLineChart.getData().clear();
-        numberLineChart.setAnimated(true);
-        numberLineChart.getXAxis().setAnimated(false);  // X-Axis labels are messed if true
-        numberLineChart.setTitle(currentTitle + " - " + message("Number"));
-        numberLineChart.setCreateSymbols(true);
-        numberLineChart.setLegendVisible(legendCheck.isSelected());
-
-        increasedLineChart.setAnimated(false);
-        increasedLineChart.getData().clear();
-        increasedLineChart.setAnimated(true);
-        increasedLineChart.getXAxis().setAnimated(false);  // X-Axis labels are messed if true
-        increasedLineChart.setTitle(currentTitle + " - " + message("Increased"));
-        increasedLineChart.setCreateSymbols(true);
-        increasedLineChart.setLegendVisible(legendCheck.isSelected());
-
-        ratioLineChart.setAnimated(false);
-        ratioLineChart.getData().clear();
-        ratioLineChart.setAnimated(true);
-        ratioLineChart.getXAxis().setAnimated(false);  // X-Axis labels are messed if true
-        ratioLineChart.setTitle(currentTitle + " - " + message("Ratio"));
-        ratioLineChart.setCreateSymbols(true);
-        ratioLineChart.setLegendVisible(legendCheck.isSelected());
-
-        confirmedPie.getData().clear();
-        confirmedPie.setTitle(currentTitle + " - " + message("Confirmed"));
-        confirmedPie.setLegendVisible(legendCheck.isSelected());
-
-        healedPie.getData().clear();
-        healedPie.setTitle(currentTitle + " - " + message("Healed"));
-        healedPie.setLegendVisible(legendCheck.isSelected());
-
-        deadPie.getData().clear();
-        deadPie.setTitle(currentTitle + " - " + message("Dead"));
-        deadPie.setLegendVisible(legendCheck.isSelected());
-
-        confirmedLineChart.setAnimated(false);
-        confirmedLineChart.getData().clear();
-        confirmedLineChart.setAnimated(true);
-        confirmedLineChart.getXAxis().setAnimated(false);
-        confirmedLineChart.setTitle(currentTitle + " - " + message("Confirmed"));
-        confirmedLineChart.setCreateSymbols(true);
-        confirmedLineChart.setLegendVisible(legendCheck.isSelected());
-
-        healedLineChart.setAnimated(false);
-        healedLineChart.getData().clear();
-        healedLineChart.setAnimated(true);
-        healedLineChart.getXAxis().setAnimated(false);
-        healedLineChart.setTitle(currentTitle + " - " + message("Healed"));
-        healedLineChart.setCreateSymbols(true);
-        healedLineChart.setLegendVisible(legendCheck.isSelected());
-
-        deadLineChart.setAnimated(false);
-        deadLineChart.getData().clear();
-        deadLineChart.setAnimated(true);
-        deadLineChart.getXAxis().setAnimated(false);
-        deadLineChart.setTitle(currentTitle + " - " + message("Dead"));
-        deadLineChart.setCreateSymbols(true);
-        deadLineChart.setLegendVisible(legendCheck.isSelected());
-
-        mapController.clearAction();
-    }
-
-    protected void drawCharts() {
-        if (isSettingValues) {
-            return;
-        }
-        initCharts();
-        if (currentChartsType == null || currentChartsType == ChartsType.None
-                || currentChartsSQL == null) {
-            return;
-        }
-        synchronized (this) {
-            if (chartsTask != null) {
-                chartsTask.cancel();
-            }
-            chartsTask = new SingletonTask<Void>() {
-                private List<EpidemicReport> chartsReports, mapReports;
-
-                @Override
-                protected boolean handle() {
-                    chartsReports = TableEpidemicReport.dataQuery(currentChartsSQL);
-                    if (currentChartsSQL.equals(currentMapSQL)) {
-                        mapReports = chartsReports;
-                    } else {
-                        mapReports = TableEpidemicReport.dataQuery(currentMapSQL);
-                    }
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    if (null == chartsReports || chartsReports.isEmpty()) {
-                        tabPane.getTabs().removeAll(chartsDataTab, numberTab, increasedTab, ratioTab,
-                                confirmedTab, healedTab, deadTab, mapTab);
-                        return;
-                    }
-                    isSettingValues = true;
-                    chartsData.setAll(chartsReports);
-                    isSettingValues = false;
-                    chartsTableView.refresh();
-                    chartsSizeLabel.setText(message("Size") + ": " + chartsReports.size());
-
-                    allZero = true;
-                    for (EpidemicReport report : chartsReports) {
-                        if (report.getIncreasedConfirmed() != 0) {
-                            allZero = false;
-                            break;
-                        }
-                    }
-                    if (allZero) {
-                        popInformation(message("EpidemicReportAllZeroComments"), 6000);
-                    }
-                    if (null != currentChartsType) {
-                        LoadingController loading = openHandlingStage(Modality.WINDOW_MODAL);
-                        switch (currentChartsType) {
-                            case TimeBased:
-                                drawTimeBasedCharts(chartsReports);
-                                mapController.drawTimeBasedMap(interval, mapLevel(), valuesCheck.isSelected(), mapReports);
-                                break;
-                            case LocationBased:
-                                drawLocationBasedCharts(chartsReports);
-                                mapController.drawLocationBasedMap(mapLevel(), valuesCheck.isSelected(), mapReports);
-                                break;
-                            case TimeLocationBased:
-                                drawTimeLocationBasedCharts(chartsReports);
-                                mapController.drawTimeBasedMap(interval, mapLevel(), valuesCheck.isSelected(), mapReports);
-                                break;
-                            default:
-                                break;
-                        }
-                        if (loading != null) {
-                            loading.closeStage();
-                        }
-                    }
-
-                }
-
-                @Override
-                protected void taskQuit() {
-                    endTime = new Date().getTime();
-                    chartsTask = null;
-                }
-            };
-            openHandlingStage(chartsTask, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(chartsTask);
-            thread.setDaemon(true);
-            thread.start();
-        }
-    }
-
-    protected XYChart.Data lineDataNode(String label, Object value) {
-        XYChart.Data data = new XYChart.Data(label, value);
-        if (valuesCheck.isSelected()) {
-            Label text = new Label(value + "");
-            text.setStyle("-fx-background-color: transparent;  -fx-font-size: 0.8em;");
-            data.setNode(text);
-        }
-        return data;
-    }
-
-    protected XYChart.Data lineDataNode(String label, String prefix,
-            Object value) {
-        XYChart.Data data = new XYChart.Data(label, value);
-        if (valuesCheck.isSelected()) {
-            Label text = new Label(prefix + "\n" + value);
-            text.setStyle("-fx-background-color: transparent;  -fx-font-size: 0.7em; -fx-font-weight: bolder;");
-            data.setNode(text);
-        }
-        return data;
-    }
-
-    protected XYChart.Data dataNode(String label, Object value) {
-        XYChart.Data data = new XYChart.Data(label, value);
-        return data;
-    }
-
-    protected void drawTimeBasedCharts(List<EpidemicReport> reports) {
+    @Override
+    protected void checkOrderBy() {
         try {
-            if (reports == null || reports.isEmpty()) {
-                return;
+            if (topNumber > 0) {
+                queryOrder = "time DESC";
+                orderTitle = "\"" + message("TimeDescending") + "\"";
+            } else {
+                queryOrder = "";
+                orderTitle = "";
             }
-            XYChart.Series confirmedSeries = new XYChart.Series();
-            XYChart.Series healedSeries = new XYChart.Series();
-            XYChart.Series deadSeries = new XYChart.Series();
-            confirmedSeries.setName(message("Confirmed"));
-            healedSeries.setName(message("Healed"));
-            deadSeries.setName(message("Dead"));
+            List<String> langsList = orderByList.getSelectionModel().getSelectedItems();
+            for (String name : langsList) {
+                if (message("TimeDescending").equals(name)) {
+                    if (topNumber <= 0) {
+                        queryOrder = queryOrder.isBlank() ? "time DESC" : queryOrder + ", time DESC";
+                    }
 
-            XYChart.Series increasedConfirmedSeries = new XYChart.Series();
-            XYChart.Series increasedHealedSeries = new XYChart.Series();
-            XYChart.Series increasedDeadSeries = new XYChart.Series();
-            increasedConfirmedSeries.setName(message("IncreasedConfirmed"));
-            increasedHealedSeries.setName(message("IncreasedHealed"));
-            increasedDeadSeries.setName(message("IncreasedDead"));
+                } else if (message("TimeAscending").equals(name)) {
+                    if (topNumber <= 0) {
+                        queryOrder = queryOrder.isBlank() ? "time ASC" : queryOrder + ", time ASC";
+                    }
 
-            XYChart.Series healedRatioSeries = new XYChart.Series();
-            XYChart.Series deadRatioSeries = new XYChart.Series();
-            healedRatioSeries.setName(message("HealedRatio"));
-            deadRatioSeries.setName(message("DeadRatio"));
+                } else if (message("ConfirmedDescending").equals(name)) {
+                    queryOrder = queryOrder.isBlank() ? "confirmed DESC" : queryOrder + ", confirmed DESC";
 
-            for (EpidemicReport report : reports) {
-                String label = DateTools.datetimeToString(report.getTime());
+                } else if (message("ConfirmedAscending").equals(name)) {
+                    queryOrder = queryOrder.isBlank() ? "confirmed ASC" : queryOrder + ", confirmed ASC";
 
-                confirmedSeries.getData().add(lineDataNode(label, report.getConfirmed()));
-                healedSeries.getData().add(lineDataNode(label, report.getHealed()));
-                deadSeries.getData().add(lineDataNode(label, report.getDead()));
+                } else if (message("HealedDescending").equals(name)) {
+                    queryOrder = queryOrder.isBlank() ? "healed DESC" : queryOrder + ", healed DESC";
 
-                increasedConfirmedSeries.getData().add(lineDataNode(label, report.getIncreasedConfirmed()));
-                increasedHealedSeries.getData().add(lineDataNode(label, report.getIncreasedHealed()));
-                increasedDeadSeries.getData().add(lineDataNode(label, report.getIncreasedDead()));
+                } else if (message("HealedAscending").equals(name)) {
+                    queryOrder = queryOrder.isBlank() ? "healed ASC" : queryOrder + ", healed ASC";
 
-                healedRatioSeries.getData().add(lineDataNode(label, report.getHealedRatio()));
-                deadRatioSeries.getData().add(lineDataNode(label, report.getDeadRatio()));
+                } else if (message("DeadDescending").equals(name)) {
+                    queryOrder = queryOrder.isBlank() ? "dead DESC" : queryOrder + ", dead DESC";
+
+                } else if (message("DeadAscending").equals(name)) {
+                    queryOrder = queryOrder.isBlank() ? "dead ASC" : queryOrder + ", dead ASC";
+
+                } else if (message("IncreasedConfirmedDescending").equals(name)) {
+                    queryOrder = queryOrder.isBlank() ? "increased_confirmed DESC" : queryOrder + ", increased_confirmed DESC";
+
+                } else if (message("IncreasedConfirmedAscending").equals(name)) {
+                    queryOrder = queryOrder.isBlank() ? "increased_confirmed ASC" : queryOrder + ", increased_confirmed ASC";
+
+                } else if (message("IncreasedHealedDescending").equals(name)) {
+                    queryOrder = queryOrder.isBlank() ? "increased_healed DESC" : queryOrder + ", increased_healed DESC";
+
+                } else if (message("IncreasedHealedAscending").equals(name)) {
+                    queryOrder = queryOrder.isBlank() ? "increased_healed ASC" : queryOrder + ", increased_healed ASC";
+
+                } else if (message("IncreasedDeadDescending").equals(name)) {
+                    queryOrder = queryOrder.isBlank() ? "increased_dead DESC" : queryOrder + ", increased_dead DESC";
+
+                } else if (message("IncreasedDeadAscending").equals(name)) {
+                    queryOrder = queryOrder.isBlank() ? "increased_dead ASC" : queryOrder + ", increased_dead ASC";
+
+                } else if (message("HealedConfirmedPermillageDescending").equals(name)) {
+                    queryOrder = queryOrder.isBlank() ? "healed_confirmed_permillage DESC" : queryOrder + ", healed_confirmed_permillage DESC";
+
+                } else if (message("HealedConfirmedPermillageAscending").equals(name)) {
+                    queryOrder = queryOrder.isBlank() ? "healed_confirmed_permillage ASC" : queryOrder + ", healed_confirmed_permillage ASC";
+
+                } else if (message("DeadConfirmedPermillageDescending").equals(name)) {
+                    queryOrder = queryOrder.isBlank() ? "dead_confirmed_permillage DESC" : queryOrder + ", dead_confirmed_permillage DESC";
+
+                } else if (message("DeadConfirmedPermillageAscending").equals(name)) {
+                    queryOrder = queryOrder.isBlank() ? "dead_confirmed_permillage ASC" : queryOrder + ", dead_confirmed_permillage ASC";
+
+                } else if (message("ConfirmedPopulationPermillageDescending").equals(name)) {
+                    queryOrder = queryOrder.isBlank() ? "confirmed_population_permillage DESC" : queryOrder + ", confirmed_population_permillage DESC";
+
+                } else if (message("ConfirmedPopulationPermillageAscending").equals(name)) {
+                    queryOrder = queryOrder.isBlank() ? "confirmed_population_permillage ASC" : queryOrder + ", confirmed_population_permillage ASC";
+
+                } else if (message("HealedPopulationPermillageDescending").equals(name)) {
+                    queryOrder = queryOrder.isBlank() ? "healed_population_permillage DESC" : queryOrder + ", healed_population_permillage DESC";
+
+                } else if (message("HealedPopulationPermillageAscending").equals(name)) {
+                    queryOrder = queryOrder.isBlank() ? "healed_population_permillage ASC" : queryOrder + ", healed_population_permillage ASC";
+
+                } else if (message("DeadPopulationPermillageDescending").equals(name)) {
+                    queryOrder = queryOrder.isBlank() ? "dead_population_permillage DESC" : queryOrder + ", dead_population_permillage DESC";
+
+                } else if (message("DeadPopulationPermillageAscending").equals(name)) {
+                    queryOrder = queryOrder.isBlank() ? "dead_population_permillage ASC" : queryOrder + ", dead_population_permillage ASC";
+
+                } else if (message("ConfirmedAreaPermillageDescending").equals(name)) {
+                    queryOrder = queryOrder.isBlank() ? "confirmed_area_permillage DESC" : queryOrder + ", confirmed_area_permillage DESC";
+
+                } else if (message("ConfirmedAreaPermillageAscending").equals(name)) {
+                    queryOrder = queryOrder.isBlank() ? "confirmed_area_permillage ASC" : queryOrder + ", confirmed_area_permillage ASC";
+
+                } else if (message("HealedAreaPermillageDescending").equals(name)) {
+                    queryOrder = queryOrder.isBlank() ? "healed_area_permillage DESC" : queryOrder + ", healed_area_permillage DESC";
+
+                } else if (message("HealedAreaPermillageAscending").equals(name)) {
+                    queryOrder = queryOrder.isBlank() ? "healed_area_permillage ASC" : queryOrder + ", healed_area_permillage ASC";
+
+                } else if (message("DeadAreaPermillageDescending").equals(name)) {
+                    queryOrder = queryOrder.isBlank() ? "dead_area_permillage DESC" : queryOrder + ", dead_area_permillage DESC";
+
+                } else if (message("DeadAreaPermillageAscending").equals(name)) {
+                    queryOrder = queryOrder.isBlank() ? "dead_area_permillage ASC" : queryOrder + ", dead_area_permillage ASC";
+
+                } else {
+                    continue;
+                }
+                orderTitle = orderTitle.isBlank() ? "\"" + name + "\"" : orderTitle + " \"" + name + "\"";
+
             }
-            numberLineChart.getData().add(0, confirmedSeries);
-            numberLineChart.getData().add(1, healedSeries);
-            numberLineChart.getData().add(2, deadSeries);
-
-            increasedLineChart.getData().add(0, increasedConfirmedSeries);
-            increasedLineChart.getData().add(1, increasedHealedSeries);
-            increasedLineChart.getData().add(2, increasedDeadSeries);
-
-            ratioLineChart.getData().add(0, healedRatioSeries);
-            ratioLineChart.getData().add(1, deadRatioSeries);
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            logger.error(e.toString());
         }
-
     }
 
-    protected String locationLabel(EpidemicReport report) {
-        String level = report.getLevel();
-        if (message("City").equals(level)) {
-            return report.getCity();
-        } else if (message("AllTime").equals(level)) {
-            return report.getCountry();
-        } else if (message("Countries").equals(level)) {
-            return report.getCountry();
-        } else if (message("CountryProvinces").equals(level)) {
-            return report.getProvince();
-        } else if (message("ProvinceCities").equals(level)) {
-            return report.getCity();
-        } else if (message("Province").equals(level)) {
-            return report.getProvince();
-        } else if (message("Country").equals(level)) {
-            return report.getCountry();
-        } else if (message("City").equals(level)) {
-            return report.getCity();
+    protected void checkOrderValues() {
+        orderNames.clear();
+        if (topNumber <= 0) {
+            return;
+        }
+        String order = queryCondition.getOrder();
+        if (order == null || order.isBlank()) {
+            popError(message("OrderValuesShouldSet"));
+            queryCondition = null;
+            return;
+        }
+        order = order.trim().toLowerCase();
+        if (!order.startsWith("time desc")) {
+            queryCondition.setOrder("time DESC, " + queryCondition.getOrder());
+            order = "time desc," + order;
+        }
+        String[] names = order.replaceAll("desc", "").replaceAll("asc", "").split(",");
+        for (String name : names) {
+            String n = name.trim();
+            if (!orderNames.contains(n)) {
+                orderNames.add(n);
+            }
+        }
+        if (orderNames.isEmpty()
+                || (orderNames.size() == 1 && orderNames.contains("time"))) {
+            popError(message("OrderValuesShouldSet"));
+            queryCondition = null;
+            orderNames.clear();
+        }
+    }
+
+    protected boolean validTopOrder(QueryCondition condition) {
+        if (condition == null) {
+            return false;
+        }
+        if (condition.getTop() <= 0) {
+            return true;
+        }
+        String order = condition.getOrder();
+        if (order == null || order.isBlank()) {
+            return false;
+        }
+        order = order.trim().toLowerCase();
+        if (!order.startsWith("time desc")) {
+            return false;
+        }
+        String[] names = order.replaceAll("desc", "").replaceAll("asc", "").split(",");
+        return names.length >= 2;
+    }
+
+    @Override
+    public boolean preLoadingTableData() {
+        Tab currentTab = tabsPane.getSelectionModel().getSelectedItem();
+        tabsPane.getTabs().clear();
+        tabsPane.getTabs().add(infoTab);
+        if (queryCondition == null) {
+            return false;
+        }
+        checkOrderValues();
+        if (!validTopOrder(queryCondition)) {
+            alertError(message("TimeAsOrderWhenSetTop"));
+            return false;
+        }
+        tabsPane.getTabs().clear();
+        topNumber = queryCondition.getTop();
+        if (topNumber > 0) {
+            tabsPane.getTabs().addAll(chartsTab, dataTab, infoTab, settingsTab);
+            settingsController.adjustTabs(true);
         } else {
-            logger.debug(level);
-            return null;
+            tabsPane.getTabs().addAll(dataTab, infoTab, settingsTab);
+            settingsController.adjustTabs(false);
+        }
+        if (tabsPane.getTabs().contains(currentTab)) {
+            tabsPane.getSelectionModel().select(currentTab);
+        }
+        return super.preLoadingTableData();
+    }
+
+    @Override
+    public int readDataSize() {
+        if (topNumber > 0) {
+            readTopData();
+            return totalSize;
+        } else {
+            return TableEpidemicReport.size(sizeQuerySQL);
         }
     }
 
-    protected int mapLevel() {
-        switch (currentNodeLevel) {
-            case Time:
-                return 3;
-            case Country:
-                return 3;
-            case Provinces:
-                return 5;
-            case Province:
-                return 7;
-            case Cities:
-                return 9;
-            case City:
-                return 9;
+    @Override
+    public List<EpidemicReport> readPageData() {
+        setPageSQL();
+        if (topNumber <= 0) {
+            return TableEpidemicReport.dataQuery(pageQuerySQL, true);
+        } else {
+            return readTopPageData();
         }
-        return 3;
     }
 
-    protected void drawLocationBasedCharts(List<EpidemicReport> reports) {
-        try {
-            if (reports == null || reports.isEmpty()) {
-                return;
-            }
-            XYChart.Series confirmedSeries = new XYChart.Series();
-            XYChart.Series healedSeries = new XYChart.Series();
-            XYChart.Series deadSeries = new XYChart.Series();
-            confirmedSeries.setName(message("Confirmed"));
-            healedSeries.setName(message("Healed"));
-            deadSeries.setName(message("Dead"));
-
-            XYChart.Series increasedConfirmedSeries = new XYChart.Series();
-            XYChart.Series increasedHealedSeries = new XYChart.Series();
-            XYChart.Series increasedDeadSeries = new XYChart.Series();
-            increasedConfirmedSeries.setName(message("IncreasedConfirmed"));
-            increasedHealedSeries.setName(message("IncreasedHealed"));
-            increasedDeadSeries.setName(message("IncreasedDead"));
-
-            XYChart.Series healedRatioSeries = new XYChart.Series();
-            XYChart.Series deadRatioSeries = new XYChart.Series();
-            healedRatioSeries.setName(message("HealedRatio"));
-            deadRatioSeries.setName(message("DeadRatio"));
-
-            for (EpidemicReport report : reports) {
-                String label = locationLabel(report);
-
-                confirmedSeries.getData().add(dataNode(label, report.getConfirmed()));
-                healedSeries.getData().add(dataNode(label, report.getHealed()));
-                deadSeries.getData().add(dataNode(label, report.getDead()));
-
-                increasedConfirmedSeries.getData().add(dataNode(label, report.getIncreasedConfirmed()));
-                increasedHealedSeries.getData().add(dataNode(label, report.getIncreasedHealed()));
-                increasedDeadSeries.getData().add(dataNode(label, report.getIncreasedDead()));
-
-                healedRatioSeries.getData().add(dataNode(label, report.getHealedRatio()));
-                deadRatioSeries.getData().add(dataNode(label, report.getDeadRatio()));
-            }
-
-            numberBarChart.getData().add(0, confirmedSeries);
-            numberBarChart.getData().add(1, healedSeries);
-            numberBarChart.getData().add(2, deadSeries);
-
-            increasedBarChart.getData().add(0, increasedConfirmedSeries);
-            increasedBarChart.getData().add(1, increasedHealedSeries);
-            increasedBarChart.getData().add(2, increasedDeadSeries);
-
-            ratioBarChart.getData().add(0, healedRatioSeries);
-            ratioBarChart.getData().add(1, deadRatioSeries);
-
-            drawLocationBasedPies(reports);
-
-        } catch (Exception e) {
-            logger.debug(e.toString());
+    protected boolean readTopData() {
+        datasets.clear();
+        dataTimes.clear();
+        dataLocations.clear();
+        timesReports.clear();
+        locationsReports.clear();
+        totalSize = 0;
+        maxValue = 0;
+        if (topNumber <= 0 || !dataQuerySQL.contains("time DESC")) {
+            return false;
         }
-
-    }
-
-    protected void drawLocationBasedPies(List<EpidemicReport> reports) {
-        try {
-            if (reports == null || reports.isEmpty()) {
-                return;
+        dataQueryString = dataQuerySQL + "</br>" + message("NumberTopDataDaily") + ": " + topNumber;
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            conn.setReadOnly(true);
+            if (loading != null) {
+                loading.setInfo(message("LoadingChartData") + "\n" + dataQuerySQL);
             }
-            int totalConfirmed = 0, totalDead = 0, totalHealed = 0;
-            for (EpidemicReport report : reports) {
-                totalConfirmed += report.getConfirmed();
-                totalDead += report.getDead();
-                totalHealed += report.getHealed();
-            }
-            ObservableList<PieChart.Data> confirmedData = FXCollections.observableArrayList();
-            ObservableList<PieChart.Data> deadData = FXCollections.observableArrayList();
-            ObservableList<PieChart.Data> headedData = FXCollections.observableArrayList();
-            boolean showLabel = valuesCheck.isSelected();
-            String baselabel, label;
-            for (EpidemicReport report : reports) {
-                baselabel = locationLabel(report);
-                if (totalConfirmed > 0) {
-                    label = baselabel;
-                    if (showLabel) {
-                        label += " " + DoubleTools.scale(report.getConfirmed() * 100.0d / totalConfirmed, 1) + "%"
-                                + " " + report.getConfirmed();
-                    }
-                    confirmedData.add(new PieChart.Data(label, report.getConfirmed()));
-                }
-                if (totalDead > 0) {
-                    label = baselabel;
-                    if (showLabel) {
-                        label += " " + DoubleTools.scale(report.getDead() * 100.0d / totalDead, 1) + "%"
-                                + " " + report.getDead();
-                    }
-                    deadData.add(new PieChart.Data(label, report.getDead()));
-                }
-                if (totalHealed > 0) {
-                    label = baselabel;
-                    if (showLabel) {
-                        label += " " + DoubleTools.scale(report.getHealed() * 100.0d / totalHealed, 1) + "%"
-                                + " " + report.getHealed();
-                    }
-                    headedData.add(new PieChart.Data(label, report.getHealed()));
-                }
-            }
-            confirmedPie.setData(confirmedData);
-            deadPie.setData(deadData);
-            healedPie.setData(headedData);
-
-            FxmlControl.setPieColors(confirmedPie, legendCheck.isSelected());
-            FxmlControl.setPieColors(deadPie, legendCheck.isSelected());
-            FxmlControl.setPieColors(healedPie, legendCheck.isSelected());
-
-        } catch (Exception e) {
-            logger.debug(e.toString());
-        }
-
-    }
-
-    protected boolean locationMatch(String location, EpidemicReport report) {
-        switch (currentNodeLevel) {
-            case Provinces:
-                if (location.equals(report.getProvince())) {
-                    return true;
-                }
-                break;
-            case Cities:
-                if (location.equals(report.getCity())) {
-                    return true;
-                }
-                break;
-            default:
-                if (location.equals(report.getCountry())) {
-                    return true;
-                }
-                break;
-        }
-        return false;
-    }
-
-    protected List<String> timeLocationValues(List<EpidemicReport> reports,
-            List<Date> validTimes,
-            Map<Date, List<EpidemicReport>> timesLocations) {
-        try {
-            if (reports == null || validTimes == null || timesLocations == null) {
-                return null;
-            }
-            List<Date> times = timesMap.get(currentDataSet);
-            final List<String> locations;
-            switch (currentNodeLevel) {
-                case AllTime:
-                case Countries:
-                    locations = countriesMap.get(currentDataSet);
-                    break;
-                case Provinces:
-                    locations = provincesMap.get(currentDataSet + currentCountry);
-                    break;
-                case Cities:
-                    locations = citiesMap.get(currentDataSet + currentCountry + currentProvince);
-                    break;
-                default:
-                    return null;
-            }
-            if (locations == null || locations.isEmpty()) {
-                return null;
-            }
-            for (Date time : times) {
+            List<Long> validLocationids = new ArrayList<>();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            try ( ResultSet results = conn.createStatement().executeQuery(dataQuerySQL)) {
+                String lastDate = null;
                 List<EpidemicReport> timeReports = new ArrayList();
-                boolean hasData = false;
-                for (String location : locations) {
-                    if (location.isBlank()) {
-                        continue;
-                    }
-                    EpidemicReport timeReport = null;
-                    for (EpidemicReport report : reports) {
-                        if (report.getTime() == time.getTime()) {
-                            if (locationMatch(location, report)) {
-                                if (report.getConfirmed() > 0) {
-                                    timeReport = report;
-                                    hasData = true;
-                                }
+                String valueName = orderNames.get(1);
+                while (results.next()) {
+                    EpidemicReport report = TableEpidemicReport.statisticViewQuery(conn, results, false);
+                    String date = dateFormat.format(report.getTime());
+                    long locationid = report.getLocationid();
+                    boolean existed = false;
+                    if (lastDate == null || !date.equals(lastDate)) {
+                        if (timeReports.size() > 0 && loading != null) {
+                            loading.setInfo(MessageFormat.format(
+                                    message("ReadTopDateData"), timeReports.size(), lastDate));
+                        }
+                        dataTimes.add(date);
+                        timeReports = new ArrayList();
+                        timesReports.put(date, timeReports);
+                        lastDate = date;
+                    } else {
+                        if (timeReports.size() >= topNumber) {
+                            continue;
+                        }
+                        for (EpidemicReport timeReport : timeReports) {
+                            if (timeReport.getDataSet().equals(report.getDataSet())
+                                    && timeReport.getLocationid() == locationid) {
+                                existed = true;
                                 break;
                             }
                         }
                     }
-                    if (timeReport == null) {
-                        timeReport = new EpidemicReport();
-                        switch (currentNodeLevel) {
-                            case AllTime:
-                            case Countries:
-                                timeReport.setLevel(message("Country")).setCountry(location);
-                                break;
-                            case Provinces:
-                                timeReport.setLevel(message("Province")).setProvince(location);
-                                break;
-                            case Cities:
-                                timeReport.setLevel(message("City")).setCity(location);
-                                break;
-                            default:
-                                continue;
+                    if (!existed) {
+                        GeographyCode location = TableGeographyCode.readCode(conn, locationid, true);
+                        report.setLocation(location);
+                        timeReports.add(report);
+                        totalSize++;
+                        Number n = report.value(valueName);
+                        if (n != null) {
+                            double value = n.doubleValue();
+                            if (value > maxValue) {
+                                maxValue = value;
+                            }
+                        }
+                        if (!validLocationids.contains(locationid)) {
+                            validLocationids.add(locationid);
+                            dataLocations.add(location);
+                        }
+                        String dataset = report.getDataSet();
+                        if (!datasets.contains(dataset)) {
+                            datasets.add(dataset);
                         }
                     }
-                    timeReports.add(timeReport);
                 }
-                if (!hasData) {
-                    continue;
-                }
-
-                timesLocations.put(time, timeReports);
-                validTimes.add(time);
             }
 
-            return locations;
+            locationsReports.clear();
+            try ( PreparedStatement statement = conn.prepareStatement(TableEpidemicReport.LocationidQuery)) {
+                for (GeographyCode location : dataLocations) {
+                    statement.setLong(1, location.getGcid());
+                    try ( ResultSet results = statement.executeQuery()) {
+                        while (results.next()) {
+                            EpidemicReport report = TableEpidemicReport.statisticViewQuery(conn, results, false);
+                            if (report != null && datasets.contains(report.getDataSet())) {
+                                String date = dateFormat.format(report.getTime());
+                                List<EpidemicReport> dateLocationReports = locationsReports.get(date);
+                                if (dateLocationReports == null) {
+                                    dateLocationReports = new ArrayList<>();
+                                    locationsReports.put(date, dateLocationReports);
+                                }
+                                report.setLocation(location);
+                                report.setLocationFullName(location.getFullName());
+                                dateLocationReports.add(report);
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                logger.debug(e.toString());
+            }
+
+            if (loading != null) {
+                loading.setInfo(message("DateNumber") + ": " + dataTimes.size()
+                        + " " + message("TotalSize") + ": " + totalSize);
+            }
+            Platform.runLater(() -> {
+                chartController.loadCharts();
+            });
+            return true;
+
         } catch (Exception e) {
+            if (loading != null) {
+                loading.setInfo(e.toString());
+            }
             logger.debug(e.toString());
+            return false;
+        }
+
+    }
+
+    public List<EpidemicReport> readTopPageData() {
+        if (dataTimes == null || dataTimes.isEmpty()
+                || timesReports == null || timesReports.isEmpty()) {
             return null;
         }
-    }
-
-    protected void drawTimeLocationBasedCharts(
-            List<EpidemicReport> reports) {
-        try {
-            Map<Date, List<EpidemicReport>> timesLocations = new HashMap<>();
-            List<Date> validTimes = new ArrayList();
-            List<String> locations = timeLocationValues(reports, validTimes, timesLocations);
-            if (validTimes.isEmpty()) {
-                return;
-            }
-            drawTimeLocationBasedBarCharts(reports, locations, validTimes, timesLocations);
-            drawTimeLocationBasedLineCharts(reports, locations, validTimes, timesLocations);
-        } catch (Exception e) {
-            logger.debug(e.toString());
-        }
-    }
-
-    protected void drawTimeLocationBasedBarCharts(
-            List<EpidemicReport> reports) {
-        try {
-            Map<Date, List<EpidemicReport>> timesLocations = new HashMap<>();
-            List<Date> validTimes = new ArrayList();
-            List<String> locations = timeLocationValues(reports, validTimes, timesLocations);
-            if (validTimes.isEmpty()) {
-                return;
-            }
-            drawTimeLocationBasedBarCharts(reports, locations, validTimes, timesLocations);
-        } catch (Exception e) {
-            logger.debug(e.toString());
-        }
-    }
-
-    protected void drawTimeLocationBasedBarCharts(List<EpidemicReport> reports,
-            List<String> locations, List<Date> validTimes,
-            Map<Date, List<EpidemicReport>> timesLocations) {
-        try {
-            final LoadingController loading;
-            final SnapshotParameters snapPara;
-            final double scale;
-            List<File> numberSnapshots, increasedSnapshots, ratioSnapshots;
-            if (isSnapping) {
-                loading = openHandlingStage(Modality.WINDOW_MODAL);
-                double scalev = dpi / Screen.getPrimary().getDpi();
-                scale = scalev > 1 ? scalev : 1;
-                snapPara = new SnapshotParameters();
-                snapPara.setFill(Color.WHITE);
-                snapPara.setTransform(Transform.scale(scale, scale));
-                numberSnapshots = new ArrayList();
-                increasedSnapshots = new ArrayList();
-                ratioSnapshots = new ArrayList();
-            } else {
-                loading = null;
-                snapPara = null;
-                numberSnapshots = increasedSnapshots = ratioSnapshots = null;
-                scale = 1;
-            }
-            numberBarChart.setAnimated(false);
-            numberBarChart.getData().clear();
-            numberBarChart.getXAxis().setAnimated(false);
-            numberBarChart.getYAxis().setAnimated(false);
-
-            increasedBarChart.setAnimated(false);
-            increasedBarChart.getData().clear();
-            increasedBarChart.getXAxis().setAnimated(false);
-            increasedBarChart.getYAxis().setAnimated(false);
-
-            ratioBarChart.setAnimated(false);
-            ratioBarChart.getData().clear();
-            ratioBarChart.getXAxis().setAnimated(false);
-            ratioBarChart.getYAxis().setAnimated(false);
-            ratioBarChart.setTitle(currentTitle + " - " + message("Ratio"));
-
-            int realInterval = isSnapping ? 200 : interval;
-
-            timeLocationIndex = validTimes.size() - 1;
-            timer = new Timer();
-            timer.schedule(new TimerTask() {
-
-                @Override
-                public void run() {
-                    Platform.runLater(() -> {
-                        Date time = validTimes.get(timeLocationIndex);
-                        List<EpidemicReport> timeReports = timesLocations.get(time);
-                        drawTimeLocationBasedBarCharts(time, timeReports);
-
-                        if (isSnapping && snapPara != null) {
-                            File file = FileTools.getTempFile(".png");
-                            BufferedImage image = SwingFXUtils.fromFXImage(snap(snapPara, scale, numberTab, numberBarChart), null);
-                            ImageFileWriters.writeImageFile(image, "png", file.getAbsolutePath());
-                            numberSnapshots.add(file);
-
-                            file = FileTools.getTempFile(".png");
-                            image = SwingFXUtils.fromFXImage(snap(snapPara, scale, increasedTab, increasedBarChart), null);
-                            ImageFileWriters.writeImageFile(image, "png", file.getAbsolutePath());
-                            increasedSnapshots.add(file);
-
-                            file = FileTools.getTempFile(".png");
-                            image = SwingFXUtils.fromFXImage(snap(snapPara, scale, ratioTab, ratioBarChart), null);
-                            ImageFileWriters.writeImageFile(image, "png", file.getAbsolutePath());
-                            ratioSnapshots.add(file);
-
-                        }
-
-                        timeLocationIndex--;
-                        if (timeLocationIndex < 0) {
-                            if (isSnapping && snapPara != null) {
-                                timer.cancel();
-                                timer = null;
-
-                                numberSnapshotsFile = new File(AppVariables.MyBoxTempPath + File.separator + "numberSnapshots.gif");
-                                ImageGifFile.writeImageFiles(numberSnapshots, numberSnapshotsFile, interval, true);
-                                numberSnapshots.clear();
-
-                                increasedSnapshotsFile = new File(AppVariables.MyBoxTempPath + File.separator + "increasedSnapshots.gif");
-                                ImageGifFile.writeImageFiles(increasedSnapshots, increasedSnapshotsFile, interval, true);
-                                increasedSnapshots.clear();
-
-                                ratioSnapshotsFile = new File(AppVariables.MyBoxTempPath + File.separator + "ratioSnapshots.gif");
-                                ImageGifFile.writeImageFiles(ratioSnapshots, ratioSnapshotsFile, interval, true);
-                                ratioSnapshots.clear();
-
-                                if (loading != null) {
-                                    loading.closeStage();
-                                }
-                                isSnapping = false;
-                                drawTimeLocationBasedBarCharts(chartsData);
-                                mapController.snapMap();
-                            } else {
-                                timeLocationIndex = validTimes.size() - 1;
-                            }
-                        }
-                    });
-                }
-
-            }, 0, realInterval);
-
-        } catch (Exception e) {
-            logger.debug(e.toString());
-        }
-    }
-
-    public void drawTimeLocationBasedBarCharts(Date time,
-            List<EpidemicReport> timeReports) {
-
-        numberBarChart.getData().clear();
-        numberBarChart.setTitle(currentTitle + " - " + DateTools.datetimeToString(time));
-        numberBarChart.setAlternativeRowFillVisible(true);
-        numberBarChart.setAlternativeColumnFillVisible(true);
-        XYChart.Series confirmedSeries = new XYChart.Series();
-        XYChart.Series healedSeries = new XYChart.Series();
-        XYChart.Series deadSeries = new XYChart.Series();
-        confirmedSeries.setName(message("Confirmed"));
-        healedSeries.setName(message("Healed"));
-        deadSeries.setName(message("Dead"));
-
-        increasedBarChart.getData().clear();
-        increasedBarChart.setTitle(currentTitle + " - " + DateTools.datetimeToString(time));
-        increasedBarChart.setAlternativeRowFillVisible(true);
-        increasedBarChart.setAlternativeColumnFillVisible(true);
-        XYChart.Series increasedConfirmedSeries = new XYChart.Series();
-        XYChart.Series increasedHealedSeries = new XYChart.Series();
-        XYChart.Series increasedDeadSeries = new XYChart.Series();
-        increasedConfirmedSeries.setName(message("IncreasedConfirmed"));
-        increasedHealedSeries.setName(message("IncreasedHealed"));
-        increasedDeadSeries.setName(message("IncreasedDead"));
-
-        ratioBarChart.getData().clear();
-        ratioBarChart.setTitle(currentTitle + " - " + message("Ratio") + " - " + DateTools.datetimeToString(time));
-        ratioBarChart.setAlternativeRowFillVisible(true);
-        ratioBarChart.setAlternativeColumnFillVisible(true);
-        XYChart.Series healedRatioSeries = new XYChart.Series();
-        XYChart.Series deadRatioSeries = new XYChart.Series();
-        healedRatioSeries.setName(message("HealedRatio"));
-        deadRatioSeries.setName(message("DeadRatio"));
-
-        if (timeReports == null || timeReports.isEmpty()) {
-            return;
-        }
-        Collections.sort(timeReports, (EpidemicReport r1, EpidemicReport r2) -> {
-            double diff = r2.getConfirmed() - r1.getConfirmed();
-            if (diff > 0) {
-                return 1;
-            } else if (diff < 0) {
-                return -1;
-            } else {
-                return 0;
-            }
-        });
-        for (EpidemicReport report : timeReports) {
-            String label;
-            switch (currentNodeLevel) {
-                case AllTime:
-                case Countries:
-                    label = report.getCountry();
-                    break;
-                case Provinces:
-                    label = report.getProvince();
-                    break;
-                case Cities:
-                    label = report.getCity();
-                    break;
-                default:
-                    continue;
-            }
-
-            if (label == null || label.isBlank()) {
+        pageQueryString = pageQueryString + "</br>" + message("NumberTopDataDaily") + ": " + topNumber;
+        List<EpidemicReport> data = new ArrayList();
+        int start = 0;
+        int targetStart = currentPageStart;
+        int targetEnd = currentPageStart + currentPageSize;
+        for (String date : dataTimes) {
+            List<EpidemicReport> reports = timesReports.get(date);
+            int end = start + reports.size();
+            if (end <= targetStart) {
+                start = end;
                 continue;
             }
-            confirmedSeries.getData().add(dataNode(label, report.getConfirmed()));
-            healedSeries.getData().add(dataNode(label, report.getHealed()));
-            deadSeries.getData().add(dataNode(label, report.getDead()));
-
-            increasedConfirmedSeries.getData().add(dataNode(label, report.getIncreasedConfirmed()));
-            increasedHealedSeries.getData().add(dataNode(label, report.getIncreasedHealed()));
-            increasedDeadSeries.getData().add(dataNode(label, report.getIncreasedDead()));
-
-            healedRatioSeries.getData().add(dataNode(label, report.getHealedRatio()));
-            deadRatioSeries.getData().add(dataNode(label, report.getDeadRatio()));
-
-        }
-        numberBarChart.getData().add(0, confirmedSeries);
-        numberBarChart.getData().add(1, healedSeries);
-        numberBarChart.getData().add(2, deadSeries);
-
-        increasedBarChart.getData().add(0, increasedConfirmedSeries);
-        increasedBarChart.getData().add(1, increasedHealedSeries);
-        increasedBarChart.getData().add(2, increasedDeadSeries);
-
-        ratioBarChart.getData().add(0, healedRatioSeries);
-        ratioBarChart.getData().add(1, deadRatioSeries);
-    }
-
-    protected Image snap(SnapshotParameters snapPara, double scale,
-            Tab tab, BarChart chart) {
-        tabPane.getSelectionModel().select(tab);
-        Bounds bounds = chart.getLayoutBounds();
-        int imageWidth = (int) Math.round(bounds.getWidth() * scale);
-        int imageHeight = (int) Math.round(bounds.getHeight() * scale);
-        return chart.snapshot(snapPara, new WritableImage(imageWidth, imageHeight));
-
-    }
-
-    protected void drawTimeLocationBasedLineCharts(List<EpidemicReport> reports,
-            List<String> locations, List<Date> validTimes,
-            Map<Date, List<EpidemicReport>> timesLocations) {
-        try {
-            List<Date> ascTimes = new ArrayList<>();
-            ascTimes.addAll(validTimes);
-            Collections.sort(ascTimes, (Date d1, Date d2) -> {
-                long diff = d1.getTime() - d2.getTime();
-                if (diff > 0) {
-                    return 1;
-                } else if (diff < 0) {
-                    return -1;
-                } else {
-                    return 0;
-                }
-            });
-            Map<String, XYChart.Series> confirmedSeriesMap = new HashMap<>();
-            Map<String, XYChart.Series> healedSeriesMap = new HashMap<>();
-            Map<String, XYChart.Series> deadSeriesMap = new HashMap<>();
-
-            for (int i = 0; i < locations.size(); i++) {
-                String location = locations.get(i);
-                XYChart.Series confirmedSeries = new XYChart.Series();
-                confirmedSeries.setName(location);
-                confirmedSeriesMap.put(location, confirmedSeries);
-                confirmedLineChart.getData().add(i, confirmedSeries);
-
-                XYChart.Series healedSeries = new XYChart.Series();
-                healedSeries.setName(location);
-                healedSeriesMap.put(location, healedSeries);
-                healedLineChart.getData().add(i, healedSeries);
-
-                XYChart.Series deadSeries = new XYChart.Series();
-                deadSeries.setName(location);
-                deadSeriesMap.put(location, deadSeries);
-                deadLineChart.getData().add(i, deadSeries);
+            if (start >= targetEnd) {
+                break;
             }
-
-            for (int i = 0; i < ascTimes.size(); i++) {
-                Date time = ascTimes.get(i);
-                List<EpidemicReport> timeReports = timesLocations.get(time);
-                if (timeReports == null || timeReports.isEmpty()) {
-                    continue;
-                }
-                for (EpidemicReport report : timeReports) {
-                    String location;
-                    switch (currentNodeLevel) {
-                        case AllTime:
-                        case Countries:
-                            location = report.getCountry();
-                            break;
-                        case Provinces:
-                            location = report.getProvince();
-                            break;
-                        case Cities:
-                            location = report.getCity();
-                            break;
-                        default:
-                            continue;
-                    }
-                    if (location == null || location.isBlank()) {
-                        continue;
-                    }
-                    String timeString = DateTools.datetimeToString(time);
-                    XYChart.Series confirmedSeries = confirmedSeriesMap.get(location);
-                    XYChart.Series healedSeries = healedSeriesMap.get(location);
-                    XYChart.Series deadSeries = deadSeriesMap.get(location);
-                    if (i == ascTimes.size() - 1) {
-                        confirmedSeries.getData().add(lineDataNode(timeString, location, report.getConfirmed()));
-                        healedSeries.getData().add(lineDataNode(timeString, location, report.getHealed()));
-                        deadSeries.getData().add(lineDataNode(timeString, location, report.getDead()));
-                    } else {
-                        confirmedSeries.getData().add(lineDataNode(timeString, report.getConfirmed()));
-                        healedSeries.getData().add(lineDataNode(timeString, report.getHealed()));
-                        deadSeries.getData().add(lineDataNode(timeString, report.getDead()));
-                    }
-                }
+            int readStart = Math.max(start, targetStart) - start;
+            int readEnd = Math.min(end, targetEnd) - start;
+            if (readStart < readEnd) {
+                data.addAll(reports.subList(readStart, readEnd));
             }
-
-            FxmlControl.setLineChartColors(confirmedLineChart, legendCheck.isSelected());
-            FxmlControl.setLineChartColors(healedLineChart, legendCheck.isSelected());
-            FxmlControl.setLineChartColors(deadLineChart, legendCheck.isSelected());
-
-        } catch (Exception e) {
-            logger.debug(e.toString());
+            start = end;
         }
-
+        return data;
     }
 
     @Override
-    public void itemDoubleClicked() {
-        editAction();
+    protected String loadMoreInfo() {
+        if (queryCondition != null && queryCondition.getTop() > 0) {
+            String info = "<b>" + message("DateNumber") + ": </b>" + dataTimes.size() + "</br>";
+            info += "<b>" + message("LocationsNumber") + ": </b>" + dataLocations.size() + "</br>";
+            info += "<b>" + message("DataNumber") + ": </b>" + totalSize + "</br></br>";
+            return info;
+        } else {
+            return "";
+        }
     }
 
+    //  Call this when data are changed and need reload all
+    @FXML
     @Override
-    protected void checkSelected() {
-        if (isSettingValues) {
-            return;
-        }
-        super.checkSelected();
-        int selection = tableView.getSelectionModel().getSelectedIndices().size();
-        sureButton.setDisable(selection == 0);
+    public void refreshAction() {
+        loadTrees(true);
     }
 
     @FXML
     @Override
-    public void addAction() {
-        try {
-            EpidemicReportEditController controller
-                    = (EpidemicReportEditController) openScene(null, CommonValues.EpidemicReportEditFxml);
-            if (controller != null) {
-                controller.parent = this;
-                if (currentDataSet != null) {
-                    controller.datasetSelector.setValue(currentDataSet);
-                }
-                if (currentCountry != null) {
-                    controller.countrySelector.setValue(currentCountry);
-                }
-                if (currentProvince != null) {
-                    controller.provinceSelector.setValue(currentProvince);
-                }
-                if (currentCity != null) {
-                    controller.citySelector.setValue(currentCity);
-                }
-            }
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    @FXML
-    public void ChineseProvincesReport() {
-        try {
-            EpidemicReportsChineseProvincesEditController controller
-                    = (EpidemicReportsChineseProvincesEditController) openScene(null,
-                            CommonValues.EpidemicReportsChineseProvincesEditFxml);
-            if (controller != null) {
-                controller.parent = this;
-                controller.load(currentDataSet);
-            }
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    @FXML
-    public void globalReport() {
-        try {
-            EpidemicReportsCountriesEditController controller
-                    = (EpidemicReportsCountriesEditController) openScene(null,
-                            CommonValues.EpidemicReportsCountriesEditFxml);
-            if (controller != null) {
-                controller.parent = this;
-                controller.load(currentDataSet);
-            }
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    @FXML
-    protected void editAction() {
+    public void editAction() {
         EpidemicReport selected = tableView.getSelectionModel().getSelectedItem();
         if (selected == null) {
+            addAction();
             return;
         }
         try {
             EpidemicReportEditController controller
                     = (EpidemicReportEditController) openScene(null, CommonValues.EpidemicReportEditFxml);
-            if (controller != null) {
-                controller.parent = this;
-                controller.loadReport(selected);
-            }
+            controller.reportsController = this;
+            controller.loadReport(selected);
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -2083,31 +858,16 @@ public class EpidemicReportsController extends TableManageController<EpidemicRep
         if (selected == null || selected.isEmpty()) {
             return false;
         }
-        if (TableEpidemicReport.deleteData(selected)) {
-            loadTree(false);
-            return true;
-        } else {
-            return false;
-        }
+        return TableEpidemicReport.deleteData(selected);
     }
 
-    @Override
-    protected boolean clearData() {
-        treeView.setRoot(null);
-        nameLabel.setText("");
-        if (currentDataSet == null) {
-            return new TableEpidemicReport().clear();
-        } else {
-            return TableEpidemicReport.delete(currentDataSet);
-        }
-    }
-
-    @FXML
-    public void sureAction() {
-        final List<EpidemicReport> selected = tableView.getSelectionModel().getSelectedItems();
+    public void setSelectedData(EpidemicReport.SourceType sourceType) {
+        List<EpidemicReport> selected = tableView.getSelectionModel().getSelectedItems();
         if (selected == null || selected.isEmpty()) {
             return;
         }
+        final List<EpidemicReport> reports = new ArrayList();
+        reports.addAll(selected);
         synchronized (this) {
             if (task != null) {
                 return;
@@ -2116,14 +876,18 @@ public class EpidemicReportsController extends TableManageController<EpidemicRep
 
                 @Override
                 protected boolean handle() {
-                    TableEpidemicReport.sure(selected);
+                    int source = EpidemicReport.source(sourceType);
+                    for (EpidemicReport report : reports) {
+                        report.setSource(source);
+                    }
+                    TableEpidemicReport.update(reports);
                     return true;
                 }
 
                 @Override
                 protected void whenSucceeded() {
                     popSuccessful();
-                    load();
+                    refreshAction();
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
@@ -2133,37 +897,57 @@ public class EpidemicReportsController extends TableManageController<EpidemicRep
         }
     }
 
-    @FXML
     @Override
-    public void saveAsAction() {
-        htmlAction();
+    protected DataExportController dataExporter() {
+        return (EpidemicReportsExportController) openStage(CommonValues.EpidemicReportsExportFxml);
     }
 
     @FXML
-    public void htmlAction() {
+    @Override
+    protected void popSetMenu(MouseEvent mouseEvent) {
         try {
-            String name = (message("EpidemicReport") + "-" + currentTitle + "_"
-                    + DateTools.datetimeToString(new Date())).replaceAll(":", "-");
-            htmlFile = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
-                    name, CommonFxValues.HtmlExtensionFilter, true);
-            if (htmlFile == null) {
-                return;
+            if (popMenu != null && popMenu.isShowing()) {
+                popMenu.hide();
             }
-            recordFileWritten(htmlFile);
+            popMenu = new ContextMenu();
+            popMenu.setAutoHide(true);
 
-            currentTab = tabPane.getSelectionModel().getSelectedItem();
-            if (currentChartsType == ChartsType.TimeLocationBased) {
-                if (timer != null) {
-                    timer.cancel();
-                    timer = null;
-                }
-                isSnapping = true;
-                drawTimeLocationBasedBarCharts(chartsData);
-            } else if (tabPane.getTabs().contains(mapTab)) {
-                mapController.snapMap();
-            } else {
-                makeHtml(null);
-            }
+            MenuItem menu = new MenuItem(message("SetAsInputtedData"));
+            menu.setOnAction((ActionEvent event) -> {
+                setSelectedData(EpidemicReport.SourceType.InputtedData);
+            });
+            popMenu.getItems().add(menu);
+            popMenu.getItems().add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("SetAsPredefinedData"));
+            menu.setOnAction((ActionEvent event) -> {
+                setSelectedData(EpidemicReport.SourceType.PredefinedData);
+            });
+            popMenu.getItems().add(menu);
+            popMenu.getItems().add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("SetAsStatisticData"));
+            menu.setOnAction((ActionEvent event) -> {
+                setSelectedData(EpidemicReport.SourceType.StatisticData);
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("SetAsFilledData"));
+            menu.setOnAction((ActionEvent event) -> {
+                setSelectedData(EpidemicReport.SourceType.FilledData);
+            });
+            popMenu.getItems().add(menu);
+            popMenu.getItems().add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("MenuClose"));
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setOnAction((ActionEvent event) -> {
+                popMenu.hide();
+                popMenu = null;
+            });
+            popMenu.getItems().add(menu);
+
+            FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -2171,449 +955,22 @@ public class EpidemicReportsController extends TableManageController<EpidemicRep
     }
 
     @FXML
-    public void makeHtml(File mapImageFile) {
+    public void ChineseProvincesReport() {
         try {
-            double scale = dpi / Screen.getPrimary().getDpi();
-            scale = scale > 1 ? scale : 1;
-            SnapshotParameters snapPara = new SnapshotParameters();
-            snapPara.setFill(Color.TRANSPARENT);
-            snapPara.setTransform(Transform.scale(scale, scale));
+            EpidemicReportsEditController controller
+                    = (EpidemicReportsEditController) openScene(null, CommonValues.EpidemicReportsEditFxml);
+            controller.load(this, true);
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
 
-            final Image numberLineChartSnap, numberBarChartSnap,
-                    increasedLineChartSnap, increasedBarChartSnap,
-                    ratioLineChartSnap, ratioBarChartSnap,
-                    confirmedPieSnap, healedPieSnap, deadPieSnap,
-                    confirmedLineChartSnap, healedLineChartSnap, deadLineChartSnap;
-            if (tabPane.getTabs().contains(numberTab)) {
-                tabPane.getSelectionModel().select(numberTab);
-                if (numberChartBox.getChildren().contains(numberLineChart)) {
-                    Bounds bounds = numberLineChart.getLayoutBounds();
-                    int imageWidth = (int) Math.round(bounds.getWidth() * scale);
-                    int imageHeight = (int) Math.round(bounds.getHeight() * scale);
-                    WritableImage snapshot = new WritableImage(imageWidth, imageHeight);
-                    numberLineChartSnap = numberLineChart.snapshot(snapPara, snapshot);
-                } else {
-                    numberLineChartSnap = null;
-                }
-                if (numberChartBox.getChildren().contains(numberBarChart)
-                        && currentChartsType != ChartsType.TimeLocationBased) {
-                    Bounds bounds = numberBarChart.getLayoutBounds();
-                    int imageWidth = (int) Math.round(bounds.getWidth() * scale);
-                    int imageHeight = (int) Math.round(bounds.getHeight() * scale);
-                    WritableImage snapshot = new WritableImage(imageWidth, imageHeight);
-                    numberBarChartSnap = numberBarChart.snapshot(snapPara, snapshot);
-                } else {
-                    numberBarChartSnap = null;
-                }
-            } else {
-                numberLineChartSnap = null;
-                numberBarChartSnap = null;
-            }
-
-            if (tabPane.getTabs().contains(increasedTab)) {
-                tabPane.getSelectionModel().select(increasedTab);
-                if (increasedChartBox.getChildren().contains(increasedLineChart)) {
-                    Bounds bounds = increasedLineChart.getLayoutBounds();
-                    int imageWidth = (int) Math.round(bounds.getWidth() * scale);
-                    int imageHeight = (int) Math.round(bounds.getHeight() * scale);
-                    WritableImage snapshot = new WritableImage(imageWidth, imageHeight);
-                    increasedLineChartSnap = increasedLineChart.snapshot(snapPara, snapshot);
-                } else {
-                    increasedLineChartSnap = null;
-                }
-                if (increasedChartBox.getChildren().contains(increasedBarChart)
-                        && currentChartsType != ChartsType.TimeLocationBased) {
-                    Bounds bounds = increasedBarChart.getLayoutBounds();
-                    int imageWidth = (int) Math.round(bounds.getWidth() * scale);
-                    int imageHeight = (int) Math.round(bounds.getHeight() * scale);
-                    WritableImage snapshot = new WritableImage(imageWidth, imageHeight);
-                    increasedBarChartSnap = increasedBarChart.snapshot(snapPara, snapshot);
-                } else {
-                    increasedBarChartSnap = null;
-                }
-            } else {
-                increasedLineChartSnap = null;
-                increasedBarChartSnap = null;
-            }
-
-            if (tabPane.getTabs().contains(ratioTab)) {
-                tabPane.getSelectionModel().select(ratioTab);
-                if (ratioChartBox.getChildren().contains(ratioLineChart)) {
-                    Bounds bounds = ratioLineChart.getLayoutBounds();
-                    int imageWidth = (int) Math.round(bounds.getWidth() * scale);
-                    int imageHeight = (int) Math.round(bounds.getHeight() * scale);
-                    WritableImage snapshot = new WritableImage(imageWidth, imageHeight);
-                    ratioLineChartSnap = ratioLineChart.snapshot(snapPara, snapshot);
-                } else {
-                    ratioLineChartSnap = null;
-                }
-                if (ratioChartBox.getChildren().contains(ratioBarChart)
-                        && currentChartsType != ChartsType.TimeLocationBased) {
-                    Bounds bounds = ratioBarChart.getLayoutBounds();
-                    int imageWidth = (int) Math.round(bounds.getWidth() * scale);
-                    int imageHeight = (int) Math.round(bounds.getHeight() * scale);
-                    WritableImage snapshot = new WritableImage(imageWidth, imageHeight);
-                    ratioBarChartSnap = ratioBarChart.snapshot(snapPara, snapshot);
-                } else {
-                    ratioBarChartSnap = null;
-                }
-            } else {
-                ratioLineChartSnap = null;
-                ratioBarChartSnap = null;
-            }
-
-            if (tabPane.getTabs().contains(confirmedTab)) {
-                tabPane.getSelectionModel().select(confirmedTab);
-                if (confirmedChartBox.getChildren().contains(confirmedPie)) {
-                    Bounds bounds = confirmedPie.getLayoutBounds();
-                    int imageWidth = (int) Math.round(bounds.getWidth() * scale);
-                    int imageHeight = (int) Math.round(bounds.getHeight() * scale);
-                    WritableImage snapshot = new WritableImage(imageWidth, imageHeight);
-                    confirmedPieSnap = confirmedPie.snapshot(snapPara, snapshot);
-                } else {
-                    confirmedPieSnap = null;
-                }
-                if (confirmedChartBox.getChildren().contains(confirmedLineChart)) {
-                    Bounds bounds = confirmedLineChart.getLayoutBounds();
-                    int imageWidth = (int) Math.round(bounds.getWidth() * scale);
-                    int imageHeight = (int) Math.round(bounds.getHeight() * scale);
-                    WritableImage snapshot = new WritableImage(imageWidth, imageHeight);
-                    confirmedLineChartSnap = confirmedLineChart.snapshot(snapPara, snapshot);
-                } else {
-                    confirmedLineChartSnap = null;
-                }
-            } else {
-                confirmedPieSnap = null;
-                confirmedLineChartSnap = null;
-            }
-
-            if (tabPane.getTabs().contains(healedTab)) {
-                tabPane.getSelectionModel().select(healedTab);
-                if (healedChartBox.getChildren().contains(healedPie)) {
-                    Bounds bounds = healedPie.getLayoutBounds();
-                    int imageWidth = (int) Math.round(bounds.getWidth() * scale);
-                    int imageHeight = (int) Math.round(bounds.getHeight() * scale);
-                    WritableImage snapshot = new WritableImage(imageWidth, imageHeight);
-                    healedPieSnap = healedPie.snapshot(snapPara, snapshot);
-                } else {
-                    healedPieSnap = null;
-                }
-                if (healedChartBox.getChildren().contains(healedLineChart)) {
-                    Bounds bounds = healedLineChart.getLayoutBounds();
-                    int imageWidth = (int) Math.round(bounds.getWidth() * scale);
-                    int imageHeight = (int) Math.round(bounds.getHeight() * scale);
-                    WritableImage snapshot = new WritableImage(imageWidth, imageHeight);
-                    healedLineChartSnap = healedLineChart.snapshot(snapPara, snapshot);
-                } else {
-                    healedLineChartSnap = null;
-                }
-            } else {
-                healedPieSnap = null;
-                healedLineChartSnap = null;
-            }
-
-            if (tabPane.getTabs().contains(deadTab)) {
-                tabPane.getSelectionModel().select(deadTab);
-                if (deadChartBox.getChildren().contains(deadPie)) {
-                    Bounds bounds = deadPie.getLayoutBounds();
-                    int imageWidth = (int) Math.round(bounds.getWidth() * scale);
-                    int imageHeight = (int) Math.round(bounds.getHeight() * scale);
-                    WritableImage snapshot = new WritableImage(imageWidth, imageHeight);
-                    deadPieSnap = deadPie.snapshot(snapPara, snapshot);
-                } else {
-                    deadPieSnap = null;
-                }
-                if (deadChartBox.getChildren().contains(deadLineChart)) {
-                    Bounds bounds = deadLineChart.getLayoutBounds();
-                    int imageWidth = (int) Math.round(bounds.getWidth() * scale);
-                    int imageHeight = (int) Math.round(bounds.getHeight() * scale);
-                    WritableImage snapshot = new WritableImage(imageWidth, imageHeight);
-                    deadLineChartSnap = deadLineChart.snapshot(snapPara, snapshot);
-                } else {
-                    deadLineChartSnap = null;
-                }
-            } else {
-                deadPieSnap = null;
-                deadLineChartSnap = null;
-            }
-
-            List<EpidemicReport> rows = chartsTableView.getSelectionModel().getSelectedItems();
-            if (rows == null || rows.isEmpty()) {
-                rows = chartsData;
-            }
-            if (rows == null || rows.isEmpty()) {
-                popError(message("NoData"));
-                return;
-            }
-            List<String> names = new ArrayList<>();
-            String title;
-            boolean all = currentDataSet == null || message("All").equals(currentDataSet);
-            if (all) {
-                names.add(message("DataSet"));
-                title = message("EpidemicReport");
-            } else {
-                title = message("EpidemicReport") + " - " + currentDataSet;
-            }
-            names.addAll(Arrays.asList(message("Time"), message("Country"), message("Province"), message("City"),
-                    message("Confirmed"), message("Suspected"), message("Healed"), message("Dead"),
-                    message("Longitude"), message("Latitude"), message("Label"), message("Comments")
-            ));
-            StringTable table = new StringTable(names, title);
-            for (EpidemicReport data : rows) {
-                List<String> row = new ArrayList<>();
-                if (all) {
-                    row.add(data.getDataSet());
-                }
-                if (data.getTime() > 0) {
-                    row.add(DateTools.datetimeToString(data.getTime()));
-                } else {
-                    row.add("");
-                }
-                if (data.getCountry() != null) {
-                    row.add(data.getCountry());
-                } else {
-                    row.add("");
-                }
-                if (data.getProvince() != null) {
-                    row.add(data.getProvince());
-                } else {
-                    row.add("");
-                }
-                if (data.getCountry() != null) {
-                    row.add(data.getCountry());
-                } else {
-                    row.add("");
-                }
-                if (data.getCity() != null) {
-                    row.add(data.getCity());
-                } else {
-                    row.add("");
-                }
-                row.addAll(Arrays.asList(data.getSuspected() + "", data.getHealed() + "",
-                        data.getDead() + "", data.getLongitude() + "", data.getLatitude() + ""
-                ));
-                if (data.getDataLabel() != null) {
-                    row.add(data.getDataLabel());
-                } else {
-                    row.add("");
-                }
-                if (data.getComments() != null) {
-                    row.add(data.getComments());
-                } else {
-                    row.add("");
-                }
-                table.add(row);
-            }
-            final String dataTable = tableDiv(table);
-
-            tabPane.getSelectionModel().select(currentTab);
-
-            synchronized (this) {
-                if (htmlTask != null) {
-                    return;
-                }
-                htmlTask = new SingletonTask<Void>() {
-
-                    @Override
-                    protected boolean handle() {
-                        try {
-
-                            String subPath = FileTools.getFilePrefix(htmlFile.getName());
-                            String path = htmlFile.getParent() + "/" + subPath;
-                            (new File(path)).mkdirs();
-
-                            StringBuilder s = new StringBuilder();
-                            s.append("<h1  class=\"center\">").append(currentTitle).append("</h1>\n");
-                            s.append("<hr>\n");
-
-                            s.append("<h2  class=\"center\">").append(message("Data")).append("</h2>\n");
-                            s.append(dataTable);
-
-                            if (numberLineChartSnap != null) {
-                                BufferedImage bufferedImage = SwingFXUtils.fromFXImage(numberLineChartSnap, null);
-                                ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "numberLineChartSnap.jpg");
-                                String imageName = subPath + "/numberLineChartSnap.jpg";
-                                s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"width:85%;\" ></div>\n");
-                                if (htmlTask == null || isCancelled()) {
-                                    return false;
-                                }
-                            }
-
-                            if (numberBarChartSnap != null) {
-                                BufferedImage bufferedImage = SwingFXUtils.fromFXImage(numberBarChartSnap, null);
-                                ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "numberBarChartSnap.jpg");
-                                String imageName = subPath + "/numberBarChartSnap.jpg";
-                                s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"width:85%;\" ></div>\n");
-                                if (htmlTask == null || isCancelled()) {
-                                    return false;
-                                }
-                            }
-
-                            if (increasedLineChartSnap != null) {
-                                BufferedImage bufferedImage = SwingFXUtils.fromFXImage(increasedLineChartSnap, null);
-                                ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "increasedLineChartSnap.jpg");
-                                String imageName = subPath + "/increasedLineChartSnap.jpg";
-                                s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"width:85%;\" ></div>\n");
-                                if (htmlTask == null || isCancelled()) {
-                                    return false;
-                                }
-                            }
-
-                            if (increasedBarChartSnap != null) {
-                                BufferedImage bufferedImage = SwingFXUtils.fromFXImage(increasedBarChartSnap, null);
-                                ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "increasedBarChartSnap.jpg");
-                                String imageName = subPath + "/increasedBarChartSnap.jpg";
-                                s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"width:85%;\" ></div>\n");
-                                if (htmlTask == null || isCancelled()) {
-                                    return false;
-                                }
-                            }
-
-                            if (ratioLineChartSnap != null) {
-                                BufferedImage bufferedImage = SwingFXUtils.fromFXImage(ratioLineChartSnap, null);
-                                ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "ratioLineChartSnap.jpg");
-                                String imageName = subPath + "/ratioLineChartSnap.jpg";
-                                s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"width:85%;\" ></div>\n");
-                                if (htmlTask == null || isCancelled()) {
-                                    return false;
-                                }
-                            }
-
-                            if (ratioBarChartSnap != null) {
-                                BufferedImage bufferedImage = SwingFXUtils.fromFXImage(ratioBarChartSnap, null);
-                                ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "ratioBarChartSnap.jpg");
-                                String imageName = subPath + "/ratioBarChartSnap.jpg";
-                                s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"width:85%;\" ></div>\n");
-                                if (htmlTask == null || isCancelled()) {
-                                    return false;
-                                }
-                            }
-
-                            if (confirmedPieSnap != null) {
-                                BufferedImage bufferedImage = SwingFXUtils.fromFXImage(confirmedPieSnap, null);
-                                ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "confirmedPieSnap.jpg");
-                                String imageName = subPath + "/confirmedPieSnap.jpg";
-                                s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"width:85%;\" ></div>\n");
-                                if (htmlTask == null || isCancelled()) {
-                                    return false;
-                                }
-                            }
-
-                            if (healedPieSnap != null) {
-                                BufferedImage bufferedImage = SwingFXUtils.fromFXImage(healedPieSnap, null);
-                                ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "healedPieSnap.jpg");
-                                String imageName = subPath + "/healedPieSnap.jpg";
-                                s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"width:85%;\" ></div>\n");
-                                if (htmlTask == null || isCancelled()) {
-                                    return false;
-                                }
-                            }
-
-                            if (deadPieSnap != null) {
-                                BufferedImage bufferedImage = SwingFXUtils.fromFXImage(deadPieSnap, null);
-                                ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "deadPieSnap.jpg");
-                                String imageName = subPath + "/deadPieSnap.jpg";
-                                s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"width:85%;\" ></div>\n");
-                                if (htmlTask == null || isCancelled()) {
-                                    return false;
-                                }
-                            }
-
-                            if (confirmedLineChartSnap != null) {
-                                BufferedImage bufferedImage = SwingFXUtils.fromFXImage(confirmedLineChartSnap, null);
-                                ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "confirmedLineChartSnap.jpg");
-                                String imageName = subPath + "/confirmedLineChartSnap.jpg";
-                                s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"width:85%;\" ></div>\n");
-                                if (htmlTask == null || isCancelled()) {
-                                    return false;
-                                }
-                            }
-
-                            if (healedLineChartSnap != null) {
-                                BufferedImage bufferedImage = SwingFXUtils.fromFXImage(healedLineChartSnap, null);
-                                ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "healedLineChartSnap.jpg");
-                                String imageName = subPath + "/healedLineChartSnap.jpg";
-                                s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"width:85%;\" ></div>\n");
-                                if (htmlTask == null || isCancelled()) {
-                                    return false;
-                                }
-                            }
-
-                            if (deadLineChartSnap != null) {
-                                BufferedImage bufferedImage = SwingFXUtils.fromFXImage(deadLineChartSnap, null);
-                                ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "deadLineChartSnap.jpg");
-                                String imageName = subPath + "/deadLineChartSnap.jpg";
-                                s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"width:85%;\" ></div>\n");
-                                if (htmlTask == null || isCancelled()) {
-                                    return false;
-                                }
-                            }
-
-                            if (numberSnapshotsFile != null && numberSnapshotsFile.exists()) {
-                                numberSnapshotsFile.renameTo(new File(path + File.separator + "numberSnapshots.gif"));
-                                String imageName = subPath + "/numberSnapshots.gif";
-                                s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"width:85%;\" ></div>\n");
-                                if (htmlTask == null || isCancelled()) {
-                                    return false;
-                                }
-                            }
-                            if (increasedSnapshotsFile != null && increasedSnapshotsFile.exists()) {
-                                increasedSnapshotsFile.renameTo(new File(path + File.separator + "increasedSnapshots.gif"));
-                                String imageName = subPath + "/increasedSnapshots.gif";
-                                s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"width:85%;\" ></div>\n");
-                                if (htmlTask == null || isCancelled()) {
-                                    return false;
-                                }
-                            }
-                            if (ratioSnapshotsFile != null && ratioSnapshotsFile.exists()) {
-                                ratioSnapshotsFile.renameTo(new File(path + File.separator + "ratioSnapshots.gif"));
-                                String imageName = subPath + "/ratioSnapshots.gif";
-                                s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"width:85%;\" ></div>\n");
-                                if (htmlTask == null || isCancelled()) {
-                                    return false;
-                                }
-                            }
-
-                            if (mapImageFile != null && mapImageFile.exists()) {
-                                mapImageFile.renameTo(new File(path + File.separator + "mapSnap.gif"));
-                                String imageName = subPath + "/mapSnap.gif";
-                                s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"width:85%;\" ></div>\n");
-                                if (htmlTask == null || isCancelled()) {
-                                    return false;
-                                }
-                            }
-
-                            String html = HtmlTools.html("", s.toString());
-                            FileTools.writeFile(htmlFile, html);
-
-                            if (htmlTask == null || isCancelled()) {
-                                return false;
-                            }
-                            return htmlFile.exists();
-                        } catch (Exception e) {
-                            return false;
-                        }
-                    }
-
-                    @Override
-                    protected void whenSucceeded() {
-                        browseURI(htmlFile.toURI());
-//                        FxmlStage.openHtmlEditor(null, file);
-
-                    }
-
-                    @Override
-                    protected void taskQuit() {
-                        endTime = new Date().getTime();
-                        htmlTask = null;
-                    }
-                };
-                openHandlingStage(htmlTask, Modality.WINDOW_MODAL);
-                Thread thread = new Thread(htmlTask);
-                thread.setDaemon(true);
-                thread.start();
-            }
-
+    @FXML
+    public void globalReport() {
+        try {
+            EpidemicReportsEditController controller
+                    = (EpidemicReportsEditController) openScene(null, CommonValues.EpidemicReportsEditFxml);
+            controller.load(this, false);
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -2621,261 +978,220 @@ public class EpidemicReportsController extends TableManageController<EpidemicRep
 
     @FXML
     @Override
-    public void refreshAction() {
-        loadTree(false);
+    public void addAction() {
+        try {
+            EpidemicReportEditController controller
+                    = (EpidemicReportEditController) openScene(null, CommonValues.EpidemicReportEditFxml);
+            controller.reportsController = this;
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    public void loadCharts() {
+
     }
 
     @Override
-    public void loadExamples() {
-        File file;
-        if ("zh".equals(AppVariables.getLanguage())) {
-            file = FxmlControl.getInternalFile("/data/db/Epidemic_Report_zh_6.2.1.txt",
-                    "data", "Epidemic_Report_zh_6.2.1.txt");
-        } else {
-            file = FxmlControl.getInternalFile("/data/db/Epidemic_Report_en_6.2.1.txt",
-                    "data", "Epidemic_Report_en_6.2.1.txt");
+    protected boolean checkClearCondition() {
+        if (!super.checkClearCondition()) {
+            return false;
         }
-        importFile(file);
+        String where = clearCondition.getWhere() == null || clearCondition.getWhere().isBlank()
+                ? "source<>1" : " ( " + clearCondition.getWhere() + " ) AND source<>1";
+        clearCondition.setWhere(where);
+        return true;
     }
 
-    // This is run in a task instead of FX application thread
-    protected void importFile(File file) {
-        if (file == null || !file.exists()) {
-            return;
-        }
-        List<EpidemicReport> data = EpidemicReport.readTxt(file);
-        if (data.isEmpty()) {
-            return;
-        }
-        TableEpidemicReport.write(data);
+    @Override
+    protected void setClearSQL() {
+        clearSQL = clearPrefix + " WHERE " + clearCondition.getWhere() + " )";
     }
 
     @FXML
-    public void fetchAction() {
-        EpidemicReportsFetchNCPDataController controller
-                = (EpidemicReportsFetchNCPDataController) openStage(CommonValues.EpidemicReportsFetchNCPDataFxml);
+    public void statisticAction() {
+        EpidemicReportsStatisticController controller
+                = (EpidemicReportsStatisticController) openStage(CommonValues.EpidemicReportsStatisticFxml);
         controller.parent = this;
     }
 
     @FXML
     @Override
-    public void clearAction() {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle(getBaseTitle());
-        alert.setContentText(AppVariables.message("SureClearConditions")
-                + "\n\n" + currentTitle + "\n\n" + currentClearSQL);
-        alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
-        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-        ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
-        ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
-        alert.getButtonTypes().setAll(buttonSure, buttonCancel);
-        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-        stage.setAlwaysOnTop(true);
-        stage.toFront();
-
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() != buttonSure) {
-            return;
-        }
-        synchronized (this) {
-            if (clearTask != null) {
-                return;
-            }
-            clearTask = new SingletonTask<Void>() {
-
-                @Override
-                protected boolean handle() {
-                    return new TableEpidemicReport().update(currentClearSQL) >= 0;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    refreshAction();
-                }
-
-                @Override
-                protected void taskQuit() {
-                    endTime = new Date().getTime();
-                    clearTask = null;
-                }
-            };
-            openHandlingStage(clearTask, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(clearTask);
-            thread.setDaemon(true);
-            thread.start();
-        }
-    }
-
-    @FXML
-    public void statisticAction() {
-        loadTree(true);
-    }
-
-    @FXML
-    public void fillAction() {
-        synchronized (this) {
-            if (task != null) {
-                return;
-            }
-            task = new SingletonTask<Void>() {
-
-                private int count = 0;
-
-                @Override
-                protected boolean handle() {
-                    count = TableEpidemicReport.fillData();
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    popInformation(message("TotalFilledData") + ": " + count, 5000);
-                    loadTree();
-                }
-
-            };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
-            thread.setDaemon(true);
-            thread.start();
-        }
-    }
-
-    @FXML
-    protected void exportTableDataAction() {
-        exportData(currentDataQuery);
-    }
-
-    @FXML
-    protected void exportChartsDataAction() {
-        exportData(currentChartsSQL);
-    }
-
-    protected void exportData(String sql) {
+    protected void popImportMenu(MouseEvent mouseEvent) {
         try {
-            DirectoryChooser chooser = new DirectoryChooser();
-            File path = AppVariables.getUserConfigPath(targetPathKey);
-            if (path != null) {
-                chooser.setInitialDirectory(path);
+            if (popMenu != null && popMenu.isShowing()) {
+                popMenu.hide();
             }
-            File directory = chooser.showDialog(getMyStage());
-            if (directory == null) {
-                return;
-            }
-            recordFileWritten(directory);
+            popMenu = new ContextMenu();
+            popMenu.setAutoHide(true);
 
-            String filePrefix = directory.getAbsolutePath() + File.separator
-                    + (currentTitle + "_" + datetimeToString(new Date())).replaceAll(":", "-");
-            synchronized (this) {
-                if (exportTask != null) {
-                    return;
-                }
-                exportTask = new SingletonTask<Void>() {
+            MenuItem menu;
 
-                    @Override
-                    protected boolean handle() {
-                        List<EpidemicReport> data = TableEpidemicReport.dataQuery(sql);
-                        EpidemicReport.writeTxt(new File(filePrefix + ".txt"), data);
-                        EpidemicReport.writeExcel(new File(filePrefix + ".xlsx"), data);
-                        EpidemicReport.writeJson(new File(filePrefix + ".json"), data);
-                        EpidemicReport.writeXml(new File(filePrefix + ".xml"), data);
-                        EpidemicReport.writeHtml(new File(filePrefix + ".html"), data);
-                        data.clear();
-                        return true;
-                    }
+            menu = new MenuItem(message("ImportEpidemicReportExternalCSVFormat"));
+            menu.setOnAction((ActionEvent event) -> {
+                EpidemicReportsImportExternalCSVController controller
+                        = (EpidemicReportsImportExternalCSVController) openStage(CommonValues.EpidemicReportsImportExternalCSVFxml);
+                controller.parent = this;
+            });
+            popMenu.getItems().add(menu);
+            popMenu.getItems().add(new SeparatorMenuItem());
 
-                    @Override
-                    protected void whenSucceeded() {
-                        popSuccessful();
-                        browseURI(directory.toURI());
-                    }
+            menu = new MenuItem(message("ImportEpidemicReportJHUTimes"));
+            menu.setOnAction((ActionEvent event) -> {
+                EpidemicReportsImportJHUTimesSeriesController controller
+                        = (EpidemicReportsImportJHUTimesSeriesController) openStage(CommonValues.EpidemicReportsImportJHUTimeSeriesFxml);
+                controller.parent = this;
+            });
+            popMenu.getItems().add(menu);
 
-                    @Override
-                    protected void taskQuit() {
-                        endTime = new Date().getTime();
-                        exportTask = null;
-                    }
-                };
-                openHandlingStage(exportTask, Modality.WINDOW_MODAL);
-                Thread thread = new Thread(exportTask);
-                thread.setDaemon(true);
-                thread.start();
-            }
+            menu = new MenuItem(message("ImportEpidemicReportJHUDaily"));
+            menu.setOnAction((ActionEvent event) -> {
+                EpidemicReportsImportJHUDailyController controller
+                        = (EpidemicReportsImportJHUDailyController) openStage(CommonValues.EpidemicReportsImportJHUDailyFxml);
+                controller.parent = this;
+            });
+            popMenu.getItems().add(menu);
+            popMenu.getItems().add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("ImportEpidemicReportBaidu"));
+            menu.setOnAction((ActionEvent event) -> {
+                EpidemicReportsImportBaiduController controller
+                        = (EpidemicReportsImportBaiduController) openStage(CommonValues.EpidemicReportsImportBaiduFxml);
+                controller.parent = this;
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ImportEpidemicReportTecent"));
+            menu.setOnAction((ActionEvent event) -> {
+                EpidemicReportsImportTecentController controller
+                        = (EpidemicReportsImportTecentController) openStage(CommonValues.EpidemicReportsImportTecentFxml);
+                controller.parent = this;
+            });
+            popMenu.getItems().add(menu);
+
+            popMenu.getItems().add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("ImportEpidemicReportJHUPredefined"));
+            menu.setOnAction((ActionEvent event) -> {
+                predefined();
+            });
+            popMenu.getItems().add(menu);
+            popMenu.getItems().add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("MenuClose"));
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setOnAction((ActionEvent event) -> {
+                popMenu.hide();
+                popMenu = null;
+            });
+            popMenu.getItems().add(menu);
+
+            FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
+
         } catch (Exception e) {
             logger.error(e.toString());
         }
     }
 
+    protected void predefined() {
+        EpidemicReportsImportExternalCSVController controller
+                = (EpidemicReportsImportExternalCSVController) openStage(CommonValues.EpidemicReportsImportExternalCSVFxml);
+        controller.parent = this;
+        File file = FxmlControl.getInternalFile("/data/db/Epidemic_Report_JHU.csv",
+                "data", "Epidemic_Report_JHU.csv", false);
+        controller.predefined = true;
+        controller.startFile(file, true);
+    }
+
     @FXML
-    @Override
-    protected void importAction() {
-        final FileChooser fileChooser = new FileChooser();
-        File path = AppVariables.getUserConfigPath(sourcePathKey);
-        if (path.exists()) {
-            fileChooser.setInitialDirectory(path);
-        }
-        fileChooser.getExtensionFilters().addAll(CommonFxValues.TextExtensionFilter);
-        File file = fileChooser.showOpenDialog(getMyStage());
-        if (file == null || !file.exists()) {
+    public void upAction() {
+        List<Integer> selected = new ArrayList<>();
+        selected.addAll(orderByList.getSelectionModel().getSelectedIndices());
+        if (selected.isEmpty()) {
             return;
         }
-        recordFileOpened(file);
-        synchronized (this) {
-            if (task != null) {
-                return;
+        List<Integer> newselected = new ArrayList<>();
+        for (Integer index : selected) {
+            if (index == 0 || newselected.contains(index - 1)) {
+                newselected.add(index);
+                continue;
             }
-            task = new SingletonTask<Void>() {
-
-                @Override
-                protected boolean handle() {
-                    importFile(file);
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    refreshAction();
-                }
-            };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
-            thread.setDaemon(true);
-            thread.start();
+            String lang = (String) orderByList.getItems().get(index);
+            orderByList.getItems().set(index, orderByList.getItems().get(index - 1));
+            orderByList.getItems().set(index - 1, lang);
+            newselected.add(index - 1);
         }
+        orderByList.getSelectionModel().clearSelection();
+        for (int index : newselected) {
+            orderByList.getSelectionModel().select(index);
+        }
+        orderByList.refresh();
+    }
+
+    @FXML
+    public void downAction() {
+        List<Integer> selected = new ArrayList<>();
+        selected.addAll(orderByList.getSelectionModel().getSelectedIndices());
+        if (selected.isEmpty()) {
+            return;
+        }
+        List<Integer> newselected = new ArrayList<>();
+        for (int i = selected.size() - 1; i >= 0; --i) {
+            int index = selected.get(i);
+            if (index == orderByList.getItems().size() - 1
+                    || newselected.contains(index + 1)) {
+                newselected.add(index);
+                continue;
+            }
+            String lang = (String) orderByList.getItems().get(index);
+            orderByList.getItems().set(index, orderByList.getItems().get(index + 1));
+            orderByList.getItems().set(index + 1, lang);
+            newselected.add(index + 1);
+        }
+        orderByList.getSelectionModel().clearSelection();
+        for (int index : newselected) {
+            orderByList.getSelectionModel().select(index);
+        }
+        orderByList.refresh();
+
+    }
+
+    @FXML
+    public void topAction() {
+        List<Integer> selectedIndices = new ArrayList<>();
+        selectedIndices.addAll(orderByList.getSelectionModel().getSelectedIndices());
+        if (selectedIndices.isEmpty()) {
+            return;
+        }
+        List<String> selected = new ArrayList<>();
+        selected.addAll(orderByList.getSelectionModel().getSelectedItems());
+        int size = selectedIndices.size();
+        for (int i = size - 1; i >= 0; --i) {
+            int index = selectedIndices.get(i);
+            orderByList.getItems().remove(index);
+        }
+        orderByList.getSelectionModel().clearSelection();
+        orderByList.getItems().addAll(0, selected);
+        orderByList.getSelectionModel().selectRange(0, size);
+        orderByList.refresh();
     }
 
     @Override
     public boolean leavingScene() {
         try {
-            if (treeTask != null) {
-                treeTask.cancel();
-                treeTask = null;
+            if (timer != null) {
+                timer.cancel();
+                timer = null;
             }
-            if (dataTask != null) {
-                dataTask.cancel();
-                dataTask = null;
-            }
-            if (chartsTask != null) {
-                chartsTask.cancel();
-                chartsTask = null;
-            }
-            if (importTask != null) {
-                importTask.cancel();
-                importTask = null;
-            }
-            if (exportTask != null) {
-                exportTask.cancel();
-                exportTask = null;
-            }
-            if (htmlTask != null) {
-                htmlTask.cancel();
-                htmlTask = null;
-            }
-            mapController.leavingScene();
+            geoController.leavingScene();
+            sourceController.leavingScene();
+            timeController.leavingScene();
+            chartController.leavingScene();
+            settingsController.leavingScene();
+
         } catch (Exception e) {
         }
         return super.leavingScene();
-
     }
 
 }

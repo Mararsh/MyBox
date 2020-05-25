@@ -5,7 +5,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
@@ -14,7 +13,6 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -25,6 +23,7 @@ import mara.mybox.value.CommonValues;
 public class LoadingController extends BaseController {
 
     private Task<?> loadingTask;
+    private boolean isCanceled;
 
     @FXML
     private ProgressIndicator progressIndicator;
@@ -58,14 +57,14 @@ public class LoadingController extends BaseController {
     public void init(final Task<?> task) {
         try {
             infoLabel.setText(message("Handling..."));
+            infoLabel.requestFocus();
             loadingTask = task;
-            if (task != null) {
-                progressIndicator.setProgress(-1F);
-                if (timeLabel != null) {
-                    showTimer();
-                }
+            isCanceled = false;
+            progressIndicator.setProgress(-1F);
+            if (timeLabel != null) {
+                showTimer();
             }
-
+            getMyStage().toFront();
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -83,16 +82,13 @@ public class LoadingController extends BaseController {
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (loadingTask != null && loadingTask.isCancelled()) {
-                                cancelAction();
-                                return;
-                            }
-                            long d = new Date().getTime() - startTime;
-                            timeLabel.setText(prefix + DateTools.showTime(d));
+                    Platform.runLater(() -> {
+                        if (loadingTask != null && loadingTask.isCancelled()) {
+                            cancelAction();
+                            return;
                         }
+                        long d = new Date().getTime() - startTime;
+                        timeLabel.setText(prefix + DateTools.showTime(d));
                     });
                 }
             }, 0, 1000);
@@ -102,13 +98,9 @@ public class LoadingController extends BaseController {
     }
 
     @FXML
-    private void mybox(ActionEvent event) {
-        openStage(CommonValues.MyboxFxml);
-    }
-
-    @FXML
     @Override
     public void cancelAction() {
+        isCanceled = true;
         if (loadingTask != null) {
             if (parentController != null) {
                 parentController.taskCanceled(loadingTask);
@@ -118,17 +110,23 @@ public class LoadingController extends BaseController {
         }
         if (timer != null) {
             timer.cancel();
+            timer = null;
         }
         this.closeStage();
-
     }
 
     public void setInfo(String info) {
 //        if (loadingTask == null || !loadingTask.isRunning()) {
 //            return;
 //        }
-        infoLabel.setText(info);
+        Platform.runLater(() -> {
+            infoLabel.setText(info);
+        });
 
+    }
+
+    public boolean isRunning() {
+        return timer != null;
     }
 
     public void setProgress(float value) {
@@ -170,6 +168,22 @@ public class LoadingController extends BaseController {
         this.loadingTask = loadingTask;
     }
 
+    public boolean isIsCanceled() {
+        return isCanceled;
+    }
+
+    public void setIsCanceled(boolean isCanceled) {
+        this.isCanceled = isCanceled;
+    }
+
+    public Label getTimeLabel() {
+        return timeLabel;
+    }
+
+    public void setTimeLabel(Label timeLabel) {
+        this.timeLabel = timeLabel;
+    }
+
     @Override
     public boolean checkBeforeNextAction() {
         if (loadingTask != null && loadingTask.isRunning()) {
@@ -178,5 +192,4 @@ public class LoadingController extends BaseController {
         }
         return true;
     }
-
 }

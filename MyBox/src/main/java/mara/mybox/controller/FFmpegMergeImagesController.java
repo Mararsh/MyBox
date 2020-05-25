@@ -11,13 +11,10 @@ import java.nio.charset.Charset;
 import java.util.Date;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TextField;
 import mara.mybox.data.MediaInformation;
 import mara.mybox.data.VisitHistory;
 import static mara.mybox.fxml.FxmlControl.badStyle;
@@ -50,11 +47,9 @@ public class FFmpegMergeImagesController extends FFmpegConvertMediaStreamsContro
     protected FFmpegAudiosTableController audiosTableController;
     @FXML
     protected CheckBox stopCheck;
-    @FXML
-    protected TextField audioBitrateInput;
 
     public FFmpegMergeImagesController() {
-        baseTitle = AppVariables.message("FFmpegMergeImages");
+        baseTitle = AppVariables.message("FFmpegMergeImagesInformation");
         mustSetResolution = true;
 
         SourceFileType = VisitHistory.FileType.Image;
@@ -82,16 +77,6 @@ public class FFmpegMergeImagesController extends FFmpegConvertMediaStreamsContro
             audiosTableController.parentFxml = myFxml;
 
             audiosData = audiosTableController.tableData;
-
-            audioBitrateInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    if (newValue != null && !newValue.isEmpty()) {
-                        AppVariables.setUserConfigValue("ffmpegDefaultAudioBitrate", newValue);
-                    }
-                }
-            });
-            audioBitrateInput.setText(AppVariables.getUserConfigValue("ffmpegDefaultAudioBitrate", "192k"));
 
             startButton.disableProperty().bind(
                     Bindings.isEmpty(tableView.getItems())
@@ -303,24 +288,21 @@ public class FFmpegMergeImagesController extends FFmpegConvertMediaStreamsContro
 
                 @Override
                 public void onProgress(FFmpegProgress progress) {
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            long now = System.currentTimeMillis();
-                            if (now > lastProgress + 500) {
-                                if (verboseCheck == null || verboseCheck.isSelected()) {
-                                    updateLogs(message("Handled") + ":"
-                                            + DateTools.showSeconds(progress.getTimeMillis() / 1000), true);
-                                }
-                                progressValue.setText(DateTools.showSeconds(progress.getTimeMillis() / 1000));
-                                lastProgress = now;
+                    Platform.runLater(() -> {
+                        long now = System.currentTimeMillis();
+                        if (now > lastProgress + 500) {
+                            if (verboseCheck == null || verboseCheck.isSelected()) {
+                                updateLogs(message("Handled") + ":"
+                                        + DateTools.showSeconds(progress.getTimeMillis() / 1000), true);
                             }
-                            if (now > lastStatus + 3000) {
-                                long cost = now - mediaStart;
-                                String s = message("Cost") + ": " + DateTools.showTime(cost);
-                                statusLabel.setText(s);
-                                lastStatus = now;
-                            }
+                            progressValue.setText(DateTools.showSeconds(progress.getTimeMillis() / 1000));
+                            lastProgress = now;
+                        }
+                        if (now > lastStatus + 3000) {
+                            long cost = now - mediaStart;
+                            String s = message("Cost") + ": " + DateTools.showTime(cost);
+                            statusLabel.setText(s);
+                            lastStatus = now;
                         }
                     });
 
@@ -338,9 +320,11 @@ public class FFmpegMergeImagesController extends FFmpegConvertMediaStreamsContro
             }
             ffmpeg.addArguments("-s", width + "x" + height)
                     .addArguments("-pix_fmt", "yuv420p");
-            String ba = audioBitrateInput.getText().trim();
-            if (!ba.isEmpty()) {
-                ffmpeg.addArguments("-b:a", audioBitrateInput.getText());
+            if (audioBitrate > 0) {
+                ffmpeg.addArguments("-b:a", audioBitrate + "k");
+            }
+            if (audioSampleRate > 0) {
+                ffmpeg.addArguments("-ar", audioSampleRate + "");
             }
             ffmpeg.addOutput(UrlOutput.toPath(videoFile.toPath()))
                     .setProgressListener(listener)
@@ -350,6 +334,16 @@ public class FFmpegMergeImagesController extends FFmpegConvertMediaStreamsContro
             } else if (videoCodec != null) {
                 ffmpeg.addArguments("-vcodec", videoCodec);
             }
+            if (aspect != null) {
+                ffmpeg.addArguments("-aspect", aspect);
+            }
+            if (videoFrameRate > 0) {
+                ffmpeg.addArguments("-r", videoFrameRate + "");
+            }
+            if (videoBitrate > 0) {
+                ffmpeg.addArguments("-b:v", videoBitrate + "k");
+            }
+
             if (disbaleAudio) {
                 ffmpeg.addArgument("-an");
             } else if (audioCodec != null) {
@@ -360,12 +354,7 @@ public class FFmpegMergeImagesController extends FFmpegConvertMediaStreamsContro
             } else if (subtitleCodec != null) {
                 ffmpeg.addArguments("-scodec", subtitleCodec);
             }
-            if (aspect != null) {
-                ffmpeg.addArguments("-aspect", aspect);
-            }
-            if (videoFrameRate > 0) {
-                ffmpeg.addArguments("-r", videoFrameRate + "");
-            }
+
             String volumn = volumnInput.getText().trim();
             if (!volumn.isBlank()) {
                 ffmpeg.addArguments("-af", "volume=" + volumn);

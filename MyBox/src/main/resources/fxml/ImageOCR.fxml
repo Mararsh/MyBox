@@ -34,7 +34,7 @@ License:    Apache License Version 2.0
                             <content>
                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                     <children>
-                                        <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Image">
+                                        <TitledPane maxWidth="1.7976931348623157E308" text="%Image">
                                             <content>
                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="5.0">
                                                     <children>
@@ -90,7 +90,7 @@ License:    Apache License Version 2.0
                                                 </VBox>
                                             </content>
                                         </TitledPane>
-                                        <TitledPane fx:id="preprocessPane" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Preprocess">
+                                        <TitledPane fx:id="preprocessPane" layoutX="10.0" layoutY="10.0"  maxWidth="1.7976931348623157E308"  text="%Preprocess">
                                             <content>
                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="5.0">
                                                     <children>
@@ -143,7 +143,7 @@ License:    Apache License Version 2.0
                                                                     <graphic>
                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                             <image>
-                                                                                <Image url="@../buttons/iconRun.png" />
+                                                                                <Image url="@../buttons/iconGo.png" />
                                                                             </image>
                                                                         </ImageView>
                                                                     </graphic>
@@ -225,7 +225,7 @@ License:    Apache License Version 2.0
                                                 </VBox>
                                             </content>
                                         </TitledPane>
-                                        <TitledPane fx:id="ocrOptionsPane" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%OCROptions">
+                                        <TitledPane fx:id="ocrOptionsPane" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308"  text="%OCROptions">
                                             <content>
                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                     <children>

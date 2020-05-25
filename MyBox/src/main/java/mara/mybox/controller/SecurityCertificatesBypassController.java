@@ -43,7 +43,13 @@ public class SecurityCertificatesBypassController extends TableManageController<
     }
 
     @Override
-    public void load() {
+    public void afterSceneLoaded() {
+        super.afterSceneLoaded();
+        loadTableData();
+    }
+
+    @Override
+    public void loadTableData() {
         tableData.clear();
         tableData.addAll(TableBrowserBypassSSL.read());
         checkSelected();

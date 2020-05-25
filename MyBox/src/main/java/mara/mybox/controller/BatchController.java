@@ -379,6 +379,9 @@ public abstract class BatchController<T> extends BaseController {
     @FXML
     @Override
     public void startAction() {
+        if (tableController != null) {
+            tableController.stopCountSize();
+        }
         if (statusLabel != null) {
             statusLabel.setText("");
         }
@@ -599,6 +602,7 @@ public abstract class BatchController<T> extends BaseController {
                     public void succeeded() {
                         super.succeeded();
                         updateInterface("Done");
+                        afterSuccessful();
                     }
 
                     @Override
@@ -636,6 +640,10 @@ public abstract class BatchController<T> extends BaseController {
     }
 
     public void afterHandleFiles() {
+
+    }
+
+    public void afterSuccessful() {
 
     }
 
@@ -681,7 +689,7 @@ public abstract class BatchController<T> extends BaseController {
             } else {
                 return;
             }
-            totalItemsHandled++;
+
             tableController.markFileHandled(currentParameters.currentIndex, result);
         } catch (Exception e) {
             logger.debug(e.toString());
@@ -962,8 +970,7 @@ public abstract class BatchController<T> extends BaseController {
         updateLogs(line, true, immediate);
     }
 
-    protected void updateLogs(final String line, boolean showTime,
-            boolean immediate) {
+    protected void updateLogs(final String line, boolean showTime, boolean immediate) {
         try {
             if (logsTextArea == null) {
                 return;
@@ -974,18 +981,17 @@ public abstract class BatchController<T> extends BaseController {
             newLogs.append(line).append("\n");
             logsNewlines++;
             long past = new Date().getTime() - processStartTime.getTime();
-            if (immediate || logsNewlines > logsCacheLines || past > 5000) {
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        logsTextArea.appendText(newLogs.toString());
-                        logsTotalLines += logsNewlines;
-                        if (logsTotalLines > logsMaxLines + logsCacheLines) {
-                            logsTextArea.deleteText(0, newLogs.length());
-                        }
-                        newLogs = new StringBuffer();
-                        logsNewlines = 0;
+            if (immediate || logsTotalLines % 300 == 0 || past > 5000) {
+                Platform.runLater(() -> {
+                    logsTextArea.appendText(newLogs.toString());
+                    logsTotalLines += logsNewlines;
+                    if (logsTotalLines > logsMaxLines + logsCacheLines) {
+//                        logsTextArea.deleteText(0, newLogs.length());
+                        logsTextArea.clear();
+                        logsTotalLines = 0;
                     }
+                    newLogs = new StringBuffer();
+                    logsNewlines = 0;
                 });
             }
         } catch (Exception e) {
@@ -1038,14 +1044,14 @@ public abstract class BatchController<T> extends BaseController {
                     startButton.setOnAction((ActionEvent event) -> {
                         cancelProcess(event);
                     });
-                    if (allowPaused) {
-                        pauseButton.setVisible(true);
-                        pauseButton.setDisable(false);
-                        pauseButton.setText(AppVariables.message("Pause"));
-                        pauseButton.setOnAction((ActionEvent event) -> {
-                            pauseProcess(event);
-                        });
-                    }
+//                    if (allowPaused) {
+//                        pauseButton.setVisible(true);
+//                        pauseButton.setDisable(false);
+//                        pauseButton.setText(AppVariables.message("Pause"));
+//                        pauseButton.setOnAction((ActionEvent event) -> {
+//                            pauseProcess(event);
+//                        });
+//                    }
                     disableControls(true);
                     break;
 
@@ -1094,7 +1100,7 @@ public abstract class BatchController<T> extends BaseController {
 
     public void showCost() {
         long cost = new Date().getTime() - processStartTime.getTime();
-        double avg = countAverageTime(cost);
+
         String s;
         if (paused) {
             s = message("Paused");
@@ -1102,15 +1108,24 @@ public abstract class BatchController<T> extends BaseController {
             s = message(currentParameters.status);
         }
         String space = "   ";
-        s += ". " + message("HandledThisTime") + ":" + totalFilesHandled + space;
+        String avgString = "";
+        if (totalFilesHandled > 0) {
+            s += ". " + message("HandledFiles") + ":" + totalFilesHandled + space;
+            avgString = DateTools.showTime(Math.round(countAverageTime(cost))) + " " + message("PerFile");
+        }
+        if (totalItemsHandled > 0) {
+            s += ". " + message("HandledItems") + ":" + totalItemsHandled + space;
+            avgString += " " + DoubleTools.scale3((double) cost / totalItemsHandled) + " " + message("PerItem");
+        }
         int count = 0;
-        if (targetFiles != null) {
-            count = targetFiles.size();
+        if (targetFiles != null && !targetFiles.isEmpty()) {
             popInformation(MessageFormat.format(AppVariables.message("FilesGenerated"), count));
         }
-        s += MessageFormat.format(AppVariables.message("FilesGenerated"), count) + space;
+        if (count > 0) {
+            s += MessageFormat.format(AppVariables.message("FilesGenerated"), count) + space;
+        }
         s += message("Cost") + ": " + DateTools.showTime(cost) + "." + space
-                + message("Average") + ":" + DateTools.showTime(Math.round(avg)) + " "
+                + message("Average") + ":" + avgString + " "
                 + message("StartTime") + ":" + DateTools.datetimeToString(processStartTime) + space
                 + message("EndTime") + ":" + DateTools.datetimeToString(new Date());
         if (statusLabel != null) {

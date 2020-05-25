@@ -142,7 +142,7 @@ public class ImagesDurationTableController extends ImagesTableController {
             }
         }
         String s = message("TotalDuration") + ": " + DateTools.showDuration(d) + "  "
-                + message("TotalPixels") + ": " + StringTools.formatData(pixels) + "  ";
+                + message("TotalPixels") + ": " + StringTools.format(pixels) + "  ";
         s += MessageFormat.format(message("TotalFilesNumberSize"),
                 totalFilesNumber, FileTools.showFileSize(totalFilesSize));
         if (viewFileButton != null) {

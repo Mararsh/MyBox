@@ -7,14 +7,18 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
@@ -23,6 +27,7 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -73,7 +78,7 @@ public class ColorPaletteController extends BaseController {
     @FXML
     protected Label sizeLabel, promptLabel, titleLabel;
     @FXML
-    protected Button htmlButton;
+    protected Button htmlButton, dataButton, commonColorsButton;
     @FXML
     protected TextField nameInput;
 
@@ -86,16 +91,13 @@ public class ColorPaletteController extends BaseController {
         try {
             super.initControls();
             shadowEffect = new DropShadow();
-            colorPicker.valueProperty().addListener(new ChangeListener<Color>() {
-                @Override
-                public void changed(ObservableValue<? extends Color> ov,
-                        Color oldVal, Color newVal) {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    setColor(newVal);
-                }
-            });
+            colorPicker.valueProperty().addListener(
+                    (ObservableValue<? extends Color> ov, Color oldVal, Color newVal) -> {
+                        if (isSettingValues) {
+                            return;
+                        }
+                        setColor(newVal);
+                    });
 
             promptLabel.setStyle(darkRedText);
             pickColorButton.setVisible(false);
@@ -121,24 +123,20 @@ public class ColorPaletteController extends BaseController {
     public void toFront() {
         baseHeight = headerBox.getHeight() + barBox.getHeight()
                 + promptLabel.getHeight() + closeBox.getHeight() + 110;
-        colorsPane.heightProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> ov,
-                    Number oldVal, Number newVal) {
-                if (!isSettingValues && Math.abs(newVal.doubleValue() - oldVal.doubleValue()) > 10) {
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
+        colorsPane.heightProperty().addListener(
+                (ObservableValue<? extends Number> ov, Number oldVal, Number newVal) -> {
+                    if (!isSettingValues && Math.abs(newVal.doubleValue() - oldVal.doubleValue()) > 10) {
+                        Platform.runLater(() -> {
                             adjustHeight();
-                        }
-                    });
-                }
-            }
-        });
+                        });
+                    }
+                });
 
         load();
         adjustHeight();
         super.toFront();
+        FxmlControl.setTooltip(dataButton, message("ManageColors"));
+        FxmlControl.removeTooltip(commonColorsButton);
     }
 
     protected void adjustHeight() {
@@ -384,6 +382,111 @@ public class ColorPaletteController extends BaseController {
     }
 
     @FXML
+    protected void popCommonColorsMenu(MouseEvent mouseEvent) {
+        try {
+            if (popMenu != null && popMenu.isShowing()) {
+                popMenu.hide();
+            }
+            popMenu = new ContextMenu();
+            popMenu.setAutoHide(true);
+
+            MenuItem menu = new MenuItem(message("ImportWebCommonColors"));
+            menu.setOnAction((ActionEvent event) -> {
+                commonColors("web");
+            });
+            popMenu.getItems().add(menu);
+            popMenu.getItems().add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("ImportChineseTraditionalColors"));
+            menu.setOnAction((ActionEvent event) -> {
+                commonColors("chinese");
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ImportJapaneseTraditionalColors"));
+            menu.setOnAction((ActionEvent event) -> {
+                commonColors("japanese");
+            });
+            popMenu.getItems().add(menu);
+            popMenu.getItems().add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("MenuClose"));
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setOnAction((ActionEvent event) -> {
+                popMenu.hide();
+                popMenu = null;
+            });
+            popMenu.getItems().add(menu);
+
+            FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    protected void commonColors(String type) {
+        synchronized (this) {
+            if (task != null) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+                @Override
+                protected boolean handle() {
+                    List<Color> palette = new ArrayList<>();
+                    for (Node node : colorsPane.getChildren()) {
+                        Rectangle rect = (Rectangle) node;
+                        palette.add((Color) rect.getFill());
+                    }
+                    List<ColorData> newColors = new ArrayList<>();
+                    switch (type) {
+                        case "chinese":
+                            for (Color color
+                                    : FxmlColor.chineseColorValues()) {
+                                String rgba = color.toString();
+                                String name = FxmlColor.chineseColorNames().get(color);
+                                if (!palette.contains(color)) {
+                                    newColors.add(new ColorData(rgba, name));
+                                }
+                            }
+                            break;
+                        case "japanese":
+                            for (Color color
+                                    : FxmlColor.japaneseColorValues()) {
+                                String rgba = color.toString();
+                                String name = FxmlColor.japaneseColorNames().get(color);
+                                if (!palette.contains(color)) {
+                                    newColors.add(new ColorData(rgba, name));
+                                }
+                            }
+                            break;
+                        default:
+                            for (Color color : FxmlColor.webColorValues()) {
+                                String rgba = color.toString();
+                                String name = FxmlColor.webColorNames().get(color);
+                                if (!palette.contains(color)) {
+                                    newColors.add(new ColorData(rgba, name));
+                                }
+                            }
+                            break;
+                    }
+                    TableColorData.addInPalette(newColors);
+                    return true;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    load();
+                }
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
+    }
+
+    @FXML
     public void commonColorsAction() {
         synchronized (this) {
             if (task != null) {
@@ -398,7 +501,7 @@ public class ColorPaletteController extends BaseController {
                         Rectangle rect = (Rectangle) node;
                         colors.add((Color) rect.getFill());
                     }
-                    List<Color> commonColors = FxmlColor.commonColors();
+                    List<Color> commonColors = FxmlColor.webColorValues();
                     for (int i = commonColors.size() - 1; i >= 0; --i) {
                         Color color = commonColors.get(i);
                         if (!colors.contains(color)) {

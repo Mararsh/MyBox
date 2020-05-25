@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.awt.Toolkit;
 import java.io.File;
 import java.net.URI;
 import java.net.URL;
@@ -31,6 +32,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Control;
 import javafx.scene.control.Hyperlink;
@@ -57,6 +59,7 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Popup;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import mara.mybox.data.BaseTask;
 import mara.mybox.data.VisitHistory;
@@ -89,7 +92,7 @@ public class BaseController implements Initializable {
 
     protected String TipsLabelKey, LastPathKey, targetPathKey, sourcePathKey, defaultPathKey, SaveAsOptionsKey;
     protected int SourceFileType, SourcePathType, TargetFileType, TargetPathType, AddFileType, AddPathType,
-            operationType;
+            operationType, dpi;
     protected List<FileChooser.ExtensionFilter> sourceExtensionFilter, targetExtensionFilter;
     protected String myFxml, parentFxml, currentStatus, baseTitle, baseName, loadFxml;
     protected Stage myStage;
@@ -162,6 +165,8 @@ public class BaseController implements Initializable {
     protected ScrollPane leftPane, rightPane;
     @FXML
     protected ImageView leftPaneControl, rightPaneControl;
+    @FXML
+    protected ComboBox<String> dpiSelector;
 
     public BaseController() {
         baseTitle = AppVariables.message("AppTitle");
@@ -211,11 +216,8 @@ public class BaseController implements Initializable {
         setSceneFontSize(AppVariables.sceneFontSize);
         if (thisPane != null) {
             thisPane.setStyle("-fx-font-size: " + AppVariables.sceneFontSize + "px;");
-            thisPane.setOnKeyReleased(new EventHandler<KeyEvent>() {
-                @Override
-                public void handle(KeyEvent event) {
-                    keyEventsHandler(event);
-                }
+            thisPane.setOnKeyReleased((KeyEvent event) -> {
+                keyEventsHandler(event);
             });
         }
 
@@ -418,6 +420,33 @@ public class BaseController implements Initializable {
                 checkTargetExistType();
             }
 
+            dpi = 96;
+            if (dpiSelector != null) {
+                List<String> dpiValues = new ArrayList();
+                dpiValues.addAll(Arrays.asList("96", "120", "160", "300"));
+                String sValue = Toolkit.getDefaultToolkit().getScreenResolution() + "";
+                if (dpiValues.contains(sValue)) {
+                    dpiValues.remove(sValue);
+                }
+                dpiValues.add(0, sValue);
+                sValue = (int) Screen.getPrimary().getDpi() + "";
+                if (dpiValues.contains(sValue)) {
+                    dpiValues.remove(sValue);
+                }
+                dpiValues.add(sValue);
+                dpiSelector.getItems().addAll(dpiValues);
+                dpiSelector.getSelectionModel().selectedItemProperty().addListener(
+                        (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
+                            try {
+                                dpi = Integer.parseInt(newValue);
+                                AppVariables.setUserConfigValue(baseName + "DPI", dpi + "");
+                            } catch (Exception e) {
+                                dpi = 96;
+                            }
+                        });
+                dpiSelector.getSelectionModel().select(AppVariables.getUserConfigValue(baseName + "DPI", "96"));
+            }
+
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -462,26 +491,20 @@ public class BaseController implements Initializable {
                 maximizedListener = new MaximizedListener(prefix);
                 myStage.maximizedProperty().addListener(maximizedListener);
 
-                myScene.widthProperty().addListener(new ChangeListener<Number>() {
-                    @Override
-                    public void changed(ObservableValue<? extends Number> ov,
-                            Number old_val, Number new_val) {
-                        if (!myStage.isMaximized() && !myStage.isFullScreen() && !myStage.isIconified()
-                                && myStage.getWidth() > minSize) {
-                            AppVariables.setUserConfigInt(prefix + "StageWidth", (int) myStage.getWidth());
-                        }
-                    }
-                });
-                myScene.heightProperty().addListener(new ChangeListener<Number>() {
-                    @Override
-                    public void changed(ObservableValue<? extends Number> ov,
-                            Number old_val, Number new_val) {
-                        if (!myStage.isMaximized() && !myStage.isFullScreen() && !myStage.isIconified()
-                                && myStage.getHeight() > minSize) {
-                            AppVariables.setUserConfigInt(prefix + "StageHeight", (int) myStage.getHeight());
-                        }
-                    }
-                });
+                myScene.widthProperty().addListener(
+                        (ObservableValue<? extends Number> ov, Number old_val, Number new_val) -> {
+                            if (!myStage.isMaximized() && !myStage.isFullScreen() && !myStage.isIconified()
+                            && myStage.getWidth() > minSize) {
+                                AppVariables.setUserConfigInt(prefix + "StageWidth", (int) myStage.getWidth());
+                            }
+                        });
+                myScene.heightProperty().addListener(
+                        (ObservableValue<? extends Number> ov, Number old_val, Number new_val) -> {
+                            if (!myStage.isMaximized() && !myStage.isFullScreen() && !myStage.isIconified()
+                            && myStage.getHeight() > minSize) {
+                                AppVariables.setUserConfigInt(prefix + "StageHeight", (int) myStage.getHeight());
+                            }
+                        });
 
             } else {
                 myStage.sizeToScene();
@@ -521,6 +544,15 @@ public class BaseController implements Initializable {
         FxmlControl.refreshStyle(root);
     }
 
+    public void refreshCurrentStyle() {
+        if (getMyScene() == null) {
+            return;
+        }
+        Parent root = myScene.getRoot();
+        root.applyCss();
+        root.layout();
+    }
+
     public void toFront() {
         try {
             timer = new Timer();
@@ -550,79 +582,70 @@ public class BaseController implements Initializable {
                 return;
             }
             if (leftPane != null && rightPane == null) {
-                try {
-                    String lv = AppVariables.getUserConfigValue(baseName + "LeftPanePosition", "0.35");
-                    splitPane.setDividerPositions(Double.parseDouble(lv));
-                } catch (Exception e) {
-                    splitPane.setDividerPositions(0.35);
-                }
-                leftDividerListener = new ChangeListener<Number>() {
-                    @Override
-                    public void changed(
-                            ObservableValue<? extends Number> observable,
-                            Number oldValue, Number newValue) {
-                        if (!isSettingValues) {
-                            if (splitPane.getItems().contains(leftPane)) {
-                                AppVariables.setUserConfigValue(baseName + "LeftPanePosition", newValue.doubleValue() + "");
-                            }
-                        }
+                if (splitPane.getDividers().size() > 0) {
+                    try {
+                        String lv = AppVariables.getUserConfigValue(baseName + "LeftPanePosition", "0.35");
+                        splitPane.setDividerPositions(Double.parseDouble(lv));
+                    } catch (Exception e) {
+                        splitPane.setDividerPositions(0.35);
                     }
-                };
-                splitPane.getDividers().get(0).positionProperty().addListener(leftDividerListener);
-
+                    leftDividerListener
+                            = (ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
+                                if (!isSettingValues) {
+                                    if (splitPane.getItems().contains(leftPane)) {
+                                        AppVariables.setUserConfigValue(baseName + "LeftPanePosition", newValue.doubleValue() + "");
+                                    }
+                                }
+                            };
+                    splitPane.getDividers().get(0).positionProperty().addListener(leftDividerListener);
+                }
             } else if (leftPane == null && rightPane != null) {
-                try {
-                    String rv = AppVariables.getUserConfigValue(baseName + "RightPanePosition", "0.65");
-                    splitPane.setDividerPositions(Double.parseDouble(rv));
-                } catch (Exception e) {
-                    splitPane.setDividerPositions(0.65);
-                }
-                rightDividerListener = new ChangeListener<Number>() {
-                    @Override
-                    public void changed(
-                            ObservableValue<? extends Number> observable,
-                            Number oldValue, Number newValue) {
-                        if (!isSettingValues) {
-                            AppVariables.setUserConfigValue(baseName + "RightPanePosition", newValue.doubleValue() + "");
-                        }
+                if (splitPane.getDividers().size() > 0) {
+                    try {
+                        String rv = AppVariables.getUserConfigValue(baseName + "RightPanePosition", "0.65");
+                        splitPane.setDividerPositions(Double.parseDouble(rv));
+                    } catch (Exception e) {
+                        splitPane.setDividerPositions(0.65);
                     }
-                };
-                splitPane.getDividers().get(0).positionProperty().addListener(rightDividerListener);
-
+                    rightDividerListener
+                            = (ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
+                                if (!isSettingValues) {
+                                    AppVariables.setUserConfigValue(baseName + "RightPanePosition", newValue.doubleValue() + "");
+                                }
+                            };
+                    splitPane.getDividers().get(0).positionProperty().addListener(rightDividerListener);
+                }
             } else if (leftPane != null && rightPane != null) {
-                try {
-                    String lv = AppVariables.getUserConfigValue(baseName + "LeftPanePosition", "0.15");
-                    String rv = AppVariables.getUserConfigValue(baseName + "RightPanePosition", "0.85");
-                    splitPane.setDividerPositions(Double.parseDouble(lv), Double.parseDouble(rv));
-                } catch (Exception e) {
-                    splitPane.setDividerPositions(0.15, 0.85);
+                if (splitPane.getDividers().size() > 1) {
+                    try {
+                        String lv = AppVariables.getUserConfigValue(baseName + "LeftPanePosition", "0.15");
+                        String rv = AppVariables.getUserConfigValue(baseName + "RightPanePosition", "0.85");
+                        splitPane.setDividerPositions(Double.parseDouble(lv), Double.parseDouble(rv));
+                    } catch (Exception e) {
+                        splitPane.setDividerPositions(0.15, 0.85);
+                    }
+                    leftDividerListener
+                            = (ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
+                                if (!isSettingValues) {
+                                    if (splitPane.getItems().contains(leftPane)) {
+                                        AppVariables.setUserConfigValue(baseName + "LeftPanePosition", newValue.doubleValue() + "");
+                                    } else {
+                                        AppVariables.setUserConfigValue(baseName + "RightPanePosition", newValue.doubleValue() + "");
+                                    }
+                                }
+                            };
+                    rightDividerListener
+                            = (ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
+                                if (!isSettingValues) {
+                                    AppVariables.setUserConfigValue(baseName + "RightPanePosition", newValue.doubleValue() + "");
+                                }
+                            };
+//                    splitPane.getDividers().get(0).positionProperty().removeListener(leftDividerListener);
+                    splitPane.getDividers().get(0).positionProperty().addListener(leftDividerListener);
+//                    splitPane.getDividers().get(1).positionProperty().removeListener(rightDividerListener);
+                    splitPane.getDividers().get(1).positionProperty().addListener(rightDividerListener);
                 }
-                leftDividerListener = new ChangeListener<Number>() {
-                    @Override
-                    public void changed(
-                            ObservableValue<? extends Number> observable,
-                            Number oldValue, Number newValue) {
-                        if (!isSettingValues) {
-                            if (splitPane.getItems().contains(leftPane)) {
-                                AppVariables.setUserConfigValue(baseName + "LeftPanePosition", newValue.doubleValue() + "");
-                            } else {
-                                AppVariables.setUserConfigValue(baseName + "RightPanePosition", newValue.doubleValue() + "");
-                            }
-                        }
-                    }
-                };
-                rightDividerListener = new ChangeListener<Number>() {
-                    @Override
-                    public void changed(
-                            ObservableValue<? extends Number> observable,
-                            Number oldValue, Number newValue) {
-                        if (!isSettingValues) {
-                            AppVariables.setUserConfigValue(baseName + "RightPanePosition", newValue.doubleValue() + "");
-                        }
-                    }
-                };
-                splitPane.getDividers().get(0).positionProperty().addListener(leftDividerListener);
-                splitPane.getDividers().get(1).positionProperty().addListener(rightDividerListener);
+
             }
 
         } catch (Exception e) {
@@ -677,6 +700,7 @@ public class BaseController implements Initializable {
             double[] positions = splitPane.getDividerPositions();
             splitPane.getItems().remove(rightPane);
             ControlStyle.setIcon(rightPaneControl, ControlStyle.getIcon("iconDoubleLeft.png"));
+            rightPaneControl.applyCss();
             if (positions.length == 2) {
                 splitPane.setDividerPosition(0, positions[0]);
             }
@@ -1136,6 +1160,11 @@ public class BaseController implements Initializable {
                 break;
             case F5:
                 refresh();
+                break;
+            case F6:
+                if (popMenu != null) {
+                    popMenu.hide();
+                }
                 break;
             case F11:
                 if (saveAsButton != null && !saveAsButton.isDisabled()) {
@@ -1993,6 +2022,15 @@ public class BaseController implements Initializable {
     }
 
     @FXML
+    public void derbyHelp() {
+        try {
+            browseURI(new URI("http://db.apache.org/derby/docs/10.15/ref/index.html"));
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    @FXML
     public void okAction() {
 
     }
@@ -2115,6 +2153,11 @@ public class BaseController implements Initializable {
     @FXML
     public void lastAction() {
 
+    }
+
+    @FXML
+    public void mybox(ActionEvent event) {
+        openStage(CommonValues.MyboxFxml);
     }
 
     public boolean clearSettings() {
@@ -2383,11 +2426,8 @@ public class BaseController implements Initializable {
                 popupTimer.schedule(new TimerTask() {
                     @Override
                     public void run() {
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                hidePopup();
-                            }
+                        Platform.runLater(() -> {
+                            hidePopup();
                         });
                     }
                 }, delay);
@@ -2491,28 +2531,18 @@ public class BaseController implements Initializable {
         try {
             final LoadingController controller
                     = FxmlStage.openLoadingStage(getMyStage(), block, task, info);
-
             controller.parentController = myController;
 
-            task.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-                @Override
-                public void handle(WorkerStateEvent event) {
-                    controller.closeStage();
-                }
+            task.setOnSucceeded((WorkerStateEvent event) -> {
+                controller.closeStage();
             });
-            task.setOnCancelled(new EventHandler<WorkerStateEvent>() {
-                @Override
-                public void handle(WorkerStateEvent event) {
-                    popInformation(AppVariables.message("Canceled"));
-                    controller.closeStage();
-                }
+            task.setOnCancelled((WorkerStateEvent event) -> {
+                popInformation(AppVariables.message("Canceled"));
+                controller.closeStage();
             });
-            task.setOnFailed(new EventHandler<WorkerStateEvent>() {
-                @Override
-                public void handle(WorkerStateEvent event) {
-                    popError(AppVariables.message("Error"));
-                    controller.closeStage();
-                }
+            task.setOnFailed((WorkerStateEvent event) -> {
+                popError(AppVariables.message("Error"));
+                controller.closeStage();
             });
             return controller;
 

@@ -101,7 +101,7 @@ public class WeiboSnapRunController extends BaseController {
     protected SnapType snapType;
     protected SnapshotParameters snapParameters;
     protected int pageHeight, screenHeight, screenWidth, startPage, snapsTotal,
-            snapImageWidth, snapImageHeight, snapHeight, snapStep, dpi;
+            snapImageWidth, snapImageHeight, snapHeight, snapStep;
     protected double snapScale;
     protected List<String> imageFiles;
 
@@ -335,13 +335,13 @@ public class WeiboSnapRunController extends BaseController {
 
             String pdfSizeS = parameters.getMaxMergedSize();
             if ("1G".equals(pdfSizeS)) {
-                maxMergedSize = 1024 * 1024 * 1024;
+                maxMergedSize = 1024 * 1024 * 1024L;
             } else if ("2G".equals(pdfSizeS)) {
-                maxMergedSize = 2048 * 1024 * 1024;
+                maxMergedSize = 2048 * 1024 * 1024L;
             } else if (message("Unlimit").equals(pdfSizeS)) {
                 maxMergedSize = -1;
             } else {
-                maxMergedSize = 500 * 1024 * 1024;
+                maxMergedSize = 500 * 1024 * 1024L;
             }
 
 //            logger.debug(parameters.getWebAddress());
@@ -640,7 +640,6 @@ public class WeiboSnapRunController extends BaseController {
             retried = 0;
             currentPage++;
 
-//            logger.debug("currentPage: " + currentPage);
             if (!startPageChecked && currentMonthPageCount > 1) {
                 while (currentPage < startPage) {
                     currentPage++;
@@ -650,7 +649,7 @@ public class WeiboSnapRunController extends BaseController {
             if (currentPage > currentMonthPageCount) {
 
                 if (snapType == SnapType.Like) {
-                    missCompleted();
+                    missionCompleted();
                     return;
                 }
                 completedMonthsCount++;
@@ -665,7 +664,7 @@ public class WeiboSnapRunController extends BaseController {
                 c.add(Calendar.MONTH, 1);
                 currentMonth = c.getTime();
                 if (currentMonth.getTime() > parameters.getEndMonth().getTime()) {
-                    missCompleted();
+                    missionCompleted();
                     return;
                 }
                 currentPage = 0;
@@ -685,14 +684,14 @@ public class WeiboSnapRunController extends BaseController {
         }
     }
 
-    protected void missCompleted() {
+    protected void missionCompleted() {
         if (parameters.isMiao()) {
             FxmlControl.miao3();
         }
         if (parent != null) {
-            parent.popInformation(AppVariables.message("MissCompleted"));
+            parent.popInformation(AppVariables.message("MissionCompleted"));
         }
-        alertInformation(AppVariables.message("MissCompleted"));
+        alertInformation(AppVariables.message("MissionCompleted"));
         endSnap();
     }
 
@@ -1326,7 +1325,7 @@ public class WeiboSnapRunController extends BaseController {
                             totalSize += file.length();
                         }
                     }
-                    if (files.isEmpty() || totalSize > maxMergedSize) {
+                    if (files.isEmpty() || (maxMergedSize > 0 && totalSize > maxMergedSize)) {
                         pdfs.remove(month);
                         savedPagePdfCount += files.size();
                         return null;

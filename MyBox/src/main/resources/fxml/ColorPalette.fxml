@@ -88,12 +88,12 @@ License:    Apache License Version 2.0
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../buttons/iconDataImport.png" />
+                        <Image url="@../buttons/iconData.png" />
                      </image>
                   </ImageView>
                </graphic>
             </Button>
-                <Button fx:id="commonColorsButton" layoutX="160.0" layoutY="10.0" mnemonicParsing="false" onAction="#commonColorsAction">
+                <Button fx:id="commonColorsButton" layoutX="160.0" layoutY="10.0" mnemonicParsing="false" onMouseEntered="#popCommonColorsMenu">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>

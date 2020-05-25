@@ -36,7 +36,7 @@ License:    Apache License Version 2.0
                                     <children>
                                         <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="20.0" spacing="5.0" VBox.vgrow="NEVER">
                                             <children>
-                                    <Hyperlink onAction="#aboutColor" text="%AboutColor" />
+                                                <Hyperlink onAction="#aboutColor" text="%AboutColor" />
                                                 <Label maxWidth="1.7976931348623157E308" text=" " HBox.hgrow="ALWAYS" />
                                                 <Label text="%DecimalScale">
                                                     <HBox.margin>
@@ -59,42 +59,42 @@ License:    Apache License Version 2.0
                                                 <Button fx:id="calculateButton" mnemonicParsing="false" onAction="#calculateAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Calculate" />
                                             </children>
                                         </HBox>
-                              <SplitPane dividerPositions="0.6" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-                                 <items>
-                                    <ScrollPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefViewportHeight="576.0" prefViewportWidth="1958.0">
-                                       <content>
-                                          <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                                             <children>
-                                                          <TitledPane layoutX="10.0" layoutY="73.0" text="%SourceColor">
-                                                              <content>
-                                                                  <fx:include fx:id="sourceColor" source="XYZ.fxml" />
-                                                              </content>
-                                                          </TitledPane>
-                                                          <TitledPane text="%SourceWhitePoint">
-                                                              <content>
-                                                                  <fx:include fx:id="sourceWP" source="WhitePoint.fxml" />
-                                                              </content>
-                                                          </TitledPane>
-                                                          <TitledPane text="%TargetWhitePoint">
-                                                              <content>
-                                                                  <fx:include fx:id="targetWP" source="WhitePoint.fxml" />
-                                                              </content>
-                                                          </TitledPane>
-                                             </children>
-                                          </VBox>
-                                       </content>
-                                    </ScrollPane>
-                                              <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%TargetColor">
-                                                  <content>
-                                                      <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                                                          <children>
-                                                              <TextArea fx:id="adaptationArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
-                                                          </children>
-                                                      </VBox>
-                                                  </content>
-                                              </TitledPane>
-                                 </items>
-                              </SplitPane>
+                                        <SplitPane dividerPositions="0.6" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                            <items>
+                                                <ScrollPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefViewportHeight="576.0" prefViewportWidth="1958.0">
+                                                    <content>
+                                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                                            <children>
+                                                                <TitledPane layoutX="10.0" layoutY="73.0" text="%SourceColor">
+                                                                    <content>
+                                                                        <fx:include fx:id="sourceColor" source="XYZ.fxml" />
+                                                                    </content>
+                                                                </TitledPane>
+                                                                <TitledPane text="%SourceWhitePoint">
+                                                                    <content>
+                                                                        <fx:include fx:id="sourceWP" source="WhitePoint.fxml" />
+                                                                    </content>
+                                                                </TitledPane>
+                                                                <TitledPane text="%TargetWhitePoint">
+                                                                    <content>
+                                                                        <fx:include fx:id="targetWP" source="WhitePoint.fxml" />
+                                                                    </content>
+                                                                </TitledPane>
+                                                            </children>
+                                                        </VBox>
+                                                    </content>
+                                                </ScrollPane>
+                                                <TitledPane  maxWidth="1.7976931348623157E308" text="%TargetColor">
+                                                    <content>
+                                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                                            <children>
+                                                                <TextArea fx:id="adaptationArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
+                                                            </children>
+                                                        </VBox>
+                                                    </content>
+                                                </TitledPane>
+                                            </items>
+                                        </SplitPane>
                                     </children>
                                     <padding>
                                         <Insets top="10.0" />

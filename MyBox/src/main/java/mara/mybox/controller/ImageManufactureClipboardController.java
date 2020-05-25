@@ -623,13 +623,11 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
     @FXML
     @Override
     public void copyAction() {
-        logger.debug("here");
         // This responses to shortcut. Must empty to avoid handle twice
     }
 
     @FXML
     public void copyAction(ActionEvent event) {
-        logger.debug("here");
         parent.copy(false);  // This response to the button
     }
 

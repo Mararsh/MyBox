@@ -1020,8 +1020,8 @@ public class HtmlEditorController extends BaseController {
                 boolean success = true;
                 if (isOneImage) {
                     Runtime r = Runtime.getRuntime();
-                    long availableMem = r.maxMemory() - (r.totalMemory() - r.freeMemory()) / (1024 * 1024);
-                    long requiredMem = snapFileWidth * snapFileHeight * 5 / (1024 * 1024) + 200;
+                    long availableMem = r.maxMemory() - (r.totalMemory() - r.freeMemory()) / (1024 * 1024L);
+                    long requiredMem = snapFileWidth * snapFileHeight * 5L / (1024 * 1024) + 200;
                     if (availableMem < requiredMem) {
                         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                         alert.setTitle(getBaseTitle());

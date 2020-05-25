@@ -605,6 +605,7 @@ public class FileTools {
     public static void deleteNestedDir(File sourceDir) {
         try {
             File tmpDir = getTempDirectory();
+            logger.error(sourceDir + "   " + tmpDir);
             deleteNestedDir(sourceDir, tmpDir);
             tmpDir.delete();
             sourceDir.delete();
@@ -891,6 +892,18 @@ public class FileTools {
         }
     }
 
+    public static boolean mergeFiles(File file1, File file2, File targetFile) {
+        try {
+            List<File> files = new ArrayList();
+            files.add(file1);
+            files.add(file2);
+            return mergeFiles(files, targetFile);
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
     public static boolean mergeFiles(List<File> files, File targetFile) {
         try {
             if (files == null || files.isEmpty() || targetFile == null) {
@@ -1029,6 +1042,36 @@ public class FileTools {
     public static boolean same(File file1, File file2) {
         return Arrays.equals(SystemTools.SHA1(file1), SystemTools.SHA1(file2));
 
+    }
+
+    public static File removeBOM(File file) {
+        try {
+            String setName = null;
+            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
+                byte[] header = new byte[4];
+                if ((inputStream.read(header, 0, 4) != -1)) {
+                    setName = TextTools.checkCharsetByBom(header);
+                    if (setName == null) {
+                        return file;
+                    }
+                }
+            }
+//            logger.debug(setName);
+            File tmpFile = getTempFile();
+            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
+                     BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tmpFile))) {
+                inputStream.skip(TextTools.bomSize(setName));
+                int size = 0;
+                byte[] buffer = new byte[1024];
+                while ((size = inputStream.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, size);
+                }
+            }
+            return tmpFile;
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return null;
+        }
     }
 
 }

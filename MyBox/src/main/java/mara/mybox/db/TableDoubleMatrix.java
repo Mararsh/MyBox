@@ -39,13 +39,13 @@ public class TableDoubleMatrix extends DerbyBase {
 
     public static float[][] read(String name, int width, int height) {
         float[][] matrix = new float[height][width];
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            conn.setReadOnly(true);
             for (int j = 0; j < height; ++j) {
                 for (int i = 0; i < width; ++i) {
-                    String sql = " SELECT * FROM Double_Matrix WHERE name='" + name
+                    String sql = " SELECT * FROM Double_Matrix WHERE name='" + stringValue(name)
                             + "' AND row=" + j + " AND col=" + i;
-                    ResultSet result = statement.executeQuery(sql);
+                    ResultSet result = conn.createStatement().executeQuery(sql);
                     if (result.next()) {
                         matrix[j][i] = result.getFloat("value");
                     }
@@ -64,13 +64,13 @@ public class TableDoubleMatrix extends DerbyBase {
         }
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
-            String sql = "DELETE FROM Double_Matrix WHERE name='" + name + "'";
+            String sql = "DELETE FROM Double_Matrix WHERE name='" + stringValue(name) + "'";
             statement.executeUpdate(sql);
             for (int j = 0; j < values.length; ++j) {
                 for (int i = 0; i < values[j].length; ++i) {
                     float v = values[j][i];
                     sql = "INSERT INTO Double_Matrix(name, row , col, value) VALUES('"
-                            + name + "', " + j + ", " + i + ", " + v + ")";
+                            + stringValue(name) + "', " + j + ", " + i + ", " + v + ")";
                     statement.executeUpdate(sql);
                 }
             }
@@ -88,15 +88,15 @@ public class TableDoubleMatrix extends DerbyBase {
         }
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
-            String sql = " SELECT * FROM Double_Matrix WHERE name='" + name
+            String sql = " SELECT * FROM Double_Matrix WHERE name='" + stringValue(name)
                     + "' AND row=" + row + " AND col=" + col;
             if (statement.executeQuery(sql).next()) {
                 sql = "UPDATE Double_Matrix "
                         + " SET value=" + value
-                        + " WHERE name='" + name + "' AND row=" + row + " AND col=" + col;
+                        + " WHERE name='" + stringValue(name) + "' AND row=" + row + " AND col=" + col;
             } else {
                 sql = "INSERT INTO Double_Matrix(name, row , col, value) VALUES('"
-                        + name + "', " + row + ", " + col + ", " + value + ")";
+                        + stringValue(name) + "', " + row + ", " + col + ", " + value + ")";
             }
             statement.executeUpdate(sql);
             return true;
@@ -113,7 +113,7 @@ public class TableDoubleMatrix extends DerbyBase {
         }
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
-            String sql = "DELETE FROM Double_Matrix WHERE name='" + name
+            String sql = "DELETE FROM Double_Matrix WHERE name='" + stringValue(name)
                     + "' AND row=" + row + " AND col=" + col;
             statement.executeUpdate(sql);
             return true;
@@ -130,7 +130,7 @@ public class TableDoubleMatrix extends DerbyBase {
         }
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
-            String sql = "DELETE FROM Double_Matrix WHERE name='" + name + "'";
+            String sql = "DELETE FROM Double_Matrix WHERE name='" + stringValue(name) + "'";
             statement.executeUpdate(sql);
             return true;
         } catch (Exception e) {
@@ -146,9 +146,9 @@ public class TableDoubleMatrix extends DerbyBase {
         }
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
-            String inStr = "( '" + names.get(0) + "'";
+            String inStr = "( '" + stringValue(names.get(0)) + "'";
             for (int i = 1; i < names.size(); ++i) {
-                inStr += ", '" + names.get(i) + "'";
+                inStr += ", '" + stringValue(names.get(i)) + "'";
             }
             inStr += " )";
             String sql = "DELETE FROM Double_Matrix WHERE name IN " + inStr;
@@ -169,7 +169,7 @@ public class TableDoubleMatrix extends DerbyBase {
             String sql;
             for (ConvolutionKernel k : ConvolutionKernel.ExampleKernels) {
                 String name = k.getName();
-                sql = " SELECT row FROM Double_Matrix WHERE name='" + name + "'";
+                sql = " SELECT row FROM Double_Matrix WHERE name='" + stringValue(name) + "'";
                 boolean exist;
                 try ( ResultSet results = statement.executeQuery(sql)) {
                     exist = results.next();
@@ -180,7 +180,7 @@ public class TableDoubleMatrix extends DerbyBase {
                         for (int i = 0; i < m[j].length; ++i) {
                             float v = m[j][i];
                             sql = "INSERT INTO Double_Matrix(name, row , col, value) VALUES('"
-                                    + name + "', " + j + ", " + i + ", " + v + ")";
+                                    + stringValue(name) + "', " + j + ", " + i + ", " + v + ")";
                             statement.executeUpdate(sql);
                         }
                     }

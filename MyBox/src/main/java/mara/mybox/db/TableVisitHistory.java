@@ -2,6 +2,7 @@ package mara.mybox.db;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import mara.mybox.data.VisitHistory.FileType;
 import mara.mybox.data.VisitHistory.OperationType;
 import mara.mybox.data.VisitHistory.ResourceType;
 import mara.mybox.tools.DateTools;
+import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -45,28 +47,65 @@ public class TableVisitHistory extends DerbyBase {
                 + " )";
     }
 
+    public static VisitHistory read(ResultSet results) {
+        try {
+            VisitHistory his = new VisitHistory();
+            his.setResourceType(results.getInt("resource_type"));
+            his.setFileType(results.getInt("file_type"));
+            his.setOperationType(results.getInt("operation_type"));
+            his.setResourceValue(results.getString("resource_value"));
+            his.setDataMore(results.getString("data_more"));
+            his.setLastVisitTime(results.getTimestamp("last_visit_time"));
+            his.setVisitCount(results.getInt("visit_count"));
+            return his;
+        } catch (Exception e) {
+            failed(e);
+            return null;
+            // logger.debug(e.toString());
+        }
+    }
+
+    public static List<VisitHistory> findList(ResultSet results) {
+        List<VisitHistory> records = new ArrayList<>();
+        try {
+            while (results.next()) {
+                VisitHistory his = read(results);
+                if (his != null) {
+                    records.add(his);
+                }
+            }
+        } catch (Exception e) {
+            failed(e);
+            // logger.debug(e.toString());
+        }
+        return records;
+    }
+
+    public static List<VisitHistory> find(PreparedStatement statement) {
+        List<VisitHistory> records = new ArrayList<>();
+        try ( ResultSet results = statement.executeQuery()) {
+            return findList(results);
+        } catch (Exception e) {
+            failed(e);
+            // logger.debug(e.toString());
+        }
+        return records;
+    }
+
     public static List<VisitHistory> find(int count) {
         List<VisitHistory> records = new ArrayList<>();
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            if (count > 0) {
-                statement.setMaxRows(count);
-            }
-            String sql = " SELECT * FROM visit_history "
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            conn.setReadOnly(true);
+            final String sql = " SELECT * FROM visit_history "
                     + " ORDER BY last_visit_time  DESC  ";
-            ResultSet results = statement.executeQuery(sql);
-            while (results.next()) {
-                VisitHistory his = new VisitHistory();
-                his.setResourceType(results.getInt("resource_type"));
-                his.setFileType(results.getInt("file_type"));
-                his.setOperationType(results.getInt("operation_type"));
-                his.setResourceValue(results.getString("resource_value"));
-                his.setDataMore(results.getString("data_more"));
-                his.setLastVisitTime(results.getTimestamp("last_visit_time"));
-                his.setVisitCount(results.getInt("visit_count"));
-                records.add(his);
+            try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+                if (count > 0) {
+                    statement.setMaxRows(count);
+                }
+                records = find(statement);
             }
-        } catch (Exception e) {  failed(e);
+        } catch (Exception e) {
+            failed(e);
             // logger.debug(e.toString());
         }
         return records;
@@ -77,27 +116,19 @@ public class TableVisitHistory extends DerbyBase {
         if (resourceType < 0) {
             return records;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            if (count > 0) {
-                statement.setMaxRows(count);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            conn.setReadOnly(true);
+            final String sql = " SELECT  * FROM visit_history "
+                    + "  WHERE resource_type=? ORDER BY last_visit_time  DESC  ";
+            try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+                if (count > 0) {
+                    statement.setMaxRows(count);
+                }
+                statement.setInt(1, resourceType);
+                records = find(statement);
             }
-            String sql = " SELECT  * FROM visit_history "
-                    + "  WHERE resource_type=" + resourceType
-                    + " ORDER BY last_visit_time  DESC  ";
-            ResultSet results = statement.executeQuery(sql);
-            while (results.next()) {
-                VisitHistory his = new VisitHistory();
-                his.setResourceType(resourceType);
-                his.setFileType(results.getInt("file_type"));
-                his.setOperationType(results.getInt("operation_type"));
-                his.setResourceValue(results.getString("resource_value"));
-                his.setDataMore(results.getString("data_more"));
-                his.setLastVisitTime(results.getTimestamp("last_visit_time"));
-                his.setVisitCount(results.getInt("visit_count"));
-                records.add(his);
-            }
-        } catch (Exception e) {  failed(e);
+        } catch (Exception e) {
+            failed(e);
             // logger.debug(e.toString());
         }
         return records;
@@ -111,35 +142,34 @@ public class TableVisitHistory extends DerbyBase {
         if (fileType < 0) {
             return records;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            if (count > 0) {
-                statement.setMaxRows(count);
-            }
-            String sql;
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            conn.setReadOnly(true);
             if (resourceType <= 0) {
-                sql = " SELECT   * FROM visit_history "
-                        + "  WHERE file_type=" + fileType
-                        + " ORDER BY last_visit_time  DESC  ";
+                final String sql = " SELECT   * FROM visit_history "
+                        + "  WHERE file_type=?  ORDER BY last_visit_time  DESC  ";
+                try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+                    if (count > 0) {
+                        statement.setMaxRows(count);
+                    }
+                    statement.setInt(1, fileType);
+                    records = find(statement);
+                }
             } else {
-                sql = " SELECT   * FROM visit_history "
-                        + "  WHERE resource_type=" + resourceType
-                        + " AND file_type=" + fileType
+                final String sql = " SELECT   * FROM visit_history "
+                        + "  WHERE resource_type=?  AND file_type=? "
                         + " ORDER BY last_visit_time  DESC  ";
+                try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+                    if (count > 0) {
+                        statement.setMaxRows(count);
+                    }
+                    statement.setInt(1, resourceType);
+                    statement.setInt(2, fileType);
+                    records = find(statement);
+                }
             }
-            ResultSet results = statement.executeQuery(sql);
-            while (results.next()) {
-                VisitHistory his = new VisitHistory();
-                his.setResourceType(resourceType);
-                his.setFileType(fileType);
-                his.setOperationType(results.getInt("operation_type"));
-                his.setResourceValue(results.getString("resource_value"));
-                his.setDataMore(results.getString("data_more"));
-                his.setLastVisitTime(results.getTimestamp("last_visit_time"));
-                his.setVisitCount(results.getInt("visit_count"));
-                records.add(his);
-            }
-        } catch (Exception e) {  failed(e);
+
+        } catch (Exception e) {
+            failed(e);
             // logger.debug(e.toString());
         }
         return records;
@@ -150,11 +180,8 @@ public class TableVisitHistory extends DerbyBase {
         if (fileTypes == null || fileTypes.length == 0) {
             return records;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            if (count > 0) {
-                statement.setMaxRows(count);
-            }
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            conn.setReadOnly(true);
             String sql = " SELECT   * FROM visit_history  WHERE ( file_type=" + fileTypes[0];
             for (int i = 1; i < fileTypes.length; ++i) {
                 sql += " OR file_type=" + fileTypes[i];
@@ -164,19 +191,12 @@ public class TableVisitHistory extends DerbyBase {
                 sql += "  AND resource_type=" + resourceType;
             }
             sql += " ORDER BY last_visit_time  DESC  ";
-            ResultSet results = statement.executeQuery(sql);
-            while (results.next()) {
-                VisitHistory his = new VisitHistory();
-                his.setResourceType(resourceType);
-                his.setFileType(results.getInt("file_type"));
-                his.setOperationType(results.getInt("operation_type"));
-                his.setResourceValue(results.getString("resource_value"));
-                his.setDataMore(results.getString("data_more"));
-                his.setLastVisitTime(results.getTimestamp("last_visit_time"));
-                his.setVisitCount(results.getInt("visit_count"));
-                records.add(his);
+            try ( Statement statement = conn.createStatement();
+                     ResultSet results = statement.executeQuery(sql)) {
+                records = findList(results);
             }
-        } catch (Exception e) {  failed(e);
+        } catch (Exception e) {
+            failed(e);
             // logger.debug(e.toString());
         }
         return records;
@@ -188,48 +208,63 @@ public class TableVisitHistory extends DerbyBase {
         if (operationType < 0) {
             return records;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            if (count > 0) {
-                statement.setMaxRows(count);
-            }
-            String sql;
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            conn.setReadOnly(true);
             if (resourceType <= 0) {
                 if (fileType <= 0) {
-                    sql = " SELECT   * FROM visit_history "
-                            + " WHERE  operation_type=" + operationType
+                    final String sql = " SELECT   * FROM visit_history "
+                            + " WHERE  operation_type=? "
                             + " ORDER BY last_visit_time  DESC  ";
+                    try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+                        if (count > 0) {
+                            statement.setMaxRows(count);
+                        }
+                        statement.setInt(1, operationType);
+                        records = find(statement);
+                    }
                 } else {
-                    sql = " SELECT   * FROM visit_history "
-                            + " WHERE file_type=" + fileType + " AND operation_type=" + operationType
+                    final String sql = " SELECT   * FROM visit_history "
+                            + " WHERE file_type=? AND operation_type=?"
                             + " ORDER BY last_visit_time  DESC  ";
+                    try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+                        if (count > 0) {
+                            statement.setMaxRows(count);
+                        }
+                        statement.setInt(1, fileType);
+                        statement.setInt(2, operationType);
+                        records = find(statement);
+                    }
                 }
             } else {
                 if (fileType <= 0) {
-                    sql = " SELECT   * FROM visit_history "
-                            + " WHERE resource_type=" + resourceType
-                            + " AND operation_type=" + operationType
+                    final String sql = " SELECT   * FROM visit_history "
+                            + " WHERE resource_type=? AND operation_type=?"
                             + " ORDER BY last_visit_time  DESC  ";
+                    try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+                        if (count > 0) {
+                            statement.setMaxRows(count);
+                        }
+                        statement.setInt(1, resourceType);
+                        statement.setInt(2, operationType);
+                        records = find(statement);
+                    }
                 } else {
-                    sql = " SELECT   * FROM visit_history "
-                            + " WHERE resource_type=" + resourceType
-                            + " AND file_type=" + fileType + " AND operation_type=" + operationType
+                    final String sql = " SELECT   * FROM visit_history "
+                            + " WHERE resource_type=? AND file_type=? AND operation_type=?"
                             + " ORDER BY last_visit_time  DESC  ";
+                    try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+                        if (count > 0) {
+                            statement.setMaxRows(count);
+                        }
+                        statement.setInt(1, resourceType);
+                        statement.setInt(2, fileType);
+                        statement.setInt(3, operationType);
+                        records = find(statement);
+                    }
                 }
             }
-            ResultSet results = statement.executeQuery(sql);
-            while (results.next()) {
-                VisitHistory his = new VisitHistory();
-                his.setResourceType(resourceType);
-                his.setFileType(fileType);
-                his.setOperationType(operationType);
-                his.setResourceValue(results.getString("resource_value"));
-                his.setDataMore(results.getString("data_more"));
-                his.setLastVisitTime(results.getTimestamp("last_visit_time"));
-                his.setVisitCount(results.getInt("visit_count"));
-                records.add(his);
-            }
-        } catch (Exception e) {  failed(e);
+        } catch (Exception e) {
+            failed(e);
             // logger.debug(e.toString());
         }
         return records;
@@ -239,56 +274,64 @@ public class TableVisitHistory extends DerbyBase {
         if (resourceType < 0 || fileType < 0 || operationType < 0 || value == null) {
             return null;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            statement.setMaxRows(1);
-            String sql = " SELECT   * FROM visit_history WHERE resource_type=" + resourceType
-                    + " AND file_type=" + fileType + " AND operation_type=" + operationType
-                    + " AND  resource_value='" + value + "' ";
-            ResultSet results = statement.executeQuery(sql);
-            if (results.next()) {
-                VisitHistory his = new VisitHistory();
-                his.setResourceType(resourceType);
-                his.setFileType(fileType);
-                his.setOperationType(operationType);
-                his.setResourceValue(value);
-                his.setDataMore(results.getString("data_more"));
-                his.setLastVisitTime(results.getTimestamp("last_visit_time"));
-                his.setVisitCount(results.getInt("visit_count"));
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            conn.setReadOnly(true);
+            return find(conn, resourceType, fileType, operationType, value);
+        } catch (Exception e) {
+            failed(e);
+            // logger.debug(e.toString());
+        }
+        return null;
+    }
+
+    public static VisitHistory find(Connection conn,
+            int resourceType, int fileType, int operationType, String value) {
+        if (conn == null
+                || resourceType < 0 || fileType < 0 || operationType < 0 || value == null) {
+            return null;
+        }
+        try {
+            final String sql = " SELECT * FROM visit_history WHERE resource_type=?"
+                    + " AND file_type=? AND operation_type=? AND  resource_value=?";
+            try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+                statement.setMaxRows(1);
+                statement.setInt(1, resourceType);
+                statement.setInt(2, fileType);
+                statement.setInt(3, operationType);
+                statement.setString(4, value);
+                VisitHistory his = null;
+                try ( ResultSet results = statement.executeQuery()) {
+                    if (results.next()) {
+                        his = read(results);
+                    }
+                }
                 return his;
             }
-        } catch (Exception e) {  failed(e);
-            // logger.debug(e.toString());
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
         }
         return null;
     }
 
     public static List<VisitHistory> findAlphaImages(int count) {
         List<VisitHistory> records = new ArrayList<>();
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            if (count > 0) {
-                statement.setMaxRows(count);
-            }
-            String sql;
-            sql = " SELECT   * FROM visit_history "
-                    + " WHERE resource_type=" + ResourceType.File
-                    + " AND file_type=" + FileType.Image
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            conn.setReadOnly(true);
+            final String sql = " SELECT   * FROM visit_history "
+                    + " WHERE resource_type=? AND file_type=? "
                     + " AND SUBSTR(LOWER(resource_value), LENGTH(resource_value) - 3 ) IN ('.png',  '.tif', 'tiff') "
                     + " ORDER BY last_visit_time  DESC  ";
-            ResultSet results = statement.executeQuery(sql);
-            while (results.next()) {
-                VisitHistory his = new VisitHistory();
-                his.setResourceType(ResourceType.File);
-                his.setFileType(FileType.Image);
-                his.setOperationType(results.getInt("operation_type"));
-                his.setResourceValue(results.getString("resource_value"));
-                his.setDataMore(results.getString("data_more"));
-                his.setLastVisitTime(results.getTimestamp("last_visit_time"));
-                his.setVisitCount(results.getInt("visit_count"));
-                records.add(his);
+            try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+                if (count > 0) {
+                    statement.setMaxRows(count);
+                }
+                statement.setInt(1, ResourceType.File);
+                statement.setInt(2, FileType.Image);
+                records = find(statement);
             }
-        } catch (Exception e) {  failed(e);
+        } catch (Exception e) {
+            failed(e);
             // logger.debug(e.toString());
         }
         return records;
@@ -296,30 +339,22 @@ public class TableVisitHistory extends DerbyBase {
 
     public static List<VisitHistory> findNoAlphaImages(int count) {
         List<VisitHistory> records = new ArrayList<>();
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            if (count > 0) {
-                statement.setMaxRows(count);
-            }
-            String sql;
-            sql = " SELECT   * FROM visit_history "
-                    + " WHERE resource_type=" + ResourceType.File
-                    + " AND file_type=" + FileType.Image
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            conn.setReadOnly(true);
+            final String sql = " SELECT   * FROM visit_history "
+                    + " WHERE resource_type=? AND file_type=? "
                     + " AND SUBSTR(LOWER(resource_value), LENGTH(resource_value) - 3 ) IN ('.jpg', '.bmp', '.gif', '.pnm', 'wbmp') "
                     + " ORDER BY last_visit_time  DESC  ";
-            ResultSet results = statement.executeQuery(sql);
-            while (results.next()) {
-                VisitHistory his = new VisitHistory();
-                his.setResourceType(ResourceType.File);
-                his.setFileType(FileType.Image);
-                his.setOperationType(results.getInt("operation_type"));
-                his.setResourceValue(results.getString("resource_value"));
-                his.setDataMore(results.getString("data_more"));
-                his.setLastVisitTime(results.getTimestamp("last_visit_time"));
-                his.setVisitCount(results.getInt("visit_count"));
-                records.add(his);
+            try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+                if (count > 0) {
+                    statement.setMaxRows(count);
+                }
+                statement.setInt(1, ResourceType.File);
+                statement.setInt(2, FileType.Image);
+                records = find(statement);
             }
-        } catch (Exception e) {  failed(e);
+        } catch (Exception e) {
+            failed(e);
             // logger.debug(e.toString());
         }
         return records;
@@ -333,53 +368,72 @@ public class TableVisitHistory extends DerbyBase {
         if (resourceType < 0 || fileType < 0 || operationType < 0 || value == null) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            String sql = " SELECT * FROM visit_history WHERE resource_type=" + resourceType
-                    + " AND file_type=" + fileType + " AND operation_type=" + operationType
-                    + " AND  resource_value='" + value + "' ";
-            ResultSet results = statement.executeQuery(sql);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            VisitHistory exist = find(conn, resourceType, fileType, operationType, value);
             Date d = new Date();
-            if (results.next()) {
-                VisitHistory his = new VisitHistory();
-                his.setResourceType(resourceType);
-                his.setFileType(fileType);
-                his.setOperationType(operationType);
-                his.setResourceValue(value);
-                his.setDataMore(results.getString("data_more"));
-                his.setLastVisitTime(d);
-                his.setVisitCount(results.getInt("visit_count") + 1);
+            if (exist != null) {
                 if (more == null) {
-                    sql = "UPDATE visit_history SET visit_count=" + his.getVisitCount()
-                            + ", last_visit_time='" + DateTools.datetimeToString(d) + "'  "
-                            + " WHERE resource_type=" + resourceType
-                            + " AND file_type=" + fileType + " AND operation_type=" + operationType
-                            + " AND  resource_value='" + value + "' ";
+                    final String sql = "UPDATE visit_history SET "
+                            + " visit_count=?, last_visit_time=?"
+                            + " WHERE resource_type=? AND file_type=? AND operation_type=? AND  resource_value=?";
+                    try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+                        statement.setInt(1, exist.getVisitCount() + 1);
+                        statement.setString(2, DateTools.datetimeToString(d));
+                        statement.setInt(3, resourceType);
+                        statement.setInt(4, fileType);
+                        statement.setInt(5, operationType);
+                        statement.setString(6, value);
+                        return statement.executeUpdate() >= 0;
+                    }
                 } else {
-                    sql = "UPDATE visit_history SET visit_count=" + his.getVisitCount()
-                            + ", data_more='" + more + "'"
-                            + ", last_visit_time='" + DateTools.datetimeToString(d) + "'  "
-                            + " WHERE resource_type=" + resourceType
-                            + " AND file_type=" + fileType + " AND operation_type=" + operationType
-                            + " AND  resource_value='" + value + "' ";
+                    final String sql = "UPDATE visit_history SET "
+                            + " visit_count=?, data_more=?, last_visit_time=?"
+                            + " WHERE resource_type=? AND file_type=? AND operation_type=?"
+                            + " AND  resource_value=?";
+                    try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+                        statement.setInt(1, exist.getVisitCount() + 1);
+                        statement.setString(2, more);
+                        statement.setString(3, DateTools.datetimeToString(d));
+                        statement.setInt(4, resourceType);
+                        statement.setInt(5, fileType);
+                        statement.setInt(6, operationType);
+                        statement.setString(7, value);
+                        return statement.executeUpdate() >= 0;
+                    }
                 }
-
             } else {
                 if (more == null) {
-                    sql = "INSERT INTO visit_history(resource_type, file_type, operation_type, resource_value, last_visit_time, visit_count) VALUES("
-                            + resourceType + ", " + fileType + ", " + operationType
-                            + ", '" + value + "', '"
-                            + DateTools.datetimeToString(d) + "', 1)";
+                    final String sql = "INSERT INTO visit_history "
+                            + "(resource_type, file_type, operation_type, resource_value, last_visit_time, visit_count) "
+                            + "VALUES(?, ?,?,?,?,? )";
+                    try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+                        statement.setInt(1, resourceType);
+                        statement.setInt(2, fileType);
+                        statement.setInt(3, operationType);
+                        statement.setString(4, value);
+                        statement.setString(5, DateTools.datetimeToString(d));
+                        statement.setInt(6, 1);
+                        return statement.executeUpdate() >= 0;
+                    }
                 } else {
-                    sql = "INSERT INTO visit_history(resource_type, file_type, operation_type, resource_value, data_more, last_visit_time, visit_count) VALUES("
-                            + resourceType + ", " + fileType + ", " + operationType
-                            + ", '" + value + "', '" + more + "', '"
-                            + DateTools.datetimeToString(d) + "', 1)";
+                    final String sql = "INSERT INTO visit_history "
+                            + "(resource_type, file_type, operation_type, resource_value, data_more, last_visit_time, visit_count) "
+                            + "VALUES(?, ?, ?, ?, ?, ? ,?)";
+                    try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+                        statement.setInt(1, resourceType);
+                        statement.setInt(2, fileType);
+                        statement.setInt(3, operationType);
+                        statement.setString(4, value);
+                        statement.setString(5, more);
+                        statement.setString(6, DateTools.datetimeToString(d));
+                        statement.setInt(7, 1);
+                        return statement.executeUpdate() >= 0;
+                    }
                 }
             }
-            return statement.executeUpdate(sql) >= 0;
-        } catch (Exception e) {  failed(e);
-            // logger.debug(e.toString());
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
             return false;
         }
     }
@@ -392,55 +446,74 @@ public class TableVisitHistory extends DerbyBase {
         if (fileType < 0 || operationType < 0 || name == null || fxml == null) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            String sql = " SELECT * FROM visit_history WHERE resource_type=" + ResourceType.Menu
-                    + " AND file_type=" + fileType + " AND operation_type=" + operationType
-                    + " AND resource_value='" + name + "' "
-                    + " AND data_more='" + fxml + "' ";
-            ResultSet results = statement.executeQuery(sql);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            VisitHistory exist = null;
+            String query = " SELECT * FROM visit_history "
+                    + " WHERE resource_type=? AND file_type=? AND operation_type=?"
+                    + " AND resource_value=? AND data_more=?";
+            try ( PreparedStatement statement = conn.prepareStatement(query)) {
+                statement.setInt(1, ResourceType.Menu);
+                statement.setInt(2, fileType);
+                statement.setInt(3, operationType);
+                statement.setString(4, name);
+                statement.setString(5, fxml);
+                ResultSet results = statement.executeQuery();
+                if (results.next()) {
+                    exist = read(results);
+                }
+            }
             Date d = new Date();
-            if (results.next()) {
-                VisitHistory his = new VisitHistory();
-                his.setResourceType(ResourceType.Menu);
-                his.setFileType(fileType);
-                his.setOperationType(operationType);
-                his.setResourceValue(name);
-                his.setDataMore(fxml);
-                his.setLastVisitTime(d);
-                his.setVisitCount(results.getInt("visit_count") + 1);
-                sql = "UPDATE visit_history SET visit_count=" + his.getVisitCount()
-                        + ", last_visit_time='" + DateTools.datetimeToString(d) + "'  "
-                        + " WHERE resource_type=" + ResourceType.Menu
-                        + " AND file_type=" + fileType + " AND operation_type=" + operationType
-                        + " AND resource_value='" + name + "' "
-                        + " AND data_more='" + fxml + "' ";
+            if (exist != null) {
+                final String sql = "UPDATE visit_history SET "
+                        + "visit_count=?, last_visit_time=?"
+                        + " WHERE resource_type=? AND file_type=? AND operation_type=?"
+                        + " AND resource_value=? AND data_more=?";
+                try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+                    statement.setInt(1, exist.getVisitCount() + 1);
+                    statement.setString(2, DateTools.datetimeToString(d));
+                    statement.setInt(3, ResourceType.Menu);
+                    statement.setInt(4, fileType);
+                    statement.setInt(5, operationType);
+                    statement.setString(6, name);
+                    statement.setString(7, fxml);
+                    return statement.executeUpdate() >= 0;
+                }
 
             } else {
-                sql = "INSERT INTO visit_history(resource_type, file_type, operation_type, resource_value, data_more, last_visit_time, visit_count) VALUES("
-                        + ResourceType.Menu + ", " + fileType + ", " + operationType
-                        + ", '" + name + "', '" + fxml + "', '"
-                        + DateTools.datetimeToString(d) + "', 1)";
-
+                final String sql = "INSERT INTO visit_history "
+                        + "(resource_type, file_type, operation_type, resource_value, data_more, last_visit_time, visit_count) "
+                        + "VALUES(?,?,?,?,?,?,?)";
+                try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+                    statement.setInt(1, ResourceType.Menu);
+                    statement.setInt(2, fileType);
+                    statement.setInt(3, operationType);
+                    statement.setString(4, name);
+                    statement.setString(5, fxml);
+                    statement.setString(6, DateTools.datetimeToString(d));
+                    statement.setInt(7, 1);
+                    return statement.executeUpdate() >= 0;
+                }
             }
-            return statement.executeUpdate(sql) >= 0;
-        } catch (Exception e) {  failed(e);
+        } catch (Exception e) {
+            failed(e);
             // logger.debug(e.toString());
             return false;
         }
     }
 
     public static boolean delete(int resourceType, int fileType, int operationType, String value) {
+        final String sql = "DELETE FROM visit_history "
+                + " WHERE resource_type=? AND file_type=? "
+                + " AND operation_type=? AND resource_value=?";
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            String sql = "DELETE FROM visit_history "
-                    + " WHERE resource_type=" + resourceType
-                    + " AND file_type=" + fileType
-                    + " AND operation_type=" + operationType
-                    + " AND resource_value='" + value + "'";
-            statement.executeUpdate(sql);
-            return true;
-        } catch (Exception e) {  failed(e);
+                 PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.setInt(1, resourceType);
+            statement.setInt(2, fileType);
+            statement.setInt(3, operationType);
+            statement.setString(4, value);
+            return statement.executeUpdate() >= 0;
+        } catch (Exception e) {
+            failed(e);
             // logger.debug(e.toString());
             return false;
         }
@@ -451,14 +524,16 @@ public class TableVisitHistory extends DerbyBase {
     }
 
     public static boolean clearType(int resourceType, int fileType, int operationType) {
+        final String sql = "DELETE FROM visit_history "
+                + " WHERE resource_type=? AND file_type=? AND operation_type=?";
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            String sql = "DELETE FROM visit_history "
-                    + " WHERE resource_type=" + resourceType
-                    + " AND file_type=" + fileType + " AND operation_type=" + operationType;
-            statement.executeUpdate(sql);
-            return true;
-        } catch (Exception e) {  failed(e);
+                 PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.setInt(1, resourceType);
+            statement.setInt(2, fileType);
+            statement.setInt(3, operationType);
+            return statement.executeUpdate() >= 0;
+        } catch (Exception e) {
+            failed(e);
             // logger.debug(e.toString());
             return false;
         }
@@ -466,12 +541,12 @@ public class TableVisitHistory extends DerbyBase {
 
     @Override
     public boolean clear() {
+        final String sql = "DELETE FROM visit_history";
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            String sql = "DELETE FROM visit_history";
-            statement.executeUpdate(sql);
-            return true;
-        } catch (Exception e) {  failed(e);
+                 PreparedStatement statement = conn.prepareStatement(sql)) {
+            return statement.executeUpdate() >= 0;
+        } catch (Exception e) {
+            failed(e);
             // logger.debug(e.toString());
             return false;
         }

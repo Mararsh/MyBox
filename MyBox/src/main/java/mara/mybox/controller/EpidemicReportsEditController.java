@@ -1,18 +1,27 @@
 package mara.mybox.controller;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
-import javafx.util.converter.IntegerStringConverter;
+import javafx.util.converter.LongStringConverter;
 import mara.mybox.data.EpidemicReport;
+import mara.mybox.data.GeographyCode;
+import static mara.mybox.db.DerbyBase.dbHome;
+import static mara.mybox.db.DerbyBase.login;
+import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.TableEpidemicReport;
+import mara.mybox.db.TableGeographyCode;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DateTools;
@@ -28,37 +37,34 @@ import thridparty.TableAutoCommitCell;
  */
 public class EpidemicReportsEditController extends TableManageController<EpidemicReport> {
 
-    protected EpidemicReportsController parent;
-    protected int confirmed, suspected, dead, healed;
-    protected Date time;
-    protected String currentDataset;
+    protected EpidemicReportsController reportsController;
+    protected long time;
+    protected boolean isChineseProvince;
 
+    @FXML
+    protected Label titleLabel;
     @FXML
     protected TextField timeInput;
     @FXML
     protected ComboBox<String> datasetSelector;
     @FXML
-    protected TableColumn<EpidemicReport, String> countryColumn, provinceColumn, commentsColumn;
+    protected TableColumn<EpidemicReport, String> locationColumn;
     @FXML
-    protected TableColumn<EpidemicReport, Integer> confirmedColumn, suspectedColumn, headledColumn, deadColumn;
+    protected TableColumn<EpidemicReport, Long> confirmedColumn, headledColumn, deadColumn;
 
     public EpidemicReportsEditController() {
-        baseTitle = AppVariables.message("DiseaseReport");
+        baseTitle = AppVariables.message("EpidemicReport");
     }
 
     @Override
     public void initializeNext() {
         try {
             tableData = FXCollections.observableArrayList();
+            time = -1;
+            isChineseProvince = true;
 
             initColumns();
             tableView.setItems(tableData);
-
-            datasetSelector.getSelectionModel().selectedItemProperty().addListener(
-                    (ObservableValue<? extends String> ov, String oldv, String newv) -> {
-                        checkDataset();
-                    });
-            checkDataset();
 
             timeInput.textProperty().addListener(
                     (ObservableValue<? extends String> ov, String oldv, String newv) -> {
@@ -67,9 +73,7 @@ public class EpidemicReportsEditController extends TableManageController<Epidemi
 
             FxmlControl.setTooltip(timeInput, message("LocationDataTimeComments"));
 
-            saveButton.disableProperty().bind(datasetSelector.getEditor().styleProperty().isEqualTo(badStyle)
-                    .or(timeInput.styleProperty().isEqualTo(badStyle))
-            );
+            saveButton.disableProperty().bind(timeInput.styleProperty().isEqualTo(badStyle));
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -79,20 +83,13 @@ public class EpidemicReportsEditController extends TableManageController<Epidemi
     @Override
     protected void initColumns() {
         try {
-
-            if (countryColumn != null) {
-                countryColumn.setCellValueFactory(new PropertyValueFactory<>("country"));
-            }
-            if (provinceColumn != null) {
-                provinceColumn.setCellValueFactory(new PropertyValueFactory<>("province"));
-            }
-
+            locationColumn.setCellValueFactory(new PropertyValueFactory<>("locationFullName"));
             confirmedColumn.setCellValueFactory(new PropertyValueFactory<>("confirmed"));
-            confirmedColumn.setCellFactory((TableColumn<EpidemicReport, Integer> param) -> {
-                TableAutoCommitCell<EpidemicReport, Integer> cell
-                        = new TableAutoCommitCell<EpidemicReport, Integer>(new IntegerStringConverter()) {
+            confirmedColumn.setCellFactory((TableColumn<EpidemicReport, Long> param) -> {
+                TableAutoCommitCell<EpidemicReport, Long> cell
+                        = new TableAutoCommitCell<EpidemicReport, Long>(new LongStringConverter()) {
                     @Override
-                    public void commitEdit(Integer val) {
+                    public void commitEdit(Long val) {
                         if (val < 0) {
                             cancelEdit();
                         } else {
@@ -102,7 +99,7 @@ public class EpidemicReportsEditController extends TableManageController<Epidemi
                 };
                 return cell;
             });
-            confirmedColumn.setOnEditCommit((TableColumn.CellEditEvent<EpidemicReport, Integer> t) -> {
+            confirmedColumn.setOnEditCommit((TableColumn.CellEditEvent<EpidemicReport, Long> t) -> {
                 if (t == null) {
                     return;
                 }
@@ -113,38 +110,12 @@ public class EpidemicReportsEditController extends TableManageController<Epidemi
             });
             confirmedColumn.getStyleClass().add("editable-column");
 
-            suspectedColumn.setCellValueFactory(new PropertyValueFactory<>("suspected"));
-            suspectedColumn.setCellFactory((TableColumn<EpidemicReport, Integer> param) -> {
-                TableAutoCommitCell<EpidemicReport, Integer> cell
-                        = new TableAutoCommitCell<EpidemicReport, Integer>(new IntegerStringConverter()) {
-                    @Override
-                    public void commitEdit(Integer val) {
-                        if (val < 0) {
-                            cancelEdit();
-                        } else {
-                            super.commitEdit(val);
-                        }
-                    }
-                };
-                return cell;
-            });
-            suspectedColumn.setOnEditCommit((TableColumn.CellEditEvent<EpidemicReport, Integer> t) -> {
-                if (t == null) {
-                    return;
-                }
-                if (t.getNewValue() >= 0) {
-                    EpidemicReport row = t.getRowValue();
-                    row.setSuspected(t.getNewValue());
-                }
-            });
-            suspectedColumn.getStyleClass().add("editable-column");
-
             headledColumn.setCellValueFactory(new PropertyValueFactory<>("healed"));
-            headledColumn.setCellFactory((TableColumn<EpidemicReport, Integer> param) -> {
-                TableAutoCommitCell<EpidemicReport, Integer> cell
-                        = new TableAutoCommitCell<EpidemicReport, Integer>(new IntegerStringConverter()) {
+            headledColumn.setCellFactory((TableColumn<EpidemicReport, Long> param) -> {
+                TableAutoCommitCell<EpidemicReport, Long> cell
+                        = new TableAutoCommitCell<EpidemicReport, Long>(new LongStringConverter()) {
                     @Override
-                    public void commitEdit(Integer val) {
+                    public void commitEdit(Long val) {
                         if (val < 0) {
                             cancelEdit();
                         } else {
@@ -154,7 +125,7 @@ public class EpidemicReportsEditController extends TableManageController<Epidemi
                 };
                 return cell;
             });
-            headledColumn.setOnEditCommit((TableColumn.CellEditEvent<EpidemicReport, Integer> t) -> {
+            headledColumn.setOnEditCommit((TableColumn.CellEditEvent<EpidemicReport, Long> t) -> {
                 if (t == null) {
                     return;
                 }
@@ -166,11 +137,11 @@ public class EpidemicReportsEditController extends TableManageController<Epidemi
             headledColumn.getStyleClass().add("editable-column");
 
             deadColumn.setCellValueFactory(new PropertyValueFactory<>("dead"));
-            deadColumn.setCellFactory((TableColumn<EpidemicReport, Integer> param) -> {
-                TableAutoCommitCell<EpidemicReport, Integer> cell
-                        = new TableAutoCommitCell<EpidemicReport, Integer>(new IntegerStringConverter()) {
+            deadColumn.setCellFactory((TableColumn<EpidemicReport, Long> param) -> {
+                TableAutoCommitCell<EpidemicReport, Long> cell
+                        = new TableAutoCommitCell<EpidemicReport, Long>(new LongStringConverter()) {
                     @Override
-                    public void commitEdit(Integer val) {
+                    public void commitEdit(Long val) {
                         if (val < 0) {
                             cancelEdit();
                         } else {
@@ -180,7 +151,7 @@ public class EpidemicReportsEditController extends TableManageController<Epidemi
                 };
                 return cell;
             });
-            deadColumn.setOnEditCommit((TableColumn.CellEditEvent<EpidemicReport, Integer> t) -> {
+            deadColumn.setOnEditCommit((TableColumn.CellEditEvent<EpidemicReport, Long> t) -> {
                 if (t == null) {
                     return;
                 }
@@ -191,25 +162,21 @@ public class EpidemicReportsEditController extends TableManageController<Epidemi
             });
             deadColumn.getStyleClass().add("editable-column");
 
-            commentsColumn.setCellValueFactory(new PropertyValueFactory<>("comments"));
-            commentsColumn.setCellFactory(TableAutoCommitCell.forTableColumn());
-            commentsColumn.setOnEditCommit((TableColumn.CellEditEvent<EpidemicReport, String> t) -> {
-                if (t == null) {
-                    return;
-                }
-                EpidemicReport row = t.getRowValue();
-                row.setComments(t.getNewValue());
-            });
-            commentsColumn.getStyleClass().add("editable-column");
-
         } catch (Exception e) {
             logger.error(e.toString());
         }
     }
 
-    public void load(String dataset) {
+    public void load(EpidemicReportsController reportsController, boolean isChineseProvince) {
+        this.reportsController = reportsController;
         tableData.clear();
-        currentDataset = dataset;
+        if (isChineseProvince) {
+            titleLabel.setText(message("ChineseProvincesEpidemicReports"));
+            locationColumn.setText(message("Province"));
+        } else {
+            titleLabel.setText(message("CountriesEpidemicReports"));
+            locationColumn.setText(message("Country"));
+        }
         synchronized (this) {
             if (task != null) {
                 return;
@@ -221,10 +188,14 @@ public class EpidemicReportsEditController extends TableManageController<Epidemi
                 @Override
                 protected boolean handle() {
                     datasets = TableEpidemicReport.datasets();
-                    if (time == null) {
-                        time = new Date();
+                    if (time <= 0) {
+                        time = new Date().getTime();
                     }
-                    data = initData();
+                    if (isChineseProvince) {
+                        data = loadChineseProvinces();
+                    } else {
+                        data = loadCountries();
+                    }
                     return true;
                 }
 
@@ -234,15 +205,8 @@ public class EpidemicReportsEditController extends TableManageController<Epidemi
                     datasetSelector.getItems().clear();
                     if (datasets != null) {
                         datasetSelector.getItems().addAll(datasets);
+                        datasetSelector.getSelectionModel().select(0);
                     }
-                    if (currentDataset != null && !currentDataset.trim().isBlank()) {
-                        datasetSelector.getSelectionModel().select(dataset);
-                        datasetSelector.getEditor().setStyle(null);
-                    } else {
-                        datasetSelector.getSelectionModel().select(null);
-                        datasetSelector.getEditor().setStyle(badStyle);
-                    }
-
                     timeInput.setText(DateTools.datetimeToString(time));
                     if (data != null) {
                         tableData.addAll(data);
@@ -258,18 +222,52 @@ public class EpidemicReportsEditController extends TableManageController<Epidemi
         }
     }
 
-    protected List<EpidemicReport> initData() {
-        return null;
+    protected List<EpidemicReport> loadChineseProvinces() {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            String sql = "SELECT * FROM Geography_Code WHERE "
+                    + " level=4  AND country=100 ORDER BY gcid ";
+            List<GeographyCode> provinces = TableGeographyCode.queryCodes(conn, sql, true);
+            if (provinces == null || provinces.isEmpty()) {
+                GeographyCode.predefined(conn);
+                provinces = TableGeographyCode.queryCodes(conn, sql, true);
+                if (provinces == null || provinces.isEmpty()) {
+                    return null;
+                }
+            }
+            List<EpidemicReport> reports = new ArrayList();
+            for (GeographyCode province : provinces) {
+                EpidemicReport report = new EpidemicReport();
+                report.setLocation(province);
+                reports.add(report);
+            }
+            return reports;
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return null;
+        }
     }
 
-    protected void checkDataset() {
-        if (isSettingValues) {
-            return;
-        }
-        try {
-            load(datasetSelector.getValue());
+    protected List<EpidemicReport> loadCountries() {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            String sql = "SELECT * FROM Geography_Code WHERE level=3 ORDER BY gcid ";
+            List<GeographyCode> countries = TableGeographyCode.queryCodes(conn, sql, true);
+            if (countries == null || countries.isEmpty()) {
+                GeographyCode.predefined(conn);
+                countries = TableGeographyCode.queryCodes(conn, sql, true);
+                if (countries == null || countries.isEmpty()) {
+                    return null;
+                }
+            }
+            List<EpidemicReport> reports = new ArrayList();
+            for (GeographyCode country : countries) {
+                EpidemicReport report = new EpidemicReport();
+                report.setLocation(country);
+                reports.add(report);
+            }
+            return reports;
         } catch (Exception e) {
-            datasetSelector.getEditor().setStyle(badStyle);
+            logger.debug(e.toString());
+            return null;
         }
     }
 
@@ -277,13 +275,13 @@ public class EpidemicReportsEditController extends TableManageController<Epidemi
         try {
             String value = timeInput.getText().trim();
             if (value.isBlank()) {
-                time = new Date();
+                time = new Date().getTime();
                 timeInput.setStyle(null);
                 return;
             }
             Date v = DateTools.stringToDatetime(value);
             if (v != null) {
-                time = v;
+                time = v.getTime();
                 timeInput.setStyle(null);
             } else {
                 timeInput.setStyle(badStyle);
@@ -295,8 +293,25 @@ public class EpidemicReportsEditController extends TableManageController<Epidemi
 
     @FXML
     @Override
+    public void clearAction() {
+        loadTableData();
+    }
+
+    @FXML
+    @Override
     public void saveAction() {
-        if (currentDataset == null || tableData.isEmpty()) {
+        checkTime();
+        if (time <= 0) {
+            popError(message("MissTime"));
+            return;
+        }
+        String dataset = datasetSelector.getValue().trim();
+        if (dataset.isBlank()) {
+            popError(message("MissDataset"));
+            return;
+        }
+        if (tableData.isEmpty()) {
+            popError(message("NoData"));
             return;
         }
         synchronized (this) {
@@ -304,24 +319,31 @@ public class EpidemicReportsEditController extends TableManageController<Epidemi
                 return;
             }
             task = new SingletonTask<Void>() {
+                private long count = 0;
 
                 @Override
                 protected boolean handle() {
                     for (EpidemicReport report : tableData) {
-                        report.setTime(time.getTime());
+                        report.setDataSet(dataset);
+                        report.setTime(time);
+                        report.setSource(2);
                     }
-                    TableEpidemicReport.write(tableData);
-                    return true;
+                    count = TableEpidemicReport.write(tableData, true);
+                    return count > 0;
                 }
 
                 @Override
                 protected void whenSucceeded() {
-                    if (parent != null) {
-                        parent.loadTree();
-                        parent.getMyStage().toFront();
+                    if (reportsController != null) {
+                        reportsController.loadTrees(true);
                     }
                     if (saveCloseCheck.isSelected()) {
                         closeStage();
+                        if (reportsController != null) {
+                            reportsController.getMyStage().toFront();
+                        }
+                    } else {
+                        popInformation(message("Written") + ": " + count);
                     }
                 }
             };

@@ -55,10 +55,10 @@ public class TableLocation extends DerbyBase {
     }
 
     public static int size() {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            conn.setReadOnly(true);
             String sql = " SELECT count(dataid) FROM Location";
-            ResultSet results = statement.executeQuery(sql);
+            ResultSet results = conn.createStatement().executeQuery(sql);
             if (results.next()) {
                 return results.getInt(1);
             } else {
@@ -139,7 +139,7 @@ public class TableLocation extends DerbyBase {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
             statement.setMaxRows(max);
-            String sql = "SELECT * FROM Location WHERE data_set='" + dataset + "'";
+            String sql = "SELECT * FROM Location WHERE data_set='" + stringValue(dataset) + "'";
             ResultSet results = statement.executeQuery(sql);
             while (results.next()) {
                 Location location = read(results);
@@ -156,7 +156,7 @@ public class TableLocation extends DerbyBase {
         List<Location> locations = new ArrayList<>();
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
-            String sql = "SELECT * FROM Location  WHERE data_set='" + dataset + "' OFFSET "
+            String sql = "SELECT * FROM Location  WHERE data_set='" + stringValue(dataset) + "' OFFSET "
                     + offset + " ROWS FETCH NEXT " + number + " ROWS ONLY";
             ResultSet results = statement.executeQuery(sql);
             while (results.next()) {
@@ -181,7 +181,7 @@ public class TableLocation extends DerbyBase {
         }
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
-            String sql = "SELECT * FROM Location WHERE data_set='" + dataset + "' ORDER BY " + order;
+            String sql = "SELECT * FROM Location WHERE data_set='" + stringValue(dataset) + "' ORDER BY " + order;
             if (desc) {
                 sql += " DESC";
             } else {
@@ -207,26 +207,26 @@ public class TableLocation extends DerbyBase {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
             if (desc) {
-                String sql = "SELECT * FROM Location WHERE data_set='" + dataset + "' AND data_time_bc=0 ORDER BY  data_time DESC";
+                String sql = "SELECT * FROM Location WHERE data_set='" + stringValue(dataset) + "' AND data_time_bc=0 ORDER BY  data_time DESC";
                 ResultSet results = statement.executeQuery(sql);
                 while (results.next()) {
                     Location location = read(results);
                     locations.add(location);
                 }
-                sql = "SELECT * FROM Location WHERE data_set='" + dataset + "' AND data_time_bc=1 ORDER BY  data_time ASC";
+                sql = "SELECT * FROM Location WHERE data_set='" + stringValue(dataset) + "' AND data_time_bc=1 ORDER BY  data_time ASC";
                 results = statement.executeQuery(sql);
                 while (results.next()) {
                     Location location = read(results);
                     locations.add(location);
                 }
             } else {
-                String sql = "SELECT * FROM Location WHERE data_set='" + dataset + "' AND data_time_bc=1 ORDER BY  data_time DESC";
+                String sql = "SELECT * FROM Location WHERE data_set='" + stringValue(dataset) + "' AND data_time_bc=1 ORDER BY  data_time DESC";
                 ResultSet results = statement.executeQuery(sql);
                 while (results.next()) {
                     Location location = read(results);
                     locations.add(location);
                 }
-                sql = "SELECT * FROM Location WHERE data_set='" + dataset + "' AND data_time_bc=0 ORDER BY  data_time ASC";
+                sql = "SELECT * FROM Location WHERE data_set='" + stringValue(dataset) + "' AND data_time_bc=0 ORDER BY  data_time ASC";
                 results = statement.executeQuery(sql);
                 while (results.next()) {
                     Location location = read(results);
@@ -248,7 +248,7 @@ public class TableLocation extends DerbyBase {
         }
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
-            String sql = "SELECT * FROM Location WHERE data_set='" + dataset
+            String sql = "SELECT * FROM Location WHERE data_set='" + stringValue(dataset)
                     + " AND data_time > '" + DateTools.datetimeToString(from) + "' "
                     + " AND data_time < '" + DateTools.datetimeToString(to) + "' "
                     + "' ORDER BY  data_time ";
@@ -277,7 +277,7 @@ public class TableLocation extends DerbyBase {
         }
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
-            String sql = "SELECT * FROM Location WHERE data_set='" + dataset
+            String sql = "SELECT * FROM Location WHERE data_set='" + stringValue(dataset)
                     + " AND data_time < '" + DateTools.datetimeToString(before) + "' "
                     + "' ORDER BY  data_time ";
             if (desc) {
@@ -305,7 +305,7 @@ public class TableLocation extends DerbyBase {
         }
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
-            String sql = "SELECT * FROM Location WHERE data_set='" + dataset
+            String sql = "SELECT * FROM Location WHERE data_set='" + stringValue(dataset)
                     + " AND data_time > '" + DateTools.datetimeToString(after) + "' "
                     + "' ORDER BY  data_time ";
             if (desc) {
@@ -407,7 +407,7 @@ public class TableLocation extends DerbyBase {
         try {
             String sql = "INSERT INTO Location(data_set, source, address, longitude, latitude, altitude, precision, speed, direction, "
                     + "coordinate_system,  comments, image_location, data_value, data_size, data_time, data_time_bc, data_label) VALUES(";
-            sql += "'" + location.getDataSet() + "', ";
+            sql += "'" + stringValue(location.getDataSet()) + "', ";
             if (location.getSource() != null) {
                 sql += "'" + location.getSource() + "', ";
             } else {
@@ -464,7 +464,7 @@ public class TableLocation extends DerbyBase {
         }
         try {
             String sql = "UPDATE Location SET ";
-            sql += "data_set='" + location.getDataSet() + "', ";
+            sql += "data_set='" + stringValue(location.getDataSet()) + "', ";
             if (location.getSource() != null) {
                 sql += "source='" + location.getSource() + "', ";
             } else {
@@ -535,12 +535,12 @@ public class TableLocation extends DerbyBase {
         }
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
-            String sql = "DELETE FROM Location WHERE data_set='" + dataset + "'";
+            String sql = "DELETE FROM Location WHERE data_set='" + stringValue(dataset) + "'";
             statement.executeUpdate(sql);
             return true;
         } catch (Exception e) {
             failed(e);
-            // logger.debug(e.toString());
+//            logger.debug(e.toString());
             return false;
         }
     }
@@ -572,7 +572,7 @@ public class TableLocation extends DerbyBase {
         }
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
-            String sql = "DELETE FROM Location WHERE data_set='" + dataset + "'"
+            String sql = "DELETE FROM Location WHERE data_set='" + stringValue(dataset) + "'"
                     + " AND data_time < '" + DateTools.datetimeToString(before) + "' ";
             statement.executeUpdate(sql);
             return true;
@@ -589,7 +589,7 @@ public class TableLocation extends DerbyBase {
         }
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
-            String sql = "DELETE FROM Location WHERE data_set='" + dataset + "'"
+            String sql = "DELETE FROM Location WHERE data_set='" + stringValue(dataset) + "'"
                     + " AND data_time > '" + DateTools.datetimeToString(after) + "' ";
             statement.executeUpdate(sql);
             return true;
@@ -606,7 +606,7 @@ public class TableLocation extends DerbyBase {
         }
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
-            String sql = "DELETE FROM Location WHERE data_set='" + dataset + "'"
+            String sql = "DELETE FROM Location WHERE data_set='" + stringValue(dataset) + "'"
                     + " AND data_time > '" + DateTools.datetimeToString(from) + "' "
                     + " AND data_time < '" + DateTools.datetimeToString(to) + "' ";
             statement.executeUpdate(sql);

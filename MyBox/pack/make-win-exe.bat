@@ -1,4 +1,4 @@
-set version=6.2.1
+set version=6.3
 rd/Q/S    D:\tmp\make-mybox\out\
 del/Q/F   D:\tmp\make-mybox\src\*.jar
 copy   D:\MyBox\target\MyBox-%version%.jar    D:\tmp\make-mybox\src\MyBox-%version%.jar

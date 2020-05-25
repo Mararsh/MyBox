@@ -28,6 +28,8 @@ public class FilesDeleteNestedDirectoriesController extends FilesBatchController
     public void initControls() {
         try {
             super.initControls();
+            tableController.countDirCheck.setSelected(false);
+            tableController.countDirCheck.setVisible(false);
             operationBarController.deleteOpenControls();
 
         } catch (Exception e) {

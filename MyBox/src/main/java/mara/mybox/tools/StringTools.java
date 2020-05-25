@@ -95,9 +95,13 @@ public class StringTools {
         return v;
     }
 
-    public static String formatData(long data) {
+    public static String format(long data) {
         DecimalFormat df = new DecimalFormat("#,###");
         return df.format(data);
+    }
+
+    public static String format(double data) {
+        return format(Math.round(data));
     }
 
     public static String leftAlgin(String name, String value, int nameLength) {

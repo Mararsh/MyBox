@@ -100,7 +100,7 @@ public class ImageManufactureController extends ImageViewerController {
     @FXML
     protected Label refLabel, imageTipsLabel;
     @FXML
-    protected CheckBox saveConfirmCheck, saveCheck;
+    protected CheckBox saveCheck;
     @FXML
     protected ImageView refView, scopeView;
     @FXML
@@ -1159,7 +1159,8 @@ public class ImageManufactureController extends ImageViewerController {
                                 popText(info, AppVariables.getCommentsDelay(), "white", "1.5em", null);
                                 // Force listView to refresh
                                 // https://stackoverflow.com/questions/13906139/javafx-update-of-listview-if-an-element-of-observablelist-changes?r=SearchResults
-                                for (int i = 0; i < hisBox.getItems().size(); ++i) {
+                                for (int i = 0; i < hisBox.getItems().size();
+                                        ++i) {
                                     hisBox.getItems().set(i, hisBox.getItems().get(i));
                                 }
 

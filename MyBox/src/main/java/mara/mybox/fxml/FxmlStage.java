@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.concurrent.ScheduledFuture;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -87,20 +86,14 @@ public class FxmlStage {
             if (stageStyle != null) {
                 stage.initStyle(stageStyle);
             }
-            stage.setOnShown(new EventHandler<WindowEvent>() {
-                @Override
-                public void handle(WindowEvent event) {
-                    controller.afterStageShown();
-                }
+            stage.setOnShown((WindowEvent event) -> {
+                controller.afterStageShown();
             });
-            stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-                @Override
-                public void handle(WindowEvent event) {
-                    if (!controller.leavingScene()) {
-                        event.consume();
-                    } else {
-                        FxmlStage.closeStage(stage);
-                    }
+            stage.setOnCloseRequest((WindowEvent event) -> {
+                if (!controller.leavingScene()) {
+                    event.consume();
+                } else {
+                    FxmlStage.closeStage(stage);
                 }
             });
 

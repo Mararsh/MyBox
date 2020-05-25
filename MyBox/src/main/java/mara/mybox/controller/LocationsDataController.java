@@ -40,7 +40,7 @@ public class LocationsDataController extends TableManageController<Location> {
     @FXML
     protected TableColumn<Location, String> datasetColumn, labelColumn, addressColumn, commentsColumn, imageColumn;
     @FXML
-    protected TableColumn<Location, Double> longtitudeColumn, latitudeColumn, altitudeColumn,
+    protected TableColumn<Location, Double> longitudeColumn, latitudeColumn, altitudeColumn,
             valueColumn, sizeColumn, precisionColumn, speedColumn;
     @FXML
     protected TableColumn<Location, Date> timeColumn;
@@ -58,6 +58,8 @@ public class LocationsDataController extends TableManageController<Location> {
     @Override
     public void initializeNext() {
         try {
+            super.initializeNext();
+
             dataSets = FXCollections.observableArrayList();
             listView.setItems(dataSets);
             listView.getSelectionModel().selectedItemProperty().addListener(
@@ -66,11 +68,8 @@ public class LocationsDataController extends TableManageController<Location> {
                             return;
                         }
                         currentDataSet = selected;
-                        load();
+                        loadTableData();
                     });
-            loadDataSets();
-
-            super.initializeNext();
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -88,8 +87,8 @@ public class LocationsDataController extends TableManageController<Location> {
             addressColumn.setCellValueFactory(new PropertyValueFactory<>("address"));
             commentsColumn.setCellValueFactory(new PropertyValueFactory<>("comments"));
             imageColumn.setCellValueFactory(new PropertyValueFactory<>("imageLocation"));
-            longtitudeColumn.setCellValueFactory(new PropertyValueFactory<>("longitude"));
-            longtitudeColumn.setCellFactory(new TableCoordinateCell());
+            longitudeColumn.setCellValueFactory(new PropertyValueFactory<>("longitude"));
+            longitudeColumn.setCellFactory(new TableCoordinateCell());
             latitudeColumn.setCellValueFactory(new PropertyValueFactory<>("latitude"));
             latitudeColumn.setCellFactory(new TableCoordinateCell());
             altitudeColumn.setCellValueFactory(new PropertyValueFactory<>("altitude"));
@@ -111,6 +110,13 @@ public class LocationsDataController extends TableManageController<Location> {
         } catch (Exception e) {
             logger.error(e.toString());
         }
+    }
+
+    @Override
+    public void afterSceneLoaded() {
+        super.afterSceneLoaded();
+        loadDataSets();
+        loadTableData();
     }
 
     protected void loadDataSets() {
@@ -153,11 +159,11 @@ public class LocationsDataController extends TableManageController<Location> {
     }
 
     @Override
-    public List<Location> readData(int offset, int number) {
+    public List<Location> readPageData() {
         if (currentDataSet == null || message("All").equals(currentDataSet)) {
-            return TableLocation.read(offset, number); //Current limitation due to non-pagenation
+            return TableLocation.read(currentPageStart, currentPageSize); //Current limitation due to non-pagenation
         } else {
-            return TableLocation.read(currentDataSet, offset, number);
+            return TableLocation.read(currentDataSet, currentPageStart, currentPageSize);
         }
     }
 
@@ -182,7 +188,8 @@ public class LocationsDataController extends TableManageController<Location> {
     }
 
     @FXML
-    protected void editAction() {
+    @Override
+    public void editAction() {
         Location selected = tableView.getSelectionModel().getSelectedItem();
         if (selected == null) {
             return;
@@ -210,7 +217,7 @@ public class LocationsDataController extends TableManageController<Location> {
 
     @Override
     protected boolean clearData() {
-        if (currentDataSet == null) {
+        if (currentDataSet == null || message("All").equals(currentDataSet)) {
             return new TableLocation().clear();
         } else {
             return TableLocation.delete(currentDataSet);

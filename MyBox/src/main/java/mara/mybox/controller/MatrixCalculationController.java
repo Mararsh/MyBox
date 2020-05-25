@@ -70,15 +70,13 @@ public class MatrixCalculationController extends BaseController {
         initEditPane();
         initValuePane();
 
-        thisPane.heightProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                if (getMyStage() == null) {
-                    return;
-                }
-                thisPane.setPrefHeight(myStage.getHeight());
-            }
-        });
+        thisPane.heightProperty().addListener(
+                (ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
+                    if (getMyStage() == null) {
+                        return;
+                    }
+                    thisPane.setPrefHeight(myStage.getHeight());
+                });
     }
 
     /*
@@ -89,23 +87,21 @@ public class MatrixCalculationController extends BaseController {
             return;
         }
 
-        editPane.expandedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                if (editPane.isExpanded()) {
-                    if (!editPBox.getChildren().contains(editVBox)) {
-                        editPBox.getChildren().add(editVBox);
-                        FxmlControl.refreshStyle(editVBox);
+        editPane.expandedProperty().addListener(
+                (ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
+                    if (editPane.isExpanded()) {
+                        if (!editPBox.getChildren().contains(editVBox)) {
+                            editPBox.getChildren().add(editVBox);
+                            FxmlControl.refreshStyle(editVBox);
+                        }
+                        VBox.setVgrow(editVBox, Priority.ALWAYS);
+                        editPBox.setPrefHeight(thisPane.getHeight());
+                    } else {
+                        editPBox.getChildren().remove(editVBox);
+                        valuePane.setExpanded(true);
+                        valueVBox.setPrefHeight(thisPane.getHeight());
                     }
-                    VBox.setVgrow(editVBox, Priority.ALWAYS);
-                    editPBox.setPrefHeight(thisPane.getHeight());
-                } else {
-                    editPBox.getChildren().remove(editVBox);
-                    valuePane.setExpanded(true);
-                    valueVBox.setPrefHeight(thisPane.getHeight());
-                }
-            }
-        });
+                });
 
         List<String> opList = Arrays.asList(message("RowEachLine"), message("SetAsColumnVector"), message("SetAsRowVector"),
                 message("SetColumnsNumber"), message("IdentifyMatrix"),

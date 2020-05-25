@@ -2,8 +2,8 @@ package mara.mybox.db;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -43,10 +43,10 @@ public class TableConvolutionKernel extends DerbyBase {
 
     public static List<ConvolutionKernel> read() {
         List<ConvolutionKernel> records = new ArrayList<>();
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            conn.setReadOnly(true);
             String sql = " SELECT * FROM Convolution_Kernel ORDER BY name";
-            ResultSet kResult = statement.executeQuery(sql);
+            ResultSet kResult = conn.createStatement().executeQuery(sql);
             while (kResult.next()) {
                 ConvolutionKernel record = new ConvolutionKernel();
                 String name = kResult.getString("name");
@@ -69,21 +69,25 @@ public class TableConvolutionKernel extends DerbyBase {
                 record.setDescription(kResult.getString("description"));
                 records.add(record);
             }
-            for (ConvolutionKernel k : records) {
-                int w = k.getWidth();
-                int h = k.getHeight();
-                float[][] matrix = new float[h][w];
-                for (int j = 0; j < h; ++j) {
-                    for (int i = 0; i < w; ++i) {
-                        sql = " SELECT * FROM Float_Matrix WHERE name='" + k.getName()
-                                + "' AND row=" + j + " AND col=" + i;
-                        ResultSet mResult = statement.executeQuery(sql);
-                        if (mResult.next()) {
-                            matrix[j][i] = mResult.getFloat("value");
+            try ( PreparedStatement statement = conn.prepareStatement(
+                    " SELECT * FROM Float_Matrix WHERE name=? AND row=? AND col=?")) {
+                for (ConvolutionKernel k : records) {
+                    int w = k.getWidth();
+                    int h = k.getHeight();
+                    float[][] matrix = new float[h][w];
+                    for (int j = 0; j < h; ++j) {
+                        for (int i = 0; i < w; ++i) {
+                            statement.setString(1, k.getName());
+                            statement.setInt(2, j);
+                            statement.setInt(3, i);
+                            ResultSet mResult = statement.executeQuery();
+                            if (mResult.next()) {
+                                matrix[j][i] = mResult.getFloat("value");
+                            }
                         }
                     }
+                    k.setMatrix(matrix);
                 }
-                k.setMatrix(matrix);
             }
 
         } catch (Exception e) {
@@ -98,11 +102,17 @@ public class TableConvolutionKernel extends DerbyBase {
         if (name == null) {
             return record;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            String sql = " SELECT width FROM Convolution_Kernel WHERE name='" + name + "'";
-            ResultSet kResult = statement.executeQuery(sql);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            conn.setReadOnly(true);
+            PreparedStatement statement = conn.prepareStatement(
+                    " SELECT width FROM Convolution_Kernel WHERE name=?"
+            );
+            statement.setString(1, name);
+            ResultSet kResult = statement.executeQuery();
             if (kResult.next()) {
+                statement = conn.prepareStatement(
+                        " SELECT * FROM Float_Matrix WHERE name=? AND row=? AND col=?"
+                );
                 record = new ConvolutionKernel();
                 int w = kResult.getInt("width");
                 int h = kResult.getInt("height");
@@ -123,9 +133,10 @@ public class TableConvolutionKernel extends DerbyBase {
                 float[][] matrix = new float[h][w];
                 for (int j = 0; j < h; ++j) {
                     for (int i = 0; i < w; ++i) {
-                        sql = " SELECT * FROM Float_Matrix WHERE name='" + name
-                                + "' AND row=" + j + " AND col=" + i;
-                        ResultSet mResult = statement.executeQuery(sql);
+                        statement.setString(1, name);
+                        statement.setInt(2, j);
+                        statement.setInt(3, i);
+                        ResultSet mResult = statement.executeQuery();
                         if (mResult.next()) {
                             matrix[j][i] = mResult.getFloat("value");
                         }
@@ -140,9 +151,10 @@ public class TableConvolutionKernel extends DerbyBase {
                 float[][] matrix = new float[h][w];
                 for (int j = 0; j < h; ++j) {
                     for (int i = 0; i < w; ++i) {
-                        sql = " SELECT * FROM Float_Matrix WHERE name='" + name
-                                + "' AND row=" + j + " AND col=" + i;
-                        ResultSet mResult = statement.executeQuery(sql);
+                        statement.setString(1, name);
+                        statement.setInt(2, j);
+                        statement.setInt(3, i);
+                        ResultSet mResult = statement.executeQuery();
                         if (mResult.next()) {
                             matrix[j][i] = mResult.getFloat("value");
                         }
@@ -150,6 +162,7 @@ public class TableConvolutionKernel extends DerbyBase {
                 }
                 record.setMatrix(matrix);
             }
+            statement.close();
             return record;
         } catch (Exception e) {
             failed(e);
@@ -164,28 +177,52 @@ public class TableConvolutionKernel extends DerbyBase {
                 || record.getHeight() < 3 || record.getHeight() % 2 == 0) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            String sql = " SELECT width FROM Convolution_Kernel WHERE name='" + record.getName() + "'";
-            if (statement.executeQuery(sql).next()) {
-                sql = "UPDATE Convolution_Kernel "
-                        + " SET width=" + record.getWidth()
-                        + " , height=" + record.getHeight()
-                        + " , type=" + record.getType()
-                        + " , gray=" + record.getGray()
-                        + " , edge=" + record.getEdge()
-                        + " , create_time='" + record.getCreateTime() + "'"
-                        + " , modify_time='" + record.getModifyTime() + "'"
-                        + " , description='" + record.getDescription() + "'"
-                        + " WHERE name='" + record.getName() + "'";
-            } else {
-                sql = "INSERT INTO Convolution_Kernel(name, width , height, type, gray, edge, create_time, modify_time, description) VALUES('"
-                        + record.getName() + "', " + record.getWidth() + ", " + record.getHeight() + ", "
-                        + record.getType() + ", " + record.getGray() + ", " + record.getEdge() + ", '"
-                        + record.getCreateTime() + "',  '" + record.getModifyTime() + "', '"
-                        + record.getDescription() + "')";
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            ResultSet result;
+            try ( PreparedStatement statement = conn.prepareStatement(
+                    " SELECT width FROM Convolution_Kernel WHERE name=?"
+            )) {
+                statement.setString(1, record.getName());
+                result = statement.executeQuery();
             }
-            statement.executeUpdate(sql);
+            if (result.next()) {
+                try ( PreparedStatement update = conn.prepareStatement(
+                        "UPDATE Convolution_Kernel SET "
+                        + "  width=?, height=？, type=？, gray=？, edge=？, create_time=,？"
+                        + " modify_time=？, description=？"
+                        + " WHERE name=?"
+                )) {
+                    update.setInt(1, record.getWidth());
+                    update.setInt(2, record.getHeight());
+                    update.setInt(3, record.getType());
+                    update.setInt(4, record.getGray());
+                    update.setInt(5, record.getEdge());
+                    update.setString(6, record.getCreateTime());
+                    update.setString(7, record.getModifyTime());
+                    update.setString(8, record.getDescription());
+                    update.setString(9, record.getName());
+                    update.executeUpdate();
+                }
+
+            } else {
+                try ( PreparedStatement update = conn.prepareStatement(
+                        "INSERT INTO Convolution_Kernel "
+                        + "(name, width , height, type, gray, edge, create_time, modify_time, description) "
+                        + " VALUES( ?, ?, ?, ?, ?, ?, ?, ?, ?) "
+                )) {
+                    update.setString(1, record.getName());
+                    update.setInt(2, record.getWidth());
+                    update.setInt(3, record.getHeight());
+                    update.setInt(4, record.getType());
+                    update.setInt(5, record.getGray());
+                    update.setInt(6, record.getEdge());
+                    update.setString(7, record.getCreateTime());
+                    update.setString(8, record.getModifyTime());
+                    update.setString(9, record.getDescription());
+                    update.executeUpdate();
+                }
+            }
+
             return true;
         } catch (Exception e) {
             failed(e);
@@ -200,23 +237,35 @@ public class TableConvolutionKernel extends DerbyBase {
     }
 
     public static boolean write(List<ConvolutionKernel> records) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             conn.setAutoCommit(false);
-            String sql;
             for (ConvolutionKernel k : records) {
-                sql = " SELECT width FROM Convolution_Kernel WHERE name='" + k.getName() + "'";
                 boolean exist;
-                try ( ResultSet results = statement.executeQuery(sql)) {
-                    exist = results.next();
+                try ( PreparedStatement statement = conn.prepareStatement(
+                        " SELECT width FROM Convolution_Kernel WHERE name=?"
+                )) {
+                    statement.setString(1, k.getName());
+                    try ( ResultSet results = statement.executeQuery()) {
+                        exist = results.next();
+                    }
                 }
                 if (!exist) {
-                    sql = "INSERT INTO Convolution_Kernel(name, width , height, type, gray, edge, create_time, modify_time, description) VALUES('"
-                            + k.getName() + "', " + k.getWidth() + ", " + k.getHeight() + ", "
-                            + k.getType() + ", " + k.getGray() + ", " + k.getEdge() + ", '"
-                            + k.getCreateTime() + "',  '" + k.getModifyTime() + "', '"
-                            + k.getDescription() + "')";
-                    statement.executeUpdate(sql);
+                    try ( PreparedStatement update = conn.prepareStatement(
+                            "INSERT INTO Convolution_Kernel "
+                            + "(name, width , height, type, gray, edge, create_time, modify_time, description) "
+                            + " VALUES( ?, ?, ?, ?, ?, ?, ?, ?, ?) "
+                    )) {
+                        update.setString(1, k.getName());
+                        update.setInt(2, k.getWidth());
+                        update.setInt(3, k.getHeight());
+                        update.setInt(4, k.getType());
+                        update.setInt(5, k.getGray());
+                        update.setInt(6, k.getEdge());
+                        update.setString(7, k.getCreateTime());
+                        update.setString(8, k.getModifyTime());
+                        update.setString(9, k.getDescription());
+                        update.executeUpdate();
+                    }
                 }
             }
             conn.commit();
@@ -232,15 +281,16 @@ public class TableConvolutionKernel extends DerbyBase {
         if (records == null || records.isEmpty()) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            String inStr = "( '" + records.get(0).getName() + "'";
-            for (int i = 1; i < records.size(); ++i) {
-                inStr += ", '" + records.get(i).getName() + "'";
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            conn.setAutoCommit(false);
+            try ( PreparedStatement statement = conn.prepareStatement(
+                    "DELETE FROM Convolution_Kernel WHERE name=?")) {
+                for (int i = 0; i < records.size(); ++i) {
+                    statement.setString(1, records.get(i).getName());
+                    statement.executeUpdate();
+                }
             }
-            inStr += " )";
-            String sql = "DELETE FROM Convolution_Kernel WHERE name IN " + inStr;
-            statement.executeUpdate(sql);
+            conn.commit();
             return true;
         } catch (Exception e) {
             failed(e);
@@ -253,15 +303,16 @@ public class TableConvolutionKernel extends DerbyBase {
         if (names == null || names.isEmpty()) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            String inStr = "( '" + names.get(0) + "'";
-            for (int i = 1; i < names.size(); ++i) {
-                inStr += ", '" + names.get(i) + "'";
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            conn.setAutoCommit(false);
+            try ( PreparedStatement statement = conn.prepareStatement(
+                    "DELETE FROM Convolution_Kernel WHERE name=?")) {
+                for (int i = 0; i < names.size(); ++i) {
+                    statement.setString(1, names.get(i));
+                    statement.executeUpdate();
+                }
             }
-            inStr += " )";
-            String sql = "DELETE FROM Convolution_Kernel WHERE name IN " + inStr;
-            statement.executeUpdate(sql);
+            conn.commit();
             return true;
         } catch (Exception e) {
             failed(e);

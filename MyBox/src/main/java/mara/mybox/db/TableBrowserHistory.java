@@ -2,8 +2,8 @@ package mara.mybox.db;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.data.BrowserHistory;
@@ -46,11 +46,14 @@ public class TableBrowserHistory extends DerbyBase {
 
     public static List<String> recentBrowse() {
         List<String> recent = new ArrayList<>();
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            statement.setMaxRows(MaxBrowserURLs);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            conn.setReadOnly(true);
             String sql = "select address from Browser_History  group by address  order by max(visit_time) desc";
-            ResultSet results = statement.executeQuery(sql);
+            ResultSet results;
+            try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+                statement.setMaxRows(MaxBrowserURLs);
+                results = statement.executeQuery();
+            }
             while (results.next()) {
                 recent.add(results.getString("address"));
             }
@@ -67,11 +70,14 @@ public class TableBrowserHistory extends DerbyBase {
 
     public static List<BrowserHistory> read(int max) {
         List<BrowserHistory> his = new ArrayList<>();
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            statement.setMaxRows(max);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            conn.setReadOnly(true);
             String sql = "SELECT * FROM Browser_History ORDER BY visit_time DESC";
-            ResultSet results = statement.executeQuery(sql);
+            ResultSet results;
+            try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+                statement.setMaxRows(max);
+                results = statement.executeQuery();
+            }
             while (results.next()) {
                 BrowserHistory h = new BrowserHistory();
                 h.setAddress(results.getString("address"));
@@ -91,42 +97,51 @@ public class TableBrowserHistory extends DerbyBase {
         if (his == null) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+
+            PreparedStatement statement = conn.prepareStatement(
+                    "select * from Browser_History WHERE address=? AND visit_time=?"
+            );
+            statement.setString(1, his.getAddress());
+            statement.setString(2, DateTools.datetimeToString(his.getVisitTime()));
             statement.setMaxRows(1);
-            String sql = "select * from Browser_History WHERE address='" + his.getAddress()
-                    + "' AND visit_time='" + DateTools.datetimeToString(his.getVisitTime()) + "' ";
-            if (statement.executeQuery(sql).next()) {
-                sql = "UPDATE Browser_History SET title='";
+            ResultSet results = statement.executeQuery();
+            if (results.next()) {
+                statement = conn.prepareStatement(
+                        "UPDATE Browser_History SET title=?, icon=? "
+                        + "WHERE address=? AND visit_time=?"
+                );
                 if (his.getTitle() != null) {
-                    sql += his.getTitle() + "' ";
+                    statement.setString(1, his.getTitle());
                 } else {
-                    sql += "' ";
+                    statement.setString(1, "");
                 }
                 if (his.getIcon() != null) {
-                    sql += ", icon='" + his.getIcon() + "' ";
+                    statement.setString(2, his.getIcon());
                 } else {
-                    sql += ", icon='' ";
+                    statement.setString(2, "");
                 }
-                sql += " WHERE address='" + his.getAddress() + "'　"
-                        + " AND　visit_time='" + DateTools.datetimeToString(his.getVisitTime()) + "' ";
+                statement.setString(3, his.getAddress());
+                statement.setString(4, DateTools.datetimeToString(his.getVisitTime()));
             } else {
-                sql = "INSERT INTO Browser_History(address, visit_time , title, icon) VALUES('";
-                sql += his.getAddress() + "', '";
-                sql += DateTools.datetimeToString(his.getVisitTime()) + "' ";
+                statement = conn.prepareStatement(
+                        "INSERT INTO Browser_History(address, visit_time , title, icon) VALUES(?,?,?,?)"
+                );
+                statement.setString(1, his.getAddress());
+                statement.setString(2, DateTools.datetimeToString(his.getVisitTime()));
                 if (his.getTitle() != null) {
-                    sql += ", '" + his.getTitle() + "' ";
+                    statement.setString(3, his.getTitle());
                 } else {
-                    sql += ", '' ";
+                    statement.setString(3, "");
                 }
                 if (his.getIcon() != null) {
-                    sql += ", '" + his.getIcon() + "' ";
+                    statement.setString(4, his.getIcon());
                 } else {
-                    sql += ", '' ";
+                    statement.setString(4, "");
                 }
-                sql += " )";
             }
-            statement.executeUpdate(sql);
+            statement.executeUpdate();
+            statement.close();
             return true;
         } catch (Exception e) {
             failed(e);
@@ -139,11 +154,10 @@ public class TableBrowserHistory extends DerbyBase {
         if (address == null || address.trim().isEmpty()) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             String sql = "DELETE FROM Browser_History WHERE address='" + address.trim() + "'　"
                     + " AND　visit_time='" + DateTools.datetimeToString(time) + "' ";
-            statement.executeUpdate(sql);
+            conn.createStatement().executeUpdate(sql);
             return true;
         } catch (Exception e) {
             failed(e);
@@ -163,13 +177,12 @@ public class TableBrowserHistory extends DerbyBase {
         if (his == null || his.isEmpty()) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             conn.setAutoCommit(false);
             for (BrowserHistory h : his) {
                 String sql = "DELETE FROM Browser_History WHERE address='" + h.getAddress() + "'　"
                         + " AND　visit_time='" + DateTools.datetimeToString(h.getVisitTime()) + "' ";
-                statement.executeUpdate(sql);
+                conn.createStatement().executeUpdate(sql);
             }
             conn.commit();
             return true;

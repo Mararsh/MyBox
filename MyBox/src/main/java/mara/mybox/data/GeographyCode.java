@@ -2,29 +2,56 @@ package mara.mybox.data;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.xml.parsers.DocumentBuilderFactory;
+import mara.mybox.controller.LoadingController;
 import mara.mybox.db.DerbyBase;
+import static mara.mybox.db.DerbyBase.dbHome;
+import static mara.mybox.db.DerbyBase.login;
+import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.TableGeographyCode;
 import mara.mybox.fxml.FxmlControl;
+import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileTools;
+import static mara.mybox.tools.FileTools.charset;
+import mara.mybox.tools.LocationTools;
 import static mara.mybox.tools.NetworkTools.trustAllManager;
 import static mara.mybox.tools.NetworkTools.trustAllVerifier;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.csv.CSVRecord;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -36,111 +63,1961 @@ import org.w3c.dom.NodeList;
  */
 public class GeographyCode {
 
-    private static List<String> ChineseProvincesKeys;
-    private static List<String> CountriesKeys;
-    private static Map<String, String> CountriesChineseKeys, CountriesEnglishKeys,
-            ChineseProvincesChineseKeys, ChineseProvincesEnglishKeys;
-
-    protected String address, fullAddress, country, province, citycode, city, district, township,
-            neighborhood, building, AdministrativeCode, street, number, level;
-    protected double longitude = -200, latitude = -200;
-    protected BooleanProperty selected;
-    protected boolean isSettingValues;
+    public static String DataSeparator = ",;";
+    protected long gcid, continent, country, province, city, county, town, village, building,
+            area, population;
+    protected int level = -1;
+    protected GeographyCodeLevel levelCode;
+    protected boolean predefined;
+    protected String name, fullName, chineseName, englishName, levelName,
+            code1, code2, code3, code4, code5, alias1, alias2, alias3, alias4, alias5, comments,
+            continentName, countryName, provinceName, cityName, countyName, townName, villageName, buildingName;
+    protected double longitude, latitude;
+    protected GeographyCode continentCode, countryCode, provinceCode, cityCode,
+            countyCode, townCode, villageCode, buildingCode;
 
     public GeographyCode() {
-        selected = new SimpleBooleanProperty(false);
-        address = fullAddress = country = province = citycode = city = district = township
-                = neighborhood = building = AdministrativeCode = street = number = level = null;
+        gcid = continent = country = province = city = county = village = town = building
+                = area = population = -1;
+        level = -1;
+        levelCode = null;
+        predefined = false;
         longitude = latitude = -200;
-        isSettingValues = false;
+//        chineseName = englishName = code1 = code2 = code3 = code4 = code5
+//                = alias1 = alias2 = alias3 = alias4 = alias5
+//                = comments = null;
+        continentCode = null;
+        countryCode = null;
+        provinceCode = null;
+        cityCode = null;
+        countyCode = null;
+        townCode = null;
+        villageCode = null;
+        buildingCode = null;
+
     }
 
-    public String geography(String lineBreak) {
+    public static GeographyCode create() {
+        return new GeographyCode();
+    }
+
+    public String info(String lineBreak) {
         StringBuilder s = new StringBuilder();
-        if (getAddress() != null && !getAddress().isBlank()) {
-            s.append(message("Address")).append(message(": ")).append(getAddress()).append(lineBreak);
+
+        s.append(message("Longitude")).append(": ").append(getLongitude()).append(lineBreak);
+        s.append(message("Latitude")).append(": ").append(getLatitude()).append(lineBreak);
+
+        if (levelCode != null) {
+            s.append(message("Level")).append(": ").append(message(levelCode.getName())).append(lineBreak);
         }
-        s.append(message("Longitude")).append(message(": ")).append(getLongitude()).append(lineBreak);
-        s.append(message("Latitude")).append(message(": ")).append(getLatitude()).append(lineBreak);
-        if (getFullAddress() != null && !getFullAddress().isBlank()) {
-            s.append(message("FullAddress")).append(message(": ")).append(getFullAddress()).append(lineBreak);
+        if (getCountryName() != null && !countryName.isBlank()) {
+            s.append(message("Country")).append(": ").append(countryName).append(lineBreak);
         }
-        if (getCountry() != null && !getCountry().isBlank()) {
-            s.append(message("Country")).append(message(": ")).append(getCountry()).append(lineBreak);
+        if (getProvinceName() != null && !provinceName.isBlank()) {
+            s.append(message("Province")).append(": ").append(provinceName).append(lineBreak);
         }
-        if (getProvince() != null && !getProvince().isBlank()) {
-            s.append(message("Province")).append(message(": ")).append(getProvince()).append(lineBreak);
+        if (getCityName() != null && !cityName.isBlank()) {
+            s.append(message("City")).append(": ").append(cityName).append(lineBreak);
         }
-        if (getCitycode() != null && !getCitycode().isBlank()) {
-            s.append(message("Citycode")).append(message(": ")).append(getCitycode()).append(lineBreak);
+        if (getCountyName() != null && !countyName.isBlank()) {
+            s.append(message("County")).append(": ").append(countyName).append(lineBreak);
         }
-        if (getCity() != null && !getCity().isBlank()) {
-            s.append(message("City")).append(message(": ")).append(getCity()).append(lineBreak);
+        if (getTownName() != null && !townName.isBlank()) {
+            s.append(message("Town")).append(": ").append(townName).append(lineBreak);
         }
-        if (getDistrict() != null && !getDistrict().isBlank()) {
-            s.append(message("District")).append(message(": ")).append(getDistrict()).append(lineBreak);
+        if (getVillageName() != null && !villageName.isBlank()) {
+            s.append(message("Village")).append(": ").append(villageName).append(lineBreak);
         }
-        if (getTownship() != null && !getTownship().isBlank()) {
-            s.append(message("Township")).append(message(": ")).append(getTownship()).append(lineBreak);
+
+        if (getBuildingName() != null && !buildingName.isBlank()) {
+            s.append(message("Building")).append(": ").append(buildingName).append(lineBreak);
         }
-        if (getNeighborhood() != null && !getNeighborhood().isBlank()) {
-            s.append(message("Neighborhood")).append(message(": ")).append(getNeighborhood()).append(lineBreak);
+        if (getCode1() != null && !getCode1().isBlank()) {
+            s.append(message("Code")).append(": ").append(getCode1()).append(lineBreak);
         }
-        if (getBuilding() != null && !getBuilding().isBlank()) {
-            s.append(message("Building")).append(message(": ")).append(getBuilding()).append(lineBreak);
+        if (getCode2() != null && !getCode2().isBlank()) {
+            s.append(message("Code")).append(": ").append(getCode2()).append(lineBreak);
         }
-        if (getAdministrativeCode() != null && !getAdministrativeCode().isBlank()) {
-            s.append(message("AdministrativeCode")).append(message(": ")).append(getAdministrativeCode()).append(lineBreak);
+        if (getCode3() != null && !getCode3().isBlank()) {
+            s.append(message("Code")).append(": ").append(getCode3()).append(lineBreak);
         }
-        if (getStreet() != null && !getStreet().isBlank()) {
-            s.append(message("Street")).append(message(": ")).append(getStreet()).append(lineBreak);
+        if (getAlias1() != null && !getAlias1().isBlank()) {
+            s.append(message("Alias")).append(": ").append(getAlias1()).append(lineBreak);
         }
-        if (getNumber() != null && !getNumber().isBlank()) {
-            s.append(message("Number")).append(message(": ")).append(getNumber()).append(lineBreak);
+        if (getAlias2() != null && !getAlias2().isBlank()) {
+            s.append(message("Alias")).append(": ").append(getAlias2()).append(lineBreak);
         }
-        if (getLevel() != null && !getLevel().isBlank()) {
-            s.append(message("Level")).append(message(": ")).append(getLevel()).append(lineBreak);
+        if (getAlias3() != null && !getAlias3().isBlank()) {
+            s.append(message("Alias")).append(": ").append(getAlias3()).append(lineBreak);
         }
+
+        if (area > 0) {
+            s.append(message("SquareKilometers")).append(": ").append(area).append(lineBreak);
+        }
+        if (population > 0) {
+            s.append(message("Population")).append(": ").append(population).append(lineBreak);
+        }
+
+        if (getComments() != null) {
+            String c = getComments().trim();
+            if (!c.isBlank()) {
+                s.append(message("Comments")).append(": ").append(c).append(lineBreak);
+            }
+        }
+
         return s.toString();
     }
 
-    public static GeographyCode query(String address) {
-        try {
-            GeographyCode geographyCode = TableGeographyCode.read(message(address));
-            if (geographyCode != null) {
-                return geographyCode;
+    public boolean validCoordinate() {
+        return LocationTools.validCoordinate(this);
+    }
+
+    public boolean valid() {
+        return getLevel() > 0
+                && (chineseName != null || englishName != null);
+    }
+
+    public int mapSize() {
+        if (levelCode == null) {
+            return 3;
+        }
+        switch (levelCode.getLevel()) {
+            case 3:
+                return 4;
+            case 4:
+                return 6;
+            case 5:
+                return 9;
+            case 6:
+                return 11;
+            case 7:
+                return 13;
+            case 8:
+                return 16;
+            case 9:
+            case 10:
+                return 18;
+            default:
+                return 3;
+        }
+    }
+
+    /*
+        Static values
+     */
+    public static GeographyCode none() {
+        GeographyCode none = new GeographyCode();
+        none.setName(message("None"));
+        return none;
+    }
+
+    public static int mapSize(GeographyCode code) {
+        if (code == null) {
+            return 3;
+        }
+        return code.mapSize();
+    }
+
+
+    /*
+        Static methods
+     */
+    public static void predefined() {
+        predefined(null, null);
+    }
+
+    public static void predefined(Connection conn) {
+        predefined(conn, null);
+    }
+
+    public static void predefined(Connection conn, LoadingController loading) {
+        if (conn == null) {
+            try ( Connection conn1 = DriverManager.getConnection(protocol + dbHome() + login)) {
+                predefined(conn1, loading);
+            } catch (Exception e) {
+                logger.debug(e.toString());
             }
-            // GaoDe Map only supports geography codes of China
+            return;
+        }
+
+        try {
+            conn.setAutoCommit(false);
+
+            File file = FxmlControl.getInternalFile("/data/db/Geography_Code_global_internal.csv",
+                    "data", "Geography_Code_global_internal.csv", true);
+            importInternalCSV(conn, loading, file, true);
+
+            file = FxmlControl.getInternalFile("/data/db/Geography_Code_countries_internal.csv",
+                    "data", "Geography_Code_countries_internal.csv", true);
+            importInternalCSV(conn, loading, file, true);
+
+            if (!AppVariables.isChinese()) {
+                try {
+                    String sql = "UPDATE Geography_Code SET comments=null WHERE level=3 AND predefined=1";
+                    conn.prepareStatement(sql).executeUpdate();
+                } catch (Exception e) {
+                    logger.debug(e.toString());
+                }
+            }
+
+            file = FxmlControl.getInternalFile("/data/db/Geography_Code_china_provinces_internal.csv",
+                    "data", "Geography_Code_china_provinces_internal.csv", true);
+            importInternalCSV(conn, loading, file, true);
+
+            file = FxmlControl.getInternalFile("/data/db/Geography_Code_china_cities_internal.csv",
+                    "data", "Geography_Code_china_cities_internal.csv", true);
+            importInternalCSV(conn, loading, file, true);
+
+            file = FxmlControl.getInternalFile("/data/db/Geography_Code_china_counties_internal.csv",
+                    "data", "Geography_Code_china_counties_internal.csv", true);
+            importInternalCSV(conn, loading, file, true);
+
+            file = FxmlControl.getInternalFile("/data/db/Geography_Code_special.csv",
+                    "data", "Geography_Code_special.csv", true);
+            importInternalCSV(conn, loading, file, true);
+
+            conn.commit();
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            if (loading != null) {
+                loading.setInfo(e.toString());
+            }
+        }
+
+    }
+
+// gcid,levelid,longitude,latitude,chinese_name,english_name,code1,code2,code3,code4,code5,alias1,alias2,alias3,alias4,alias5,
+// area,population,continentid,countryid,provinceid,cityid,countyid,townid,villageid,buildingid,comments
+    public static void importInternalCSV(LoadingController loading, File file, boolean predefined) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            importInternalCSV(conn, loading, file, predefined);
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+    public static void importInternalCSV(Connection conn, LoadingController loading, File file, boolean predefined) {
+        long importCount = 0, insertCount = 0, updateCount = 0, failedCount = 0;
+        try ( CSVParser parser = CSVParser.parse(file, StandardCharsets.UTF_8,
+                CSVFormat.DEFAULT.withFirstRecordAsHeader().withDelimiter(',').withTrim().withNullString(""))) {
+            conn.setAutoCommit(false);
+            List<String> names = parser.getHeaderNames();
+            if (loading != null) {
+                loading.setInfo(message("Importing") + " " + file.getAbsolutePath());
+            }
+            try ( PreparedStatement gcidQeury = conn.prepareStatement(TableGeographyCode.GCidQeury);
+                     PreparedStatement insert = conn.prepareStatement(TableGeographyCode.Insert);
+                     PreparedStatement update = conn.prepareStatement(TableGeographyCode.Update)) {
+                gcidQeury.setMaxRows(1);
+                boolean exist;
+                for (CSVRecord record : parser) {
+                    GeographyCode code = GeographyCode.readIntenalRecord(names, record);
+                    code.setPredefined(predefined);
+                    gcidQeury.setLong(1, code.getGcid());
+                    try ( ResultSet results = gcidQeury.executeQuery()) {
+                        exist = results.next();
+                    }
+                    if (exist) {
+                        if (TableGeographyCode.update(conn, update, code)) {
+                            updateCount++;
+                            importCount++;
+                            if (loading != null && (importCount % 20 == 0)) {
+                                loading.setInfo(message("Update") + ": " + updateCount + " "
+                                        + code.getLevelCode().getName() + " " + code.getName()
+                                        + " " + code.getLongitude() + " " + code.getLatitude());
+                            }
+                        } else {
+                            ++failedCount;
+                            if (loading != null) {
+                                loading.setInfo(message("Failed") + ": " + failedCount + " "
+                                        + code.getLevelCode().getName() + " " + code.getName()
+                                        + " " + code.getLongitude() + " " + code.getLatitude());
+                            }
+                        }
+                    } else {
+                        if (TableGeographyCode.insert(conn, insert, code)) {
+                            insertCount++;
+                            importCount++;
+                            if (loading != null && (importCount % 20 == 0)) {
+                                loading.setInfo(message("Insert") + ": " + insertCount + " "
+                                        + code.getLevelCode().getName() + " " + code.getName()
+                                        + " " + code.getLongitude() + " " + code.getLatitude());
+                            }
+                        } else {
+                            ++failedCount;
+                            if (loading != null) {
+                                loading.setInfo(message("Failed") + ": " + failedCount + " "
+                                        + code.getLevelCode().getName() + " " + code.getName()
+                                        + " " + code.getLongitude() + " " + code.getLatitude());
+                            }
+                        }
+                    }
+                }
+                conn.commit();
+            }
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+    public static List<GeographyCode> readInternalCSV(File file) {
+        List<GeographyCode> codes = new ArrayList();
+        try ( CSVParser parser = CSVParser.parse(file, StandardCharsets.UTF_8,
+                CSVFormat.DEFAULT.withFirstRecordAsHeader().withDelimiter(',').withTrim().withNullString(""))) {
+            List<String> names = parser.getHeaderNames();
+            for (CSVRecord record : parser) {
+                GeographyCode code = GeographyCode.readIntenalRecord(names, record);
+                if (code != null) {
+                    codes.add(code);
+                }
+            }
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+        return codes;
+    }
+
+    public static GeographyCode readIntenalRecord(List<String> names, CSVRecord record) {
+        try {
+            GeographyCode code = new GeographyCode();
+            if (names.contains("gcid")) {
+                code.setGcid(Long.valueOf(record.get("gcid")));
+            } else {
+                code.setGcid(Long.valueOf(record.get("dataid")));
+            }
+            code.setLevelCode(new GeographyCodeLevel(Integer.valueOf(record.get("levelid"))));
+            try {
+                code.setLongitude(Double.valueOf(record.get("longitude")));
+                code.setLatitude(Double.valueOf(record.get("latitude")));
+            } catch (Exception e) {
+            }
+            if (names.contains("chinese_name")) {
+                code.setChineseName(record.get("chinese_name"));
+            }
+            if (names.contains("english_name")) {
+                code.setEnglishName(record.get("english_name"));
+            }
+            if (names.contains("code1")) {
+                code.setCode1(record.get("code1"));
+            }
+            if (names.contains("code2")) {
+                code.setCode2(record.get("code2"));
+            }
+            if (names.contains("code3")) {
+                code.setCode3(record.get("code3"));
+            }
+            if (names.contains("code4")) {
+                code.setCode4(record.get("code4"));
+            }
+            if (names.contains("code5")) {
+                code.setCode5(record.get("code5"));
+            }
+            if (names.contains("alias1")) {
+                code.setAlias1(record.get("alias1"));
+            }
+            if (names.contains("alias2")) {
+                code.setAlias2(record.get("alias2"));
+            }
+            if (names.contains("alias3")) {
+                code.setAlias3(record.get("alias3"));
+            }
+            if (names.contains("alias4")) {
+                code.setAlias4(record.get("alias4"));
+            }
+            if (names.contains("alias5")) {
+                code.setAlias5(record.get("alias5"));
+            }
+            if (names.contains("area") && record.get("area") != null) {
+                code.setArea(Long.valueOf(record.get("area")));
+            }
+            if (names.contains("population") && record.get("population") != null) {
+                code.setPopulation(Long.valueOf(record.get("population")));
+            }
+            try {
+                if (record.get("continentid") != null) {
+                    code.setContinent(Long.valueOf(record.get("continentid")));
+                }
+            } catch (Exception e) {
+            }
+            try {
+                if (record.get("countryid") != null) {
+                    code.setCountry(Long.valueOf(record.get("countryid")));
+                }
+            } catch (Exception e) {
+            }
+            try {
+                if (record.get("provinceid") != null) {
+                    code.setProvince(Long.valueOf(record.get("provinceid")));
+                }
+            } catch (Exception e) {
+            }
+            try {
+                if (record.get("cityid") != null) {
+                    code.setCity(Long.valueOf(record.get("cityid")));
+                }
+            } catch (Exception e) {
+            }
+            try {
+                if (record.get("countyid") != null) {
+                    code.setCounty(Long.valueOf(record.get("countyid")));
+                }
+            } catch (Exception e) {
+            }
+            try {
+                if (record.get("townid") != null) {
+                    code.setTown(Long.valueOf(record.get("townid")));
+                }
+            } catch (Exception e) {
+            }
+            try {
+                if (record.get("villageid") != null) {
+                    code.setVillage(Long.valueOf(record.get("villageid")));
+                }
+            } catch (Exception e) {
+            }
+            try {
+                if (record.get("buildingid") != null) {
+                    code.setBuilding(Long.valueOf(record.get("buildingid")));
+                }
+            } catch (Exception e) {
+            }
+            if (names.contains("comments")) {
+                code.setComments(record.get("comments"));
+            }
+            return code;
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return null;
+        }
+    }
+
+    public static GeographyCode readExtenalRecord(Connection conn, List<String> names, CSVRecord record) {
+        try {
+            String lang = names.contains(message("zh", "Level")) ? "zh" : "en";
+
+            GeographyCode code = new GeographyCode();
+            if (names.contains("level")) {
+                code.setLevelCode(new GeographyCodeLevel(record.get("level")));
+            } else if (names.contains(message(lang, "Level"))) {
+                code.setLevelCode(new GeographyCodeLevel(record.get(message(lang, "Level"))));
+            } else {
+                return null;
+            }
+            if (names.contains("longitude")) {
+                try {
+                    code.setLongitude(Double.valueOf(record.get("longitude")));
+                } catch (Exception e) {
+                }
+            } else if (names.contains(message(lang, "Longitude"))) {
+                try {
+                    code.setLongitude(Double.valueOf(record.get(message(lang, "Longitude"))));
+                } catch (Exception e) {
+                }
+            }
+            if (names.contains("latitude")) {
+                try {
+                    code.setLatitude(Double.valueOf(record.get("latitude")));
+                } catch (Exception e) {
+                }
+            } else if (names.contains(message(lang, "Latitude"))) {
+                try {
+                    code.setLatitude(Double.valueOf(record.get(message(lang, "Latitude"))));
+                } catch (Exception e) {
+                }
+            }
+
+            if (names.contains("chinese_name")) {
+                code.setChineseName(record.get("chinese_name"));
+            } else if (names.contains(message(lang, "ChineseName"))) {
+                code.setChineseName(record.get(message(lang, "ChineseName")));
+            }
+            if (names.contains("english_name")) {
+                code.setEnglishName(record.get("english_name"));
+            } else if (names.contains(message(lang, "EnglishName"))) {
+                code.setEnglishName(record.get(message(lang, "EnglishName")));
+            }
+            if (names.contains("code1")) {
+                code.setCode1(record.get("code1"));
+            } else if (names.contains(message(lang, "Code1"))) {
+                code.setCode1(record.get(message(lang, "Code1")));
+            }
+            if (names.contains("code2")) {
+                code.setCode2(record.get("code2"));
+            } else if (names.contains(message(lang, "Code2"))) {
+                code.setCode2(record.get(message(lang, "Code2")));
+            }
+            if (names.contains("code3")) {
+                code.setCode3(record.get("code3"));
+            } else if (names.contains(message(lang, "Code3"))) {
+                code.setCode3(record.get(message(lang, "Code3")));
+            }
+            if (names.contains("code4")) {
+                code.setCode4(record.get("code4"));
+            } else if (names.contains(message(lang, "Code4"))) {
+                code.setCode4(record.get(message(lang, "Code4")));
+            }
+            if (names.contains("code5")) {
+                code.setCode5(record.get("code5"));
+            } else if (names.contains(message(lang, "Code5"))) {
+                code.setCode5(record.get(message(lang, "Code5")));
+            }
+            if (names.contains("alias1")) {
+                code.setAlias1(record.get("alias1"));
+            } else if (names.contains(message(lang, "Alias1"))) {
+                code.setAlias1(record.get(message(lang, "Alias1")));
+            }
+            if (names.contains("alias2")) {
+                code.setAlias2(record.get("alias2"));
+            } else if (names.contains(message(lang, "Alias2"))) {
+                code.setAlias2(record.get(message(lang, "Alias2")));
+            }
+            if (names.contains("alias3")) {
+                code.setAlias3(record.get("alias3"));
+            } else if (names.contains(message(lang, "Alias3"))) {
+                code.setAlias3(record.get(message(lang, "Alias3")));
+            }
+            if (names.contains("alias4")) {
+                code.setAlias4(record.get("alias4"));
+            } else if (names.contains(message(lang, "Alias4"))) {
+                code.setAlias4(record.get(message(lang, "Alias4")));
+            }
+            if (names.contains("alias5")) {
+                code.setAlias5(record.get("alias5"));
+            } else if (names.contains(message(lang, "Alias5"))) {
+                code.setAlias5(record.get(message(lang, "Alias5")));
+            }
+
+            if (names.contains("area") && record.get("area") != null) {
+                try {
+                    code.setArea(Long.valueOf(record.get("area")));
+                } catch (Exception e) {
+                }
+            } else if (names.contains(message(lang, "SquareKilometers")) && record.get(message(lang, "SquareKilometers")) != null) {
+                try {
+                    code.setArea(Long.valueOf(record.get(message(lang, "SquareKilometers"))));
+                } catch (Exception e) {
+                }
+            }
+            if (names.contains("population") && record.get("population") != null) {
+                try {
+                    code.setPopulation(Long.valueOf(record.get("population")));
+                } catch (Exception e) {
+                }
+            } else if (names.contains(message(lang, "Population")) && record.get(message(lang, "Population")) != null) {
+                try {
+                    code.setArea(Long.valueOf(record.get(message(lang, "Population"))));
+                } catch (Exception e) {
+                }
+            }
+            GeographyCode continentC = null, countryC = null, provinceC = null, cityC = null,
+                    countyC = null, townC = null, villageC = null, buildingC = null;
+            long continentid, countryid, provinceid, cityid,
+                    countyid, townid, villageid, buildingid;
+
+            String continent = names.contains(message(lang, "Continent")) ? record.get(message(lang, "Continent"))
+                    : (names.contains("continent") ? record.get("continent") : null);
+            if (continent != null && !continent.isBlank()) {
+                continentC = TableGeographyCode.readCode(conn, 2, continent, false);
+            }
+            if (continentC != null) {
+                continentid = continentC.getGcid();
+            } else {
+                continentid = -1;
+            }
+
+            String country = names.contains(message(lang, "Country")) ? record.get(message(lang, "Country"))
+                    : (names.contains("country") ? record.get("country") : null);
+            if (country != null && !country.isBlank()) {
+                final String sql = "SELECT * FROM Geography_Code WHERE "
+                        + " level=3 AND continent=? AND ("
+                        + TableGeographyCode.NameEqual + ")";
+                try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+                    statement.setLong(1, continentid);
+                    TableGeographyCode.setNameParameters(statement, country, 1);
+                    countryC = TableGeographyCode.readCode(conn, statement, false);
+                }
+            }
+            if (countryC != null) {
+                countryid = countryC.getGcid();
+            } else {
+                countryid = -1;
+            }
+            String province = names.contains(message(lang, "Province")) ? record.get(message(lang, "Province"))
+                    : (names.contains("province") ? record.get("province") : null);
+            if (province != null && !province.isBlank()) {
+                final String sql = "SELECT * FROM Geography_Code WHERE "
+                        + " level=4 AND continent=? AND country=? AND ("
+                        + TableGeographyCode.NameEqual + ")";
+                try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+                    statement.setLong(1, continentid);
+                    statement.setLong(2, countryid);
+                    TableGeographyCode.setNameParameters(statement, province, 2);
+                    provinceC = TableGeographyCode.readCode(conn, statement, false);
+                }
+            }
+            if (provinceC != null) {
+                provinceid = provinceC.getGcid();
+            } else {
+                provinceid = -1;
+            }
+
+            String city = names.contains(message(lang, "City")) ? record.get(message(lang, "City"))
+                    : (names.contains("city") ? record.get("city") : null);
+            if (city != null && !city.isBlank()) {
+                final String sql = "SELECT * FROM Geography_Code WHERE "
+                        + " level=5 AND continent=? AND country=? AND province=?"
+                        + " AND (" + TableGeographyCode.NameEqual + ")";
+                try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+                    statement.setLong(1, continentid);
+                    statement.setLong(2, countryid);
+                    statement.setLong(3, provinceid);
+                    TableGeographyCode.setNameParameters(statement, city, 3);
+                    cityC = TableGeographyCode.readCode(conn, statement, false);
+                }
+            }
+            if (cityC != null) {
+                cityid = cityC.getGcid();
+            } else {
+                cityid = -1;
+            }
+
+            String county = names.contains(message(lang, "County")) ? record.get(message(lang, "County"))
+                    : (names.contains("county") ? record.get("county") : null);
+            if (county != null && !county.isBlank()) {
+                final String sql = "SELECT * FROM Geography_Code WHERE "
+                        + " level=6 AND continent=? AND country=? AND province=?"
+                        + " AND city=?"
+                        + " AND (" + TableGeographyCode.NameEqual + ")";
+                try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+                    statement.setLong(1, continentid);
+                    statement.setLong(2, countryid);
+                    statement.setLong(3, provinceid);
+                    statement.setLong(4, cityid);
+                    TableGeographyCode.setNameParameters(statement, county, 4);
+                    countyC = TableGeographyCode.readCode(conn, statement, false);
+                }
+            }
+            if (countyC != null) {
+                countyid = countyC.getGcid();
+            } else {
+                countyid = -1;
+            }
+
+            String town = names.contains(message(lang, "Town")) ? record.get(message(lang, "Town"))
+                    : (names.contains("town") ? record.get("town") : null);
+            if (town != null && !town.isBlank()) {
+                final String sql = "SELECT * FROM Geography_Code WHERE "
+                        + " level=7 AND continent=? AND country=? AND province=?"
+                        + " AND city=? AND county=?"
+                        + " AND (" + TableGeographyCode.NameEqual + ")";
+                try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+                    statement.setLong(1, continentid);
+                    statement.setLong(2, countryid);
+                    statement.setLong(3, provinceid);
+                    statement.setLong(4, cityid);
+                    statement.setLong(5, countyid);
+                    TableGeographyCode.setNameParameters(statement, town, 5);
+                    townC = TableGeographyCode.readCode(conn, statement, false);
+                }
+            }
+            if (townC != null) {
+                townid = townC.getGcid();
+            } else {
+                townid = -1;
+            }
+
+            String village = names.contains(message(lang, "Village")) ? record.get(message(lang, "Village"))
+                    : (names.contains("village") ? record.get("village") : null);
+            if (village != null && !village.isBlank()) {
+                final String sql = "SELECT * FROM Geography_Code WHERE "
+                        + " level=8 AND continent=? AND country=? AND province=?"
+                        + " AND city=? AND county=? AND town=?"
+                        + " AND (" + TableGeographyCode.NameEqual + ")";
+                try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+                    statement.setLong(1, continentid);
+                    statement.setLong(2, countryid);
+                    statement.setLong(3, provinceid);
+                    statement.setLong(4, cityid);
+                    statement.setLong(5, countyid);
+                    statement.setLong(6, townid);
+                    TableGeographyCode.setNameParameters(statement, village, 6);
+                    villageC = TableGeographyCode.readCode(conn, statement, false);
+                }
+            }
+            if (villageC != null) {
+                villageid = villageC.getGcid();
+            } else {
+                villageid = -1;
+            }
+
+            String building = names.contains(message(lang, "Building")) ? record.get(message(lang, "Building"))
+                    : (names.contains("building") ? record.get("building") : null);
+            if (building != null && !building.isBlank()) {
+                final String sql = "SELECT * FROM Geography_Code WHERE "
+                        + " level=9 AND continent=? AND country=? AND province=?"
+                        + " AND city=? AND county=? AND town=? AND village=?"
+                        + " AND (" + TableGeographyCode.NameEqual + ")";
+                try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+                    statement.setLong(1, continentid);
+                    statement.setLong(2, countryid);
+                    statement.setLong(3, provinceid);
+                    statement.setLong(4, cityid);
+                    statement.setLong(5, countyid);
+                    statement.setLong(6, townid);
+                    statement.setLong(7, villageid);
+                    TableGeographyCode.setNameParameters(statement, building, 7);
+                    buildingC = TableGeographyCode.readCode(conn, statement, false);
+                }
+            }
+            if (buildingC != null) {
+                buildingid = buildingC.getGcid();
+            } else {
+                buildingid = -1;
+            }
+            code.setContinent(continentid);
+            code.setCountry(countryid);
+            code.setProvince(provinceid);
+            code.setCity(cityid);
+            code.setCounty(countyid);
+            code.setTown(townid);
+            code.setVillage(villageid);
+            code.setBuilding(buildingid);
+            if (names.contains("comments")) {
+                code.setComments(record.get("comments"));
+            }
+            return code;
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return null;
+        }
+    }
+
+    public static void exportInternalCSV(File file) {
+        List<GeographyCode> codes = TableGeographyCode.readAll(false);
+        if (codes != null && !codes.isEmpty()) {
+            writeInternalCSV(file, codes);
+        }
+    }
+
+    public static void writeInternalCSV(File file, List<GeographyCode> codes) {
+        writeInternalCSV(file, codes, true);
+    }
+
+    // values of internal format are not related to languages, and headers are in English
+    public static void writeInternalCSV(File file, List<GeographyCode> codes, boolean writeHeader) {
+        try ( CSVPrinter printer = new CSVPrinter(new FileWriter(file, Charset.forName("utf-8")), CSVFormat.DEFAULT)) {
+            if (writeHeader) {
+                writeInternalCSVHeader(printer);
+            }
+            for (GeographyCode code : codes) {
+                writeInternalCSV(printer, code);
+            }
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+    public static void writeInternalCSVHeader(CSVPrinter printer) {
+        try {
+            printer.printRecord("gcid", "levelid", "longitude", "latitude", "chinese_name", "english_name",
+                    "code1", "code2", "code3", "code4", "code5", "alias1", "alias2", "alias3", "alias4", "alias5",
+                    "area", "population",
+                    "continentid", "countryid", "provinceid", "cityid", "countyid", "townid", "villageid", "buildingid",
+                    "comments");
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+    public static void writeInternalCSV(CSVPrinter printer, GeographyCode code) {
+        try {
+            printer.printRecord(code.getGcid(), code.getLevel(),
+                    code.getLongitude(), code.getLatitude(),
+                    code.getChineseName() == null ? "" : code.getChineseName(),
+                    code.getEnglishName() == null ? "" : code.getEnglishName(),
+                    code.getCode1() == null ? "" : code.getCode1(),
+                    code.getCode2() == null ? "" : code.getCode2(),
+                    code.getCode3() == null ? "" : code.getCode3(),
+                    code.getCode4() == null ? "" : code.getCode4(),
+                    code.getCode5() == null ? "" : code.getCode5(),
+                    code.getAlias1() == null ? "" : code.getAlias1(),
+                    code.getAlias2() == null ? "" : code.getAlias2(),
+                    code.getAlias3() == null ? "" : code.getAlias3(),
+                    code.getAlias4() == null ? "" : code.getAlias4(),
+                    code.getAlias5() == null ? "" : code.getAlias5(),
+                    code.getArea() > 0 ? code.getArea() : "",
+                    code.getPopulation() > 0 ? code.getPopulation() : "",
+                    code.getContinent() > 0 ? code.getContinent() : "",
+                    code.getCountry() > 0 ? code.getCountry() : "",
+                    code.getProvince() > 0 ? code.getProvince() : "",
+                    code.getCity() > 0 ? code.getCity() : "",
+                    code.getCounty() > 0 ? code.getCounty() : "",
+                    code.getTown() > 0 ? code.getTown() : "",
+                    code.getVillage() > 0 ? code.getVillage() : "",
+                    code.getBuilding() > 0 ? code.getBuilding() : "",
+                    code.getComments() == null ? "" : code.getComments()
+            );
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+    public static List<String> externalNames() {
+        try {
+            List<String> columns = new ArrayList<>();
+            columns.addAll(Arrays.asList(
+                    message("Level"), message("Longitude"), message("Latitude"),
+                    message("ChineseName"), message("EnglishName"),
+                    message("Code1"), message("Code2"), message("Code3"), message("Code4"), message("Code5"),
+                    message("Alias1"), message("Alias2"), message("Alias3"), message("Alias4"), message("Alias5"),
+                    message("SquareKilometers"), message("Population"),
+                    message("Continent"), message("Country"), message("Province"),
+                    message("City"), message("County"), message("Town"),
+                    message("Village"), message("Building"), message("Comments")
+            ));
+            return columns;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static List<String> values(GeographyCode code) {
+        List<String> row = new ArrayList<>();
+        row.addAll(Arrays.asList(
+                code.getLevelCode().getName(),
+                code.getLongitude() >= -180 && code.getLongitude() <= 180 ? code.getLongitude() + "" : "",
+                code.getLatitude() >= -90 && code.getLatitude() <= 90 ? code.getLatitude() + "" : "",
+                code.getChineseName() == null ? "" : code.getChineseName(),
+                code.getEnglishName() == null ? "" : code.getEnglishName(),
+                code.getCode1() == null ? "" : code.getCode1(),
+                code.getCode2() == null ? "" : code.getCode2(),
+                code.getCode3() == null ? "" : code.getCode3(),
+                code.getCode4() == null ? "" : code.getCode4(),
+                code.getCode5() == null ? "" : code.getCode5(),
+                code.getAlias1() == null ? "" : code.getAlias1(),
+                code.getAlias2() == null ? "" : code.getAlias2(),
+                code.getAlias3() == null ? "" : code.getAlias3(),
+                code.getAlias4() == null ? "" : code.getAlias4(),
+                code.getAlias5() == null ? "" : code.getAlias5(),
+                code.getArea() > 0 ? code.getArea() + "" : "",
+                code.getPopulation() > 0 ? code.getPopulation() + "" : "",
+                code.getContinentName() == null ? "" : code.getContinentName(),
+                code.getCountryName() == null ? "" : code.getCountryName(),
+                code.getProvinceName() == null ? "" : code.getProvinceName(),
+                code.getCityName() == null ? "" : code.getCityName(),
+                code.getCountyName() == null ? "" : code.getCountyName(),
+                code.getTownName() == null ? "" : code.getTownName(),
+                code.getVillageName() == null ? "" : code.getVillageName(),
+                code.getBuildingName() == null ? "" : code.getBuildingName(),
+                code.getComments() == null ? "" : code.getComments()
+        ));
+        return row;
+    }
+
+    public static void exportExternalCSV(File file) {
+        List<GeographyCode> codes = TableGeographyCode.readAll(true);
+        if (codes != null && !codes.isEmpty()) {
+            writeExternalCSV(file, codes);
+        }
+    }
+
+    public static void writeExternalCSV(File file, List<GeographyCode> codes) {
+        writeExternalCSV(file, codes, true);
+    }
+
+    // values of external format are related to languages
+    public static void writeExternalCSV(File file, List<GeographyCode> codes, boolean writeHeader) {
+        try ( CSVPrinter printer = new CSVPrinter(new FileWriter(file, Charset.forName("utf-8")), CSVFormat.DEFAULT)) {
+            if (writeHeader) {
+                writeExternalCSVHeader(printer);
+            }
+            for (GeographyCode code : codes) {
+                writeExternalCSV(printer, code);
+            }
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+    public static void writeExternalCSVHeader(CSVPrinter printer) {
+        try {
+            printer.printRecord(externalNames());
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+    public static void writeExternalCSV(CSVPrinter printer, GeographyCode code) {
+        try {
+            printer.printRecord(values(code));
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+    public static void writeExcel(File file, List<GeographyCode> codes) {
+        try {
+            if (file == null || codes == null || codes.isEmpty()) {
+                return;
+            }
+            XSSFWorkbook wb = new XSSFWorkbook();
+            XSSFSheet sheet = wb.createSheet("sheet1");
+            List<String> columns = writeExcelHeader(wb, sheet);
+            for (int i = 0; i < codes.size(); i++) {
+                GeographyCode code = codes.get(i);
+                writeExcel(sheet, i, code);
+            }
+            for (int i = 0; i < columns.size(); i++) {
+                sheet.autoSizeColumn(i);
+            }
+            try ( OutputStream fileOut = new FileOutputStream(file)) {
+                wb.write(fileOut);
+            }
+        } catch (Exception e) {
+
+        }
+    }
+
+    public static List<String> writeExcelHeader(XSSFWorkbook wb, XSSFSheet sheet) {
+        try {
+            List<String> columns = externalNames();
+            sheet.setDefaultColumnWidth(20);
+            XSSFRow titleRow = sheet.createRow(0);
+            XSSFCellStyle horizontalCenter = wb.createCellStyle();
+            horizontalCenter.setAlignment(HorizontalAlignment.CENTER);
+            for (int i = 0; i < columns.size(); i++) {
+                XSSFCell cell = titleRow.createCell(i);
+                cell.setCellValue(columns.get(i));
+                cell.setCellStyle(horizontalCenter);
+            }
+            return columns;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static void writeExcel(XSSFSheet sheet, int i, GeographyCode code) {
+        try {
+            List<String> row = values(code);
+            XSSFRow sheetRow = sheet.createRow(i + 1);
+            for (int j = 0; j < row.size(); j++) {
+                XSSFCell cell = sheetRow.createCell(j);
+                cell.setCellValue(row.get(j));
+            }
+        } catch (Exception e) {
+        }
+    }
+
+    public static void writeJson(File file, List<GeographyCode> codes) {
+        if (file == null || codes == null || codes.isEmpty()) {
+            return;
+        }
+        String indent = "    ";
+        try ( FileWriter writer = new FileWriter(file, Charset.forName("utf-8"))) {
+            StringBuilder s = new StringBuilder();
+            s.append("{\"GeographyCodes\": [\n");
+            writer.write(s.toString());
+            for (int i = 0; i < codes.size(); i++) {
+                GeographyCode code = codes.get(i);
+                s = writeJson(writer, indent, code);
+                if (i == codes.size() - 1) {
+                    s.append(indent).append("}\n");
+                } else {
+                    s.append(indent).append("},\n");
+                }
+                writer.write(s.toString());
+            }
+            writer.write("]}\n");
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    public static StringBuilder writeJson(FileWriter writer, String indent, GeographyCode code) {
+        try {
+            StringBuilder s = new StringBuilder();
+            s.append(indent).append("{\"level\":\"").append(code.getLevelCode().getName()).append("\"");
+            if (code.getLongitude() >= -180 && code.getLongitude() <= 180) {
+                s.append(",\"longitude\":").append(code.getLongitude());
+            }
+            if (code.getLatitude() >= -90 && code.getLatitude() <= 90) {
+                s.append(",\"latitude\":").append(code.getLatitude());
+            }
+            if (code.getChineseName() != null) {
+                s.append(",\"chinese_name\":\"").append(code.getChineseName()).append("\"");
+            }
+            if (code.getEnglishName() != null) {
+                s.append(",\"english_name\":\"").append(code.getEnglishName()).append("\"");
+            }
+            if (code.getCode1() != null) {
+                s.append(",\"code1\":\"").append(code.getCode1()).append("\"");
+            }
+            if (code.getCode2() != null) {
+                s.append(",\"code2\":\"").append(code.getCode2()).append("\"");
+            }
+            if (code.getCode3() != null) {
+                s.append(",\"code3\":\"").append(code.getCode3()).append("\"");
+            }
+            if (code.getCode4() != null) {
+                s.append(",\"code4\":\"").append(code.getCode4()).append("\"");
+            }
+            if (code.getCode5() != null) {
+                s.append(",\"code5\":\"").append(code.getCode5()).append("\"");
+            }
+            if (code.getAlias1() != null) {
+                s.append(",\"alias1\":\"").append(code.getAlias1()).append("\"");
+            }
+            if (code.getAlias2() != null) {
+                s.append(",\"alias2\":\"").append(code.getAlias2()).append("\"");
+            }
+            if (code.getAlias3() != null) {
+                s.append(",\"alias3\":\"").append(code.getAlias3()).append("\"");
+            }
+            if (code.getAlias4() != null) {
+                s.append(",\"alias4\":\"").append(code.getAlias4()).append("\"");
+            }
+            if (code.getAlias5() != null) {
+                s.append(",\"alias5\":\"").append(code.getAlias5()).append("\"");
+            }
+            if (code.getArea() > 0) {
+                s.append(",\"area\":").append(code.getArea());
+            }
+            if (code.getPopulation() > 0) {
+                s.append(",\"population\":").append(code.getPopulation());
+            }
+            if (code.getContinentName() != null) {
+                s.append(",\"continent\":\"").append(code.getContinentName()).append("\"");
+            }
+            if (code.getCountryName() != null) {
+                s.append(",\"country\":\"").append(code.getCountryName()).append("\"");
+            }
+            if (code.getProvinceName() != null) {
+                s.append(",\"province\":\"").append(code.getProvinceName()).append("\"");
+            }
+            if (code.getCityName() != null) {
+                s.append(",\"city\":\"").append(code.getCityName()).append("\"");
+            }
+            if (code.getCountyName() != null) {
+                s.append(",\"county\":\"").append(code.getCountyName()).append("\"");
+            }
+            if (code.getTownName() != null) {
+                s.append(",\"town\":\"").append(code.getTownName()).append("\"");
+            }
+            if (code.getVillageName() != null) {
+                s.append(",\"village\":\"").append(code.getVillageName()).append("\"");
+            }
+            if (code.getBuildingName() != null) {
+                s.append(",\"building\":\"").append(code.getBuildingName()).append("\"");
+            }
+            if (code.getComments() != null) {
+                s.append(",\"comments\":\"").append(code.getComments()).append("\"");
+            }
+            return s;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
+    public static void writeXml(File file, List<GeographyCode> codes) {
+        if (file == null || codes == null || codes.isEmpty()) {
+            return;
+        }
+        String indent = "    ";
+        try ( FileWriter writer = new FileWriter(file, Charset.forName("utf-8"))) {
+            StringBuilder s = new StringBuilder();
+            s.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n").
+                    append("<GeographyCodes>\n");
+            writer.write(s.toString());
+            for (GeographyCode code : codes) {
+                writeXml(writer, indent, code);
+            }
+            writer.write("</GeographyCodes>\n");
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    public static void writeXml(FileWriter writer, String indent, GeographyCode code) {
+        try {
+            StringBuilder s = new StringBuilder();
+            s.append(indent).append("<GeographyCode ")
+                    .append(" level=\"").append(code.getLevelCode().getName()).append("\" ");
+            if (code.getLongitude() >= -180 && code.getLongitude() <= 180) {
+                s.append(" longitude=\"").append(code.getLongitude()).append("\"");
+            }
+            if (code.getLatitude() >= -90 && code.getLatitude() <= 90) {
+                s.append(" latitude=\"").append(code.getLatitude()).append("\"");
+            }
+            if (code.getChineseName() != null) {
+                s.append(" chinese_name=\"").append(code.getChineseName()).append("\"");
+            }
+            if (code.getEnglishName() != null) {
+                s.append(" english_name=\"").append(code.getEnglishName()).append("\"");
+            }
+            if (code.getCode1() != null) {
+                s.append(" code1=\"").append(code.getCode1()).append("\"");
+            }
+            if (code.getCode2() != null) {
+                s.append(" code2=\"").append(code.getCode2()).append("\"");
+            }
+            if (code.getCode3() != null) {
+                s.append(" code3=\"").append(code.getCode3()).append("\"");
+            }
+            if (code.getCode4() != null) {
+                s.append(" code4=\"").append(code.getCode4()).append("\"");
+            }
+            if (code.getCode5() != null) {
+                s.append(" code5=\"").append(code.getCode5()).append("\"");
+            }
+            if (code.getAlias1() != null) {
+                s.append(" alias1=\"").append(code.getAlias1()).append("\"");
+            }
+            if (code.getAlias2() != null) {
+                s.append(" alias2=\"").append(code.getAlias2()).append("\"");
+            }
+            if (code.getAlias3() != null) {
+                s.append(" alias3=\"").append(code.getAlias3()).append("\"");
+            }
+            if (code.getAlias4() != null) {
+                s.append(" alias4=\"").append(code.getAlias4()).append("\"");
+            }
+            if (code.getAlias5() != null) {
+                s.append(" alias5=\"").append(code.getAlias5()).append("\"");
+            }
+            if (code.getArea() > 0) {
+                s.append(" area=\"").append(code.getArea()).append("\"");
+            }
+            if (code.getPopulation() > 0) {
+                s.append(" population=\"").append(code.getPopulation()).append("\"");
+            }
+            if (code.getContinentName() != null) {
+                s.append(" continent=\"").append(code.getContinentName()).append("\"");
+            }
+            if (code.getCountryName() != null) {
+                s.append(" country=\"").append(code.getCountryName()).append("\"");
+            }
+            if (code.getProvinceName() != null) {
+                s.append(" province=\"").append(code.getProvinceName()).append("\"");
+            }
+            if (code.getCityName() != null) {
+                s.append(" city=\"").append(code.getCityName()).append("\"");
+            }
+            if (code.getCountyName() != null) {
+                s.append(" county=\"").append(code.getCountyName()).append("\"");
+            }
+            if (code.getTownName() != null) {
+                s.append(" town=\"").append(code.getTownName()).append("\"");
+            }
+            if (code.getVillageName() != null) {
+                s.append(" village=\"").append(code.getVillageName()).append("\"");
+            }
+            if (code.getBuildingName() != null) {
+                s.append(" building=\"").append(code.getBuildingName()).append("\"");
+            }
+            if (code.getComments() != null) {
+                s.append(" comments=\"").append(code.getComments()).append("\"");
+            }
+            s.append(" />\n");
+            writer.write(s.toString());
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    public static void writeHtml(File file, List<GeographyCode> codes, String title) {
+        try {
+            if (file == null || codes == null || codes.isEmpty()) {
+                return;
+            }
+            List<String> names = externalNames();
+            StringTable table = new StringTable(names, title);
+            for (GeographyCode code : codes) {
+                List<String> row = values(code);
+                table.add(row);
+            }
+            FileTools.writeFile(file, StringTable.tableHtml(table));
+        } catch (Exception e) {
+        }
+    }
+
+    // !! Caller responses for committing the update
+    public static Map<String, Object> code(Connection conn,
+            PreparedStatement geoInsert, int level, double longitude, double latitude,
+            String continent, String country, String province, String city, String county,
+            String town, String village, String building, boolean create) {
+        Map<String, Object> ret = new HashMap<>();
+        try {
+            String msg = "";
+            if (conn == null || level > 9) {
+                ret.put("message", "level is wrong");
+                return ret;
+            }
+            String sql;
+            if (level == 1) {
+                GeographyCode earch = TableGeographyCode.earth(conn);
+                if (earch == null) {
+                    GeographyCode.predefined(conn, null);
+                    earch = TableGeographyCode.earth(conn);
+                }
+                ret.put("code", earch);
+                return ret;
+            }
+
+            GeographyCode continentCode = null;
+            if (continent != null) {
+                continentCode = TableGeographyCode.readCode(conn, 2, continent, false);
+                if (continentCode == null) {
+                    continentCode = new GeographyCode();
+                    continentCode.setLevelCode(new GeographyCodeLevel("Continent"));
+                    continentCode.setLongitude(longitude);
+                    continentCode.setLatitude(latitude);
+                    continentCode.setChineseName(continent);
+                    continentCode.setEnglishName(continent);
+                    msg += "continent :" + continent + ", " + longitude + "," + latitude;
+                    if (create) {
+                        if (!TableGeographyCode.insert(conn, geoInsert, continentCode)) {
+                            continentCode = null;
+                            msg += " is not existed, and failed to create. ";
+                        } else {
+                            msg += " is not existed, and  created now.";
+                            ret.put("inserted", "true");
+                        }
+                    } else {
+                        msg += " is not existed, and will not be created.";
+                    }
+                }
+            }
+            if (level == 2) {
+                ret.put("message", msg);
+                ret.put("code", continentCode);
+                return ret;
+            }
+
+            GeographyCode countryCode = null;
+            if (country != null) {
+                countryCode = TableGeographyCode.readCode(conn, 3, country, false);
+                if (countryCode == null) {
+                    countryCode = new GeographyCode();
+                    countryCode.setLevelCode(new GeographyCodeLevel("Country"));
+                    countryCode.setLongitude(longitude);
+                    countryCode.setLatitude(latitude);
+                    countryCode.setChineseName(country);
+                    countryCode.setEnglishName(country);
+                    if (continentCode != null) {
+                        countryCode.setContinent(continentCode.getGcid());
+                    }
+                    msg += "country :" + country + ", " + longitude + "," + latitude;
+                    if (create) {
+                        if (!TableGeographyCode.insert(conn, geoInsert, countryCode)) {
+                            countryCode = null;
+                            msg += " is not existed, and failed to create. ";
+                        } else {
+                            msg += " is not existed, and  created now.";
+                            ret.put("inserted", "true");
+                        }
+                    } else {
+                        msg += " is not existed, and will not be created.";
+                    }
+                }
+            }
+            if (level == 3) {
+                ret.put("message", msg);
+                ret.put("code", countryCode);
+                return ret;
+            }
+
+            GeographyCode provinceCode = null;
+            if (province != null) {
+                if (countryCode != null && create) {
+                    sql = "SELECT * FROM Geography_Code WHERE "
+                            + " level=4 AND country=" + countryCode.getGcid()
+                            + " AND (" + TableGeographyCode.nameEqual(province) + ")";
+                    provinceCode = TableGeographyCode.queryCode(conn, sql, false);
+                } else {
+                    provinceCode = TableGeographyCode.readCode(conn, 4, province, false);
+                }
+                if (provinceCode == null) {
+                    provinceCode = new GeographyCode();
+                    provinceCode.setLevelCode(new GeographyCodeLevel("Province"));
+                    provinceCode.setLongitude(longitude);
+                    provinceCode.setLatitude(latitude);
+                    provinceCode.setChineseName(province);
+                    provinceCode.setEnglishName(province);
+                    if (countryCode != null) {
+                        provinceCode.setContinent(countryCode.getContinent());
+                        provinceCode.setCountry(countryCode.getGcid());
+                        msg += "\nprovince :" + province + "," + longitude + "," + latitude;
+                    } else {
+                        msg += "\nprovince :" + country + ", " + province + "," + longitude + "," + latitude;
+                    }
+                    if (create) {
+                        if (!TableGeographyCode.insert(conn, geoInsert, provinceCode)) {
+                            provinceCode = null;
+                            msg += " is not existed, and failed to create. ";
+                        } else {
+                            msg += " is not existed, and  created now.";
+                            ret.put("inserted", "true");
+                        }
+                    } else {
+                        msg += " is not existed, and will not be created.";
+                    }
+                }
+            }
+            if (level == 4) {
+                ret.put("message", msg);
+                ret.put("code", provinceCode);
+                return ret;
+            }
+
+            GeographyCode cityCode = null;
+            if (city != null) {
+                sql = "SELECT * FROM Geography_Code WHERE "
+                        + " (level=5 OR level=6 ) AND ";
+                if (countryCode != null) {
+                    sql += " country=" + countryCode.getGcid() + " AND ";
+                }
+                if (provinceCode != null) {
+                    sql += " province=" + provinceCode.getGcid() + " AND ";
+                }
+                sql += " ( " + TableGeographyCode.nameEqual(city) + " )";
+                cityCode = TableGeographyCode.queryCode(conn, sql, false);
+                if (cityCode == null) {
+                    cityCode = new GeographyCode();
+                    cityCode.setLevelCode(new GeographyCodeLevel("City"));
+                    cityCode.setLongitude(longitude);
+                    cityCode.setLatitude(latitude);
+                    cityCode.setChineseName(city);
+                    cityCode.setEnglishName(city);
+                    if (provinceCode != null) {
+                        cityCode.setContinent(provinceCode.getContinent());
+                        cityCode.setCountry(provinceCode.getCountry());
+                        cityCode.setProvince(provinceCode.getGcid());
+                        msg += "\ncity :" + province + "," + city + "," + longitude + "," + latitude;
+                    } else if (countryCode != null) {
+                        cityCode.setContinent(countryCode.getContinent());
+                        cityCode.setCountry(countryCode.getGcid());
+                        msg += "\ncity :" + country + ", " + city + "," + longitude + "," + latitude;
+                    }
+                    if (create) {
+                        if (!TableGeographyCode.insert(conn, geoInsert, cityCode)) {
+                            cityCode = null;
+                            msg += " is not existed, and failed to create. ";
+                        } else {
+                            msg += " is not existed, and  created now.";
+                            ret.put("inserted", "true");
+                        }
+                    } else {
+                        msg += " is not existed, and will not be created.";
+                    }
+                }
+            }
+            if (level == 5) {
+                ret.put("message", msg);
+                ret.put("code", cityCode);
+                return ret;
+            }
+
+            GeographyCode countyCode = null;
+            if (county != null) {
+                sql = "SELECT * FROM Geography_Code WHERE level=6 AND ";
+                if (countryCode != null) {
+                    sql += " country=" + countryCode.getGcid() + " AND ";
+                }
+                if (provinceCode != null) {
+                    sql += " province=" + provinceCode.getGcid() + " AND ";
+                }
+                if (cityCode != null) {
+                    sql += " city=" + cityCode.getGcid() + " AND ";
+                }
+                sql += " ( " + TableGeographyCode.nameEqual(county) + " )";
+                countyCode = TableGeographyCode.queryCode(conn, sql, false);
+                if (countyCode == null) {
+                    countyCode = new GeographyCode();
+                    countyCode.setLevelCode(new GeographyCodeLevel("County"));
+                    countyCode.setLongitude(longitude);
+                    countyCode.setLatitude(latitude);
+                    countyCode.setChineseName(county);
+                    countyCode.setEnglishName(county);
+                    if (cityCode != null) {
+                        countyCode.setContinent(cityCode.getContinent());
+                        countyCode.setCountry(cityCode.getCountry());
+                        countyCode.setProvince(cityCode.getProvince());
+                        countyCode.setCity(cityCode.getGcid());
+                        msg += "\ncounty :" + city + ", " + county + "," + longitude + "," + latitude;
+                    } else if (provinceCode != null) {
+                        countyCode.setContinent(provinceCode.getContinent());
+                        countyCode.setCountry(provinceCode.getCountry());
+                        countyCode.setProvince(provinceCode.getGcid());
+                        msg += "\ncounty :" + province + ", " + county + "," + longitude + "," + latitude;
+                    } else if (countryCode != null) {
+                        countyCode.setContinent(countryCode.getContinent());
+                        countyCode.setCountry(countryCode.getGcid());
+                        msg += "\ncounty :" + country + ", " + county + "," + longitude + "," + latitude;
+                    }
+                    if (create) {
+                        if (!TableGeographyCode.insert(conn, geoInsert, countyCode)) {
+                            countyCode = null;
+                            msg += " is not existed, and failed to create. ";
+                        } else {
+                            msg += " is not existed, and  created now.";
+                            ret.put("inserted", "true");
+                        }
+                    } else {
+                        msg += " is not existed, and will not be created.";
+                    }
+                }
+            }
+            if (level == 6) {
+                ret.put("message", msg);
+                ret.put("code", countyCode);
+                return ret;
+            }
+
+            GeographyCode townCode = null;
+            if (town != null) {
+                sql = "SELECT * FROM Geography_Code WHERE level=7 AND ";
+                if (countryCode != null) {
+                    sql += " country=" + countryCode.getGcid() + " AND ";
+                }
+                if (provinceCode != null) {
+                    sql += " province=" + provinceCode.getGcid() + " AND ";
+                }
+                if (cityCode != null) {
+                    sql += " city=" + cityCode.getGcid() + " AND ";
+                }
+                if (countyCode != null) {
+                    sql += " county=" + countyCode.getGcid() + " AND ";
+                }
+                sql += "  ( " + TableGeographyCode.nameEqual(county) + " )";
+                townCode = TableGeographyCode.queryCode(conn, sql, false);
+                if (townCode == null) {
+                    townCode = new GeographyCode();
+                    townCode.setLevelCode(new GeographyCodeLevel("Town"));
+                    townCode.setLongitude(longitude);
+                    townCode.setLatitude(latitude);
+                    townCode.setChineseName(town);
+                    townCode.setEnglishName(town);
+                    if (countyCode != null) {
+                        townCode.setContinent(countyCode.getContinent());
+                        townCode.setCountry(countyCode.getCountry());
+                        townCode.setProvince(countyCode.getProvince());
+                        townCode.setCity(countyCode.getCity());
+                        townCode.setCounty(countyCode.getGcid());
+                        msg += "\ntown :" + county + ", " + town + "," + longitude + "," + latitude;
+                    } else if (cityCode != null) {
+                        townCode.setContinent(cityCode.getContinent());
+                        townCode.setCountry(cityCode.getCountry());
+                        townCode.setProvince(cityCode.getProvince());
+                        townCode.setCity(cityCode.getGcid());
+                        msg += "\ntown :" + city + ", " + town + "," + longitude + "," + latitude;
+                    } else if (provinceCode != null) {
+                        townCode.setContinent(provinceCode.getContinent());
+                        townCode.setCountry(provinceCode.getCountry());
+                        townCode.setProvince(provinceCode.getGcid());
+                        msg += "\ntown :" + province + ", " + town + "," + longitude + "," + latitude;
+                    } else if (countryCode != null) {
+                        townCode.setContinent(countryCode.getContinent());
+                        townCode.setCountry(countryCode.getGcid());
+                        msg += "\ntown :" + county + ", " + town + "," + longitude + "," + latitude;
+                    }
+                    if (create) {
+                        if (!TableGeographyCode.insert(conn, geoInsert, townCode)) {
+                            townCode = null;
+                            msg += " is not existed, and failed to create. ";
+                        } else {
+                            msg += " is not existed, and  created now.";
+                            ret.put("inserted", "true");
+                        }
+                    } else {
+                        msg += " is not existed, and will not be created.";
+                    }
+                }
+            }
+            if (level == 7) {
+                ret.put("message", msg);
+                ret.put("code", townCode);
+                return ret;
+            }
+
+            GeographyCode villageCode = null;
+            if (village != null) {
+                sql = "SELECT * FROM Geography_Code WHERE level=8 AND ";
+                if (countryCode != null) {
+                    sql += " country=" + countryCode.getGcid() + " AND ";
+                }
+                if (provinceCode != null) {
+                    sql += " province=" + provinceCode.getGcid() + " AND ";
+                }
+                if (cityCode != null) {
+                    sql += " city=" + cityCode.getGcid() + " AND ";
+                }
+                if (countyCode != null) {
+                    sql += " county=" + countyCode.getGcid() + " AND ";
+                }
+                if (townCode != null) {
+                    sql += " town=" + townCode.getGcid() + " AND ";
+                }
+                sql += " ( " + TableGeographyCode.nameEqual(village) + " )";
+                villageCode = TableGeographyCode.queryCode(conn, sql, false);
+                if (villageCode == null) {
+                    villageCode = new GeographyCode();
+                    villageCode.setLevelCode(new GeographyCodeLevel("Village"));
+                    villageCode.setLongitude(longitude);
+                    villageCode.setLatitude(latitude);
+                    villageCode.setChineseName(village);
+                    villageCode.setEnglishName(village);
+                    if (townCode != null) {
+                        villageCode.setContinent(townCode.getContinent());
+                        villageCode.setCountry(townCode.getCountry());
+                        villageCode.setProvince(townCode.getProvince());
+                        villageCode.setCity(townCode.getCity());
+                        villageCode.setCounty(townCode.getCounty());
+                        villageCode.setTown(townCode.getGcid());
+                        msg += "\nvillage :" + town + ", " + village + "," + longitude + "," + latitude;
+                    } else if (countyCode != null) {
+                        villageCode.setContinent(countyCode.getContinent());
+                        villageCode.setCountry(countyCode.getCountry());
+                        villageCode.setProvince(countyCode.getProvince());
+                        villageCode.setCity(countyCode.getCity());
+                        villageCode.setCounty(countyCode.getGcid());
+                        msg += "\nvillage :" + county + ", " + village + "," + longitude + "," + latitude;
+                    } else if (cityCode != null) {
+                        villageCode.setContinent(cityCode.getContinent());
+                        villageCode.setCountry(cityCode.getCountry());
+                        villageCode.setProvince(cityCode.getProvince());
+                        villageCode.setCity(cityCode.getGcid());
+                        msg += "\nvillage :" + city + ", " + village + "," + longitude + "," + latitude;
+                    } else if (provinceCode != null) {
+                        villageCode.setContinent(provinceCode.getContinent());
+                        villageCode.setCountry(provinceCode.getCountry());
+                        villageCode.setProvince(provinceCode.getGcid());
+                        msg += "\nvillage :" + province + ", " + village + "," + longitude + "," + latitude;
+                    } else if (countryCode != null) {
+                        villageCode.setContinent(countryCode.getContinent());
+                        villageCode.setCountry(countryCode.getGcid());
+                        msg += "\nvillage :" + county + ", " + village + "," + longitude + "," + latitude;
+                    }
+                    if (create) {
+                        if (!TableGeographyCode.insert(conn, geoInsert, villageCode)) {
+                            villageCode = null;
+                            msg += " is not existed, and failed to create. ";
+                        } else {
+                            msg += " is not existed, and  created now.";
+                            ret.put("inserted", "true");
+                        }
+                    } else {
+                        msg += " is not existed, and will not be created.";
+                    }
+                }
+            }
+            if (level == 8) {
+                ret.put("message", msg);
+                ret.put("code", villageCode);
+                return ret;
+            }
+            GeographyCode buildingCode = null;
+            if (building != null) {
+                sql = "SELECT * FROM Geography_Code WHERE level=9 AND ";
+                if (countryCode != null) {
+                    sql += " country=" + countryCode.getGcid() + " AND ";
+                }
+                if (provinceCode != null) {
+                    sql += " province=" + provinceCode.getGcid() + " AND ";
+                }
+                if (cityCode != null) {
+                    sql += " city=" + cityCode.getGcid() + " AND ";
+                }
+                if (countyCode != null) {
+                    sql += " county=" + countyCode.getGcid() + " AND ";
+                }
+                if (townCode != null) {
+                    sql += " town=" + townCode.getGcid() + " AND ";
+                }
+                if (villageCode != null) {
+                    sql += " village=" + villageCode.getGcid() + " AND ";
+                }
+                sql += " ( " + TableGeographyCode.nameEqual(building) + " )";
+                buildingCode = TableGeographyCode.queryCode(conn, sql, false);
+                if (buildingCode == null) {
+                    buildingCode = new GeographyCode();
+                    buildingCode.setLevelCode(new GeographyCodeLevel("Building"));
+                    buildingCode.setLongitude(longitude);
+                    buildingCode.setLatitude(latitude);
+                    buildingCode.setChineseName(building);
+                    buildingCode.setEnglishName(building);
+                    if (villageCode != null) {
+                        buildingCode.setContinent(villageCode.getContinent());
+                        buildingCode.setCountry(villageCode.getCountry());
+                        buildingCode.setProvince(villageCode.getProvince());
+                        buildingCode.setCity(villageCode.getCity());
+                        buildingCode.setCounty(villageCode.getCounty());
+                        buildingCode.setTown(villageCode.getTown());
+                        buildingCode.setVillage(villageCode.getGcid());
+                        msg += "\nbuilding :" + village + ", " + building + "," + longitude + "," + latitude;
+                    } else if (townCode != null) {
+                        buildingCode.setContinent(townCode.getContinent());
+                        buildingCode.setCountry(townCode.getCountry());
+                        buildingCode.setProvince(townCode.getProvince());
+                        buildingCode.setCity(townCode.getCity());
+                        buildingCode.setCounty(townCode.getCounty());
+                        buildingCode.setTown(townCode.getGcid());
+                        msg += "\nbuilding :" + town + ", " + building + "," + longitude + "," + latitude;
+                    } else if (countyCode != null) {
+                        buildingCode.setContinent(countyCode.getContinent());
+                        buildingCode.setCountry(countyCode.getCountry());
+                        buildingCode.setProvince(countyCode.getProvince());
+                        buildingCode.setCity(countyCode.getCity());
+                        buildingCode.setCounty(countyCode.getGcid());
+                        msg += "\nbuilding :" + county + ", " + building + "," + longitude + "," + latitude;
+                    } else if (cityCode != null) {
+                        buildingCode.setContinent(cityCode.getContinent());
+                        buildingCode.setCountry(cityCode.getCountry());
+                        buildingCode.setProvince(cityCode.getProvince());
+                        buildingCode.setCity(cityCode.getGcid());
+                        msg += "\nbuilding :" + city + ", " + building + "," + longitude + "," + latitude;
+                    } else if (provinceCode != null) {
+                        buildingCode.setContinent(provinceCode.getContinent());
+                        buildingCode.setCountry(provinceCode.getCountry());
+                        buildingCode.setProvince(provinceCode.getGcid());
+                        msg += "\nbuilding :" + province + ", " + building + "," + longitude + "," + latitude;
+                    } else if (countryCode != null) {
+                        buildingCode.setContinent(countryCode.getContinent());
+                        buildingCode.setCountry(countryCode.getGcid());
+                        msg += "\nbuilding :" + country + ", " + building + "," + longitude + "," + latitude;
+                    }
+                    if (create) {
+                        if (!TableGeographyCode.insert(conn, geoInsert, buildingCode)) {
+                            buildingCode = null;
+                            msg += " is not existed, and failed to create. ";
+                        } else {
+                            msg += " is not existed, and  created now.";
+                            ret.put("inserted", "true");
+                        }
+                    } else {
+                        msg += " is not existed, and will not be created.";
+                    }
+                }
+            }
+            if (level == 9) {
+                ret.put("message", msg);
+                ret.put("code", buildingCode);
+                return ret;
+            }
+            ret.put("message", msg);
+            return ret;
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            ret.put("message", e.toString());
+            return ret;
+        }
+    }
+
+    /*
+
+     */
+    public static void importText(File file) {
+        List<GeographyCode> codes = readText(file);
+        if (codes != null && !codes.isEmpty()) {
+            TableGeographyCode.write(codes);
+        }
+    }
+
+    public static List<GeographyCode> readText(File file) {
+        List<GeographyCode> codes = new ArrayList<>();
+        try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset(file)))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                GeographyCode code = data(line);
+                if (code != null) {
+                    codes.add(code);
+                }
+            }
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+        return codes;
+    }
+
+    private static String readTxtString(String value) {
+        if (value == null) {
+            return null;
+        }
+        String v = value.trim();
+        if (v.startsWith("\"")) {
+            return v.substring(v.indexOf("\"") + 1, v.lastIndexOf("\""));
+        } else {
+            return v;
+        }
+    }
+
+    public static GeographyCode data(String line) {
+        try {
+            if (line == null || line.startsWith("//")) {
+                return null;
+            }
+            // https://stackoverflow.com/questions/14602062/java-string-split-removed-empty-values?r=SearchResults
+            String[] values = line.split(DataSeparator, -1);
+            int offset;
+            if (values.length == 27) {
+                offset = 0;
+            } else if (values.length > 27) {
+                offset = 1;
+            } else {
+                return null;
+            }
+            // [gcid,] levelCode, longitude, latitude, chineseName, chineseFullName,englishName, englishFullName, code1, code2, code3, alias1, alias2, alias3,comments,
+            //continent, country, area, province, city, county, town, village, building
+            for (String value : values) {
+                value = value.trim();
+            }
+            GeographyCode code = new GeographyCode();
+            if (values.length > 27 && !values[0].isBlank()) {
+                code.setGcid(Long.valueOf(values[0]));
+            }
+            code.setLevelCode(new GeographyCodeLevel(readTxtString(values[offset + 0])));
+            code.setLongitude(Double.valueOf(values[offset + 1]));
+            code.setLatitude(Double.valueOf(values[offset + 2]));
+            if (!values[offset + 3].isBlank()) {
+                code.setChineseName(readTxtString(values[offset + 3]));
+            }
+//            if (!values[offset + 4].isBlank()) {
+//                code.setChineseFullName(readTxtString(values[offset + 4]));
+//            }
+            if (!values[offset + 5].isBlank()) {
+                code.setEnglishName(readTxtString(values[offset + 5]));
+            }
+//            if (!values[offset + 6].isBlank()) {
+//                code.setEnglishFullName(readTxtString(values[offset + 6]));
+//            }
+            if (!values[offset + 7].isBlank()) {
+                code.setCode1(readTxtString(values[offset + 7]));
+            }
+            if (!values[offset + 8].isBlank()) {
+                code.setCode2(readTxtString(values[offset + 8]));
+            }
+            if (!values[offset + 9].isBlank()) {
+                code.setCode3(readTxtString(values[offset + 9]));
+            }
+            if (!values[offset + 10].isBlank()) {
+                code.setCode4(readTxtString(values[offset + 10]));
+            }
+            if (!values[offset + 11].isBlank()) {
+                code.setCode5(readTxtString(values[offset + 11]));
+            }
+            if (!values[offset + 12].isBlank()) {
+                code.setAlias1(readTxtString(values[offset + 12]));
+            }
+            if (!values[offset + 13].isBlank()) {
+                code.setAlias2(readTxtString(values[offset + 13]));
+            }
+            if (!values[offset + 14].isBlank()) {
+                code.setAlias3(readTxtString(values[offset + 14]));
+            }
+            if (!values[offset + 15].isBlank()) {
+                code.setAlias4(readTxtString(values[offset + 15]));
+            }
+            if (!values[offset + 16].isBlank()) {
+                code.setAlias5(readTxtString(values[offset + 16]));
+            }
+            if (!values[offset + 17].isBlank()) {
+                code.setComments(readTxtString(values[offset + 17]));
+            }
+            if (!values[offset + 18].isBlank()) {
+                code.setContinent(Long.valueOf(values[offset + 18]));
+            }
+            if (!values[offset + 19].isBlank()) {
+                code.setCountry(Long.valueOf(values[offset + 19]));
+            }
+
+            if (!values[offset + 21].isBlank()) {
+                code.setProvince(Long.valueOf(values[offset + 21]));
+            }
+            if (!values[offset + 22].isBlank()) {
+                code.setCity(Long.valueOf(values[offset + 22]));
+            }
+            if (!values[offset + 23].isBlank()) {
+                code.setCounty(Long.valueOf(values[offset + 23]));
+            }
+            if (!values[offset + 24].isBlank()) {
+                code.setTown(Long.valueOf(values[offset + 24]));
+            }
+            if (!values[offset + 25].isBlank()) {
+                code.setVillage(Long.valueOf(values[offset + 25]));
+            }
+            if (!values[offset + 26].isBlank()) {
+                code.setBuilding(Long.valueOf(values[offset + 26]));
+            }
+            return code;
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            logger.debug(line);
+            return null;
+        }
+    }
+
+    // CALL SYSCS_UTIL.SYSCS_EXPORT_TABLE ('MARA', 'GEOGRAPHY_CODE', 'D:\MyBox\src\main\resources\data\db\Geography_Code.txt', null, null,  'UTF-8');
+    public static void exportText(File file, List<GeographyCode> codes, boolean gcid) {
+        try {
+            if (file == null || codes == null || codes.isEmpty()) {
+                return;
+            }
+            StringBuilder s = new StringBuilder();
+            s.append("// ");
+            if (gcid) {
+                s.append("gcid,");
+            }
+            s.append("level, longitude, latitude, chinese_name, chinese_full_name, english_name, english_full_name, \n");
+            s.append("// code1, code2, code3, code4, code5, alias1, alias2, alias3, alias4, alias5, comments, \n");
+            s.append("// continent, country, area, province, city, county, town, village, building \n");
+            s.append("// Separated by \",;\" \n");
+
+            for (GeographyCode code : codes) {
+                if (gcid) {
+                    s.append(code.getGcid()).append(DataSeparator);
+                }
+                s.append("\"").append(code.getLevelCode()).append("\"").append(DataSeparator)
+                        .append(code.getLongitude()).append(DataSeparator).append(code.getLatitude()).append(DataSeparator);
+                if (code.getChineseName() == null) {
+                    s.append(DataSeparator);
+                } else {
+                    s.append("\"").append(code.getChineseName()).append("\"").append(DataSeparator);
+                }
+//                if (code.getChineseFullName() == null) {
+//                    s.append(DataSeparator);
+//                } else {
+//                    s.append("\"").append(code.getChineseFullName()).append("\"").append(DataSeparator);
+//                }
+                if (code.getEnglishName() == null) {
+                    s.append(DataSeparator);
+                } else {
+                    s.append("\"").append(code.getEnglishName()).append("\"").append(DataSeparator);
+                }
+//                if (code.getEnglishFullName() == null) {
+//                    s.append(DataSeparator);
+//                } else {
+//                    s.append("\"").append(code.getEnglishFullName()).append("\"").append(DataSeparator);
+//                }
+                if (code.getCode1() == null) {
+                    s.append(DataSeparator);
+                } else {
+                    s.append("\"").append(code.getCode1()).append("\"").append(DataSeparator);
+                }
+                if (code.getCode2() == null) {
+                    s.append(DataSeparator);
+                } else {
+                    s.append("\"").append(code.getCode2()).append("\"").append(DataSeparator);
+                }
+                if (code.getCode3() == null) {
+                    s.append(DataSeparator);
+                } else {
+                    s.append("\"").append(code.getCode3()).append("\"").append(DataSeparator);
+                }
+                if (code.getCode4() == null) {
+                    s.append(DataSeparator);
+                } else {
+                    s.append("\"").append(code.getCode4()).append("\"").append(DataSeparator);
+                }
+                if (code.getCode5() == null) {
+                    s.append(DataSeparator);
+                } else {
+                    s.append("\"").append(code.getCode5()).append("\"").append(DataSeparator);
+                }
+                if (code.getAlias1() == null) {
+                    s.append(DataSeparator);
+                } else {
+                    s.append("\"").append(code.getAlias1()).append("\"").append(DataSeparator);
+                }
+                if (code.getAlias2() == null) {
+                    s.append(DataSeparator);
+                } else {
+                    s.append("\"").append(code.getAlias2()).append("\"").append(DataSeparator);
+                }
+                if (code.getAlias3() == null) {
+                    s.append(DataSeparator);
+                } else {
+                    s.append("\"").append(code.getAlias3()).append("\"").append(DataSeparator);
+                }
+                if (code.getAlias4() == null) {
+                    s.append(DataSeparator);
+                } else {
+                    s.append("\"").append(code.getAlias4()).append("\"").append(DataSeparator);
+                }
+                if (code.getAlias5() == null) {
+                    s.append(DataSeparator);
+                } else {
+                    s.append("\"").append(code.getAlias5()).append("\"").append(DataSeparator);
+                }
+                if (code.getComments() == null) {
+                    s.append(DataSeparator);
+                } else {
+                    s.append("\"").append(code.getComments()).append("\"").append(DataSeparator);
+                }
+                s.append(code.getContinent()).append(DataSeparator).append(code.getCountry()).append(DataSeparator)
+                        .append(code.getProvince()).append(DataSeparator)
+                        .append(code.getCity()).append(DataSeparator).append(code.getCounty()).append(DataSeparator)
+                        .append(code.getTown()).append(DataSeparator).append(code.getVillage()).append(DataSeparator)
+                        .append(code.getBuilding());
+                s.append("\n");
+            }
+            FileTools.writeFile(file, s.toString(), Charset.forName("utf-8"));
+
+        } catch (Exception e) {
+
+        }
+    }
+
+    public static GeographyCode geoCode(String address) {
+        return geoCode(CommonValues.GaoDeWebKey, address);
+    }
+
+    public static GeographyCode geoCode(String key, String address) {
+        try {
+            // GaoDe Map only supports info codes of China
             String urlString = "https://restapi.amap.com/v3/geocode/geo?address="
-                    + URLEncoder.encode(message("zh", address), "UTF-8")
-                    + "&output=xml&key=" + CommonValues.GaoDeWebKey;
-            geographyCode = new GeographyCode();
-            geographyCode.setAddress(message(address));
-            return read(urlString, geographyCode);
+                    + URLEncoder.encode(address, "UTF-8")
+                    + "&output=xml&key=" + key;
+            GeographyCode geographyCode = new GeographyCode();
+            geographyCode.setChineseName(address);
+            return geoCode(urlString, geographyCode);
         } catch (Exception e) {
             return null;
         }
     }
 
-    public static GeographyCode query(double longtitude, double latitude) {
+    public static GeographyCode query(double longitude, double latitude, boolean decodeAncestors) {
         try {
-            GeographyCode geographyCode = TableGeographyCode.read(longtitude, latitude);
+            GeographyCode geographyCode = TableGeographyCode.readCode(longitude, latitude, decodeAncestors);
             if (geographyCode != null) {
                 return geographyCode;
             }
-            String urlString = "https://restapi.amap.com/v3/geocode/regeo?location="
-                    + longtitude + "," + latitude
-                    + "&output=xml&key=" + CommonValues.GaoDeWebKey;
-            geographyCode = new GeographyCode();
-            geographyCode.setLongitude(longtitude);
-            geographyCode.setLatitude(latitude);
-            return read(urlString, geographyCode);
+            return GeographyCode.geoCode(longitude, latitude);
         } catch (Exception e) {
             return null;
         }
     }
 
-    public static GeographyCode read(String urlString,
+    public static GeographyCode geoCode(double longitude, double latitude) {
+        try {
+            String urlString = "https://restapi.amap.com/v3/geocode/regeo?location="
+                    + longitude + "," + latitude
+                    + "&output=xml&key=" + CommonValues.GaoDeWebKey;
+            GeographyCode geographyCode = new GeographyCode();
+            geographyCode.setLongitude(longitude);
+            geographyCode.setLatitude(latitude);
+            return geoCode(urlString, geographyCode);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    // {"status":"1","info":"OK","infocode":"10000","count":"1","geocodes":
+    // [{"formatted_address":"山东省泰安市泰山区泰山","country":"中国","province":"山东省","citycode":"0538",
+    //"city":"泰安市","county":"泰山区","township":[],
+    //"village":{"name":[],"type":[]},
+    //"building":{"name":[],"type":[]},
+    //"adcode":"370902","town":[],"number":[],"location":"117.157242,36.164988","levelCode":"兴趣点"}]}
+    public static GeographyCode geoCode(String urlString,
             GeographyCode geographyCode) {
         try {
             URL url = new URL(urlString);
@@ -165,83 +2042,47 @@ public class GeographyCode {
             NodeList nodes = doc.getElementsByTagName("formatted_address");
             if (nodes != null && nodes.getLength() > 0) {
                 String fulladdress = nodes.item(0).getTextContent();
-                geographyCode.setFullAddress(fulladdress);
-                if (geographyCode.getAddress() == null) {
-                    geographyCode.setAddress(fulladdress);
-                }
-            } else {
-                if (geographyCode.getAddress() != null) {
-                    geographyCode.setFullAddress(geographyCode.getAddress());
+                geographyCode.setAlias1(fulladdress);
+                if (geographyCode.getChineseName() == null) {
+                    geographyCode.setChineseName(fulladdress);
                 }
             }
 
             nodes = doc.getElementsByTagName("country");
             if (nodes != null && nodes.getLength() > 0) {
-                String v = nodes.item(0).getTextContent();
-                if (message("zh", "China").equals(v)) {
-                    geographyCode.setCountry(message("China"));
-                } else {
-                    geographyCode.setCountry(v);
-                }
-            } else {
-                geographyCode.setCountry("");
+                geographyCode.setCountryName(nodes.item(0).getTextContent());
             }
             nodes = doc.getElementsByTagName("province");
             if (nodes != null && nodes.getLength() > 0) {
-                geographyCode.setProvince(nodes.item(0).getTextContent());
-
-            } else {
-                geographyCode.setProvince("");
+                geographyCode.setProvinceName(nodes.item(0).getTextContent());
             }
-
             nodes = doc.getElementsByTagName("citycode");
             if (nodes != null && nodes.getLength() > 0) {
-                geographyCode.setCitycode(nodes.item(0).getTextContent());
-
-            } else {
-                geographyCode.setCitycode("");
+                geographyCode.setCode2(nodes.item(0).getTextContent());
             }
             nodes = doc.getElementsByTagName("city");
             if (nodes != null && nodes.getLength() > 0) {
-                geographyCode.setCity(nodes.item(0).getTextContent());
-
-            } else {
-                geographyCode.setCity("");
+                geographyCode.setCityName(nodes.item(0).getTextContent());
             }
             nodes = doc.getElementsByTagName("district");
             if (nodes != null && nodes.getLength() > 0) {
-                geographyCode.setDistrict(nodes.item(0).getTextContent());
-
-            } else {
-                geographyCode.setDistrict("");
+                geographyCode.setCountyName(nodes.item(0).getTextContent());
             }
             nodes = doc.getElementsByTagName("township");
             if (nodes != null && nodes.getLength() > 0) {
-                geographyCode.setTownship(nodes.item(0).getTextContent());
-
-            } else {
-                geographyCode.setTownship("");
+                geographyCode.setTownName(nodes.item(0).getTextContent());
             }
             nodes = doc.getElementsByTagName("neighborhood");
             if (nodes != null && nodes.getLength() > 0) {
-                geographyCode.setNeighborhood(nodes.item(0).getFirstChild().getTextContent());
-
-            } else {
-                geographyCode.setNeighborhood("");
+                geographyCode.setVillageName(nodes.item(0).getFirstChild().getTextContent());
             }
             nodes = doc.getElementsByTagName("building");
             if (nodes != null && nodes.getLength() > 0) {
-                geographyCode.setBuilding(nodes.item(0).getTextContent());
-
-            } else {
-                geographyCode.setBuilding("");
+                geographyCode.setBuildingName(nodes.item(0).getTextContent());
             }
             nodes = doc.getElementsByTagName("adcode");
             if (nodes != null && nodes.getLength() > 0) {
-                geographyCode.setAdministrativeCode(nodes.item(0).getTextContent());
-
-            } else {
-                geographyCode.setAdministrativeCode("");
+                geographyCode.setCode1(nodes.item(0).getTextContent());
             }
             nodes = doc.getElementsByTagName("streetNumber");
             if (nodes != null && nodes.getLength() > 0) {
@@ -273,25 +2114,17 @@ public class GeographyCode {
                     if (v != null) {
                         s += v;
                     }
-                    geographyCode.setStreet(s);
-                } else {
-                    geographyCode.setStreet("");
+                    geographyCode.setComments(s);
                 }
-                geographyCode.setNumber("");
-                geographyCode.setLevel("");
             } else {
                 nodes = doc.getElementsByTagName("street");
                 if (nodes != null && nodes.getLength() > 0) {
-                    geographyCode.setStreet(nodes.item(0).getTextContent());
-                } else {
-                    geographyCode.setStreet("");
+                    geographyCode.setAlias2(nodes.item(0).getTextContent());
                 }
 
                 nodes = doc.getElementsByTagName("number");
                 if (nodes != null && nodes.getLength() > 0) {
-                    geographyCode.setNumber(nodes.item(0).getTextContent());
-                } else {
-                    geographyCode.setNumber("");
+                    geographyCode.setCode5(nodes.item(0).getTextContent());
                 }
                 if (geographyCode.getLongitude() < -180) {
                     nodes = doc.getElementsByTagName("location");
@@ -304,744 +2137,714 @@ public class GeographyCode {
                         geographyCode.setLatitude(-200);
                     }
                 }
-                if (geographyCode.getAddress() == null) {
-                    geographyCode.setAddress(geographyCode.getLongitude() + "," + geographyCode.getLatitude());
+                if (geographyCode.getChineseName() == null) {
+                    geographyCode.setChineseName(geographyCode.getLongitude() + "," + geographyCode.getLatitude());
                 }
                 nodes = doc.getElementsByTagName("level");
                 if (nodes != null && nodes.getLength() > 0) {
                     String v = nodes.item(0).getTextContent();
                     if (message("zh", "Country").equals(v)) {
-                        geographyCode.setLevel(message("Country"));
+                        geographyCode.setLevelCode(new GeographyCodeLevel("Country"));
                     } else if (message("zh", "Province").equals(v)) {
-                        geographyCode.setLevel(message("Province"));
-                    } else if (message("zh", "Country").equals(v)) {
-                        geographyCode.setLevel(message("Country"));
+                        geographyCode.setLevelCode(new GeographyCodeLevel("Province"));
                     } else if (message("zh", "City").equals(v)) {
-                        geographyCode.setLevel(message("City"));
-                    } else if (message("zh", "District").equals(v)) {
-                        geographyCode.setLevel(message("District"));
-                    } else if (message("zh", "Township").equals(v)) {
-                        geographyCode.setLevel(message("Township"));
+                        geographyCode.setLevelCode(new GeographyCodeLevel("City"));
+                    } else if (message("zh", "County").equals(v)) {
+                        geographyCode.setLevelCode(new GeographyCodeLevel("County"));
+                    } else if (message("zh", "Town").equals(v)) {
+                        geographyCode.setLevelCode(new GeographyCodeLevel("Town"));
                     } else if (message("zh", "Neighborhood").equals(v)) {
-                        geographyCode.setLevel(message("Neighborhood"));
+                        geographyCode.setLevelCode(new GeographyCodeLevel("Village"));
                     } else if (message("zh", "PointOfInterest").equals(v)) {
-                        geographyCode.setLevel(message("PointOfInterest"));
+                        geographyCode.setLevelCode(new GeographyCodeLevel("Point Of Interest"));
+                    } else if (message("zh", "Street").equals(v)) {
+                        geographyCode.setLevelCode(new GeographyCodeLevel("Village"));
+                    } else if (message("zh", "Building").equals(v)) {
+                        geographyCode.setLevelCode(new GeographyCodeLevel("Building"));
                     } else {
-                        geographyCode.setLevel(v);
+                        geographyCode.setLevelCode(new GeographyCodeLevel("Point Of Interest"));
                     }
-                } else {
-                    geographyCode.setLevel("");
                 }
             }
 
-            if (geographyCode.getLongitude() >= -180 && geographyCode.getLongitude() <= 180
-                    && geographyCode.getLatitude() >= -90 && geographyCode.getLatitude() <= 90) {
-                TableGeographyCode.write(geographyCode);
+            if (geographyCode.getLongitude() < -180 || geographyCode.getLongitude() > 180
+                    || geographyCode.getLatitude() < -90 && geographyCode.getLatitude() > 90) {
+                return null;
             }
+            return geographyCode;
         } catch (Exception e) {
 //            logger.debug(e.toString());
+            return null;
         }
-        return geographyCode;
-    }
 
-    public static List<String> countriesKeys() {
-        if (CountriesKeys != null) {
-            return CountriesKeys;
-        }
-        CountriesKeys = new ArrayList();
-        CountriesKeys.add("China");
-        CountriesKeys.add("Angola");
-        CountriesKeys.add("Afghanistan");
-        CountriesKeys.add("Albania");
-        CountriesKeys.add("Algeria");
-        CountriesKeys.add("Andorra");
-        CountriesKeys.add("Anguilla");
-        CountriesKeys.add("Argentina");
-        CountriesKeys.add("Armenia");
-        CountriesKeys.add("Ascension");
-        CountriesKeys.add("Australia");
-        CountriesKeys.add("Austria");
-        CountriesKeys.add("Azerbaijan");
-        CountriesKeys.add("Bahamas");
-        CountriesKeys.add("Bahrain");
-        CountriesKeys.add("Bangladesh");
-        CountriesKeys.add("Barbados");
-        CountriesKeys.add("Belarus");
-        CountriesKeys.add("Belgium");
-        CountriesKeys.add("Belize");
-        CountriesKeys.add("Benin");
-        CountriesKeys.add("BermudaIs");
-        CountriesKeys.add("Bolivia");
-        CountriesKeys.add("Botswana");
-        CountriesKeys.add("Brazil");
-        CountriesKeys.add("Brunei");
-        CountriesKeys.add("Bulgaria");
-        CountriesKeys.add("Burkina-faso");
-        CountriesKeys.add("Burma");
-        CountriesKeys.add("Burundi");
-        CountriesKeys.add("Cameroon");
-        CountriesKeys.add("Canada");
-        CountriesKeys.add("CaymanIs");
-        CountriesKeys.add("CentralAfricanRepublic");
-        CountriesKeys.add("Chad");
-        CountriesKeys.add("Chile");
-        CountriesKeys.add("Colombia");
-        CountriesKeys.add("CookIs");
-        CountriesKeys.add("CostaRica");
-        CountriesKeys.add("Croatia");
-        CountriesKeys.add("Cuba");
-        CountriesKeys.add("Cyprus");
-        CountriesKeys.add("Czech");
-        CountriesKeys.add("Denmark");
-        CountriesKeys.add("Djibouti");
-        CountriesKeys.add("DominicaRep");
-        CountriesKeys.add("Ecuador");
-        CountriesKeys.add("Egypt");
-        CountriesKeys.add("EISalvador");
-        CountriesKeys.add("Estonia");
-        CountriesKeys.add("Ethiopia");
-        CountriesKeys.add("Fiji");
-        CountriesKeys.add("Finland");
-        CountriesKeys.add("France");
-        CountriesKeys.add("FrenchGuiana");
-        CountriesKeys.add("Gabon");
-        CountriesKeys.add("Gambia");
-        CountriesKeys.add("Georgia");
-        CountriesKeys.add("Germany");
-        CountriesKeys.add("Ghana");
-        CountriesKeys.add("Gibraltar");
-        CountriesKeys.add("Greece");
-        CountriesKeys.add("Grenada");
-        CountriesKeys.add("Guam");
-        CountriesKeys.add("Guatemala");
-        CountriesKeys.add("Guinea");
-        CountriesKeys.add("Guyana");
-        CountriesKeys.add("Haiti");
-        CountriesKeys.add("Honduras");
-        CountriesKeys.add("Hungary");
-        CountriesKeys.add("Iceland");
-        CountriesKeys.add("India");
-        CountriesKeys.add("Indonesia");
-        CountriesKeys.add("Iran");
-        CountriesKeys.add("Iraq");
-        CountriesKeys.add("Ireland");
-        CountriesKeys.add("Israel");
-        CountriesKeys.add("Italy");
-        CountriesKeys.add("IvoryCoast");
-        CountriesKeys.add("Japan");
-        CountriesKeys.add("Jordan");
-        CountriesKeys.add("Kampuchea");
-        CountriesKeys.add("Kazakstan");
-        CountriesKeys.add("Kenya");
-        CountriesKeys.add("Korea");
-        CountriesKeys.add("Kuwait");
-        CountriesKeys.add("Kyrgyzstan");
-        CountriesKeys.add("Laos");
-        CountriesKeys.add("Latvia");
-        CountriesKeys.add("Lebanon");
-        CountriesKeys.add("Lesotho");
-        CountriesKeys.add("Liberia");
-        CountriesKeys.add("Libya");
-        CountriesKeys.add("Liechtenstein");
-        CountriesKeys.add("Lithuania");
-        CountriesKeys.add("Luxembourg");
-        CountriesKeys.add("Madagascar");
-        CountriesKeys.add("Malawi");
-        CountriesKeys.add("Malaysia");
-        CountriesKeys.add("Maldives");
-        CountriesKeys.add("Mali");
-        CountriesKeys.add("Malta");
-        CountriesKeys.add("MarianaIs");
-        CountriesKeys.add("Martinique");
-        CountriesKeys.add("Mauritius");
-        CountriesKeys.add("Mexico");
-        CountriesKeys.add("Monaco");
-        CountriesKeys.add("Mongolia");
-        CountriesKeys.add("MontserratIs");
-        CountriesKeys.add("Morocco");
-        CountriesKeys.add("Mozambique");
-        CountriesKeys.add("Namibia");
-        CountriesKeys.add("Nauru");
-        CountriesKeys.add("Nepal");
-        CountriesKeys.add("NetheriAndsAntilles");
-        CountriesKeys.add("Netherlands");
-        CountriesKeys.add("NewZealand");
-        CountriesKeys.add("Nicaragua");
-        CountriesKeys.add("Niger");
-        CountriesKeys.add("Nigeria");
-        CountriesKeys.add("NorthKorea");
-        CountriesKeys.add("NorthernMacedonia");
-        CountriesKeys.add("Norway");
-        CountriesKeys.add("Oman");
-        CountriesKeys.add("Pakistan");
-        CountriesKeys.add("Panama");
-        CountriesKeys.add("PapuaNewCuinea");
-        CountriesKeys.add("Paraguay");
-        CountriesKeys.add("Peru");
-        CountriesKeys.add("Philippines");
-        CountriesKeys.add("Poland");
-        CountriesKeys.add("FrenchPolynesia");
-        CountriesKeys.add("Portugal");
-        CountriesKeys.add("PuertoRico");
-        CountriesKeys.add("Qatar");
-        CountriesKeys.add("Reunion");
-        CountriesKeys.add("Romania");
-        CountriesKeys.add("Russia");
-        CountriesKeys.add("SaintLueia");
-        CountriesKeys.add("SaintVincent");
-        CountriesKeys.add("SamoaEastern");
-        CountriesKeys.add("SamoaWestern");
-        CountriesKeys.add("SanMarino");
-        CountriesKeys.add("SaoTomeAndPrincipe");
-        CountriesKeys.add("SaudiArabia");
-        CountriesKeys.add("Senegal");
-        CountriesKeys.add("Seychelles");
-        CountriesKeys.add("SierraLeone");
-        CountriesKeys.add("Singapore");
-        CountriesKeys.add("Slovakia");
-        CountriesKeys.add("Slovenia");
-        CountriesKeys.add("SolomonIs");
-        CountriesKeys.add("Somali");
-        CountriesKeys.add("SouthAfrica");
-        CountriesKeys.add("Spain");
-        CountriesKeys.add("SriLanka");
-        CountriesKeys.add("St.Lucia");
-        CountriesKeys.add("St.Vincent");
-        CountriesKeys.add("Sudan");
-        CountriesKeys.add("Suriname");
-        CountriesKeys.add("Swaziland");
-        CountriesKeys.add("Sweden");
-        CountriesKeys.add("Switzerland");
-        CountriesKeys.add("Syria");
-        CountriesKeys.add("Tajikstan");
-        CountriesKeys.add("Thailand");
-        CountriesKeys.add("Togo");
-        CountriesKeys.add("Tonga");
-        CountriesKeys.add("TrinidadAndTobago");
-        CountriesKeys.add("Tunisia");
-        CountriesKeys.add("Turkey");
-        CountriesKeys.add("Turkmenistan");
-        CountriesKeys.add("Uganda");
-        CountriesKeys.add("Ukraine");
-        CountriesKeys.add("UnitedArabEmirates");
-        CountriesKeys.add("UAE");
-        CountriesKeys.add("UnitedKingdom");
-        CountriesKeys.add("UK");
-        CountriesKeys.add("UnitedStates");
-        CountriesKeys.add("Uruguay");
-        CountriesKeys.add("Uzbekistan");
-        CountriesKeys.add("Venezuela");
-        CountriesKeys.add("Vietnam");
-        CountriesKeys.add("Yemen");
-        CountriesKeys.add("Yugoslavia");
-        CountriesKeys.add("Zimbabwe");
-        CountriesKeys.add("Zaire");
-        CountriesKeys.add("Zambia");
-        return CountriesKeys;
     }
+    // https://www.geonames.org/countries/
+    // ISO-3166-alpha2	ISO-3166-alpha3	ISO-3166-numeric	fips	Country	Capital	Area	Population	Continent
+    // AD	AND	020	AN	Andorra	Andorra la Vella	468.0	84,000	EU
 
-    public static List<String> countriesChinese() {
-        List<String> countries = new ArrayList();
-        for (String key : countriesKeys()) {
-            countries.add(message("zh", key));
-        }
-        return countries;
-    }
+    public static void importGeonamesCountriesCodes() {
+        File file = new File("D:\\玛瑞\\Mybox\\地理代码\\countries\\geonames_contries.csv");
+        GeographyCode code;
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                 CSVParser parser = CSVParser.parse(file, StandardCharsets.UTF_8,
+                        CSVFormat.DEFAULT.withFirstRecordAsHeader().withDelimiter('\t').withTrim().withNullString(""))) {
+            conn.setAutoCommit(false);
+            for (CSVRecord record : parser) {
+                String country = record.get("Country");
+                String sql = "SELECT * FROM Geography_Code WHERE level=3 AND ( " + TableGeographyCode.nameEqual(country) + " )";
+                try ( ResultSet results = conn.createStatement().executeQuery(sql)) {
+                    if (results.next()) {
+                        code = TableGeographyCode.readCode(results);
+                    } else {
+                        code = null;
+                    }
+                }
+                if (code == null) {
+                    code = new GeographyCode();
+                    code.setEnglishName(country);
+                    code.setLevelCode(new GeographyCodeLevel(3));
+                    logger.debug(record.get("ISO-3166-alpha3") + " " + country + " "
+                            + record.get("Area") + " " + record.get("Population") + " " + record.get("Continent"));
+                } else {
+                    if (code.getEnglishName() == null) {
+                        code.setEnglishName(country);
+                        logger.debug(code.getChineseName() + " " + country);
+                    } else if (!code.getEnglishName().equals(country)) {
+                        logger.debug(code.getChineseName() + " " + code.getEnglishName() + " " + country);
+                        if (code.getAlias1() == null || code.getAlias1().equals(country)) {
+                            code.setAlias1(country);
+                        } else if (code.getAlias2() == null || code.getAlias2().equals(country)) {
+                            code.setAlias2(country);
+                        } else if (code.getAlias3() == null || code.getAlias3().equals(country)) {
+                            code.setAlias3(country);
+                        } else if (code.getAlias4() == null || code.getAlias4().equals(country)) {
+                            code.setAlias4(country);
+                        } else {
+                            code.setAlias5(country);
+                        }
+                    }
+                }
+                code.setCode1(record.get("ISO-3166-alpha3"));
+                code.setCode2(record.get("ISO-3166-alpha2"));
+                code.setCode3(record.get("ISO-3166-numeric"));
+                code.setCode4(record.get("fips"));
+                code.setArea(Math.round(Double.valueOf(record.get("Area").replaceAll(",", ""))));
+                code.setPopulation(Math.round(Double.valueOf(record.get("Population").replaceAll(",", ""))));
 
-    public static List<String> countriesEnglish() {
-        List<String> countries = new ArrayList();
-        for (String key : countriesKeys()) {
-            countries.add(message("en", key));
-        }
-        return countries;
-    }
+                TableGeographyCode.write(conn, code);
 
-    public static List<String> countries() {
-        if (AppVariables.getLanguage().startsWith("zh")) {
-            return countriesChinese();
-        } else {
-            return countriesEnglish();
-        }
-    }
-
-    public static Map<String, String> countriesChineseMap() {
-        if (CountriesChineseKeys != null) {
-            return CountriesChineseKeys;
-        }
-        CountriesChineseKeys = new HashMap<>();
-        for (String country : countriesKeys()) {
-            CountriesChineseKeys.put(message("zh", country), country);
-        }
-        return CountriesChineseKeys;
-    }
-
-    public static String countryChineseKey(String chineseName) {
-        return countriesChineseMap().get(chineseName);
-    }
-
-    public static Map<String, String> countriesEnglishMap() {
-        if (CountriesEnglishKeys != null) {
-            return CountriesEnglishKeys;
-        }
-        CountriesEnglishKeys = new HashMap<>();
-        for (String country : countriesKeys()) {
-            CountriesEnglishKeys.put(message("en", country), country);
-        }
-        return CountriesEnglishKeys;
-    }
-
-    public static String countryEnglishKey(String englishName) {
-        return countriesEnglishMap().get(englishName);
-    }
-
-    public static String countryKey(String name) {
-        if (AppVariables.getLanguage().startsWith("zh")) {
-            return countriesChineseMap().get(name);
-        } else {
-            return countriesEnglishMap().get(name);
-        }
-    }
-
-    public static String countryEnglish(String name) {
-        if (AppVariables.getLanguage().startsWith("zh")) {
-            return message("en", countriesChineseMap().get(name));
-        } else {
-            return name;
-        }
-    }
-
-    public static String countryChinese(String name) {
-        if (!AppVariables.getLanguage().startsWith("zh")) {
-            return message("zh", countriesEnglishMap().get(name));
-        } else {
-            return name;
-        }
-    }
-
-    public static List<String> chineseProvincesKeys() {
-        if (ChineseProvincesKeys != null) {
-            return ChineseProvincesKeys;
-        }
-        ChineseProvincesKeys = new ArrayList();
-        ChineseProvincesKeys.add("CityBeijing");
-        ChineseProvincesKeys.add("ProvinceHubei");
-        ChineseProvincesKeys.add("ProvinceZhejiang");
-        ChineseProvincesKeys.add("ProvinceGuangdong");
-        ChineseProvincesKeys.add("ProvinceHenan");
-        ChineseProvincesKeys.add("ProvinceHunan");
-        ChineseProvincesKeys.add("ProvinceAnhui");
-        ChineseProvincesKeys.add("ProvinceJiangxi");
-        ChineseProvincesKeys.add("ProvinceJiangsu");
-        ChineseProvincesKeys.add("ProvinceSichuan");
-        ChineseProvincesKeys.add("ProvinceShandong");
-        ChineseProvincesKeys.add("ProvinceFujian");
-        ChineseProvincesKeys.add("ProvinceShanxi");
-        ChineseProvincesKeys.add("ProvinceGuangxi");
-        ChineseProvincesKeys.add("ProvinceHebei");
-        ChineseProvincesKeys.add("ProvinceYunnan");
-        ChineseProvincesKeys.add("ProvinceHeilongjiang");
-        ChineseProvincesKeys.add("ProvinceLiaoning");
-        ChineseProvincesKeys.add("ProvinceHainan");
-        ChineseProvincesKeys.add("ProvinceShanxi2");
-        ChineseProvincesKeys.add("ProvinceGansu");
-        ChineseProvincesKeys.add("ProvinceGuizhou");
-        ChineseProvincesKeys.add("ProvinceNingxia");
-        ChineseProvincesKeys.add("InnerMongolia");
-        ChineseProvincesKeys.add("ProvinceJiLin");
-        ChineseProvincesKeys.add("ProvinceXinjiang");
-        ChineseProvincesKeys.add("ProvinceXizang");
-        ChineseProvincesKeys.add("ProvinceQinghai");
-        ChineseProvincesKeys.add("CityShanghai");
-        ChineseProvincesKeys.add("CityChongqing");
-        ChineseProvincesKeys.add("CityTianjin");
-        ChineseProvincesKeys.add("Macau");
-        ChineseProvincesKeys.add("HongKong");
-        ChineseProvincesKeys.add("Taiwan");
-        return ChineseProvincesKeys;
-    }
-
-    public static Map<String, String> chineseProvincesChineseMap() {
-        if (ChineseProvincesChineseKeys != null) {
-            return ChineseProvincesChineseKeys;
-        }
-        ChineseProvincesChineseKeys = new HashMap<>();
-        for (String province : chineseProvincesKeys()) {
-            ChineseProvincesChineseKeys.put(message("zh", province), province);
-        }
-        return ChineseProvincesChineseKeys;
-    }
-
-    public static String chineseProvincesChineseKey(String chineseName) {
-        return chineseProvincesChineseMap().get(chineseName);
-    }
-
-    public static Map<String, String> chineseProvincesEnglishMap() {
-        if (ChineseProvincesEnglishKeys != null) {
-            return ChineseProvincesEnglishKeys;
-        }
-        ChineseProvincesEnglishKeys = new HashMap<>();
-        for (String province : chineseProvincesKeys()) {
-            ChineseProvincesEnglishKeys.put(message("en", province), province);
-        }
-        return ChineseProvincesEnglishKeys;
-    }
-
-    public static String chineseProvincesEnglishKey(String englishName) {
-        return chineseProvincesEnglishMap().get(englishName);
-    }
-
-    public static String chineseProvinceKey(String name) {
-        if (AppVariables.getLanguage().startsWith("zh")) {
-            return chineseProvincesChineseMap().get(name);
-        } else {
-            return chineseProvincesEnglishMap().get(name);
-        }
-    }
-
-    public static String chineseProvinceEnglish(String name) {
-        if (AppVariables.getLanguage().startsWith("zh")) {
-            return message("en", chineseProvincesChineseMap().get(name));
-        } else {
-            return name;
-        }
-    }
-
-    public static String chineseProvinceChinese(String name) {
-        if (!AppVariables.getLanguage().startsWith("zh")) {
-            return message("zh", chineseProvincesEnglishMap().get(name));
-        } else {
-            return name;
-        }
-    }
-
-    public static void initChineseProvincesCodes() {
-        try {
-            for (String name : chineseProvincesKeys()) {
-                query(name);
             }
+            conn.commit();
+            String sql = "SELECT * FROM Geography_Code WHERE level=3 ";
+            List<GeographyCode> codes = TableGeographyCode.queryCodes(conn, sql, false);
+            writeInternalCSV(new File("D:\\tmp\\1\\Geography_Code_countries_internal.csv"), codes);
         } catch (Exception e) {
-//            logger.debug(e.toString());
-        }
-    }
-
-    public static GeographyCode countryCode(String country,
-            double longtitude, double latitude) {
-        GeographyCode code = new GeographyCode();
-        code.setAddress(message(country));
-        code.setCountry(message(country));
-        code.setLongitude(longtitude);
-        code.setLatitude(latitude);
-        code.setLevel(message("Country"));
-        return code;
-    }
-
-    public static void initCountriesCodes() {
-        List<GeographyCode> codes = new ArrayList();
-        try {
-            codes.add(countryCode("Angola", 17.87, -11.20));
-            codes.add(countryCode("Afghanistan", 67.71, 33.94));
-            codes.add(countryCode("Albania", 20.17, 41.15));
-            codes.add(countryCode("Algeria", 1.66, 28.03));
-            codes.add(countryCode("Andorra", 1.52, 42.51));
-            codes.add(countryCode("Anguilla", -63.07, 18.22));
-            codes.add(countryCode("Argentina", -63.62, -38.42));
-            codes.add(countryCode("Armenia", 45.04, 40.07));
-            codes.add(countryCode("Ascension", -90.94, 30.20));
-            codes.add(countryCode("Australia", 133.78, -25.27));
-            codes.add(countryCode("Austria", 14.55, 47.52));
-            codes.add(countryCode("Azerbaijan", 47.58, 40.14));
-            codes.add(countryCode("Bahamas", -77.40, 25.03));
-            codes.add(countryCode("Bahrain", 50.56, 26.07));
-            codes.add(countryCode("Bangladesh", 90.36, 23.68));
-            codes.add(countryCode("Barbados", -59.54, 13.19));
-            codes.add(countryCode("Belarus", 27.95, 53.71));
-            codes.add(countryCode("Belgium", 4.47, 50.50));
-            codes.add(countryCode("Belize", -88.50, 17.19));
-            codes.add(countryCode("Benin", 2.32, 9.31));
-            codes.add(countryCode("BermudaIs", -64.75, 32.31));
-            codes.add(countryCode("Bolivia", -63.59, -16.29));
-            codes.add(countryCode("Botswana", 24.68, -22.33));
-            codes.add(countryCode("Brazil", -51.93, -14.24));
-            codes.add(countryCode("Brunei", 114.73, 4.54));
-            codes.add(countryCode("Bulgaria", 25.49, 42.73));
-            codes.add(countryCode("Burkina-faso", -1.56, 12.24));
-            codes.add(countryCode("Burma", 95.96, 21.92));
-            codes.add(countryCode("Burundi", 29.92, -3.37));
-            codes.add(countryCode("Cameroon", 12.35, 7.37));
-            codes.add(countryCode("Canada", -106.35, 56.13));
-            codes.add(countryCode("CaymanIs", -117.64, 33.64));
-            codes.add(countryCode("CentralAfricanRepublic", 20.94, 6.61));
-            codes.add(countryCode("Chad", 18.73, 15.45));
-            codes.add(countryCode("Chile", -71.54, -35.68));
-            codes.add(countryCode("China", 104.20, 35.86));
-            codes.add(countryCode("Colombia", -74.30, 4.57));
-            codes.add(countryCode("CookIs", -90.49, 47.61));
-            codes.add(countryCode("CostaRica", -83.75, 9.75));
-            codes.add(countryCode("Croatia", 15.2, 45.1));
-            codes.add(countryCode("Cuba", -77.78, 21.52));
-            codes.add(countryCode("Cyprus", 33.43, 35.13));
-            codes.add(countryCode("CzechRepublic", 15.47, 49.82));
-            codes.add(countryCode("Denmark", 9.50, 56.26));
-            codes.add(countryCode("Djibouti", 42.59, 11.83));
-            codes.add(countryCode("DominicaRep", -0.19, 51.52));
-            codes.add(countryCode("Ecuador", -78.18, -1.83));
-            codes.add(countryCode("Egypt", 30.80, 26.82));
-            codes.add(countryCode("EISalvador", -88.90, 13.79));
-            codes.add(countryCode("Estonia", 25.01, 58.60));
-            codes.add(countryCode("Ethiopia", 40.49, 9.15));
-            codes.add(countryCode("Fiji", 178.07, -17.71));
-            codes.add(countryCode("Finland", 25.75, 61.92));
-            codes.add(countryCode("France", 2.21, 46.23));
-            codes.add(countryCode("FrenchGuiana", -53.13, 3.93));
-            codes.add(countryCode("Gabon", 11.61, -0.80));
-            codes.add(countryCode("Gambia", -15.31, 13.44));
-            codes.add(countryCode("Georgia", -82.90, 32.17));
-            codes.add(countryCode("Germany", 10.45, 51.17));
-            codes.add(countryCode("Ghana", -1.02, 7.95));
-            codes.add(countryCode("Gibraltar", -5.35, 36.14));
-            codes.add(countryCode("Greece", 21.82, 39.07));
-            codes.add(countryCode("Grenada", -61.68, 12.12));
-            codes.add(countryCode("Guam", 144.79, 13.44));
-            codes.add(countryCode("Guatemala", -90.23, 15.78));
-            codes.add(countryCode("Guinea", -9.70, 9.95));
-            codes.add(countryCode("Guyana", -58.93, 4.86));
-            codes.add(countryCode("Haiti", -72.29, 18.97));
-            codes.add(countryCode("Honduras", -86.24, 15.20));
-            codes.add(countryCode("Hungary", 19.50, 47.16));
-            codes.add(countryCode("Iceland", -19.02, 64.96));
-            codes.add(countryCode("India", 78.96, 20.59));
-            codes.add(countryCode("Indonesia", 113.92, -0.79));
-            codes.add(countryCode("Iran", 53.69, 32.43));
-            codes.add(countryCode("Iraq", 43.68, 33.22));
-            codes.add(countryCode("Ireland", -8.24, 53.41));
-            codes.add(countryCode("Israel", 34.85, 31.05));
-            codes.add(countryCode("Italy", 12.57, 41.87));
-            codes.add(countryCode("IvoryCoast", -5.55, 7.54));
-            codes.add(countryCode("Japan", 138.25, 36.20));
-            codes.add(countryCode("Jordan", 36.24, 30.59));
-            codes.add(countryCode("Kampuchea", 105.46, 12.00));
-            codes.add(countryCode("Kazakstan", 66.92, 48.02));
-            codes.add(countryCode("Kenya", 37.91, -0.02));
-            codes.add(countryCode("Korea", 127.98, 37.66));
-            codes.add(countryCode("Kuwait", 47.48, 29.31));
-            codes.add(countryCode("Kyrgyzstan", 74.77, 41.20));
-            codes.add(countryCode("Laos", 102.50, 19.86));
-            codes.add(countryCode("Latvia", 24.60, 56.88));
-            codes.add(countryCode("Lebanon", 35.86, 33.85));
-            codes.add(countryCode("Lesotho", 28.23, -29.61));
-            codes.add(countryCode("Liberia", -9.43, 6.43));
-            codes.add(countryCode("Libya", 17.23, 26.34));
-            codes.add(countryCode("Liechtenstein", 9.56, 47.17));
-            codes.add(countryCode("Lithuania", 23.88, 55.17));
-            codes.add(countryCode("Luxembourg", 6.13, 49.82));
-            codes.add(countryCode("Madagascar", 46.87, -18.77));
-            codes.add(countryCode("Malawi", 34.30, -13.25));
-            codes.add(countryCode("Malaysia", 101.98, 4.21));
-            codes.add(countryCode("Maldives", 73.54, 1.98));
-            codes.add(countryCode("Mali", -4.00, 17.57));
-            codes.add(countryCode("Malta", 14.38, 35.94));
-            codes.add(countryCode("MarianaIs", -43.41, -20.37));
-            codes.add(countryCode("Martinique", -61.02, 14.64));
-            codes.add(countryCode("Mauritius", 57.55, -20.35));
-            codes.add(countryCode("Mexico", -102.55, 23.63));
-            codes.add(countryCode("Monaco", 7.42, 43.74));
-            codes.add(countryCode("Mongolia", 103.85, 46.86));
-            codes.add(countryCode("MontserratIs", -62.19, 16.74));
-            codes.add(countryCode("Morocco", -7.09, 31.79));
-            codes.add(countryCode("Mozambique", 35.53, -18.67));
-            codes.add(countryCode("Namibia", 18.49, -22.96));
-            codes.add(countryCode("Nauru", 166.93, -0.52));
-            codes.add(countryCode("Nepal", 84.12, 28.39));
-            codes.add(countryCode("NetheriAndsAntilles", -68.26, 12.20));
-            codes.add(countryCode("Netherlands", 5.29, 52.13));
-            codes.add(countryCode("NewZealand", 174.89, -40.90));
-            codes.add(countryCode("Nicaragua", -85.21, 12.87));
-            codes.add(countryCode("Niger", 8.08, 17.61));
-            codes.add(countryCode("Nigeria", 8.68, 9.08));
-            codes.add(countryCode("NorthKorea", 127.51, 40.34));
-            codes.add(countryCode("NorthernMacedonia", 21.26, 42.01));
-            codes.add(countryCode("Norway", 10.45, 59.55));
-            codes.add(countryCode("Oman", 55.98, 21.47));
-            codes.add(countryCode("Pakistan", 69.35, 30.38));
-            codes.add(countryCode("Panama", -80.78, 8.54));
-            codes.add(countryCode("PapuaNewCuinea", 143.96, -6.31));
-            codes.add(countryCode("Paraguay", -58.44, -23.44));
-            codes.add(countryCode("Peru", -75.02, -9.19));
-            codes.add(countryCode("Philippines", 121.77, 12.88));
-            codes.add(countryCode("Poland", 19.15, 51.92));
-            codes.add(countryCode("FrenchPolynesia", -149.41, -17.68));
-            codes.add(countryCode("Portugal", -8.22, 39.40));
-            codes.add(countryCode("PuertoRico", -66.59, 18.22));
-            codes.add(countryCode("Qatar", 51.18, 25.35));
-            codes.add(countryCode("Reunion", 55.54, -21.12));
-            codes.add(countryCode("Romania", 24.97, 45.94));
-            codes.add(countryCode("Russia", 105.32, 61.52));
-            codes.add(countryCode("SaintLueia", -60.98, 13.91));
-            codes.add(countryCode("SaintVincent", 7.64, 45.75));
-            codes.add(countryCode("SamoaEastern", -121.83, 37.35));
-            codes.add(countryCode("SamoaWestern", -124.15, 40.80));
-            codes.add(countryCode("SanMarino", 12.46, 43.94));
-            codes.add(countryCode("SaoTomeAndPrincipe", 6.61, 0.19));
-            codes.add(countryCode("SaudiArabia", 45.08, 23.89));
-            codes.add(countryCode("Senegal", -14.45, 14.50));
-            codes.add(countryCode("Seychelles", 55.49, -4.68));
-            codes.add(countryCode("SierraLeone", -11.78, 8.46));
-            codes.add(countryCode("Singapore", 103.82, 1.35));
-            codes.add(countryCode("Slovakia", 19.70, 48.67));
-            codes.add(countryCode("Slovenia", 15.00, 46.15));
-            codes.add(countryCode("SolomonIs", -97.37, 38.92));
-            codes.add(countryCode("Somali", 46.20, 5.15));
-            codes.add(countryCode("SouthAfrica", 22.94, -30.56));
-            codes.add(countryCode("Spain", -3.75, 40.46));
-            codes.add(countryCode("SriLanka", 80.77, 7.87));
-            codes.add(countryCode("St.Lucia", -60.98, 13.91));
-            codes.add(countryCode("St.Vincent", -91.06, 29.99));
-            codes.add(countryCode("Sudan", 30.22, 12.86));
-            codes.add(countryCode("Suriname", -56.03, 3.92));
-            codes.add(countryCode("Swaziland", 31.47, -26.52));
-            codes.add(countryCode("Sweden", 18.64, 60.13));
-            codes.add(countryCode("Switzerland", 8.23, 46.82));
-            codes.add(countryCode("Syria", 39.00, 34.80));
-            codes.add(countryCode("Tajikstan", 71.28, 38.86));
-            codes.add(countryCode("Thailand", 100.99, 15.87));
-            codes.add(countryCode("Togo", 0.82, 8.62));
-            codes.add(countryCode("Tonga", -175.20, -21.18));
-            codes.add(countryCode("TrinidadAndTobago", -61.22, 10.69));
-            codes.add(countryCode("Tunisia", 9.54, 33.89));
-            codes.add(countryCode("Turkey", 35.24, 38.96));
-            codes.add(countryCode("Turkmenistan", 59.56, 38.97));
-            codes.add(countryCode("Uganda", 32.29, 1.37));
-            codes.add(countryCode("Ukraine", 31.17, 48.38));
-            codes.add(countryCode("UnitedArabEmirates", 53.85, 23.42));
-            codes.add(countryCode("UnitedKingdom", -3.44, 55.38));
-            codes.add(countryCode("UnitedStates", -95.71, 37.09));
-            codes.add(countryCode("Uruguay", -55.77, -32.52));
-            codes.add(countryCode("Uzbekistan", 64.59, 41.38));
-            codes.add(countryCode("Venezuela", -66.59, 6.42));
-            codes.add(countryCode("Vietnam", 108.28, 14.06));
-            codes.add(countryCode("Yemen", 48.52, 15.55));
-            codes.add(countryCode("Yugoslavia", 121.02, 14.48));
-            codes.add(countryCode("Zimbabwe", 29.15, -19.02));
-            codes.add(countryCode("Zaire", 21.76, -4.04));
-            codes.add(countryCode("Zambia", 27.85, -13.13));
-
-            TableGeographyCode.write(codes);
-        } catch (Exception e) {
-//            logger.debug(e.toString());        }
+            logger.debug(e.toString());
         }
 
     }
 
-    public static void importCodes() {
-        File file;
-        if ("zh".equals(AppVariables.getLanguage())) {
-            file = FxmlControl.getInternalFile("/data/db/Geography_Code_zh_6.2.1.txt",
-                    "data", "Geography_Code_zh_6.2.1.txt");
-            DerbyBase.importData("Geography_Code", file.getAbsolutePath(), false);
-        } else {
-            file = FxmlControl.getInternalFile("/data/db/Geography_Code_en_6.2.1.txt",
-                    "data", "Geography_Code_en_6.2.1.txt");
-            DerbyBase.importData("Geography_Code", file.getAbsolutePath(), false);
+    public static void importCountriesCoordinate() {
+        File file = new File("D:\\玛瑞\\Mybox\\地理代码\\countries\\countries_coordinate.csv");
+        GeographyCode code;
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                 CSVParser parser = CSVParser.parse(file, StandardCharsets.UTF_8,
+                        CSVFormat.DEFAULT.withDelimiter(',').withTrim().withNullString(""))) {
+            conn.setAutoCommit(false);
+            for (CSVRecord record : parser) {
+                String country = record.get(0);
+                double longitude = Double.valueOf(record.get(1));
+                double latitude = Double.valueOf(record.get(2));
+                String sql = "SELECT * FROM Geography_Code WHERE level=3 AND ( " + TableGeographyCode.nameEqual(country) + " )";
+                try ( ResultSet results = conn.createStatement().executeQuery(sql)) {
+                    if (results.next()) {
+                        code = TableGeographyCode.readCode(results);
+                    } else {
+                        code = null;
+                    }
+                }
+                if (code == null) {
+//                    code = new GeographyCode();
+//                    code.setEnglishName(country);
+//                    code.setLevel(new GeographyCodeLevel(3));
+                    logger.debug(country + " " + longitude + " " + latitude);
+                } else {
+                    code.setLongitude(DoubleTools.scale(longitude, 6));
+                    code.setLatitude(DoubleTools.scale(latitude, 6));
+                    TableGeographyCode.write(conn, code);
+//                    logger.debug(country + " " + code.getLongitude() + " " + code.getLatitude() + " " + longitude + " " + latitude);
+                }
+            }
+            conn.commit();
+            String sql = "SELECT * FROM Geography_Code WHERE level=3 ORDER BY gcid ";
+            List<GeographyCode> codes = TableGeographyCode.queryCodes(conn, sql, false);
+            writeInternalCSV(new File("D:\\tmp\\1\\Geography_Code_countries_internal.csv"), codes);
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+
+    }
+
+    public static void importChinaCitiesCoordinates() {
+        File file = new File("D:\\玛瑞\\Mybox\\地理代码\\cities\\citiesCoordinates.csv");
+        GeographyCode code;
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                 CSVParser parser = CSVParser.parse(file, StandardCharsets.UTF_8,
+                        CSVFormat.DEFAULT.withFirstRecordAsHeader().withDelimiter(',').withTrim().withNullString(""))) {
+            conn.setAutoCommit(false);
+            for (CSVRecord record : parser) {
+                String city = record.get("chinese_name");
+                double longitude = Double.valueOf(record.get("longitude"));
+                double latitude = Double.valueOf(record.get("latitude"));
+                String sql = "SELECT * FROM Geography_Code WHERE level=5 AND ( " + TableGeographyCode.nameEqual(city) + " )";
+                try ( ResultSet results = conn.createStatement().executeQuery(sql)) {
+                    if (results.next()) {
+                        code = TableGeographyCode.readCode(results);
+                    } else {
+                        code = null;
+                    }
+                }
+                if (code == null) {
+//                    code = new GeographyCode();
+//                    code.setEnglishName(country);
+//                    code.setLevel(new GeographyCodeLevel(3));
+                    logger.debug(city + " " + longitude + " " + latitude);
+                } else {
+                    code.setLongitude(longitude);
+                    code.setLatitude(latitude);
+                    code.setCode1(record.get("code1"));
+                    code.setCode2(record.get("code2"));
+                    code.setCode3(record.get("code3"));
+                    TableGeographyCode.write(conn, code);
+//                    logger.debug(country + " " + code.getLongitude() + " " + code.getLatitude() + " " + longitude + " " + latitude);
+                }
+            }
+            conn.commit();
+            String sql = "SELECT * FROM Geography_Code WHERE "
+                    + " country=100 AND level=5 ORDER BY gcid ";
+            List<GeographyCode> codes = TableGeographyCode.queryCodes(conn, sql, false);
+            writeInternalCSV(new File("D:\\tmp\\1\\Geography_Code_china_cities_internal.csv"), codes);
+        } catch (Exception e) {
+            logger.debug(e.toString());
         }
     }
 
     /*
-        get/set
+        Feteh extrenal data
      */
-    public String getAddress() {
-        return address;
+    // https://github.com/wizardcode/world-area
+    public static void countriesJson() {
+        File file = new File("D:\\玛瑞\\Mybox\\world-area-master\\world-area-master\\children\\json\\countries.json");
+        List<GeographyCode> codes = new ArrayList<>();
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                 BufferedReader reader = new BufferedReader(new FileReader(file, charset(file)))) {
+            conn.setAutoCommit(false);
+            String line;
+            GeographyCode code = null;
+            while ((line = reader.readLine()) != null) {
+                String[] values = line.split(":");
+                if (values.length != 2) {
+                    continue;
+                }
+                switch (countriesJsonValue(values[0])) {
+                    case "id": {
+                        if (code != null) {
+                            code.setLevelCode(new GeographyCodeLevel("Country"));
+                            codes.add(code);
+                        }
+                        code = new GeographyCode();
+                        int id = Integer.valueOf(countriesJsonValue(values[1]));
+                        code.setGcid(id + 300);
+                        break;
+                    }
+                    case "continent_id": {
+                        try {
+                            int id = Integer.valueOf(countriesJsonValue(values[1]));
+                            code.setContinent(id + 1);
+                        } catch (Exception e) {
+                        }
+                        break;
+                    }
+                    case "name": {
+                        String value = countriesJsonValue(values[1]);
+                        code.setEnglishName(value);
+                        if (value != null && !value.isBlank()) {
+                            String sql = "SELECT * FROM Geography_Code WHERE english_name='" + DerbyBase.stringValue(value) + "'";
+                            try ( ResultSet results = conn.createStatement().executeQuery(sql)) {
+                                if (results.next()) {
+                                    GeographyCode ecode = TableGeographyCode.readCode(results);
+                                    code.setLongitude(ecode.getLongitude());
+                                    code.setLatitude(ecode.getLatitude());
+                                } else {
+                                    logger.debug(value);
+                                }
+                            }
+                        }
+                        break;
+                    }
+                    case "full_name": {
+                        String value = countriesJsonValue(values[1]);
+                        code.setAlias1(value);
+                        break;
+                    }
+                    case "cname": {
+                        String value = countriesJsonValue(values[1]);
+                        code.setChineseName(value);
+                        if (code.getLongitude() == -200 && value != null && !value.isBlank()) {
+                            String sql = "SELECT * FROM Geography_Code WHERE chinese_name='" + DerbyBase.stringValue(value) + "'";
+                            try ( ResultSet results = conn.createStatement().executeQuery(sql)) {
+                                if (results.next()) {
+                                    GeographyCode ecode = TableGeographyCode.readCode(results);
+                                    code.setLongitude(ecode.getLongitude());
+                                    code.setLatitude(ecode.getLatitude());
+                                } else {
+                                    logger.debug(value);
+                                }
+                            }
+                        }
+                        break;
+                    }
+                    case "full_cname": {
+                        String value = countriesJsonValue(values[1]);
+                        code.setAlias2(value);
+                        if (code.getLongitude() == -200 && value != null && !value.isBlank()) {
+                            String sql = "SELECT * FROM Geography_Code WHERE chinese_full_name='" + DerbyBase.stringValue(value) + "'";
+                            try ( ResultSet results = conn.createStatement().executeQuery(sql)) {
+                                if (results.next()) {
+                                    GeographyCode ecode = TableGeographyCode.readCode(results);
+                                    code.setLongitude(ecode.getLongitude());
+                                    code.setLatitude(ecode.getLatitude());
+                                } else {
+                                    logger.debug(value);
+                                }
+                            }
+                        }
+                        break;
+                    }
+                    case "remark": {
+                        String value = countriesJsonValue(values[1]);
+                        code.setComments(value);
+                        break;
+                    }
+                    case "code": {
+                        String value = countriesJsonValue(values[1]);
+                        code.setCode1(value);
+                        break;
+                    }
+                    default:
+                        break;
+                }
+
+            }
+            conn.commit();
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+        TableGeographyCode.write(codes);
+        GeographyCode.exportText(new File("D:\\玛瑞\\Mybox\\b.txt"), codes, true);
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public static String countriesJsonValue(String value) {
+        if (value == null || value.isBlank() || !value.startsWith("\"")) {
+            return value;
+        }
+        String v = value.trim();
+        if (v.startsWith("\"")) {
+            return v.substring(v.indexOf("\"") + 1, v.lastIndexOf("\""));
+        } else {
+            return v;
+        }
     }
 
-    public String getFullAddress() {
-        return fullAddress;
+
+    /*
+        custmized get/set
+     */
+    public static String name(GeographyCode code) {
+        if (code != null) {
+            if (AppVariables.isChinese()) {
+                if (code.getChineseName() != null) {
+                    return code.getChineseName();
+                } else {
+                    return code.getEnglishName();
+                }
+            } else {
+                if (code.getEnglishName() != null) {
+                    return code.getEnglishName();
+                } else {
+                    return code.getChineseName();
+                }
+            }
+        }
+        return null;
     }
 
-    public void setFullAddress(String fullAddress) {
-        this.fullAddress = fullAddress;
+    public String getName() {
+        name = name(this);
+        return name;
     }
 
-    public String getCountry() {
+    public String getFullName() {
+        if (fullName != null) {
+            return fullName;
+        }
+        if (levelCode == null) {
+            return getName();
+        }
+        if (level <= 3) {
+            fullName = getName();
+        } else {
+            continentName = getContinentName();
+            countryName = getCountryName();
+            provinceName = getProvinceName();
+            cityName = getCityName();
+            countyName = getCountyName();
+            townName = getTownName();
+            villageName = getVillageName();
+            buildingName = getBuildingName();
+            if (AppVariables.isChinese()) {
+                if (countryName != null) {
+                    fullName = countryName;
+                } else {
+                    fullName = "";
+                }
+                if (provinceName != null) {
+                    fullName = fullName.isBlank() ? provinceName : fullName + "-" + provinceName;
+                }
+                if (cityName != null) {
+                    fullName = fullName.isBlank() ? cityName : fullName + "-" + cityName;
+                }
+                if (countyName != null) {
+                    fullName = fullName.isBlank() ? countyName : fullName + "-" + countyName;
+                }
+                if (townName != null) {
+                    fullName = fullName.isBlank() ? townName : fullName + "-" + townName;
+                }
+                if (villageName != null) {
+                    fullName = fullName.isBlank() ? villageName : fullName + "-" + villageName;
+                }
+                if (buildingName != null) {
+                    fullName = fullName.isBlank() ? buildingName : fullName + "-" + buildingName;
+                }
+            } else {
+                if (buildingName != null) {
+                    fullName = buildingName;
+                } else {
+                    fullName = "";
+                }
+                if (villageName != null) {
+                    fullName = fullName.isBlank() ? villageName : fullName + "," + villageName;
+                }
+                if (townName != null) {
+                    fullName = fullName.isBlank() ? townName : fullName + "," + townName;
+                }
+                if (countyName != null) {
+                    fullName = fullName.isBlank() ? countyName : fullName + "," + countyName;
+                }
+                if (cityName != null) {
+                    fullName = fullName.isBlank() ? cityName : fullName + "," + cityName;
+                }
+                if (provinceName != null) {
+                    fullName = fullName.isBlank() ? provinceName : fullName + "," + provinceName;
+                }
+                if (countryName != null) {
+                    fullName = fullName.isBlank() ? countryName : fullName + "," + countryName;
+                }
+            }
+        }
+        if (fullName == null || fullName.isBlank()) {
+            fullName = getName();
+        }
+        return fullName;
+    }
+
+    public String getContinentName() {
+        if (level == 2) {
+            continentName = getName();
+        } else if (level > 2 && continentName == null && getContinentCode() != null) {
+            continentName = name(getContinentCode());
+        }
+        return continentName;
+    }
+
+    public String getCountryName() {
+        if (level == 3) {
+            countryName = getName();
+        } else if (level > 3 && countryName == null && getCountryCode() != null) {
+            countryName = name(getCountryCode());
+        }
+        return countryName;
+    }
+
+    public String getProvinceName() {
+        if (level == 4) {
+            provinceName = getName();
+        } else if (level > 4 && provinceName == null && getProvinceCode() != null) {
+            provinceName = name(getProvinceCode());
+        }
+        return provinceName;
+    }
+
+    public String getCityName() {
+        if (level == 5) {
+            cityName = getName();
+        } else if (level > 5 && cityName == null && getCityCode() != null) {
+            cityName = name(getCityCode());
+        }
+        return cityName;
+    }
+
+    public String getCountyName() {
+        if (level == 6) {
+            countyName = getName();
+        } else if (level > 6 && countyName == null && getCountyCode() != null) {
+            countyName = name(getCountyCode());
+        }
+        return countyName;
+    }
+
+    public String getTownName() {
+        if (level == 7) {
+            townName = getName();
+        } else if (level > 7 && townName == null && getTownCode() != null) {
+            townName = name(getTownCode());
+        }
+        return townName;
+    }
+
+    public String getVillageName() {
+        if (level == 8) {
+            villageName = getName();
+        } else if (level > 8 && villageName == null && getVillageCode() != null) {
+            villageName = name(getVillageCode());
+        }
+        return villageName;
+    }
+
+    public String getBuildingName() {
+        if (level == 9) {
+            buildingName = getName();
+        } else if (level > 9 && buildingName == null && getBuildingCode() != null) {
+            buildingName = name(getBuildingCode());
+        }
+        return buildingName;
+    }
+
+    public long getContinent() {
+        if (continent < 0 && continentCode != null) {
+            continent = continentCode.getGcid();
+        }
+        return continent;
+    }
+
+    public long getCountry() {
+        if (country < 0 && countryCode != null) {
+            country = countryCode.getGcid();
+        }
         return country;
     }
 
-    public void setCountry(String country) {
-        this.country = country;
-    }
-
-    public String getProvince() {
+    public long getProvince() {
+        if (province < 0 && provinceCode != null) {
+            province = provinceCode.getGcid();
+        }
         return province;
     }
 
-    public void setProvince(String province) {
-        this.province = province;
-    }
-
-    public String getCitycode() {
-        return citycode;
-    }
-
-    public void setCitycode(String citycode) {
-        this.citycode = citycode;
-    }
-
-    public String getCity() {
+    public long getCity() {
+        if (city < 0 && cityCode != null) {
+            city = cityCode.getGcid();
+        }
         return city;
     }
 
-    public void setCity(String city) {
-        this.city = city;
+    public long getCounty() {
+        if (county < 0 && countyCode != null) {
+            county = countyCode.getGcid();
+        }
+        return county;
     }
 
-    public String getDistrict() {
-        return district;
+    public long getVillage() {
+        if (village < 0 && villageCode != null) {
+            village = villageCode.getGcid();
+        }
+        return village;
     }
 
-    public void setDistrict(String district) {
-        this.district = district;
+    public long getTown() {
+        if (town < 0 && townCode != null) {
+            town = townCode.getGcid();
+        }
+        return town;
     }
 
-    public String getTownship() {
-        return township;
+    public long getBuilding() {
+        if (building < 0 && buildingCode != null) {
+            building = buildingCode.getGcid();
+        }
+        return building;
     }
 
-    public void setTownship(String township) {
-        this.township = township;
+    public GeographyCode getContinentCode() {
+//        if (level > 2 && continentCode == null) {
+//            TableGeographyCode.decodeAncestors(this);
+//        }
+        return continentCode;
     }
 
-    public String getAdministrativeCode() {
-        return AdministrativeCode;
+    public GeographyCode getCountryCode() {
+//        if (level > 3 && countryCode == null) {
+//            TableGeographyCode.decodeAncestors(this);
+//        }
+        return countryCode;
     }
 
-    public void setAdministrativeCode(String AdministrativeCode) {
-        this.AdministrativeCode = AdministrativeCode;
+    public GeographyCode getProvinceCode() {
+//        if (level > 4 && provinceCode == null) {
+//            TableGeographyCode.decodeAncestors(this);
+//        }
+        return provinceCode;
     }
 
-    public String getStreet() {
-        return street;
+    public GeographyCode getCityCode() {
+//        if (level > 5 && cityCode == null) {
+//            TableGeographyCode.decodeAncestors(this);
+//        }
+        return cityCode;
     }
 
-    public void setStreet(String street) {
-        this.street = street;
+    public GeographyCode getCountyCode() {
+//        if (level > 7 && countyCode == null) {
+//            TableGeographyCode.decodeAncestors(this);
+//        }
+        return countyCode;
     }
 
-    public String getNumber() {
-        return number;
+    public GeographyCode getTownCode() {
+//        if (level > 8 && townCode == null) {
+//            TableGeographyCode.decodeAncestors(this);
+//        }
+        return townCode;
     }
 
-    public void setNumber(String number) {
-        this.number = number;
+    public GeographyCode getVillageCode() {
+//        if (level > 9 && villageCode == null) {
+//            TableGeographyCode.decodeAncestors(this);
+//        }
+        return villageCode;
     }
 
-    public String getLevel() {
+    public GeographyCode getBuildingCode() {
+//        if (level > 9 && buildingCode == null) {
+//            TableGeographyCode.decodeAncestors(this);
+//        }
+        return buildingCode;
+    }
+
+    public GeographyCodeLevel getLevelCode() {
+        if (levelCode == null && level > 0) {
+            levelCode = new GeographyCodeLevel(level);
+        }
+        return levelCode;
+    }
+
+    public int getLevel() {
+        if (level <= 0 && levelCode != null) {
+            level = levelCode.getLevel();
+        }
         return level;
     }
 
-    public void setLevel(String level) {
-        this.level = level;
+    public String getLevelName() {
+        if (levelName == null && getLevelCode() != null) {
+            levelName = levelCode.getName();
+        }
+        return levelName;
+    }
+
+
+    /*
+        get/set
+     */
+    public long getGcid() {
+        return gcid;
+    }
+
+    public void setGcid(long gcid) {
+        this.gcid = gcid;
+    }
+
+    public String getChineseName() {
+        return chineseName;
+    }
+
+    public void setChineseName(String chineseName) {
+        this.chineseName = chineseName;
+    }
+
+    public String getEnglishName() {
+        return englishName;
+    }
+
+    public void setEnglishName(String englishName) {
+        this.englishName = englishName;
+    }
+
+    public String getCode1() {
+        return code1;
+    }
+
+    public void setCode1(String code1) {
+        this.code1 = code1;
+    }
+
+    public String getCode2() {
+        return code2;
+    }
+
+    public void setCode2(String code2) {
+        this.code2 = code2;
+    }
+
+    public String getCode3() {
+        return code3;
+    }
+
+    public void setCode3(String code3) {
+        this.code3 = code3;
+    }
+
+    public String getAlias1() {
+        return alias1;
+    }
+
+    public void setAlias1(String alias1) {
+        this.alias1 = alias1;
+    }
+
+    public String getAlias2() {
+        return alias2;
+    }
+
+    public void setAlias2(String alias2) {
+        this.alias2 = alias2;
+    }
+
+    public String getAlias3() {
+        return alias3;
+    }
+
+    public void setAlias3(String alias3) {
+        this.alias3 = alias3;
+    }
+
+    public String getComments() {
+        return comments;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
     }
 
     public double getLongitude() {
@@ -1060,46 +2863,184 @@ public class GeographyCode {
         this.latitude = latitude;
     }
 
-    public String getNeighborhood() {
-        return neighborhood;
+    public void setContinent(long continent) {
+        this.continent = continent;
     }
 
-    public void setNeighborhood(String neighborhood) {
-        this.neighborhood = neighborhood;
+    public void setCountry(long country) {
+        this.country = country;
     }
 
-    public String getBuilding() {
-        return building;
+    public void setProvince(long province) {
+        this.province = province;
     }
 
-    public void setBuilding(String building) {
+    public void setCity(long city) {
+        this.city = city;
+    }
+
+    public void setCounty(long county) {
+        this.county = county;
+    }
+
+    public void setVillage(long village) {
+        this.village = village;
+    }
+
+    public void setTown(long town) {
+        this.town = town;
+    }
+
+    public void setBuilding(long building) {
         this.building = building;
     }
 
-    public static List<String> getChineseProvincesKeys() {
-        return ChineseProvincesKeys;
+    public void setCountryName(String countryName) {
+        this.countryName = countryName;
     }
 
-    public static void setChineseProvincesKeys(List<String> ChineseProvincesKeys) {
-        GeographyCode.ChineseProvincesKeys = ChineseProvincesKeys;
+    public void setProvinceName(String provinceName) {
+        this.provinceName = provinceName;
     }
 
-    public BooleanProperty getSelectedProperty() {
-        return selected;
+    public void setCityName(String cityName) {
+        this.cityName = cityName;
     }
 
-    public boolean getSelected() {
-        return selected.get();
+    public static String getDataSeparator() {
+        return DataSeparator;
     }
 
-    public void setSelected(boolean in) {
-        isSettingValues = true;
-        if (selected == null) {
-            selected = new SimpleBooleanProperty(in);
-        } else {
-            selected.set(in);
-        }
-        isSettingValues = false;
+    public static void setDataSeparator(String DataSeparator) {
+        GeographyCode.DataSeparator = DataSeparator;
+    }
+
+    public void setCountyName(String countyName) {
+        this.countyName = countyName;
+    }
+
+    public void setVillageName(String villageName) {
+        this.villageName = villageName;
+    }
+
+    public void setTownName(String townName) {
+        this.townName = townName;
+    }
+
+    public void setBuildingName(String buildingName) {
+        this.buildingName = buildingName;
+    }
+
+    public String getCode4() {
+        return code4;
+    }
+
+    public void setCode4(String code4) {
+        this.code4 = code4;
+    }
+
+    public String getCode5() {
+        return code5;
+    }
+
+    public void setCode5(String code5) {
+        this.code5 = code5;
+    }
+
+    public String getAlias4() {
+        return alias4;
+    }
+
+    public void setAlias4(String alias4) {
+        this.alias4 = alias4;
+    }
+
+    public String getAlias5() {
+        return alias5;
+    }
+
+    public void setAlias5(String alias5) {
+        this.alias5 = alias5;
+    }
+
+    public void setContinentCode(GeographyCode continentCode) {
+        this.continentCode = continentCode;
+    }
+
+    public void setCountryCode(GeographyCode countryCode) {
+        this.countryCode = countryCode;
+    }
+
+    public void setProvinceCode(GeographyCode provinceCode) {
+        this.provinceCode = provinceCode;
+    }
+
+    public void setCityCode(GeographyCode cityCode) {
+        this.cityCode = cityCode;
+    }
+
+    public void setCountyCode(GeographyCode countyCode) {
+        this.countyCode = countyCode;
+    }
+
+    public void setTownCode(GeographyCode townCode) {
+        this.townCode = townCode;
+    }
+
+    public void setVillageCode(GeographyCode villageCode) {
+        this.villageCode = villageCode;
+    }
+
+    public void setBuildingCode(GeographyCode buildingCode) {
+        this.buildingCode = buildingCode;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public void setContinentName(String continentName) {
+        this.continentName = continentName;
+    }
+
+    public boolean isPredefined() {
+        return predefined;
+    }
+
+    public void setPredefined(boolean predefined) {
+        this.predefined = predefined;
+    }
+
+    public void setLevelCode(GeographyCodeLevel levelCode) {
+        this.levelCode = levelCode;
+    }
+
+    public long getArea() {
+        return area;
+    }
+
+    public void setArea(long area) {
+        this.area = area;
+    }
+
+    public long getPopulation() {
+        return population;
+    }
+
+    public void setPopulation(long population) {
+        this.population = population;
+    }
+
+    public void setLevelName(String levelName) {
+        this.levelName = levelName;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
     }
 
 }

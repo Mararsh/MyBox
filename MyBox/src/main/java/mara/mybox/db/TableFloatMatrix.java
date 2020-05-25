@@ -2,8 +2,8 @@ package mara.mybox.db;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.data.ConvolutionKernel;
@@ -39,15 +39,19 @@ public class TableFloatMatrix extends DerbyBase {
 
     public static float[][] read(String name, int width, int height) {
         float[][] matrix = new float[height][width];
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            for (int j = 0; j < height; ++j) {
-                for (int i = 0; i < width; ++i) {
-                    String sql = " SELECT * FROM Float_Matrix WHERE name='" + name
-                            + "' AND row=" + j + " AND col=" + i;
-                    ResultSet result = statement.executeQuery(sql);
-                    if (result.next()) {
-                        matrix[j][i] = result.getFloat("value");
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            conn.setReadOnly(true);
+            try ( PreparedStatement statement = conn.prepareStatement(
+                    " SELECT * FROM Float_Matrix WHERE name=? AND row=? AND col=?")) {
+                for (int j = 0; j < height; ++j) {
+                    for (int i = 0; i < width; ++i) {
+                        statement.setString(1, name);
+                        statement.setInt(2, j);
+                        statement.setInt(3, i);
+                        ResultSet result = statement.executeQuery();
+                        if (result.next()) {
+                            matrix[j][i] = result.getFloat("value");
+                        }
                     }
                 }
             }
@@ -62,18 +66,28 @@ public class TableFloatMatrix extends DerbyBase {
         if (name == null || values == null) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            String sql = "DELETE FROM Float_Matrix WHERE name='" + name + "'";
-            statement.executeUpdate(sql);
-            for (int j = 0; j < values.length; ++j) {
-                for (int i = 0; i < values[j].length; ++i) {
-                    float v = values[j][i];
-                    sql = "INSERT INTO Float_Matrix(name, row , col, value) VALUES('"
-                            + name + "', " + j + ", " + i + ", " + v + ")";
-                    statement.executeUpdate(sql);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            try ( PreparedStatement statement = conn.prepareStatement(
+                    "DELETE FROM Float_Matrix WHERE name=?")) {
+                statement.setString(1, name);
+                statement.executeUpdate();
+            }
+
+            conn.setAutoCommit(false);
+            try ( PreparedStatement insert = conn.prepareStatement(
+                    "INSERT INTO Float_Matrix(name, row , col, value) VALUES(?,?,?,?)")) {
+                for (int j = 0; j < values.length; ++j) {
+                    for (int i = 0; i < values[j].length; ++i) {
+                        float v = values[j][i];
+                        insert.setString(1, name);
+                        insert.setInt(2, j);
+                        insert.setInt(3, i);
+                        insert.setFloat(4, v);
+                        insert.executeUpdate();
+                    }
                 }
             }
+            conn.commit();
             return true;
         } catch (Exception e) {
             failed(e);
@@ -86,19 +100,35 @@ public class TableFloatMatrix extends DerbyBase {
         if (name == null || row < 0 || col < 0) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            String sql = " SELECT * FROM Float_Matrix WHERE name='" + name
-                    + "' AND row=" + row + " AND col=" + col;
-            if (statement.executeQuery(sql).next()) {
-                sql = "UPDATE Float_Matrix "
-                        + " SET value=" + value
-                        + " WHERE name='" + name + "' AND row=" + row + " AND col=" + col;
-            } else {
-                sql = "INSERT INTO Float_Matrix(name, row , col, value) VALUES('"
-                        + name + "', " + row + ", " + col + ", " + value + ")";
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            ResultSet result;
+            try ( PreparedStatement statement = conn.prepareStatement(
+                    " SELECT * FROM Float_Matrix WHERE name=? AND row=? AND col=?")) {
+                statement.setString(1, name);
+                statement.setInt(2, row);
+                statement.setInt(3, col);
+                result = statement.executeQuery();
             }
-            statement.executeUpdate(sql);
+            if (result.next()) {
+                try ( PreparedStatement update = conn.prepareStatement(
+                        "UPDATE Float_Matrix SET value=? WHERE name=? AND row=? AND col=?")) {
+                    update.setFloat(1, value);
+                    update.setString(2, name);
+                    update.setInt(3, row);
+                    update.setInt(4, col);
+                    update.executeUpdate();
+                }
+            } else {
+                try ( PreparedStatement insert = conn.prepareStatement(
+                        "INSERT INTO Float_Matrix(name, row , col, value) VALUES(?,?,?,?)")) {
+                    insert.setString(1, name);
+                    insert.setInt(2, row);
+                    insert.setInt(3, col);
+                    insert.setFloat(4, value);
+                    insert.executeUpdate();
+                }
+            }
+
             return true;
         } catch (Exception e) {
             failed(e);
@@ -111,11 +141,14 @@ public class TableFloatMatrix extends DerbyBase {
         if (name == null || row < 0 || col < 0) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            String sql = "DELETE FROM Float_Matrix WHERE name='" + name
-                    + "' AND row=" + row + " AND col=" + col;
-            statement.executeUpdate(sql);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            try ( PreparedStatement statement = conn.prepareStatement(
+                    "DELETE FROM Float_Matrix WHERE name=? AND row=? AND col=?")) {
+                statement.setString(1, name);
+                statement.setInt(2, row);
+                statement.setInt(3, col);
+                statement.executeUpdate();
+            }
             return true;
         } catch (Exception e) {
             failed(e);
@@ -128,10 +161,12 @@ public class TableFloatMatrix extends DerbyBase {
         if (name == null) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            String sql = "DELETE FROM Float_Matrix WHERE name='" + name + "'";
-            statement.executeUpdate(sql);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            try ( PreparedStatement statement = conn.prepareStatement(
+                    "DELETE FROM Float_Matrix WHERE name=?")) {
+                statement.setString(1, name);
+                statement.executeUpdate();
+            }
             return true;
         } catch (Exception e) {
             failed(e);
@@ -144,15 +179,16 @@ public class TableFloatMatrix extends DerbyBase {
         if (names == null || names.isEmpty()) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            String inStr = "( '" + names.get(0) + "'";
-            for (int i = 1; i < names.size(); ++i) {
-                inStr += ", '" + names.get(i) + "'";
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            conn.setAutoCommit(false);
+            try ( PreparedStatement statement = conn.prepareStatement(
+                    "DELETE FROM Float_Matrix WHERE name=?")) {
+                for (int i = 0; i < names.size(); ++i) {
+                    statement.setString(1, names.get(i));
+                    statement.executeUpdate();
+                }
             }
-            inStr += " )";
-            String sql = "DELETE FROM Float_Matrix WHERE name IN " + inStr;
-            statement.executeUpdate(sql);
+            conn.commit();
             return true;
         } catch (Exception e) {
             failed(e);
@@ -163,20 +199,29 @@ public class TableFloatMatrix extends DerbyBase {
 
     public static boolean writeExamples() {
         ConvolutionKernel.makeExample();
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            String sql;
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             for (ConvolutionKernel k : ConvolutionKernel.ExampleKernels) {
                 String name = k.getName();
-                sql = " SELECT row FROM Float_Matrix WHERE name='" + name + "'";
-                if (!statement.executeQuery(sql).next()) {
-                    float[][] m = k.getMatrix();
-                    for (int j = 0; j < m.length; ++j) {
-                        for (int i = 0; i < m[j].length; ++i) {
-                            float v = m[j][i];
-                            sql = "INSERT INTO Float_Matrix(name, row , col, value) VALUES('"
-                                    + name + "', " + j + ", " + i + ", " + v + ")";
-                            statement.executeUpdate(sql);
+                ResultSet result;
+                try ( PreparedStatement statement = conn.prepareStatement(
+                        " SELECT row FROM Float_Matrix WHERE name=?")) {
+                    statement.setString(1, name);
+                    result = statement.executeQuery();
+                }
+                if (!result.next()) {
+                    try ( PreparedStatement insert = conn.prepareStatement(
+                            "INSERT INTO Float_Matrix(name, row , col, value) VALUES(?,?,?,?)"
+                    )) {
+                        float[][] m = k.getMatrix();
+                        for (int j = 0; j < m.length; ++j) {
+                            for (int i = 0; i < m[j].length; ++i) {
+                                float v = m[j][i];
+                                insert.setString(1, name);
+                                insert.setInt(2, j);
+                                insert.setInt(3, i);
+                                insert.setFloat(4, v);
+                                insert.executeUpdate();
+                            }
                         }
                     }
                 }

@@ -1,24 +1,22 @@
 package mara.mybox.db;
 
-import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import mara.mybox.data.EpidemicReport;
+import mara.mybox.data.GeographyCode;
 import static mara.mybox.db.DerbyBase.dbHome;
 import static mara.mybox.db.DerbyBase.failed;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
+import static mara.mybox.db.DerbyBase.stringValue;
 import mara.mybox.tools.DateTools;
-import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara
@@ -27,47 +25,143 @@ import static mara.mybox.value.AppVariables.message;
  */
 public class TableEpidemicReport extends DerbyBase {
 
+    /*
+        Indexes
+     */
+    public static final String Create_Index_DatasetTimeDesc
+            = " CREATE INDEX  Epidemic_Report_DatasetTimeDesc_index on Epidemic_Report ( "
+            + "  data_set, time DESC, locationid, confirmed DESC"
+            + " )";
+
+    public static final String Create_Index_DatasetTimeAsc
+            = " CREATE INDEX  Epidemic_Report_DatasetTimeAsc_index on Epidemic_Report ( "
+            + "  data_set, time ASC, locationid, confirmed DESC"
+            + " )";
+
+    public static final String Create_Index_TimeAsc
+            = " CREATE INDEX  Epidemic_Report_timeAsc_index on Epidemic_Report ( "
+            + "  time ASC, locationid, confirmed DESC"
+            + " )";
+
+    /*
+        Prepared Statements
+     */
+    public static final String StatisticViewSelect
+            = "SELECT * FROM Epidemic_Report_Statistic_View";
+
+    public static final String SizeSelectPrefix
+            = "SELECT count(Epidemic_Report.epid) FROM Epidemic_Report JOIN Geography_Code"
+            + "  ON Epidemic_Report.locationid=Geography_Code.gcid ";
+
+    public static final String ClearPrefix
+            = "DELETE FROM Epidemic_Report WHERE epid IN "
+            + "( SELECT Epidemic_Report.epid FROM  Epidemic_Report JOIN Geography_Code "
+            + "  ON Epidemic_Report.locationid=Geography_Code.gcid";
+
+    public static final String EPidQuery
+            = StatisticViewSelect + " WHERE epid=?";
+
+    public static final String EqualCondition
+            = " data_set=?  AND time=?  AND locationid=?";
+
+    public static final String EqualQuery
+            = StatisticViewSelect + " WHERE " + EqualCondition;
+
+    public static final String ExistQuery
+            = "SELECT * FROM Epidemic_Report WHERE " + EqualCondition;
+
+    public static final String DatasetQuery
+            = StatisticViewSelect + " WHERE data_set=?";
+
+    public static final String LocationidQuery
+            = StatisticViewSelect + " WHERE locationid=? ORDER BY time ASC";
+
+    public static final String Insert
+            = "INSERT INTO Epidemic_Report "
+            + " (data_set, locationid, time, source,"
+            + " confirmed, healed, dead,"
+            + " increased_confirmed,  increased_healed, increased_dead) "
+            + " VALUES(?,?,?,?,?,?,?,?,?,? )";
+
+    public static final String UpdateAsEPid
+            = "UPDATE Epidemic_Report SET "
+            + "data_set=?, locationid=?, time=?, confirmed=?, healed=?, dead=?, "
+            + "increased_confirmed=?,  increased_healed=?, increased_dead=?, "
+            + "source=? WHERE epid=?";
+
+    public static final String UpdateAsEqual
+            = "UPDATE Epidemic_Report SET "
+            + "confirmed=?, healed=?, dead=?, "
+            + "increased_confirmed=?, increased_healed=?, increased_dead=?"
+            + "source=? WHERE " + EqualCondition;
+
+    public static final String Datasets
+            = "SELECT DISTINCT data_set FROM Epidemic_Report";
+
+    public static final String Times
+            = " SELECT DISTINCT time FROM Epidemic_Report  ORDER BY time ASC";
+
+    public static final String DatasetTimes
+            = " SELECT DISTINCT time FROM Epidemic_Report WHERE data_set=?  ORDER BY time ASC";
+
+    public static final String DatasetCount
+            = "SELECT count(epid) FROM Epidemic_Report WHERE data_set=?";
+
+    public static final String DeleteEPid
+            = "DELETE FROM Epidemic_Report WHERE epid=? AND source<>1 ";
+
+    public static final String DeleteDataset
+            = "DELETE FROM Epidemic_Report WHERE data_set=? AND source<>1 ";
+
+    /*
+        View
+     */
+    public static final String Create_View_StatisticView
+            = " CREATE VIEW Epidemic_Report_Statistic_View AS "
+            + "  SELECT Epidemic_Report.*, Geography_Code.*,  "
+            + "  CASE WHEN confirmed <= 0 THEN 0 ELSE healed * DOUBLE('1000.0') / confirmed END AS healed_confirmed_permillage, "
+            + "  CASE WHEN confirmed <= 0 THEN 0 ELSE dead * DOUBLE('1000.0') / confirmed END AS dead_confirmed_permillage, "
+            + "  CASE WHEN population <= 0 THEN 0 ELSE confirmed * DOUBLE('1000.0') / population END AS confirmed_population_permillage, "
+            + "  CASE WHEN population <= 0 THEN 0 ELSE healed * DOUBLE('1000.0') / population END AS healed_population_permillage, "
+            + "  CASE WHEN population <= 0 THEN 0 ELSE dead * DOUBLE('1000.0') / population END AS dead_population_permillage, "
+            + "  CASE WHEN area <= 0 THEN 0 ELSE confirmed * DOUBLE('1000.0') / area END AS confirmed_area_permillage, "
+            + "  CASE WHEN area <= 0 THEN 0 ELSE healed * DOUBLE('1000.0') / area END AS healed_area_permillage, "
+            + "  CASE WHEN area <= 0 THEN 0 ELSE dead * DOUBLE('1000.0') / area END AS dead_area_permillage "
+            + "  FROM Epidemic_Report JOIN Geography_Code ON Epidemic_Report.locationid=Geography_Code.gcid";
+
+    /*
+        Table
+     */
     public TableEpidemicReport() {
         Table_Name = "Epidemic_Report";
         Keys = new ArrayList<>() {
             {
-                add("dataid");
+                add("epid");
             }
         };
         Create_Table_Statement
                 = " CREATE TABLE Epidemic_Report ( "
-                + "  dataid BIGINT NOT NULL GENERATED BY DEFAULT AS IDENTITY (START WITH 1, INCREMENT BY 1), "
+                + "  epid BIGINT NOT NULL GENERATED BY DEFAULT AS IDENTITY (START WITH 1, INCREMENT BY 1), "
                 + "  data_set VARCHAR(1024) NOT NULL, "
-                + "  data_label VARCHAR(1024), "
-                + "  longitude DOUBLE , "
-                + "  latitude DOUBLE , "
-                + "  level VARCHAR(1024) , "
-                + "  country VARCHAR(1024), "
-                + "  province VARCHAR(1024), "
-                + "  city VARCHAR(1024), "
-                + "  district VARCHAR(2048), "
-                + "  township VARCHAR(2048), "
-                + "  neighborhood VARCHAR(2048), "
-                + "  confirmed INTEGER, "
-                + "  suspected INTEGER, "
-                + "  healed INTEGER, "
-                + "  dead INTEGER, "
-                + "  increased_confirmed INTEGER, "
-                + "  increased_suspected INTEGER, "
-                + "  increased_healed INTEGER, "
-                + "  increased_dead INTEGER, "
-                + "  comments VARCHAR(32672), "
-                + "  time TIMESTAMP  NOT NULL, "
-                + "  PRIMARY KEY (dataid)"
+                + "  time TIMESTAMP NOT NULL, "
+                + "  locationid BIGINT NOT NULL, "
+                + "  confirmed BIGINT, "
+                + "  healed BIGINT, "
+                + "  dead BIGINT, "
+                + "  increased_confirmed BIGINT, "
+                + "  increased_healed BIGINT, "
+                + "  increased_dead BIGINT, "
+                + "  source SMALLINT NOT NULL, " // 1:predefined 2:added 3:filled 4:statistic others:unknown
+                + "  PRIMARY KEY (epid), "
+                + "  FOREIGN KEY (locationid) REFERENCES Geography_Code (gcid) ON DELETE CASCADE ON UPDATE RESTRICT"
                 + " )";
-
     }
 
     public static int size() {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            String sql = " SELECT count(dataid) FROM Epidemic_Report";
-            ResultSet results = statement.executeQuery(sql);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            conn.setReadOnly(true);
+            final String sql = " SELECT count(epid) FROM Epidemic_Report";
+            ResultSet results = conn.createStatement().executeQuery(sql);
             if (results.next()) {
                 return results.getInt(1);
             } else {
@@ -79,164 +173,84 @@ public class TableEpidemicReport extends DerbyBase {
         }
     }
 
-    public static void moveDataid() {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
+    public static void moveEPid() {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             long max = 0;
-            String sql = "SELECT max(dataid) FROM Epidemic_Report";
-            try ( ResultSet results = statement.executeQuery(sql)) {
+            String sql = "SELECT max(epid) FROM Epidemic_Report";
+            try ( ResultSet results = conn.createStatement().executeQuery(sql)) {
                 if (results.next()) {
-                    max = results.getInt(1);
+                    max = results.getLong(1);
                 }
             }
-            sql = "ALTER TABLE Epidemic_Report ALTER COLUMN dataid RESTART WITH " + (max + 1);
-            statement.executeUpdate(sql);
+            sql = "ALTER TABLE Epidemic_Report ALTER COLUMN epid RESTART WITH " + (max + 1);
+            conn.createStatement().executeUpdate(sql);
         } catch (Exception e) {
             failed(e);
             logger.debug(e.toString());
         }
     }
 
-    public static int sizeQuery(String sql) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            ResultSet results = statement.executeQuery(sql);
-            if (results.next()) {
-                return results.getInt(1);
-            } else {
-                return 0;
-            }
-        } catch (Exception e) {
-            failed(e);
-            return 0;
-        }
-    }
-
-    public static List<EpidemicReport> dataQuery(String sql) {
+    public static List<EpidemicReport> dataQuery(String sql, boolean decodeAncestors) {
         List<EpidemicReport> reports = new ArrayList<>();
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            ResultSet results = statement.executeQuery(sql);
-            while (results.next()) {
-                EpidemicReport report = read(results);
-                reports.add(report);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            conn.setReadOnly(true);
+            try ( ResultSet results = conn.createStatement().executeQuery(sql)) {
+                while (results.next()) {
+                    EpidemicReport report = statisticViewQuery(conn, results, decodeAncestors);
+                    reports.add(report);
+                }
             }
         } catch (Exception e) {
             failed(e);
-            // logger.debug(e.toString());
+            logger.debug(e.toString());
         }
         return reports;
     }
 
-    public static List<String> datasets() {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            List<String> datasets = new ArrayList();
-            String sql = " SELECT DISTINCT data_set FROM Epidemic_Report";
-            ResultSet results = statement.executeQuery(sql);
-            while (results.next()) {
-                datasets.add(results.getString("data_set"));
-            }
-            return datasets;
-        } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
-            return null;
-        }
-    }
-
-    public static List<Date> times() {
-        List<Date> times = new ArrayList<>();
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            String sql = " SELECT DISTINCT time FROM Epidemic_Report";
-            ResultSet results = statement.executeQuery(sql);
-            while (results.next()) {
-                Date d = results.getTimestamp("time");
-                if (d != null) {
-                    times.add(d);
-                }
-            }
-            return times;
-        } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
-            return null;
-        }
-    }
-
-    public static List<Date> times(String dataset) {
-        List<Date> times = new ArrayList<>();
+    public static List<EpidemicReport> read(String dataset, int max, boolean decodeAncestors) {
+        List<EpidemicReport> reports = new ArrayList<>();
         if (dataset == null) {
-            return times;
+            return reports;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            String sql = " SELECT DISTINCT time FROM Epidemic_Report WHERE data_set='"
-                    + dataset + "' ORDER BY time desc";
-            ResultSet results = statement.executeQuery(sql);
-            while (results.next()) {
-                Date d = results.getTimestamp("time");
-                if (d != null) {
-                    times.add(d);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            conn.setReadOnly(true);
+            try ( PreparedStatement statement = conn.prepareStatement(DatasetQuery)) {
+                statement.setMaxRows(max);
+                statement.setString(1, dataset);
+                try ( ResultSet results = statement.executeQuery()) {
+                    while (results.next()) {
+                        EpidemicReport location = statisticViewQuery(conn, results, decodeAncestors);
+                        reports.add(location);
+                    }
                 }
             }
-            return times;
         } catch (Exception e) {
             failed(e);
-//            // logger.debug(e.toString());
-            return null;
+            logger.debug(e.toString());
         }
+        return reports;
     }
 
-    public static List<String> countries(String dataset) {
-        List<String> countries = new ArrayList<>();
-        if (dataset == null) {
-            return countries;
-        }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            String sql = " SELECT DISTINCT country FROM Epidemic_Report WHERE "
-                    + " data_set='" + dataset + "' AND country IS NOT NULL "
-                    + " ORDER BY country";
-            ResultSet results = statement.executeQuery(sql);
-            while (results.next()) {
-                String c = results.getString("country");
-                if (c != null && !c.trim().isBlank()) {
-                    countries.add(c);
+    public static EpidemicReport read(Connection conn, String sql, boolean decodeAncestors) {
+        EpidemicReport report = null;
+        try ( Statement statement = conn.createStatement()) {
+            statement.setMaxRows(1);
+            try ( ResultSet results = statement.executeQuery(sql)) {
+                if (results.next()) {
+                    report = statisticViewQuery(conn, results, decodeAncestors);
                 }
             }
-            if (countries.contains(message("China"))) {
-                countries.remove(message("China"));
-                countries.add(0, message("China"));
-            }
-            return countries;
         } catch (Exception e) {
             failed(e);
-//            // logger.debug(e.toString());
-            return null;
+            logger.debug(e.toString());
         }
+        return report;
     }
 
-    public static List<String> provinces(String dataset, String country) {
-        List<String> provinces = new ArrayList<>();
-        if (dataset == null) {
-            return provinces;
-        }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            String sql = " SELECT DISTINCT province FROM Epidemic_Report WHERE "
-                    + " data_set='" + dataset + "' AND country='" + country + "' "
-                    + " AND province IS NOT NULL "
-                    + " ORDER BY province";
-            ResultSet results = statement.executeQuery(sql);
-            while (results.next()) {
-                String c = results.getString("province");
-                if (c != null && !c.trim().isBlank()) {
-                    provinces.add(c);
-                }
-            }
-            return provinces;
+    public static EpidemicReport read(String dataset, Date time, long location, boolean decodeAncestors) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            conn.setReadOnly(true);
+            return read(conn, dataset, time, location, decodeAncestors);
         } catch (Exception e) {
             failed(e);
             logger.debug(e.toString());
@@ -244,130 +258,73 @@ public class TableEpidemicReport extends DerbyBase {
         }
     }
 
-    public static List<String> cities(String dataset, String country,
-            String province) {
-        List<String> cities = new ArrayList<>();
-        if (dataset == null) {
-            return cities;
-        }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            String sql = " SELECT DISTINCT city FROM Epidemic_Report WHERE "
-                    + " data_set='" + dataset + "' AND country='" + country + "' "
-                    + (province == null ? " " : " AND province='" + province + "' ")
-                    + " AND city IS NOT NULL AND level='" + message("City") + "'"
-                    + " ORDER BY city";
-            ResultSet results = statement.executeQuery(sql);
-            while (results.next()) {
-                String c = results.getString("city");
-                if (c != null && !c.trim().isBlank()) {
-                    cities.add(c);
+    public static EpidemicReport read(Connection conn, String dataset, Date time, long location, boolean decodeAncestors) {
+        EpidemicReport report = null;
+        try ( PreparedStatement statement = conn.prepareStatement(EqualQuery)) {
+            statement.setMaxRows(1);
+            statement.setString(1, dataset);
+            statement.setString(2, DateTools.datetimeToString(time));
+            statement.setLong(3, location);
+            try ( ResultSet results = statement.executeQuery()) {
+                if (results.next()) {
+                    report = statisticViewQuery(conn, results, decodeAncestors);
                 }
             }
-            return cities;
         } catch (Exception e) {
             failed(e);
             logger.debug(e.toString());
-            return null;
         }
+        return report;
     }
 
-    public static List<EpidemicReport> filled(String dataset, int max) {
-        List<EpidemicReport> locations = new ArrayList<>();
-        if (dataset == null) {
-            return locations;
-        }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            statement.setMaxRows(max);
-            String sql = "SELECT * FROM Epidemic_Report WHERE data_set='" + dataset + "' AND confirmed > 0 ";
-            ResultSet results = statement.executeQuery(sql);
-            while (results.next()) {
-                EpidemicReport location = read(results);
-                locations.add(location);
+    public static EpidemicReport readBySql(Connection conn, String dataset, Date time, long location, boolean decodeAncestors) {
+        EpidemicReport report = null;
+        try ( Statement statement = conn.createStatement()) {
+            String sql = StatisticViewSelect + " WHERE "
+                    + " data_set='" + stringValue(dataset) + "' AND "
+                    + "  time='" + DateTools.datetimeToString(time) + "' AND "
+                    + " locationid=" + location;
+            statement.setMaxRows(1);
+            try ( ResultSet results = statement.executeQuery(sql)) {
+                if (results.next()) {
+                    report = statisticViewQuery(conn, results, decodeAncestors);
+                }
             }
         } catch (Exception e) {
             failed(e);
-            // logger.debug(e.toString());
+            logger.debug(e.toString());
         }
-        return locations;
+        return report;
     }
 
-    public static List<EpidemicReport> read(String dataset, int max) {
-        List<EpidemicReport> locations = new ArrayList<>();
-        if (dataset == null) {
-            return locations;
-        }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            statement.setMaxRows(max);
-            String sql = "SELECT * FROM Epidemic_Report WHERE data_set='" + dataset + "' AND confirmed > 0 ";
-            ResultSet results = statement.executeQuery(sql);
-            while (results.next()) {
-                EpidemicReport location = read(results);
-                locations.add(location);
-            }
-        } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
-        }
-        return locations;
-    }
-
-    public static List<EpidemicReport> read(String dataset, long time, int max) {
-        List<EpidemicReport> locations = new ArrayList<>();
-        if (dataset == null) {
-            return locations;
-        }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            statement.setMaxRows(max);
-            String sql = "SELECT * FROM Epidemic_Report WHERE "
-                    + "data_set='" + dataset + "'  AND confirmed > 0  AND time='"
-                    + DateTools.datetimeToString(time) + "'";
-            ResultSet results = statement.executeQuery(sql);
-            while (results.next()) {
-                EpidemicReport location = read(results);
-                locations.add(location);
-            }
-        } catch (Exception e) {
-            failed(e);
-            // logger.debug(e.toString());
-        }
-        return locations;
-    }
-
-    public static EpidemicReport read(ResultSet results) {
+    public static EpidemicReport statisticViewQuery(Connection conn, ResultSet results, boolean decodeAncestors) {
         if (results == null) {
             return null;
         }
         try {
+
             EpidemicReport report = new EpidemicReport();
-            report.setDataid(results.getLong("dataid"));
+            report.setEpid(results.getLong("epid"));
             report.setDataSet(results.getString("data_set"));
-            report.setDataLabel(results.getString("data_label"));
-            report.setLevel(results.getString("level"));
-            report.setCountry(results.getString("country"));
-            report.setProvince(results.getString("province"));
-            report.setCity(results.getString("city"));
-            report.setDistrict(results.getString("district"));
-            report.setTownship(results.getString("township"));
-            report.setNeighborhood(results.getString("neighborhood"));
-            report.setConfirmed(results.getInt("confirmed"));
-            report.setSuspected(results.getInt("suspected"));
-            report.setHealed(results.getInt("healed"));
-            report.setDead(results.getInt("dead"));
-            report.setIncreasedConfirmed(results.getInt("increased_confirmed"));
-            report.setIncreasedSuspected(results.getInt("increased_suspected"));
-            report.setIncreasedHealed(results.getInt("increased_healed"));
-            report.setIncreasedDead(results.getInt("increased_dead"));
-            report.setLongitude(results.getDouble("longitude"));
-            report.setLatitude(results.getDouble("latitude"));
-            report.setComments(results.getString("comments"));
-            Date d = results.getTimestamp("time");
-            if (d != null) {
-                report.setTime(d.getTime());
-            }
+            report.setLocationid(results.getLong("locationid"));
+            GeographyCode location = TableGeographyCode.readCode(conn, results, decodeAncestors);
+            report.setLocation(location);
+            report.setTime(results.getTimestamp("time").getTime());
+            report.setConfirmed(results.getLong("confirmed"));
+            report.setHealed(results.getLong("healed"));
+            report.setDead(results.getLong("dead"));
+            report.setIncreasedConfirmed(results.getLong("increased_confirmed"));
+            report.setIncreasedHealed(results.getLong("increased_healed"));
+            report.setIncreasedDead(results.getLong("increased_dead"));
+            report.setHealedConfirmedPermillage(results.getDouble("healed_confirmed_permillage"));
+            report.setDeadConfirmedPermillage(results.getDouble("dead_confirmed_permillage"));
+            report.setConfirmedPopulationPermillage(results.getDouble("confirmed_population_permillage"));
+            report.setHealedPopulationPermillage(results.getDouble("healed_population_permillage"));
+            report.setDeadPopulationPermillage(results.getDouble("dead_population_permillage"));
+            report.setConfirmedAreaPermillage(results.getDouble("confirmed_area_permillage"));
+            report.setHealedAreaPermillage(results.getDouble("healed_area_permillage"));
+            report.setDeadAreaPermillage(results.getDouble("dead_area_permillage"));
+            report.setSource(results.getShort("source"));
             return report;
         } catch (Exception e) {
             failed(e);
@@ -376,18 +333,59 @@ public class TableEpidemicReport extends DerbyBase {
         }
     }
 
-    public static boolean write(EpidemicReport report) {
-        if (report == null || report.getConfirmed() <= 0) {
+    // no location values
+    public static EpidemicReport read(Connection conn, ResultSet results) {
+        if (results == null) {
+            return null;
+        }
+        try {
+            EpidemicReport report = new EpidemicReport();
+            report.setEpid(results.getLong("epid"));
+            report.setDataSet(results.getString("data_set"));
+            report.setLocationid(results.getLong("locationid"));
+            report.setTime(results.getTimestamp("time").getTime());
+            report.setConfirmed(results.getLong("confirmed"));
+            report.setHealed(results.getLong("healed"));
+            report.setDead(results.getLong("dead"));
+            report.setIncreasedConfirmed(results.getLong("increased_confirmed"));
+            report.setIncreasedHealed(results.getLong("increased_healed"));
+            report.setIncreasedDead(results.getLong("increased_dead"));
+            report.setSource(results.getShort("source"));
+            return report;
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return null;
+        }
+    }
+
+    public static boolean validReport(EpidemicReport report) {
+        try {
+            return (report != null)
+                    && (report.getLocationid() > 0)
+                    && (report.getTime() > 0)
+                    && (report.getConfirmed() > 0
+                    || report.getHealed() > 0
+                    || report.getDead() > 0);
+//            if (!valid) {
+//                return false;
+//            }
+//            // Only care data and ignore time
+//            String dateString = DateTools.datetimeToString(report.getTime()).substring(0, 10) + EpidemicReport.COVID19TIME;
+//            report.setTime(DateTools.stringToDatetime(dateString).getTime());
+//            return true;
+        } catch (Exception e) {
+            logger.debug(e.toString());
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            if (report.getDataid() < 0) {
-                create(statement, report);
-            } else {
-                update(statement, report);
-            }
-            return true;
+    }
+
+    public static boolean write(EpidemicReport report) {
+        if (!validReport(report)) {
+            return false;
+        }
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);) {
+            return write(conn, report);
         } catch (Exception e) {
             failed(e);
             logger.debug(e.toString());
@@ -395,25 +393,121 @@ public class TableEpidemicReport extends DerbyBase {
         }
     }
 
-    public static boolean write(List<EpidemicReport> reports) {
-        if (reports == null || reports.isEmpty()) {
+    public static boolean write(Connection conn, EpidemicReport report) {
+        if (conn == null || !validReport(report)) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
+        try {
+            boolean exist = false;
+            if (report.getEpid() <= 0) {
+                try ( PreparedStatement statement = conn.prepareStatement(EqualQuery)) {
+                    statement.setMaxRows(1);
+                    statement.setString(1, report.getDataSet());
+                    statement.setString(2, DateTools.datetimeToString(report.getTime()));
+                    statement.setLong(3, report.getLocationid());
+                    try ( ResultSet results = statement.executeQuery()) {
+                        if (results.next()) {
+                            exist = true;
+                            report.setEpid(results.getLong("epid"));
+                        }
+                    }
+                }
+            } else {
+                try ( PreparedStatement statement = conn.prepareStatement(EPidQuery)) {
+                    statement.setMaxRows(1);
+                    statement.setLong(1, report.getEpid());
+                    try ( ResultSet results = statement.executeQuery()) {
+                        if (results.next()) {
+                            exist = true;
+                        }
+                    }
+                }
+            }
+            if (exist) {
+                return update(conn, report);
+            } else {
+                return insert(conn, report);
+            }
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static long write(List<EpidemicReport> reports, boolean replace) {
+        if (reports == null || reports.isEmpty()) {
+            return -1;
+        }
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             conn.setAutoCommit(false);
+            return write(conn, reports, replace);
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return -1;
+        }
+    }
+
+    public static long write(Connection conn, List<EpidemicReport> reports, boolean replace) {
+        if (conn == null || reports == null || reports.isEmpty()) {
+            return 0;
+        }
+        try ( PreparedStatement equalQuery = conn.prepareStatement(ExistQuery);
+                 PreparedStatement epidQuery = conn.prepareStatement(EPidQuery);
+                 PreparedStatement update = conn.prepareStatement(UpdateAsEPid);
+                 PreparedStatement insert = conn.prepareStatement(Insert)) {
+            epidQuery.setMaxRows(1);
+            equalQuery.setMaxRows(1);
+            long count = 0;
             for (EpidemicReport report : reports) {
-                if (report.getConfirmed() <= 0) {
+                if (!validReport(report)) {
                     continue;
                 }
-                if (report.getDataid() < 0) {
-                    create(statement, report);
+                boolean exist = false;
+                if (report.getEpid() <= 0) {
+                    equalQuery.setString(1, report.getDataSet());
+                    equalQuery.setString(2, DateTools.datetimeToString(report.getTime()));
+                    equalQuery.setLong(3, report.getLocationid());
+                    try ( ResultSet results = equalQuery.executeQuery()) {
+                        if (results.next()) {
+                            exist = true;
+                            report.setEpid(results.getLong("epid"));
+                        }
+                    }
                 } else {
-                    update(statement, report);
+                    epidQuery.setLong(1, report.getEpid());
+                    try ( ResultSet results = epidQuery.executeQuery()) {
+                        if (results.next()) {
+                            exist = true;
+                        }
+                    }
+                }
+                if (exist) {
+                    if (replace && updateAsEPid(update, report)) {
+                        count++;
+                    }
+                } else {
+                    if (insert(insert, report)) {
+                        count++;
+                    }
                 }
             }
             conn.commit();
-            return true;
+            return count;
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return 0;
+        }
+    }
+
+    public static boolean insert(Connection conn, EpidemicReport report) {
+        if (conn == null || !validReport(report)) {
+            return false;
+        }
+        try ( PreparedStatement statement = conn.prepareStatement(Insert)) {
+            return insert(statement, report);
         } catch (Exception e) {
             failed(e);
             logger.debug(e.toString());
@@ -421,80 +515,13 @@ public class TableEpidemicReport extends DerbyBase {
         }
     }
 
-    public static boolean create(Statement statement, EpidemicReport report) {
-        if (statement == null || report == null || report.getConfirmed() <= 0) {
+    public static boolean insert(PreparedStatement statement, EpidemicReport report) {
+        if (statement == null || !validReport(report)) {
             return false;
         }
         try {
-            String sql = "INSERT INTO Epidemic_Report(data_set, data_label, level, country, province, city, "
-                    + "district, township, neighborhood, confirmed, suspected, healed, dead, "
-                    + "increased_confirmed, increased_suspected, increased_healed, increased_dead, "
-                    + "longitude, latitude, comments,time) VALUES(";
-            sql += "'" + report.getDataSet() + "', ";
-            if (report.getDataLabel() != null) {
-                sql += "'" + report.getDataLabel() + "', ";
-            } else {
-                sql += "null, ";
-            }
-            if (report.getLevel() != null) {
-                sql += "'" + report.getLevel() + "', ";
-            } else {
-                return false;
-            }
-            if (report.getCountry() != null) {
-                sql += "'" + report.getCountry() + "', ";
-            } else {
-                sql += "null, ";
-            }
-            if (report.getProvince() != null) {
-                sql += "'" + report.getProvince() + "', ";
-            } else {
-                sql += "null, ";
-            }
-            if (report.getCity() != null) {
-                sql += "'" + report.getCity() + "', ";
-            } else {
-                sql += "null, ";
-            }
-            if (report.getDistrict() != null) {
-                sql += "'" + report.getDistrict() + "', ";
-            } else {
-                sql += "null, ";
-            }
-            if (report.getTownship() != null) {
-                sql += "'" + report.getTownship() + "', ";
-            } else {
-                sql += "null, ";
-            }
-            if (report.getNeighborhood() != null) {
-                sql += "'" + report.getNeighborhood() + "', ";
-            } else {
-                sql += "null, ";
-            }
-            sql += report.getConfirmed() + ", ";
-            sql += report.getSuspected() + ", ";
-            sql += report.getHealed() + ", ";
-            sql += report.getDead() + ", ";
-            sql += report.getIncreasedConfirmed() + ", ";
-            sql += report.getIncreasedSuspected() + ", ";
-            sql += report.getIncreasedHealed() + ", ";
-            sql += report.getIncreasedDead() + ", ";
-            sql += report.getLongitude() + ", ";
-            sql += report.getLatitude() + ", ";
-            if (report.getComments() != null) {
-                sql += "'" + report.getComments() + "', ";
-            } else {
-                sql += "null, ";
-            }
-            if (report.getTime() > 0) {
-                sql += "'" + DateTools.datetimeToString(report.getTime()) + "' ";
-            } else {
-                sql += "null ";
-            }
-            sql += " )";
-//            logger.debug(sql);
-            statement.executeUpdate(sql);
-            return true;
+            setInsert(statement, report);
+            return statement.executeUpdate() > 0;
         } catch (Exception e) {
             failed(e);
             logger.debug(e.toString());
@@ -502,78 +529,23 @@ public class TableEpidemicReport extends DerbyBase {
         }
     }
 
-    public static boolean update(Statement statement, EpidemicReport report) {
-        if (statement == null || report == null
-                || report.getDataid() < 0 || report.getConfirmed() <= 0) {
+    // Should not run Batch update against EpidemicReport because each new data need compare previous data.
+    // External data may include unexpected data inconsistent.
+    private static boolean setInsert(PreparedStatement statement, EpidemicReport report) {
+        if (statement == null || !validReport(report)) {
             return false;
         }
         try {
-
-            String sql = "UPDATE Epidemic_Report SET ";
-            sql += "data_set='" + report.getDataSet() + "', ";
-            if (report.getDataLabel() != null) {
-                sql += "data_label='" + report.getDataLabel() + "', ";
-            } else {
-                sql += "data_label=null, ";
-            }
-            if (report.getLevel() != null) {
-                sql += "level='" + report.getLevel() + "', ";
-
-            } else {
-                return false;
-            }
-            if (report.getCountry() != null) {
-                sql += "country='" + report.getCountry() + "', ";
-            } else {
-                sql += "country=null, ";
-            }
-            if (report.getProvince() != null) {
-                sql += "province='" + report.getProvince() + "', ";
-            } else {
-                sql += "province=null, ";
-            }
-            if (report.getCity() != null) {
-                sql += "city='" + report.getCity() + "', ";
-            } else {
-                sql += "city=null, ";
-            }
-            if (report.getDistrict() != null) {
-                sql += "district='" + report.getDistrict() + "', ";
-            } else {
-                sql += "district=null, ";
-            }
-            if (report.getTownship() != null) {
-                sql += "township='" + report.getTownship() + "', ";
-            } else {
-                sql += "township=null, ";
-            }
-            if (report.getNeighborhood() != null) {
-                sql += "neighborhood='" + report.getNeighborhood() + "', ";
-            } else {
-                sql += "neighborhood=null, ";
-            }
-            sql += "confirmed=" + report.getConfirmed() + ", ";
-            sql += "suspected=" + report.getSuspected() + ", ";
-            sql += "healed=" + report.getHealed() + ", ";
-            sql += "dead=" + report.getDead() + ", ";
-            sql += "increased_confirmed=" + report.getIncreasedConfirmed() + ", ";
-            sql += "increased_suspected=" + report.getIncreasedSuspected() + ", ";
-            sql += "increased_healed=" + report.getIncreasedHealed() + ", ";
-            sql += "increased_dead=" + report.getIncreasedDead() + ", ";
-            sql += "longitude=" + report.getLongitude() + ", ";
-            sql += "latitude=" + report.getLatitude() + ", ";
-            if (report.getComments() != null) {
-                sql += "comments='" + report.getComments() + "', ";
-            } else {
-                sql += "comments=null, ";
-            }
-            if (report.getTime() > 0) {
-                sql += "time='" + DateTools.datetimeToString(report.getTime()) + "' ";
-            } else {
-                sql += "time=null  ";
-            }
-            sql += "WHERE dataid=" + report.getDataid();
-            statement.executeUpdate(sql);
+            statement.setString(1, report.getDataSet());
+            statement.setLong(2, report.getLocationid());
+            statement.setString(3, DateTools.datetimeToString(report.getTime()));
+            statement.setShort(4, (short) report.getSource());
+            statement.setLong(5, report.getConfirmed());
+            statement.setLong(6, report.getHealed());
+            statement.setLong(7, report.getDead());
+            statement.setLong(8, report.getIncreasedConfirmed());
+            statement.setLong(9, report.getIncreasedHealed());
+            statement.setLong(10, report.getIncreasedDead());
             return true;
         } catch (Exception e) {
             failed(e);
@@ -582,17 +554,172 @@ public class TableEpidemicReport extends DerbyBase {
         }
     }
 
-    public static List<String> datasets(Statement statement) {
+    public static String equalCondition(EpidemicReport report) {
+        try {
+            return " data_set='" + stringValue(report.getDataSet()) + "' "
+                    + " AND time='" + DateTools.datetimeToString(report.getTime()) + "'  "
+                    + " AND locationid=" + report.getLocationid();
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return null;
+        }
+    }
+
+    public static boolean update(Connection conn, EpidemicReport report) {
+        if (conn == null || !validReport(report)) {
+            return false;
+        }
+        try {
+            if (report.getEpid() > 0) {
+                try ( PreparedStatement statement = conn.prepareStatement(UpdateAsEPid)) {
+                    return updateAsEPid(statement, report);
+                }
+            } else {
+                try ( PreparedStatement statement = conn.prepareStatement(UpdateAsEqual)) {
+                    return updateAsEqual(statement, report);
+                }
+            }
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean updateAsEPid(PreparedStatement statement, EpidemicReport report) {
+        if (statement == null || !validReport(report) || report.getEpid() < 0) {
+            return false;
+        }
+        try {
+            if (setUpdateAsEPid(statement, report)) {
+                return statement.executeUpdate() > 0;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    // Should not run Batch update against EpidemicReport because each new data need compare previous data.
+    // External data may include unexpected data inconsistent.
+    private static boolean setUpdateAsEPid(PreparedStatement statement, EpidemicReport report) {
+        if (statement == null || !validReport(report) || report.getEpid() < 0) {
+            return false;
+        }
+        try {
+            statement.setString(1, report.getDataSet());
+            statement.setLong(2, report.getLocationid());
+            statement.setString(3, DateTools.datetimeToString(report.getTime()));
+            statement.setLong(4, report.getConfirmed());
+            statement.setLong(5, report.getHealed());
+            statement.setLong(6, report.getDead());
+            statement.setLong(7, report.getIncreasedConfirmed());
+            statement.setLong(8, report.getIncreasedHealed());
+            statement.setLong(9, report.getIncreasedDead());
+            statement.setShort(10, (short) report.getSource());
+            statement.setLong(11, report.getEpid());
+            return true;
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean updateAsEqual(PreparedStatement statement, EpidemicReport report) {
+        if (statement == null || !validReport(report)) {
+            return false;
+        }
+        try {
+            if (setUpdateAsEqual(statement, report)) {
+                return statement.executeUpdate() > 0;
+            } else {
+                return false;
+            }
+
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    // Should not run Batch update against EpidemicReport because each new data need compare previous data.
+    // External data may include unexpected data inconsistent.
+    private static boolean setUpdateAsEqual(PreparedStatement statement, EpidemicReport report) {
+        if (statement == null || !validReport(report)) {
+            return false;
+        }
+        try {
+            statement.setLong(1, report.getConfirmed());
+            statement.setLong(3, report.getHealed());
+            statement.setLong(4, report.getDead());
+            statement.setLong(5, report.getIncreasedConfirmed());
+            statement.setLong(6, report.getIncreasedHealed());
+            statement.setLong(7, report.getIncreasedDead());
+            statement.setShort(8, (short) report.getSource());
+            statement.setString(9, report.getDataSet());
+            statement.setString(10, DateTools.datetimeToString(report.getTime()));
+            statement.setLong(11, report.getLocationid());
+            return true;
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static int update(List<EpidemicReport> reports) {
+        if (reports == null || reports.isEmpty()) {
+            return 0;
+        }
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                 PreparedStatement update = conn.prepareStatement(UpdateAsEPid)) {
+            conn.setAutoCommit(false);
+            int count = 0;
+            for (EpidemicReport report : reports) {
+                if (!validReport(report)) {
+                    continue;
+                }
+                if (updateAsEPid(update, report)) {
+                    count++;
+                }
+            }
+            conn.commit();
+            return count;
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return 0;
+        }
+    }
+
+    public static List<String> datasets() {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            conn.setReadOnly(true);
+            return datasets(conn);
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return null;
+        }
+    }
+
+    public static List<String> datasets(Connection conn) {
         List<String> datasets = new ArrayList();
-        if (statement == null) {
+        if (conn == null) {
             return datasets;
         }
-        String sql = " SELECT DISTINCT data_set FROM Epidemic_Report";
-        try ( ResultSet datasetsResults = statement.executeQuery(sql)) {
-            while (datasetsResults.next()) {
-                String c = datasetsResults.getString("data_set");
-                if (c != null && !c.trim().isBlank()) {
-                    datasets.add(c);
+        try ( PreparedStatement statement = conn.prepareStatement(Datasets)) {
+            try ( ResultSet results = statement.executeQuery()) {
+                while (results.next()) {
+                    String c = results.getString("data_set");
+                    if (c != null && !c.trim().isBlank()) {
+                        datasets.add(c);
+                    }
                 }
             }
         } catch (Exception e) {
@@ -602,18 +729,29 @@ public class TableEpidemicReport extends DerbyBase {
         return datasets;
     }
 
-    public static List<Date> timesASC(Statement statement, String dataset) {
+    public static List<Date> times() {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            conn.setReadOnly(true);
+            return times(conn);
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return null;
+        }
+    }
+
+    public static List<Date> times(Connection conn) {
         List<Date> times = new ArrayList<>();
-        if (statement == null || dataset == null) {
+        if (conn == null) {
             return times;
         }
-        String sql = " SELECT DISTINCT time FROM Epidemic_Report WHERE data_set='"
-                + dataset + "' ORDER BY time asc";
-        try ( ResultSet timesResults = statement.executeQuery(sql)) {
-            while (timesResults.next()) {
-                Date d = timesResults.getTimestamp("time");
-                if (d != null) {
-                    times.add(d);
+        try ( PreparedStatement statement = conn.prepareStatement(Times)) {
+            try ( ResultSet results = statement.executeQuery()) {
+                while (results.next()) {
+                    Date d = results.getTimestamp("time");
+                    if (d != null) {
+                        times.add(d);
+                    }
                 }
             }
         } catch (Exception e) {
@@ -623,607 +761,52 @@ public class TableEpidemicReport extends DerbyBase {
         return times;
     }
 
-    public static List<String> countries(Statement statement, String dataset) {
-        List<String> countries = new ArrayList<>();
-        if (statement == null || dataset == null) {
-            return countries;
-        }
-        String sql = " SELECT DISTINCT country FROM Epidemic_Report WHERE"
-                + " data_set='" + dataset + "' AND country IS NOT NULL";
-        try ( ResultSet countriesResults = statement.executeQuery(sql)) {
-            while (countriesResults.next()) {
-                countries.add(countriesResults.getString("country"));
-            }
-            countries.remove("");
-        } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
-        }
-        return countries;
-    }
-
-    public static List<String> provinces(Statement statement, String dataset) {
-        List<String> provinces = new ArrayList<>();
-        if (statement == null || dataset == null) {
-            return provinces;
-        }
-        String sql = "SELECT DISTINCT province FROM Epidemic_Report WHERE"
-                + " data_set='" + dataset + "' AND province IS NOT NULL"
-                + " AND level='" + message("Province") + "'";
-        try ( ResultSet provincesResults = statement.executeQuery(sql)) {
-            while (provincesResults.next()) {
-                provinces.add(provincesResults.getString("province"));
-            }
-            provinces.remove("");
-        } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
-        }
-        return provinces;
-    }
-
-    public static List<String> cities(Statement statement, String dataset) {
-        List<String> cities = new ArrayList<>();
-        if (statement == null || dataset == null) {
-            return cities;
-        }
-        String sql = "SELECT DISTINCT city FROM Epidemic_Report WHERE"
-                + " data_set='" + dataset + "' AND city IS NOT NULL"
-                + " AND level='" + message("City") + "'";
-        try ( ResultSet citiesResults = statement.executeQuery(sql)) {
-            while (citiesResults.next()) {
-                cities.add(citiesResults.getString("city"));
-            }
-            cities.remove("");
-        } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
-        }
-        return cities;
-    }
-
-    public static int fillData() {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            List<String> datasets = datasets(statement);
-            int count = 0;
-            for (String dataset : datasets) {
-                count += fillData(statement, dataset);
-            }
-            return count;
-        } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
-            return 0;
-        }
-    }
-
-    public static int fillData(Statement statement, String dataset) {
-        if (dataset == null || statement == null) {
-            return 0;
-        }
-        try {
-            List<Date> times = timesASC(statement, dataset);
-            int count = 0;
-            if (!times.isEmpty()) {
-                count += fillCitiesData(statement, dataset, times);
-                count += fillProvincesData(statement, dataset, times);
-                count += fillCountriesData(statement, dataset, times);
-            }
-            return count;
-        } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
-            return 0;
-        }
-    }
-
-    // times is in asc
-    public static int fillCitiesData(Statement statement, String dataset,
-            List<Date> times) {
-        try {
-            List<String> cities = cities(statement, dataset);
-            List<EpidemicReport> filled = new ArrayList<>();
-            for (String city : cities) {
-                String sql = "SELECT * FROM Epidemic_Report WHERE "
-                        + "data_set='" + dataset + "' AND city='" + city + "'"
-                        + " AND level='" + message("City") + "'";
-                Map<Long, EpidemicReport> reports = new HashMap<>();
-                try ( ResultSet results = statement.executeQuery(sql)) {
-                    while (results.next()) {
-                        EpidemicReport report = read(results);
-                        if (report == null) {
-                            continue;
-                        }
-                        reports.put(report.getTime(), report);
-                    }
-                }
-                EpidemicReport thisreport, lastReport = null;
-                for (int i = 0; i < times.size(); i++) {
-                    long time = times.get(i).getTime();
-                    thisreport = reports.get(time);
-                    if (thisreport == null) {
-                        if (lastReport != null) {
-                            thisreport = lastReport.copy().setTime(time).setComments("Filled");
-                            filled.add(thisreport);
-//                            logger.debug("Filled:" + DateTools.datetimeToString(time) + " " + city);
-                            lastReport = thisreport;
-                        }
-                    } else {
-//                        logger.debug("Existed:" + DateTools.datetimeToString(time) + " " + city);
-                        lastReport = thisreport;
-                    }
-                }
-            }
-            if (!filled.isEmpty()) {
-                if (!write(filled)) {
-                    return 0;
-                }
-            }
-
-            return filled.size();
-        } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
-            return 0;
-        }
-    }
-
-    public static int fillProvincesData(Statement statement, String dataset,
-            List<Date> times) {
-        try {
-            List<String> provinces = provinces(statement, dataset);
-            List<EpidemicReport> filled = new ArrayList<>();
-            for (String province : provinces) {
-                String sql = "SELECT * FROM Epidemic_Report WHERE "
-                        + "data_set='" + dataset + "' AND province='" + province + "'"
-                        + " AND level='" + message("Province") + "'";
-                Map<Long, EpidemicReport> reports = new HashMap<>();
-                try ( ResultSet results = statement.executeQuery(sql)) {
-                    while (results.next()) {
-                        EpidemicReport report = read(results);
-                        if (report == null) {
-                            continue;
-                        }
-                        reports.put(report.getTime(), report);
-                    }
-                }
-                EpidemicReport thisreport, lastReport = null;
-                for (int i = 0; i < times.size(); i++) {
-                    long time = times.get(i).getTime();
-                    thisreport = reports.get(time);
-                    if (thisreport == null) {
-                        if (lastReport != null) {
-                            thisreport = lastReport.copy().setTime(time).setComments("Filled");
-                            filled.add(thisreport);
-//                            logger.debug("Filled:" + DateTools.datetimeToString(time) + " " + province);
-                            lastReport = thisreport;
-                        }
-                    } else {
-//                        logger.debug("Existed:" + DateTools.datetimeToString(time) + " " + province);
-                        lastReport = thisreport;
-                    }
-                }
-            }
-            if (!filled.isEmpty()) {
-                if (!write(filled)) {
-                    return 0;
-                }
-            }
-            return filled.size();
-        } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
-            return 0;
-        }
-    }
-
-    public static int fillCountriesData(Statement statement, String dataset,
-            List<Date> times) {
-        try {
-            List<EpidemicReport> filled = new ArrayList<>();
-            List<String> countries = countries(statement, dataset);
-            for (String country : countries) {
-                String sql = "SELECT * FROM Epidemic_Report WHERE "
-                        + "data_set='" + dataset + "' AND country='" + country + "'"
-                        + " AND level='" + message("Country") + "'";
-                Map<Long, EpidemicReport> reports = new HashMap<>();
-                try ( ResultSet results = statement.executeQuery(sql)) {
-                    while (results.next()) {
-                        EpidemicReport report = read(results);
-                        if (report == null) {
-                            continue;
-                        }
-                        reports.put(report.getTime(), report);
-                    }
-                }
-                EpidemicReport thisreport, lastReport = null;
-                for (int i = 0; i < times.size(); i++) {
-                    long time = times.get(i).getTime();
-                    thisreport = reports.get(time);
-                    if (thisreport == null) {
-                        if (lastReport != null) {
-                            thisreport = lastReport.copy().setTime(time).setComments("Filled");
-                            filled.add(thisreport);
-//                            logger.debug("Filled:" + DateTools.datetimeToString(time) + " " + country);
-                            lastReport = thisreport;
-                        }
-                    } else {
-//                        logger.debug("Existed:" + DateTools.datetimeToString(time) + " " + country);
-                        lastReport = thisreport;
-                    }
-                }
-            }
-            if (!filled.isEmpty()) {
-                if (!write(filled)) {
-                    return 0;
-                }
-            }
-            return filled.size();
-        } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
-            return 0;
-        }
-
-    }
-
-    public static boolean sure(List<EpidemicReport> reports) {
-        if (reports == null || reports.isEmpty()) {
-            return false;
-        }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            String inStr = "( " + reports.get(0).getDataid();
-            for (int i = 1; i < reports.size(); ++i) {
-                inStr += ", " + reports.get(i).getDataid();
-            }
-            inStr += " )";
-            String sql = "UPDATE Epidemic_Report SET comments=null "
-                    + " WHERE comments='Filled' AND  dataid IN " + inStr;
-            statement.executeUpdate(sql);
-            return true;
-        } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
-            return false;
-        }
-    }
-
-    public static boolean statistic() {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            List<String> datasets = new ArrayList();
-//            String sql = " DELETE FROM Epidemic_Report WHERE confirmed <= 0";
-//            statement.executeUpdate(sql);
-            String sql = " SELECT DISTINCT data_set FROM Epidemic_Report";
-            ResultSet datasetsResults = statement.executeQuery(sql);
-            while (datasetsResults.next()) {
-                datasets.add(datasetsResults.getString("data_set"));
-            }
-            for (String dataset : datasets) {
-                statistic(statement, dataset);
-            }
-            return true;
-        } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
-            return false;
-        }
-    }
-
-    public static boolean statistic(String dataset) {
+    public static List<Date> times(Connection conn, String dataset) {
         if (dataset == null) {
-            return false;
+            return times(conn);
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            statistic(statement, dataset);
-            return true;
-        } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
-            return false;
+        List<Date> times = new ArrayList<>();
+        if (conn == null) {
+            return times;
         }
-    }
-
-    public static boolean statistic(Statement statement, String dataset) {
-        if (dataset == null || statement == null) {
-            return false;
-        }
-        try {
-            List<Date> times = timesASC(statement, dataset);
-            if (!times.isEmpty()) {
-                statisticCountries(statement, dataset, times);
-                statisticGlobal(statement, dataset, times);
-            }
-
-            statisticCitiesIncreased(statement, dataset);
-            statisticProvincesIncreased(statement, dataset);
-            statisticCountriesIncreased(statement, dataset);
-            statisticGlobalIncreased(statement, dataset);
-            return true;
-        } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
-            return false;
-        }
-    }
-
-    public static boolean statisticGlobal(Statement statement, String dataset,
-            List<Date> times) {
-        try {
-            String sql = " DELETE FROM Epidemic_Report WHERE data_set='"
-                    + dataset + "' AND level='" + message("Global") + "'";
-            statement.executeUpdate(sql);
-
-            int confirmed, healed, suspected, dead;
-            for (Date d : times) {
-                sql = " SELECT sum(confirmed) FROM Epidemic_Report WHERE data_set='"
-                        + dataset + "' AND time='" + DateTools.datetimeToString(d) + "' "
-                        + " AND country IS NOT NULL AND level='" + message("Country") + "'";
-                try ( ResultSet confirmedResults = statement.executeQuery(sql)) {
-                    if (confirmedResults.next()) {
-                        confirmed = confirmedResults.getInt(1);
-                    } else {
-                        confirmed = 0;
-                    }
-                    if (confirmed == 0) {
-                        continue;
-                    }
-                }
-
-                sql = " SELECT sum(suspected) FROM Epidemic_Report WHERE data_set='"
-                        + dataset + "' AND time='" + DateTools.datetimeToString(d) + "' "
-                        + " AND country IS NOT NULL AND level='" + message("Country") + "'";
-                try ( ResultSet suspectedResults = statement.executeQuery(sql)) {
-                    if (suspectedResults.next()) {
-                        suspected = suspectedResults.getInt(1);
-                    } else {
-                        suspected = 0;
-                    }
-                }
-
-                sql = " SELECT sum(healed) FROM Epidemic_Report WHERE data_set='"
-                        + dataset + "' AND time='" + DateTools.datetimeToString(d) + "' "
-                        + " AND country IS NOT NULL AND level='" + message("Country") + "'";
-                ResultSet healedResults = statement.executeQuery(sql);
-                if (healedResults.next()) {
-                    healed = healedResults.getInt(1);
-                } else {
-                    healed = 0;
-                }
-
-                sql = " SELECT sum(dead) FROM Epidemic_Report WHERE data_set='"
-                        + dataset + "' AND time='" + DateTools.datetimeToString(d) + "' "
-                        + " AND country IS NOT NULL AND level='" + message("Country") + "'";
-                try ( ResultSet deadResults = statement.executeQuery(sql)) {
-                    if (deadResults.next()) {
-                        dead = deadResults.getInt(1);
-                    } else {
-                        dead = 0;
-                    }
-                }
-
-                EpidemicReport report = EpidemicReport.create()
-                        .setDataSet(dataset)
-                        .setLevel(message("Global"))
-                        .setCountry(null).setProvince(null).setCity(null)
-                        .setConfirmed(confirmed).setSuspected(suspected)
-                        .setHealed(healed).setDead(dead)
-                        .setLongitude(149.828481).setLatitude(23.206391)
-                        .setTime(d.getTime());
-                create(statement, report);
-
-            }
-            return true;
-        } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
-            return false;
-        }
-    }
-
-    public static boolean statisticCountries(Statement statement, String dataset,
-            List<Date> times) {
-        try {
-            List<String> countries = countries(statement, dataset);
-            for (String country : countries) {
-                statisticCountry(statement, dataset, times, country);
-            }
-            return true;
-        } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
-            return false;
-        }
-    }
-
-    public static boolean statisticCountry(Statement statement, String dataset,
-            List<Date> times, String country) {
-        try {
-            String sql = "SELECT count(dataid) FROM Epidemic_Report WHERE country='" + country + "' "
-                    + " AND level='" + message("Province") + "'";
-            try ( ResultSet pcount = statement.executeQuery(sql)) {
-                if (pcount.next()) {
-                    int count = pcount.getInt(1);
-                    if (count == 0) {
-                        return false;
-                    }
-                }
-            }
-
-            sql = " DELETE FROM Epidemic_Report WHERE data_set='"
-                    + dataset + "' AND country='" + country
-                    + "'  AND level='" + message("Country") + "'";
-            statement.executeUpdate(sql);
-
-            double longitude = -200;
-            double latitude = -200;
-            sql = "SELECT * FROM Geography_Code WHERE address='" + country + "' "
-                    + " AND level='" + message("Country") + "'";
-            try ( ResultSet codeResults = statement.executeQuery(sql)) {
-                if (codeResults.next()) {
-                    longitude = codeResults.getDouble("longitude");
-                    latitude = codeResults.getDouble("latitude");
-                }
-            }
-
-            int confirmed = 0, healed = 0, suspected = 0, dead = 0;
-            for (Date d : times) {
-                sql = " SELECT sum(confirmed), sum(suspected),sum(healed), sum(dead) "
-                        + " FROM Epidemic_Report WHERE data_set='"
-                        + dataset + "' AND time='" + DateTools.datetimeToString(d) + "' "
-                        + " AND country='" + country + "' AND level='" + message("Province") + "'";
-                try ( ResultSet sumResults = statement.executeQuery(sql)) {
-                    if (sumResults.next()) {
-                        confirmed = sumResults.getInt(1);
-                        suspected = sumResults.getInt(2);
-                        healed = sumResults.getInt(3);
-                        dead = sumResults.getInt(4);
-                    } else {
-                        confirmed = suspected = healed = dead = 0;
-                    }
-                    if (confirmed == 0) {
-                        continue;
-                    }
-                }
-
-                EpidemicReport report = EpidemicReport.create()
-                        .setDataSet(dataset)
-                        .setCountry(country).setLevel(message("Country"))
-                        .setConfirmed(confirmed).setSuspected(suspected)
-                        .setHealed(healed).setDead(dead)
-                        .setTime(d.getTime())
-                        .setLongitude(longitude).setLatitude(latitude);
-                create(statement, report);
-            }
-            return true;
-        } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
-            return false;
-        }
-    }
-
-    public static boolean statisticCitiesIncreased(Statement statement,
-            String dataset) {
-        try {
-            List<String> cities = cities(statement, dataset);
-            for (String city : cities) {
-                String sql = "SELECT * FROM Epidemic_Report WHERE "
-                        + "data_set='" + dataset + "' AND city='" + city + "'"
-                        + " AND level='" + message("City") + "' ORDER BY time desc";
-                List<EpidemicReport> citiesReports = new ArrayList<>();
-                try ( ResultSet results = statement.executeQuery(sql)) {
-                    while (results.next()) {
-                        citiesReports.add(read(results));
-                    }
-                }
-                for (int i = 0; i < citiesReports.size() - 1; i++) {
-                    EpidemicReport report = citiesReports.get(i);
-                    EpidemicReport reportLast = citiesReports.get(i + 1);
-                    report.setIncreasedConfirmed(report.getConfirmed() - reportLast.getConfirmed());
-                    report.setIncreasedHealed(report.getHealed() - reportLast.getHealed());
-                    report.setIncreasedSuspected(report.getSuspected() - reportLast.getSuspected());
-                    report.setIncreasedDead(report.getDead() - reportLast.getDead());
-                    update(statement, report);
-                }
-            }
-            return true;
-        } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
-            return false;
-        }
-    }
-
-    public static boolean statisticProvincesIncreased(Statement statement,
-            String dataset) {
-        try {
-            List<String> provinces = provinces(statement, dataset);
-            for (String province : provinces) {
-                String sql = "SELECT * FROM Epidemic_Report WHERE "
-                        + "data_set='" + dataset + "' AND province='" + province + "'"
-                        + " AND level='" + message("Province") + "' ORDER BY time desc";
-                List<EpidemicReport> provincesReports = new ArrayList<>();
-                try ( ResultSet results = statement.executeQuery(sql)) {
-                    while (results.next()) {
-                        provincesReports.add(read(results));
-                    }
-                }
-                for (int i = 0; i < provincesReports.size() - 1; i++) {
-                    EpidemicReport report = provincesReports.get(i);
-                    EpidemicReport reportLast = provincesReports.get(i + 1);
-                    report.setIncreasedConfirmed(report.getConfirmed() - reportLast.getConfirmed());
-                    report.setIncreasedHealed(report.getHealed() - reportLast.getHealed());
-                    report.setIncreasedSuspected(report.getSuspected() - reportLast.getSuspected());
-                    report.setIncreasedDead(report.getDead() - reportLast.getDead());
-                    update(statement, report);
-                }
-            }
-            return true;
-        } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
-            return false;
-        }
-    }
-
-    public static boolean statisticCountriesIncreased(Statement statement,
-            String dataset) {
-        try {
-            List<String> countries = countries(statement, dataset);
-            for (String country : countries) {
-                String sql = "SELECT * FROM Epidemic_Report WHERE "
-                        + "data_set='" + dataset + "' AND country='" + country + "'"
-                        + " AND level='" + message("Country") + "' ORDER BY time desc";
-                List<EpidemicReport> countriesReports = new ArrayList<>();
-                try ( ResultSet results = statement.executeQuery(sql)) {
-                    while (results.next()) {
-                        countriesReports.add(read(results));
-                    }
-                }
-                for (int i = 0; i < countriesReports.size() - 1; i++) {
-                    EpidemicReport report = countriesReports.get(i);
-                    EpidemicReport reportLast = countriesReports.get(i + 1);
-                    report.setIncreasedConfirmed(report.getConfirmed() - reportLast.getConfirmed());
-                    report.setIncreasedHealed(report.getHealed() - reportLast.getHealed());
-                    report.setIncreasedSuspected(report.getSuspected() - reportLast.getSuspected());
-                    report.setIncreasedDead(report.getDead() - reportLast.getDead());
-                    update(statement, report);
-                }
-            }
-
-            return true;
-        } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
-            return false;
-        }
-    }
-
-    public static boolean statisticGlobalIncreased(Statement statement,
-            String dataset) {
-        try {
-            String sql = "SELECT * FROM Epidemic_Report WHERE "
-                    + "data_set='" + dataset + "' "
-                    + " AND level='" + message("Global") + "' ORDER BY time desc";
-            List<EpidemicReport> globalReports = new ArrayList<>();
-            try ( ResultSet results = statement.executeQuery(sql)) {
+        try ( PreparedStatement statement = conn.prepareStatement(DatasetTimes)) {
+            statement.setString(1, dataset);
+            try ( ResultSet results = statement.executeQuery()) {
                 while (results.next()) {
-                    globalReports.add(read(results));
+                    Date d = results.getTimestamp("time");
+                    if (d != null) {
+                        times.add(d);
+                    }
                 }
             }
-            for (int i = 0; i < globalReports.size() - 1; i++) {
-                EpidemicReport report = globalReports.get(i);
-                EpidemicReport reportLast = globalReports.get(i + 1);
-                report.setIncreasedConfirmed(report.getConfirmed() - reportLast.getConfirmed());
-                report.setIncreasedHealed(report.getHealed() - reportLast.getHealed());
-                report.setIncreasedSuspected(report.getSuspected() - reportLast.getSuspected());
-                report.setIncreasedDead(report.getDead() - reportLast.getDead());
-                update(statement, report);
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+        }
+        return times;
+    }
+
+    public static int datasetCount(Connection conn, String dataset) {
+        int size = 0;
+        try ( PreparedStatement statement = conn.prepareStatement(DatasetCount)) {
+            statement.setString(1, dataset);
+            try ( ResultSet results = statement.executeQuery()) {
+                if (results.next()) {
+                    size = results.getInt(1);
+                }
             }
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+        }
+        return size;
+    }
+
+    public static boolean delete(long epid) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                 PreparedStatement statement = conn.prepareStatement(DeleteEPid)) {
+            statement.setLong(1, epid);
+            statement.executeUpdate();
             return true;
         } catch (Exception e) {
             failed(e);
@@ -1232,15 +815,17 @@ public class TableEpidemicReport extends DerbyBase {
         }
     }
 
-    public static boolean delete(long dataid) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            String sql = "DELETE FROM Epidemic_Report WHERE dataid=" + dataid;
-            statement.executeUpdate(sql);
+    public static boolean delete(PreparedStatement statement, long epid) {
+        if (statement == null) {
+            return false;
+        }
+        try {
+            statement.setLong(1, epid);
+            statement.executeUpdate();
             return true;
         } catch (Exception e) {
             failed(e);
-            // logger.debug(e.toString());
+            logger.debug(e.toString());
             return false;
         }
     }
@@ -1250,13 +835,13 @@ public class TableEpidemicReport extends DerbyBase {
             return false;
         }
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            String sql = "DELETE FROM Epidemic_Report WHERE data_set='" + dataset + "'";
-            statement.executeUpdate(sql);
+                 PreparedStatement statement = conn.prepareStatement(DeleteDataset)) {
+            statement.setString(1, dataset);
+            statement.executeUpdate();
             return true;
         } catch (Exception e) {
             failed(e);
-            // logger.debug(e.toString());
+            logger.debug(e.toString());
             return false;
         }
     }
@@ -1266,107 +851,25 @@ public class TableEpidemicReport extends DerbyBase {
             return false;
         }
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            String inStr = "( " + values.get(0).getDataid();
-            for (int i = 1; i < values.size(); ++i) {
-                inStr += ", " + values.get(i).getDataid();
+                 PreparedStatement statement = conn.prepareStatement(DeleteEPid)) {
+            conn.setAutoCommit(false);
+            for (int i = 0; i < values.size(); ++i) {
+                statement.setLong(1, values.get(i).getEpid());
+                statement.addBatch();
+                if (i > 0 && i % 500 == 0) {
+                    statement.executeBatch();
+                    conn.commit();
+                    statement.clearBatch();
+                }
             }
-            inStr += " )";
-            String sql = "DELETE FROM Epidemic_Report WHERE dataid IN " + inStr;
-            statement.executeUpdate(sql);
+            statement.executeBatch();
+            conn.commit();
             return true;
         } catch (Exception e) {
             failed(e);
-//            // logger.debug(e.toString());
+            logger.debug(e.toString());
             return false;
         }
-    }
-
-    public static boolean migrate615() {
-        int size = TableEpidemicReport.size();
-        if (size > 0) {
-            try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                     Statement statement = conn.createStatement()) {
-                String sql = "ALTER TABLE Epidemic_Report  add  column  level VARCHAR(1024)";
-                statement.executeUpdate(sql);
-                sql = "ALTER TABLE Epidemic_Report  add  column  district VARCHAR(2048)";
-                statement.executeUpdate(sql);
-                sql = "ALTER TABLE Epidemic_Report  add  column  township VARCHAR(2048)";
-                statement.executeUpdate(sql);
-                sql = "ALTER TABLE Epidemic_Report  add  column  neighborhood VARCHAR(2048)";
-                statement.executeUpdate(sql);
-                sql = "ALTER TABLE Epidemic_Report  add  column  increased_confirmed INTEGER";
-                statement.executeUpdate(sql);
-                sql = "ALTER TABLE Epidemic_Report  add  column  increased_suspected INTEGER";
-                statement.executeUpdate(sql);
-                sql = "ALTER TABLE Epidemic_Report  add  column  increased_healed INTEGER";
-                statement.executeUpdate(sql);
-                sql = "ALTER TABLE Epidemic_Report  add  column  increased_dead INTEGER";
-                statement.executeUpdate(sql);
-
-                sql = "ALTER TABLE Epidemic_Report  alter column time NOT NULL";
-                statement.executeUpdate(sql);
-
-                sql = "UPDATE Epidemic_Report SET level='" + message("Global")
-                        + "' WHERE country IS NULL AND province IS NULL ";
-                statement.executeUpdate(sql);
-
-                sql = "UPDATE Epidemic_Report SET level='" + message("Country")
-                        + "' WHERE country IS NOT NULL AND province IS NULL";
-                statement.executeUpdate(sql);
-
-                sql = "UPDATE Epidemic_Report SET level='" + message("Province")
-                        + "' WHERE province IS NOT NULL";
-                statement.executeUpdate(sql);
-
-                sql = "UPDATE Epidemic_Report SET level='" + message("City")
-                        + "' WHERE level IS NULL";
-                statement.executeUpdate(sql);
-
-                sql = "ALTER TABLE Epidemic_Report  alter column level NOT NULL";
-                statement.executeUpdate(sql);
-
-            } catch (Exception e) {
-                logger.debug(e.toString());
-                failed(e);
-                return false;
-            }
-
-            File tmpFile = new File(AppVariables.MyboxDataPath + File.separator + "data"
-                    + File.separator + "Epidemic_Report_backup6.1_" + (new Date().getTime()) + ".del");
-            tmpFile.mkdirs();
-            DerbyBase.exportData("Epidemic_Report", tmpFile.getAbsolutePath());
-            AppVariables.setSystemConfigValue("EpidemicReportBackup6.1.5", tmpFile.getAbsolutePath());
-        }
-
-        new TableEpidemicReport().drop();
-        new TableEpidemicReport().init();
-        return true;
-    }
-
-    public static boolean migrate621() {
-        int size = TableGeographyCode.size();
-        if (size > 0) {
-            try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                     Statement statement = conn.createStatement()) {
-                String sql = "UPDATE Epidemic_Report SET level='" + message("Country")
-                        + "', country='" + message("Monaco") + "', province=null, city=null, "
-                        + " longitude=7.42, latitude=43.74 "
-                        + " WHERE province='摩纳哥'";
-                statement.executeUpdate(sql);
-
-                sql = "DELETE FROM Epidemic_Report "
-                        + " WHERE country='" + message("Macao")
-                        + "' OR country='" + message("Macau") + "'";
-                statement.executeUpdate(sql);
-            } catch (Exception e) {
-                logger.debug(e.toString());
-                failed(e);
-                return false;
-            }
-
-        }
-        return true;
     }
 
 }

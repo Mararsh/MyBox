@@ -9,7 +9,6 @@ import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
 import mara.mybox.value.AppVariables;
-import mara.mybox.value.CommonValues;
 import static mara.mybox.value.AppVariables.logger;
 
 /**
@@ -93,11 +92,6 @@ public class WeiboSnapingInfoController extends BaseController {
     @FXML
     private void reloadAction(ActionEvent event) {
         parent.reloadPage();
-    }
-
-    @FXML
-    private void mybox(ActionEvent event) {
-        openStage(CommonValues.MyboxFxml);
     }
 
     public WeiboSnapRunController getParent() {

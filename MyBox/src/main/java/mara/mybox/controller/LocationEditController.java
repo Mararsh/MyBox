@@ -27,16 +27,16 @@ import mara.mybox.value.CommonFxValues;
  * @CreateDate 2020-1-20
  * @License Apache License Version 2.0
  */
-public class LocationEditController extends LocationBaseController {
+public class LocationEditController extends LocationEditBaseController {
 
     protected LocationsDataController parent;
-    protected double longtitude, latitude, altitude, precision, speed, dataValue, dataSize;
+    protected double altitude, precision, speed, dataValue, dataSize;
     protected int direction, coordinateSystem;
     protected Date dataTime;
     protected long dataid = -1;
 
     @FXML
-    protected TextField dataidInput, addressInput, longitudeInput, latitudeInput,
+    protected TextField dataidInput, addressInput,
             altitudeInput, precisionInput, speedInput, timeInput, valueInput, sizeInput, labelInput;
     @FXML
     protected TextArea commentsArea;
@@ -74,7 +74,7 @@ public class LocationEditController extends LocationBaseController {
                         checkDataset();
                     });
 
-            checkLongtitude();
+            checklongitude();
             checkLatitude();
 
             altitudeInput.textProperty().addListener(
@@ -386,7 +386,7 @@ public class LocationEditController extends LocationBaseController {
             String dataset = datasetSelector.getValue().trim();
             location.setDataSet(dataset);
             location.setAddress(addressInput.getText().trim());
-            location.setLongitude(longtitude);
+            location.setLongitude(longitude);
             location.setLatitude(latitude);
             location.setAltitude(altitude);
             location.setPrecision(precision);

@@ -24,7 +24,7 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
     protected StringBuilder imageFileString;
 
     public FFmpegMergeImageFilesController() {
-        baseTitle = AppVariables.message("FFmpegMergeImageFiles");
+        baseTitle = AppVariables.message("FFmpegMergeImagesFiles");
     }
 
     @Override

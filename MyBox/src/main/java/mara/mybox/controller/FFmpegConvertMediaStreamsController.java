@@ -42,7 +42,8 @@ public class FFmpegConvertMediaStreamsController extends FFmpegConvertMediaFiles
                         int len = tableData.size();
                         updateTaskProgress(currentParameters.currentIndex, len);
 
-                        for (; currentParameters.currentIndex < len; currentParameters.currentIndex++) {
+                        for (; currentParameters.currentIndex < len;
+                                currentParameters.currentIndex++) {
                             if (isCancelled()) {
                                 break;
                             }

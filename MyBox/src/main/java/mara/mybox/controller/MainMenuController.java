@@ -1,9 +1,12 @@
 package mara.mybox.controller;
 
 import com.sun.management.OperatingSystemMXBean;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -26,9 +29,14 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import javax.imageio.ImageIO;
 import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlStage;
+import mara.mybox.image.ImageScope;
+import mara.mybox.image.PixelsOperation;
+import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.ConfigTools;
+import mara.mybox.tools.FileTools;
 import mara.mybox.tools.FloatTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
@@ -1200,11 +1208,6 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
-    private void openGeographyRegion(ActionEvent event) {
-        loadScene(CommonValues.GeographyRegionFxml);
-    }
-
-    @FXML
     private void openLocationsDataInMap(ActionEvent event) {
         loadScene(CommonValues.LocationsDataInMapFxml);
     }
@@ -1217,11 +1220,6 @@ public class MainMenuController extends BaseController {
     @FXML
     private void openEpidemicReports(ActionEvent event) {
         loadScene(CommonValues.EpidemicReportsFxml);
-    }
-
-    @FXML
-    private void openFetchNCPData(ActionEvent event) {
-        loadScene(CommonValues.EpidemicReportsFetchNCPDataFxml);
     }
 
     @FXML
@@ -1326,6 +1324,73 @@ public class MainMenuController extends BaseController {
                     + CommonValues.AppDocVersion + "/MyBox-UserGuide-" + CommonValues.AppDocVersion
                     + "-DeveloperGuide-" + AppVariables.getLanguage() + ".pdf";
             browseURI(new URI(link));
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    // This is for developement to generate Icons automatically in different color style
+    @FXML
+    public void makeIcons() {
+        try {
+            List<String> keeps = Arrays.asList(
+                    "iconChina.png", "iconMyBox.png", "iconRGB.png", "iconSaveAs.png", "iconWOW.png",
+                    "iconHue.png", "iconColorWheel.png", "iconColor.png", "iconButterfly.png", "iconPalette.png",
+                    "iconMosaic.png", "iconBlackWhite.png", "iconGrayscale.png", "iconDefault.png",
+                    "iconMap.png", "iconRandom.png"
+            );
+            String srcPath = "D:\\MyBox\\src\\main\\resources\\";
+            String redPath = srcPath + "buttons\\";
+            FileTools.clearDir(new File(redPath));
+            String pinkPath = srcPath + "buttonsPink\\";
+            FileTools.clearDir(new File(pinkPath));
+            String orangePath = srcPath + "buttonsOrange\\";
+            FileTools.clearDir(new File(orangePath));
+            String bluePath = srcPath + "buttonsBlue\\";
+            FileTools.clearDir(new File(bluePath));
+
+            File[] icons = new File(srcPath + "buttonsLightBlue").listFiles();
+            BufferedImage src = null;
+            ImageScope scope = new ImageScope();
+            PixelsOperation redOperation = PixelsOperation.create(src, scope,
+                    PixelsOperation.OperationType.Hue, PixelsOperation.ColorActionType.Decrease);
+            redOperation.setFloatPara1(215 / 360.0f);
+            PixelsOperation pinkOperation = PixelsOperation.create(src, scope,
+                    PixelsOperation.OperationType.Red, PixelsOperation.ColorActionType.Increase);
+            pinkOperation.setIntPara1(151);
+            PixelsOperation orangeOperation = PixelsOperation.create(src, scope,
+                    PixelsOperation.OperationType.Hue, PixelsOperation.ColorActionType.Increase);
+            orangeOperation.setFloatPara1(171 / 360.0f);
+            PixelsOperation blueOperation = PixelsOperation.create(src, scope,
+                    PixelsOperation.OperationType.Saturation, PixelsOperation.ColorActionType.Increase);
+            blueOperation.setFloatPara1(0.5f);
+            String filename;
+            for (File icon : icons) {
+                filename = icon.getName();
+                if (!filename.startsWith("icon") || !filename.endsWith(".png")) {
+                    continue;
+                }
+                src = ImageIO.read(icon);
+                if (keeps.contains(filename)) {
+                    FileTools.copyFile(icon, new File(redPath + filename));
+                    FileTools.copyFile(icon, new File(pinkPath + filename));
+                    FileTools.copyFile(icon, new File(orangePath + filename));
+                    FileTools.copyFile(icon, new File(bluePath + filename));
+                    continue;
+                }
+                redOperation.setImage(src);
+                ImageFileWriters.writeImageFile(redOperation.operate(), "png", redPath + filename);
+
+                pinkOperation.setImage(src);
+                ImageFileWriters.writeImageFile(pinkOperation.operate(), "png", pinkPath + filename);
+
+                orangeOperation.setImage(src);
+                ImageFileWriters.writeImageFile(orangeOperation.operate(), "png", orangePath + filename);
+
+                blueOperation.setImage(src);
+                ImageFileWriters.writeImageFile(blueOperation.operate(), "png", bluePath + filename);
+            }
+
         } catch (Exception e) {
             logger.error(e.toString());
         }
