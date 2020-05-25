@@ -17,7 +17,7 @@ Packages of each version have been uploaded at [Releases](https://github.com/Mar
     
 ### Self-contain packages 
 Self-contain packages include all files and need not java env and installation.   (Please unpack it under path with pure-English name.)   
- 
+
 | Platform | Link | Size | Launcher |    
 | --- | --- | ---  | ---  |    
 | win | [MyBox-6.3-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3/MyBox-6.3-win-exe.zip)  | 259MB | MyBox.exe |       
