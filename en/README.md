@@ -511,12 +511,7 @@ Recognizing texts in image/PDF(OCR) works only on Windows currently.
 2. Pagination
 3. Export/Import
 
-### Geography Code<a id="geographyCode" />      
-1. Query and display location in map.
-2. Example: all countries and Chinese provinces/citis/districts.      
-3. Migration. Errors and missed are fixed.  Suggestion: Export your data, clear data, load exmaple data, and then import your data if need.         
-Updated example data of Geography Codes are important to table "Epidemic Reports".                       
-If user wrote some data in v6.1, existed data will be exported when this interface is opened at first time, and the path will be opened. User can import previous data.              
+### Geography Code<a id="geographyCode" />              
 1. Data definition： 
 	-  Basical attributes: id, level, longitude, latitude, chinese_name, english_name, 5 codes, 5 aliases, area(square kilometer), population, comments.   
 	-  Subordinate: continent, country, province, city, county, town, village, building. ("Ancestors")      
