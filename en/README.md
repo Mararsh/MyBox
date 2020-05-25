@@ -12,8 +12,7 @@ Solved problems.  Cursor should stay orginial location after saving in Text Edit
 
 ## Download and Execution
 Packages of each version have been uploaded at [Releases](https://github.com/Mararsh/MyBox/releases?) directory now. You can find them by clicking `releases` tab in main page of this project. 
-[What's new](#devLog)       
-[Data about "New Coronavirus Pneumonia"](https://sourceforge.net/projects/mara-mybox/files/data/)            
+       
     
 ### Self-contain packages 
 Self-contain packages include all files and need not java env and installation.   (Please unpack it under path with pure-English name.)   
