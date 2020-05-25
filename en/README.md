@@ -1,12 +1,14 @@
-# [中文ReadMe](https://github.com/Mararsh/MyBox)
+# [中文ReadMe](https://github.com/Mararsh/MyBox)   ![ReadMe](https://mararsh.github.io/MyBox/iconTips.png) 
 
 # MyBox: Set of Easy Tools
-This is GUI program based on JavaFx to provide simple and easy functions. It's free and open sources
+This is desktop application based on JavaFx to provide simple and easy functions. It's free and open sources
 
-Notice: "Geography Code" and "Epidemic Report" will be redesigned in v6.3. 
-Please do not input your data of the 2 tables with current version, because this new version can not guarantee to migrate data of current version. 
-But MyBox will try best to help users to export data in new tables format. So sorry about this!        
-
+## What's New
+2020-5-25 v6.3  Redesign  "Geography Codes" and "Epidemic Reports".        
+Provide selections of audio parameters in Audio/Vedio Convertor.           
+Provide Common Chinese Colors and Common Japanese Colors.      
+Solved problems.  Cursor should stay orginial location after saving in Text Editor. Option “Count dir size” may cause some batch operations fail.      
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3)      
 
 ## Download and Execution
 Packages of each version have been uploaded at [Releases](https://github.com/Mararsh/MyBox/releases?) directory now. You can find them by clicking `releases` tab in main page of this project. 
@@ -18,9 +20,9 @@ Self-contain packages include all files and need not java env and installation. 
  
 | Platform | Link | Size | Launcher |    
 | --- | --- | ---  | ---  |    
-| win | [MyBox-6.2.1-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.2.1/MyBox-6.2.1-win-exe.zip)  | 258MB | MyBox.exe |       
-| linux | [MyBox-6.2.1-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.2.1/MyBox-6.2.1-linux.tar.gz)  | 217MB  | bin/MyBox  |     
-| mac | [MyBox-6.2.1-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.2.1/MyBox-6.2.1-mac.dmg)  | 218MB  |  MyBox-6.2.1.app   |   
+| win | [MyBox-6.3-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3/MyBox-6.3-win-exe.zip)  | 259MB | MyBox.exe |       
+| linux | [MyBox-6.3-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.3/MyBox-6.3-linux.tar.gz)  | 218MB  | bin/MyBox  |     
+| mac | [MyBox-6.3-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.3/MyBox-6.3-mac.dmg)  | 220MB  |  MyBox-6.3.app   |   
 
 User can double click the launcher to start MyBox or run it by command line. The default "Open Method" of image/text/PDF files can be associated to MyBox and a file can be opened directly by MyBox by double clicking the file's name.
 (File with name including non-ascii can not be opened by double clicking currently)
@@ -30,16 +32,16 @@ When JRE or JDK 13 or higher(`Oracle jdk` or `open jdk`) is installed, jar can r
   
 | Platform | Link | Size | Requirements |   
 | --- | --- | ---  | ---  |    
-| win | [MyBox-6.2.1-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.2.1/MyBox-6.2.1-win-jar.zip)  | 145MB | Java 13.0.1 or higher |    
-| linux | [MyBox-6.2.1-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.2.1/MyBox-6.2.1-linux-jar.zip)  | 152MB  | Java 13.0.1 or higher |    
-| mac | [MyBox-6.2.1-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.2.1/MyBox-6.2.1-mac-jar.zip)  |  148MB  | Java 13.0.1 or higher |    
+| win | [MyBox-6.3-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3/MyBox-6.3-win-jar.zip)  | 145MB | Java 13.0.1 or higher |    
+| linux | [MyBox-6.3-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3/MyBox-6.3-linux-jar.zip)  | 152MB  | Java 13.0.1 or higher |    
+| mac | [MyBox-6.3-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3/MyBox-6.3-mac-jar.zip)  |  149MB  | Java 13.0.1 or higher |    
  
     
 Run following command to launch this program with Jar package: 
-<PRE><CODE>     java   -jar   MyBox-6.2.1.jar</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-6.3.jar</CODE></PRE>
 	
 A file path can follow the command as argument to be opened directly by MyBox. Example, following command will open the image:    
-<PRE><CODE>     java   -jar   MyBox-6.2.1.jar   /tmp/a1.jpg</CODE></PRE>   
+<PRE><CODE>     java   -jar   MyBox-6.3.jar   /tmp/a1.jpg</CODE></PRE>   
 
 ### Other addresses to download   
 Download from cloud storage: https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F   
@@ -53,20 +55,24 @@ A bug has been reported to jpackage dev team:
 Current version still does not support OCR on Linux/Mac. The reason is that the based tesseract libraries are different on different platforms and there are not out of box packages available.   
 This requirement is delayed due to limited development time.    
 
+## Migration
+V6.3 is a "Truncated" version which is only compatible with v6.2.1.  If user need keep data of version older than v6.2.1, MyBox should be migrated from older version to v6.2.1, 
+and then migrated from v6.2.1 to new version.      
+When run v6.3 first time, data of "Geography Code" and "Epidemic Report" in v6.2.1 will be exported in format of v6.3, and then the 2 tables will be reset. 
+User decides whether import the old data into new version.             
+ 
+If new version can not be started or run abnormally, rename/move current data path to have new data path created automatically.       
 
-# Resource Addresses
-Project Main Page: https://github.com/Mararsh/MyBox
-
-Source Codes and Compiled Packages: https://github.com/Mararsh/MyBox/releases
-
-Submit Software Requirements and Problem Reports: https://github.com/Mararsh/MyBox/issues
-
-Cloud Storage: https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F
-
-Online Helps: https://mararsh.github.io/MyBox/mybox_help_en.html
-
-sourceforge: https://sourceforge.net/projects/mara-mybox/files/
-
+# Resource Addresses        
+| Contents | Link | 
+| --- | --- |     
+| Project Main Page | https://github.com/Mararsh/MyBox |    
+| Source Codes and Compiled Packages | https://github.com/Mararsh/MyBox/releases |    
+| Submit Software Requirements and Problem Reports | https://github.com/Mararsh/MyBox/issues |    
+| Data | https://github.com/Mararsh/MyBox_data |    
+| Mirror Site | https://sourceforge.net/projects/mara-mybox/files/ |        
+| Cloud Storage | https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F |    
+| Online Helps | https://mararsh.github.io/MyBox/mybox_help_zh.html |    
 
 # Documents
 | Name | Version | Time | Link |
@@ -77,14 +83,14 @@ sourceforge: https://sourceforge.net/projects/mara-mybox/files/
 | User Guide - Desktop Tools | 5.0 | 2019-4-16 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-DesktopTools-en.pdf) |
 | User Guide - Network Tools | 5.0 | 2019-4-16 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-NetworkTools-en.pdf) |
 | Development Guide | 2.0 | 2019-11-18 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-DevGuide-2.0-en.pdf) |
-| Shortcuts | 5.9 | 2019-12-21 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts_en.html) |
-| Development Logs | 6.2.1 | 2020-3-3 | [html](#devLog) |
+| Shortcuts | 6.3 | 2020-05-25 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts_en.html) |
+| Development Logs | 6.3 | 2020-05-25 | [html](#devLog) |
 
 # Implementation
 
 MyBox is based on following open sources softwares:    
 
-| Software | Role | Link |    
+| Name | Role | Link |    
 | --- | --- | --- |    
 | JDK | Java | http://jdk.java.net/13/   |      
 |   |   | https://www.oracle.com/technetwork/java/javase/downloads/index.html  |        
@@ -115,48 +121,56 @@ MyBox is based on following open sources softwares:
 | image4j | ico format | https://github.com/imcdonagh/image4j |   
 | AutoCommitCell | Submit updates | https://stackoverflow.com/questions/24694616 （Ogmios） |   
 | GaoDe | Map | https://lbs.amap.com/api/javascript-api/summary |      
-| WeiXin | Materials| https://weibo.com/3876734080/InmB1aPiL?type=comment#_rnd1582211299665 |      
-| Baidu | Data| https://voice.baidu.com/act/newpneumonia/newpneumonia/?from=osari_pc_3 |      
-| TengXun | Data | https://api.inews.qq.com/newsqa/v1/query/pubished/daily/list?province=湖北&city=武汉 |      
+| GaoDe | Coordinate | https://github.com/Mararsh/MyBox_data/tree/master/GeographyCode |      
+| WeiXin | Image materials| https://weibo.com/3876734080/InmB1aPiL?type=comment#_rnd1582211299665 |      
+| Baidu | COVID-19 data| https://voice.baidu.com/act/newpneumonia/newpneumonia/?from=osari_pc_3 |      
+| Tecent | COVID-19 data | https://api.inews.qq.com/newsqa/v1/query/pubished/daily/list?province=湖北&city=武汉 |      
 | poi | Excel | https://poi.apache.org |   
-| LabeledBarChart | values in charts | https://stackoverflow.com/questions/34286062/how-to-clear-text-added-in-a-javafx-barchart/41494789#41494789 (Roland) |      
+| LabeledBarChart | Javafx charts | https://stackoverflow.com/questions/34286062/how-to-clear-text-added-in-a-javafx-barchart/41494789#41494789 (Roland) |      
+| geonames | Location data | https://www.geonames.org/countries/ |      
+| world-area | Location data | https://github.com/wizardcode/world-area |      
+| China National Bureau of Statistics | Data | http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/ |      
+| JHU | COVID-19 data | https://github.com/CSSEGISandData/COVID-19 |      
+| Website | Color data | https://tool.lanrentuku.com/color/china.html |      
 
  
 # Current Version
-Current version is 6.2.1. Its features are mentioned below in summary:   
+Current version is 6.3. Its features are mentioned below in summary:   
  
 * [Cross platforms](#Cross-platform)
 * [Internationalized](#Internationalized)
-* [PDF Tools](#PDFTools)
+* [Document Tools](#documentTools)
+    - [PDF Tools](#pdfTools)
+    - [Edit Text](#editText)
+    - [Edit Bytes](#editBytes)
+    - [Edit Html](#htmlEditor)
+    - [Edit Markdown](#markdownEditor)
+    - [Others](#documentOthers)
 * [Image Tools](#imageTools)
     - [View Image](#viewImage)
     - [Browse Images](#browserImage)
-    - [Analyse Image](#ImageData)  
+    - [Analyse Image](#analyseImage)  
     - [Manufacture Image](#imageManufacture)
-    - [Color Management](#ColorManagement)
-    - [Color Palette](#ColorPalette)
-    - [Convert Image](#imageConvert)
-    - [Recognize Texts in Image](#imageOCR)
     - [Multi-frames Image](#multiFrames)
     - [Merge Images](#multipleImages)
     - [Part Image](#imagePart)
-    - [Big Image](#bigImage)
-    - [Others](#imageOthers)
-* [Data Tools](#dataTools)
-    - [Matrcies Calculation](#matrixTool)
+    - [Convert Image](#imageConvert)
+    - [Recognize Texts in Image](#imageOCR)
+    - [Color Management](#ColorManagement)
+    - [Color Palette](#ColorPalette)
     - [Color Spaces](#colorSpaces)
+    - [Others](#imageOthers)
+    - [Big Image](#bigImage)
+* [Data Tools](#dataTools)
+    - [Geography Codes](#geographyCode)
+    - [Location in Map](#locationInMap)
+    - [Location Data](#locationData)
+    - [Epidemic Reports](#epidemicReport)
+    - [Matrcies Calculation](#matrixTool)
     - [Create Barcodes](#createBarcodes)
     - [Decode Barcodes](#decodeBarcodes)
     - [Message Digest](#messageDigest)
-    - [Location in Map](#locationInMap)
-    - [Geography Codes](#geographyCode)
-    - [Location Data](#locationData)
-    - [Location Data in Map](#locationDataInMap)
-    - [Epidemic Reports](#epidemicReport)
-    - [Fetch Data About "New Coronavirus Pneumonia"](#epidemicReportFetch)
  * [File Tools](#fileTools)
-    - [Edit Text](#editText)
-    - [Edit Bytes](#editBytes)
     - [Manage Files/Directories](#directoriesArrange)
     - [Archive/Compress/Decompress/Unarchive](#archiveCompress)
     - [Check Redundant Files](#filesRedundancy)
@@ -168,11 +182,8 @@ Current version is 6.2.1. Its features are mentioned below in summary:
     - [Game-Elimination](#gameElimination)
     - [Others](#mediaOthers)
 * [Network Tools](#netTools)
-    - [Edit Html](#htmlEditor)
     - [Web Browser](#webBrowser)
     - [Security Certificates](#securityCerificates)
-    - [Edit Markdown](#markdownEditor)
-    - [Conversion between html and Markdown](#htmlMarkdownConversion)
     - [Manage Downloads](#manageDownloads)
     - [Snap WeiBo](#weiboSnap)
 * [Settings](#settings)
@@ -190,15 +201,17 @@ Previous versions are based on Java 8.
 Recognizing texts in image/PDF(OCR) works only on Windows currently.    
 
 ## Internationalized <a id="Internationalized"></a> 
-1. All codes of MyBox are internationalized.
+1. All codes of MyBox are internationalized. Currently MyBox supports Chinese and English. 
 2. User can switch language in time.
-3. Currently MyBox supports Chinese and English. 
-4. To support a new language is just to edit a new resource file.   
-5. Support adding new languages online. Table is provided with English as comparison. New langauges take effects at once.    
-6. Translated files can be shared with others: Put the files under "mybox_languages" of data path and MyBox is aware of them immediately.    
-       
+3. To support a new language is just to edit a new resource file.   
+4. Support adding new languages online. Table is provided with English as comparison. New langauges take effects at once.    
+5. Translated files can be shared with others: Put the files under "mybox_languages" of data path and MyBox is aware of them immediately.    
+      
+![Snap-Cover](https://mararsh.github.io/MyBox/snap-cover-en.jpg)
 
-## PDF Tools <a id="PDFTools"></a> 
+##  Document Tools <a id="documentTools"></a> 
+
+### PDF Tools <a id="PDFTools"></a> 
 1. View PDF in html mode. Browse and edit html page by page. Bookmarks and thumbnails.
 2. Convert PDF files as html files in batch. Options: Whether one html for each page or one html for each PDF; The way to handle fonts/images: embed, save separately, or ignore.
 3. View PDF file in image mode. DPI can be set to adjust resolution. Page can be cropped as images.
@@ -225,6 +238,64 @@ Recognizing texts in image/PDF(OCR) works only on Windows currently.
 13. Handle PDF files in batch way.
 14. Maximum main memory of PDF handling can be set.    
 
+![Snap-pdf](https://mararsh.github.io/MyBox/snap-pdf-en.jpg)       
+
+### Edit Texts <a id="editText"></a>     
+1. File charset can be either detected automatically or set manually. Target file charset can be selected to implement encoding conversion. BOM setting is supported.
+2. Detect line break automatically. Convert line break. Show lines number. 
+3. Support LF(Unix/Linux), CR(Apple), and CRLF(Windows).
+4. Find and replace. In current page, or in whole file. Counting. Support regular expression.
+5. Locate. Go to position of specified character or specified line.
+6. Filter lines. By “Include One”, “Not Include All”, “Include All”, or “Not Include Any”.   Support regular expression.
+7. Cumulative filter. Filtered results can be saved. Select whether include lines number.
+8. Hexadecimal codes according file's charset can be viewed, scrolled, and selected synchronously.
+9. Paginate. Fit for viewing or editing very large file, such as logs in size of several GBs.
+	-  Set page size.
+	-  Pages navigation bar
+	-  Load and display first page, and scan the file in background to count characters number and lines number. 
+	   Part of functions are unavaliable while counting. Interface will be refreshed automatically after counting process is complete.
+	-  Make sure correction of finding, replacing, and filtering of strings that are across pages.
+10. General functions of editing, like copy/paste/cut/delete/selectAll/undo/redo/recover. And their shortcuts.
+
+![Snap-textEditor](https://mararsh.github.io/MyBox/snap-textEditor-en.jpg)        
+
+### Edit Bytes <a id="editBytes"></a>     
+1. Bytes are expressed as 2 hexadecimal characters. All blanks, line breaks, and invalid values are ignored.
+2. Input boxes of general ASCII characters.
+3. Break lines, which is only for display and has not actual effect. By bytes number or by some defined bytes.
+4. Find and replace. In current page, or in whole file. Counting. Support regular expression.
+5. Locate. Go to position of specified character or specified line.
+6. Filter lines. By “Include One”, “Not Include All”, “Include All”, or “Not Include Any”.  Support regular expression.
+7. Cumulative filter. Filtered results can be saved. Select whether include lines number.
+8. Select charset to decode bytes which can be viewed, scrolled, and selected synchronously.
+9. Paginate. Fit for viewing or editing very large file, such as binary file in size of several GBs.
+	-  Set page size.
+	-  Pages navigation bar
+	-  Load and display first page, and scan the file in background to count bytes number and lines number. 
+	   Part of functions are unavaliable while counting. Interface will be refreshed automatically after counting process is complete.
+	-  Make sure correction of finding, replacing, and filtering of bytes group that are across pages. 
+	   When break lines by bytes number, crossing pages need not concerned.
+10. General functions of editing, like copy/paste/cut/delete/selectAll/undo/redo/recover. And their shortcuts.
+
+### Html Editor <a id="htmlEditor"></a>     
+1. Edit local web pages or online pages in rich text. (Not support FrameSet)
+2. Edit Html codes directly. (Support FrameSet)
+3. Web browser to view contents of Editors or load the online page. Support history browsing, font zooming 、and snapshoting of the whole page as an image or a PDF file.
+4. Convert to Markdown synchronously。
+
+### Edit Markdown<a id="markdownEditor" />
+1. Provide buttons to help inputting formats.
+2. Convert to html synchronously. Options supported.
+3. Convert to text synchronously.
+4. Find and replace. Support regular expression.
+5. Locate. Go to position of specified character or specified line.
+
+### Conversion between html and Markdown<a id="htmlMarkdownConversion" />
+1. Convert files' charset in batch.
+2. Convert files' line break in batch.
+3. Conversion from html to Markdown in batch.    
+4. Conversion from Markdown to html in batch.    
+
 ## Image Tools <a id="imageTools"></a>     
 
 ### View Image <a id="viewImage"></a>     
@@ -237,6 +308,8 @@ Recognizing texts in image/PDF(OCR) works only on Windows currently.
 6. Image attributes and image meta. ICC profile embedded in image can be decoded.
 7. Navigation of images under same directory.
 
+![Snap-imageViewer](https://mararsh.github.io/MyBox/snap-imageViewer-en.jpg)       
+
 ### Browse Images <a id="browserImage"></a>     
 
 1. Display multiple images in same screen. Rotation and zoomming can be separated or synchronized.
@@ -246,9 +319,22 @@ Recognizing texts in image/PDF(OCR) works only on Windows currently.
 5. Files List Mode.
 6. Rename and Delete.
 
+![Snap-imageBrowser](https://mararsh.github.io/MyBox/snap-imageBrowser-en.jpg)       
+
+
+### Analyse Image <a id="analyseImage"></a>     
+1. Statistic and visualization of image data, including average, variance, skewness, median, mode, minimum, maximum of occurance of each color channel, and their histograms.
+2. Channels of histograms can be selected.
+3. Statistic against selected area.
+4. Calculate mostly different colors in image by K-Means Clustering.
+5. Calculate mostly occurer colors in image by Popularity Quantization.
+6. Image data can be saved as html file.
+
+![Snap-imageAnanlyse](https://mararsh.github.io/MyBox/snap-imageAnanlyse-en.jpg)     
+
+
 ### Image Manufacture <a id="imageManufacture"></a>    
- 
-1. Clipboard
+ 1. Clipboard
 	-  Clip sources: "Copy"(CTRL+c) against whole image or selected part of image, cutted part of image, system clipboard, image files in system, example clips.
 	-  Manage clips list: Add, Delete, Clear, Set maximum number of list.
 	-  Click button "Paste"(CTRL+v) anytime while editing image, to paste the first image in clipboard onto current edited image. Or double click item in the clipboard to paste it.
@@ -296,34 +382,25 @@ Recognizing texts in image/PDF(OCR) works only on Windows currently.
 21. Image Manufacture in batch.
 22. Demo: One clicking to show examples of kinds of image manufacture about "Color", "Effect", and "Enhancement".
 
+![Snap-imageManufacture](https://mararsh.github.io/MyBox/snap-imageManufacture-en.jpg)       
 
-### Color Management<a id="ColorManagement" />   
-1. Add/Delete/Edit any colors in color library. 139 named colors can be added automatically. 
-2. Name colors. 
-3. Add/Remove colors in palette.  
-4. Display colors in simple/all columns.   
-5. Display colors in merged/separated columns.   
-6. Exaport all or selected data as html.
+### Multiple frames image file <a id="multiFrames"></a>     
 
-### Color Palette <a id="ColorPalette"></a>     
+1. View/Extract images in multiple frames file.
+2. Create/Edit multiple frames Tiff/Tif file.
+3. View/Extract/Create/Edit animated Gif file. Interval, whether loop, and images' size can be set.
 
-1. Any colors can be saved. 139 named colors can be added automatically.
-2. Color is shown in a small rectangle and its name(if has), hexidecimal value, rgb values, opacity, cmyk values, and cie values are popped when mouse is moved upon it.
-3. Name colors
-4. Export colors to html table.
-5. Pick colors on current image, image history, or reference image.
+### Merge images <a id="multipleImages"></a>     
+1. Combine images. Options like array ordering, background color, interval, margins, and size.
+2. Combine images in PDF file.
+3. Add Alpha channel.
 
-### Analyse Image <a id="ImageData"></a>     
+### Part image <a id="imagePart"></a>     
+1. Split image. By number, by size, or by customizing. Results can be saved as image files, multiple frames Tiff file, or PDF file.
+2. Subsample image. Options like sample region and sample ratio.
+3. Extract Alpha channel.
 
-1. Statistic and visualization of image data, including average, variance, skewness, median, mode, minimum, maximum of occurance of each color channel, and their histograms.
-2. Channels of histograms can be selected.
-3. Statistic against selected area.
-4. Calculate mostly different colors in image by K-Means Clustering.
-5. Calculate mostly occurer colors in image by Popularity Quantization.
-6. Image data can be saved as html file.
-
-### Image Conversion <a id="imageConvert"></a>     
-
+### Image Conversion <a id="imageConvert"></a>       
 1. Formats of image file: png, jpg, bmp, tif, gif, ico, wbmp, pnm, pcx, raw.
 2. Color spaces: sRGB, Linear sRGB, ECI RGB, Adobe RGB, Apple RGB, Color Match RGB, ECI CMYK, Adobe CMYK(several), Gray, Binary
 3. Color space based on external ICC profile.
@@ -333,8 +410,7 @@ Recognizing texts in image/PDF(OCR) works only on Windows currently.
 7. For binary, algorithms can be choiced: OTSU, default or threshold. And option of dithering.
 8. Conversion in batch.
 
-### Recognize Texts in Image <a id="imageOCR"></a>     
-
+### Recognize Texts in Image <a id="imageOCR"></a>      
 1. Preprocess image:
 	-  Nine algorithms about image enhancement
 	-  Scale ratio
@@ -357,46 +433,23 @@ Recognizing texts in image/PDF(OCR) works only on Windows currently.
 	-  Whether merge recognized texts
 5. Embedded "fast" data files of English and Chinese which support OCR out of box on windows. User can download more data if need.   
 
-### Multiple frames image file <a id="multiFrames"></a>     
-
-1. View/Extract images in multiple frames file.
-2. Create/Edit multiple frames Tiff/Tif file.
-3. View/Extract/Create/Edit animated Gif file. Interval, whether loop, and images' size can be set.
-
-### Merge images <a id="multipleImages"></a>     
-1. Combine images. Options like array ordering, background color, interval, margins, and size.
-2. Combine images in PDF file.
-3. Add Alpha channel.
-
-### Part image <a id="imagePart"></a>     
-1. Split image. By number, by size, or by customizing. Results can be saved as image files, multiple frames Tiff file, or PDF file.
-2. Subsample image. Options like sample region and sample ratio.
-3. Extract Alpha channel.
-
-### Big Image <a id="bigImage"></a>     
-1. Evaulate the required memory for whole image, and judge whether load all data in memory.
-2. If enough memory is available to load whole image, read all data for next operations. Try best to operate in memory and avoid file I/O.
-3. If memory may be out, subsample the image for next operations.
-4. The sample ratio is determined by following rule: Make sure the sampled image is good enough while the sampled data occupy limited memory.
-5. The sampled image is mainly for displaying, and not suitable for operations against whole image and images merging.
-6. Some operations, like splitting and subsampling, can be handled by reading part of image data and writing-while-reading, so they are suitable for big images. Sampled image is displayed while original image is handled.
-
-### Others <a id="imageOthers"></a>     
-1. Supported image formats include png, jpg, bmp, tif, gif, ico, wbmp, pnm, pcx.	Adobe YCCK/CMYK jpg file can be decoded.
-2. Pixels calculator
-3. Convolution Kernels Manager
+![Snap-ocr](https://mararsh.github.io/MyBox/snap-ocr-en.jpg)       
 
 
-## Data Tools <a id="dataTools"></a>     
+### Color Management<a id="ColorManagement" />   
+1. Add/Delete/Edit any colors in color library. Provide "Common web color", "Common Chinese colors", and "Common Japanese Colors".     
+2. Name colors. 
+3. Add/Remove colors in palette.  
+4. Display colors in simple/all columns.   
+5. Display colors in merged/separated columns.   
+6. Exaport all or selected data as html.
 
-### Matrices Calculation <a id="matrixTool"></a>     
-1. Edit matrix data:
-	-  Filter special characters in input/pasted data to fit for data in some format.
-	-  Convert current matrix data into row vector, column vector, or matrix in defined columns number automatically.
-	-  Generate identify matrix, random matrix, or random square matrix automatically.
-2. Unary matrix calculation: Transpose, Row Echelon Form, Reduced Row Echelon Form, Determinant By Elimination, Determinant By Complement Minor, Inverse Matrix By Elimination, Inverse Matrix By Adjoint, Matrix Rank, Adjoint Matrix, Complement Minor, Normalize, Set Decimal Scale, Set As Integer, Multiply Number, Divide By Number, Power.
-3. Binary matrices calculation: Plus, Minus, Hadamard Product, Kronecker Product, Horizontally Merge, Vertically Merge.
-	
+### Color Palette <a id="ColorPalette"></a>     
+1. Color is shown in a small rectangle and its name(if has), hexidecimal value, rgb values, opacity, cmyk values, and cie values are popped when mouse is moved upon it.
+2. Pick colors on current image, image history, or reference image.
+
+![Snap-colors](https://mararsh.github.io/MyBox/snap-colors-en.jpg)       
+
 ### Color Space <a id="colorSpaces"></a>     
 1. Draw Chromaticity Diagram:
 	-  Outlines of standard data, including CIE 1931 2 Degree Observer(D50), CIE 1964 10 Degree Observer(D50), CIE RGB Gamut, ECI RGB Gamut, 
@@ -437,6 +490,234 @@ Recognizing texts in image/PDF(OCR) works only on Windows currently.
 	-  User select or input source white and target white, and the tool will calculate the chromatic adaptation matrix automatically and show the calculation procedure..
 	-  Table and texts are shown for chromatic adaptation matrices by different standard illuminants and different algorithms. Data texts can be exported.
 	
+![Snap-colorDiagram](https://mararsh.github.io/MyBox/snap-colorDiagram-en.jpg)       
+
+### Others <a id="imageOthers"></a>     
+1. Supported image formats include png, jpg, bmp, tif, gif, ico, wbmp, pnm, pcx.	Adobe YCCK/CMYK jpg file can be decoded.
+2. Pixels calculator
+3. Convolution Kernels Manager
+
+### Big Image <a id="bigImage"></a>     
+1. Evaulate the required memory for whole image, and judge whether load all data in memory.
+2. If enough memory is available to load whole image, read all data for next operations. Try best to operate in memory and avoid file I/O.
+3. If memory may be out, subsample the image for next operations.
+4. The sample ratio is determined by following rule: Make sure the sampled image is good enough while the sampled data occupy limited memory.
+5. The sampled image is mainly for displaying, and not suitable for operations against whole image and images merging.
+6. Some operations, like splitting and subsampling, can be handled by reading part of image data and writing-while-reading, so they are suitable for big images. Sampled image is displayed while original image is handled.
+
+## Data Tools <a id="dataTools"></a>     
+
+### General Management Base of Data Table<a id="dataManage" />    
+1. Add/Delete/Edit/Clear/Refresh
+2. Pagination
+3. Export/Import
+
+### Geography Code<a id="geographyCode" />      
+1. Query and display location in map.
+2. Example: all countries and Chinese provinces/citis/districts.      
+3. Migration. Errors and missed are fixed.  Suggestion: Export your data, clear data, load exmaple data, and then import your data if need.         
+Updated example data of Geography Codes are important to table "Epidemic Reports".                       
+If user wrote some data in v6.1, existed data will be exported when this interface is opened at first time, and the path will be opened. User can import previous data.              
+1. Data definition： 
+	-  Basical attributes: id, level, longitude, latitude, chinese_name, english_name, 5 codes, 5 aliases, area(square kilometer), population, comments.   
+	-  Subordinate: continent, country, province, city, county, town, village, building. ("Ancestors")      
+            Data is unnecessary to be subordinated level by level. Cross-over can happen.              
+            Example, a village is subordinated to Antarctica, and a city belongs to a country without province level.     
+2. Data constraints:
+ 	-  Must have values: id, level,  chinese_name or english_name.          
+ 	-  Values of "level": global(only "Earth"), continent, country, province(state), city, county(district), town, village(neighborhood), building, point of interest.
+	-  One of following can determine an address:
+ 	  	- Match “id"(assigned by MyBox automatically). This is accurate matching.
+  	  	- Match "level" + ancestors + "chinese_name"/"english_name"/any one "alias". This is accurate matching.
+ 	  	- Match "level" + "chinese_name"/"english_name"/any one "alias". This is fuzzy matching. Duplicated names in same level can cause false matching.
+            Matching of name or alias is case-insensitive.
+            Sometimes 5 "code" are useful to match data.
+3. Edit data：
+ 	-  "subordinate" of data is set by selecting node in locations tree.   
+ 	-  "level" of data should be lower than its ancestors.
+ 	-  Data must have either chinese_name or english_name.
+ 	-  Select or display coordinate in map.
+ 	-  Set as "Predefined data" or "Inputted data" against selected rows.
+4. Import data:
+ 	-  Embedded predefined data in MyBox include continents, countries, Chinese provinces/cities/counties.
+            Countries have values of "area" and "population".         
+ 	-  MyBox external format data file.            
+            Download address:  https://github.com/Mararsh/MyBox_data/tree/master/GeographyCode                    
+ 	-   Location data from geoname.org.          
+            Download address:  https://www.geonames.org/countries/         
+ 	-  Except for predefined data, option "Whether replace existed data" can be selected when import.  Predefined data always replace.                
+5. Define, manage, and apply "Condition": 
+ 	-  "Condition" is used for operations of Query, Clear, and Export.
+ 	-  Set conditions in panes:
+ 	  	- All geograhy codes in MyBox are organized as a Locations Tree by their subordination relationship. Multiple nodes can be selected.   
+ 	  	- Select values for ordering and their sequences.   
+ 	-  Edit condition: title, where, order by, fetch, which are combined together as the final condition.
+ 	-  Manage conditions: Add/Delete/Modify.
+ 	-  Conditions ever executed are saved automatically.
+	-  Recently visited conditions are listed in pop window of the buttons.
+6. Query data:
+ 	-  Define and manage query conditions.
+ 	-  Current query condition is displayed in "Information" tab.
+ 	-  Data which satisfy condition are displayed in pages of data table.        
+ 	-  Data rows are shown in different colors accoding to whether they are "Predefined data".
+7. Display charts:
+ 	-  Addresses of current data page are shown in map.
+ 	-  Save current map and its data as html, with option of dpi.    
+8. Delete data:
+ 	-  Define and manage deletion condition.
+ 	-  Predefined data can not be deleted.
+ 	-  Referred data(Example, as foregin key of "Epidemic Report") can not be deleted.
+9. Export data:
+ 	-  Define and manage export condition.
+ 	-  Select formats: csv, xml, json, xlsx, html.
+ 	-  Select maximum lines to split files.
+ 	-  Export current data page.
+10. Settings:
+ 	-  Customize colors of data rows. Provide "Default" and "Random" buttons.
+
+![Snap-geoCode](https://mararsh.github.io/MyBox/snap-geoCode-en.jpg)       
+   
+
+### Location in Map<a id="locationInMap" />      
+1. Base on GaoDe Map.
+2. Query and display location data by clicking map, inputting address, or inputting coordinate. 
+3. Set markers as: point(bubble), circle, or any image. Markers size can be set.  
+4. Set texts as: none, coordinate, or address.
+5. Pop detailed location information when put mouse upon marker. Geography code is supported only for addesses in China.
+6. Map layers: standard, satellite, roadnet, traffic.  
+ 	-  Roadnet layer and traffic layer are only supported for China. 
+ 	-  Satellite layer is supported for part of foreign addresses. 
+ 	-  Opacity can be set for each map layer.  
+7. Set map language as:  Chinese, English, Chinese and English.        
+
+
+### Location Data<a id="locationData" />      
+1. Attributes: data set, data label, address, longitude, latitude, altitude, precision, speed, data value, data size, data time, data image, data comments. Time of BC is supported.   
+2. Example:  China Earlier Cultures(incomplete).       
+
+### Location Data in Map<a id="locationDataInMap" />      
+1. Display data distribution in map. Data values can be used as map markers/texts/pops.
+2. Set markers as: point(bubble), circle, any image, or data image.  
+3. Set texts as: none, coordinate, address, data label, data value, data size, data time.
+4. Pop information: ：coordinate, address, data label, data value, data size, data time, data comments, data image.          
+  
+
+### Epidemic Reports<a id="epidemicReport" />      
+1. Data definition： 
+	-  Basical attributes: dataSet, time, location, source.  
+	-  Basical values: confirmed, healed, dead.
+	-  Subtraction statistic: increased confirmed, increased healed, increased dead.
+           Calculated by adjacent rows.            
+	-  Division statistics:
+	  	- healed/confirmed permillage,  dead/confirmed permillage
+	  	- confirmed/population permillage, healed/population permillage, dead/population permillage, 
+	  	- confirmed/area permillage,  healed/area permillage, dead/area permillage           
+            When value of "area"/"population" of location is invalid(zero or negitive), corresponding statistics data are meaningless.              
+            Predefined data "countries" have valid "area"/"population" and they have meaningful statistics values.                     
+	-  Accumulation statistics:
+	  	- Values of some countries                         
+                  Calculated by values of country's provinces.                      
+	  	- Values of continents                
+                  Calculated by values of continent's countries.           
+	  	- Values of Earth                   
+                  Calculated by values of continents.  
+2. Data constraints:
+ 	-  Must have values: dataSet, time, location
+ 	- Values of "source": "Inputted data", "Predefined data", "Filled data", "Statistics data".  
+ 	- "location" is foreign key of "Geography Code", which must have row defined in that table.
+ 	- In "confirm", "healed", "dead", at least one should be larger than zero.
+	- One of following can determine a data row:
+ 	  	- Match id, which is assigned by MyBox automatically. This is accurate matching.
+  	  	- Match "dataSet" + "date" + "location". This is accurate matching.
+	- This version assumes that only one valid data in each day for same dataSet plus same location.
+3. Edit data：
+ 	-  When in single data, location is set by selecting node from locations tree.
+ 	-  In interface of "Epidemic Reports of Chinese Provinces" or  "Epidemic Reports of Countries", multiple rows can be inputted for same dataSet and time.
+ 	-  Modify values of "source" for selected data rows.  
+4. Import data:
+ 	-  Embedded predefined data in MyBox: COVID-19 historical data from Johns Hopkins University.(Till 2020-05-24)
+ 	-  MyBox external format data file      
+            Download address: https://github.com/Mararsh/MyBox_data/tree/master/COVID19       
+ 	-  COVID-19 historical data from Johns Hopkins University(Global)     
+            Download address: https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series        
+ 	-  COVID-19 daily data from Johns Hopkins University(Global)      
+            Download address: https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_daily_reports        
+ 	-  COVID-19 daily data from Baidu(Global)      
+           Download address: https://voice.baidu.com/act/newpneumonia/newpneumonia/?from=osari_pc_3       
+ 	-  COVID-19 historical data from Tecent(China)           
+            Download address: https://api.inews.qq.com/newsqa/v1/query/pubished/daily/list?       
+ 	-  Except for predefined data, option "Whether replace existed data" can be selected when import.  Predefined data always replace.             
+ 	-  Option "Statistics against dataset"      
+ 	-  Time of all data are changed as “23:59:00”.      
+5. Statistics data:
+ 	-  Option to accumulate date
+ 	-  Option to calculate subtraction statistic for different location levels.
+6. Define, manage, and apply "Condition": 
+ 	-  "Condition" is used for operations of Query, Clear, and Export.
+ 	-  Set conditions in panes:
+ 	  	- “Data Sources Tree”:  Data sets and their different sources are organized a tree.  Multiple nodes can be selected.     
+ 	  	- “Locations Tree”:  All geograhy codes in MyBox are organized as a tree by their subordination relationship. Multiple nodes can be selected.   
+ 	  	- “Times Tree”:  All times involved in Epidemic Reports of MyBox are organized as a tree. Multiple nodes can be selected.   
+ 	  	- "Number of Top Data in Each Day":
+ 	  	  	- Unlimit. Charts will not be displayed. Data are queried as condition.
+ 	  	  	- Valid value:
+ 	  	  		- Data are queried as condition, and then be truncated as top data of each day, by which charts and data are displayed.
+ 	  	  		- "Time Descending" is always as the first ordering element automactically.
+ 	  	  		- At least one more column should be picked as ordering element.
+ 	  	  		- Beside "Time Descending", the first ordering element is called "major quering attribute". 
+ 	  	- Elements of ordering：
+ 	  	  	- Support multiple selection 
+ 	  	  	- Sequences can be adjusted
+                "Number of Top Data in Each Day" and "Elements of ordering" work for Query and Export, and not for Clear.   
+ 	-  Edit condition: title, where, order by, fetch, "Number of Top Data in Each Day"(0 or -1 means Unlimit), which are combined together as the final condition.
+ 	-  Manage conditions: Add/Delete/Modify.
+ 	-  Conditions ever executed are saved automatically.
+	-  Recently visited conditions are listed in pop window of the buttons.
+7. Query data:
+ 	-  Define and manage query conditions.
+ 	-  Current query condition is displayed in "Information" tab.
+ 	-  Data which satisfy condition are displayed in pages of data table.        
+ 	-  Data rows are shown in different colors accoding to column "source".
+8. Display charts:
+ 	-  Only when query condition satisfies requirements, charts are displayed. Charts' data are always "Daily top data" and have "Major query attribute".
+ 	-  Beside "Major query attribute" , more attribues can be selected, to display multiple dimension data in same chart, or show multiple charts at same time.
+ 	-  Chart type: horizontal bars, vertical bars, horizontal lines, vertical lines, pie, map.
+ 	-  When there are  multiple times in data，charts are animated. Data charts of each time are displayed frame by frame in time ascending.
+ 	-  For animated charts, support Pause/Continue, Jump to frame of a time, Last frame, Next frame, setting interval.
+ 	-  Common settings, which take effect immediately：
+ 	  	- Legend location: not display, top, bottom, left, right.
+ 	  	- Value's label: name and value, value, name, not display, pop
+ 	  	- Whether display: category axis, horizontal grid lines, vertical grid lines
+ 	  	- Number axis: Cartesian Cordinate, Square Root Cordinate, Logarithmic E Cordinate, Logarithmic 10 Cordinate.    
+ 	  	- Font size
+ 	  	- Parameters of map: level, layers, language
+ 	-  Snap chart.
+9. Delete data:
+ 	-  Define and manage deletion condition.
+ 	-  Predefined data can not be deleted.
+10. Export data:
+ 	-  Define and manage export condition.
+ 	-  Select formats: csv, xml, json, xlsx, html.
+ 	-  Select maximum lines to split files.
+ 	-  Export current data page.
+11. Settings:
+ 	-  Snap dpi, maximum width of snapped animated images, time to loading chart's data.                       
+           These parameters are related to memory usage and computer's calculation capacity.                           
+ 	-  Customize colors of data rows as column "source". Provide "Default" and "Random" buttons.
+ 	-  Customize colors of data values in charts. Provide "Default" and "Random" buttons.
+ 	-  Customize colors of location values in charts. Provide "Random" buttons.
+
+![Snap-epidemicReport](https://mararsh.github.io/MyBox/snap-epidemicReport-en.jpg)    
+
+
+### Matrices Calculation <a id="matrixTool"></a>     
+1. Edit matrix data:
+	-  Filter special characters in input/pasted data to fit for data in some format.
+	-  Convert current matrix data into row vector, column vector, or matrix in defined columns number automatically.
+	-  Generate identify matrix, random matrix, or random square matrix automatically.
+2. Unary matrix calculation: Transpose, Row Echelon Form, Reduced Row Echelon Form, Determinant By Elimination, Determinant By Complement Minor, Inverse Matrix By Elimination, Inverse Matrix By Adjoint, Matrix Rank, Adjoint Matrix, Complement Minor, Normalize, Set Decimal Scale, Set As Integer, Multiply Number, Divide By Number, Power.
+3. Binary matrices calculation: Plus, Minus, Hadamard Product, Kronecker Product, Horizontally Merge, Vertically Merge.
+	
 ### Create Barcodes<a id="createBarcodes" />
 1. Supported 1-d barcodes: Code39, Code128, Codabar, Interleaved2Of5, ITF_14, POSTNET, EAN13, EAN8, EAN_128, UPCA, UPCE,
         Royal_Mail_Customer_Barcode, USPS_Intelligent_Mail
@@ -458,97 +739,6 @@ Recognizing texts in image/PDF(OCR) works only on Windows currently.
 2. Support MD2, MD5, SHA-1, SHA-224, SHA-256, SHA-384, SHA-512/224, SHA-512/256, SHA3-224, SHA3-256, SHA3-384, SHA3-512.    
 
 
-### General Management Base of Data Table<a id="dataManage" />    
-1. Add/Delete/Edit/Clear/Refresh
-2. Pagination
-3. Export/Import
-4. Export as html     
-
-### Location in Map<a id="locationInMap" />      
-1. Base on GaoDe Map.
-2. Query and display location data by clicking map, inputting address, or inputting coordinate. 
-3. Set markers as: point(bubble), circle, or any image. Markers size can be set.  
-4. Set texts as: none, coordinate, or address.
-5. Pop detailed location information when put mouse upon marker. Geography code is supported only for addesses in China.
-6. Map layers: standard, satellite, roadnet, traffic.  Roadnet layer and traffic layer are only supported for China. Satellite layer is supported for part of foreign addresses. Opacity can be set for each map layer.  
-7. Set map language as:  Chinese, English, Chinese and English.        
-
-### Geography Code<a id="geographyCode" />      
-1. Query and display location in map.
-2. Example: all countries and Chinese provinces/citis/districts.      
-3. Migration. Errors and missed are fixed.  Suggestion: Export your data, clear data, load exmaple data, and then import your data if need.         
-Updated example data of Geography Codes are important to table "Epidemic Reports".                       
-If user wrote some data in v6.1, existed data will be exported when this interface is opened at first time, and the path will be opened. User can import previous data.              
-    
-
-### Location Data<a id="locationData" />      
-1. Attributes: data set, data label, address, longitude, latitude, altitude, precision, speed, data value, data size, data time, data image, data comments. Time of BC is supported.   
-2. Example:  China Earlier Cultures(incomplete).       
-
-### Location Data in Map<a id="locationDataInMap" />      
-1. Display data distribution in map. Data values can be used as map markers/texts/pops.
-2. Set markers as: point(bubble), circle, any image, or data image.  
-3. Set texts as: none, coordinate, address, data label, data value, data size, data time.
-4. Pop information: ：coordinate, address, data label, data value, data size, data time, data comments, data image.          
-
-### Epidemic Reports<a id="epidemicReport" />      
-1. Data definition:
-	-  Base attributes: data Set, time, level, (label, comments).
-	-  Geography attributes:  country, province, city,  longitude, latitude.     
-            Table "Geography Code" will be referred when data are handled, but it is not depended. The rule is avoiding foreign key by redundant data. 
-	-  Value attributes: confirmed, suspected, healed, dead.
-	-  Statistic attributes: increased confirmed, increased suspected, increased healed, increased dead, healed ratio, dead ratio .
-	-  Statistic data: total values of China, total values of global.
-2. Input Data:
-	-  Button "Add",  or double click row, to open form to fill in each field of one report.    
-	-  Button "Epidemic Reports of Chinese Provinces": to display sheet to input data of Chinese provinces for specific data set and specific time.  
-	-  Button "Epidemic Reports of Global": to display sheet to input data of global for specific data set and specific time.  
-	-  Button "Examples", to import  historical data of Chinese provinces/cities/districts and global between 2020-1-20 and 2020-2-21.
-	-  Button "Fetch Data About New Coronavirus Pneumonia",  to download latest data and historical data from internet.   
-	-  Button "MyBox Internet Data Path",  to download and import formatted data which will be updated.   
-	-  Button "Import",  to write the data of an external file into table.  (Exported txt file can be imported directly or after edited)      
-           Data file can include the auto-increased field "dataid" or not.     
-	-  Button "Fill in data holes", to add missed data as previous days automatically. Filled data are shown in different color.      
-	-  Do not input same data more than one time. This table can not judge whether the data are same and always write data as new ones.   
-3. Analyse Data:
-	-  Query Tree: 
- 	  	- Include 3 dimensions: data set, time, location.     
- 	  	- Location data are in 4 levels: global, countries, provinces, cities/districts.       
-                   Support  structure of "Country-cities" which does not include province level and is used by countries other than China.      
- 	  	- Node "Except for China": query and display data of countries other than China.     
- 	  	- Node "Filled Data": Query and edit the filled data. Change them as normal status by editing or click button "Sure".    
-	-  Click node in Query Tree:
- 	  	- Reports will be shown in "Data" table in the right
- 	  	- Reports in charts are shown in "Charts Data" table
- 	  	-  SQL statements are displayed above the 2 tables.
-	-  When time is determined, locations-based charts are displayed, including: bar charts, pies charts, and map. 
-	-  When time is not determined, time-based charts are displayed, including: line charts, dynamical bar charts, and dynamical map. 
-	-  Checkbox "Label", to set whether display values in the charts. 
-	-  Checkbox "Legend", to set whether display legends in the charts. 
-	-  "Interval", to set duration of frames in dynamical charts and dynamical map. 
-4. Delete Data:
-	-  Button "Delete": to delete selected rows in right "data" table.  
-	-  Button "Clear": to delete selected node in left tree. Example, when a date time is selected, then clearing is against all data of this node.    
-5. Output Data:
-	-  Button "Export": to write current reports of "data" table into external files, in formats txt/html/json/xml/xlsx(Excel2007).    
-            Format in txt can be imported directly or after edited.        
-            The exported data do not include the auto-increased field "dataid".       
- 	-  Button "html": to save current reports in "Charts Data" table and all current charts as a html file, and open it.      
-            Dynamical charts and map will be saved as animated gif.         
-            Snap dpi can be set.  Lots of memory may cost when high dpi is set. 96 dpi is enough for common screen.      
-6. Data Statistic:   
-	-  Calculating statistic may cost long time, so suggest to do statistic only when data are changed.     
-	-  Checkbox  "Statistic for each loading": if selected, statistic will be run once data is reloaded.    
-	-  Button "Statistic": to calculate statistic at once. Suggest click this button after data are changed.     
-7. Languages:
-	-  When write data of "Epidemic Reports", table "Geography Code" will be referred. Both of them are related to languages. So make sure importing their examples in same language interface.      
-           Example, example data of  "Geography Code" are imported in English interface, then example data of "Epidemic Reports" should be imported in English interface too.    
-	-  Watch data in same langauge interface as importing lanaguage.   
-            Examlpe,  example data of "Epidemic Reports" are generated in English interface, then watch the data in English interface.     
-	-  In location data, countries and provinces are Internationalized, that different values are written in different language interfaces. But cities are still in Chinese.   
-8. Migration. This table is improved. Suggestion: Export your data, clear data, load exmaple data, and then import your data if need.        
-If user wrote some data in v6.1, existed data will be exported when this interface is opened at first time, and the path will be opened. User can import previous data.          
-
 
 ### Fetch Data About "New Coronavirus Pneumonia"<a id="epidemicReportFetch" />
 1. Extract data in Baidu page and get latest in-time data of chinese provinces/cities/districts and other countries. Suggest run it daily.  
@@ -559,41 +749,6 @@ If user wrote some data in v6.1, existed data will be exported when this interfa
 Notice: The 2 data sources may change or become invalid in future.       
 
 ## File Tools <a id="fileTools"></a>     
-
-### Edit Texts <a id="editText"></a>     
-1. File charset can be either detected automatically or set manually. Target file charset can be selected to implement encoding conversion. BOM setting is supported.
-2. Detect line break automatically. Convert line break. Show lines number. 
-3. Support LF(Unix/Linux), CR(Apple), and CRLF(Windows).
-4. Find and replace. In current page, or in whole file. Counting. Support regular expression.
-5. Locate. Go to position of specified character or specified line.
-6. Filter lines. By “Include One”, “Not Include All”, “Include All”, or “Not Include Any”.   Support regular expression.
-7. Cumulative filter. Filtered results can be saved. Select whether include lines number.
-8. Hexadecimal codes according file's charset can be viewed, scrolled, and selected synchronously.
-9. Paginate. Fit for viewing or editing very large file, such as logs in size of several GBs.
-	-  Set page size.
-	-  Pages navigation bar
-	-  Load and display first page, and scan the file in background to count characters number and lines number. 
-	   Part of functions are unavaliable while counting. Interface will be refreshed automatically after counting process is complete.
-	-  Make sure correction of finding, replacing, and filtering of strings that are across pages.
-10. General functions of editing, like copy/paste/cut/delete/selectAll/undo/redo/recover. And their shortcuts.
-
-### Edit Bytes <a id="editBytes"></a>     
-1. Bytes are expressed as 2 hexadecimal characters. All blanks, line breaks, and invalid values are ignored.
-2. Input boxes of general ASCII characters.
-3. Break lines, which is only for display and has not actual effect. By bytes number or by some defined bytes.
-4. Find and replace. In current page, or in whole file. Counting. Support regular expression.
-5. Locate. Go to position of specified character or specified line.
-6. Filter lines. By “Include One”, “Not Include All”, “Include All”, or “Not Include Any”.  Support regular expression.
-7. Cumulative filter. Filtered results can be saved. Select whether include lines number.
-8. Select charset to decode bytes which can be viewed, scrolled, and selected synchronously.
-9. Paginate. Fit for viewing or editing very large file, such as binary file in size of several GBs.
-	-  Set page size.
-	-  Pages navigation bar
-	-  Load and display first page, and scan the file in background to count bytes number and lines number. 
-	   Part of functions are unavaliable while counting. Interface will be refreshed automatically after counting process is complete.
-	-  Make sure correction of finding, replacing, and filtering of bytes group that are across pages. 
-	   When break lines by bytes number, crossing pages need not concerned.
-10. General functions of editing, like copy/paste/cut/delete/selectAll/undo/redo/recover. And their shortcuts.
 
 ### Manage Files/Directories <a id="directoriesArrange"></a>     
 1. Find, Delete, Copy, Move, Rename.
@@ -615,17 +770,13 @@ Notice: The 2 data sources may change or become invalid in future.
 ### Check Redundant Files<a id="filesRedundancy" />  
 1. Find duplicated files according to MD5.     
 2. Files tree is displayed to help user delete redundant files.     
-3. Deletion can be done while checking is running.       
-
-
+3. Deletion can be executed while checking is running.       
 
 ### Others <a id="fileOthers"></a>     
-1. Convert files' charset in batch.
-2. Convert files' line break in batch.
-3. Split file, by files number, by bytes number, or by start-end list.
-4. Merge files.
-5. Compare files(bytes).   
-6. When operate in batch, select files by extension, file name, file size, or modified time. Regular expression is supported.
+1. Split file, by files number, by bytes number, or by start-end list.
+2. Merge files.
+3. Compare files(bytes).   
+4. When operate in batch, select files by extension, file name, file size, or modified time. Regular expression is supported.
 
 ## Media Tools <a id="MediaTools"></a>     
 
@@ -647,6 +798,8 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 2. Add/Delete items in playlists.
 3. Read medias information, including duration, audio encoding, and video encoding.   
 
+![Snap-mediaPlayer](https://mararsh.github.io/MyBox/snap-mediaPlayer-en.jpg)       
+
 ### Wrap Functions of ffmpeg<a id="ffmpeg" />
 1. Convert videos/audios in batch - Files/DIrectories
 2. Convert videos/audios in batch - Streams and medias information
@@ -659,6 +812,9 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 9. Read information of ffmpeg, like version, supported formats/codecs/filters, and query with customized parameters.    
 Notice: This set of functions is based on ffmpeg, and user need download ffmpeg by yourself. (Suggest to use static version)
 
+![Snap-makeMedia](https://mararsh.github.io/MyBox/snap-makeMedia-en.jpg)       
+
+
 ### Game-Elimination<a id="gameElimination" />     
 1. Options about chesses images, number, size, effects like dropshadow or arc.     
 2. Chesses can be predefined images, user defined images, or colors.
@@ -670,18 +826,17 @@ Notice: This set of functions is based on ffmpeg, and user need download ffmpeg 
 8. Button "Help Me": prompt valid step. 
 9. Button "Play Automatically": click to play by compute and click again to stop it.      
 
+![Snap-game](https://mararsh.github.io/MyBox/snap-game-en.jpg)       
+
+
 ### Others<a id="mediaOthers" />
 1. Monitor images in system clipboard and have user save/view them. Lossless or compression type can be selected.
 2. Alarm clocks, including options of time and music. Support rings of “Meow”, wav files, and mp3. Can run in background.
 
+![Snap-snap](https://mararsh.github.io/MyBox/snap-snap-en.jpg)       
+
 
 ## Network Tools <a id="netTools"></a>     
-
-### Html Editor <a id="htmlEditor"></a>     
-1. Edit local web pages or online pages in rich text. (Not support FrameSet)
-2. Edit Html codes directly. (Support FrameSet)
-3. Web browser to view contents of Editors or load the online page. Support history browsing, font zooming 、and snapshoting of the whole page as an image or a PDF file.
-4. Convert to Markdown synchronously。
 
 ### Web Browser<a id="webBrowser" />
 1. Display pages in multiple tabs
@@ -695,18 +850,6 @@ Notice: This set of functions is based on ffmpeg, and user need download ffmpeg 
 3. Download and install cerificates of any websites.
 4. Delete certifcates in keystore/truststore.
 5. Backup keystore/truststore automatically when update.   
-
-### Edit Markdown<a id="markdownEditor" />
-1. Provide buttons to help inputting formats.
-2. Convert to html synchronously. Options supported.
-3. Convert to text synchronously.
-4. Find and replace. Support regular expression.
-5. Locate. Go to position of specified character or specified line.
-
-### Conversion between html and Markdown<a id="htmlMarkdownConversion" />
-1. Conversion from html to Markdown in batch.    
-2. Conversion from Markdown to html in batch.   
-
 
 ### Manage Downloads<a id="manageDownloads" />
 1. Manage downloads tasks in table and update progress when receive data.   
@@ -782,6 +925,13 @@ Developers need notice: JavaFx screen is not same as physical screen and has dif
 
 
 # Development Logs <a id="devLog"></a>       
+2020-5-25 v6.3  Redesign  "Geography Codes" and "Epidemic Reports".        
+Provide selections of audio parameters in Audio/Vedio Convertor.           
+Provide Common Chinese Colors and Common Japanese Colors.      
+Solved problems.  Cursor should stay orginial location after saving in Text Editor. Option “Count dir size” may cause some batch operations fail.      
+This version is for my mom. Wish all mothers loving and being loved.                    
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3)        
+
 2020-3-3 v6.2.1  Improve "Epidemic Reports".  Node "Except for China": query and display data of countries other than China.            
 Filled Data are shown in different color.  Change filled data as normal status by editing or click button "Sure".      
 Support  structure of "Country-cities" which does not include province level and is used by countries other than China.      
@@ -1104,27 +1254,6 @@ This tool might fail to work when weibo would change the accessing channel of pa
 
 [Closed requirements/bugs not in any version](https://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+no%3Amilestone)    
 
-# Main Interface
-
-![Snapshot 1](https://mararsh.github.io/MyBox/1-en.jpg)
-
-![Snapshot 2](https://mararsh.github.io/MyBox/2-en.jpg)
-
-![Snapshot 3](https://mararsh.github.io/MyBox/3-en.jpg)
-
-![Snapshot 4](https://mararsh.github.io/MyBox/4-en.jpg)
-
-![Snapshot 5](https://mararsh.github.io/MyBox/5-en.jpg)
-
-![Snapshot 6](https://mararsh.github.io/MyBox/6-en.jpg)
-
-![Snapshot 7](https://mararsh.github.io/MyBox/7-en.jpg)
-
-![Snapshot 8](https://mararsh.github.io/MyBox/8-en.gif)
-
-![Snapshot 9](https://mararsh.github.io/MyBox/9-en.jpg)
-
-![Snapshot 10](https://mararsh.github.io/MyBox/10-en.gif)
 
 
 

@@ -1,22 +1,27 @@
-# [ReadMe in English](https://github.com/Mararsh/MyBox/tree/master/en)
+# [ReadMe in English](https://github.com/Mararsh/MyBox/tree/master/en)  ![ReadMe](https://mararsh.github.io/MyBox/iconTips.png)   
 
 # MyBox：简易工具集
-这是利用JavaFx开发的图形化界面程序，目标是提供简单易用的功能。免费开源。     
+这是利用JavaFx开发的图形化桌面应用，目标是提供简单易用的功能。免费开源。     
 
-注意：正在开发的v6.3将重新设计“地理代码”和“疫情报告”。
-建议不要用现在的版本录入你自己的数据，因为这一次的新版本可能无法保证数据迁移（但是仍会尽可能帮助用户把数据导出为新表格式）。非常抱歉！   
-
+## 新内容
+2020-5-25 版本6.3  重新设计和实现”地理编码“和”疫情报告“。        
+音/视频转换时提供音频参数的选择。       
+提供常用中国颜色和常用日本颜色。      
+解决问题：文本编辑保存后光标应留在原地。选项”为目录下文件计数“可能使批处理失败。            
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3)      
+ 
 ## 下载与运行
 每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases?)目录下（点击上面的`releases`页签）。[新内容](#devLog)         
+  
 
 ### 自包含程序包   
 自包含的程序包无需java环境、无需安装、解包可用。（解包的目录名不要包含汉字）  
   
 | 平台 | 链接 | 大小 | 启动文件 |    
 | --- | --- | --- |  --- |   
-| win | [MyBox-6.2.1-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.2.1/MyBox-6.2.1-win-exe.zip)  | 258MB | MyBox.exe |       
-| linux | [MyBox-6.2.1-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.2.1/MyBox-6.2.1-linux.tar.gz)  | 217MB  | bin/MyBox  |     
-| mac | [MyBox-6.2.1-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.2.1/MyBox-6.2.1-mac.dmg)  | 218MB  |  MyBox-6.2.1.app   |   
+| win | [MyBox-6.3-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3/MyBox-6.3-win-exe.zip)  | 259MB | MyBox.exe |       
+| linux | [MyBox-6.3-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.3/MyBox-6.3-linux.tar.gz)  | 218MB  | bin/MyBox  |     
+| mac | [MyBox-6.3-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.3/MyBox-6.3-mac.dmg)  | 220MB  |  MyBox-6.3.app   |   
 
 双击或者用命令行执行包内的启动文件即可运行程序。可以把图片/文本/PDF文件的打开方式关联到MyBox，这样双击文件名就直接是用MyBox打开了。
 （目前无法双击打开路径包含汉字的文件） 
@@ -26,16 +31,16 @@
  
 | 平台 | 链接 | 大小 | 运行需要 |    
 | --- | --- | --- |  --- |   
-| win | [MyBox-6.2.1-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.2.1/MyBox-6.2.1-win-jar.zip)  | 145MB | Java 13.0.1或更高版本 |    
-| linux | [MyBox-6.2.1-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.2.1/MyBox-6.2.1-linux-jar.zip)  | 152MB  | Java 13.0.1或更高版本 |    
-| mac | [MyBox-6.2.1-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.2.1/MyBox-6.2.1-mac-jar.zip)  |  148MB  | Java 13.0.1或更高版本 |    
+| win | [MyBox-6.3-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3/MyBox-6.3-win-jar.zip)  | 145MB | Java 13.0.1或更高版本 |    
+| linux | [MyBox-6.3-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3/MyBox-6.3-linux-jar.zip)  | 152MB  | Java 13.0.1或更高版本 |    
+| mac | [MyBox-6.3-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3/MyBox-6.3-mac-jar.zip)  |  149MB  | Java 13.0.1或更高版本 |    
     
 执行以下命令来启动程序：
-<PRE><CODE>     java   -jar   MyBox-6.2.1.jar</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-6.3.jar</CODE></PRE>
 程序可以跟一个文件名作为参数、以用MyBox直接打开此文件。例如以下命令是打开此图片：
-<PRE><CODE>     java   -jar   MyBox-6.2.1.jar   /tmp/a1.jpg</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-6.3.jar   /tmp/a1.jpg</CODE></PRE>
 
-### 其它下载地址  
+### 其它下载地址     
 从云盘下载：  https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F     
 从sourceforge下载：https://sourceforge.net/projects/mara-mybox/files/     
 
@@ -43,23 +48,25 @@
 自包含包：无法在包含非英文字符的路径下启动；而且无法双击打开包含汉字的文件。已向jpackage开发组报告这个问题：
 [JDK-8232936](http://bugs.java.com/bugdatabase/view_bug.do?bug_id=JDK-8232936) 
 
-本版本仍未能支持在Linux/Mac上文字识别，原因是：所依托的tesseract库与各种平台紧密相关，没有统一的打包途径。   
+本版本仍未能支持在Linux/Mac上文字识别，原因是：所依托的tesseract库与各种平台紧密相关，没有统一的打包途径。     
 时间有限，目前暂搁此需求。
 
+## 版本迁移   
+版本v6.3是“截断版本”：只兼容前一个版本v6.2.1，如果用户需要保留v6.2.1之前版本的数据，需要先迁移至v6.2.1，再迁移至v6.3。    
+第一次运行v6.3时，v6.2.1中的数据“地理编码”和“疫情报告”将被自动导出为v6.3的格式文件、然后表格被重置。用户自行决定是否将旧数据导入新版本。   
 
-# 资源地址
-项目主页：https://github.com/Mararsh/MyBox
+如果由于以前版本的存在而导致新版本无法正常启动/运行，可以将现有数据目录改名以使新数据目录被自动生成。   
 
-源代码和编译好的包：https://github.com/Mararsh/MyBox/releases
-
-在线提交软件需求和问题报告：https://github.com/Mararsh/MyBox/issues
-
-云盘地址：https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F
-
-在线帮助：https://mararsh.github.io/MyBox/mybox_help_zh.html
-
-sourceforge:  https://sourceforge.net/projects/mara-mybox/files/
-
+# 资源地址     
+| 内容 | 链接 | 
+| --- | --- |     
+| 项目主页 | https://github.com/Mararsh/MyBox |    
+| 源代码和编译好的包 | https://github.com/Mararsh/MyBox/releases |    
+| 在线提交软件需求和问题报告 | https://github.com/Mararsh/MyBox/issues |    
+| 数据 | https://github.com/Mararsh/MyBox_data |    
+| 镜像 | https://sourceforge.net/projects/mara-mybox/files/ |        
+| 云盘 | https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F |    
+| 在线帮助 | https://mararsh.github.io/MyBox/mybox_help_zh.html |    
 
 # 文档    
 
@@ -71,14 +78,14 @@ sourceforge:  https://sourceforge.net/projects/mara-mybox/files/
 | 用户手册-桌面工具 | 5.0 |  2019-4-16 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-DesktopTools-zh.pdf) |
 | 用户手册-网络工具 | 5.0 |  2019-4-16 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-NetworkTools-zh.pdf) |
 | 开发指南 | 2.0 |  2019-11-18 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-DevGuide-2.0-zh.pdf) |
-| 快捷键 | 5.9 |  2019-12-21 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts.html) |
-| 开发日志 | 6.2.1 |  2020-3-3 | [html](#devLog) |
+| 快捷键 | 6.3 |  2020-5-25 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts.html) |
+| 开发日志 | 6.3 |  2020-5-25 | [html](#devLog) |
 
 
 # 实现基础
 MyBox基于以下开源软件：  
 
-| 软件 | 角色 | 链接 |  
+| 名字 | 角色 | 链接 |  
 | --- | --- | --- | 
 | JDK | Java语言 | http://jdk.java.net/13/   |
 |   |   | https://www.oracle.com/technetwork/java/javase/downloads/index.html  |   
@@ -89,12 +96,12 @@ MyBox基于以下开源软件：
 | jpackage | 自包含包 | http://jdk.java.net/jpackage/ |     
 | jai-imageio | 图像处理 | https://github.com/jai-imageio/jai-imageio-core |   
 | PDFBox | PDF处理 | https://pdfbox.apache.org/ |   
-| PDF2DOM | PDF转换html | http://cssbox.sourceforge.net/pdf2dom/ |   
+| PDF2DOM | PDF转html | http://cssbox.sourceforge.net/pdf2dom/ |   
 | javazoom | MP3解码 | http://www.javazoom.net/index.shtml |      
 | log4j | 日志处理 | https://logging.apache.org/log4j/2.x/ |      
 | Derby | 数据库 | http://db.apache.org/derby/ |   
-| GifDecoder | 解码不规范的Gif | https://github.com/DhyanB/Open-Imaging/ |   
-| EncodingDetect | 检测文本编码 | https://www.cnblogs.com/ChurchYim/p/8427373.html |   
+| GifDecoder | 不规范Gif | https://github.com/DhyanB/Open-Imaging/ |   
+| EncodingDetect | 文本编码 | https://www.cnblogs.com/ChurchYim/p/8427373.html |   
 | Free Icons | 图标 | https://icons8.com/icons/set/home |  
 | Lindbloom | 色彩理论 | http://brucelindbloom.com/index.html |  
 | tess4j | OCR | https://github.com/nguyenq/tess4j |  
@@ -109,46 +116,55 @@ MyBox基于以下开源软件：
 | image4j | ico格式 | https://github.com/imcdonagh/image4j |   
 | AutoCommitCell | 提交修改 | https://stackoverflow.com/questions/24694616 （Ogmios） |   
 | 高德 | 地图 | https://lbs.amap.com/api/javascript-api/summary |      
-| 微信 | 素材 | https://weibo.com/3876734080/InmB1aPiL?type=comment#_rnd1582211299665 |      
-| 百度 | 数据 | https://voice.baidu.com/act/newpneumonia/newpneumonia/?from=osari_pc_3 |      
-| 腾讯 | 数据 | https://api.inews.qq.com/newsqa/v1/query/pubished/daily/list?province=湖北&city=武汉 |      
+| 高德 | 坐标 | https://github.com/Mararsh/MyBox_data/tree/master/GeographyCode |      
+| 微信 | 图片素材 | https://weibo.com/3876734080/InmB1aPiL?type=comment#_rnd1582211299665 |      
+| 百度 | COVID-19数据 | https://voice.baidu.com/act/newpneumonia/newpneumonia/?from=osari_pc_3 |      
+| 腾讯 | COVID-19数据 | https://api.inews.qq.com/newsqa/v1/query/pubished/daily/list?province=湖北&city=武汉 |      
 | poi | Excel | https://poi.apache.org |      
-| LabeledBarChart | 图示显示数值 | https://stackoverflow.com/questions/34286062/how-to-clear-text-added-in-a-javafx-barchart/41494789#41494789 (Roland) |      
+| LabeledBarChart | JavaFx图 | https://stackoverflow.com/questions/34286062/how-to-clear-text-added-in-a-javafx-barchart/41494789#41494789 (Roland) |      
+| geonames | 位置数据 | https://www.geonames.org/countries/ |      
+| world-area | 位置数据 | https://github.com/wizardcode/world-area |      
+| 中国国家统计局 | 数据 | http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/ |      
+| JHU | COVID-19数据 | https://github.com/CSSEGISandData/COVID-19 |      
+| 懒人图库 | 色彩数据 | https://tool.lanrentuku.com/color/china.html |      
 
 
 # 当前版本
-当前是版本6.2.1，已实现的特点概述如下:
+当前是版本6.3，已实现的特点概述如下:
 * [跨平台](#cross-platform)
 * [国际化](#international)
-* [PDF工具](#pdfTools)
+* [文档工具](#documentTools)
+    - [PDF工具](#pdfTools)
+    - [编辑文本](#editText)
+    - [编辑字节](#editBytes)
+    - [编辑网页](#htmlEditor)
+    - [编辑Markdown](#markdownEditor)
+    - [其它](#documentOthers)
 * [图像工具](#imageTools)
     - [查看图像](#viewImage)
     - [浏览图像](#browserImage)  
     - [分析图像](#ImageData)  
     - [图像处理](#imageManufacture)   
-    - [颜色管理](#ColorManagement)
-    - [调色盘](#ColorPalette)
-    - [图片转换](#imageConvert)
-    - [识别图像中的文字](#imageOCR)
     - [多帧图像文件](#multiFrames)
     - [多图合一](#multipleImages)
     - [图像局部化](#imagePart)
-    - [大图片的处理](#bigImage)
-    - [其它](#imageOthers)
-* [数据工具](#dataTools)
-    - [矩阵计算](#matrixTool)
+    - [图片转换](#imageConvert)
+    - [识别图像中的文字](#imageOCR)
+    - [颜色管理](#ColorManagement)
+    - [调色盘](#ColorPalette)
     - [色彩空间](#colorSpaces)
+    - [其它](#imageOthers)
+    - [大图片的处理](#bigImage)
+* [数据工具](#dataTools)
+    - [地理编码](#geographyCode)
+    - [地图上的位置](#locationInMap)
+    - [位置应用](#locationData)
+    - [疫情报告](#epidemicReport)
+    - [矩阵计算](#matrixTool)
     - [生成条码](#createBarcodes)
     - [解码条码](#decodeBarcodes)
-    - [地图上的位置](#locationInMap)
-    - [地理编码](#geographyCode)
-    - [位置数据](#locationData)
-    - [地图上的位置数据](#locationDataInMap)
-    - [疫情报告](#epidemicReport)
-    - [读取“新型冠状病毒肺炎”的数据](#epidemicReportFetch)
+    - [消息摘要](#messageDegist)
 * [文件工具](#fileTools)
-    - [编辑文本](#editText)
-    - [编辑字节](#editBytes)
     - [管理文件/目录](#directoriesArrange)
     - [归档/压缩/解压/解档](#archiveCompress)
     - [检查冗余文件](#filesRedundancy)
@@ -160,11 +176,8 @@ MyBox基于以下开源软件：
     - [游戏-消消乐](#gameElimination)
     - [其它](#mediaOthers)
 * [网络工具](#netTools)
-    - [编辑网页](#htmlEditor)
     - [浏览器](#webBrowser)
     - [管理安全证书](#securityCerificates)
-    - [编辑Markdown](#markdownEditor)
-    - [html与Markdown互换](#htmlMarkdownConversion)
     - [管理下载](#manageDownloads)
     - [微博截图工具](#weiboSnap)
 * [设置](#settings)
@@ -176,17 +189,20 @@ MyBox基于以下开源软件：
 ## 跨平台<a id="cross-platform" />   
 MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持Java 13的平台。（MyBox v5.3以前的版本均基于Java 8）
 
-图像识别文字目前只支持windows平台。
+图像识别文字目前只支持windows平台。    
 
 ## 国际化<a id="international" />
-1. 所有代码均国际化。
+1. 所有代码均国际化。目前支持中文、英文。
 2. 可实时切换语言。
-3. 目前支持中文、英文。
-4. 扩展语言只需编辑资源文件。
-5. 支持在线添加语言，提供表格，对照英语翻译。新语言可实时生效。
-6. 新语言的资源文件可共享给别人：把新语言文件复制到数据目录的子目录“mybox_languages”下，则MyBox可即时感知到新语言。
+3. 扩展语言只需编辑资源文件。
+4. 支持在线添加语言，提供表格，对照英语翻译。新语言可实时生效。
+5. 新语言的资源文件可共享给别人：把新语言文件复制到数据目录的子目录“mybox_languages”下，则MyBox可即时感知到新语言。
 
-## PDF工具<a id="pdfTools" />
+![截屏-封面](https://mararsh.github.io/MyBox/snap-cover.jpg)
+
+## 文档工具<a id="documentTools" />
+
+### PDF工具<a id="pdfTools" />
 1. 以网页模式查看PDF文件，可逐页查看和编辑页面和html。标签和缩略图。
 2. 批量将PDF转换为网页，可选：每页保存为一个html、还是整个PDF保存为一个html；字体文件/图像文件是嵌入、单独保存、还是忽略。
 3. 以图像模式查看PDF文件，可设置dpi以调整清晰度，可以把页面剪切保存为图片。
@@ -211,7 +227,63 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 11. 将PDF文件中的文字提取出来，可以定制页的分割行。
 12. 修改PDF的属性，如：标题、作者、版本、修改时间、用户密码、所有者密码、用户权限等
 13. PDF的批量处理。
-14. 可设置PDF处理的主内存使用量。
+14. 可设置PDF处理的主内存使用量。   
+
+![截屏-pdf](https://mararsh.github.io/MyBox/snap-pdf.jpg)       
+
+### 编辑文本<a id="editText" />
+1. 自动检测或手动设置文件编码；改变字符集实现转码；支持BOM设置。
+2. 自动检测换行符；改变换行符。显示行号。
+3. 支持LF（Unix/Linux）、 CR（Apple）、 CRLF（Windows）。
+4. 查找与替换。可只本页查找/替换、或整个文件查找/替换。计数功能。支持正则表达式。
+5. 定位。跳转到指定的字符位置或行号。
+6. 行过滤。条件：“包含任一”、“不含所有”、“包含所有”、“不含任一”。支持正则表达式。
+7. 可累加过滤。可保存过滤结果。可选是否包含行号。
+8. 字符集对应的编码：字节的十六进制同步显示、同步滚动、同步选择。
+9. 分页。可用于查看和编辑非常大的文件，如几十G的运行日志。
+	-  可以设置页尺寸。
+	-  页面导航。
+	-  先加载显示首页，同时后端扫描文件以统计字符数和行数；统计期间部分功能不可用；统计完毕自动刷新界面。
+	-  对于跨页字符串，确保查找、替换、过滤的正确性。
+10. 通用的编辑功能（复制/粘贴/剪切/删除/全选/撤销/重做/恢复）及其快捷键。    
+
+![截屏-textEditor](https://mararsh.github.io/MyBox/snap-textEditor.jpg)        
+
+### 编辑字节<a id="editBytes" />
+1. 字节被表示为两个十六进制字符。所有空格、换行、非法值将被忽略。
+2. 常用ASCII字符的输入选择框。
+3. 换行。仅用于显示、无实际影响。显示行号。可按字节数换行、或按一组字节值来换行。
+4. 查找与替换。可只本页查找/替换、或整个文件查找/替换。计数功能。支持正则表达式。
+5. 定位。跳转到指定的字节位置或行号。
+6. 行过滤。条件：“包含任一”、“不含所有”、“包含所有”、“不含任一”。可累加过滤。可保存过滤结果。可选是否包含行号。支持正则表达式。
+7. 选择字符集来解码：同步显示、同步滚动、同步选择。非字符显示为问号。
+8. 分页。可用于查看和编辑非常大的文件，如几十G的二进制文件。
+	- 可以设置页尺寸。
+	- 页面导航。
+	- 先加载显示首页，同时后端扫描文件以统计字节数和行数；统计期间部分功能不可用；统计完毕自动刷新界面。
+	- 对于跨页字节组，确保查找、替换、过滤的正确性。若按字节数换行，则行过滤时不考虑跨页。
+9. 通用的编辑功能（复制/粘贴/剪切/删除/全选/撤销/重做/恢复）及其快捷键。
+
+
+### 编辑网页<a id="htmlEditor" />
+1. 以富文本方式编辑本地网页或在线网页。（不支持FrameSet）
+2. 直接编辑HTML代码。（支持FrameSet）
+3. 网页浏览器显示编辑器内容、或在线网页。支持前后导览、缩放字体、截图页面为整图或者PDF文件。
+4. 同步转换为Markdown。
+
+### 编辑Markdown<a id="markdownEditor" />
+1. 提供输入格式的按钮。
+2. 同步转换为html，提供转换选项。
+3. 同步转换为文本。
+4. 查找与替换。支持正则表达式。
+5. 定位。跳转到指定的字符位置或行号
+
+### 其它<a id="documentOthers" />
+1. 批量转换文件的字符集。
+2. 批量转换文件的换行符。
+3. html到Markdown的批量转换。
+4. Markdown到html的批量转换。
+
 
 ## 图像工具<a id="imageTools" />
 
@@ -224,13 +296,28 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 6. 查看图像的元数据和属性，可解码图像中嵌入的ICC特性文件。
 7. 同目录下图像文件导览，多种文件排序方式。  
 
+![截屏-imageViewer](https://mararsh.github.io/MyBox/snap-imageViewer.jpg)       
+
 ### 浏览图像<a id="browserImage" />
 1. 同屏显示多图，分别或者同步旋转和缩放。
 2. 旋转可选保存。
 3. 格栅模式：可选文件数、列数、加载宽度
 4. 文件列表模式
 5. 缩略图列表模式
-6. 重命名、删除   
+6. 重命名、删除    
+
+![截屏-imageBrowser](https://mararsh.github.io/MyBox/snap-imageBrowser.jpg)       
+
+
+### 分析图像<a id="ImageData" />
+1. 统计显示图像的数据：各颜色成分的均值/方差/斜率/中值/众数/最大/最小，以及直方图。
+2. 直方图的颜色成分可多选。
+3. 可针对选择的矩形区域做统计显示。
+4. 利用K-Means聚类计算最不同的颜色。
+5. 利用统计量化计算出现最多的颜色。
+6. 图像数据可以被保存为html文件。   
+
+![截屏-imageAnanlyse](https://mararsh.github.io/MyBox/snap-imageAnanlyse.jpg)     
 
 ### 图像处理<a id="imageManufacture" />
 1. 粘贴板。
@@ -279,28 +366,23 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 21. 批量图像处理。
 22. 演示：对于“颜色”、“效果”、“增强”，一键展示各种数据处理的示例。
 
-### 颜色管理<a id="ColorManagement" />
-1. 在颜色库中增/删/改任意色彩。可自动添加139种常用色彩。
-2. 给颜色命名。
-3. 把颜色加入/移出调色板。
-4. 简单/全部显示颜色属性。 
-5. 合并/分列显示颜色属性。
-6. 导出全部或选择的颜色为html。
+![截屏-imageManufacture](https://mararsh.github.io/MyBox/snap-imageManufacture.jpg)       
 
-### 调色盘<a id="ColorPalette" />
-1. 可保存任意色彩。可自动填写139种常用色彩。
-2. 色块直观显示颜色。弹出颜色的名字（如果有）、十六进制值、rgb值、hsb值、不透明值、cmyk值、cie值。
-3. 可以给颜色命名。
-4. 可选把调色盘中颜色导出为html列表。
-5. 可在当前图片、图片历史、或参照图上点击取色。 
 
-### 分析图像<a id="ImageData" />
-1. 统计显示图像的数据：各颜色成分的均值/方差/斜率/中值/众数/最大/最小，以及直方图。
-2. 直方图的颜色成分可多选。
-3. 可针对选择的矩形区域做统计显示。
-4. 利用K-Means聚类计算最不同的颜色。
-5. 利用统计量化计算出现最多的颜色。
-6. 图像数据可以被保存为html文件。   
+### 多帧图像文件<a id="multiFrames" />
+1. 查看、提取多帧图像文件
+2. 创建、编辑多帧tiff文件
+3. 查看/提取/创建/编辑动画Gif文件。可设置间隔、是否循环、图片尺寸    
+
+### 多图合一<a id="multipleImages" />
+1. 图片的合并。支持排列选项、背景颜色、间隔、边沿、和尺寸选项。
+2. 将多个图片合成PDF文件
+3. 添加透明通道   
+
+### 图像局部化<a id="imagePart" />
+1. 图像的分割。支持按个数分割、按尺寸分割、和定制分割。可以保存为多个图像文件、多帧Tiff文件、或者PDF。
+2. 图像的降采样。可以设置采样区域、采样比例。
+3. 提取透明通道      
 
 ### 图片转换<a id="imageConvert" />
 1. 可选图像文件的格式，包括：png,jpg,bmp,tif,gif, ico, wbmp,pnm,pcx, raw。
@@ -335,46 +417,22 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 	-  可选是否合并识别出文字
 5. 内置英文和中文的“最快的”数据文件，在windows上解包即用。用户也可以按需下载更多数据文件。   
 
-### 多帧图像文件<a id="multiFrames" />
-1. 查看、提取多帧图像文件
-2. 创建、编辑多帧tiff文件
-3. 查看/提取/创建/编辑动画Gif文件。可设置间隔、是否循环、图片尺寸    
+![截屏-ocr](https://mararsh.github.io/MyBox/snap-ocr.jpg)       
 
-### 多图合一<a id="multipleImages" />
-1. 图片的合并。支持排列选项、背景颜色、间隔、边沿、和尺寸选项。
-2. 将多个图片合成PDF文件
-3. 添加透明通道   
+### 颜色管理<a id="ColorManagement" />
+1. 在颜色库中增/删/改任意色彩。提供常用网页色彩、常用中国色彩、常用日本色彩。
+2. 给颜色命名。
+3. 把颜色加入/移出调色板。
+4. 简单/全部显示颜色属性。 
+5. 合并/分列显示颜色属性。
+6. 导出全部或选择的颜色为html。
 
-### 图像局部化<a id="imagePart" />
-1. 图像的分割。支持按个数分割、按尺寸分割、和定制分割。可以保存为多个图像文件、多帧Tiff文件、或者PDF。
-2. 图像的降采样。可以设置采样区域、采样比例。
-3. 提取透明通道    
+### 调色盘<a id="ColorPalette" />
+1. 色块显示颜色。弹出颜色的名字（如果有）、十六进制值、rgb值、hsb值、不透明值、cmyk值、cie值。
+2. 在当前图片、图片历史、或参照图上点击取色。 
 
-### 大图片的处理<a id="bigImage" />
-1. 评估加载整个图像所需内存,判断能否加载整个图像。
-2. 若可用内存足够载入整个图像，则读取图像所有数据做下一步处理。尽可能内存操作而避免文件读写。
-3. 若内存可能溢出，则采样读取图像数据做下一步处理。
-4. 采样比的选择：即要保证采样图像足够清晰、又要避免采样数据占用过多内存。
-5. 采样图像主要用于显示图像。已被采样的大图像，不适用于图像整体的操作和图像合并操作。
-6. 一些操作，如分割图像、降采样图像，可以局部读取图像数据、边读边写，因此适用于大图像：显示的是采样图像、而处理的是原图像。  
+![截屏-colors](https://mararsh.github.io/MyBox/snap-colors.jpg)       
 
-### 其它<a id="imageOthers" />
-1. 支持图像格式：png,jpg,bmp,tif,gif,ico,wbmp,pnm,pcx。可读Adobe YCCK/CMYK的jpg图像。
-2. 像素计算器
-3. 卷积核管理器
-
-## 数据工具<a id="dataTools" />
-
-### 矩阵计算<a id="matrixTool" />
-1. 矩阵数据的编辑：
-	-  对于输入或粘贴的数据，过滤特殊字符，以适应带格式的数据。
-	-  自动把当前矩阵数据转变为行向量、列向量、或指定列数的矩阵。
-	-  自动生成单位矩阵、随机方阵、或随机矩阵，可设置行/列数。   
-2. 矩阵的一元计算：转置、行阶梯形、简化行阶梯形、行列式值-用消元法求解、行列式值-用余子式求解
-	、逆矩阵-用消元法求解、逆矩阵-用伴随矩阵求解、矩阵的秩、伴随矩阵、余子式、归一化、
-	、设置小数位数、设为整型、乘以数值、除以数值、幂。
-3. 矩阵的二元计算：加、减、乘、克罗内克积、哈达马积、水平合并、垂直合并。
-	
 ### 色彩空间<a id="colorSpaces" />
 1. 绘制色度图
 	-  标准数据的轮廓线：CIE 1931 2度观察者（D50）、CIE 1964 10度观察者（D50）、CIE RGB色域、ECI RGB色域、sRGB色域、
@@ -416,6 +474,228 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 	-  用户选择或输入源白点和目标白点，工具自动计算色度适应矩阵，并展示计算过程。
 	-  工具以表格和文本显示不同标准光源之间不同的算法的色度适应矩阵。用户可导出数据的文本。   
 
+![截屏-colorDiagram](https://mararsh.github.io/MyBox/snap-colorDiagram.jpg)       
+
+### 其它<a id="imageOthers" />
+1. 支持图像格式：png,jpg,bmp,tif,gif,ico,wbmp,pnm,pcx。可读Adobe YCCK/CMYK的jpg图像。
+2. 像素计算器
+3. 卷积核管理器
+
+ 
+### 大图片的处理<a id="bigImage" />
+1. 评估加载整个图像所需内存,判断能否加载整个图像。
+2. 若可用内存足够载入整个图像，则读取图像所有数据做下一步处理。尽可能内存操作而避免文件读写。
+3. 若内存可能溢出，则采样读取图像数据做下一步处理。
+4. 采样比的选择：即要保证采样图像足够清晰、又要避免采样数据占用过多内存。
+5. 采样图像主要用于显示图像。已被采样的大图像，不适用于图像整体的操作和图像合并操作。
+6. 一些操作，如分割图像、降采样图像，可以局部读取图像数据、边读边写，因此适用于大图像：显示的是采样图像、而处理的是原图像。  
+
+## 数据工具<a id="dataTools" />
+
+### 通用的数据表管理基础<a id="dataManage" />
+1. 增/删/改/清除/刷新数据。
+2. 分页显示数据列表。
+3. 导入/导出数据表。
+
+### 地理编码<a id="geographyCode" />
+1. 数据定义： 
+	-  基本属性：标识、级别、经度、纬度、中国名、英文名、5个代码、5个别名、面积（平方公里）、人口、注释。  
+	-  从属属性：洲、国家、省、市、县、镇、村、建筑。（构成“祖先”）      
+            数据不必逐级从属，即可以跨级定义，例如：一个村庄直接属于南极洲；又如：城市直接属于国家，而没有省/州一级。
+2. 数据约束：
+ 	-  必须有值：标识、级别、中文名或英文名 
+ 	-  “级别”的取值：全球（只能是“地球”）、洲、国家、省（州）、市、县（区）、镇（乡）、村（居委会）、建筑、兴趣点。
+	- 以下方式之一可以确定一个地址：
+ 	  	- 匹配数据标识（由MyBox自动赋值）。这是精确匹配。
+  	  	- 匹配“级别” + “祖先” + “中文名”或“英文名”或任一别名”。这是精确匹配。
+ 	  	- 匹配“级别“ + “中文名”或“英文名”或任一别名”。这是模糊匹配，可能有同级重名导致匹配错误的情况。     
+           匹配名字或者别名时，不区分大小写。           
+           有时候“代码”（code1/2/3/4/5）也可以辅助查找。    
+3. 编辑数据：
+ 	-  数据的“从属关系”只能从位置树上选择。
+ 	-  数据的级别必须比祖先低。
+ 	-  数据必须有中文名或者英文名。
+ 	-  可在地图上选择/显示坐标。
+ 	-  对选择的数据项设置为：“预定义的数据”、或“输入的数据”。
+4. 导入数据：
+ 	-  MyBox内置预定义数据：洲、国家、中国的省/市/县。国家的“面积”和“人口”有值。       
+ 	-  MyBox外部格式文件。            
+            下载地址：https://github.com/Mararsh/MyBox_data/tree/master/GeographyCode
+ 	-  来自geoname.org的位置数据。          
+            下载地址：https://www.geonames.org/countries/
+ 	-  除了预定义，导入时可选替换已存在的数据。预定义数据总是替换。      
+5. 定义、管理、和应用“条件”：
+ 	-  “条件”被用来执行：查询、删除、导出。
+ 	-  在面板中设置条件：
+ 	  	- MyBox中所有的地理编码按从属关系形成一棵位置树，树结点可以多选。
+ 	  	- 选择排序的值和顺序。
+ 	-  编辑条件：标题、where、order by、fetch，它们被拼接成最终条件。
+ 	-  管理条件：增/删/改。
+ 	-  被执行过的条件被自动保存。
+	-  最近执行过的条件被列出在按钮的弹出窗口中。
+6. 查询数据：
+ 	-  可以定义和管理查询条件。
+ 	-  当前查询条件被显示在“信息”页签上。
+ 	-  符合条件的数据分页显示在“数据”表中。        
+ 	-  数据行按“预定义数据“/”输入的数据“显示不同颜色。
+7. 显示图：
+ 	-  当前数据页的地址显示在地图上。
+ 	-  把当前地图和图中数据截取为html，可设置截图分辨率。
+8. 删除数据：
+ 	-  可以定义和管理删除条件。
+ 	-  预定义的数据无法被删除。
+ 	-  被引用的数据（如被“疫情报告”引用）无法被删除。
+9. 导出数据：
+ 	-  可以定义和管理导出条件。
+ 	-  可选导出格式：csv、xml、json、xlsx、html。
+ 	-  可选择文件分割行数。
+ 	-  可导出当前数据页。
+10. 设置：
+ 	-  定制数据行颜色。提供”缺省“和”随机“按钮。
+
+![截屏-geoCode](https://mararsh.github.io/MyBox/snap-geoCode.jpg)       
+
+
+### 地图上的位置<a id="locationInMap" />
+1. 基于高德地图。
+2. 通过点击地图、输入地址（只支持中国地址）、或输入坐标来查询和显示位置数据。  
+3. 标记可为：点（泡泡）、圆形、或任意图片，标记尺寸可设置。
+4. 文字可为：无、坐标、地址。
+5. 鼠标放在标记上则弹出具体的位置信息。只支持中国坐标的地理编码。
+6. 地图图层：标准图层、卫星图层、路网图层、交通图层。
+ 	-  外国坐标不支持路网图层和交通图层。
+ 	-  部分外国坐标支持卫星图层。
+ 	-  可分别设置每个图层的不透明度。  
+7. 地图的语言：中文、英文、中英文。
+
+### 位置数据<a id="locationData" />
+1. 属性： 数据集、数据标签、地址、经度、纬度、高度、精度、速度、方向、数据值、数据规模、数据时间、说明、图像。数据时间支持“公元前”。  
+2. 示例：中国早期文化（未完成）。  
+
+### 地图上的位置数据<a id="locationDataInMap" />
+1. 在地图上显示数据集的分布。  
+2. 标记可为：点（泡泡）、圆形、任意图片、或数据的图像。
+3. 文字可为：无、坐标、地址、数据标签、数据值、数据规模、数据时间。
+4. 弹出信息可包含：坐标、地址、数据标签、数据值、数据规模、数据时间、说明、数据图像。 
+
+### 疫情报告<a id="epidemicReport" />
+1. 数据定义： 
+	-  基本属性：数据集、时间、位置、来源。  
+	-  基础数值：确认、治愈、死亡。
+	-  差值统计：新增确认、新增治愈、新增死亡。
+           由前后两天数据行的差值计算出。
+	-  除值统计：
+	  	- 治愈/确认千分比、死亡/确认千分比。
+	  	- 确认/面积千分比、治愈/面积千分比、死亡/面积千分比。
+	  	- 确认/人口千分比、治愈/人口千分比、死亡/人口千分比。        
+            当位置数据的”面积“/”人口“值非法（零或负数）时，相应的统计值没有意义（零）。      
+            预定义的”国家“数据有合法的”面积“和”人口“值，因此可以得到有意义的统计值。          
+	-  累加统计：
+	  	- 一些国家的数值            
+                  由此国家的省的数值累加计算出。          
+	  	- 洲的数值                
+                  由此洲的国家的数值累加计算出。             
+	  	- 全球的数值              
+                  由各洲的数值累加计算出。        
+2. 数据约束：
+ 	-  必须有值：数据集、时间、位置
+ 	- ”来源“的取值：”输入的数据“、”预定义数据“、”填充的数据“、”统计数据“。
+ 	- ”位置“是”地理编码“的外键，即所引用的位置必须在”地理编码“中有定义。
+ 	- “确认”、“治愈”、“死亡”这三个值至少有一个大于零。
+	- 以下方式之一可以确定一个疫情报告：
+ 	  	- 匹配数据标识（由MyBox自动赋值）。这是精确匹配。
+  	  	- 匹配“数据集 + “日期” + “位置”。这是精确匹配。
+	- 此版本假设，对于确定的数据集、确定的地址，一天只有一个有效数据。
+3. 编辑数据：
+ 	-  输入单个数据时，“位置”只能从位置树上选择。
+ 	-  在“中国省会疫情报告”和"全球疫情报告"界面上，可以填写多个地址的同一数据集同一天的数据。
+ 	-  对选择的多个数据项修改”来源“的取值。
+4. 导入数据：
+ 	-  MyBox内置预定义数据：来自约翰霍普金斯大学的COVID-19数据（直到2020-05-24）。
+ 	-  MyBox外部格式文件。      
+            下载地址：https://github.com/Mararsh/MyBox_data/tree/master/COVID19       
+ 	-  来自约翰霍普金斯大学的COVID-19历史数据（全球）。     
+            下载地址：https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series        
+ 	-  来自约翰霍普金斯大学的COVID-19每日数据（全球）。     
+            下载地址：https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_daily_reports        
+ 	-  来自百度的COVID-19今日数据（全球）。     
+            下载地址：https://voice.baidu.com/act/newpneumonia/newpneumonia/?from=osari_pc_3       
+ 	-  来自腾讯的COVID-19历史数据（中国）。     
+            下载地址：https://api.inews.qq.com/newsqa/v1/query/pubished/daily/list?       
+ 	-  除了预定义数据，导入时可选替换已存在的数据。预定义数据总是替换。      
+ 	-  导入时可选统计数据集。      
+ 	-  导入数据的时间均被改为“23:59:00”。      
+5. 统计数据：
+ 	-  可选累加数据：省/州的数据累加为国家的数据、国家的数据累加为洲的数据、洲的数据累加为地球的数据。
+ 	-  可选差值数据的位置级别。
+6. 定义、管理、和应用“条件”：
+ 	-  “条件”被用来执行：查询、删除、导出。
+ 	-  在面板中设置条件：
+ 	  	- ”数据源树“：数据集、及其不同数据源形成一棵”数据源树“，树结点可以多选。
+ 	  	- ”位置树“：MyBox中所有的地理编码按从属关系形成一棵”位置树“，树结点可以多选。
+ 	  	- ”时间树“：MyBox中所有的疫情报告涉及的时间按年/月/日形成一棵”时间树“，树结点可以多选。
+ 	  	- ”每日首部数据的个数“：
+ 	  	  	- 不限制。不显示图，只按条件查询数据。
+ 	  	  	- 有效值：
+ 	  	  		- 按条件查询数据后、截取每日最前面的数据，以此显示数据和图。
+ 	  	  		- ”时间降序“自动被设置为最前面的排序条件。
+ 	  	  		- 还必须再选择至少一个排序字段
+ 	  	  		- 除了”时间降序“，最前面的排序字段被称为”查询的主属性“
+ 	  	- 排序字段：
+ 	  	  	- 可以多选。
+ 	  	  	- 可以调整顺序。
+                ”每日首部数据的个数“和排序条件只对查询和导出有效，对删除无效。     
+ 	-  编辑条件：标题、where、order by、fetch、”每日首部数据的个数“(-1或0表示不限制)，它们被拼接成最终查询条件。
+ 	-  管理条件：增/删/改。
+ 	-  被执行过的条件被自动保存。
+	-  最近执行过的条件被列出在按钮的弹出窗口中。
+7. 查询数据：
+ 	-  可以定义和管理查询条件。
+ 	-  当前查询条件被显示在“信息”页签上。
+ 	-  符合条件的数据分页显示在“数据”表中。        
+ 	-  数据行按”数据源“显示不同颜色。
+8. 显示图：
+ 	-  当查询条件符合要求时，才会显示图：图数据总是”每日首部数据“，并有一个”查询的主属性“。
+ 	-  除了”查询的主属性“，可以选择更多数据属性，以在图中显示多维数据、或者同时显示多个数据的图。
+ 	-  可选的图类型：水平条图、垂直条图、水平线图、垂直线图、饼图、地图。
+ 	-  当数据的时间不唯一时，图是动态的：按时间升序逐帧显示每个时间的数据图。
+ 	-  对于动态图，可以暂停/继续、设置间隔、停在指定时间的帧、上一帧、下一帧。
+ 	-  常用选择，即时生效：
+ 	  	- 图例位置：不显示、顶、底、左、右
+ 	  	- 数值标签：名和值、值、名、不显示、弹出
+ 	  	- 显示/不显示：类别轴的标签、水平网格线、垂直网格线
+ 	  	- 数值轴：笛卡尔坐标、方根坐标、自然对数坐标、以10为底的对数坐标
+ 	  	- 文字大小
+ 	  	- 地图的参数：级别、图层、语言
+ 	-  截图
+9. 删除数据：
+ 	-  可以定义和管理删除条件。
+ 	-  预定义的数据无法被删除。
+10. 导出数据：
+ 	-  可以定义和管理导出条件。
+ 	-  可选导出格式：csv、xml、json、xlsx、html。
+ 	-  可选择文件分割行数。
+ 	-  可导出当前数据页。
+11. 设置：
+ 	-  截图的分辨率、动态截图的最大宽度、加载图数据的时间。       
+           这些参数与内存消耗和计算机计算能力有关。    
+ 	-  按”数据源“定制数据行颜色。提供”缺省“和”随机“按钮。
+ 	-  定制图中数据值的颜色。提供”缺省“和”随机“按钮。
+ 	-  定制图中位置值的颜色。提供”随机“按钮。      
+
+![截屏-epidemicReport](https://mararsh.github.io/MyBox/snap-epidemicReport.jpg)       
+
+### 矩阵计算<a id="matrixTool" />
+1. 矩阵数据的编辑：
+	-  对于输入或粘贴的数据，过滤特殊字符，以适应带格式的数据。
+	-  自动把当前矩阵数据转变为行向量、列向量、或指定列数的矩阵。
+	-  自动生成单位矩阵、随机方阵、或随机矩阵，可设置行/列数。   
+2. 矩阵的一元计算：转置、行阶梯形、简化行阶梯形、行列式值-用消元法求解、行列式值-用余子式求解
+	、逆矩阵-用消元法求解、逆矩阵-用伴随矩阵求解、矩阵的秩、伴随矩阵、余子式、归一化、
+	、设置小数位数、设为整型、乘以数值、除以数值、幂。
+3. 矩阵的二元计算：加、减、乘、克罗内克积、哈达马积、水平合并、垂直合并。
+	
+
 ### 生成条码<a id="createBarcodes" />
 1. 支持的一维码类型： Code39, Code128, Codabar, Interleaved2Of5, ITF_14, POSTNET, EAN13, EAN8, EAN_128, UPCA, UPCE,
         Royal_Mail_Customer_Barcode, USPS_Intelligent_Mail
@@ -434,134 +714,9 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 ### 消息摘要<a id="messageDigest" />
 1. 生成文件或者输入文本的消息摘要   
 2. 支持MD2, MD5, SHA-1, SHA-224, SHA-256, SHA-384, SHA-512/224, SHA-512/256, SHA3-224, SHA3-256, SHA3-384, SHA3-512  
-
-### 通用的数据表管理基础<a id="dataManage" />
-1. 增/删/改/清除/刷新数据。
-2. 分页显示数据列表。
-3. 导入/导出数据表。
-4. 全部或选择导出为html。 
-
-### 地图上的位置<a id="locationInMap" />
-1. 基于高德地图。
-2. 通过点击地图、输入地址（只支持中国地址）、或输入坐标来查询和显示位置数据。  
-3. 标记可为：点（泡泡）、圆形、或任意图片，标记尺寸可设置。
-4. 文字可为：无、坐标、地址。
-5. 鼠标放在标记上则弹出具体的位置信息。只支持中国坐标的地理编码。
-6. 地图图层：标准图层、卫星图层、路网图层、交通图层。外国坐标不支持路网图层和交通图层，部分外国坐标支持卫星图层。可分别设置每个图层的不透明度。  
-7. 地图的语言：中文、英文、中英文。
-
-### 地理编码<a id="geographyCode" />
-1. 在地图上查询和显示定位。
-2. 示例：所有国家和中国省/市/区。  
-3. 迁移。错误和残缺已修正。建议用户先导出自己数据、清除数据、然后加载示例数据、如果需要再把自己的数据导入。 更新了的示例数据对”疫情报告“很重要。   
-若用户在v6.1写入了一些数据，则这一版在这个界面初次打开时，MyBox将导出用户的数据，并打开文件路径。如果需要，用户可以导入上一版的数据。        
-
-### 位置数据<a id="locationData" />
-1. 属性： 数据集、数据标签、地址、经度、纬度、高度、精度、速度、方向、数据值、数据规模、数据时间、说明、图像。数据时间支持“公元前”。  
-2. 示例：中国早期文化（未完成）。  
-
-### 地图上的位置数据<a id="locationDataInMap" />
-1. 在地图上显示数据集的分布。  
-2. 标记可为：点（泡泡）、圆形、任意图片、或数据的图像。
-3. 文字可为：无、坐标、地址、数据标签、数据值、数据规模、数据时间。
-4. 弹出信息可包含：坐标、地址、数据标签、数据值、数据规模、数据时间、说明、数据图像。   
-
-### 疫情报告<a id="epidemicReport" />
-1. 数据定义： 
-	-  基本属性：数据集、时间、级别、（数据标签、说明）。  
-	-  地理属性：国家、省、城市、经度、纬度。
-            数据处理时会参考表“地理代码”，但不依赖它。原则是：用数据冗余避免外键。
-	-  数值属性：确认、疑似、治愈、死亡。
-	-  统计属性：新增确认、新增疑似、新增治愈、新增死亡、治愈率、死亡率。  
-	-  统计数据：中国总计值、全球总计值。  
-2. 数据录入：
-	- 按钮“添加”、或双击数据行，可以填写一个数据的字段值。
-	- 按钮“中国省会的疫情报告”：显示表单，以便输入指定数据集、指定时间的中国省会的疫情数据。
-	- 按钮“全球的疫情报告”：显示表单，以便输入指定数据集、指定时间的全球疫情数据。
-	- 按钮“示例”：导入2020-1-20到2020-3-3的中国省份和市/区的数据以及部分国家的新型冠状病毒肺炎数据。
-	- 按钮“读取新型冠状病毒肺炎的数据”：从网络上获得最新数据和历史数据。
-	- 按钮“MyBox网络数据目录”：存放更新的数据，用户可以下载并导入。
-	- 按钮“导入”：将格式正确的表数据文件的内容写入数据表。（导出的txt格式可以直接导入或编辑后导入）
-           数据文件可以包含或不包含自增字段dataid。
-	- 按钮“填充数据空洞”：按前面的数据自动添加缺失的数据。填充的数据用不同颜色显示。
-	- 不要重复录入相同的数据。此表无法识别出数据是否一样，而总是当作新数据写入。
-3. 数据分析：
- 	- 查询树：
- 	  	- 节点层次包括数据集、时间、位置
- 	  	- 位置数据为四级：全球、国家、省、市/区。支持不包含”省“级的”国家-城市“的结构（除中国以外的其它国家是这种行政层级）。
- 	  	- 节点“除了中国"：查询和显示中国以外的数据
- 	  	- 节点“填充的数据"：用户可以编辑或者点击按钮”确认“来把填充数据改为正常状态。
- 	- 点击查询树的节点：
- 	  	- 相应的数据显示在右边的“数据”表中
- 	  	- 相应的图表数据也显示“图表数据”表中
- 	  	- SQL查询语句显示在表和地图上方。
- 	- 当时间确定时，显示基于位置序列的条图/饼图/地图。
- 	- 当时间不定时，显示基于时间序列的线图/动态条图/多位置线图/动态地图。
- 	- 复选框“标签”：是否在图上显示数据值。
-  	- 复选框“图例”：是否在图上显示图例。
-	- “间隔”：可以设置动态条图和动态地图的每帧时长。
-4. 数据删除：
- 	- 按钮“删除”，用来删除右边“数据”表中被选中的多个数据行。
- 	- 按钮“清除”，用来删除左边查询树上被选中的节点。例如，当一个日期节点被选中时，清除是针对这个日期的所有数据。
-5. 数据导出：
- 	- 按钮“导出”：将当前“数据”表中的内容写入外部文件，格式包括：txt/html/json/xml/xlsx(Excel2007)。
-           其中txt格式可以直接导入或编辑后导入。     
-           导出的数据不包含自增字段dataid。    
- 	- 按钮“显示为html”：将当前“图表数据”表的内容、和当前所有图示保存为html文件。动态条图和动态地图被保存为动态gif。   
-           可以设置截图的像素密度，高于96dpi则会消耗大量内存。
-6. 数据统计：  
- 	- 计算统计属性可能花费较长时间，因此建议只有当数据变化时才做统计。
- 	- 复选框“每次加载都统计”：若选中，则每次加载或刷新数据时，都会先计算统计值。
- 	- 按钮“统计”：对当前所有数据计算统计属性。建议每次数据变化时点击这个按钮。
-7. 语言：  
- 	- 录入“疫情报告”数据时，会参考表“地理代码”， 它们都与语言有关。因此应当用同一种语言导入它们的示例数据。   
-          例如，“地理代码”在英文界面下写入示例数据，则“疫情报告”也应在英文界面下写入示例数据。  
- 	- 导入和观察“疫情报告”数据也应用同一种语言。   
-          例如，“疫情报告”的数据是在英文界面中生成的，则应在英文界面中观察它们。      
- 	- 位置数据中，国家级和省级已经国际化（不同语言界面产生不同值），但是城市级仍是中文。  
-8. 迁移。此数据表结构已改进。建议用户先导出自己数据、清除数据、然后加载示例数据、如果需要再把自己的数据导入。    
-若用户在v6.1写入了一些数据，则这一版在这个界面初次打开时，MyBox将导出用户的数据，并打开文件路径。如果需要，用户可以导入上一版的数据。          
-
-### 读取“新型冠状病毒肺炎”的数据<a id="epidemicReportFetch" />
-1. 解析百度数据页面，读取当前最新实时数据（包含中国省/市/区以及其它国家的数据）。建议每天一次。   
-2. 调用腾讯查询接口，读取从2020-1-20起的中国省/市/区的历史数据。示例中已包含这些数据。 
-3. 地理属性被加到每个数据行中。 
-4. 数据被显示为三种格式：html、json、xml，并可以保存为文件。保存的格式还包括xlsx(Excel2007)格式。
-5. 按钮“导入”：把读取到的数据写入“疫情报告”表中。    
-注意：这两个数据源将来可能变动或失效。     
-
+   
 
 ## 文件工具<a id="fileTools" />
-### 编辑文本<a id="editText" />
-1. 自动检测或手动设置文件编码；改变字符集实现转码；支持BOM设置。
-2. 自动检测换行符；改变换行符。显示行号。
-3. 支持LF（Unix/Linux）、 CR（Apple）、 CRLF（Windows）。
-4. 查找与替换。可只本页查找/替换、或整个文件查找/替换。计数功能。支持正则表达式。
-5. 定位。跳转到指定的字符位置或行号。
-6. 行过滤。条件：“包含任一”、“不含所有”、“包含所有”、“不含任一”。支持正则表达式。
-7. 可累加过滤。可保存过滤结果。可选是否包含行号。
-8. 字符集对应的编码：字节的十六进制同步显示、同步滚动、同步选择。
-9. 分页。可用于查看和编辑非常大的文件，如几十G的运行日志。
-	-  可以设置页尺寸。
-	-  页面导航。
-	-  先加载显示首页，同时后端扫描文件以统计字符数和行数；统计期间部分功能不可用；统计完毕自动刷新界面。
-	-  对于跨页字符串，确保查找、替换、过滤的正确性。
-10. 通用的编辑功能（复制/粘贴/剪切/删除/全选/撤销/重做/恢复）及其快捷键。
-
-### 编辑字节<a id="editBytes" />
-1. 字节被表示为两个十六进制字符。所有空格、换行、非法值将被忽略。
-2. 常用ASCII字符的输入选择框。
-3. 换行。仅用于显示、无实际影响。显示行号。可按字节数换行、或按一组字节值来换行。
-4. 查找与替换。可只本页查找/替换、或整个文件查找/替换。计数功能。支持正则表达式。
-5. 定位。跳转到指定的字节位置或行号。
-6. 行过滤。条件：“包含任一”、“不含所有”、“包含所有”、“不含任一”。可累加过滤。可保存过滤结果。可选是否包含行号。支持正则表达式。
-7. 选择字符集来解码：同步显示、同步滚动、同步选择。非字符显示为问号。
-8. 分页。可用于查看和编辑非常大的文件，如几十G的二进制文件。
-	- 可以设置页尺寸。
-	- 页面导航。
-	- 先加载显示首页，同时后端扫描文件以统计字节数和行数；统计期间部分功能不可用；统计完毕自动刷新界面。
-	- 对于跨页字节组，确保查找、替换、过滤的正确性。若按字节数换行，则行过滤时不考虑跨页。
-9. 通用的编辑功能（复制/粘贴/剪切/删除/全选/撤销/重做/恢复）及其快捷键。
 
 ### 管理文件/目录<a id="directoriesArrange" />
 1. 查找、删除、复制、移动、重命名。
@@ -586,12 +741,10 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 3. 支持边检查边删除。  
 
 ### 其它<a id="fileOthers" />
-1. 批量转换文件的字符集。
-2. 批量转换文件的换行符。
-3. 切割文件。切割方式可以是：按文件数、按字节数、或按起止列表。
-4. 合并文件。
-5. 比较文件（字节）。
-6. 批量处理时，选择文件的方式：扩展名、文件名、文件大小、文件修改时间，支持正则表达式。
+1. 切割文件。切割方式可以是：按文件数、按字节数、或按起止列表。
+2. 合并文件。
+3. 比较文件（字节）。
+4. 批量处理时，选择文件的方式：扩展名、文件名、文件大小、文件修改时间，支持正则表达式。
 
 ## 媒体工具<a id="MediaTools" />
 
@@ -613,6 +766,9 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 2. 增删改播放列表的内容。
 3. 读取所支持媒体格式的信息：时长、音频编码、视频编码
 
+![截屏-mediaPlayer](https://mararsh.github.io/MyBox/snap-mediaPlayer.jpg)       
+
+
 ### 封装ffmpeg的功能<a id="ffmpeg" />
 1. 批量转换音频/视频-文件/目录表
 2. 批量转换音频/视频-流和媒体信息表
@@ -625,6 +781,9 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 9. 读取ffmpeg的信息：版本、格式、支持的编码解码器、支持的滤镜，以及自定义查询参数。    
 注：这一组功能依赖于ffmpeg，需要用户自己下载ffmpeg（建议使用静态版本）。
 
+![截屏-makeMedia](https://mararsh.github.io/MyBox/snap-makeMedia.jpg)       
+
+
 ### 游戏-消消乐<a id="gameElimination" />
 1. 可选棋子的图片、个数、尺寸、显示效果（是否阴影/圆角）。
 2. 棋子可以是预定义图片、用户指定的任意图片、或用户选择的颜色。  
@@ -636,17 +795,17 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 8. “帮我”按钮：为用户提示有效的步骤。
 9. “自动玩”按钮：点击即自动玩游戏、再次点击则停止自动玩。
 
+![截屏-game](https://mararsh.github.io/MyBox/snap-game.jpg)       
+
+
 ### 其它<a id="mediaOthers" />
 1. 记录系统粘贴板中的图像：保存或查看粘贴板中的图像，可选无损图像或压缩类型。
 2. 闹钟，包括时间选项和音乐选项，支持铃音“喵”、wav铃音、和MP3铃音，可以在后端运行。
 
-## 网络工具<a id="netTools" />
+![截屏-snap](https://mararsh.github.io/MyBox/snap-snap.jpg)       
 
-### 编辑网页<a id="htmlEditor" />
-1. 以富文本方式编辑本地网页或在线网页。（不支持FrameSet）
-2. 直接编辑HTML代码。（支持FrameSet）
-3. 网页浏览器显示编辑器内容、或在线网页。支持前后导览、缩放字体、截图页面为整图或者PDF文件。
-4. 同步转换为Markdown。
+
+## 网络工具<a id="netTools" />
 
 ### 浏览器<a id="webBrowser" />
 1. 多页签显示网页
@@ -661,16 +820,6 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 4. 删除密钥库中的证书。
 5. 修改密钥库时自动备份
 
-### 编辑Markdown<a id="markdownEditor" />
-1. 提供输入格式的按钮。
-2. 同步转换为html，提供转换选项。
-3. 同步转换为文本。
-4. 查找与替换。支持正则表达式。
-5. 定位。跳转到指定的字符位置或行号
-
-### html与Markdown互换<a id="htmlMarkdownConversion" />
-1. html到Markdown的批量转换。
-2. Markdown到html的批量转换。
 
 ### 管理下载<a id="manageDownloads" />
 1. 以表格管理下载任务，并按收到的数据实时更新表格。   
@@ -715,7 +864,6 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 2. MyBox的属性
 3. 文档：帮助用户启动下载任务。若数据目录下已有MyBox文档，则MyBox会自动发现它们。
 
-
 ## 配置<a id="Config" />
 
 ### 缺省的配置文件“MyBox.ini”
@@ -745,7 +893,14 @@ Java 9以后已支持HiDPI，控件和字体都会适应当前清晰度配置。
 开发者需要注意的是：JavaFx虚拟屏幕的dpi不同于物理屏幕的dpi，对于窗口元素尺寸的计算还要考虑伸缩比。   
 
 
-# 开发日志<a id="devLog" />     
+# 开发日志<a id="devLog" />      
+2020-5-25 版本6.3  重新设计和实现”地理编码“和”疫情报告“。        
+音/视频转换时提供音频参数的选择。       
+提供常用中国颜色和常用日本颜色。      
+解决问题：文本编辑保存后光标应留在原地。选项”为目录下文件计数“可能使批处理失败。            
+这一版献给我妈。祝所有母亲都爱与被爱。
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3)               
+
 2020-3-3 版本6.2.1  完善疫情报告。节点“除了中国”：查询和显示中国以外的数据。      
 填充的数据用不同颜色显示。编辑填充的数据或点按钮”确认“以把填充数据改为正常状态。        
 支持不包含”省“级的”国家-城市“的结构（除中国以外的其它国家是这种行政层级）。      
@@ -780,7 +935,7 @@ Java 9以后已支持HiDPI，控件和字体都会适应当前清晰度配置。
 改善游戏消消乐：棋子可为任意图片文件或任意颜色；声效可以是任意mp3/wav文件；优化消除算法；“帮我”按钮为用户提示有效的步骤；可自动玩游戏。        
 解决问题：目录操作可能生成“无限嵌套目录”；“将图片和音频合成为视频”：错误处理小于1秒的时长、错误处理多帧图片；“编辑html”在高清屏下截图不完整；
 首次运行时无法打开Markdown文件。        
-这一版献给中国和她的孩子们，他们正在与病魔战斗。期盼春暖花开！      
+这一版献给中国和她的孩子们，他们正在与病魔战斗。期盼春暖花开！     
 [此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.1)      
 
 2020-1-2 版本6.0  图像浏览界面可以方便地弹出大图。    
@@ -1083,28 +1238,6 @@ PDF工具：标签（目录）和缩略图；可修改PDF文件的属性，如�
 2018-06-12 版本1.0 实现功能：将PDF文件的每页转换为一张图片，包含图像密度、类型、格式等选项，并且可以暂停/继续转换过程。    
 
 [未定义版本的已关闭的需求/问题列表](https://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+no%3Amilestone)    
-
-# 主界面
-
-![截屏1](https://mararsh.github.io/MyBox/1.jpg)
-
-![截屏2](https://mararsh.github.io/MyBox/2.jpg)
-
-![截屏3](https://mararsh.github.io/MyBox/3.jpg)
-
-![截屏4](https://mararsh.github.io/MyBox/4.jpg)
-
-![截屏5](https://mararsh.github.io/MyBox/5.jpg)
-
-![截屏6](https://mararsh.github.io/MyBox/6.jpg)
-
-![截屏7](https://mararsh.github.io/MyBox/7.jpg)
-
-![截屏8](https://mararsh.github.io/MyBox/8.gif)
-
-![截屏9](https://mararsh.github.io/MyBox/9.jpg)
-
-![截屏10](https://mararsh.github.io/MyBox/10.gif)  
 
 
 
