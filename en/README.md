@@ -5,7 +5,7 @@ This is desktop application based on JavaFx to provide simple and easy functions
 
 ## What's New
 2020-6-11 v6.3.1  Migrate to java 14.0.1 + javaFx 14.0.1(Except for module "javafx-web") + Netbeans 11.3.        
-Still support migration from loder versions instead of "Truncated Version".               
+Still support migration from lower versions instead of "Truncated Version".               
 Improve table "Geography Codes" to get quicker queries.  Unit of "Area" is changed from "square kilometers" to "square meters".            
 Keys of map can be set.           
 Solved problems. Length of "Recently visited files" is not limited. Values in pie chart of "Epidemic Reports" should be percentage.            
@@ -920,7 +920,7 @@ Developers need notice: JavaFx screen is not same as physical screen and has dif
 
 # Development Logs <a id="devLog"></a>         
 2020-6-11 v6.3.1  Migrate to java 14.0.1 + javaFx 14.0.1(Except for module "javafx-web") + Netbeans 11.3.        
-Still support migration from loder versions instead of "Truncated Version".               
+Still support migration from lower versions instead of "Truncated Version".               
 Improve table "Geography Codes" to get quicker queries.  Unit of "Area" is changed from "square kilometers" to "square meters".            
 Keys of map can be set.           
 Solved problems. Length of "Recently visited files" is not limited. Values in pie chart of "Epidemic Reports" should be percentage.            
