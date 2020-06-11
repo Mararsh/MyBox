@@ -36,7 +36,7 @@ License:    Apache License Version 2.0
                                     <content>
                                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                             <children>
-                                                <TitledPane fx:id="filePane"  maxWidth="1.7976931348623157E308" text="%File" textOverrun="CLIP">
+                                                <TitledPane fx:id="filePane" maxWidth="1.7976931348623157E308" text="%File" textOverrun="CLIP">
                                                     <content>
                                                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="5.0">
                                                             <children>
@@ -77,11 +77,7 @@ License:    Apache License Version 2.0
                                                                                 </Button>
                                                                             </children>
                                                                         </HBox>
-                                                                        <HBox alignment="CENTER_LEFT" spacing="5.0">
-                                                                            <children>
-                                                                                <CheckBox fx:id="saveConfirmCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%ConfirmWhenSave" />
-                                                                            </children>
-                                                                        </HBox>
+                                                                          <CheckBox fx:id="saveConfirmCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%ConfirmWhenSave" />
                                                                         <HBox alignment="CENTER_LEFT" spacing="5.0" />
                                                                     </children>
                                                                 </VBox>
@@ -89,7 +85,7 @@ License:    Apache License Version 2.0
                                                         </VBox>
                                                     </content>
                                                 </TitledPane>
-                                                <TitledPane fx:id="newPane" layoutX="10.0" layoutY="266.0"  maxWidth="1.7976931348623157E308" text="%Create">
+                                                <TitledPane fx:id="newPane" layoutX="10.0" layoutY="266.0" maxWidth="1.7976931348623157E308" text="%Create">
                                                     <content>
                                                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="5.0">
                                                             <children>
@@ -135,7 +131,7 @@ License:    Apache License Version 2.0
                                                         </VBox>
                                                     </content>
                                                 </TitledPane>
-                                                <TitledPane fx:id="saveAsPane"  maxWidth="1.7976931348623157E308" text="%SaveAs">
+                                                <TitledPane fx:id="saveAsPane" maxWidth="1.7976931348623157E308" text="%SaveAs">
                                                     <content>
                                                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="5.0">
                                                             <children>
@@ -199,7 +195,7 @@ License:    Apache License Version 2.0
                                                         </VBox>
                                                     </content>
                                                 </TitledPane>
-                                                <TitledPane fx:id="browsePane" expanded="false"  maxWidth="1.7976931348623157E308" text="%Browse">
+                                                <TitledPane fx:id="browsePane" expanded="false" maxWidth="1.7976931348623157E308" text="%Browse">
                                                     <content>
                                                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                             <children>
@@ -259,7 +255,7 @@ License:    Apache License Version 2.0
                                                         </VBox>
                                                     </content>
                                                 </TitledPane>
-                                                <TitledPane fx:id="tipsPane"  maxWidth="1.7976931348623157E308" text="%Tips">
+                                                <TitledPane fx:id="tipsPane" maxWidth="1.7976931348623157E308" text="%Tips">
                                                     <content>
                                                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                                             <children>

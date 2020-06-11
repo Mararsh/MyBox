@@ -244,6 +244,12 @@ public class DataQueryController extends BaseController {
 
     @FXML
     @Override
+    public void copyAction() {
+        qcid = -1;
+    }
+
+    @FXML
+    @Override
     public void okAction() {
         savedCondition = save();
         if (savedCondition == null) {

@@ -7,6 +7,7 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import mara.mybox.data.FileInformation;
@@ -30,6 +31,8 @@ public class DataImportController extends FilesBatchController {
     protected TabPane tabPane;
     @FXML
     protected Tab sourcesTab, commentsTab;
+    @FXML
+    protected Hyperlink link;
 
     public DataImportController() {
         baseTitle = AppVariables.message("ImportEpidemicReport");

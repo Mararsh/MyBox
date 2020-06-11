@@ -100,7 +100,7 @@ public class EpidemicReportsImportBaiduController extends DataTaskController {
             URL url = new URL(address);
             File pageFile = FileTools.getTempFile(".txt");
             HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-            SSLContext sc = SSLContext.getInstance("SSL");
+            SSLContext sc = SSLContext.getInstance(CommonValues.HttpsProtocal);
             sc.init(null, trustAllManager(), new SecureRandom());
             connection.setSSLSocketFactory(sc.getSocketFactory());
             connection.setHostnameVerifier(trustAllVerifier());

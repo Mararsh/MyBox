@@ -200,7 +200,8 @@ public class TableFloatMatrix extends DerbyBase {
     public static boolean writeExamples() {
         ConvolutionKernel.makeExample();
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
-            for (ConvolutionKernel k : ConvolutionKernel.ExampleKernels) {
+            for (Object o : ConvolutionKernel.ExampleKernels) {
+                ConvolutionKernel k = (ConvolutionKernel) o;
                 String name = k.getName();
                 ResultSet result;
                 try ( PreparedStatement statement = conn.prepareStatement(

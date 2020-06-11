@@ -242,7 +242,7 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
                 treeBox.setDisable(true);
             }
             if (level > 1) {
-                parentCode = TableGeographyCode.getParent(code, true);
+                parentCode = TableGeographyCode.getOwner(code, true);
                 codeSelected(parentCode);
             }
 
@@ -397,6 +397,7 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
             newCode.setAlias4(alias4Input.getText().trim());
             newCode.setAlias5(alias5Input.getText().trim());
             if (selectedCode != null) {
+                newCode.setOwner(selectedCode.getGcid());
                 newCode.setContinent(selectedCode.getContinent());
                 newCode.setCountry(selectedCode.getCountry());
                 newCode.setProvince(selectedCode.getProvince());

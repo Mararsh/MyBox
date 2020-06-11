@@ -167,7 +167,8 @@ public class TableDoubleMatrix extends DerbyBase {
                  Statement statement = conn.createStatement()) {
             conn.setAutoCommit(false);
             String sql;
-            for (ConvolutionKernel k : ConvolutionKernel.ExampleKernels) {
+            for (Object o : ConvolutionKernel.ExampleKernels) {
+                ConvolutionKernel k = (ConvolutionKernel) o;
                 String name = k.getName();
                 sql = " SELECT row FROM Double_Matrix WHERE name='" + stringValue(name) + "'";
                 boolean exist;

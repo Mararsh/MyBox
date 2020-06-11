@@ -90,7 +90,7 @@ public class FilesMergeController extends FilesBatchController {
             }
             byte[] buf = new byte[CommonValues.IOBufferLength];
             int bufLen;
-            FileInformation d = tableData.get(currentParameters.currentIndex);
+            FileInformation d = (FileInformation) tableData.get(currentParameters.currentIndex);
             try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(d.getFile()))) {
                 while ((bufLen = inputStream.read(buf)) != -1) {
                     buf = ByteTools.subBytes(buf, 0, bufLen);

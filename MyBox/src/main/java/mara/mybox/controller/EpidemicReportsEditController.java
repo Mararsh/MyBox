@@ -323,7 +323,8 @@ public class EpidemicReportsEditController extends TableManageController<Epidemi
 
                 @Override
                 protected boolean handle() {
-                    for (EpidemicReport report : tableData) {
+                    for (Object o : tableData) {
+                        EpidemicReport report = (EpidemicReport) o;
                         report.setDataSet(dataset);
                         report.setTime(time);
                         report.setSource(2);

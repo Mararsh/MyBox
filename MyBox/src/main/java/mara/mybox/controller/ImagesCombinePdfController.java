@@ -487,14 +487,15 @@ public class ImagesCombinePdfController extends ImagesListController {
                             document.setVersion(1.0f);
                             int count = 0;
                             int total = tableData.size();
-                            for (ImageInformation source : tableData) {
+                            for (Object source : tableData) {
                                 if (task == null || isCancelled()) {
                                     document.close();
                                     return false;
                                 }
-                                BufferedImage bufferedImage = ImageFileReaders.getBufferedImage(source);
+                                ImageInformation imageInfo = (ImageInformation) source;
+                                BufferedImage bufferedImage = ImageFileReaders.getBufferedImage(imageInfo);
                                 if (bufferedImage != null) {
-                                    PdfTools.writePage(document, font, source.getImageFormat(), bufferedImage,
+                                    PdfTools.writePage(document, font, imageInfo.getImageFormat(), bufferedImage,
                                             ++count, total, pdfFormat,
                                             threshold, jpegQuality, isImageSize, pageNumberCheck.isSelected(),
                                             pageWidth, pageHeight, marginSize, headerInput.getText(), ditherCheck.isSelected());

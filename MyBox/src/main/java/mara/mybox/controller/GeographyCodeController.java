@@ -177,6 +177,7 @@ public class GeographyCodeController extends DataAnalysisController<GeographyCod
             mapController.initSplitPanes();
             mapController.controlRightPane();
 
+//            GeographyCode.exportPredefined();
             String backFile = AppVariables.getSystemConfigValue("GeographyCode621Exported", "");
             if (!backFile.isBlank()) {
                 browseURI(new File(backFile).getParentFile().toURI());

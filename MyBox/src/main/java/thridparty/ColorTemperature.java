@@ -1,14 +1,9 @@
-package mara.mybox.color;
+package thridparty;
 
 /**
- * @Author Mara
- * @CreateDate 2019-6-7 8:42:33
- * @Version 1.0
- * @Description
- * @License Apache License Version 2.0
- *
- * Reference: http://brucelindbloom.com/index.html?Eqn_XYZ_to_T.html
+ * @Author http://brucelindbloom.com/index.html?Eqn_XYZ_to_T.html
  * http://brucelindbloom.com/index.html?Eqn_T_to_xy.html
+ *  *
  */
 public class ColorTemperature {
 

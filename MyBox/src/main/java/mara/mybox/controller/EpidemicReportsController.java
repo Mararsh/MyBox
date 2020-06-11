@@ -837,7 +837,7 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
     @FXML
     @Override
     public void editAction() {
-        EpidemicReport selected = tableView.getSelectionModel().getSelectedItem();
+        EpidemicReport selected = (EpidemicReport) tableView.getSelectionModel().getSelectedItem();
         if (selected == null) {
             addAction();
             return;

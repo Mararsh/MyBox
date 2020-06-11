@@ -14,6 +14,7 @@ import javafx.stage.Stage;
 import javax.imageio.ImageIO;
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.MyBoxLoadingController;
+import mara.mybox.db.DataMigration;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.DerbyBase.DerbyStatus;
 import mara.mybox.fxml.FxmlStage;
@@ -89,7 +90,7 @@ public class MainApp extends Application {
                             // The following statements should be executed in this order
                             DerbyBase.initTables();
                             AppVariables.initAppVaribles();
-                            if (!DerbyBase.checkUpdates()) {
+                            if (!DataMigration.checkUpdates()) {
                                 cancel();
                                 return null;
                             }

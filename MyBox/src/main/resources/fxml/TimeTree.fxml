@@ -17,5 +17,6 @@ License:    Apache License Version 2.0
       fx:controller="mara.mybox.controller.TimeTreeController">
     <children>
         <ConditionTreeView fx:id="treeView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
+        <CheckBox fx:id="allCheck" mnemonicParsing="false" selected="true" text="%All" />
     </children>
 </VBox>

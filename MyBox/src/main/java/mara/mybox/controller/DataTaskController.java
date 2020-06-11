@@ -22,6 +22,7 @@ public class DataTaskController extends BaseController {
     protected long startTime;
     protected int logsMaxLines, logsTotalLines, logsCacheLines = 200;
     protected boolean cancelled;
+    protected String cancelName;
 
     @FXML
     protected TabPane tabPane;
@@ -35,6 +36,7 @@ public class DataTaskController extends BaseController {
     protected TextField maxLinesinput;
 
     public DataTaskController() {
+        cancelName = "Cancel";
     }
 
     @Override
@@ -45,7 +47,7 @@ public class DataTaskController extends BaseController {
     @FXML
     @Override
     public void startAction() {
-        if (message("Cancel").equals(startButton.getText())) {
+        if (message(cancelName).equals(startButton.getText())) {
             cancelAction();
             return;
         }
@@ -55,7 +57,7 @@ public class DataTaskController extends BaseController {
             }
             initLogs();
             startTime = new Date().getTime();
-            startButton.setText(message("Cancel"));
+            startButton.setText(message(cancelName));
             tabPane.getSelectionModel().select(logsTab);
             task = new SingletonTask<Void>() {
 
@@ -72,7 +74,7 @@ public class DataTaskController extends BaseController {
 
                 @Override
                 protected void whenCanceled() {
-                    updateLogs(message("Canceled"), true);
+                    updateLogs(message(cancelName), true);
                 }
 
                 @Override
@@ -80,7 +82,7 @@ public class DataTaskController extends BaseController {
                     startButton.setText(message("Start"));
                     updateLogs(message("Completed") + " " + message("Cost")
                             + " " + DateTools.showTime(new Date().getTime() - startTime),
-                             true);
+                            true);
                 }
             };
             Thread thread = new Thread(task);

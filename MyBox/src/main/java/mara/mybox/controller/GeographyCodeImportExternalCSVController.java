@@ -13,6 +13,7 @@ import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.TableGeographyCode;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
+import mara.mybox.value.CommonValues;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -26,7 +27,12 @@ public class GeographyCodeImportExternalCSVController extends DataImportControll
 
     public GeographyCodeImportExternalCSVController() {
         baseTitle = AppVariables.message("ImportGeographyCodeExternalCSVFormat");
+    }
 
+    @Override
+    public void initializeNext() {
+        link.setText(CommonValues.MyBoxInternetDataPath
+                + (AppVariables.isChinese() ? "" : "/tree/master/en"));
     }
 
     // level,longitude,latitude,chinese_name,english_name,code1,code2,code3,code4,code5,alias1,alias2,alias3,alias4,alias5,
@@ -48,6 +54,7 @@ public class GeographyCodeImportExternalCSVController extends DataImportControll
                 conn.setAutoCommit(false);
                 for (CSVRecord record : parser) {
                     if (task == null || task.isCancelled()) {
+                        conn.commit();
                         updateLogs("Canceled", true);
                         return importCount;
                     }

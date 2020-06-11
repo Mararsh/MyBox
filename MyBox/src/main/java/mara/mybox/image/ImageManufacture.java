@@ -301,8 +301,7 @@ public class ImageManufacture {
         return scaleImage(source, finalW, finalH);
     }
 
-    public static BufferedImage fitSize(BufferedImage source, int targetW,
-            int targetH) {
+    public static BufferedImage fitSize(BufferedImage source, int targetW, int targetH) {
         try {
             int[] wh = ImageManufacture.scale(source.getWidth(), source.getHeight(),
                     targetW, targetH, KeepRatioType.BaseOnSmaller);

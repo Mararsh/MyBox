@@ -190,7 +190,7 @@ public class LocationsDataController extends TableManageController<Location> {
     @FXML
     @Override
     public void editAction() {
-        Location selected = tableView.getSelectionModel().getSelectedItem();
+        Location selected = (Location) tableView.getSelectionModel().getSelectedItem();
         if (selected == null) {
             return;
         }

@@ -74,7 +74,7 @@ public class DownloadTask<Void> extends BaseTask<Void> {
         try {
             if ("https".equals(url.getProtocol())) {
                 HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
-                SSLContext sc = SSLContext.getInstance("SSL");
+                SSLContext sc = SSLContext.getInstance(CommonValues.HttpsProtocal);
                 sc.init(null, trustAllManager(), new SecureRandom());
                 conn.setSSLSocketFactory(sc.getSocketFactory());
                 conn.setHostnameVerifier(trustAllVerifier());

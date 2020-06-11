@@ -423,7 +423,7 @@ public class MediaTableController extends BatchTableController<MediaInformation>
     @Override
     public void tableSelected() {
         super.tableSelected();
-        MediaInformation selected = tableView.getSelectionModel().getSelectedItem();
+        MediaInformation selected = (MediaInformation) tableView.getSelectionModel().getSelectedItem();
         if (selected == null || selected.getInfo() == null) {
             return;
         }

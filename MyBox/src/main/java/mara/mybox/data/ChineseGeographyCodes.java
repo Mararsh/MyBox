@@ -400,9 +400,9 @@ public class ChineseGeographyCodes {
                 s.append(d).append("\n");
                 logger.debug(d);
                 FileTools.writeFile(new File("D:\\玛瑞\\Mybox\\地理代码\\links\\" + cityName + "-Links.txt"), currentLinks.toString());
-                GeographyCode.exportText(new File("D:\\玛瑞\\Mybox\\地理代码\\city\\" + cityName + "-counties.txt"), counties, true);
-                GeographyCode.exportText(new File("D:\\玛瑞\\Mybox\\地理代码\\city\\" + cityName + "-towns.txt"), towns, true);
-                GeographyCode.exportText(new File("D:\\玛瑞\\Mybox\\地理代码\\city\\" + cityName + "-villages.txt"), villages, true);
+//                GeographyCode.exportText(new File("D:\\玛瑞\\Mybox\\地理代码\\city\\" + cityName + "-counties.txt"), counties, true);
+//                GeographyCode.exportText(new File("D:\\玛瑞\\Mybox\\地理代码\\city\\" + cityName + "-towns.txt"), towns, true);
+//                GeographyCode.exportText(new File("D:\\玛瑞\\Mybox\\地理代码\\city\\" + cityName + "-villages.txt"), villages, true);
             }
             FileTools.writeFile(new File("D:\\玛瑞\\Mybox\\地理代码\\costs.txt"), s.toString());
         } catch (Exception e) {

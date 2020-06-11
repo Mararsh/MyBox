@@ -211,6 +211,7 @@ License:    Apache License Version 2.0
                                 <MenuItem mnemonicParsing="false" onAction="#openMediaPlayer" text="%MediaPlayer" />
                                 <MenuItem mnemonicParsing="false" onAction="#openMediaList" text="%ManageMediaLists" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
+                                <!--<MenuItem mnemonicParsing="false" onAction="#openScreenRecorder" text="%FFmpegScreenRecorder" />-->
                                 <Menu mnemonicParsing="false" text="%FFmpegConvertMedias">
                                     <items>
                                         <MenuItem mnemonicParsing="false" onAction="#openFFmpegConvertMediaStreams" text="%FFmpegConvertMediaStreams" />

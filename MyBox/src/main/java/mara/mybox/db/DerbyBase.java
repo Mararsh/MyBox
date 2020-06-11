@@ -9,19 +9,13 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
-import mara.mybox.data.EpidemicReport;
-import mara.mybox.data.GeographyCode;
-import mara.mybox.data.GeographyCodeLevel;
-import mara.mybox.fxml.FxmlStage;
 import mara.mybox.tools.ConfigTools;
 import mara.mybox.tools.NetworkTools;
 import mara.mybox.value.AppVariables;
@@ -34,8 +28,6 @@ import org.apache.derby.drda.NetworkServerControl;
 /**
  * @Author Mara
  * @CreateDate 2018-10-15 9:31:28
- * @Version 1.0
- * @Description
  * @License Apache License Version 2.0
  */
 public class DerbyBase {
@@ -329,8 +321,7 @@ public class DerbyBase {
     }
 
     public static boolean canEmbeded() {
-        try ( Connection conn = DriverManager.getConnection(
-                "jdbc:derby:" + dbHome() + create)) {
+        try ( Connection conn = DriverManager.getConnection("jdbc:derby:" + dbHome() + create)) {
             return true;
         } catch (Exception e) {
 //            logger.debug(e.toString());
@@ -418,7 +409,7 @@ public class DerbyBase {
     }
 
     public static String tableDefinition(String tablename) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + create)) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             String s = "";
             for (String column : columns(conn, tablename)) {
                 s += column + "\n";
@@ -520,9 +511,12 @@ public class DerbyBase {
             if (!tables.contains("Geography_Code".toUpperCase())) {
                 try {
                     new TableGeographyCode().init(conn);
-                    conn.createStatement().executeUpdate(TableGeographyCode.Create_Index_levelIndex);
-                    conn.createStatement().executeUpdate(TableGeographyCode.Create_Index_codeIndex);
-                    conn.createStatement().executeUpdate(TableGeographyCode.Create_Index_gcidIndex);
+
+                    try ( Statement statement = conn.createStatement()) {
+                        statement.executeUpdate(TableGeographyCode.Create_Index_levelIndex);
+                        statement.executeUpdate(TableGeographyCode.Create_Index_codeIndex);
+                        statement.executeUpdate(TableGeographyCode.Create_Index_gcidIndex);
+                    }
                 } catch (Exception e) {
                 }
             }
@@ -531,10 +525,12 @@ public class DerbyBase {
                 try {
                     new TableEpidemicReport().init(conn);
 
-                    conn.createStatement().executeUpdate(TableEpidemicReport.Create_Index_DatasetTimeDesc);
-                    conn.createStatement().executeUpdate(TableEpidemicReport.Create_Index_DatasetTimeAsc);
-                    conn.createStatement().executeUpdate(TableEpidemicReport.Create_Index_TimeAsc);
-                    conn.createStatement().executeUpdate(TableEpidemicReport.Create_View_StatisticView);
+                    try ( Statement statement = conn.createStatement()) {
+                        statement.executeUpdate(TableEpidemicReport.Create_Index_DatasetTimeDesc);
+                        statement.executeUpdate(TableEpidemicReport.Create_Index_DatasetTimeAsc);
+                        statement.executeUpdate(TableEpidemicReport.Create_Index_TimeAsc);
+                        statement.executeUpdate(TableEpidemicReport.CreateStatisticView);
+                    }
                 } catch (Exception e) {
                 }
             }
@@ -733,193 +729,6 @@ public class DerbyBase {
         } catch (Exception e) {
             failed(e);
 
-        }
-    }
-
-    public static boolean checkUpdates() {
-        AppVariables.setSystemConfigValue("CurrentVersion", CommonValues.AppVersion);
-        checkMigrateFrom621();
-        return true;
-    }
-
-    public static void checkMigrateFrom621() {
-        if (AppVariables.getSystemConfigBoolean("MigratedFrom621", false)) {
-            return;
-        }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + create)) {
-            List<String> columns = columnNames(conn, "Epidemic_Report");
-            List<String> installed = TableStringValues.read(conn, "InstalledVersions");
-            if (installed.contains("6.2.1") && columns.contains("country")) {
-                migrateFrom621(conn);
-                return;
-            }
-            if (!installed.isEmpty() && !installed.contains("6.2.1")) {
-                Platform.runLater(() -> {
-                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                    alert.setContentText(AppVariables.message("Migrate621First"));
-                    alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-                    ButtonType buttonDiscard = new ButtonType(AppVariables.message("DiscardOldData"));
-                    ButtonType buttonExit = new ButtonType(AppVariables.message("Exit"));
-                    alert.getButtonTypes().setAll(buttonDiscard, buttonExit);
-                    Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-                    stage.setAlwaysOnTop(true);
-                    stage.toFront();
-
-                    Optional<ButtonType> result = alert.showAndWait();
-                    if (result.get() == buttonDiscard) {
-                        dropTables();
-                        initTables();
-                        AppVariables.setSystemConfigValue("MigratedFrom621", true);
-                        TableStringValues.add("InstalledVersions", CommonValues.AppVersion);
-                    } else {
-                        FxmlStage.appExit();
-                    }
-                });
-            } else {
-                AppVariables.setSystemConfigValue("MigratedFrom621", true);
-                TableStringValues.add("InstalledVersions", CommonValues.AppVersion);
-            }
-        } catch (Exception e) {
-            logger.debug(e.toString());
-        }
-    }
-
-    private static void migrateFrom621(Connection conn) {
-        exportGeographyCode621(conn);
-        exportEpidemicReport621(conn);
-        try ( Statement statement = conn.createStatement()) {
-            try {
-                statement.executeUpdate("DROP TABLE Epidemic_Report");
-            } catch (Exception e) {
-                logger.debug(e.toString());
-            }
-            try {
-                statement.executeUpdate("DROP TABLE Geography_Code");
-            } catch (Exception e) {
-                logger.debug(e.toString());
-            }
-
-            new TableGeographyCode().init(conn);
-            statement.executeUpdate(TableGeographyCode.Create_Index_levelIndex);
-            statement.executeUpdate(TableGeographyCode.Create_Index_gcidIndex);
-            statement.executeUpdate(TableGeographyCode.Create_Index_codeIndex);
-
-            new TableEpidemicReport().init(conn);
-            statement.executeUpdate(TableEpidemicReport.Create_Index_DatasetTimeDesc);
-            statement.executeUpdate(TableEpidemicReport.Create_Index_DatasetTimeAsc);
-            statement.executeUpdate(TableEpidemicReport.Create_Index_TimeAsc);
-            statement.executeUpdate(TableEpidemicReport.Create_View_StatisticView);
-
-            AppVariables.setSystemConfigValue("MigratedFrom621", true);
-            TableStringValues.add("InstalledVersions", CommonValues.AppVersion);
-        } catch (Exception e) {
-            logger.debug(e.toString());
-        }
-    }
-
-    private static void exportGeographyCode621(Connection conn) {
-        try {
-            String sql = "SELECT * FROM Geography_Code ORDER BY level, country, province, city";
-            List<GeographyCode> codes = new ArrayList<>();
-            try ( ResultSet results = conn.createStatement().executeQuery(sql)) {
-                while (results.next()) {
-                    try {
-                        String address = results.getString("address");
-                        if (address == null) {
-                            break;
-                        }
-                        GeographyCode code = new GeographyCode();
-                        String level = results.getString("level");
-                        GeographyCodeLevel levelCode = new GeographyCodeLevel(level);
-                        code.setLevelCode(levelCode);
-                        code.setLongitude(results.getDouble("longitude"));
-                        code.setLatitude(results.getDouble("latitude"));
-                        if (AppVariables.isChinese()) {
-                            code.setChineseName(address);
-                        } else {
-                            code.setEnglishName(address);
-                        }
-                        code.setCountryName(results.getString("country"));
-                        code.setProvinceName(results.getString("province"));
-                        code.setCityName(results.getString("city"));
-                        code.setCode2(results.getString("citycode"));
-                        code.setCountyName(results.getString("district"));
-                        code.setTownName(results.getString("township"));
-                        code.setVillageName(results.getString("neighborhood"));
-                        code.setBuildingName(results.getString("building"));
-                        code.setCode1(results.getString("administrative_code"));
-                        code.setComments(results.getString("street"));
-                        codes.add(code);
-                    } catch (Exception e) {
-//                    logger.debug(e.toString());
-                        break;
-                    }
-                }
-            }
-            if (!codes.isEmpty()) {
-                File tmpFile = new File(AppVariables.MyboxDataPath + File.separator + "data"
-                        + File.separator + "GeographyCode6.2.1Exported.csv");
-                GeographyCode.writeExternalCSV(tmpFile, codes);
-                AppVariables.setSystemConfigValue("GeographyCode621Exported", tmpFile.getAbsolutePath());
-            }
-        } catch (Exception e) {
-            logger.debug(e.toString());
-        }
-    }
-
-    private static void exportEpidemicReport621(Connection conn) {
-        try {
-            String sql = "SELECT * FROM Epidemic_Report ORDER BY level, country, province, city";
-            List<EpidemicReport> reports = new ArrayList<>();
-            try ( ResultSet results = conn.createStatement().executeQuery(sql)) {
-                while (results.next()) {
-                    try {
-                        String levelValue = results.getString("level");
-                        if (levelValue == null) {
-                            break;
-                        }
-                        GeographyCodeLevel levelCode = new GeographyCodeLevel(levelValue);
-                        GeographyCode code = new GeographyCode();
-                        code.setLevelCode(levelCode);
-                        code.setCountryName(results.getString("country"));
-                        code.setProvinceName(results.getString("province"));
-                        code.setCityName(results.getString("city"));
-                        code.setCountyName(results.getString("district"));
-                        code.setTownName(results.getString("township"));
-                        code.setVillageName(results.getString("neighborhood"));
-                        code.setLongitude(results.getDouble("longitude"));
-                        code.setLatitude(results.getDouble("latitude"));
-
-                        EpidemicReport report = new EpidemicReport();
-                        report.setLocation(code);
-                        report.setDataSet(results.getString("data_set"));
-                        report.setConfirmed(results.getInt("confirmed"));
-                        report.setHealed(results.getInt("healed"));
-                        report.setDead(results.getInt("dead"));
-                        report.setIncreasedConfirmed(results.getInt("increased_confirmed"));
-                        report.setIncreasedHealed(results.getInt("increased_healed"));
-                        report.setIncreasedDead(results.getInt("increased_dead"));
-                        Date d = results.getTimestamp("time");
-                        if (d != null) {
-                            report.setTime(d.getTime());
-                        }
-                        report.setSource("Filled".equals(results.getString("comments")) ? 3 : 2);
-                        reports.add(report);
-
-                    } catch (Exception e) {
-//                    logger.debug(e.toString());
-                        break;
-                    }
-                }
-            }
-            if (!reports.isEmpty()) {
-                File tmpFile = new File(AppVariables.MyboxDataPath + File.separator + "data"
-                        + File.separator + "EpidemicReport6.2.1Exported.csv");
-                EpidemicReport.writeExternalCSV(tmpFile, reports, null);
-                AppVariables.setSystemConfigValue("EpidemicReport621Exported", tmpFile.getAbsolutePath());
-            }
-        } catch (Exception e) {
-            logger.debug(e.toString());
         }
     }
 

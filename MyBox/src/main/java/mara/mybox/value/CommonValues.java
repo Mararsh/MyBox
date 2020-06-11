@@ -14,8 +14,8 @@ import java.util.TimeZone;
  */
 public class CommonValues {
 
-    public static final String AppVersion = "6.3";
-    public static final String AppVersionDate = "2020-05-25";
+    public static final String AppVersion = "6.3.1";
+    public static final String AppVersionDate = "2020-06-11";
     public static final String AppDocVersion = "5.0";
 
     public static final String AppDerbyUser = "mara";
@@ -170,6 +170,7 @@ public class CommonValues {
     public static final String FFmpegConvertMediaStreamsFxml = "/fxml/FFmpegConvertMediaStreams.fxml";
     public static final String FFmpegMergeImagesFxml = "/fxml/FFmpegMergeImages.fxml";
     public static final String FFmpegMergeImageFilesFxml = "/fxml/FFmpegMergeImageFiles.fxml";
+    public static final String FFmpegScreenRecorderFxml = "/fxml/FFmpegScreenRecorder.fxml";
     public static final String SecurityCertificatesFxml = "/fxml/SecurityCertificates.fxml";
     public static final String SecurityCertificateAddFxml = "/fxml/SecurityCertificateAdd.fxml";
     public static final String SecurityCertificatesBypassFxml = "/fxml/SecurityCertificatesBypass.fxml";
@@ -228,12 +229,7 @@ public class CommonValues {
 
     public static final int IOBufferLength = 8024;
 
-    public static final String HttpsProtocal = "SSL";
-
-    // https://lbs.amap.com/dev/index
-    public static final String GaoDeJavasriptkey = "06b9e078a51325a843dfefd57ffd876c";
-    public static final String GaoDeMapVerison = "1.4.15";
-    public static final String GaoDeWebKey = "d7444d9a7fae01fa850236d909ad4450";
+    public static final String HttpsProtocal = "TLSv1.2";
 
     public static final String MyBoxSeparator = "##MyBox#";
 

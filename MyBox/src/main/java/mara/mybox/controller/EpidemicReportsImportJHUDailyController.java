@@ -60,6 +60,7 @@ public class EpidemicReportsImportJHUDailyController extends EpidemicReportsImpo
             for (CSVRecord record : parser) {
                 lineCount++;
                 if (task == null || task.isCancelled()) {
+                    conn.commit();
                     updateLogs("Canceled", true);
                     return importCount;
                 }

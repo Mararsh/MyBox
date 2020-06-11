@@ -100,8 +100,6 @@ public class ImageManufactureController extends ImageViewerController {
     @FXML
     protected Label refLabel, imageTipsLabel;
     @FXML
-    protected CheckBox saveCheck;
-    @FXML
     protected ImageView refView, scopeView;
     @FXML
     protected Rectangle bgRect;
@@ -280,6 +278,14 @@ public class ImageManufactureController extends ImageViewerController {
             FxmlControl.setTooltip(bgRect, FxmlColor.colorNameDisplay((Color) bgRect.getFill()));
             newWidthInput.setText("500");
             newHeightInput.setText("500");
+
+            saveConfirmCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    AppVariables.setUserConfigValue("ImageConfirmSave", saveConfirmCheck.isSelected());
+                }
+            });
+            saveConfirmCheck.setSelected(AppVariables.getUserConfigBoolean("ImageConfirmSave", true));
 
             createButton.disableProperty().bind(
                     newWidthInput.styleProperty().isEqualTo(badStyle)

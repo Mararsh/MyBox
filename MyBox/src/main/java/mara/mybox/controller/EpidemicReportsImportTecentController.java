@@ -43,7 +43,7 @@ public class EpidemicReportsImportTecentController extends EpidemicReportsImport
     public EpidemicReportsImportTecentController() {
         baseTitle = AppVariables.message("ImportEpidemicReportTecent");
         Address = "https://api.inews.qq.com/newsqa/v1/query/pubished/daily/list?";
-        Dataset = "COVID-19_Tencent";
+        Dataset = "COVID-19_Tecent";
     }
 
     @Override
@@ -67,7 +67,7 @@ public class EpidemicReportsImportTecentController extends EpidemicReportsImport
 
                 File pageFile = FileTools.getTempFile(".txt");
                 HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-                SSLContext sc = SSLContext.getInstance("SSL");
+                SSLContext sc = SSLContext.getInstance(CommonValues.HttpsProtocal);
                 sc.init(null, trustAllManager(), new SecureRandom());
                 connection.setSSLSocketFactory(sc.getSocketFactory());
                 connection.setHostnameVerifier(trustAllVerifier());
@@ -103,7 +103,7 @@ public class EpidemicReportsImportTecentController extends EpidemicReportsImport
                             + "&city=" + cityEncode);
                     pageFile = FileTools.getTempFile(".txt");
                     connection = (HttpsURLConnection) url.openConnection();
-                    sc = SSLContext.getInstance("SSL");
+                    sc = SSLContext.getInstance(CommonValues.HttpsProtocal);
                     sc.init(null, trustAllManager(), new SecureRandom());
                     connection.setSSLSocketFactory(sc.getSocketFactory());
                     connection.setHostnameVerifier(trustAllVerifier());

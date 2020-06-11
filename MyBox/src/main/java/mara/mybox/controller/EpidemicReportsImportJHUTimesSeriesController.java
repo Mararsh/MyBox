@@ -67,6 +67,7 @@ public class EpidemicReportsImportJHUTimesSeriesController extends EpidemicRepor
             for (CSVRecord record : parser) {
                 lineCount++;
                 if (task == null || task.isCancelled()) {
+                    conn.commit();
                     updateLogs("Canceled", true);
                     return importCount;
                 }
@@ -126,6 +127,8 @@ public class EpidemicReportsImportJHUTimesSeriesController extends EpidemicRepor
                     for (int i = 4; i < names.size(); i++) {
                         dataCount++;
                         if (task == null || task.isCancelled()) {
+                            conn.commit();
+                            updateLogs("Canceled", true);
                             return importCount;
                         }
                         String d = names.get(i);

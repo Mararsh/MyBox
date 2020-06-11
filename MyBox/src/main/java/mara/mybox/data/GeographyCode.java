@@ -2,10 +2,8 @@ package mara.mybox.data;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.OutputStream;
 import java.net.URL;
@@ -26,7 +24,6 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.xml.parsers.DocumentBuilderFactory;
 import mara.mybox.controller.LoadingController;
-import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.DerbyBase.dbHome;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
@@ -34,7 +31,6 @@ import mara.mybox.db.TableGeographyCode;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileTools;
-import static mara.mybox.tools.FileTools.charset;
 import mara.mybox.tools.LocationTools;
 import static mara.mybox.tools.NetworkTools.trustAllManager;
 import static mara.mybox.tools.NetworkTools.trustAllVerifier;
@@ -63,8 +59,7 @@ import org.w3c.dom.NodeList;
  */
 public class GeographyCode {
 
-    public static String DataSeparator = ",;";
-    protected long gcid, continent, country, province, city, county, town, village, building,
+    protected long gcid, owner, continent, country, province, city, county, town, village, building,
             area, population;
     protected int level = -1;
     protected GeographyCodeLevel levelCode;
@@ -72,9 +67,22 @@ public class GeographyCode {
     protected String name, fullName, chineseName, englishName, levelName,
             code1, code2, code3, code4, code5, alias1, alias2, alias3, alias4, alias5, comments,
             continentName, countryName, provinceName, cityName, countyName, townName, villageName, buildingName;
-    protected double longitude, latitude;
-    protected GeographyCode continentCode, countryCode, provinceCode, cityCode,
+    protected double longitude, latitude, altitude, precision;
+    protected GeographyCode ownerCode, continentCode, countryCode, provinceCode, cityCode,
             countyCode, townCode, villageCode, buildingCode;
+    protected CoordinatetSystem coordinatetSystem;
+
+    public enum AddressLevel {
+        Global, Continent, Country, Province, City, County, Town, Village, Building, InterestOfLocation
+    }
+
+    public enum AddressSource {
+        Inputted, Predefined, Geonames, Data
+    }
+
+    public enum CoordinatetSystem {
+        GPS, GaoDe, Baidu, BeiDou
+    }
 
     public GeographyCode() {
         gcid = continent = country = province = city = county = village = town = building
@@ -152,7 +160,7 @@ public class GeographyCode {
         }
 
         if (area > 0) {
-            s.append(message("SquareKilometers")).append(": ").append(area).append(lineBreak);
+            s.append(message("SquareMeters")).append(": ").append(area).append(lineBreak);
         }
         if (population > 0) {
             s.append(message("Population")).append(": ").append(population).append(lineBreak);
@@ -199,6 +207,44 @@ public class GeographyCode {
                 return 18;
             default:
                 return 3;
+        }
+    }
+
+    public short coordinatetSystem() {
+        if (coordinatetSystem == null) {
+            return 1;
+        }
+        switch (coordinatetSystem) {
+            case GPS:
+                return 1;
+            case GaoDe:
+                return 2;
+            case Baidu:
+                return 3;
+            case BeiDou:
+                return 9;
+            default:
+                return 1;
+        }
+    }
+
+    public void setCoordinatetSystem(short value) {
+        switch (value) {
+            case 1:
+                coordinatetSystem = CoordinatetSystem.GPS;
+                break;
+            case 2:
+                coordinatetSystem = CoordinatetSystem.GaoDe;
+                break;
+            case 3:
+                coordinatetSystem = CoordinatetSystem.Baidu;
+                break;
+            case 9:
+                coordinatetSystem = CoordinatetSystem.BeiDou;
+                break;
+            default:
+                coordinatetSystem = CoordinatetSystem.GPS;
+                break;
         }
     }
 
@@ -589,12 +635,17 @@ public class GeographyCode {
 
             if (names.contains("area") && record.get("area") != null) {
                 try {
-                    code.setArea(Long.valueOf(record.get("area")));
+                    code.setArea(1000000 * Long.valueOf(record.get("area")));
+                } catch (Exception e) {
+                }
+            } else if (names.contains(message(lang, "SquareMeters")) && record.get(message(lang, "SquareMeters")) != null) {
+                try {
+                    code.setArea(Long.valueOf(record.get(message(lang, "SquareMeters"))));
                 } catch (Exception e) {
                 }
             } else if (names.contains(message(lang, "SquareKilometers")) && record.get(message(lang, "SquareKilometers")) != null) {
                 try {
-                    code.setArea(Long.valueOf(record.get(message(lang, "SquareKilometers"))));
+                    code.setArea(1000000 * Long.valueOf(record.get(message(lang, "SquareKilometers"))));
                 } catch (Exception e) {
                 }
             }
@@ -792,10 +843,55 @@ public class GeographyCode {
         }
     }
 
-    public static void exportInternalCSV(File file) {
-        List<GeographyCode> codes = TableGeographyCode.readAll(false);
-        if (codes != null && !codes.isEmpty()) {
-            writeInternalCSV(file, codes);
+    public static void exportPredefined() {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            conn.setReadOnly(true);
+
+            File file = new File("D:\\tmp\\3\\Geography_Code_global_internal.csv");
+            String sql = "SELECT * FROM Geography_Code WHERE level<3 ORDER BY gcid";
+            writeInternalCSV(conn, file, sql);
+
+            file = new File("D:\\tmp\\3\\Geography_Code_countries_internal.csv");
+            sql = "SELECT * FROM Geography_Code WHERE level=3 ORDER BY gcid";
+            writeInternalCSV(conn, file, sql);
+
+            file = new File("D:\\tmp\\3\\Geography_Code_china_provinces_internal.csv");
+            sql = "SELECT * FROM Geography_Code WHERE level=4 AND country=100 ORDER BY gcid";
+            writeInternalCSV(conn, file, sql);
+
+            file = new File("D:\\tmp\\3\\Geography_Code_china_cities_internal.csv");
+            sql = "SELECT * FROM Geography_Code WHERE level=5 AND country=100 ORDER BY gcid";
+            writeInternalCSV(conn, file, sql);
+
+            file = new File("D:\\tmp\\3\\Geography_Code_china_counties_internal.csv");
+            sql = "SELECT * FROM Geography_Code WHERE level=6 AND country=100 ORDER BY gcid";
+            writeInternalCSV(conn, file, sql);
+
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+    protected static void writeInternalCSV(File file, String sql) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            conn.setReadOnly(true);
+            writeInternalCSV(conn, file, sql);
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+    protected static void writeInternalCSV(Connection conn, File file, String sql) {
+        try ( CSVPrinter printer = new CSVPrinter(new FileWriter(file, Charset.forName("utf-8")), CSVFormat.DEFAULT)) {
+            writeInternalCSVHeader(printer);
+            try ( ResultSet results = conn.createStatement().executeQuery(sql)) {
+                while (results.next()) {
+                    GeographyCode code = TableGeographyCode.readResults(results);
+                    writeInternalCSV(printer, code);
+                }
+            }
+        } catch (Exception e) {
+            logger.debug(e.toString());
         }
     }
 
@@ -821,7 +917,7 @@ public class GeographyCode {
         try {
             printer.printRecord("gcid", "levelid", "longitude", "latitude", "chinese_name", "english_name",
                     "code1", "code2", "code3", "code4", "code5", "alias1", "alias2", "alias3", "alias4", "alias5",
-                    "area", "population",
+                    "area", "population", "owner",
                     "continentid", "countryid", "provinceid", "cityid", "countyid", "townid", "villageid", "buildingid",
                     "comments");
         } catch (Exception e) {
@@ -847,6 +943,7 @@ public class GeographyCode {
                     code.getAlias5() == null ? "" : code.getAlias5(),
                     code.getArea() > 0 ? code.getArea() : "",
                     code.getPopulation() > 0 ? code.getPopulation() : "",
+                    code.getOwner() > 0 ? code.getOwner() : "",
                     code.getContinent() > 0 ? code.getContinent() : "",
                     code.getCountry() > 0 ? code.getCountry() : "",
                     code.getProvince() > 0 ? code.getProvince() : "",
@@ -870,7 +967,7 @@ public class GeographyCode {
                     message("ChineseName"), message("EnglishName"),
                     message("Code1"), message("Code2"), message("Code3"), message("Code4"), message("Code5"),
                     message("Alias1"), message("Alias2"), message("Alias3"), message("Alias4"), message("Alias5"),
-                    message("SquareKilometers"), message("Population"),
+                    message("SquareMeters"), message("Population"),
                     message("Continent"), message("Country"), message("Province"),
                     message("City"), message("County"), message("Town"),
                     message("Village"), message("Building"), message("Comments")
@@ -931,7 +1028,8 @@ public class GeographyCode {
             if (writeHeader) {
                 writeExternalCSVHeader(printer);
             }
-            for (GeographyCode code : codes) {
+            for (GeographyCode code
+                    : codes) {
                 writeExternalCSV(printer, code);
             }
         } catch (Exception e) {
@@ -963,11 +1061,15 @@ public class GeographyCode {
             XSSFWorkbook wb = new XSSFWorkbook();
             XSSFSheet sheet = wb.createSheet("sheet1");
             List<String> columns = writeExcelHeader(wb, sheet);
-            for (int i = 0; i < codes.size(); i++) {
+            for (int i = 0;
+                    i < codes.size();
+                    i++) {
                 GeographyCode code = codes.get(i);
                 writeExcel(sheet, i, code);
             }
-            for (int i = 0; i < columns.size(); i++) {
+            for (int i = 0;
+                    i < columns.size();
+                    i++) {
                 sheet.autoSizeColumn(i);
             }
             try ( OutputStream fileOut = new FileOutputStream(file)) {
@@ -985,7 +1087,9 @@ public class GeographyCode {
             XSSFRow titleRow = sheet.createRow(0);
             XSSFCellStyle horizontalCenter = wb.createCellStyle();
             horizontalCenter.setAlignment(HorizontalAlignment.CENTER);
-            for (int i = 0; i < columns.size(); i++) {
+            for (int i = 0;
+                    i < columns.size();
+                    i++) {
                 XSSFCell cell = titleRow.createCell(i);
                 cell.setCellValue(columns.get(i));
                 cell.setCellStyle(horizontalCenter);
@@ -1000,7 +1104,9 @@ public class GeographyCode {
         try {
             List<String> row = values(code);
             XSSFRow sheetRow = sheet.createRow(i + 1);
-            for (int j = 0; j < row.size(); j++) {
+            for (int j = 0;
+                    j < row.size();
+                    j++) {
                 XSSFCell cell = sheetRow.createCell(j);
                 cell.setCellValue(row.get(j));
             }
@@ -1017,7 +1123,9 @@ public class GeographyCode {
             StringBuilder s = new StringBuilder();
             s.append("{\"GeographyCodes\": [\n");
             writer.write(s.toString());
-            for (int i = 0; i < codes.size(); i++) {
+            for (int i = 0;
+                    i < codes.size();
+                    i++) {
                 GeographyCode code = codes.get(i);
                 s = writeJson(writer, indent, code);
                 if (i == codes.size() - 1) {
@@ -1129,7 +1237,8 @@ public class GeographyCode {
             s.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n").
                     append("<GeographyCodes>\n");
             writer.write(s.toString());
-            for (GeographyCode code : codes) {
+            for (GeographyCode code
+                    : codes) {
                 writeXml(writer, indent, code);
             }
             writer.write("</GeographyCodes>\n");
@@ -1232,7 +1341,8 @@ public class GeographyCode {
             }
             List<String> names = externalNames();
             StringTable table = new StringTable(names, title);
-            for (GeographyCode code : codes) {
+            for (GeographyCode code
+                    : codes) {
                 List<String> row = values(code);
                 table.add(row);
             }
@@ -1713,262 +1823,8 @@ public class GeographyCode {
         }
     }
 
-    /*
-
-     */
-    public static void importText(File file) {
-        List<GeographyCode> codes = readText(file);
-        if (codes != null && !codes.isEmpty()) {
-            TableGeographyCode.write(codes);
-        }
-    }
-
-    public static List<GeographyCode> readText(File file) {
-        List<GeographyCode> codes = new ArrayList<>();
-        try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset(file)))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                GeographyCode code = data(line);
-                if (code != null) {
-                    codes.add(code);
-                }
-            }
-        } catch (Exception e) {
-            logger.debug(e.toString());
-        }
-        return codes;
-    }
-
-    private static String readTxtString(String value) {
-        if (value == null) {
-            return null;
-        }
-        String v = value.trim();
-        if (v.startsWith("\"")) {
-            return v.substring(v.indexOf("\"") + 1, v.lastIndexOf("\""));
-        } else {
-            return v;
-        }
-    }
-
-    public static GeographyCode data(String line) {
-        try {
-            if (line == null || line.startsWith("//")) {
-                return null;
-            }
-            // https://stackoverflow.com/questions/14602062/java-string-split-removed-empty-values?r=SearchResults
-            String[] values = line.split(DataSeparator, -1);
-            int offset;
-            if (values.length == 27) {
-                offset = 0;
-            } else if (values.length > 27) {
-                offset = 1;
-            } else {
-                return null;
-            }
-            // [gcid,] levelCode, longitude, latitude, chineseName, chineseFullName,englishName, englishFullName, code1, code2, code3, alias1, alias2, alias3,comments,
-            //continent, country, area, province, city, county, town, village, building
-            for (String value : values) {
-                value = value.trim();
-            }
-            GeographyCode code = new GeographyCode();
-            if (values.length > 27 && !values[0].isBlank()) {
-                code.setGcid(Long.valueOf(values[0]));
-            }
-            code.setLevelCode(new GeographyCodeLevel(readTxtString(values[offset + 0])));
-            code.setLongitude(Double.valueOf(values[offset + 1]));
-            code.setLatitude(Double.valueOf(values[offset + 2]));
-            if (!values[offset + 3].isBlank()) {
-                code.setChineseName(readTxtString(values[offset + 3]));
-            }
-//            if (!values[offset + 4].isBlank()) {
-//                code.setChineseFullName(readTxtString(values[offset + 4]));
-//            }
-            if (!values[offset + 5].isBlank()) {
-                code.setEnglishName(readTxtString(values[offset + 5]));
-            }
-//            if (!values[offset + 6].isBlank()) {
-//                code.setEnglishFullName(readTxtString(values[offset + 6]));
-//            }
-            if (!values[offset + 7].isBlank()) {
-                code.setCode1(readTxtString(values[offset + 7]));
-            }
-            if (!values[offset + 8].isBlank()) {
-                code.setCode2(readTxtString(values[offset + 8]));
-            }
-            if (!values[offset + 9].isBlank()) {
-                code.setCode3(readTxtString(values[offset + 9]));
-            }
-            if (!values[offset + 10].isBlank()) {
-                code.setCode4(readTxtString(values[offset + 10]));
-            }
-            if (!values[offset + 11].isBlank()) {
-                code.setCode5(readTxtString(values[offset + 11]));
-            }
-            if (!values[offset + 12].isBlank()) {
-                code.setAlias1(readTxtString(values[offset + 12]));
-            }
-            if (!values[offset + 13].isBlank()) {
-                code.setAlias2(readTxtString(values[offset + 13]));
-            }
-            if (!values[offset + 14].isBlank()) {
-                code.setAlias3(readTxtString(values[offset + 14]));
-            }
-            if (!values[offset + 15].isBlank()) {
-                code.setAlias4(readTxtString(values[offset + 15]));
-            }
-            if (!values[offset + 16].isBlank()) {
-                code.setAlias5(readTxtString(values[offset + 16]));
-            }
-            if (!values[offset + 17].isBlank()) {
-                code.setComments(readTxtString(values[offset + 17]));
-            }
-            if (!values[offset + 18].isBlank()) {
-                code.setContinent(Long.valueOf(values[offset + 18]));
-            }
-            if (!values[offset + 19].isBlank()) {
-                code.setCountry(Long.valueOf(values[offset + 19]));
-            }
-
-            if (!values[offset + 21].isBlank()) {
-                code.setProvince(Long.valueOf(values[offset + 21]));
-            }
-            if (!values[offset + 22].isBlank()) {
-                code.setCity(Long.valueOf(values[offset + 22]));
-            }
-            if (!values[offset + 23].isBlank()) {
-                code.setCounty(Long.valueOf(values[offset + 23]));
-            }
-            if (!values[offset + 24].isBlank()) {
-                code.setTown(Long.valueOf(values[offset + 24]));
-            }
-            if (!values[offset + 25].isBlank()) {
-                code.setVillage(Long.valueOf(values[offset + 25]));
-            }
-            if (!values[offset + 26].isBlank()) {
-                code.setBuilding(Long.valueOf(values[offset + 26]));
-            }
-            return code;
-        } catch (Exception e) {
-            logger.debug(e.toString());
-            logger.debug(line);
-            return null;
-        }
-    }
-
-    // CALL SYSCS_UTIL.SYSCS_EXPORT_TABLE ('MARA', 'GEOGRAPHY_CODE', 'D:\MyBox\src\main\resources\data\db\Geography_Code.txt', null, null,  'UTF-8');
-    public static void exportText(File file, List<GeographyCode> codes, boolean gcid) {
-        try {
-            if (file == null || codes == null || codes.isEmpty()) {
-                return;
-            }
-            StringBuilder s = new StringBuilder();
-            s.append("// ");
-            if (gcid) {
-                s.append("gcid,");
-            }
-            s.append("level, longitude, latitude, chinese_name, chinese_full_name, english_name, english_full_name, \n");
-            s.append("// code1, code2, code3, code4, code5, alias1, alias2, alias3, alias4, alias5, comments, \n");
-            s.append("// continent, country, area, province, city, county, town, village, building \n");
-            s.append("// Separated by \",;\" \n");
-
-            for (GeographyCode code : codes) {
-                if (gcid) {
-                    s.append(code.getGcid()).append(DataSeparator);
-                }
-                s.append("\"").append(code.getLevelCode()).append("\"").append(DataSeparator)
-                        .append(code.getLongitude()).append(DataSeparator).append(code.getLatitude()).append(DataSeparator);
-                if (code.getChineseName() == null) {
-                    s.append(DataSeparator);
-                } else {
-                    s.append("\"").append(code.getChineseName()).append("\"").append(DataSeparator);
-                }
-//                if (code.getChineseFullName() == null) {
-//                    s.append(DataSeparator);
-//                } else {
-//                    s.append("\"").append(code.getChineseFullName()).append("\"").append(DataSeparator);
-//                }
-                if (code.getEnglishName() == null) {
-                    s.append(DataSeparator);
-                } else {
-                    s.append("\"").append(code.getEnglishName()).append("\"").append(DataSeparator);
-                }
-//                if (code.getEnglishFullName() == null) {
-//                    s.append(DataSeparator);
-//                } else {
-//                    s.append("\"").append(code.getEnglishFullName()).append("\"").append(DataSeparator);
-//                }
-                if (code.getCode1() == null) {
-                    s.append(DataSeparator);
-                } else {
-                    s.append("\"").append(code.getCode1()).append("\"").append(DataSeparator);
-                }
-                if (code.getCode2() == null) {
-                    s.append(DataSeparator);
-                } else {
-                    s.append("\"").append(code.getCode2()).append("\"").append(DataSeparator);
-                }
-                if (code.getCode3() == null) {
-                    s.append(DataSeparator);
-                } else {
-                    s.append("\"").append(code.getCode3()).append("\"").append(DataSeparator);
-                }
-                if (code.getCode4() == null) {
-                    s.append(DataSeparator);
-                } else {
-                    s.append("\"").append(code.getCode4()).append("\"").append(DataSeparator);
-                }
-                if (code.getCode5() == null) {
-                    s.append(DataSeparator);
-                } else {
-                    s.append("\"").append(code.getCode5()).append("\"").append(DataSeparator);
-                }
-                if (code.getAlias1() == null) {
-                    s.append(DataSeparator);
-                } else {
-                    s.append("\"").append(code.getAlias1()).append("\"").append(DataSeparator);
-                }
-                if (code.getAlias2() == null) {
-                    s.append(DataSeparator);
-                } else {
-                    s.append("\"").append(code.getAlias2()).append("\"").append(DataSeparator);
-                }
-                if (code.getAlias3() == null) {
-                    s.append(DataSeparator);
-                } else {
-                    s.append("\"").append(code.getAlias3()).append("\"").append(DataSeparator);
-                }
-                if (code.getAlias4() == null) {
-                    s.append(DataSeparator);
-                } else {
-                    s.append("\"").append(code.getAlias4()).append("\"").append(DataSeparator);
-                }
-                if (code.getAlias5() == null) {
-                    s.append(DataSeparator);
-                } else {
-                    s.append("\"").append(code.getAlias5()).append("\"").append(DataSeparator);
-                }
-                if (code.getComments() == null) {
-                    s.append(DataSeparator);
-                } else {
-                    s.append("\"").append(code.getComments()).append("\"").append(DataSeparator);
-                }
-                s.append(code.getContinent()).append(DataSeparator).append(code.getCountry()).append(DataSeparator)
-                        .append(code.getProvince()).append(DataSeparator)
-                        .append(code.getCity()).append(DataSeparator).append(code.getCounty()).append(DataSeparator)
-                        .append(code.getTown()).append(DataSeparator).append(code.getVillage()).append(DataSeparator)
-                        .append(code.getBuilding());
-                s.append("\n");
-            }
-            FileTools.writeFile(file, s.toString(), Charset.forName("utf-8"));
-
-        } catch (Exception e) {
-
-        }
-    }
-
     public static GeographyCode geoCode(String address) {
-        return geoCode(CommonValues.GaoDeWebKey, address);
+        return geoCode(AppVariables.DaoDeMapWebServiceKey, address);
     }
 
     public static GeographyCode geoCode(String key, String address) {
@@ -2001,7 +1857,7 @@ public class GeographyCode {
         try {
             String urlString = "https://restapi.amap.com/v3/geocode/regeo?location="
                     + longitude + "," + latitude
-                    + "&output=xml&key=" + CommonValues.GaoDeWebKey;
+                    + "&output=xml&key=" + AppVariables.DaoDeMapWebServiceKey;
             GeographyCode geographyCode = new GeographyCode();
             geographyCode.setLongitude(longitude);
             geographyCode.setLatitude(latitude);
@@ -2023,7 +1879,7 @@ public class GeographyCode {
             URL url = new URL(urlString);
             File xmlFile = FileTools.getTempFile(".xml");
             HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-            SSLContext sc = SSLContext.getInstance("SSL");
+            SSLContext sc = SSLContext.getInstance(CommonValues.HttpsProtocal);
             sc.init(null, trustAllManager(), new SecureRandom());
             connection.setSSLSocketFactory(sc.getSocketFactory());
             connection.setHostnameVerifier(trustAllVerifier());
@@ -2089,7 +1945,9 @@ public class GeographyCode {
                 nodes = nodes.item(0).getChildNodes();
                 if (nodes != null) {
                     Map<String, String> values = new HashMap<>();
-                    for (int i = 0; i < nodes.getLength(); i++) {
+                    for (int i = 0;
+                            i < nodes.getLength();
+                            i++) {
                         Node node = nodes.item(i);
                         values.put(node.getNodeName(), node.getTextContent());
                     }
@@ -2173,7 +2031,7 @@ public class GeographyCode {
             }
             return geographyCode;
         } catch (Exception e) {
-//            logger.debug(e.toString());
+            logger.debug(e.toString());
             return null;
         }
 
@@ -2189,12 +2047,13 @@ public class GeographyCode {
                  CSVParser parser = CSVParser.parse(file, StandardCharsets.UTF_8,
                         CSVFormat.DEFAULT.withFirstRecordAsHeader().withDelimiter('\t').withTrim().withNullString(""))) {
             conn.setAutoCommit(false);
-            for (CSVRecord record : parser) {
+            for (CSVRecord record
+                    : parser) {
                 String country = record.get("Country");
                 String sql = "SELECT * FROM Geography_Code WHERE level=3 AND ( " + TableGeographyCode.nameEqual(country) + " )";
                 try ( ResultSet results = conn.createStatement().executeQuery(sql)) {
                     if (results.next()) {
-                        code = TableGeographyCode.readCode(results);
+                        code = TableGeographyCode.readResults(results);
                     } else {
                         code = null;
                     }
@@ -2251,14 +2110,15 @@ public class GeographyCode {
                  CSVParser parser = CSVParser.parse(file, StandardCharsets.UTF_8,
                         CSVFormat.DEFAULT.withDelimiter(',').withTrim().withNullString(""))) {
             conn.setAutoCommit(false);
-            for (CSVRecord record : parser) {
+            for (CSVRecord record
+                    : parser) {
                 String country = record.get(0);
                 double longitude = Double.valueOf(record.get(1));
                 double latitude = Double.valueOf(record.get(2));
                 String sql = "SELECT * FROM Geography_Code WHERE level=3 AND ( " + TableGeographyCode.nameEqual(country) + " )";
                 try ( ResultSet results = conn.createStatement().executeQuery(sql)) {
                     if (results.next()) {
-                        code = TableGeographyCode.readCode(results);
+                        code = TableGeographyCode.readResults(results);
                     } else {
                         code = null;
                     }
@@ -2292,14 +2152,15 @@ public class GeographyCode {
                  CSVParser parser = CSVParser.parse(file, StandardCharsets.UTF_8,
                         CSVFormat.DEFAULT.withFirstRecordAsHeader().withDelimiter(',').withTrim().withNullString(""))) {
             conn.setAutoCommit(false);
-            for (CSVRecord record : parser) {
+            for (CSVRecord record
+                    : parser) {
                 String city = record.get("chinese_name");
                 double longitude = Double.valueOf(record.get("longitude"));
                 double latitude = Double.valueOf(record.get("latitude"));
                 String sql = "SELECT * FROM Geography_Code WHERE level=5 AND ( " + TableGeographyCode.nameEqual(city) + " )";
                 try ( ResultSet results = conn.createStatement().executeQuery(sql)) {
                     if (results.next()) {
-                        code = TableGeographyCode.readCode(results);
+                        code = TableGeographyCode.readResults(results);
                     } else {
                         code = null;
                     }
@@ -2326,133 +2187,6 @@ public class GeographyCode {
             writeInternalCSV(new File("D:\\tmp\\1\\Geography_Code_china_cities_internal.csv"), codes);
         } catch (Exception e) {
             logger.debug(e.toString());
-        }
-    }
-
-    /*
-        Feteh extrenal data
-     */
-    // https://github.com/wizardcode/world-area
-    public static void countriesJson() {
-        File file = new File("D:\\玛瑞\\Mybox\\world-area-master\\world-area-master\\children\\json\\countries.json");
-        List<GeographyCode> codes = new ArrayList<>();
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 BufferedReader reader = new BufferedReader(new FileReader(file, charset(file)))) {
-            conn.setAutoCommit(false);
-            String line;
-            GeographyCode code = null;
-            while ((line = reader.readLine()) != null) {
-                String[] values = line.split(":");
-                if (values.length != 2) {
-                    continue;
-                }
-                switch (countriesJsonValue(values[0])) {
-                    case "id": {
-                        if (code != null) {
-                            code.setLevelCode(new GeographyCodeLevel("Country"));
-                            codes.add(code);
-                        }
-                        code = new GeographyCode();
-                        int id = Integer.valueOf(countriesJsonValue(values[1]));
-                        code.setGcid(id + 300);
-                        break;
-                    }
-                    case "continent_id": {
-                        try {
-                            int id = Integer.valueOf(countriesJsonValue(values[1]));
-                            code.setContinent(id + 1);
-                        } catch (Exception e) {
-                        }
-                        break;
-                    }
-                    case "name": {
-                        String value = countriesJsonValue(values[1]);
-                        code.setEnglishName(value);
-                        if (value != null && !value.isBlank()) {
-                            String sql = "SELECT * FROM Geography_Code WHERE english_name='" + DerbyBase.stringValue(value) + "'";
-                            try ( ResultSet results = conn.createStatement().executeQuery(sql)) {
-                                if (results.next()) {
-                                    GeographyCode ecode = TableGeographyCode.readCode(results);
-                                    code.setLongitude(ecode.getLongitude());
-                                    code.setLatitude(ecode.getLatitude());
-                                } else {
-                                    logger.debug(value);
-                                }
-                            }
-                        }
-                        break;
-                    }
-                    case "full_name": {
-                        String value = countriesJsonValue(values[1]);
-                        code.setAlias1(value);
-                        break;
-                    }
-                    case "cname": {
-                        String value = countriesJsonValue(values[1]);
-                        code.setChineseName(value);
-                        if (code.getLongitude() == -200 && value != null && !value.isBlank()) {
-                            String sql = "SELECT * FROM Geography_Code WHERE chinese_name='" + DerbyBase.stringValue(value) + "'";
-                            try ( ResultSet results = conn.createStatement().executeQuery(sql)) {
-                                if (results.next()) {
-                                    GeographyCode ecode = TableGeographyCode.readCode(results);
-                                    code.setLongitude(ecode.getLongitude());
-                                    code.setLatitude(ecode.getLatitude());
-                                } else {
-                                    logger.debug(value);
-                                }
-                            }
-                        }
-                        break;
-                    }
-                    case "full_cname": {
-                        String value = countriesJsonValue(values[1]);
-                        code.setAlias2(value);
-                        if (code.getLongitude() == -200 && value != null && !value.isBlank()) {
-                            String sql = "SELECT * FROM Geography_Code WHERE chinese_full_name='" + DerbyBase.stringValue(value) + "'";
-                            try ( ResultSet results = conn.createStatement().executeQuery(sql)) {
-                                if (results.next()) {
-                                    GeographyCode ecode = TableGeographyCode.readCode(results);
-                                    code.setLongitude(ecode.getLongitude());
-                                    code.setLatitude(ecode.getLatitude());
-                                } else {
-                                    logger.debug(value);
-                                }
-                            }
-                        }
-                        break;
-                    }
-                    case "remark": {
-                        String value = countriesJsonValue(values[1]);
-                        code.setComments(value);
-                        break;
-                    }
-                    case "code": {
-                        String value = countriesJsonValue(values[1]);
-                        code.setCode1(value);
-                        break;
-                    }
-                    default:
-                        break;
-                }
-
-            }
-            conn.commit();
-        } catch (Exception e) {
-            logger.debug(e.toString());
-        }
-        TableGeographyCode.write(codes);
-        GeographyCode.exportText(new File("D:\\玛瑞\\Mybox\\b.txt"), codes, true);
-    }
-
-    public static String countriesJsonValue(String value) {
-        if (value == null || value.isBlank() || !value.startsWith("\"")) {
-            return value;
-        }
-        String v = value.trim();
-        if (v.startsWith("\"")) {
-            return v.substring(v.indexOf("\"") + 1, v.lastIndexOf("\""));
-        } else {
-            return v;
         }
     }
 
@@ -2485,7 +2219,7 @@ public class GeographyCode {
     }
 
     public String getFullName() {
-        if (fullName != null) {
+        if (fullName != null && !fullName.isBlank()) {
             return fullName;
         }
         if (levelCode == null) {
@@ -2907,14 +2641,6 @@ public class GeographyCode {
         this.cityName = cityName;
     }
 
-    public static String getDataSeparator() {
-        return DataSeparator;
-    }
-
-    public static void setDataSeparator(String DataSeparator) {
-        GeographyCode.DataSeparator = DataSeparator;
-    }
-
     public void setCountyName(String countyName) {
         this.countyName = countyName;
     }
@@ -3041,6 +2767,46 @@ public class GeographyCode {
 
     public void setLevel(int level) {
         this.level = level;
+    }
+
+    public long getOwner() {
+        return owner;
+    }
+
+    public void setOwner(long owner) {
+        this.owner = owner;
+    }
+
+    public double getAltitude() {
+        return altitude;
+    }
+
+    public void setAltitude(double altitude) {
+        this.altitude = altitude;
+    }
+
+    public double getPrecision() {
+        return precision;
+    }
+
+    public void setPrecision(double precision) {
+        this.precision = precision;
+    }
+
+    public GeographyCode getOwnerCode() {
+        return ownerCode;
+    }
+
+    public void setOwnerCode(GeographyCode ownerCode) {
+        this.ownerCode = ownerCode;
+    }
+
+    public CoordinatetSystem getCoordinatetSystem() {
+        return coordinatetSystem;
+    }
+
+    public void setCoordinatetSystem(CoordinatetSystem coordinatetSystem) {
+        this.coordinatetSystem = coordinatetSystem;
     }
 
 }

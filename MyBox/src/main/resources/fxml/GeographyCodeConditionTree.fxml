@@ -16,6 +16,6 @@ License:    Apache License Version 2.0
 <VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.GeographyCodeConditionTreeController">
     <children>
         <ConditionTreeView fx:id="treeView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
-        <CheckBox fx:id="leafCheck" mnemonicParsing="false" selected="true" text="%CheckLeafNodes" />
+        <CheckBox fx:id="allCheck" mnemonicParsing="false" selected="true" text="%All" />
     </children>
 </VBox>

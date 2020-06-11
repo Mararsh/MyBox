@@ -30,17 +30,12 @@ public class EpidemicReportsImportController extends DataImportController {
 
     @Override
     public long importFile(File file) {
-        int count = 1;
-        while (count++ < 5) {
-            try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
-                return importFile(conn, file);
-            } catch (Exception e) {
-                logger.debug(count + "  " + e.toString());
-                try {
-                    Thread.sleep(500 * count);
-                } catch (Exception ex) {
-                }
-            }
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            long ret = importFile(conn, file);
+            conn.commit();
+            return ret;
+        } catch (Exception e) {
+            logger.debug(e.toString());
         }
         return -1;
     }

@@ -4,43 +4,45 @@
 This is desktop application based on JavaFx to provide simple and easy functions. It's free and open sources
 
 ## What's New
-2020-5-25 v6.3  Redesign "Geography Codes" and "Epidemic Reports".        
-Provide selections of audio parameters in Audio/Vedio Convertor.           
-Provide Common Chinese Colors and Common Japanese Colors.      
-Solved problems.  Cursor should stay orginial location after saving in Text Editor. Option “Count dir size” may cause some batch operations fail.      
-[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3)      
+2020-6-11 v6.3.1  Migrate to java 14.0.1 + javaFx 14.0.1(Except for module "javafx-web") + Netbeans 11.3.        
+Still support migration from loder versions instead of "Truncated Version".               
+Improve table "Geography Codes" to get quicker queries.  Unit of "Area" is changed from "square kilometers" to "square meters".            
+Keys of map can be set.           
+Solved problems. Length of "Recently visited files" is not limited. Values in pie chart of "Epidemic Reports" should be percentage.            
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.1)        
+
 
 ## Download and Execution
 Packages of each version have been uploaded at [Releases](https://github.com/Mararsh/MyBox/releases?) directory now. You can find them by clicking `releases` tab in main page of this project. 
        
     
 ### Self-contain packages 
-Self-contain packages include all files and need not java env and installation.   (Please unpack it under path with pure-English name.)   
+Self-contain packages include all files and need not java env nor installation.   (Please unpack it under path with pure-English name.)   
 
 | Platform | Link | Size | Launcher |    
 | --- | --- | ---  | ---  |    
-| win | [MyBox-6.3-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3/MyBox-6.3-win-exe.zip)  | 259MB | MyBox.exe |       
-| linux | [MyBox-6.3-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.3/MyBox-6.3-linux.tar.gz)  | 218MB  | bin/MyBox  |     
-| mac | [MyBox-6.3-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.3/MyBox-6.3-mac.dmg)  | 220MB  |  MyBox-6.3.app   |   
+| win | [MyBox-6.3.1-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.1/MyBox-6.3.1-win-exe.zip)  | 213MB | MyBox.exe |       
+| linux | [MyBox-6.3.1-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.3.1/MyBox-6.3.1-linux.tar.gz)  | 220MB  | bin/MyBox  |     
+| mac | [MyBox-6.3.1-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.3.1/MyBox-6.3.1-mac.dmg)  | 223MB  |  MyBox-6.3.1.app   |   
 
 User can double click the launcher to start MyBox or run it by command line. The default "Open Method" of image/text/PDF files can be associated to MyBox and a file can be opened directly by MyBox by double clicking the file's name.
 (File with name including non-ascii can not be opened by double clicking currently)
 
 ### Jar 
-When JRE or JDK 13 or higher(`Oracle jdk` or `open jdk`) is installed, jar can run:    
+When JRE or JDK 14 or higher(`Oracle jdk` or `open jdk`) is installed, jar can run:    
   
 | Platform | Link | Size | Requirements |   
 | --- | --- | ---  | ---  |    
-| win | [MyBox-6.3-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3/MyBox-6.3-win-jar.zip)  | 145MB | Java 13.0.1 or higher |    
-| linux | [MyBox-6.3-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3/MyBox-6.3-linux-jar.zip)  | 152MB  | Java 13.0.1 or higher |    
-| mac | [MyBox-6.3-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3/MyBox-6.3-mac-jar.zip)  |  149MB  | Java 13.0.1 or higher |    
+| win | [MyBox-6.3.1-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.1/MyBox-6.3.1-win-jar.zip)  | 147MB | Java 14.0.1 or higher |    
+| linux | [MyBox-6.3.1-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.1/MyBox-6.3.1-linux-jar.zip)  | 154MB  | Java 14.0.1 or higher |    
+| mac | [MyBox-6.3.1-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.1/MyBox-6.3.1-mac-jar.zip)  |  151MB  | Java 14.0.1 or higher |    
  
     
 Run following command to launch this program with Jar package: 
-<PRE><CODE>     java   -jar   MyBox-6.3.jar</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-6.3.1.jar</CODE></PRE>
 	
 A file path can follow the command as argument to be opened directly by MyBox. Example, following command will open the image:    
-<PRE><CODE>     java   -jar   MyBox-6.3.jar   /tmp/a1.jpg</CODE></PRE>   
+<PRE><CODE>     java   -jar   MyBox-6.3.1.jar   /tmp/a1.jpg</CODE></PRE>   
 
 ### Other addresses to download   
 Download from cloud storage: https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F   
@@ -55,12 +57,7 @@ Current version still does not support OCR on Linux/Mac. The reason is that the 
 This requirement is delayed due to limited development time.    
 
 ## Migration
-V6.3 is a "Truncated" version which is only compatible with v6.2.1.  If user need keep data of version older than v6.2.1, MyBox should be migrated from older version to v6.2.1, 
-and then migrated from v6.2.1 to new version.      
-When run v6.3 first time, data of "Geography Code" and "Epidemic Report" in v6.2.1 will be exported in format of v6.3, and then the 2 tables will be reset. 
-User decides whether import the old data into new version.             
- 
-If new version can not be started or run abnormally, rename/move current data path to have new data path created automatically.       
+If new version can not be started or runs abnormally, rename/move current data path to have new data path created automatically.       
 
 # Resource Addresses        
 | Contents | Link | 
@@ -83,7 +80,7 @@ If new version can not be started or run abnormally, rename/move current data pa
 | User Guide - Network Tools | 5.0 | 2019-4-16 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-NetworkTools-en.pdf) |
 | Development Guide | 2.0 | 2019-11-18 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-DevGuide-2.0-en.pdf) |
 | Shortcuts | 6.3 | 2020-05-25 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts_en.html) |
-| Development Logs | 6.3 | 2020-05-25 | [html](#devLog) |
+| Development Logs | 6.3.1 | 2020-06-11 | [html](#devLog) |
 
 # Implementation
 
@@ -91,7 +88,7 @@ MyBox is based on following open sources softwares:
 
 | Name | Role | Link |    
 | --- | --- | --- |    
-| JDK | Java | http://jdk.java.net/13/   |      
+| JDK | Java | http://jdk.java.net/14/   |      
 |   |   | https://www.oracle.com/technetwork/java/javase/downloads/index.html  |        
 |  JavaFx | GUI |  https://gluonhq.com/products/javafx/ |     
 |   |   |  https://docs.oracle.com/javafx/2/  |     
@@ -126,6 +123,7 @@ MyBox is based on following open sources softwares:
 | Tecent | COVID-19 data | https://api.inews.qq.com/newsqa/v1/query/pubished/daily/list?province=湖北&city=武汉 |      
 | poi | Excel | https://poi.apache.org |   
 | LabeledBarChart | Javafx charts | https://stackoverflow.com/questions/34286062/how-to-clear-text-added-in-a-javafx-barchart/41494789#41494789 (Roland) |      
+| commons-csv | CSV | https://commons.apache.org/proper/commons-csv/ |      
 | geonames | Location data | https://www.geonames.org/countries/ |      
 | world-area | Location data | https://github.com/wizardcode/world-area |      
 | China National Bureau of Statistics | Data | http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/ |      
@@ -134,7 +132,7 @@ MyBox is based on following open sources softwares:
 
  
 # Current Version
-Current version is 6.3. Its features are mentioned below in summary:   
+Current version is 6.3.1. Its features are mentioned below in summary:   
  
 * [Cross platforms](#Cross-platform)
 * [Internationalized](#Internationalized)
@@ -194,8 +192,8 @@ Current version is 6.3. Its features are mentioned below in summary:
   
 ## Cross platforms <a id="Cross-platform"></a>       
 
-MyBox is implemented in pure Java and based on open source codes, so it can run any platform which supports Java 13.
-Previous versions are based on Java 8.
+MyBox is implemented in pure Java and based on open source codes, so it can run any platform which supports Java 14.
+Versions before v5.3 are based on Java 8.
 
 Recognizing texts in image/PDF(OCR) works only on Windows currently.    
 
@@ -514,18 +512,18 @@ Recognizing texts in image/PDF(OCR) works only on Windows currently.
 ### Geography Code<a id="geographyCode" />              
 1. Data definition： 
 	-  Basical attributes: id, level, longitude, latitude, chinese_name, english_name, 5 codes, 5 aliases, area(square kilometer), population, comments.   
-	-  Subordinate: continent, country, province, city, county, town, village, building. ("Ancestors")      
+	-  Subordinate: owner, continent, country, province, city, county, town, village, building. ("Ancestors")          
             Data is unnecessary to be subordinated level by level. Cross-over can happen.              
-            Example, a village is subordinated to Antarctica, and a city belongs to a country without province level.     
+            Example, a village is subordinated to Antarctica, and a city belongs to a country without province level.          
 2. Data constraints:
  	-  Must have values: id, level,  chinese_name or english_name.          
  	-  Values of "level": global(only "Earth"), continent, country, province(state), city, county(district), town, village(neighborhood), building, point of interest.
 	-  One of following can determine an address:
  	  	- Match “id"(assigned by MyBox automatically). This is accurate matching.
   	  	- Match "level" + ancestors + "chinese_name"/"english_name"/any one "alias". This is accurate matching.
- 	  	- Match "level" + "chinese_name"/"english_name"/any one "alias". This is fuzzy matching. Duplicated names in same level can cause false matching.
-            Matching of name or alias is case-insensitive.
-            Sometimes 5 "code" are useful to match data.
+ 	  	- Match "level" + "chinese_name"/"english_name"/any one "alias". This is fuzzy matching. Duplicated names in same level can cause false matching.            
+            Matching of name or alias is case-insensitive.              
+            Sometimes 5 "code" are useful to match data.              
 3. Edit data：
  	-  "subordinate" of data is set by selecting node in locations tree.   
  	-  "level" of data should be lower than its ancestors.
@@ -538,7 +536,7 @@ Recognizing texts in image/PDF(OCR) works only on Windows currently.
  	-  MyBox external format data file.            
             Download address:  https://github.com/Mararsh/MyBox_data/tree/master/GeographyCode                    
  	-   Location data from geoname.org.          
-            Download address:  https://www.geonames.org/countries/         
+            Download address:  https://www.geonames.org/countries/           
  	-  Except for predefined data, option "Whether replace existed data" can be selected when import.  Predefined data always replace.                
 5. Define, manage, and apply "Condition": 
  	-  "Condition" is used for operations of Query, Clear, and Export.
@@ -583,7 +581,7 @@ Recognizing texts in image/PDF(OCR) works only on Windows currently.
  	-  Satellite layer is supported for part of foreign addresses. 
  	-  Opacity can be set for each map layer.  
 7. Set map language as:  Chinese, English, Chinese and English.        
-
+8. Keys of map can be changed in "Settings".          
 
 ### Location Data<a id="locationData" />      
 1. Attributes: data set, data label, address, longitude, latitude, altitude, precision, speed, data value, data size, data time, data image, data comments. Time of BC is supported.   
@@ -686,6 +684,8 @@ Recognizing texts in image/PDF(OCR) works only on Windows currently.
  	  	- Font size
  	  	- Parameters of map: level, layers, language
  	-  Snap chart.
+ 	  	- When dynamical chart is playing, the snapshot is animated gif.    
+ 	  	- When dynamical chart is paused, or when the chart is statical, the snapshot is current frame.     
 9. Delete data:
  	-  Define and manage deletion condition.
  	-  Predefined data can not be deleted.
@@ -918,7 +918,14 @@ MyBox supports enable/disable dpi-aware on line, which will cause MyBox reboots 
 Developers need notice: JavaFx screen is not same as physical screen and has different dpi definition which considers X/Y scale ratio too.    
 
 
-# Development Logs <a id="devLog"></a>       
+# Development Logs <a id="devLog"></a>         
+2020-6-11 v6.3.1  Migrate to java 14.0.1 + javaFx 14.0.1(Except for module "javafx-web") + Netbeans 11.3.        
+Still support migration from loder versions instead of "Truncated Version".               
+Improve table "Geography Codes" to get quicker queries.  Unit of "Area" is changed from "square kilometers" to "square meters".            
+Keys of map can be set.           
+Solved problems. Length of "Recently visited files" is not limited. Values in pie chart of "Epidemic Reports" should be percentage.            
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.1)        
+
 2020-5-25 v6.3  Redesign "Geography Codes" and "Epidemic Reports".        
 Provide selections of audio parameters in Audio/Vedio Convertor.           
 Provide Common Chinese Colors and Common Japanese Colors.      

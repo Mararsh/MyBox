@@ -35,7 +35,7 @@ import mara.mybox.value.CommonFxValues;
  * @CreateDate 2019-12-1
  * @License Apache License Version 2.0
  */
-public class FFmpegMergeImagesController extends FFmpegConvertMediaStreamsController {
+public class FFmpegMergeImagesController extends FFmpegBaseController {
 
     protected ObservableList<MediaInformation> audiosData;
 
@@ -87,6 +87,18 @@ public class FFmpegMergeImagesController extends FFmpegConvertMediaStreamsContro
 
         } catch (Exception e) {
             logger.debug(e.toString());
+        }
+    }
+
+    @Override
+    public void checkExecutableInput() {
+        try {
+            super.checkExecutableInput();
+            readMuxers();
+            readEncoders();
+
+        } catch (Exception e) {
+            logger.error(e.toString());
         }
     }
 

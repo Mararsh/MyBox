@@ -38,7 +38,7 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
                     return null;
                 }
                 tableController.markFileHandling(i);
-                FileInformation info = tableData.get(i);
+                FileInformation info = (FileInformation) tableData.get(i);
                 File file = info.getFile();
                 if (file == null) {
                     continue;

@@ -1114,6 +1114,11 @@ public class MyBoxController extends BaseController {
             loadScene(CommonValues.FFmpegMergeImageFilesFxml);
         });
 
+        MenuItem screenRecorder = new MenuItem(AppVariables.message("FFmpegScreenRecorder"));
+        screenRecorder.setOnAction((ActionEvent event1) -> {
+            loadScene(CommonValues.FFmpegScreenRecorderFxml);
+        });
+
         Menu FFmpegMergeMenu = new Menu(AppVariables.message("FFmpegMergeImages"));
         FFmpegMergeMenu.getItems().addAll(
                 FFmpegMergeImageFiles, FFmpegMergeImages);
@@ -1137,6 +1142,7 @@ public class MyBoxController extends BaseController {
         popMenu.setAutoHide(true);
         popMenu.getItems().addAll(
                 mediaPlayer, mediaLists, new SeparatorMenuItem(),
+                //                screenRecorder,
                 FFmpegConversionMenu, FFmpegMergeMenu,
                 FFprobe, FFmpegInformation, new SeparatorMenuItem(),
                 recordImages, new SeparatorMenuItem(), alarmClock, new SeparatorMenuItem(),

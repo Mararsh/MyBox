@@ -14,6 +14,7 @@ import mara.mybox.db.TableGeographyCode;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
+import mara.mybox.value.CommonValues;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -29,6 +30,12 @@ public class EpidemicReportsImportExternalCSVController extends EpidemicReportsI
 
     public EpidemicReportsImportExternalCSVController() {
         baseTitle = AppVariables.message("ImportEpidemicReportExternalCSVFormat");
+    }
+
+    @Override
+    public void initializeNext() {
+        link.setText(CommonValues.MyBoxInternetDataPath
+                + (AppVariables.isChinese() ? "" : "/tree/master/en"));
     }
 
     // Data Set,Time,Confirmed,Healed,Dead,Increased Confirmed,Increased Healed,Increased Dead,Data Source,
@@ -61,6 +68,7 @@ public class EpidemicReportsImportExternalCSVController extends EpidemicReportsI
                     ++lineCount;
                     if (task == null || task.isCancelled()) {
                         updateLogs("Canceled", true);
+                        conn.commit();
                         return importCount;
                     }
                     equalQuery.setMaxRows(1);

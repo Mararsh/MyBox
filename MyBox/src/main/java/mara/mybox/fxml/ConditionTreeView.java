@@ -133,6 +133,16 @@ public class ConditionTreeView extends TreeView {
         }
     }
 
+    public void selectAll() {
+        CheckBoxTreeItem<ConditionNode> root = (CheckBoxTreeItem<ConditionNode>) getRoot();
+        root.setSelected(true);
+    }
+
+    public void selectNone() {
+        CheckBoxTreeItem<ConditionNode> root = (CheckBoxTreeItem<ConditionNode>) getRoot();
+        root.setSelected(false);
+    }
+
     public void checkExpanded() {
         try {
             expandedNodes.clear();

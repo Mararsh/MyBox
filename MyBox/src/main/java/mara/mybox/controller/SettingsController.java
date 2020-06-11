@@ -51,6 +51,9 @@ import mara.mybox.tools.ConfigTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.OCRTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.DaoDeMapVersion;
+import static mara.mybox.value.AppVariables.DaoDeMapWebKey;
+import static mara.mybox.value.AppVariables.DaoDeMapWebServiceKey;
 import static mara.mybox.value.AppVariables.getUserConfigValue;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
@@ -79,7 +82,7 @@ public class SettingsController extends BaseController {
             clearCurrentRootCheck, hidpiCheck;
     @FXML
     protected TextField jvmInput, imageMaxHisInput, dataDirInput, fileRecentInput, thumbnailWidthInput,
-            ocrDirInput;
+            ocrDirInput, mapWebKeyInput, mapWebServiceKeyInput;
     @FXML
     protected VBox localBox, dataBox, ocrBox;
     @FXML
@@ -122,6 +125,7 @@ public class SettingsController extends BaseController {
             initPdfTab();
             initImageTab();
             initOCRTab();
+            initMapTab();
 
             isSettingValues = true;
             initSettingValues();
@@ -1290,6 +1294,41 @@ public class SettingsController extends BaseController {
         isSettingValues = false;
         checkLanguages();
     }
+
+    /*
+        Map settings
+     */
+    public void initMapTab() {
+        try {
+            mapWebKeyInput.setText(AppVariables.DaoDeMapWebKey);
+            mapWebServiceKeyInput.setText(AppVariables.DaoDeMapWebServiceKey);
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+    @FXML
+    public void setMapKeysAction() {
+        String webKey = mapWebKeyInput.getText();
+        String serviceKey = mapWebServiceKeyInput.getText();
+        if (webKey == null || webKey.trim().isBlank()
+                || serviceKey == null || serviceKey.trim().isBlank()) {
+            popError(message("InvalidData"));
+            return;
+        }
+        AppVariables.DaoDeMapWebKey = webKey;
+        AppVariables.setUserConfigValue("DaoDeMapWebKey", webKey);
+        AppVariables.DaoDeMapWebServiceKey = serviceKey;
+        AppVariables.setUserConfigValue("DaoDeMapWebServiceKey", serviceKey);
+    }
+
+    @FXML
+    public void defaultMapAction() {
+        mapWebKeyInput.setText("06b9e078a51325a843dfefd57ffd876c");
+        mapWebServiceKeyInput.setText("d7444d9a7fae01fa850236d909ad4450");
+        setMapKeysAction();
+    }
+
 
     /*
         others

@@ -1153,6 +1153,11 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
+    private void openScreenRecorder(ActionEvent event) {
+        loadScene(CommonValues.FFmpegScreenRecorderFxml);
+    }
+
+    @FXML
     private void openFFmpegMergeImages(ActionEvent event) {
         loadScene(CommonValues.FFmpegMergeImagesFxml);
     }
@@ -1336,8 +1341,7 @@ public class MainMenuController extends BaseController {
             List<String> keeps = Arrays.asList(
                     "iconChina.png", "iconMyBox.png", "iconRGB.png", "iconSaveAs.png", "iconWOW.png",
                     "iconHue.png", "iconColorWheel.png", "iconColor.png", "iconButterfly.png", "iconPalette.png",
-                    "iconMosaic.png", "iconBlackWhite.png", "iconGrayscale.png", "iconDefault.png",
-                    "iconMap.png", "iconRandom.png"
+                    "iconMosaic.png", "iconBlackWhite.png", "iconGrayscale.png", "iconMap.png"
             );
             String srcPath = "D:\\MyBox\\src\\main\\resources\\";
             String redPath = srcPath + "buttons\\";

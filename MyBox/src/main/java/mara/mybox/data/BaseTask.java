@@ -28,10 +28,12 @@ public class BaseTask<P> extends Task<P> {
         }
         try {
             if (!handle() || isCancelled()) {
+                ok = false;
                 return null;
             }
         } catch (Exception e) {
             error = e.toString();
+            ok = false;
         }
         return null;
     }

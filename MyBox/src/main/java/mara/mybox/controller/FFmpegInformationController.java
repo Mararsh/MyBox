@@ -42,7 +42,7 @@ public class FFmpegInformationController extends FFmpegBaseController {
     protected ObservableList<FFmpegFormat> formatsData;
     protected ObservableList<FFmpegCodec> codecsData;
     protected ObservableList<FFmpegFilter> filtersData;
-    protected SingletonTask formatsTask, codecsTask, filtersTask, queryTask;
+    protected SingletonTask formatsTask, codecsTask, filtersTask;
 
     @FXML
     protected TabPane tabPane;
@@ -301,6 +301,7 @@ public class FFmpegInformationController extends FFmpegBaseController {
 
                 }
 
+                @Override
                 protected void taskQuit() {
                     formatsTask = null;
                 }
@@ -336,7 +337,6 @@ public class FFmpegInformationController extends FFmpegBaseController {
                         command.add("-codecs");
                         ProcessBuilder pb = new ProcessBuilder(command)
                                 .redirectErrorStream(true);
-                        pb.redirectErrorStream(true);
                         final Process process = pb.start();
                         try ( BufferedReader inReader = new BufferedReader(
                                 new InputStreamReader(process.getInputStream()))) {
@@ -361,7 +361,7 @@ public class FFmpegInformationController extends FFmpegBaseController {
                                 } else if (flags.contains("S")) {
                                     type = AppVariables.message("Subtitle");
                                 }
-                                String[] v = StringTools.separatedBySpace(line.substring(8));;
+                                String[] v = StringTools.separatedBySpace(line.substring(8));
                                 String codec = v[0];
                                 String desc = v[1];
                                 FFmpegCodec c = FFmpegCodec.create().
@@ -392,6 +392,7 @@ public class FFmpegInformationController extends FFmpegBaseController {
 
                 }
 
+                @Override
                 protected void taskQuit() {
                     codecsTask = null;
                 }
@@ -551,6 +552,7 @@ public class FFmpegInformationController extends FFmpegBaseController {
                     }
                 }
 
+                @Override
                 protected void taskQuit() {
                     queryTask = null;
                 }

@@ -46,7 +46,7 @@ License:    Apache License Version 2.0
                                                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                     <children>
                                                         <Label text="%DownloadAddress" />
-                                                        <Hyperlink onAction="#link" text="https://github.com/Mararsh/MyBox_data" />
+                                                        <Hyperlink fx:id="link" onAction="#link" text="https://github.com/Mararsh/MyBox_data" />
                                                     </children>
                                                 </HBox>
                                                 <Label text="%CSVSeparatedByCommas" />

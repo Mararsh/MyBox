@@ -200,7 +200,7 @@ public class EpidemicReportsStatisticController extends DataTaskController {
                     if (task == null || task.isCancelled()) {
                         return;
                     }
-                    GeographyCode code = TableGeographyCode.readCode(results);
+                    GeographyCode code = TableGeographyCode.readResults(results);
                     sum(conn, equalQuery, insert, update, code);
                 }
             }
@@ -216,7 +216,7 @@ public class EpidemicReportsStatisticController extends DataTaskController {
                     if (task == null || task.isCancelled()) {
                         return;
                     }
-                    GeographyCode code = TableGeographyCode.readCode(results);
+                    GeographyCode code = TableGeographyCode.readResults(results);
                     sum(conn, equalQuery, insert, update, code);
                 }
             }

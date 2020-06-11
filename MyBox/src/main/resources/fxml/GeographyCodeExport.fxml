@@ -217,6 +217,15 @@ License:    Apache License Version 2.0
                      </graphic>
                   </Button>
                         <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Export" HBox.hgrow="NEVER" />
+                  <Button fx:id="copyButton" mnemonicParsing="false" onAction="#copyAction">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/iconCopy.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
                     </children>
                 </HBox>
             </children>

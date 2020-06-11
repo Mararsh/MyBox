@@ -2,25 +2,21 @@ package mara.mybox.controller;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.value.ObservableValue;
-import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.TreeItem;
 import javafx.stage.Modality;
 import mara.mybox.data.GeographyCode;
 import mara.mybox.data.GeographyCodeLevel;
-import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.DerbyBase.dbHome;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.TableGeographyCode;
 import mara.mybox.fxml.ConditionNode;
-import mara.mybox.fxml.FxmlControl;
-import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
@@ -33,9 +29,6 @@ public class GeographyCodeConditionTreeController extends ConditionTreeControlle
 
     protected LoadingController loading;
 
-    @FXML
-    protected CheckBox leafCheck;
-
     public GeographyCodeConditionTreeController() {
         baseTitle = message("GeographyCode");
     }
@@ -47,13 +40,6 @@ public class GeographyCodeConditionTreeController extends ConditionTreeControlle
             List<String> s = new ArrayList();
             s.add(message("AllLocations"));
             treeView.setSelectedTitles(s);
-
-            FxmlControl.setTooltip(leafCheck, message("CheckLeafNodesComments"));
-            leafCheck.setSelected(AppVariables.getUserConfigBoolean("GeographyCodesTreeCheckLeafNodes", true));
-            leafCheck.selectedProperty().addListener(
-                    (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                        AppVariables.setUserConfigValue("GeographyCodesTreeCheckLeafNodes", newValue);
-                    });
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -85,62 +71,49 @@ public class GeographyCodeConditionTreeController extends ConditionTreeControlle
                             }
                         }
                         conn.setReadOnly(true);
+                        conn.setAutoCommit(true);
 
                         if (loading != null) {
                             loading.setInfo(message("LoadingContinents"));
                         }
-                        String sql = "SELECT * FROM Geography_Code WHERE "
-                                + " level=2 AND continent>=2 AND continent<=8 ORDER BY gcid ";
-                        continents = TableGeographyCode.queryCodes(conn, sql, false);
+                        continents = new ArrayList<>();
+                        others = new ArrayList<>();
+                        List<GeographyCode> nodes = TableGeographyCode.queryChildren(conn, earch.getGcid());
+                        nodes.forEach((node) -> {
+                            if (node.getLevel() == 2 && node.getGcid() >= 2 && node.getGcid() <= 8) {
+                                continents.add(node);
+                            } else if (node.getLevel() > 1) {
+                                others.add(node);
+                            }
+                        });
 
-                        String condition = "";
-                        for (int i = 3; i <= 9; i++) {
-                            String ic = "level=" + i;
-                            for (int j = 3; j < i; j++) {
-                                GeographyCodeLevel jLevel = new GeographyCodeLevel(j);
-                                ic += " AND " + jLevel.getKey() + "<=0 ";
-                            }
-                            if (condition.isBlank()) {
-                                condition += "( " + ic + ")";
-                            } else {
-                                condition += " OR ( " + ic + ")";
-                            }
+                        if (loading != null) {
+                            loading.setInfo(message("CheckingLeafNodes"));
                         }
-                        sql = "SELECT * FROM Geography_Code WHERE "
-                                + " ( " + condition + " ) AND "
-                                + " (continent<2 OR continent>8) "
-                                + " ORDER BY gcid ";
-                        others = TableGeographyCode.queryCodes(conn, sql, false);
-
-                        if (leafCheck.isSelected()) {
-                            if (loading != null) {
-                                loading.setInfo(message("CheckingLeafNodes"));
-                            }
-                            haveChildren = new ArrayList();
-                            List<GeographyCode> checkEmpty = new ArrayList<>();
-                            checkEmpty.addAll(continents);
-                            if (others != null && !others.isEmpty()) {
-                                checkEmpty.addAll(others);
-                            }
-                            haveChildren = TableGeographyCode.haveChildren(conn, checkEmpty);
-                        } else {
-                            haveChildren = null;
-                        }
+                        haveChildren = TableGeographyCode.haveChildren(conn, nodes);
 
                         if (loading != null) {
                             loading.setInfo(message("LoadingLevels"));
                         }
                         haveLevels = new ArrayList();
-                        for (int i = 2; i <= 9; i++) {
-                            sql = "SELECT count(gcid) FROM Geography_Code WHERE level=" + i;
-                            if (DerbyBase.size(conn, sql) > 0) {
-                                haveLevels.add(i);
+                        try ( PreparedStatement query = conn.prepareStatement(TableGeographyCode.LevelSizeQuery)) {
+                            query.setMaxRows(1);
+                            for (int i = 2; i <= 9; i++) {
+                                query.setLong(1, i);
+                                try ( ResultSet results = query.executeQuery()) {
+                                    if (results.next()) {
+                                        int size = results.getInt(1);
+                                        if (size > 0) {
+                                            haveLevels.add(i);
+                                        }
+                                    }
+                                }
                             }
                         }
-
                         return true;
                     } catch (Exception e) {
                         error = e.toString();
+                        logger.debug(error);
                         return false;
                     }
                 }
@@ -244,8 +217,7 @@ public class GeographyCodeConditionTreeController extends ConditionTreeControlle
             );
             parent.getChildren().add(codeItem);
 
-            if (!leafCheck.isSelected()
-                    || (haveChildren != null && haveChildren.contains(codeid))) {
+            if (haveChildren != null && haveChildren.contains(codeid)) {
                 TreeItem<ConditionNode> dummyItem = new TreeItem("Loading");
                 codeItem.getChildren().add(dummyItem);
 
@@ -293,43 +265,22 @@ public class GeographyCodeConditionTreeController extends ConditionTreeControlle
                             loading.setInfo(message("Loading") + " " + level.getName()
                                     + " " + code.getName());
                         }
-                        String condition = "";
-                        for (int i = codeLevel + 1; i <= 9; i++) {
-                            String ic = "level=" + i;
-                            for (int j = codeLevel + 1; j < i; j++) {
-                                GeographyCodeLevel jLevel = new GeographyCodeLevel(j);
-                                ic += " AND " + jLevel.getKey() + "<=0 ";
-                            }
-                            if (condition.isBlank()) {
-                                condition += "( " + ic + ")";
-                            } else {
-                                condition += " OR ( " + ic + ")";
-                            }
-                        }
-                        String sql = "SELECT * FROM Geography_Code WHERE "
-                                + " ( " + condition + " ) AND "
-                                + level.getKey() + "=" + code.getGcid()
-                                + " ORDER BY gcid ";
-                        nodes = TableGeographyCode.queryCodes(conn, sql, false);
+                        nodes = TableGeographyCode.queryChildren(conn, code.getGcid());
                         if (nodes == null || nodes.isEmpty()) {
                             return false;
                         }
 
-                        if (leafCheck.isSelected()) {
-                            if (loading != null) {
-                                loading.setInfo(message("CheckingLeafNodes"));
-                            }
-                            haveChildren = TableGeographyCode.haveChildren(conn, nodes);
-                        } else {
-                            haveChildren = null;
+                        if (loading != null) {
+                            loading.setInfo(message("CheckingLeafNodes"));
                         }
+                        haveChildren = TableGeographyCode.haveChildren(conn, nodes);
 
                         if (loading != null) {
                             loading.setInfo(message("LoadingLevels"));
                         }
                         haveLevels = new ArrayList();
                         for (int i = codeLevel + 1; i <= 9; i++) {
-                            sql = "SELECT gcid FROM Geography_Code WHERE "
+                            String sql = "SELECT gcid FROM Geography_Code WHERE "
                                     + " level=" + i + " AND "
                                     + level.getKey() + "=" + code.getGcid()
                                     + " OFFSET 0 ROWS FETCH NEXT 1 ROWS ONLY";

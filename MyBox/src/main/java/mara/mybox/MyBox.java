@@ -147,8 +147,9 @@ public class MyBox {
             System.setProperty("javax.net.ssl.trustStorePassword", SystemTools.keystorePassword());
             System.setProperty("javax.net.ssl.keyStore", SystemTools.keystore());
             System.setProperty("javax.net.ssl.keyStorePassword", SystemTools.keystorePassword());
-//            System.setProperty("jdk.tls.client.protocols", "TLSv1.2");
-//            System.setProperty("https.protocols", "TLSv1.2");
+//            System.setProperty("jdk.tls.client.protocols", "TLSv1");
+            System.setProperty("jdk.tls.server.protocols", "TLSv1,TLSv1.1,TLSv1.2,TLSv1.3");
+//            System.setProperty("https.protocol", "TLSv1");
             System.setProperty("com.sun.security.enableAIAcaIssuers", "true");
             System.setProperty("sun.net.http.allowRestrictedHeaders", "true");
 //            System.setProperty("javax.net.debug", "ssl,record, plaintext, handshake,session,trustmanager,sslctx");

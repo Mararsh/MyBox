@@ -24,6 +24,9 @@ import static mara.mybox.value.AppVariables.logger;
  */
 public class TableVisitHistory extends DerbyBase {
 
+    private static final String AllQuery
+            = " SELECT * FROM visit_history  ORDER BY last_visit_time  DESC  ";
+
     public TableVisitHistory() {
         Table_Name = "visit_history";
         Keys = new ArrayList<>() {
@@ -96,9 +99,7 @@ public class TableVisitHistory extends DerbyBase {
         List<VisitHistory> records = new ArrayList<>();
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             conn.setReadOnly(true);
-            final String sql = " SELECT * FROM visit_history "
-                    + " ORDER BY last_visit_time  DESC  ";
-            try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+            try ( PreparedStatement statement = conn.prepareStatement(AllQuery)) {
                 if (count > 0) {
                     statement.setMaxRows(count);
                 }
@@ -191,9 +192,13 @@ public class TableVisitHistory extends DerbyBase {
                 sql += "  AND resource_type=" + resourceType;
             }
             sql += " ORDER BY last_visit_time  DESC  ";
-            try ( Statement statement = conn.createStatement();
-                     ResultSet results = statement.executeQuery(sql)) {
-                records = findList(results);
+            try ( Statement statement = conn.createStatement()) {
+                if (count > 0) {
+                    statement.setMaxRows(count);
+                }
+                try ( ResultSet results = statement.executeQuery(sql)) {
+                    records = findList(results);
+                }
             }
         } catch (Exception e) {
             failed(e);

@@ -173,6 +173,16 @@ public class ImageViewerController extends ImageMaskController {
                 deleteConfirmCheck.setSelected(AppVariables.getUserConfigBoolean("ImageConfirmDelete", true));
             }
 
+            if (saveConfirmCheck != null) {
+                saveConfirmCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        AppVariables.setUserConfigValue("ImageConfirmSave", saveConfirmCheck.isSelected());
+                    }
+                });
+                saveConfirmCheck.setSelected(AppVariables.getUserConfigBoolean("ImageConfirmSave", true));
+            }
+
             if (manufactureButton != null) {
                 manufactureButton.setDisable(true);
             }

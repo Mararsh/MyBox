@@ -208,7 +208,7 @@ public class PdfSplitBatchController extends PdfBatchController {
             countHandling(srcFile);
             currentParameters.currentSourceFile = srcFile;
             if (!isPreview) {
-                PdfInformation info = tableData.get(currentParameters.currentIndex);
+                PdfInformation info = (PdfInformation) tableData.get(currentParameters.currentIndex);
                 actualParameters.fromPage = info.getFromPage();
                 if (actualParameters.fromPage <= 0) {
                     actualParameters.fromPage = 1;

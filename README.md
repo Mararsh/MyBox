@@ -4,11 +4,12 @@
 这是利用JavaFx开发的图形化桌面应用，目标是提供简单易用的功能。免费开源。     
 
 ## 新内容
-2020-5-25 版本6.3  重新设计和实现"地理编码"和"疫情报告"。        
-音/视频转换时提供音频参数的选择。       
-提供常用中国颜色和常用日本颜色。      
-解决问题：文本编辑保存后光标应留在原地。选项"为目录下文件计数"可能使批处理失败。            
-[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3)      
+2020-6-11 版本6.3.1  升级至java 14.0.1 + javaFx 14.0.1(除“javafx-web”模块) + NetBeans 11.3。        
+仍支持旧版本的迁移而不是截断版本。        
+完善“地理编码”表定义以提高查询速度。“面积”单位由平方公里改为平方米。                
+可以设置地图的数据密钥。       
+解决问题：“最近访问的文件”列表没有限制长度。“疫情报告”的饼图数据值应当是百分值。            
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.1)         
  
 ## 下载与运行
 每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases?)目录下（点击上面的`releases`页签）。    
@@ -19,26 +20,26 @@
   
 | 平台 | 链接 | 大小 | 启动文件 |    
 | --- | --- | --- |  --- |   
-| win | [MyBox-6.3-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3/MyBox-6.3-win-exe.zip)  | 259MB | MyBox.exe |       
-| linux | [MyBox-6.3-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.3/MyBox-6.3-linux.tar.gz)  | 218MB  | bin/MyBox  |     
-| mac | [MyBox-6.3-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.3/MyBox-6.3-mac.dmg)  | 220MB  |  MyBox-6.3.app   |   
+| win | [MyBox-6.3.1-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.1/MyBox-6.3.1-win-exe.zip)  | 213MB | MyBox.exe |       
+| linux | [MyBox-6.3.1-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.3.1/MyBox-6.3.1-linux.tar.gz)  | 220MB  | bin/MyBox  |     
+| mac | [MyBox-6.3.1-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.3.1/MyBox-6.3.1-mac.dmg)  | 223MB  |  MyBox-6.3.1.app   |   
 
 双击或者用命令行执行包内的启动文件即可运行程序。可以把图片/文本/PDF文件的打开方式关联到MyBox，这样双击文件名就直接是用MyBox打开了。
 （目前无法双击打开路径包含汉字的文件） 
     
 ### Jar包   
-在已安装JRE或者JDK 13或更高版本（`Oracle java`或`Open jdk`均可）的环境下，可以下载jar包。   
+在已安装JRE或者JDK 14或更高版本（`Oracle java`或`Open jdk`均可）的环境下，可以下载jar包。   
  
 | 平台 | 链接 | 大小 | 运行需要 |    
 | --- | --- | --- |  --- |   
-| win | [MyBox-6.3-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3/MyBox-6.3-win-jar.zip)  | 145MB | Java 13.0.1或更高版本 |    
-| linux | [MyBox-6.3-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3/MyBox-6.3-linux-jar.zip)  | 152MB  | Java 13.0.1或更高版本 |    
-| mac | [MyBox-6.3-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3/MyBox-6.3-mac-jar.zip)  |  149MB  | Java 13.0.1或更高版本 |    
+| win | [MyBox-6.3.1-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.1/MyBox-6.3.1-win-jar.zip)  | 147MB | Java 14.0.1或更高版本 |    
+| linux | [MyBox-6.3.1-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.1/MyBox-6.3.1-linux-jar.zip)  | 154MB  | Java 14.0.1或更高版本 |    
+| mac | [MyBox-6.3.1-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.1/MyBox-6.3.1-mac-jar.zip)  |  151MB  | Java 14.0.1或更高版本 |    
     
 执行以下命令来启动程序：
-<PRE><CODE>     java   -jar   MyBox-6.3.jar</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-6.3.1.jar</CODE></PRE>
 程序可以跟一个文件名作为参数、以用MyBox直接打开此文件。例如以下命令是打开此图片：
-<PRE><CODE>     java   -jar   MyBox-6.3.jar   /tmp/a1.jpg</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-6.3.1.jar   /tmp/a1.jpg</CODE></PRE>
 
 ### 其它下载地址     
 从云盘下载：  https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F     
@@ -51,11 +52,8 @@
 本版本仍未能支持在Linux/Mac上文字识别，原因是：所依托的tesseract库与各种平台紧密相关，没有统一的打包途径。     
 时间有限，目前暂搁此需求。
 
-## 版本迁移   
-版本v6.3是"截断版本"：只兼容前一个版本v6.2.1，如果用户需要保留v6.2.1之前版本的数据，需要先迁移至v6.2.1，再迁移至v6.3。    
-第一次运行v6.3时，v6.2.1中的数据"地理编码"和"疫情报告"将被自动导出为v6.3的格式文件、然后表格被重置。用户自行决定是否将旧数据导入新版本。   
-
-如果由于以前版本的存在而导致新版本无法正常启动/运行，可以将现有数据目录改名以使新数据目录被自动生成。   
+## 版本迁移      
+如果由于以前版本的存在而导致新版本无法正常启动/运行，可以将现有数据目录改名，以使新数据目录被自动生成。   
 
 # 资源地址     
 | 内容 | 链接 | 
@@ -79,7 +77,7 @@
 | 用户手册-网络工具 | 5.0 |  2019-4-16 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-NetworkTools-zh.pdf) |
 | 开发指南 | 2.0 |  2019-11-18 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-DevGuide-2.0-zh.pdf) |
 | 快捷键 | 6.3 |  2020-5-25 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts.html) |
-| 开发日志 | 6.3 |  2020-5-25 | [html](#devLog) |
+| 开发日志 | 6.3.1 |  2020-6-11 | [html](#devLog) |
 
 
 # 实现基础
@@ -87,13 +85,13 @@ MyBox基于以下开源软件：
 
 | 名字 | 角色 | 链接 |  
 | --- | --- | --- | 
-| JDK | Java语言 | http://jdk.java.net/13/   |
+| JDK | Java语言 | http://jdk.java.net/14/   |
 |   |   | https://www.oracle.com/technetwork/java/javase/downloads/index.html  |   
 | JavaFx | 图形化界面 | https://gluonhq.com/products/javafx/  |     
 |   |   |  https://docs.oracle.com/javafx/2/  |     
 |   |   |  https://www.oracle.com/technetwork/java/javafxscenebuilder-1x-archive-2199384.html |     
 | NetBeans | 集成开发环境 | https://netbeans.org/ |     
-| jpackage | 自包含包 | http://jdk.java.net/jpackage/ |     
+| jpackage | 自包含包 | https://docs.oracle.com/en/java/javase/14/docs/specs/man/jpackage.html |     
 | jai-imageio | 图像处理 | https://github.com/jai-imageio/jai-imageio-core |   
 | PDFBox | PDF处理 | https://pdfbox.apache.org/ |   
 | PDF2DOM | PDF转html | http://cssbox.sourceforge.net/pdf2dom/ |   
@@ -122,6 +120,7 @@ MyBox基于以下开源软件：
 | 腾讯 | COVID-19数据 | https://api.inews.qq.com/newsqa/v1/query/pubished/daily/list?province=湖北&city=武汉 |      
 | poi | Excel | https://poi.apache.org |      
 | LabeledBarChart | JavaFx图 | https://stackoverflow.com/questions/34286062/how-to-clear-text-added-in-a-javafx-barchart/41494789#41494789 (Roland) |      
+| commons-csv | CSV | https://commons.apache.org/proper/commons-csv/ |      
 | geonames | 位置数据 | https://www.geonames.org/countries/ |      
 | world-area | 位置数据 | https://github.com/wizardcode/world-area |      
 | 中国国家统计局 | 数据 | http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/ |      
@@ -130,7 +129,7 @@ MyBox基于以下开源软件：
 
 
 # 当前版本
-当前是版本6.3，已实现的特点概述如下:
+当前是版本6.3.1，已实现的特点概述如下:
 * [跨平台](#cross-platform)
 * [国际化](#international)
 * [文档工具](#documentTools)
@@ -187,7 +186,7 @@ MyBox基于以下开源软件：
 * [对于高清晰屏幕的支持](#Hidpig)    
     
 ## 跨平台<a id="cross-platform" />   
-MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持Java 13的平台。（MyBox v5.3以前的版本均基于Java 8）
+MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持Java 14的平台。（MyBox v5.3以前的版本均基于Java 8）
 
 图像识别文字目前只支持windows平台。    
 
@@ -500,7 +499,7 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 ### 地理编码<a id="geographyCode" />
 1. 数据定义： 
 	-  基本属性：标识、级别、经度、纬度、中国名、英文名、5个代码、5个别名、面积（平方公里）、人口、注释。  
-	-  从属属性：洲、国家、省、市、县、镇、村、建筑。（构成"祖先"）      
+	-  从属属性：属主、洲、国家、省、市、县、镇、村、建筑。（构成"祖先"）      
             数据不必逐级从属，即可以跨级定义，例如：一个村庄直接属于南极洲；又如：城市直接属于国家，而没有省/州一级。
 2. 数据约束：
  	-  必须有值：标识、级别、中文名或英文名 
@@ -508,9 +507,9 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 	- 以下方式之一可以确定一个地址：
  	  	- 匹配数据标识（由MyBox自动赋值）。这是精确匹配。
   	  	- 匹配"级别" + "祖先" + "中文名"或"英文名"或任一别名"。这是精确匹配。
- 	  	- 匹配"级别" + "中文名"或"英文名"或任一"别名"。这是模糊匹配，可能有同级重名导致匹配错误的情况。     
-           匹配名字或者别名时，不区分大小写。           
-           有时候"代码"（code1/2/3/4/5）也可以辅助查找。    
+ 	  	- 匹配"级别" + "中文名"或"英文名"或任一"别名"。这是模糊匹配，可能有同级重名导致匹配错误的情况。       
+           匹配名字或者别名时，不区分大小写。            
+           有时候"代码"（code1/2/3/4/5）也可以辅助查找。      
 3. 编辑数据：
  	-  数据的"从属关系"只能从位置树上选择。
  	-  数据的级别必须比祖先低。
@@ -520,9 +519,9 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 4. 导入数据：
  	-  MyBox内置预定义数据：洲、国家、中国的省/市/县。国家的"面积"和"人口"有值。       
  	-  MyBox外部格式文件。            
-            下载地址：https://github.com/Mararsh/MyBox_data/tree/master/GeographyCode
+            下载地址：https://github.com/Mararsh/MyBox_data/tree/master/GeographyCode                     
  	-  来自geoname.org的位置数据。          
-            下载地址：https://www.geonames.org/countries/
+            下载地址：https://www.geonames.org/countries/              
  	-  除了预定义，导入时可选替换已存在的数据。预定义数据总是替换。      
 5. 定义、管理、和应用"条件"：
  	-  "条件"被用来执行：查询、删除、导出。
@@ -566,7 +565,8 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
  	-  外国坐标不支持路网图层和交通图层。
  	-  部分外国坐标支持卫星图层。
  	-  可分别设置每个图层的不透明度。  
-7. 地图的语言：中文、英文、中英文。
+7. 地图的语言：中文、英文、中英文。  
+8. 地图的数据密钥可以在“设置”里修改。              
 
 ### 位置数据<a id="locationData" />
 1. 属性： 数据集、数据标签、地址、经度、纬度、高度、精度、速度、方向、数据值、数据规模、数据时间、说明、图像。数据时间支持"公元前"。  
@@ -586,9 +586,9 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
            由前后两天数据行的差值计算出。
 	-  除值统计：
 	  	- 治愈/确认千分比、死亡/确认千分比。
-	  	- 确认/面积千分比、治愈/面积千分比、死亡/面积千分比。
-	  	- 确认/人口千分比、治愈/人口千分比、死亡/人口千分比。        
-            当位置数据的"面积"/"人口"值非法（零或负数）时，相应的统计值没有意义（零）。      
+	  	- 确认/平方公里千分比、治愈/平方公里千分比、死亡/平方公里千分比。
+	  	- 确认/人口千分比、治愈/人口千分比、死亡/人口千分比。         
+            当位置数据的"面积"/"人口"值非法（零或负数）时，相应的统计值没有意义（零）。         
             预定义的"国家"数据有合法的"面积"和"人口"值，因此可以得到有意义的统计值。          
 	-  累加统计：
 	  	- 一些国家的数值            
@@ -611,7 +611,7 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
  	-  在"中国省会疫情报告"和"全球疫情报告"界面上，可以填写多个地址的同一数据集同一天的数据。
  	-  对选择的多个数据项修改"来源"的取值。
 4. 导入数据：
- 	-  MyBox内置预定义数据：来自约翰霍普金斯大学的COVID-19数据（直到2020-05-24）。
+ 	-  MyBox内置预定义数据：来自约翰霍普金斯大学的COVID-19数据（直到2020-06-10）。
  	-  MyBox外部格式文件。      
             下载地址：https://github.com/Mararsh/MyBox_data/tree/master/COVID19       
  	-  来自约翰霍普金斯大学的COVID-19历史数据（全球）。     
@@ -668,6 +668,8 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
  	  	- 文字大小
  	  	- 地图的参数：级别、图层、语言
  	-  截图
+ 	  	- 当动态图播放时，截图为动态gif
+ 	  	- 当动态图暂停时、或图为静态图时，截图为当前帧。
 9. 删除数据：
  	-  可以定义和管理删除条件。
  	-  预定义的数据无法被删除。
@@ -893,7 +895,14 @@ Java 9以后已支持HiDPI，控件和字体都会适应当前清晰度配置。
 开发者需要注意的是：JavaFx虚拟屏幕的dpi不同于物理屏幕的dpi，对于窗口元素尺寸的计算还要考虑伸缩比。   
 
 
-# 开发日志<a id="devLog" />      
+# 开发日志<a id="devLog" />       
+2020-6-11 版本6.3.1  升级至java 14.0.1 + javaFx 14.0.1(除“javafx-web”模块) + NetBeans 11.3。        
+仍支持旧版本的迁移而不是截断版本。        
+完善“地理编码”表定义以提高查询速度。“面积”单位由平方公里改为平方米。                
+可以设置地图的数据密钥。       
+解决问题：“最近访问的文件”列表没有限制长度。“疫情报告”的饼图数据值应当是百分值。            
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.1)      
+
 2020-5-25 版本6.3  重新设计和实现"地理编码"和"疫情报告"。        
 音/视频转换时提供音频参数的选择。       
 提供常用中国颜色和常用日本颜色。      

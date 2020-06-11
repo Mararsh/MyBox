@@ -334,6 +334,7 @@ public class EpidemicReportsChartController extends LocationsMapController {
             }
             task = new SingletonTask<Void>() {
 
+                @Override
                 protected boolean handle() {
                     try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
                         conn.setReadOnly(true);
@@ -828,7 +829,7 @@ public class EpidemicReportsChartController extends LocationsMapController {
                     continue;
                 }
                 double d = value.doubleValue();
-                double percent = DoubleTools.scale(d / total, 1);
+                double percent = DoubleTools.scale(d * 100 / total, 1);
                 String labelValue = StringTools.format(d);
                 switch (labelType) {
                     case Name:
@@ -956,15 +957,6 @@ public class EpidemicReportsChartController extends LocationsMapController {
                     || time == null || timeReports == null || timeReports.isEmpty()) {
                 return;
             }
-            List<Long> validLocationids = new ArrayList<>();
-            List<GeographyCode> locations = new ArrayList<>();
-            for (EpidemicReport report : timeReports) {
-                long locationid = report.getLocationid();
-                if (!validLocationids.contains(locationid)) {
-                    validLocationids.add(locationid);
-                    locations.add(report.getLocation());
-                }
-            }
             chartBox.getChildren().clear();
             HBox line = new HBox();
             int colsNum = (int) Math.sqrt(valuesNames.size());
@@ -988,7 +980,7 @@ public class EpidemicReportsChartController extends LocationsMapController {
                 VBox.setVgrow(lineChart, Priority.ALWAYS);
                 HBox.setHgrow(lineChart, Priority.ALWAYS);
                 line.getChildren().add(lineChart);
-                drawValueLines(valueName, lineChart, time, locations, vertical);
+                drawValueLines(valueName, lineChart, time, vertical);
             }
         } catch (Exception e) {
             logger.debug(e.toString());
@@ -996,11 +988,10 @@ public class EpidemicReportsChartController extends LocationsMapController {
     }
 
     protected void drawValueLines(String valueName, LineChart lineChart,
-            String time, List<GeographyCode> locations, boolean vertical) {
+            String time, boolean vertical) {
         try {
             if (valueName == null || lineChart == null
-                    || time == null || locationsReports == null
-                    || locations == null || locations.isEmpty()) {
+                    || time == null || locationsReports == null) {
                 return;
             }
             Map<String, String> palette = new HashMap();
@@ -1346,10 +1337,12 @@ public class EpidemicReportsChartController extends LocationsMapController {
             snapPara.setFill(Color.WHITE);
             snapPara.setTransform(Transform.scale(scale, scale));
 
-            if (timer != null) {
-                timer.cancel();
-                timer = null;
+            if (timer == null) {
+                openImageViewer(snapWidth(snapPara, scale, Integer.MAX_VALUE, chartSnapBox));
+                return;
             }
+            timer.cancel();
+            timer = null;
             List<File> snapshots = new ArrayList<>();
             loading = openHandlingStage(Modality.WINDOW_MODAL);
             byte[] lock = new byte[0];
@@ -1403,7 +1396,7 @@ public class EpidemicReportsChartController extends LocationsMapController {
                                 Thread.sleep(100);
                             } catch (Exception e) {
                             }
-                            snapshots.add(snapWidth(snapPara, scale, chartSnapBox));
+                            snapshots.add(snapWidth(snapPara, scale, snapWidth, chartSnapBox));
                             ++index;
                         }
                     });
@@ -1416,14 +1409,14 @@ public class EpidemicReportsChartController extends LocationsMapController {
         }
     }
 
-    protected File snapWidth(SnapshotParameters snapPara, double scale, Region chart) {
+    protected File snapWidth(SnapshotParameters snapPara, double scale, int width, Region chart) {
         try {
             Bounds bounds = chart.getLayoutBounds();
             int imageWidth = (int) Math.round(bounds.getWidth() * scale);
             int imageHeight = (int) Math.round(bounds.getHeight() * scale);
             Image snap = chart.snapshot(snapPara, new WritableImage(imageWidth, imageHeight));
             BufferedImage bufferedImage = SwingFXUtils.fromFXImage(snap, null);
-            if (bufferedImage.getWidth() > snapWidth) {
+            if (bufferedImage.getWidth() > width) {
                 bufferedImage = ImageManufacture.scaleImageWidthKeep(bufferedImage, snapWidth);
             }
             File tmpfile = FileTools.getTempFile(".png");

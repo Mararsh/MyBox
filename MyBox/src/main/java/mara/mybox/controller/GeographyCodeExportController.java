@@ -43,7 +43,7 @@ public class GeographyCodeExportController extends DataExportController {
 
     @Override
     protected void writeInternalCSV(Connection conn, CSVPrinter printer, ResultSet results) {
-        GeographyCode code = TableGeographyCode.readCode(results);
+        GeographyCode code = TableGeographyCode.readResults(results);
         GeographyCode.writeInternalCSV(printer, code);
     }
 
@@ -54,21 +54,21 @@ public class GeographyCodeExportController extends DataExportController {
 
     @Override
     protected void writeExternalCSV(Connection conn, CSVPrinter printer, ResultSet results) {
-        GeographyCode code = TableGeographyCode.readCode(results);
+        GeographyCode code = TableGeographyCode.readResults(results);
         TableGeographyCode.decodeAncestors(conn, code);
         GeographyCode.writeExternalCSV(printer, code);
     }
 
     @Override
     protected void writeXML(Connection conn, FileWriter writer, ResultSet results, String indent) {
-        GeographyCode code = TableGeographyCode.readCode(results);
+        GeographyCode code = TableGeographyCode.readResults(results);
         TableGeographyCode.decodeAncestors(conn, code);
         GeographyCode.writeXml(writer, indent, code);
     }
 
     @Override
     protected String writeJSON(Connection conn, FileWriter writer, ResultSet results, String indent) {
-        GeographyCode code = TableGeographyCode.readCode(results);
+        GeographyCode code = TableGeographyCode.readResults(results);
         TableGeographyCode.decodeAncestors(conn, code);
         return GeographyCode.writeJson(writer, indent, code).toString();
     }
@@ -80,14 +80,14 @@ public class GeographyCodeExportController extends DataExportController {
 
     @Override
     protected void writeExcel(Connection conn, XSSFSheet sheet, ResultSet results, int count) {
-        GeographyCode code = TableGeographyCode.readCode(results);
+        GeographyCode code = TableGeographyCode.readResults(results);
         TableGeographyCode.decodeAncestors(conn, code);
         GeographyCode.writeExcel(sheet, count, code);
     }
 
     @Override
     protected List<String> htmlRow(Connection conn, ResultSet results) {
-        GeographyCode code = TableGeographyCode.readCode(results);
+        GeographyCode code = TableGeographyCode.readResults(results);
         TableGeographyCode.decodeAncestors(conn, code);
         return GeographyCode.values(code);
     }

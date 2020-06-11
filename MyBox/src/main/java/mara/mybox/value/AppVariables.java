@@ -54,6 +54,7 @@ public class AppVariables {
     public static String lastError;
     public static SSLSocketFactory defaultSSLSocketFactory;
     public static HostnameVerifier defaultHostnameVerifier;
+    public static String DaoDeMapVersion, DaoDeMapWebKey, DaoDeMapWebServiceKey;
 
     public AppVariables() {
     }
@@ -73,6 +74,9 @@ public class AppVariables {
             controlDisplayText = AppVariables.getUserConfigBoolean("ControlDisplayText", false);
             ImagePopCooridnate = AppVariables.getUserConfigBoolean("ImagePopCooridnate", false);
             disableHiDPI = DerbyFailAsked = false;
+            DaoDeMapVersion = AppVariables.getUserConfigValue("DaoDeMapVersion", "1.4.15");
+            DaoDeMapWebKey = AppVariables.getUserConfigValue("DaoDeMapWebKey", "06b9e078a51325a843dfefd57ffd876c");
+            DaoDeMapWebServiceKey = AppVariables.getUserConfigValue("DaoDeMapWebServiceKey", "d7444d9a7fae01fa850236d909ad4450");
             lastError = null;
             if (defaultSSLSocketFactory == null) {
                 defaultSSLSocketFactory = HttpsURLConnection.getDefaultSSLSocketFactory();

@@ -18,23 +18,29 @@ import java.security.SecureRandom;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
+import java.security.cert.PKIXBuilderParameters;
 import java.security.cert.X509Certificate;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
 import javafx.scene.web.WebEngine;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509ExtendedTrustManager;
 import javax.net.ssl.X509TrustManager;
 import mara.mybox.data.CertificateBypass;
 import mara.mybox.value.AppVariables;
@@ -219,7 +225,65 @@ public class NetworkTools {
         return verifier;
     }
 
+    public static class TrustAllManager extends X509ExtendedTrustManager implements X509TrustManager {
+
+        @Override
+        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+//            logger.debug("here");
+            return null;
+        }
+
+        @Override
+        public void checkClientTrusted(X509Certificate[] certs, String authType) {
+//            logger.debug((certs != null) + " " + authType);
+        }
+
+        @Override
+        public void checkServerTrusted(X509Certificate[] certs, String authType) {
+//            logger.debug(certs.length + " " + authType);
+//            for (X509Certificate cert : certs) {
+//                logger.debug(cert);
+//            }
+        }
+
+        @Override
+        public void checkClientTrusted(X509Certificate[] chain, String authType,
+                Socket socket) throws CertificateException {
+//            logger.debug((chain != null) + " " + authType);
+        }
+
+        @Override
+        public void checkServerTrusted(X509Certificate[] chain, String authType,
+                Socket socket) throws CertificateException {
+//            logger.debug(chain.length + " " + authType);
+//            for (X509Certificate cert : chain) {
+//                logger.debug(cert);
+//            }
+        }
+
+        @Override
+        public void checkClientTrusted(X509Certificate[] chain, String authType,
+                SSLEngine engine) throws CertificateException {
+//            logger.debug((chain != null) + " " + authType);
+        }
+
+        @Override
+        public void checkServerTrusted(X509Certificate[] chain, String authType,
+                SSLEngine engine) throws CertificateException {
+//            logger.debug(chain.length + " " + authType);
+//            for (X509Certificate cert : chain) {
+//                logger.debug(cert);
+//            }
+        }
+
+    }
+
     public static TrustManager[] trustAllManager() {
+        TrustManager[] trustAllManager = new TrustManager[]{new TrustAllManager()};
+        return trustAllManager;
+    }
+
+    public static TrustManager[] trustAllManager2() {
         TrustManager[] trustAllManager = new TrustManager[]{
             new X509TrustManager() {
                 @Override
@@ -229,13 +293,15 @@ public class NetworkTools {
                 }
 
                 @Override
-                public void checkClientTrusted(X509Certificate[] certs,
-                        String authType) {
+                public void checkClientTrusted(X509Certificate[] certs, String authType) {
                 }
 
                 @Override
-                public void checkServerTrusted(X509Certificate[] certs,
-                        String authType) {
+                public void checkServerTrusted(X509Certificate[] certs, String authType) {
+                    logger.debug(certs.length + " " + authType);
+                    for (X509Certificate cert : certs) {
+                        logger.debug(cert);
+                    }
                 }
             }
         };
@@ -253,8 +319,9 @@ public class NetworkTools {
     // https://nakov.com/blog/2009/07/16/disable-certificate-validation-in-java-ssl-connections/
     public static void trustAll() {
         try {
-            SSLContext sc = SSLContext.getInstance("SSL");
+            SSLContext sc = SSLContext.getInstance(CommonValues.HttpsProtocal);
             sc.init(null, trustAllManager(), new SecureRandom());
+//            logger.info("---SSLContext sc " + sc.getProtocol());
 
             HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
             HttpsURLConnection.setDefaultHostnameVerifier(trustAllVerifier());
@@ -269,7 +336,7 @@ public class NetworkTools {
             if (urlConnection == null || !(urlConnection instanceof HttpsURLConnection)) {
                 return;
             }
-            SSLContext sc = SSLContext.getInstance("SSL");
+            SSLContext sc = SSLContext.getInstance(CommonValues.HttpsProtocal);
             sc.init(null, trustAllManager(), new java.security.SecureRandom());
 
             HttpsURLConnection uc = (HttpsURLConnection) urlConnection;
@@ -611,7 +678,7 @@ public class NetworkTools {
             File tmpFile = FileTools.getTempFile();
             URL url = new URL(address);
             HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
-            SSLContext sc = SSLContext.getInstance("SSL");
+            SSLContext sc = SSLContext.getInstance(CommonValues.HttpsProtocal);
             sc.init(null, trustAllManager(), new SecureRandom());
             conn.setSSLSocketFactory(sc.getSocketFactory());
             conn.setHostnameVerifier(trustAllVerifier());
@@ -663,7 +730,7 @@ public class NetworkTools {
             URL url = new URL(address);
             File pageFile = FileTools.getTempFile(".htm");
             HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-            SSLContext sc = SSLContext.getInstance("SSL");
+            SSLContext sc = SSLContext.getInstance(CommonValues.HttpsProtocal);
             sc.init(null, trustAllManager(), new SecureRandom());
             connection.setSSLSocketFactory(sc.getSocketFactory());
             connection.setHostnameVerifier(trustAllVerifier());

@@ -30,6 +30,7 @@ import javafx.stage.Screen;
 import mara.mybox.data.GeographyCode;
 import mara.mybox.data.StringTable;
 import mara.mybox.data.VisitHistory;
+import mara.mybox.db.TableBrowserBypassSSL;
 import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;

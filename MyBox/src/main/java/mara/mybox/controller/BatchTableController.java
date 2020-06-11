@@ -51,14 +51,11 @@ import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 
 /**
+ * @param <P> T must be subClass of FileInformation
  * @Author Mara
  * @CreateDate 2018-11-28
  * @Description
  * @License Apache License Version 2.0
- */
-
-/*
-    T must be subClass of FileInformation
  */
 public abstract class BatchTableController<P> extends BaseController {
 
