@@ -70,18 +70,18 @@
 
 | 文档名 | 版本 | 修改时间  | 链接 |
 | --- | --- | --- | --- |
-| 用户手册-综述 |  5.0 |  2019-4-19 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-Overview-zh.pdf) |
-| 用户手册-图像工具 | 5.0 |  2019-4-18 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-ImageTools-zh.pdf) |
-| 用户手册-PDF工具 | 5.0 |  2019-4-20 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-PdfTools-zh.pdf) |
-| 用户手册-桌面工具 | 5.0 |  2019-4-16 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-DesktopTools-zh.pdf) |
-| 用户手册-网络工具 | 5.0 |  2019-4-16 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-NetworkTools-zh.pdf) |
+| 用户手册-综述 |  5.0 |  2019-4-19 | [PDF](https://github.com/Mararsh/MyBox_documents/zh/MyBox-UserGuide-5.0-Overview-zh.pdf) |
+| 用户手册-图像工具 | 5.0 |  2019-4-18 | [PDF](https://github.com/Mararsh/MyBox_documents/zh/MyBox-UserGuide-5.0-ImageTools-zh.pdf) |
+| 用户手册-PDF工具 | 5.0 |  2019-4-20 | [PDF](https://github.com/Mararsh/MyBox_documents/zh/MyBox-UserGuide-5.0-PdfTools-zh.pdf) |
+| 用户手册-桌面工具 | 5.0 |  2019-4-16 | [PDF](https://github.com/Mararsh/MyBox_documents/zh/MyBox-UserGuide-5.0-DesktopTools-zh.pdf) |
+| 用户手册-网络工具 | 5.0 |  2019-4-16 | [PDF](https://github.com/Mararsh/MyBox_documents/zh/MyBox-UserGuide-5.0-NetworkTools-zh.pdf) |
 | 开发指南 | 2.0 |  2019-11-18 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-DevGuide-2.0-zh.pdf) |
 | 快捷键 | 6.3 |  2020-5-25 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts.html) |
 | 开发日志 | 6.3.1 |  2020-6-11 | [html](#devLog) |
 
 
 # 实现基础
-MyBox基于以下开源软件：  
+MyBox基于以下开源资源：  
 
 | 名字 | 角色 | 链接 |  
 | --- | --- | --- | 
@@ -114,7 +114,7 @@ MyBox基于以下开源软件：
 | image4j | ico格式 | https://github.com/imcdonagh/image4j |   
 | AutoCommitCell | 提交修改 | https://stackoverflow.com/questions/24694616 （Ogmios） |   
 | 高德 | 地图 | https://lbs.amap.com/api/javascript-api/summary |      
-| 高德 | 坐标 | https://github.com/Mararsh/MyBox_data/tree/master/GeographyCode |      
+| 高德 | 坐标 | https://lbs.amap.com/api/webservice/guide/api/georegeo |      
 | 微信 | 图片素材 | https://weibo.com/3876734080/InmB1aPiL?type=comment#_rnd1582211299665 |      
 | 百度 | COVID-19数据 | https://voice.baidu.com/act/newpneumonia/newpneumonia/?from=osari_pc_3 |      
 | 腾讯 | COVID-19数据 | https://api.inews.qq.com/newsqa/v1/query/pubished/daily/list?province=湖北&city=武汉 |      
@@ -126,6 +126,7 @@ MyBox基于以下开源软件：
 | 中国国家统计局 | 数据 | http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/ |      
 | JHU | COVID-19数据 | https://github.com/CSSEGISandData/COVID-19 |      
 | 懒人图库 | 色彩数据 | https://tool.lanrentuku.com/color/china.html |      
+| 中国纹样全集 | 素材 | https://book.douban.com/subject/3894923/ |      
 
 
 # 当前版本
@@ -232,19 +233,20 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 
 ### 编辑文本<a id="editText" />
 1. 自动检测或手动设置文件编码；改变字符集实现转码；支持BOM设置。
-2. 自动检测换行符；改变换行符。显示行号。
-3. 支持LF（Unix/Linux）、 CR（Apple）、 CRLF（Windows）。
-4. 查找与替换。可只本页查找/替换、或整个文件查找/替换。计数功能。支持正则表达式。
-5. 定位。跳转到指定的字符位置或行号。
-6. 行过滤。条件："包含任一"、"不含所有"、"包含所有"、"不含任一"。支持正则表达式。
-7. 可累加过滤。可保存过滤结果。可选是否包含行号。
-8. 字符集对应的编码：字节的十六进制同步显示、同步滚动、同步选择。
-9. 分页。可用于查看和编辑非常大的文件，如几十G的运行日志。
+2. 自动检测换行符；改变换行符。显示行号。     
+   支持LF（Unix/Linux）、 CR（Apple）、 CRLF（Windows）。
+3. 查找与替换。可只本页查找/替换、或整个文件查找/替换。计数功能。支持正则表达式。
+4. 定位。跳转到指定的字符位置或行号。
+5. 行过滤。条件："包含任一"、"不含所有"、"包含所有"、"不含任一"。        
+   支持正则表达式。   
+   可累加过滤。可保存过滤结果。可选是否包含行号。  
+6. 字符集对应的编码：字节的十六进制同步显示、同步滚动、同步选择。
+7. 分页。可用于查看和编辑非常大的文件，如几十G的运行日志。
 	-  可以设置页尺寸。
 	-  页面导航。
 	-  先加载显示首页，同时后端扫描文件以统计字符数和行数；统计期间部分功能不可用；统计完毕自动刷新界面。
 	-  对于跨页字符串，确保查找、替换、过滤的正确性。
-10. 通用的编辑功能（复制/粘贴/剪切/删除/全选/撤销/重做/恢复）及其快捷键。    
+8. 通用的编辑功能（复制/粘贴/剪切/删除/全选/撤销/重做/恢复）及其快捷键。    
 
 ![截屏-textEditor](https://mararsh.github.io/MyBox/snap-textEditor.jpg)        
 
@@ -320,7 +322,12 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 
 ### 图像处理<a id="imageManufacture" />
 1. 粘贴板。
-	-  数据来源：对图像整体或选择的部分做"复制"（CTRL+c）、剪切下来的图片部分、系统粘贴板、系统中的图片文件、示例图片。
+	-  数据来源：     
+	   -  对图像整体或选择的部分做"复制"（CTRL+c）  
+	   -  剪切下来的图片部分  
+	   -  系统粘贴板  
+	   -  系统中的图片文件  
+	   -  示例图片    
 	-  管理粘贴板列表：增、删、清除、刷新，可设置最多保存数。
 	-  编辑图像时随时可以按粘贴按钮（CTRL+v）以把粘贴板的第一张图贴到当前图片上，也可以双击粘贴板列表的项目以粘贴。
 	-  在当前图片上拖拉被粘贴图片，调整大小和位置。
@@ -499,8 +506,8 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 ### 地理编码<a id="geographyCode" />
 1. 数据定义： 
 	-  基本属性：标识、级别、经度、纬度、中国名、英文名、5个代码、5个别名、面积（平方公里）、人口、注释。  
-	-  从属属性：属主、洲、国家、省、市、县、镇、村、建筑。（构成"祖先"）      
-            数据不必逐级从属，即可以跨级定义，例如：一个村庄直接属于南极洲；又如：城市直接属于国家，而没有省/州一级。
+	-  从属属性：属主、洲、国家、省、市、县、镇、村、建筑。（构成"祖先"）        
+       数据不必逐级从属，即可以跨级定义，例如：一个村庄直接属于南极洲；又如：城市直接属于国家，而没有省/州一级。
 2. 数据约束：
  	-  必须有值：标识、级别、中文名或英文名 
  	-  "级别"的取值：全球（只能是"地球"）、洲、国家、省（州）、市、县（区）、镇（乡）、村（居委会）、建筑、兴趣点。
@@ -508,8 +515,8 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
  	  	- 匹配数据标识（由MyBox自动赋值）。这是精确匹配。
   	  	- 匹配"级别" + "祖先" + "中文名"或"英文名"或任一别名"。这是精确匹配。
  	  	- 匹配"级别" + "中文名"或"英文名"或任一"别名"。这是模糊匹配，可能有同级重名导致匹配错误的情况。       
-           匹配名字或者别名时，不区分大小写。            
-           有时候"代码"（code1/2/3/4/5）也可以辅助查找。      
+      匹配名字或者别名时，不区分大小写。            
+      有时候"代码"（code1/2/3/4/5）也可以辅助查找。      
 3. 编辑数据：
  	-  数据的"从属关系"只能从位置树上选择。
  	-  数据的级别必须比祖先低。
@@ -582,27 +589,27 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 1. 数据定义： 
 	-  基本属性：数据集、时间、位置、来源。  
 	-  基础数值：确认、治愈、死亡。
-	-  差值统计：新增确认、新增治愈、新增死亡。
-           由前后两天数据行的差值计算出。
+	-  差值统计：新增确认、新增治愈、新增死亡。      
+       由前后两天数据行的差值计算出。
 	-  除值统计：
 	  	- 治愈/确认千分比、死亡/确认千分比。
 	  	- 确认/平方公里千分比、治愈/平方公里千分比、死亡/平方公里千分比。
 	  	- 确认/人口千分比、治愈/人口千分比、死亡/人口千分比。         
-            当位置数据的"面积"/"人口"值非法（零或负数）时，相应的统计值没有意义（零）。         
-            预定义的"国家"数据有合法的"面积"和"人口"值，因此可以得到有意义的统计值。          
+       当位置数据的"面积"/"人口"值非法（零或负数）时，相应的统计值没有意义（零）。         
+       预定义的"国家"数据有合法的"面积"和"人口"值，因此可以得到有意义的统计值。          
 	-  累加统计：
 	  	- 一些国家的数值            
-                  由此国家的省的数值累加计算出。          
+          由此国家的省的数值累加计算出。          
 	  	- 洲的数值                
-                  由此洲的国家的数值累加计算出。             
+          由此洲的国家的数值累加计算出。             
 	  	- 全球的数值              
-                  由各洲的数值累加计算出。        
+          由各洲的数值累加计算出。        
 2. 数据约束：
  	-  必须有值：数据集、时间、位置
  	- "来源"的取值："输入的数据"、"预定义数据"、"填充的数据"、"统计数据"。
  	- "位置"是"地理编码"的外键，即所引用的位置必须在"地理编码"中有定义。
  	- "确认"、"治愈"、"死亡"这三个值至少有一个大于零。
-	- 以下方式之一可以确定一个疫情报告：
+	- 以下方式之一可以确定一个疫情报告：     
  	  	- 匹配数据标识（由MyBox自动赋值）。这是精确匹配。
   	  	- 匹配"数据集 + "日期" + "位置"。这是精确匹配。
 	- 此版本假设，对于确定的数据集、确定的地址，一天只有一个有效数据。
@@ -643,8 +650,8 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
  	  	  		- 除了"时间降序"，最前面的排序字段被称为"查询的主属性"
  	  	- 排序字段：
  	  	  	- 可以多选。
- 	  	  	- 可以调整顺序。
-                "每日首部数据的个数"和排序条件只对查询和导出有效，对删除无效。     
+ 	  	  	- 可以调整顺序。   
+        - "每日首部数据的个数"和排序条件只对查询和导出有效，对删除无效。     
  	-  编辑条件：标题、where、order by、fetch、"每日首部数据的个数"(-1或0表示不限制)，它们被拼接成最终查询条件。
  	-  管理条件：增/删/改。
  	-  被执行过的条件被自动保存。
@@ -679,8 +686,8 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
  	-  可选择文件分割行数。
  	-  可导出当前数据页。
 11. 设置：
- 	-  截图的分辨率、动态截图的最大宽度、加载图数据的时间。       
-           这些参数与内存消耗和计算机计算能力有关。    
+ 	-  截图的分辨率、动态截图的最大宽度、加载图数据的时间。        
+       这些参数与内存消耗和计算机计算能力有关。    
  	-  按"数据源"定制数据行颜色。提供"缺省"和"随机"按钮。
  	-  定制图中数据值的颜色。提供"缺省"和"随机"按钮。
  	-  定制图中位置值的颜色。提供"随机"按钮。      

@@ -73,18 +73,18 @@ If new version can not be started or runs abnormally, rename/move current data p
 # Documents
 | Name | Version | Time | Link |
 | --- | --- | --- |  --- |  
-| User Guide - Overview | 5.0 | 2019-4-19 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-Overview-en.pdf) |
-| User Guide - Image Tools | 5.0 | 2019-4-18 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-ImageTools-en.pdf) |
-| User Guide - PDF Tools | 5.0 | 2019-4-20 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-PdfTools-en.pdf) |
-| User Guide - Desktop Tools | 5.0 | 2019-4-16 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-DesktopTools-en.pdf) |
-| User Guide - Network Tools | 5.0 | 2019-4-16 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-NetworkTools-en.pdf) |
+| User Guide - Overview | 5.0 | 2019-4-19 | [PDF](https://github.com/Mararsh/MyBox_documents/en/MyBox-UserGuide-5.0-Overview-en.pdf) |
+| User Guide - Image Tools | 5.0 | 2019-4-18 | [PDF](https://github.com/Mararsh/MyBox_documents/en/MyBox-UserGuide-5.0-ImageTools-en.pdf) |
+| User Guide - PDF Tools | 5.0 | 2019-4-20 | [PDF](https://github.com/Mararsh/MyBox_documents/en/MyBox-UserGuide-5.0-PdfTools-en.pdf) |
+| User Guide - Desktop Tools | 5.0 | 2019-4-16 | [PDF](https://github.com/Mararsh/MyBox_documents/en/MyBox-UserGuide-5.0-DesktopTools-en.pdf) |
+| User Guide - Network Tools | 5.0 | 2019-4-16 | [PDF](https://github.com/Mararsh/MyBox_documents/en/MyBox-UserGuide-5.0-NetworkTools-en.pdf) |
 | Development Guide | 2.0 | 2019-11-18 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-DevGuide-2.0-en.pdf) |
 | Shortcuts | 6.3 | 2020-05-25 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts_en.html) |
 | Development Logs | 6.3.1 | 2020-06-11 | [html](#devLog) |
 
 # Implementation
 
-MyBox is based on following open sources softwares:    
+MyBox is based on following open sources:    
 
 | Name | Role | Link |    
 | --- | --- | --- |    
@@ -117,7 +117,7 @@ MyBox is based on following open sources softwares:
 | image4j | ico format | https://github.com/imcdonagh/image4j |   
 | AutoCommitCell | Submit updates | https://stackoverflow.com/questions/24694616 （Ogmios） |   
 | GaoDe | Map | https://lbs.amap.com/api/javascript-api/summary |      
-| GaoDe | Coordinate | https://github.com/Mararsh/MyBox_data/tree/master/GeographyCode |      
+| GaoDe | Coordinate | https://lbs.amap.com/api/webservice/guide/api/georegeo |      
 | WeiXin | Image materials| https://weibo.com/3876734080/InmB1aPiL?type=comment#_rnd1582211299665 |      
 | Baidu | COVID-19 data| https://voice.baidu.com/act/newpneumonia/newpneumonia/?from=osari_pc_3 |      
 | Tecent | COVID-19 data | https://api.inews.qq.com/newsqa/v1/query/pubished/daily/list?province=湖北&city=武汉 |      
@@ -129,6 +129,7 @@ MyBox is based on following open sources softwares:
 | China National Bureau of Statistics | Data | http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/ |      
 | JHU | COVID-19 data | https://github.com/CSSEGISandData/COVID-19 |      
 | Website | Color data | https://tool.lanrentuku.com/color/china.html |      
+| Book | Materials | https://book.douban.com/subject/3894923/ |      
 
  
 # Current Version
@@ -239,20 +240,21 @@ Recognizing texts in image/PDF(OCR) works only on Windows currently.
 
 ### Edit Texts <a id="editText"></a>     
 1. File charset can be either detected automatically or set manually. Target file charset can be selected to implement encoding conversion. BOM setting is supported.
-2. Detect line break automatically. Convert line break. Show lines number. 
-3. Support LF(Unix/Linux), CR(Apple), and CRLF(Windows).
-4. Find and replace. In current page, or in whole file. Counting. Support regular expression.
-5. Locate. Go to position of specified character or specified line.
-6. Filter lines. By “Include One”, “Not Include All”, “Include All”, or “Not Include Any”.   Support regular expression.
-7. Cumulative filter. Filtered results can be saved. Select whether include lines number.
-8. Hexadecimal codes according file's charset can be viewed, scrolled, and selected synchronously.
-9. Paginate. Fit for viewing or editing very large file, such as logs in size of several GBs.
+2. Detect line break automatically. Convert line break. Show lines number.      
+   Support LF(Unix/Linux), CR(Apple), and CRLF(Windows).
+3. Find and replace. In current page, or in whole file. Counting. Support regular expression.
+4. Locate. Go to position of specified character or specified line.
+5. Filter lines. By “Include One”, “Not Include All”, “Include All”, or “Not Include Any”.      
+   Support regular expression.      
+   Cumulative filter. Filtered results can be saved. Select whether include lines number.     
+6. Hexadecimal codes according file's charset can be viewed, scrolled, and selected synchronously.
+7. Paginate. Fit for viewing or editing very large file, such as logs in size of several GBs.
 	-  Set page size.
 	-  Pages navigation bar
 	-  Load and display first page, and scan the file in background to count characters number and lines number. 
 	   Part of functions are unavaliable while counting. Interface will be refreshed automatically after counting process is complete.
 	-  Make sure correction of finding, replacing, and filtering of strings that are across pages.
-10. General functions of editing, like copy/paste/cut/delete/selectAll/undo/redo/recover. And their shortcuts.
+8. General functions of editing, like copy/paste/cut/delete/selectAll/undo/redo/recover. And their shortcuts.
 
 ![Snap-textEditor](https://mararsh.github.io/MyBox/snap-textEditor-en.jpg)        
 
@@ -332,7 +334,12 @@ Recognizing texts in image/PDF(OCR) works only on Windows currently.
 
 ### Image Manufacture <a id="imageManufacture"></a>    
  1. Clipboard
-	-  Clip sources: "Copy"(CTRL+c) against whole image or selected part of image, cutted part of image, system clipboard, image files in system, example clips.
+	-  Clip sources:    
+	   -  "Copy"(CTRL+c) against whole image or selected part of image    
+       -  Cutted part of image     
+       -  System clipboard    
+	   -  Image files in system    
+	   -  Example clips      
 	-  Manage clips list: Add, Delete, Clear, Set maximum number of list.
 	-  Click button "Paste"(CTRL+v) anytime while editing image, to paste the first image in clipboard onto current edited image. Or double click item in the clipboard to paste it.
 	-  Drag and move pasted clip on current edited image, to adjust clip's size and location.
@@ -513,8 +520,8 @@ Recognizing texts in image/PDF(OCR) works only on Windows currently.
 1. Data definition： 
 	-  Basical attributes: id, level, longitude, latitude, chinese_name, english_name, 5 codes, 5 aliases, area(square kilometer), population, comments.   
 	-  Subordinate: owner, continent, country, province, city, county, town, village, building. ("Ancestors")          
-            Data is unnecessary to be subordinated level by level. Cross-over can happen.              
-            Example, a village is subordinated to Antarctica, and a city belongs to a country without province level.          
+       Data is unnecessary to be subordinated level by level. Cross-over can happen.              
+       Example, a village is subordinated to Antarctica, and a city belongs to a country without province level.          
 2. Data constraints:
  	-  Must have values: id, level,  chinese_name or english_name.          
  	-  Values of "level": global(only "Earth"), continent, country, province(state), city, county(district), town, village(neighborhood), building, point of interest.
@@ -522,8 +529,8 @@ Recognizing texts in image/PDF(OCR) works only on Windows currently.
  	  	- Match “id"(assigned by MyBox automatically). This is accurate matching.
   	  	- Match "level" + ancestors + "chinese_name"/"english_name"/any one "alias". This is accurate matching.
  	  	- Match "level" + "chinese_name"/"english_name"/any one "alias". This is fuzzy matching. Duplicated names in same level can cause false matching.            
-            Matching of name or alias is case-insensitive.              
-            Sometimes 5 "code" are useful to match data.              
+       Matching of name or alias is case-insensitive.              
+       Sometimes 5 "code" are useful to match data.              
 3. Edit data：
  	-  "subordinate" of data is set by selecting node in locations tree.   
  	-  "level" of data should be lower than its ancestors.
@@ -598,21 +605,21 @@ Recognizing texts in image/PDF(OCR) works only on Windows currently.
 1. Data definition： 
 	-  Basical attributes: dataSet, time, location, source.  
 	-  Basical values: confirmed, healed, dead.
-	-  Subtraction statistic: increased confirmed, increased healed, increased dead.
-           Calculated by adjacent rows.            
+	-  Subtraction statistic: increased confirmed, increased healed, increased dead.         
+       Calculated by adjacent rows.            
 	-  Division statistics:
 	  	- healed/confirmed permillage,  dead/confirmed permillage
 	  	- confirmed/population permillage, healed/population permillage, dead/population permillage, 
 	  	- confirmed/area permillage,  healed/area permillage, dead/area permillage           
-            When value of "area"/"population" of location is invalid(zero or negitive), corresponding statistics data are meaningless.              
-            Predefined data "countries" have valid "area"/"population" and they have meaningful statistics values.                     
+       When value of "area"/"population" of location is invalid(zero or negitive), corresponding statistics data are meaningless.               
+       Predefined data "countries" have valid "area"/"population" and they have meaningful statistics values.                     
 	-  Accumulation statistics:
 	  	- Values of some countries                         
-                  Calculated by values of country's provinces.                      
+          Calculated by values of country's provinces.                      
 	  	- Values of continents                
-                  Calculated by values of continent's countries.           
+          Calculated by values of continent's countries.           
 	  	- Values of Earth                   
-                  Calculated by values of continents.  
+          Calculated by values of continents.  
 2. Data constraints:
  	-  Must have values: dataSet, time, location
  	- Values of "source": "Inputted data", "Predefined data", "Filled data", "Statistics data".  
@@ -659,8 +666,8 @@ Recognizing texts in image/PDF(OCR) works only on Windows currently.
  	  	  		- Beside "Time Descending", the first ordering element is called "major quering attribute". 
  	  	- Elements of ordering：
  	  	  	- Support multiple selection 
- 	  	  	- Sequences can be adjusted
-                "Number of Top Data in Each Day" and "Elements of ordering" work for Query and Export, and not for Clear.   
+ 	  	  	- Sequences can be adjusted       
+        - Number of Top Data in Each Day" and "Elements of ordering" work for Query and Export, and not for Clear.    
  	-  Edit condition: title, where, order by, fetch, "Number of Top Data in Each Day"(0 or -1 means Unlimit), which are combined together as the final condition.
  	-  Manage conditions: Add/Delete/Modify.
  	-  Conditions ever executed are saved automatically.
@@ -696,7 +703,7 @@ Recognizing texts in image/PDF(OCR) works only on Windows currently.
  	-  Export current data page.
 11. Settings:
  	-  Snap dpi, maximum width of snapped animated images, time to loading chart's data.                       
-           These parameters are related to memory usage and computer's calculation capacity.                           
+       These parameters are related to memory usage and computer's calculation capacity.                           
  	-  Customize colors of data rows as column "source". Provide "Default" and "Random" buttons.
  	-  Customize colors of data values in charts. Provide "Default" and "Random" buttons.
  	-  Customize colors of location values in charts. Provide "Random" buttons.
@@ -714,7 +721,7 @@ Recognizing texts in image/PDF(OCR) works only on Windows currently.
 	
 ### Create Barcodes<a id="createBarcodes" />
 1. Supported 1-d barcodes: Code39, Code128, Codabar, Interleaved2Of5, ITF_14, POSTNET, EAN13, EAN8, EAN_128, UPCA, UPCE,
-        Royal_Mail_Customer_Barcode, USPS_Intelligent_Mail
+   Royal_Mail_Customer_Barcode, USPS_Intelligent_Mail
 2. Supported 2-d barcodes: QR_Code, PDF_417, DataMatrix
 3. Options about 1-d barcodes: Orientation, width/height, dpi, text location, font size, quiet-zone width, etc. 
 4. Options about 2-d barcodes: Width/height, margin, error correction level, compact mode, etc.
