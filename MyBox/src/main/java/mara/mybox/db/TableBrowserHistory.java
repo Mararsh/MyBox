@@ -173,24 +173,24 @@ public class TableBrowserHistory extends DerbyBase {
         return delete(his.getAddress(), his.getVisitTime());
     }
 
-    public static boolean delete(List<BrowserHistory> his) {
+    public static int delete(List<BrowserHistory> his) {
         if (his == null || his.isEmpty()) {
-            return false;
+            return 0;
         }
+        int count = 0;
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             conn.setAutoCommit(false);
             for (BrowserHistory h : his) {
                 String sql = "DELETE FROM Browser_History WHERE address='" + h.getAddress() + "'　"
                         + " AND　visit_time='" + DateTools.datetimeToString(h.getVisitTime()) + "' ";
-                conn.createStatement().executeUpdate(sql);
+                count += conn.createStatement().executeUpdate(sql);
             }
             conn.commit();
-            return true;
         } catch (Exception e) {
             failed(e);
             // logger.debug(e.toString());
-            return false;
         }
+        return count;
     }
 
 }

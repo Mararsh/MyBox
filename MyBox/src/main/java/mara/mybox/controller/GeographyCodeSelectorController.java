@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -19,9 +18,7 @@ import static mara.mybox.db.DerbyBase.dbHome;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.TableGeographyCode;
-import mara.mybox.fxml.FxmlControl;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.tools.GeographyCodeTools;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -36,28 +33,9 @@ public class GeographyCodeSelectorController extends BaseController {
 
     @FXML
     protected TreeView<Text> treeView;
-    @FXML
-    protected CheckBox leafCheck;
 
     public GeographyCodeSelectorController() {
         baseTitle = message("GeographyCode");
-    }
-
-    @Override
-    public void initializeNext() {
-        try {
-            super.initializeNext();
-
-            FxmlControl.setTooltip(leafCheck, message("CheckLeafNodesComments"));
-            leafCheck.setSelected(AppVariables.getUserConfigBoolean("GeographyCodesTreeCheckLeafNodes", true));
-            leafCheck.selectedProperty().addListener(
-                    (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                        AppVariables.setUserConfigValue("GeographyCodesTreeCheckLeafNodes", newValue);
-                    });
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
     }
 
     public void loadTree(GeographyCodeUserController userController) {
@@ -85,7 +63,7 @@ public class GeographyCodeSelectorController extends BaseController {
                         }
                         earch = TableGeographyCode.earth(conn);
                         if (earch == null) {
-                            GeographyCode.predefined(conn);
+                            GeographyCodeTools.importPredefined(conn);
                             earch = TableGeographyCode.earth(conn);
                             if (earch == null) {
                                 return false;
@@ -120,20 +98,16 @@ public class GeographyCodeSelectorController extends BaseController {
                                 + " ORDER BY gcid ";
                         others = TableGeographyCode.queryCodes(conn, sql, true);
 
-                        if (leafCheck.isSelected()) {
-                            if (loading != null) {
-                                loading.setInfo(message("CheckingLeafNodes"));
-                            }
-                            haveChildren = new ArrayList();
-                            List<GeographyCode> checkEmpty = new ArrayList<>();
-                            checkEmpty.addAll(continents);
-                            if (others != null && !others.isEmpty()) {
-                                checkEmpty.addAll(others);
-                            }
-                            haveChildren = TableGeographyCode.haveChildren(conn, checkEmpty);
-                        } else {
-                            haveChildren = null;
+                        if (loading != null) {
+                            loading.setInfo(message("CheckingLeafNodes"));
                         }
+                        haveChildren = new ArrayList();
+                        List<GeographyCode> checkEmpty = new ArrayList<>();
+                        checkEmpty.addAll(continents);
+                        if (others != null && !others.isEmpty()) {
+                            checkEmpty.addAll(others);
+                        }
+                        haveChildren = TableGeographyCode.haveChildren(conn, checkEmpty);
 
                         return true;
                     } catch (Exception e) {
@@ -188,8 +162,7 @@ public class GeographyCodeSelectorController extends BaseController {
             TreeItem<Text> codeItem = new TreeItem(codeNode);
             parent.getChildren().add(codeItem);
 
-            if (!leafCheck.isSelected()
-                    || (haveChildren != null && haveChildren.contains(codeid))) {
+            if (haveChildren != null && haveChildren.contains(codeid)) {
                 TreeItem<Text> dummyItem = new TreeItem(new Text("Loading"));
                 codeItem.getChildren().add(dummyItem);
                 codeItem.setExpanded(false);
@@ -262,14 +235,12 @@ public class GeographyCodeSelectorController extends BaseController {
                         if (children == null || children.isEmpty()) {
                             return true;
                         }
-                        if (leafCheck.isSelected()) {
-                            if (loading != null) {
-                                loading.setInfo(message("CheckingLeafNodes"));
-                            }
-                            haveChildren = TableGeographyCode.haveChildren(conn, children);
-                        } else {
-                            haveChildren = null;
+
+                        if (loading != null) {
+                            loading.setInfo(message("CheckingLeafNodes"));
                         }
+                        haveChildren = TableGeographyCode.haveChildren(conn, children);
+
                         return true;
                     } catch (Exception e) {
                         error = e.toString();

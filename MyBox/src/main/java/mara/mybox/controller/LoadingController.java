@@ -75,7 +75,7 @@ public class LoadingController extends BaseController {
             if (timer != null) {
                 timer.cancel();
             }
-            final long startTime = new Date().getTime();
+            final Date startTime = new Date();
             final String prefix = AppVariables.message("StartTime") + ": " + DateTools.nowString()
                     + "   " + AppVariables.message("ElapsedTime") + ": ";
             timer = new Timer();
@@ -87,8 +87,7 @@ public class LoadingController extends BaseController {
                             cancelAction();
                             return;
                         }
-                        long d = new Date().getTime() - startTime;
-                        timeLabel.setText(prefix + DateTools.showTime(d));
+                        timeLabel.setText(prefix + DateTools.datetimeMsDuration(new Date(), startTime));
                     });
                 }
             }, 0, 1000);

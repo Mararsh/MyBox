@@ -25,6 +25,7 @@ import mara.mybox.db.TableGeographyCode;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DateTools;
+import mara.mybox.tools.GeographyCodeTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
@@ -71,7 +72,7 @@ public class EpidemicReportsEditController extends TableManageController<Epidemi
                         checkTime();
                     });
 
-            FxmlControl.setTooltip(timeInput, message("LocationDataTimeComments"));
+            FxmlControl.setTooltip(timeInput, message("TimeComments"));
 
             saveButton.disableProperty().bind(timeInput.styleProperty().isEqualTo(badStyle));
 
@@ -228,7 +229,7 @@ public class EpidemicReportsEditController extends TableManageController<Epidemi
                     + " level=4  AND country=100 ORDER BY gcid ";
             List<GeographyCode> provinces = TableGeographyCode.queryCodes(conn, sql, true);
             if (provinces == null || provinces.isEmpty()) {
-                GeographyCode.predefined(conn);
+                GeographyCodeTools.importPredefined(conn);
                 provinces = TableGeographyCode.queryCodes(conn, sql, true);
                 if (provinces == null || provinces.isEmpty()) {
                     return null;
@@ -252,7 +253,7 @@ public class EpidemicReportsEditController extends TableManageController<Epidemi
             String sql = "SELECT * FROM Geography_Code WHERE level=3 ORDER BY gcid ";
             List<GeographyCode> countries = TableGeographyCode.queryCodes(conn, sql, true);
             if (countries == null || countries.isEmpty()) {
-                GeographyCode.predefined(conn);
+                GeographyCodeTools.importPredefined(conn);
                 countries = TableGeographyCode.queryCodes(conn, sql, true);
                 if (countries == null || countries.isEmpty()) {
                     return null;

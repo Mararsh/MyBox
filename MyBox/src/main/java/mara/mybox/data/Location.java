@@ -1,97 +1,279 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package mara.mybox.data;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.TableLocation;
+import mara.mybox.db.TableBase;
+import mara.mybox.db.TableLocationData;
 import mara.mybox.fxml.FxmlControl;
+import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**
- *
- * @author mara
+ * @Author Mara
+ * @CreateDate 2020-7-5
+ * @License Apache License Version 2.0
  */
-public class Location {
+public class Location extends TableData implements Cloneable {
 
-    protected long dataid = -1;
-    protected String dataSet, address, source, comments, imageLocation, dataLabel;
-    protected double longitude, latitude, altitude, precision, speed,
-            dataValue = Double.MIN_VALUE, dataSize = Double.MIN_VALUE;
-    protected int direction, coordinateSystem;
-    protected boolean timeBC;
-    protected long dataTime = -1;
+    protected long datasetid, startTime, endTime, duration;
+    protected String datasetName, address, comments, image, label,
+            startTimeText, endTimeText, periodText, durationText;
+    protected double longitude, latitude, altitude, precision, speed, dataValue, dataSize;
+    protected int direction;
+    protected CoordinateSystem coordinateSystem;
+    protected Dataset dataset;
+    protected Era startEra, endEra;
 
+    public Location() {
+        init();
+    }
+
+    private void init() {
+        id = datasetid = -1;
+        longitude = latitude = altitude = precision = speed = dataValue = dataSize = Double.MAX_VALUE;
+        startTime = endTime = duration = Long.MIN_VALUE;
+        direction = Integer.MIN_VALUE;
+        coordinateSystem = CoordinateSystem.defaultCode();
+    }
+
+    public boolean validCoordinate() {
+        return longitude >= -180 && longitude <= 180
+                && latitude >= -90 && latitude <= 90;
+    }
+
+    @Override
+    public boolean valid() {
+        return validCoordinate();
+    }
+
+    public String info(String lineBreak) {
+        StringBuilder s = new StringBuilder();
+        if (getDatasetName() != null) {
+            s.append(message("Dataset")).append(": ").append(datasetName).append(lineBreak);
+        }
+        if (label != null) {
+            s.append(message("Label")).append(": ").append(label).append(lineBreak);
+        }
+        if (address != null) {
+            s.append(message("Address")).append(": ").append(address).append(lineBreak);
+        }
+        if (longitude >= -180 && longitude <= 180) {
+            s.append(message("Longitude")).append(": ").append(longitude).append(lineBreak);
+        }
+        if (latitude >= -90 && latitude <= 90) {
+            s.append(message("Latitude")).append(": ").append(latitude).append(lineBreak);
+        }
+        if (altitude != Double.MAX_VALUE) {
+            s.append(message("Altitude")).append(": ").append(altitude).append(lineBreak);
+        }
+        if (precision != Double.MAX_VALUE) {
+            s.append(message("Precision")).append(": ").append(precision).append(lineBreak);
+        }
+        if (speed != Double.MAX_VALUE) {
+            s.append(message("Speed")).append(": ").append(speed).append(lineBreak);
+        }
+        if (direction != Integer.MIN_VALUE) {
+            s.append(message("Direction")).append(": ").append(direction).append(lineBreak);
+        }
+        if (coordinateSystem != null) {
+            s.append(message("CoordinateSystem")).append(": ").append(coordinateSystem.name()).append(lineBreak);
+        }
+        if (dataValue != Double.MAX_VALUE) {
+            s.append(message("DataValue")).append(": ").append(dataValue).append(lineBreak);
+        }
+        if (dataSize != Double.MAX_VALUE) {
+            s.append(message("DataSize")).append(": ").append(dataSize).append(lineBreak);
+        }
+        if (startTime != Long.MIN_VALUE) {
+            String t;
+            if (dataset != null) {
+                t = DateTools.textEra(getStartEra());
+            } else {
+                t = DateTools.textEra(startTime);
+            }
+            s.append(message("StartTime")).append(": ").append(t).append(lineBreak);
+        }
+        if (endTime != Long.MIN_VALUE) {
+            String t;
+            if (dataset != null) {
+                t = DateTools.textEra(getEndEra());
+            } else {
+                t = DateTools.textEra(endTime);
+            }
+            s.append(message("EndTime")).append(": ").append(t).append(lineBreak);
+        }
+        String imageFile = null;
+        if (image != null) {
+            imageFile = image;
+        } else if (dataset != null && dataset.getImage() != null) {
+            imageFile = dataset.getImage().getAbsolutePath();
+        }
+        if (imageFile != null) {
+            if (lineBreak.toLowerCase().equals("</br>")) {
+                s.append(message("Image")).append(": ").
+                        append("<img src=\"file:///").append(imageFile.replaceAll("\\\\", "/"))
+                        .append("\" width=200px>").append(lineBreak);
+            } else {
+                s.append(message("Image")).append(": ").append(imageFile).append(lineBreak);
+            }
+        }
+        if (comments != null) {
+            s.append(message("Comments")).append(": ").append(comments).append(lineBreak);
+        }
+        return s.toString();
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        try {
+            Location newCode = (Location) super.clone();
+            if (coordinateSystem != null) {
+                newCode.setCoordinateSystem((CoordinateSystem) coordinateSystem.clone());
+            }
+            if (dataset != null) {
+                newCode.setDataset((Dataset) dataset.clone());
+            }
+            return newCode;
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return null;
+        }
+    }
+
+    /*
+        static methods
+     */
     public static Location create() {
         return new Location();
     }
 
-    public static List<Location> ChinaEarlyCultures() {
-        String dataset = message("ChinaEarlyCultures");
-        List<Location> data = TableLocation.read(dataset, 1);
-        if (data != null && !data.isEmpty()) {
-            return data;
-        }
-        data = new ArrayList<>();
-        Location location = create().setDataSet(dataset).setDataLabel("裴李岗文化\n公元前5500～前4900年")
-                .setDataValue(-4900)
-                .setComments("裴李岗文化是新石器时代早期的文化，公元前5500～前4900年。\n"
-                        + "其遗址位于黄河流城中游地区，因其遗迹最早发现于河南省新郑市的裴李岗村而得名。\n"
-                        + "已发现的遗迹有住地、灰坑、陶窖和墓葬等。裴李岗人的房屋均为半地穴式建筑，以圆形为主，并有阶梯式门道。\n"
-                        + "从遗址挖掘出的石器，如石铲、石镰、石磨盘来看，此时已出现农业生产，作物主要为粟。"
-                        + "另外，畜牧业也已经出现，裴李岗人已经懂得在木栅栏和洞穴中饲养猪、牛、羊、鸡等家畜和家禽。\n"
-                        + "遗址中发现的陶器多为泥质红陶，均为手制，大多数陶器都没有纹饰，裴李岗文化是中国已知的最早的陶器文化。")
-                .setLongitude(113.659836).setLatitude(34.435688)
-                .setAddress("河南省郑州市新郑市裴李岗村");
-        data.add(location);
+    public static Location create(double longitude, double latitude) {
+        return new Location().setLongitude(longitude).setLatitude(latitude);
+    }
 
-        location = create().setDataSet(dataset).setDataLabel("磁山文化\n公元前5400～前5100年")
-                .setDataValue(-5100)
-                .setComments("磁山文化是中国华北地区的新石器文化，公元前5400～前5100年。\n"
-                        + "因首在河北省邯郸市武安磁山发现而得名，是世界上粮食粟、家鸡和中原核桃最早发现地。\n"
-                        + "在磁山遗址，一共发现了189个储存粮食的“窖穴”。这些“粮仓”形似袋状，窖口直径大都为1—2米，深浅不一，最浅的只有0.85米，而最深的则达到了5米。"
-                        + "这些窖穴中的“粟灰”一般堆积厚度为0.2—2米，有10个甚至达到了2米以上。如果按照比重、体积推测，这189个“粮仓”中储存的粟，至少应在5万公斤以上。"
-                        + "而在当时简陋的生产条件下，剩余这么多的粮食几乎是不可想像的。")
-                .setLongitude(114.134526).setLatitude(36.654066)
-                .setAddress("河北省邯郸市武安市武安");
-        data.add(location);
+    public static Location create(GeographyCode code) {
+        return new Location()
+                .setLongitude(code.getLongitude())
+                .setLatitude(code.getLatitude())
+                .setAltitude(code.getAltitude())
+                .setPrecision(code.getPrecision())
+                .setCoordinateSystem(code.getCoordinateSystem())
+                .setLabel(code.getName())
+                .setAddress(code.getFullName())
+                .setComments(code.getComments());
+    }
 
-        location = create().setDataSet(dataset).setDataLabel("大地湾文化\n公元前2800～前60000年")
-                .setDataValue(-2800)
-                .setComments("大地湾文化是中国黄河中游最早也是延续时间最长的旧石器文化和新石器时代文化，约距今4800至60000年，位于甘肃省天水市秦安邵店村。\n"
-                        + "第1—3文化层形成于60000—20000年前，地层中仅发现石英砸击技术产品，如石英石片、碎片等；"
-                        + "第4文化层形成于20000—13000年前，细石器技术产品和大地湾一期陶片开始出现，但在遗物总体数量上处于从属地位；\n"
-                        + "第5文化层形成于13000—7000年前，以细石器和大地湾一期陶片为主；第6文化层形成于7000—5000年前，主要文化遗物为半坡和仰韶晚期陶片。\n"
-                        + "大地湾遗址的彩陶是中国已知最古老的彩陶之一。大地湾晚期F411房屋的大型地画，距今5000年，更是迄今最早且保存完整的绘画作品。")
-                .setLongitude(105.904519).setLatitude(35.013761)
-                .setAddress("甘肃省天水市秦安县邵店村");
-        data.add(location);
-
-        if (TableLocation.write(data)) {
-            return data;
-        } else {
+    public static List<String> externalNames() {
+        try {
+            List<String> columns = new ArrayList<>();
+            columns.addAll(Arrays.asList(
+                    message("Dataset"), message("Label"), message("Address"),
+                    message("Longitude"), message("Latitude"), message("Altitude"),
+                    message("Precision"), message("Speed"), message("Direction"), message("CoordinateSystem"),
+                    message("DataValue"), message("DataSize"), message("StartTime"), message("EndTime"),
+                    message("Image"), message("Comments")
+            ));
+            return columns;
+        } catch (Exception e) {
             return null;
         }
     }
 
-    public static List<Location> LiBaiFootprints() {
-        String dataset = message("LiBaiFootprints");
-        List<Location> data = TableLocation.read(dataset, 1);
-        if (data != null && !data.isEmpty()) {
-            return data;
-        }
+    public static List<String> externalValues(Location data) {
+        List<String> row = new ArrayList<>();
+        row.addAll(Arrays.asList(
+                data.getDatasetName() == null ? "" : data.getDatasetName(),
+                data.getLabel() == null ? "" : data.getLabel(),
+                data.getAddress() == null ? "" : data.getAddress(),
+                data.getLongitude() >= -180 && data.getLongitude() <= 180 ? data.getLongitude() + "" : "",
+                data.getLatitude() >= -90 && data.getLatitude() <= 90 ? data.getLatitude() + "" : "",
+                data.getAltitude() != Double.MAX_VALUE ? data.getAltitude() + "" : "",
+                data.getPrecision() != Double.MAX_VALUE ? data.getPrecision() + "" : "",
+                data.getSpeed() != Double.MAX_VALUE ? data.getSpeed() + "" : "",
+                data.getDirection() != Integer.MIN_VALUE ? data.getDirection() + "" : "",
+                data.getCoordinateSystem() == null ? "" : data.getCoordinateSystem().name(),
+                data.getDataValue() != Double.MAX_VALUE ? data.getDataValue() + "" : "",
+                data.getDataSize() != Double.MAX_VALUE ? data.getDataSize() + "" : "",
+                data.getStartTime() != Long.MIN_VALUE ? data.getStartTimeText() : "",
+                data.getEndTime() != Long.MIN_VALUE ? data.getEndTimeText() : "",
+                data.getImage() == null ? "" : data.getImage(),
+                data.getComments() == null ? "" : data.getComments()
+        ));
+        return row;
+    }
 
-        if (TableLocation.write(data)) {
-            return data;
-        } else {
-            return null;
+    public static List<String> externalValues(List<String> columns, Location data) {
+        List<String> row = new ArrayList<>();
+        if (columns == null || columns.isEmpty()) {
+            return row;
         }
+        String lang = columns.contains(message("zh", "Longitude")) ? "zh" : "en";
+        if (columns.contains(message(lang, "Dataset"))) {
+            row.add(data.getDatasetName() == null ? "" : data.getDatasetName());
+        }
+        if (columns.contains(message(lang, "Label"))) {
+            row.add(data.getLabel() == null ? "" : data.getLabel());
+        }
+        if (columns.contains(message(lang, "Address"))) {
+            row.add(data.getAddress() == null ? "" : data.getAddress());
+        }
+        if (columns.contains(message(lang, "Longitude"))) {
+            row.add(data.getLongitude() >= -180 && data.getLongitude() <= 180 ? data.getLongitude() + "" : "");
+        }
+        if (columns.contains(message(lang, "Latitude"))) {
+            row.add(data.getLatitude() >= -90 && data.getLatitude() <= 90 ? data.getLatitude() + "" : "");
+        }
+        if (columns.contains(message(lang, "Altitude"))) {
+            row.add(data.getAltitude() != Double.MAX_VALUE ? data.getAltitude() + "" : "");
+        }
+        if (columns.contains(message(lang, "Precision"))) {
+            row.add(data.getPrecision() != Double.MAX_VALUE ? data.getPrecision() + "" : "");
+        }
+        if (columns.contains(message(lang, "Speed"))) {
+            row.add(data.getSpeed() != Double.MAX_VALUE ? data.getSpeed() + "" : "");
+        }
+        if (columns.contains(message(lang, "Direction"))) {
+            row.add(data.getDirection() != Integer.MIN_VALUE ? data.getDirection() + "" : "");
+        }
+        if (columns.contains(message(lang, "CoordinateSystem"))) {
+            row.add(data.getCoordinateSystem() == null ? "" : data.getCoordinateSystem().name());
+        }
+        if (columns.contains(message(lang, "DataValue"))) {
+            row.add(data.getDataValue() != Double.MAX_VALUE ? data.getDataValue() + "" : "");
+        }
+        if (columns.contains(message(lang, "DataSize"))) {
+            row.add(data.getDataSize() != Double.MAX_VALUE ? data.getDataSize() + "" : "");
+        }
+        if (columns.contains(message(lang, "StartTime"))) {
+            row.add(data.getStartTime() != Long.MIN_VALUE ? data.getStartTimeText() : "");
+        }
+        if (columns.contains(message(lang, "EndTime"))) {
+            row.add(data.getEndTime() != Long.MIN_VALUE ? data.getEndTimeText() : "");
+        }
+        if (columns.contains(message(lang, "Image"))) {
+            row.add(data.getImage() == null ? "" : data.getImage());
+        }
+        if (columns.contains(message(lang, "Comments"))) {
+            row.add(data.getComments() == null ? "" : data.getComments());
+        }
+        return row;
+    }
+
+    /*
+        customized  get/set
+     */
+    @Override
+    public TableBase getTable() {
+        if (table == null) {
+            table = new TableLocationData();
+        }
+        return table;
     }
 
     public static void importChinaEarlyCultures() {
@@ -107,44 +289,125 @@ public class Location {
     }
 
     /*
+        custmized get/set
+     */
+    public long getDatasetid() {
+        if (dataset != null) {
+            datasetid = dataset.getId();
+        }
+        return datasetid;
+    }
+
+    public String getDatasetName() {
+        if (dataset != null) {
+            datasetName = dataset.getDataSet();
+        }
+        return datasetName;
+    }
+
+    public long getStartTime() {
+        if (startTime == Long.MIN_VALUE && endTime != Long.MIN_VALUE) {
+            startTime = endTime;
+        }
+        return startTime;
+    }
+
+    public long getEndTime() {
+        if (endTime == Long.MIN_VALUE && startTime != Long.MIN_VALUE) {
+            endTime = startTime;
+        }
+        return endTime;
+    }
+
+    public String getStartTimeText() {
+        if (getStartTime() == Long.MIN_VALUE) {
+            startTimeText = null;
+        } else if (dataset == null) {
+            startTimeText = DateTools.textEra(startTime);
+        } else {
+            startTimeText = DateTools.textEra(startTime, dataset.getTimeFormat(), dataset.isOmitAD());
+        }
+        return startTimeText;
+    }
+
+    public String getEndTimeText() {
+        if (getEndTime() == Long.MIN_VALUE) {
+            endTimeText = null;
+        } else if (dataset == null) {
+            endTimeText = DateTools.textEra(endTime);
+        } else {
+            endTimeText = DateTools.textEra(endTime, dataset.getTimeFormat(), dataset.isOmitAD());
+        }
+        return endTimeText;
+    }
+
+    public String getPeriodText() {
+        String startText = getStartTimeText();
+        String endText = getEndTimeText();
+        if (startText != null) {
+            if (endText != null) {
+                if (!startText.equals(endText)) {
+                    return startText + " - " + endText;
+                } else {
+                    return startText;
+                }
+            } else {
+                return startText + " - ";
+            }
+        } else {
+            if (endText != null) {
+                return " - " + endText;
+            } else {
+                return null;
+            }
+        }
+    }
+
+    public Era getStartEra() {
+        if (getStartTime() == Long.MIN_VALUE) {
+            startEra = null;
+        } else if (dataset == null) {
+            startEra = new Era(startTime);
+        } else {
+            startEra = new Era(startTime, dataset.getTimeFormat(), dataset.isOmitAD());
+        }
+        return startEra;
+    }
+
+    public Era getEndEra() {
+        if (getEndTime() == Long.MIN_VALUE) {
+            endEra = null;
+        } else if (dataset == null) {
+            endEra = new Era(endTime);
+        } else {
+            endEra = new Era(endTime, dataset.getTimeFormat(), dataset.isOmitAD());
+        }
+        return endEra;
+    }
+
+    public long getDuration() {
+        if (startTime != endTime && startTime != Long.MIN_VALUE && endTime != Long.MIN_VALUE) {
+            duration = endTime - startTime;
+        } else {
+            duration = Long.MIN_VALUE;
+        }
+        return duration;
+    }
+
+    public String getDurationText() {
+        if (startTime == endTime || startTime == Long.MIN_VALUE || endTime == Long.MIN_VALUE) {
+            return null;
+        }
+        if (dataset != null) {
+            return DateTools.duration(new Date(startTime), new Date(endTime), dataset.timeFormat);
+        } else {
+            return DateTools.duration(new Date(startTime), new Date(endTime), null);
+        }
+    }
+
+    /*
         get/set
      */
-    public long getDataid() {
-        return dataid;
-    }
-
-    public Location setDataid(long dataid) {
-        this.dataid = dataid;
-        return this;
-    }
-
-    public String getDataSet() {
-        return dataSet;
-    }
-
-    public Location setDataSet(String dataSet) {
-        this.dataSet = dataSet;
-        return this;
-    }
-
-    public String getSource() {
-        return source;
-    }
-
-    public Location setSource(String source) {
-        this.source = source;
-        return this;
-    }
-
-    public String getComments() {
-        return comments;
-    }
-
-    public Location setComments(String comments) {
-        this.comments = comments;
-        return this;
-    }
-
     public double getLongitude() {
         return longitude;
     }
@@ -181,48 +444,31 @@ public class Location {
         return this;
     }
 
-    public double getSpeed() {
-        return speed;
-    }
-
-    public Location setSpeed(double speed) {
-        this.speed = speed;
-        return this;
-    }
-
-    public int getDirection() {
-        return direction;
-    }
-
-    public Location setDirection(int direction) {
-        this.direction = direction;
-        return this;
-    }
-
-    public long getDataTime() {
-        return dataTime;
-    }
-
-    public Location setDataTime(long dataTime) {
-        this.dataTime = dataTime;
-        return this;
-    }
-
-    public String getImageLocation() {
-        return imageLocation;
-    }
-
-    public Location setImageLocation(String imageLocation) {
-        this.imageLocation = imageLocation;
-        return this;
-    }
-
-    public int getCoordinateSystem() {
+    public CoordinateSystem getCoordinateSystem() {
         return coordinateSystem;
     }
 
-    public Location setCoordinateSystem(int coordinateSystem) {
+    public Location setCoordinateSystem(CoordinateSystem coordinateSystem) {
         this.coordinateSystem = coordinateSystem;
+        return this;
+    }
+
+    public Dataset getDataset() {
+        return dataset;
+    }
+
+    public Location setDataset(Dataset dataset) {
+        this.dataset = dataset;
+        return this;
+    }
+
+    public Location setDatasetid(long datasetid) {
+        this.datasetid = datasetid;
+        return this;
+    }
+
+    public Location setDatasetName(String datasetName) {
+        this.datasetName = datasetName;
         return this;
     }
 
@@ -232,6 +478,42 @@ public class Location {
 
     public Location setAddress(String address) {
         this.address = address;
+        return this;
+    }
+
+    public String getComments() {
+        return comments;
+    }
+
+    public Location setComments(String comments) {
+        this.comments = comments;
+        return this;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public Location setImage(String image) {
+        this.image = image;
+        return this;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public Location setLabel(String label) {
+        this.label = label;
+        return this;
+    }
+
+    public double getSpeed() {
+        return speed;
+    }
+
+    public Location setSpeed(double speed) {
+        this.speed = speed;
         return this;
     }
 
@@ -253,22 +535,53 @@ public class Location {
         return this;
     }
 
-    public boolean isTimeBC() {
-        return timeBC;
+    public int getDirection() {
+        return direction;
     }
 
-    public Location setTimeBC(boolean timeBC) {
-        this.timeBC = timeBC;
+    public Location setDirection(int direction) {
+        this.direction = direction;
         return this;
     }
 
-    public String getDataLabel() {
-        return dataLabel;
+    public Location setStartTime(long startTime) {
+        this.startTime = startTime;
+        return this;
     }
 
-    public Location setDataLabel(String dataLabel) {
-        this.dataLabel = dataLabel;
+    public Location setEndTime(long endTime) {
+        this.endTime = endTime;
         return this;
+    }
+
+    public Location setStartEra(Era startEra) {
+        this.startEra = startEra;
+        return this;
+    }
+
+    public Location setEndEra(Era endEra) {
+        this.endEra = endEra;
+        return this;
+    }
+
+    public void setDuration(long duration) {
+        this.duration = duration;
+    }
+
+    public void setStartTimeText(String startTimeText) {
+        this.startTimeText = startTimeText;
+    }
+
+    public void setEndTimeText(String endTimeText) {
+        this.endTimeText = endTimeText;
+    }
+
+    public void setPeriodText(String periodText) {
+        this.periodText = periodText;
+    }
+
+    public void setDurationText(String durationText) {
+        this.durationText = durationText;
     }
 
 }

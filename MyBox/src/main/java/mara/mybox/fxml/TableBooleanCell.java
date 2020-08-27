@@ -13,7 +13,7 @@ import mara.mybox.value.AppVariables;
  * @Description
  * @License Apache License Version 2.0
  */
-public class TableBooleanCell<T, Boolean> extends TableCell<T, Boolean>
+public class TableBooleanCell<T> extends TableCell<T, Boolean>
         implements Callback<TableColumn<T, Boolean>, TableCell<T, Boolean>> {
 
     @Override
@@ -26,7 +26,7 @@ public class TableBooleanCell<T, Boolean> extends TableCell<T, Boolean>
             @Override
             public void updateItem(Boolean item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty || item == null || !((boolean) item)) {
+                if (empty || item == null || !item) {
                     setText(null);
                     setGraphic(null);
                     return;

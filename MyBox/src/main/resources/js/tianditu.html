@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="http://api.tianditu.gov.cn/api?v=4.0&tk=0ddeb917def62b4691500526cc30a9b1" type="text/javascript"></script>
+        <title>Map</title>
+        <style>
+            html,
+            body,
+            #mapcontainer {
+                width: 100%;
+                height: 100%;
+            }
+
+        </style>
+    </head>
+    <body onLoad="initMap()">
+        <div id="mapcontainer"></div>
+        <script  type="text/javascript">
+            var map, infoWindow, mapTitle;
+            var zoomControl, scaleControl, symbolsControl, mapTypeControl;
+            var style = "default";
+
+            function setStyle(inStyle) {
+                style = inStyle;
+                initMap(projectionValue, inStyle);
+            }
+
+
+            function initMap() {
+                map = new T.Map('mapcontainer', {
+                    projection: "EPSG:900913"
+                });
+
+                map.enableScrollWheelZoom();
+                map.enableDoubleClickZoom();
+                map.enableInertia();
+                map.enableKeyboard();
+                map.setMinZoom(1);
+                map.setMaxZoom(18);
+
+                zoomControl = new T.Control.Zoom();
+                scaleControl = new T.Control.Scale();
+                symbolsControl = new T.Control.militarySymbols(
+                        {position: T_ANCHOR_BOTTOM_RIGHT});
+                mapTypeControl = new T.Control.MapType();
+
+                map.addEventListener("click", mapClicked);
+                map.addEventListener("mousemove", mouseMove);
+                map.addEventListener("zoomend", zoomChanged);
+
+                map.centerAndZoom(new T.LngLat(116.40769, 39.89945), 11);
+                var layers = map.getLayers();
+                if (layers && layers.length > 0) {
+                    layers[layers.length - 1].addEventListener("load", mapLoaded);
+                }
+
+                mapTitle = new T.Label({
+                    text: "",
+                    position: map.containerPointToLngLat(new T.Point(50, 50))
+                });
+                mapTitle.setBorderLine(0);
+                mapTitle.setFontColor("blue");
+                mapTitle.setBackgroundColor("transparent");
+                map.addOverLay(mapTitle);
+
+//                if (style === "default")
+//                    map.removeStyle();
+//                else if (style === "black")
+//                    map.setStyle("black");
+//                else if (style === "indigo")
+//                    map.setStyle("indigo");
+//                else
+//                    map.removeStyle();
+
+
+            }
+
+
+            function mapLoaded() {
+                alert("Loaded");
+            }
+
+            function mapClicked(e) {
+                var text = 'click:' + e.lnglat.getLng() + ',' + e.lnglat.getLat();
+                alert(text);
+            }
+
+            function mouseMove(e) {
+                var text = 'move:' + e.lnglat.getLng() + ',' + e.lnglat.getLat();
+                alert(text);
+            }
+
+            function zoomChanged(e) {
+                alert("zoomSize:" + map.getZoom());
+            }
+
+
+            function setCenter(longtitude, latitude) {
+                map.centerAndZoom(new T.LngLat(longtitude, latitude), map.getZoom());
+            }
+
+            function setZoom(size) {
+                map.setZoom(size);
+            }
+
+
+            function setControl(name, display) {
+                if (display === true) {
+                    if (name === "zoom")
+                        map.addControl(zoomControl);
+                    else if (name === "scale")
+                        map.addControl(scaleControl);
+                    else if (name === "symbols")
+                        map.addControl(symbolsControl);
+                    else if (name === "mapType")
+                        map.addControl(mapTypeControl);
+                } else {
+                    if (name === "zoom")
+                        map.removeControl(zoomControl);
+                    else if (name === "scale")
+                        map.removeControl(scaleControl);
+                    else if (name === "symbols")
+                        map.removeControl(symbolsControl);
+                    else if (name === "mapType")
+                        map.removeControl(mapTypeControl);
+                }
+            }
+
+
+            function clearMap() {
+                map.clearOverLays();
+            }
+
+
+            function setTitle(title) {
+                var labelString = "<div style=\"font-size:24px;px;line-height:1;font-weight: bold;";
+                labelString = labelString + "\">" + title + "</div>";
+                mapTitle.setLabel(labelString);
+                mapTitle.setLngLat(map.containerPointToLngLat(new T.Point(50, 50)));
+                map.addOverLay(mapTitle);
+            }
+
+            function replaceAll(string, oldSub, newSub) {
+                if (string !== null && oldSub !== null && newSub !== null) {
+                    return string.replace(new RegExp(oldSub, 'gm'), newSub);
+                }
+            }
+
+            function drawLine(longitude1, latitude1, longitude2, latitude2, color) {
+                var points = [];
+                points.push(new T.LngLat(longitude1, latitude1));
+                points.push(new T.LngLat(longitude2, latitude2));
+                var line = new T.Polyline(points);
+                if (color !== null)
+                    line.setColor(color);
+                map.addOverLay(line);
+            }
+
+            function addMarker(longitude, latitude, label, info, image, markerSize, textSize, textColor, bold) {
+                var marker, markerLabel;
+                var latlng = new T.LngLat(longitude, latitude);
+                if (image === undefined || image === null) {
+                    marker = new T.Marker(latlng);
+                } else {
+                    var markerIcon = new T.Icon({
+                        iconUrl: "file://" + image,
+                        iconSize: new T.Point(markerSize, markerSize),
+                        iconAnchor: new T.Point(markerSize / 2, markerSize / 2)
+                    });
+                    marker = new T.Marker(latlng, {icon: markerIcon});
+                }
+                map.addOverLay(marker);
+                if (info !== null && info.length > 0) {
+                    marker.addEventListener("mousemove", function () {
+                        infoWindow = new T.InfoWindow();
+                        infoWindow.setContent("<div style=\"font-size:" + textSize + "px; background-color: transparent;\">"
+                                + info.replace(new RegExp("##MyBox#", "gm"), "'") + "</div>");
+                        marker.openInfoWindow(infoWindow);
+                    });
+                    marker.addEventListener("mouseout", function () {
+                        marker.closeInfoWindow(infoWindow);
+                    });
+                }
+                if (label !== null && label.length > 0) {
+                    var labelString = "<div style=\"font-size:" + textSize + "px;px;line-height:1;";
+                    if (bold) {
+                        labelString = labelString + "font-weight: bold;";
+                    }
+                    labelString = labelString + "\">" + label.replace(new RegExp("##MyBox#", "gm"), "'") + "</div>";
+                    markerLabel = new T.Label({
+                        text: labelString,
+                        position: latlng,
+                        offset: new T.Point(-30, markerSize + 5)
+                    });
+                    markerLabel.setBorderLine(0);
+                    if (textColor !== null)
+                        markerLabel.setFontColor(textColor);
+                    markerLabel.setBackgroundColor("transparent");
+                    map.addOverLay(markerLabel);
+                }
+
+            }
+
+            function hideStandardLayer() {
+                if (standardLayer !== undefined)
+                    map.remove(standardLayer);
+                standardLayer = undefined;
+            }
+
+
+            function setStandardLayerOpacity(v) {
+                if (standardLayer === undefined) {
+                    standardLayer = new AMap.TileLayer({
+                        zooms: [3, 18],
+                        visible: true,
+                        opacity: v,
+                        zIndex: 0
+                    });
+                    map.add(standardLayer);
+                } else {
+                    standardLayer.setOpacity(v);
+                }
+            }
+
+            function hideSatelliteLayer() {
+                if (satelliteLayer !== undefined)
+                    map.remove(satelliteLayer);
+                satelliteLayer = undefined;
+            }
+
+
+            function setSatelliteLayerOpacity(v) {
+                if (satelliteLayer === undefined) {
+                    satelliteLayer = new AMap.TileLayer.Satellite({
+                        zooms: [3, 18],
+                        visible: true,
+                        opacity: v
+                    });
+                    map.add(satelliteLayer);
+                } else {
+                    satelliteLayer.setOpacity(v);
+                }
+            }
+
+
+            function hideRoadLayer() {
+                if (roadLayer !== undefined)
+                    map.remove(roadLayer);
+                roadLayer = undefined;
+            }
+
+
+            function setRoadLayerOpacity(v) {
+                if (roadLayer === undefined) {
+                    roadLayer = new AMap.TileLayer.RoadNet({
+                        zooms: [3, 18],
+                        visible: true,
+                        opacity: v
+                    });
+                    map.add(roadLayer);
+                } else {
+                    roadLayer.setOpacity(v);
+                }
+            }
+
+
+            function hideTrafficLayer() {
+                if (trafficLayer !== undefined) {
+                    trafficLayer.hide();
+                    map.remove(trafficLayer);
+                }
+                trafficLayer = undefined;
+            }
+
+            function setTrafficLayerOpacity(v) {
+                if (trafficLayer === undefined) {
+                    trafficLayer = new AMap.TileLayer.Traffic({
+                        zooms: [3, 18],
+                        visible: true,
+                        opacity: v
+                    });
+                    map.add(trafficLayer);
+                } else {
+                    trafficLayer.setOpacity(v);
+                }
+            }
+
+        </script>
+
+    </body>
+</html>

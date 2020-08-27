@@ -1200,7 +1200,7 @@ public class ImageOCRController extends ImageViewerController {
                     }
                     textArea.setText(texts);
                     resultLabel.setText(MessageFormat.format(message("OCRresults"),
-                            texts.length(), DateTools.showTime(cost)));
+                            texts.length(), DateTools.datetimeMsDuration(cost)));
 
                     htmlController.loadHtml(html);
 

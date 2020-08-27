@@ -79,36 +79,6 @@ public class DerbyBase {
         }
     }
 
-    public ResultSet query(String sql) {
-        try {
-            ResultSet resultSet;
-            try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
-                conn.setReadOnly(true);
-                resultSet = conn.createStatement().executeQuery(sql);
-            }
-            return resultSet;
-        } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
-            return null;
-        }
-    }
-
-    public int update(String sql) {
-        try {
-            int ret;
-            try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
-                ret = conn.createStatement().executeUpdate(sql);
-            }
-            return ret;
-        } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
-            logger.debug(sql);
-            return -1;
-        }
-    }
-
     public boolean drop(Connection conn) {
         try {
             if (conn == null) {
@@ -350,6 +320,7 @@ public class DerbyBase {
         return started;
     }
 
+    // Upper case
     public static List<String> tables(Connection conn) {
         List<String> tables = new ArrayList<>();
         String sql = "SELECT TABLENAME FROM SYS.SYSTABLES WHERE TABLETYPE='T'";
@@ -383,6 +354,7 @@ public class DerbyBase {
         return columns;
     }
 
+    // lower case
     public static List<String> columnNames(Connection conn, String tablename) {
         List<String> columns = new ArrayList<>();
         String sql = "SELECT columnname  FROM SYS.SYSTABLES t, SYS.SYSCOLUMNS c "
@@ -502,44 +474,59 @@ public class DerbyBase {
                 new TableColorData().init(conn);
             }
             if (!tables.contains("Geography_Code".toUpperCase())) {
-                new TableGeographyCode().init(conn);
+                new TableGeographyCode().createTable(conn);
             }
-            if (!tables.contains("Location".toUpperCase())) {
-                new TableLocation().init(conn);
+            if (!tables.contains("Dataset".toUpperCase())) {
+                new TableDataset().createTable(conn);
             }
-
-            if (!tables.contains("Geography_Code".toUpperCase())) {
-                try {
-                    new TableGeographyCode().init(conn);
-
-                    try ( Statement statement = conn.createStatement()) {
-                        statement.executeUpdate(TableGeographyCode.Create_Index_levelIndex);
-                        statement.executeUpdate(TableGeographyCode.Create_Index_codeIndex);
-                        statement.executeUpdate(TableGeographyCode.Create_Index_gcidIndex);
-                    }
-                } catch (Exception e) {
-                }
+            if (!tables.contains("Location_Data".toUpperCase())) {
+                new TableLocationData().createTable(conn);
             }
-
             if (!tables.contains("Epidemic_Report".toUpperCase())) {
-                try {
-                    new TableEpidemicReport().init(conn);
-
-                    try ( Statement statement = conn.createStatement()) {
-                        statement.executeUpdate(TableEpidemicReport.Create_Index_DatasetTimeDesc);
-                        statement.executeUpdate(TableEpidemicReport.Create_Index_DatasetTimeAsc);
-                        statement.executeUpdate(TableEpidemicReport.Create_Index_TimeAsc);
-                        statement.executeUpdate(TableEpidemicReport.CreateStatisticView);
-                    }
-                } catch (Exception e) {
-                }
+                new TableEpidemicReport().createTable(conn);
             }
-
             if (!tables.contains("Query_Condition".toUpperCase())) {
                 new TableQueryCondition().init(conn);
             }
             if (!tables.contains("String_Value".toUpperCase())) {
                 new TableStringValue().init(conn);
+            }
+
+            List<String> indexes = indexes(conn);
+            try ( Statement statement = conn.createStatement()) {
+                if (!indexes.contains("Geography_Code_level_index".toUpperCase())) {
+                    statement.executeUpdate(TableGeographyCode.Create_Index_levelIndex);
+                }
+                if (!indexes.contains("Geography_Code_code_index".toUpperCase())) {
+                    statement.executeUpdate(TableGeographyCode.Create_Index_codeIndex);
+                }
+                if (!indexes.contains("Geography_Code_gcid_index".toUpperCase())) {
+                    statement.executeUpdate(TableGeographyCode.Create_Index_gcidIndex);
+                }
+                if (!indexes.contains("Epidemic_Report_DatasetTimeDesc_index".toUpperCase())) {
+                    statement.executeUpdate(TableEpidemicReport.Create_Index_DatasetTimeDesc);
+                }
+                if (!indexes.contains("Epidemic_Report_DatasetTimeAsc_index".toUpperCase())) {
+                    statement.executeUpdate(TableEpidemicReport.Create_Index_DatasetTimeAsc);
+                }
+                if (!indexes.contains("Epidemic_Report_timeAsc_index".toUpperCase())) {
+                    statement.executeUpdate(TableEpidemicReport.Create_Index_TimeAsc);
+                }
+                if (!indexes.contains("Dataset_unique_index".toUpperCase())) {
+                    statement.executeUpdate(TableDataset.Create_Index_unique);
+                }
+            } catch (Exception e) {
+            }
+
+            List<String> views = views(conn);
+            try ( Statement statement = conn.createStatement()) {
+                if (!views.contains("Epidemic_Report_Statistic_View".toUpperCase())) {
+                    statement.executeUpdate(TableEpidemicReport.CreateStatisticView);
+                }
+                if (!views.contains("Location_Data_View".toUpperCase())) {
+                    statement.executeUpdate(TableLocationData.CreateView);
+                }
+            } catch (Exception e) {
             }
             return true;
         } catch (Exception e) {
@@ -564,15 +551,20 @@ public class DerbyBase {
             new TableBrowserHistory().drop(conn);
             new TableBrowserBypassSSL().drop(conn);
             new TableColorData().drop(conn);
-            new TableLocation().drop(conn);
             try {
                 conn.createStatement().executeUpdate("DROP VIEW Epidemic_Report_Statistic_View");
             } catch (Exception e) {
             }
-            new TableEpidemicReport().drop(conn);
-            new TableGeographyCode().drop(conn);
+            new TableEpidemicReport().dropTable(conn);
+            new TableGeographyCode().dropTable(conn);
             new TableQueryCondition().drop(conn);
             new TableStringValue().drop(conn);
+            new TableDataset().dropTable(conn);
+            try {
+                conn.createStatement().executeUpdate("DROP VIEW Location_Data_View");
+            } catch (Exception e) {
+            }
+            new TableLocationData().dropTable(conn);
             return true;
         } catch (Exception e) {
 //            // logger.debug(e.toString());
@@ -595,12 +587,12 @@ public class DerbyBase {
             new TableBrowserHistory().clear(conn);
             new TableBrowserBypassSSL().clear(conn);
             new TableColorData().clear(conn);
-            new TableLocation().clear(conn);
-            conn.createStatement().executeUpdate("DROP VIEW Epidemic_Report_Statistic_View");
-            new TableEpidemicReport().clear(conn);
-            new TableGeographyCode().clear(conn);
+            new TableEpidemicReport().clearTable(conn);
+            new TableGeographyCode().clearTable(conn);
             new TableQueryCondition().clear(conn);
             new TableStringValue().clear(conn);
+            new TableDataset().clearTable(conn);
+            new TableLocationData().clearTable(conn);
             return true;
         } catch (Exception e) {
 //            // logger.debug(e.toString());
@@ -646,11 +638,6 @@ public class DerbyBase {
         }
     }
 
-    public static int tableSize(String table) {
-        String sql = " SELECT count(*) FROM " + table;
-        return size(sql);
-    }
-
     public static int size(String sql) {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             conn.setReadOnly(true);
@@ -669,11 +656,57 @@ public class DerbyBase {
             }
         } catch (Exception e) {
             failed(e);
-            logger.debug(e.toString());
-            logger.debug(sql);
+//            logger.debug(e.toString());
+//            logger.debug(sql);
         }
         return size;
 
+    }
+
+    public static ResultSet query(String sql) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            conn.setReadOnly(true);
+            return query(conn, sql);
+        } catch (Exception e) {
+            failed(e);
+//            // logger.debug(e.toString());
+            return null;
+        }
+    }
+
+    public static ResultSet query(Connection conn, String sql) {
+        try ( Statement statement = conn.createStatement()) {
+            return statement.executeQuery(sql);
+        } catch (Exception e) {
+            failed(e);
+//            logger.debug(e.toString());
+//            logger.debug(sql);
+            return null;
+        }
+    }
+
+    public static int update(String sql) {
+        try {
+            try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+                return update(conn, sql);
+            }
+        } catch (Exception e) {
+            failed(e);
+//            logger.debug(e.toString());
+//            logger.debug(sql);
+            return 0;
+        }
+    }
+
+    public static int update(Connection conn, String sql) {
+        try ( Statement statement = conn.createStatement()) {
+            return statement.executeUpdate(sql);
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            logger.debug(sql);
+            return 0;
+        }
     }
 
     public static String stringValue(String value) {

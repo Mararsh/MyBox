@@ -1,16 +1,19 @@
 package mara.mybox.controller;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -23,10 +26,13 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mara.mybox.data.QueryCondition;
 import mara.mybox.data.QueryCondition.DataOperation;
+import mara.mybox.db.ColumnDefinition;
 import mara.mybox.db.DerbyBase;
+import mara.mybox.db.TableBase;
 import mara.mybox.db.TableQueryCondition;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.HtmlTools;
+import mara.mybox.tools.HtmlTools.HtmlStyle;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
@@ -39,14 +45,15 @@ import mara.mybox.value.CommonValues;
  */
 public class DataAnalysisController<P> extends TableManageController<P> {
 
-    protected String finalTitle, dataQueryString, pageQueryString;
-    protected String queryPrefix, sizePrefix, clearPrefix, queryOrder, orderTitle,
-            dataQuerySQL, sizeQuerySQL, clearSQL, pageQuerySQL;
-    protected String tableDefinition;
+    protected TableBase viewDefinition;
+    protected String finalTitle, dataQueryString, pageQueryString,
+            queryPrefix, sizePrefix, clearPrefix, queryOrder, orderTitle,
+            dataQuerySQL, sizeQuerySQL, clearSQL, pageQuerySQL, tableDefinitionString;
     protected DataOperation dataOperation;
     protected QueryCondition queryCondition, exportCondition, clearCondition;
     protected boolean prefixEditable, supportTop;
     protected int topNumber;
+    protected HtmlStyle htmlStyle;
 
     @FXML
     protected TabPane tabsPane;
@@ -57,9 +64,9 @@ public class DataAnalysisController<P> extends TableManageController<P> {
     @FXML
     protected GeographyCodeConditionTreeController geoController;
     @FXML
-    protected Button dataImportButton, dataExportButton;
+    protected ComboBox<String> htmlStyleSelector;
     @FXML
-    protected CheckBox consoleCheck;
+    protected ListView orderByList;
 
     public DataAnalysisController() {
         prefixEditable = false;
@@ -69,30 +76,29 @@ public class DataAnalysisController<P> extends TableManageController<P> {
     /*
         Methods need implementation/updates
      */
-    public void initSQL() {
-//        queryPrefix = "SELECT * FROM " + dataName;
-//        sizePrefix = "SELECT count(dataid) FROM " + dataName;
-//        clearPrefix = "DELETE FROM " + dataName;
+    @Override
+    public void setTableDefinition() {
     }
 
-    protected DerbyBase dataTable() {
-        return null;
+    public void setTableValues() {
+        queryPrefix = "SELECT * FROM " + tableName;
+        sizePrefix = "SELECT count(" + idColumn + ") FROM " + tableName;
+        clearPrefix = "DELETE FROM " + tableName;
+        if (tableDefinition != null) {
+            tableDefinitionString = tableDefinition.html();
+            viewDefinition = tableDefinition;
+        }
     }
 
     protected DataExportController dataExporter() {
         return null;
     }
 
-    protected void checkOrderBy() {
-
-    }
-
     protected String checkWhere() {
         if (geoController == null) {
             return null;
         }
-        geoController.check();
-        String where = geoController.getFinalConditions();
+        String where = geoController.check();
         if (where == null) {
             popError(message("SetConditionsComments"));
             return null;
@@ -122,7 +128,7 @@ public class DataAnalysisController<P> extends TableManageController<P> {
                 + (!careOrder || orderTitle == null || orderTitle.isBlank() ? "" : "\n" + orderTitle)
                 + (topNumber <= 0 ? "" : "\n" + message("NumberTopDataDaily") + ": " + topNumber);
         return QueryCondition.create()
-                .setDataName(dataName)
+                .setDataName(tableName)
                 .setPrefix(queryPrefix)
                 .setWhere(where)
                 .setOrder(queryOrder)
@@ -217,16 +223,16 @@ public class DataAnalysisController<P> extends TableManageController<P> {
         pageQueryString = pageQuerySQL;
         if (queryCondition != null) {
             queryCondition.setFetch(dataFetch);
-        }
-        if (pagesNumber > 1) {
-            finalTitle = queryCondition.getTitle() + " - " + message("Page") + currentPage;
+            if (pagesNumber > 1) {
+                finalTitle = queryCondition.getTitle() + " - " + message("Page") + currentPage;
+            }
         }
     }
 
     @Override
     public List<P> readPageData() {
         setPageSQL();
-        return null;
+        return tableDefinition.readData(pageQuerySQL);
     }
 
     @Override
@@ -237,7 +243,12 @@ public class DataAnalysisController<P> extends TableManageController<P> {
         loadInfo();
     }
 
+    public void reloadChart() {
+
+    }
+
     @FXML
+    @Override
     protected void popImportMenu(MouseEvent mouseEvent) {
 
     }
@@ -255,11 +266,83 @@ public class DataAnalysisController<P> extends TableManageController<P> {
     public void initializeNext() {
         try {
             super.initializeNext();
-            initSQL();
-            consoleCheck.selectedProperty().addListener(
-                    (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
+            setTableValues();
+            initOrder();
+
+            htmlStyleSelector.getItems().addAll(Arrays.asList(
+                    message("Default"), message("Console"), message("Blackboard")
+            ));
+            htmlStyleSelector.getSelectionModel().selectedItemProperty().addListener(
+                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
+                        if (message("Console").equals(newValue)) {
+                            htmlStyle = HtmlStyle.Console;
+                        } else if (message("Blackboard").equals(newValue)) {
+                            htmlStyle = HtmlStyle.Blackboard;
+                        } else {
+                            htmlStyle = HtmlStyle.Default;
+                        }
+                        AppVariables.setUserConfigValue("HtmlStyle", newValue);
                         loadInfo();
                     });
+            htmlStyleSelector.getSelectionModel().select(
+                    AppVariables.getUserConfigValue("HtmlStyle", message("Default")));
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    protected void initOrder() {
+        try {
+            if (orderByList == null || tableDefinition == null) {
+                return;
+            }
+            topNumber = 0;
+
+            if (viewDefinition == null) {
+                viewDefinition = tableDefinition;
+            }
+            orderByList.getItems().clear();
+            orderByList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+            for (Object o : viewDefinition.getColumns()) {
+                ColumnDefinition column = (ColumnDefinition) o;
+                String label = column.getLabel();
+                orderByList.getItems().add(label + " " + message("Ascending"));
+                orderByList.getItems().add(label + " " + message("Descending"));
+            }
+            orderByList.getSelectionModel().select(0);
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    protected void checkOrderBy() {
+        try {
+            if (orderByList == null || viewDefinition == null) {
+                return;
+            }
+            queryOrder = "";
+            orderTitle = "";
+            List<String> selected = orderByList.getSelectionModel().getSelectedItems();
+            for (String item : selected) {
+                if (item.endsWith(" " + message("Ascending"))) {
+                    String name = item.substring(0, item.length() - message("Ascending").length() - 1);
+                    ColumnDefinition column = viewDefinition.columnByMessage(name);
+                    if (column != null) {
+                        String q = column.getName() + " ASC";
+                        queryOrder = queryOrder.isBlank() ? q : queryOrder + ", " + q;
+                    }
+                } else if (item.endsWith(" " + message("Descending"))) {
+                    String name = item.substring(0, item.length() - message("Descending").length() - 1);
+                    ColumnDefinition column = viewDefinition.columnByMessage(name);
+                    if (column != null) {
+                        String q = column.getName() + " DESC";
+                        queryOrder = queryOrder.isBlank() ? q : queryOrder + ", " + q;
+                    }
+                }
+                orderTitle = orderTitle.isBlank() ? "\"" + item + "\"" : orderTitle + " \"" + item + "\"";
+            }
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -283,19 +366,32 @@ public class DataAnalysisController<P> extends TableManageController<P> {
 
     protected void setButtons() {
         try {
-            FxmlControl.removeTooltip(goButton);
-            FxmlControl.removeTooltip(clearButton);
-            FxmlControl.setTooltip(deleteButton, message("Delete") + "\nDELETE / CTRL+d / ALT+d\n\n"
-                    + message("DataDeletedComments"));
-            FxmlControl.removeTooltip(setButton);
-            FxmlControl.removeTooltip(dataImportButton);
-            FxmlControl.removeTooltip(dataExportButton);
-            goButton.requestFocus();
+            if (clearButton != null) {
+                FxmlControl.removeTooltip(clearButton);
+            }
+            if (deleteButton != null) {
+                FxmlControl.setTooltip(deleteButton, message("Delete") + "\nDELETE / CTRL+d / ALT+d\n\n"
+                        + message("DataDeletedComments"));
+            }
+            if (setButton != null) {
+                FxmlControl.removeTooltip(setButton);
+            }
+            if (dataImportButton != null) {
+                FxmlControl.removeTooltip(dataImportButton);
+            }
+            if (dataExportButton != null) {
+                FxmlControl.removeTooltip(dataExportButton);
+            }
+            if (queryButton != null) {
+                FxmlControl.removeTooltip(queryButton);
+                queryButton.requestFocus();
+            }
         } catch (Exception e) {
             logger.error(e.toString());
         }
     }
 
+    //  Call this when data are changed and need reload all
     @FXML
     @Override
     public void refreshAction() {
@@ -309,31 +405,30 @@ public class DataAnalysisController<P> extends TableManageController<P> {
         try {
             String html = "";
             if (queryCondition == null) {
-                html += "<b>" + message("SetConditionsComments") + "</b> </br>";
+                html += "<SPAN class=\"boldText\">" + message("SetConditionsComments") + "</SPAN>";
             } else {
-                html += "<b>" + message("QueryConditionsName") + ":</b> </br>";
-                html += "<font color=\"#2e598a\">" + queryCondition.getTitle().replaceAll("\n", "</br>") + "</font></br></br>";
+                html += "<SPAN class=\"boldText\">" + message("QueryConditionsName") + ":</SPAN> </BR>";
+                html += "<SPAN class=\"valueText\">" + queryCondition.getTitle().replaceAll("\n", "</BR>") + "</SPAN></BR></BR>";
 
-                html += "<b>" + message("QueryConditions") + ": </b></br>";
-                html += "<font color=\"#2e598a\">" + queryCondition.getWhere() + "</font></br></br>";
+                html += "<SPAN class=\"boldText\">" + message("QueryConditions") + ":</SPAN></BR>";
+                html += "<SPAN class=\"valueText\">" + queryCondition.getWhere() + "</SPAN></BR></BR>";
 
                 if (dataQueryString != null && !dataQueryString.isBlank()) {
-                    html += "<b>" + message("DataQuery") + ": </b></br>";
-                    html += "<font color=\"#2e598a\">" + dataQueryString + "</font></br>";
-                    html += "<b>" + message("DataNumber") + ": </b>" + totalSize + "</br></br>";
+                    html += "<SPAN class=\"boldText\">" + message("DataQuery") + ": </SPAN></BR>";
+                    html += "<SPAN class=\"valueText\">" + dataQueryString + "</SPAN></BR>";
+                    html += "<SPAN class=\"boldText\">" + message("DataNumber") + ": </SPAN>";
+                    html += "<SPAN class=\"valueText\">" + totalSize + "</SPAN></BR></BR>";
                 }
                 if (queryCondition.getFetch() != null && !queryCondition.getFetch().isBlank()) {
-                    html += "<b>" + message("CurrentPage") + ": </b></br>";
-                    html += "<font color=\"#2e598a\">" + queryCondition.getFetch() + "</font></br>";
-                    html += "<b>" + message("DataNumber") + ": </b>" + tableData.size() + "</br></br>";
+                    html += "<SPAN class=\"boldText\">" + message("CurrentPage") + ": </SPAN></BR>";
+                    html += "<SPAN class=\"valueText\">" + queryCondition.getFetch() + "</SPAN></BR>";
+                    html += "<SPAN class=\"boldText\">" + message("DataNumber") + ": </SPAN>";
+                    html += "<SPAN class=\"valueText\">" + tableData.size() + "</SPAN></BR></BR>";
                 }
+                html += loadMoreInfo();
             }
 
-            html += loadMoreInfo();
-
-            html = HtmlTools.html(null,
-                    consoleCheck.isSelected() ? HtmlTools.ConsoleStyle : HtmlTools.DefaultStyle,
-                    html);
+            html = HtmlTools.html(null, htmlStyle, html);
             infoView.getEngine().loadContent​(html);
 
         } catch (Exception e) {
@@ -357,6 +452,12 @@ public class DataAnalysisController<P> extends TableManageController<P> {
         }
     }
 
+    @Override
+    public int readDataSize() {
+//        logger.debug(sizeQuerySQL);
+        return DerbyBase.size(sizeQuerySQL);
+    }
+
     @FXML
     @Override
     public void clearAction() {
@@ -368,7 +469,8 @@ public class DataAnalysisController<P> extends TableManageController<P> {
     }
 
     protected void setClearSQL() {
-        clearSQL = clearPrefix + (clearCondition.getWhere().isBlank() ? "" : " WHERE " + clearCondition.getWhere());
+        clearSQL = clearPrefix + (clearCondition.getWhere().isBlank() ? "" : " WHERE " + clearCondition.getWhere())
+                + (clearPrefix.contains(" JOIN ") ? ")" : "");
     }
 
     public void clear() {
@@ -406,7 +508,7 @@ public class DataAnalysisController<P> extends TableManageController<P> {
 
                 @Override
                 protected boolean handle() {
-                    count = dataTable().update(clearSQL);
+                    count = DerbyBase.update(clearSQL);
 
                     return true;
                 }
@@ -430,14 +532,81 @@ public class DataAnalysisController<P> extends TableManageController<P> {
         loadTableData();
     }
 
-    protected String tableDefinition() {
-        if (tableDefinition == null) {
-            tableDefinition = dataTable().getCreate_Table_Statement();
+    @FXML
+    public void upAction() {
+        List<Integer> selected = new ArrayList<>();
+        selected.addAll(orderByList.getSelectionModel().getSelectedIndices());
+        if (selected.isEmpty()) {
+            return;
         }
-        return tableDefinition;
+        List<Integer> newselected = new ArrayList<>();
+        for (Integer index : selected) {
+            if (index == 0 || newselected.contains(index - 1)) {
+                newselected.add(index);
+                continue;
+            }
+            String lang = (String) orderByList.getItems().get(index);
+            orderByList.getItems().set(index, orderByList.getItems().get(index - 1));
+            orderByList.getItems().set(index - 1, lang);
+            newselected.add(index - 1);
+        }
+        orderByList.getSelectionModel().clearSelection();
+        for (int index : newselected) {
+            orderByList.getSelectionModel().select(index);
+        }
+        orderByList.refresh();
     }
 
     @FXML
+    public void downAction() {
+        List<Integer> selected = new ArrayList<>();
+        selected.addAll(orderByList.getSelectionModel().getSelectedIndices());
+        if (selected.isEmpty()) {
+            return;
+        }
+        List<Integer> newselected = new ArrayList<>();
+        for (int i = selected.size() - 1; i >= 0; --i) {
+            int index = selected.get(i);
+            if (index == orderByList.getItems().size() - 1
+                    || newselected.contains(index + 1)) {
+                newselected.add(index);
+                continue;
+            }
+            String lang = (String) orderByList.getItems().get(index);
+            orderByList.getItems().set(index, orderByList.getItems().get(index + 1));
+            orderByList.getItems().set(index + 1, lang);
+            newselected.add(index + 1);
+        }
+        orderByList.getSelectionModel().clearSelection();
+        for (int index : newselected) {
+            orderByList.getSelectionModel().select(index);
+        }
+        orderByList.refresh();
+
+    }
+
+    @FXML
+    public void topAction() {
+        List<Integer> selectedIndices = new ArrayList<>();
+        selectedIndices.addAll(orderByList.getSelectionModel().getSelectedIndices());
+        if (selectedIndices.isEmpty()) {
+            return;
+        }
+        List<String> selected = new ArrayList<>();
+        selected.addAll(orderByList.getSelectionModel().getSelectedItems());
+        int size = selectedIndices.size();
+        for (int i = size - 1; i >= 0; --i) {
+            int index = selectedIndices.get(i);
+            orderByList.getItems().remove(index);
+        }
+        orderByList.getSelectionModel().clearSelection();
+        orderByList.getItems().addAll(0, selected);
+        orderByList.getSelectionModel().selectRange(0, size);
+        orderByList.refresh();
+    }
+
+    @FXML
+    @Override
     protected void popQueryMenu(MouseEvent mouseEvent) {
         try {
             if (popMenu != null && popMenu.isShowing()) {
@@ -456,15 +625,15 @@ public class DataAnalysisController<P> extends TableManageController<P> {
             menu = new MenuItem(message("InputConditions"));
             menu.setOnAction((ActionEvent event) -> {
                 QueryCondition condition = QueryCondition.create()
-                        .setDataName(dataName)
+                        .setDataName(tableName)
                         .setDataOperation(DataOperation.QueryData)
                         .setPrefix(queryPrefix);
                 DataQueryController controller = (DataQueryController) openStage(CommonValues.DataQueryFxml);
-                controller.setValue(this, condition, tableDefinition(), prefixEditable, supportTop);
+                controller.setValue(this, condition, tableDefinitionString, prefixEditable, supportTop);
             });
             popMenu.getItems().add(menu);
 
-            List<QueryCondition> list = TableQueryCondition.readList(dataName,
+            List<QueryCondition> list = TableQueryCondition.readList(tableName,
                     DataOperation.QueryData,
                     AppVariables.fileRecentNumber > 0 ? AppVariables.fileRecentNumber : 15);
             if (list != null && !list.isEmpty()) {
@@ -473,7 +642,7 @@ public class DataAnalysisController<P> extends TableManageController<P> {
                 menu.setStyle("-fx-text-fill: #2e598a;");
                 popMenu.getItems().add(menu);
                 for (QueryCondition condition : list) {
-                    menu = new MenuItem(condition.getTitle().replaceAll("</br>", " ").replaceAll("\n", " "));
+                    menu = new MenuItem(condition.getTitle().replaceAll("</br>|\n", " "));
                     menu.setOnAction((ActionEvent event) -> {
                         queryCondition = condition;
                         loadTableData();
@@ -500,6 +669,7 @@ public class DataAnalysisController<P> extends TableManageController<P> {
     }
 
     @FXML
+    @Override
     protected void popClearMenu(MouseEvent mouseEvent) {
         try {
             if (popMenu != null && popMenu.isShowing()) {
@@ -519,16 +689,16 @@ public class DataAnalysisController<P> extends TableManageController<P> {
             menu = new MenuItem(message("InputConditions"));
             menu.setOnAction((ActionEvent event) -> {
                 QueryCondition condition = QueryCondition.create()
-                        .setDataName(dataName)
+                        .setDataName(tableName)
                         .setDataOperation(DataOperation.ClearData)
                         .setPrefix(clearPrefix);
                 DataQueryController controller = (DataQueryController) openStage(CommonValues.DataQueryFxml);
-                controller.setValue(this, condition, tableDefinition(), prefixEditable, supportTop);
+                controller.setValue(this, condition, tableDefinitionString, prefixEditable, supportTop);
             });
             popMenu.getItems().add(menu);
 
             List<QueryCondition> list = TableQueryCondition.readList(
-                    dataName, DataOperation.ClearData,
+                    tableName, DataOperation.ClearData,
                     AppVariables.fileRecentNumber > 0 ? AppVariables.fileRecentNumber : 15);
             if (list != null && !list.isEmpty()) {
                 popMenu.getItems().add(new SeparatorMenuItem());
@@ -538,7 +708,7 @@ public class DataAnalysisController<P> extends TableManageController<P> {
                 popMenu.getItems().add(menu);
 
                 for (QueryCondition condition : list) {
-                    menu = new MenuItem(condition.getTitle().replaceAll("</br>", " ").replaceAll("\n", " "));
+                    menu = new MenuItem(condition.getTitle().replaceAll("</br>|\n", " "));
                     menu.setOnAction((ActionEvent event) -> {
                         clearCondition = condition;
                         clear();
@@ -576,10 +746,11 @@ public class DataAnalysisController<P> extends TableManageController<P> {
         }
         TableQueryCondition.write(exportCondition, true);
         DataExportController controller = dataExporter();
-        controller.setValue(this, exportCondition, tableDefinition(), prefixEditable, supportTop);
+        controller.setValue(this, exportCondition, tableDefinitionString, prefixEditable, supportTop);
     }
 
     @FXML
+    @Override
     protected void popExportMenu(MouseEvent mouseEvent) {
         try {
             if (popMenu != null && popMenu.isShowing()) {
@@ -604,7 +775,7 @@ public class DataAnalysisController<P> extends TableManageController<P> {
                         return;
                     }
                     QueryCondition condition = QueryCondition.create()
-                            .setDataName(dataName)
+                            .setDataName(tableName)
                             .setDataOperation(DataOperation.ExportData)
                             .setTitle(finalTitle)
                             .setPrefix(queryCondition.getPrefix())
@@ -613,7 +784,7 @@ public class DataAnalysisController<P> extends TableManageController<P> {
                             .setFetch(queryCondition.getFetch())
                             .setTop(queryCondition.getTop());
                     DataExportController controller = dataExporter();
-                    controller.currentPage(this, condition, tableDefinition(), prefixEditable, supportTop);
+                    controller.currentPage(this, condition, tableDefinitionString, prefixEditable, supportTop);
                 });
                 popMenu.getItems().add(menu);
             }
@@ -622,16 +793,16 @@ public class DataAnalysisController<P> extends TableManageController<P> {
             menu = new MenuItem(message("InputConditions"));
             menu.setOnAction((ActionEvent event) -> {
                 QueryCondition condition = QueryCondition.create()
-                        .setDataName(dataName)
+                        .setDataName(tableName)
                         .setDataOperation(DataOperation.ExportData)
                         .setPrefix(queryPrefix);
                 DataExportController controller = dataExporter();
-                controller.setValue(this, condition, tableDefinition(), prefixEditable, supportTop);
+                controller.setValue(this, condition, tableDefinitionString, prefixEditable, supportTop);
             });
             popMenu.getItems().add(menu);
 
             List<QueryCondition> list = TableQueryCondition.readList(
-                    dataName, DataOperation.ExportData,
+                    tableName, DataOperation.ExportData,
                     AppVariables.fileRecentNumber > 0 ? AppVariables.fileRecentNumber : 15);
             if (list != null && !list.isEmpty()) {
                 popMenu.getItems().add(new SeparatorMenuItem());
@@ -639,10 +810,10 @@ public class DataAnalysisController<P> extends TableManageController<P> {
                 menu.setStyle("-fx-text-fill: #2e598a;");
                 popMenu.getItems().add(menu);
                 for (QueryCondition condition : list) {
-                    menu = new MenuItem(condition.getTitle().replaceAll("</br>", " ").replaceAll("\n", " "));
+                    menu = new MenuItem(condition.getTitle().replaceAll("</br>|\n", " "));
                     menu.setOnAction((ActionEvent event) -> {
                         DataExportController controller = dataExporter();
-                        controller.setValue(this, condition, tableDefinition(), prefixEditable, supportTop);
+                        controller.setValue(this, condition, tableDefinitionString, prefixEditable, supportTop);
                     });
                     popMenu.getItems().add(menu);
                 }

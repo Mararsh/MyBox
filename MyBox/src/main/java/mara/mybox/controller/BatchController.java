@@ -293,7 +293,6 @@ public abstract class BatchController<T> extends BaseController {
 
     public void initTargetSection() {
         try {
-
             if (startButton != null) {
                 if (targetPathInput != null) {
                     if (tableView != null) {
@@ -310,6 +309,7 @@ public abstract class BatchController<T> extends BaseController {
                                         .or(optionsValid.not())
                         );
                     }
+
                 } else {
                     if (tableView != null) {
                         startButton.disableProperty().bind(
@@ -318,6 +318,7 @@ public abstract class BatchController<T> extends BaseController {
                         );
                     }
                 }
+
                 if (previewButton != null) {
                     previewButton.disableProperty().bind(startButton.disableProperty()
                             .or(startButton.textProperty().isNotEqualTo(AppVariables.message("Start")))
@@ -334,6 +335,7 @@ public abstract class BatchController<T> extends BaseController {
 
                     }
                 });
+
                 miaoCheck.setSelected(AppVariables.getUserConfigBoolean("Miao"));
             }
 
@@ -346,6 +348,7 @@ public abstract class BatchController<T> extends BaseController {
 
                     }
                 });
+
                 openCheck.setSelected(AppVariables.getUserConfigBoolean("OpenWhenComplete"));
             }
 
@@ -358,6 +361,7 @@ public abstract class BatchController<T> extends BaseController {
 
                     }
                 });
+
                 verboseCheck.setSelected(AppVariables.getUserConfigBoolean("BatchLogVerbose", true));
             }
 
@@ -1012,7 +1016,7 @@ public abstract class BatchController<T> extends BaseController {
         targetFiles.add(target);
         String msg;
         msg = MessageFormat.format(message("FilesGenerated"), finalTargetName);
-        msg += "  " + message("Cost") + ":" + DateTools.showTime(new Date().getTime() - fileStartTime.getTime());
+        msg += "  " + message("Cost") + ":" + DateTools.datetimeMsDuration(new Date(), fileStartTime);
         updateStatusLabel(msg);
         updateLogs(msg, true, true);
     }
@@ -1029,7 +1033,7 @@ public abstract class BatchController<T> extends BaseController {
         } else {
             msg = MessageFormat.format(message("FilesGenerated"), tFiles.size());
         }
-        msg += "  " + message("Cost") + ":" + DateTools.showTime(new Date().getTime() - fileStartTime.getTime());
+        msg += "  " + message("Cost") + ":" + DateTools.datetimeMsDuration(new Date(), fileStartTime);
         updateStatusLabel(msg);
         updateLogs(msg, true, true);
     }
@@ -1111,7 +1115,7 @@ public abstract class BatchController<T> extends BaseController {
         String avgString = "";
         if (totalFilesHandled > 0) {
             s += ". " + message("HandledFiles") + ":" + totalFilesHandled + space;
-            avgString = DateTools.showTime(Math.round(countAverageTime(cost))) + " " + message("PerFile");
+            avgString = DateTools.datetimeMsDuration(Math.round(countAverageTime(cost))) + " " + message("PerFile");
         }
         if (totalItemsHandled > 0) {
             s += ". " + message("HandledItems") + ":" + totalItemsHandled + space;
@@ -1124,7 +1128,7 @@ public abstract class BatchController<T> extends BaseController {
         if (count > 0) {
             s += MessageFormat.format(AppVariables.message("FilesGenerated"), count) + space;
         }
-        s += message("Cost") + ": " + DateTools.showTime(cost) + "." + space
+        s += message("Cost") + ": " + DateTools.datetimeMsDuration(new Date(), processStartTime) + "." + space
                 + message("Average") + ":" + avgString + " "
                 + message("StartTime") + ":" + DateTools.datetimeToString(processStartTime) + space
                 + message("EndTime") + ":" + DateTools.datetimeToString(new Date());

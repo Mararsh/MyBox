@@ -11,7 +11,6 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
 import java.lang.management.ManagementFactory;
 import java.text.MessageFormat;
-import java.util.Properties;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.web.WebView;
 import javafx.stage.Screen;
@@ -37,7 +36,6 @@ public class MyBoxPropertiesController extends HtmlViewerController {
 
             initTable(null);
 
-            Properties p = System.getProperties();
             addData(message("UserName"), System.getProperty("user.name"));
             addData(message("UserHome"), System.getProperty("user.home"));
             addData(message("UserDir"), System.getProperty("user.dir"));

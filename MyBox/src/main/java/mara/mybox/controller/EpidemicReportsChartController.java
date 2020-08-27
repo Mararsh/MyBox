@@ -29,14 +29,14 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.HBox;
@@ -56,7 +56,6 @@ import static mara.mybox.db.DerbyBase.dbHome;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.TableStringValue;
-import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlControl.ChartCoordinate;
@@ -70,7 +69,6 @@ import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.image.file.ImageGifFile;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.LocationTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
@@ -84,15 +82,14 @@ import thridparty.LabeledHorizontalBarChart;
  * @CreateDate 2020-2-3
  * @License Apache License Version 2.0
  */
-public class EpidemicReportsChartController extends LocationsMapController {
+public class EpidemicReportsChartController extends GeographyCodeMapController {
 
     protected EpidemicReportsController reportsController;
     protected EpidemicReportsSettingsController settingsController;
     protected QueryCondition queryCondition;
     protected String chartQuerySQL, chartName;
     protected List<String> orderNames, valuesNames;
-    protected int interval, topNumber, snapWidth, chartLoadTime, mapLoadTime,
-            totalSize, chartIndex;
+    protected int topNumber, snapWidth, chartLoadTime, mapLoadTime, totalSize;
     protected List<String> datasets, chartTimes;
     protected Map<String, List<EpidemicReport>> timesReports, locationsReports;
     protected List<GeographyCode> chartLocations;
@@ -107,13 +104,17 @@ public class EpidemicReportsChartController extends LocationsMapController {
     @FXML
     protected StackPane chartPane;
     @FXML
-    protected ComboBox<String> intervalSelector, labelSizeSelector, frameSelector;
+    protected TabPane optionsTabPane;
     @FXML
-    protected ToggleGroup chartGroup, labelGroup, legendGroup, coordinateGroup;
+    protected Tab chartOptionsTab, mapOptionsTab;
     @FXML
-    protected HBox chartTypeBox, playBox;
+    protected ComboBox<String> labelSizeSelector;
     @FXML
-    protected VBox valueTypeBox, optionsVBox, legendBox, labelBox, chartSnapBox;
+    protected ToggleGroup chartGroup, labelGroup, legendGroup, numberCoordinateGroup;
+    @FXML
+    protected HBox chartTypeBox, titleBox;
+    @FXML
+    protected VBox valueTypeBox, chartSnapBox;
     @FXML
     protected CheckBox categoryAxisCheck, confirmedCheck, healedCheck, deadCheck,
             increasedConfirmedCheck, increasedHealedCheck, increasedDeadCheck,
@@ -129,8 +130,6 @@ public class EpidemicReportsChartController extends LocationsMapController {
             cartesianRadio, logarithmicERadio, logarithmic10Radio, squareRootRadio;
     @FXML
     protected VBox chartBox, mapBox;
-    @FXML
-    protected Button pauseButton;
 
     public EpidemicReportsChartController() {
         baseTitle = AppVariables.message("EpidemicReport");
@@ -142,15 +141,15 @@ public class EpidemicReportsChartController extends LocationsMapController {
         try {
             super.initializeNext();
             valuesNames = new ArrayList();
-            initOptions();
+            initChartOptions();
+            initMapOptions();
 
         } catch (Exception e) {
             logger.error(e.toString());
         }
-
     }
 
-    protected void initOptions() {
+    protected void initChartOptions() {
         try {
             chartGroup.selectedToggleProperty().addListener(
                     (ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) -> {
@@ -161,7 +160,7 @@ public class EpidemicReportsChartController extends LocationsMapController {
                     });
 
             chartCoordinate = ChartCoordinate.Cartesian;
-            coordinateGroup.selectedToggleProperty().addListener(
+            numberCoordinateGroup.selectedToggleProperty().addListener(
                     (ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) -> {
                         if (isSettingValues || newValue == null) {
                             return;
@@ -176,18 +175,6 @@ public class EpidemicReportsChartController extends LocationsMapController {
                             chartCoordinate = ChartCoordinate.Cartesian;
                         }
                         drawChart();
-                    });
-
-            frameSelector.getSelectionModel().selectedItemProperty().addListener(
-                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                        if (isSettingValues) {
-                            return;
-                        }
-                        if (timer != null) {
-                            timer.cancel();
-                            timer = null;
-                        }
-                        drawFrame(newValue);
                     });
 
             labelType = LabelType.NameAndValue;
@@ -212,7 +199,7 @@ public class EpidemicReportsChartController extends LocationsMapController {
                 drawChart();
             });
 
-            textSize = 12;
+            mapOptionsController.textSize = 12;
             labelSizeSelector.getItems().addAll(Arrays.asList(
                     "12", "14", "10", "15", "16", "18", "9", "8", "18", "20", "24"
             ));
@@ -221,9 +208,9 @@ public class EpidemicReportsChartController extends LocationsMapController {
                         try {
                             int v = Integer.parseInt(newValue);
                             if (v > 0) {
-                                textSize = v;
+                                mapOptionsController.textSize = v;
                                 labelSizeSelector.getEditor().setStyle(null);
-                                AppVariables.setUserConfigInt("EpidemicReportChartTextSize", textSize);
+                                AppVariables.setUserConfigInt("EpidemicReportChartTextSize", mapOptionsController.textSize);
                                 if (!isSettingValues) {
                                     drawChart();
                                 }
@@ -265,6 +252,15 @@ public class EpidemicReportsChartController extends LocationsMapController {
                         drawChart();
                     });
 
+            loopCheck.selectedProperty().addListener(
+                    (ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
+                        if (isSettingValues) {
+                            return;
+                        }
+                        AppVariables.setUserConfigValue("EpidemicReportChartLoop", newValue);
+                        drawChart();
+                    });
+
             hlinesCheck.selectedProperty().addListener(
                     (ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
                         if (isSettingValues) {
@@ -283,37 +279,24 @@ public class EpidemicReportsChartController extends LocationsMapController {
                         drawChart();
                     });
 
-            interval = 200;
-            intervalSelector.getItems().addAll(Arrays.asList(
-                    "200", "500", "1000", "50", "100", "300", "800", "1500", "2000", "3000", "5000", "10000"
-            ));
-            intervalSelector.getSelectionModel().selectedItemProperty().addListener(
-                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                        try {
-                            int v = Integer.valueOf(intervalSelector.getValue());
-                            if (v > 0) {
-                                interval = v;
-                                AppVariables.setUserConfigValue("EpidemicReportInterval", interval + "");
-                                FxmlControl.setEditorNormal(intervalSelector);
-                                if (isSettingValues) {
-                                    return;
-                                }
-                                drawChart();
-                            } else {
-                                FxmlControl.setEditorBadStyle(intervalSelector);
-                            }
-                        } catch (Exception e) {
-                            logger.error(e.toString());
-                        }
-                    });
-
             isSettingValues = true;
             labelSizeSelector.getSelectionModel().select(AppVariables.getUserConfigValue("EpidemicReportChartTextSize", "12"));
             categoryAxisCheck.setSelected(AppVariables.getUserConfigBoolean("EpidemicReportDisplayCategoryAxis", false));
             hlinesCheck.setSelected(AppVariables.getUserConfigBoolean("EpidemicReportDisplayHlines", true));
             vlinesCheck.setSelected(AppVariables.getUserConfigBoolean("EpidemicReportDisplayVlines", true));
-            intervalSelector.getSelectionModel().select(AppVariables.getUserConfigValue("EpidemicReportInterval", "200"));
+            loopCheck.setSelected(AppVariables.getUserConfigBoolean("EpidemicReportChartLoop", true));
             isSettingValues = false;
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    protected void initMapOptions() {
+        try {
+            mapOptionsController.markerTextBox.getChildren().removeAll(mapOptionsController.baseTextPane);
+            mapOptionsController.optionsBox.getChildren().removeAll(
+                    mapOptionsController.dataBox, mapOptionsController.markerImageBox);
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -403,8 +386,8 @@ public class EpidemicReportsChartController extends LocationsMapController {
         chartTimes = new ArrayList<>();
         chartTimes.addAll(reportsController.dataTimes);
         Collections.reverse(chartTimes);
-        mapSize = 3;
-        chartIndex = 0;
+        mapOptionsController.mapSize = 3;
+        frameIndex = 0;
 
         orderNames = new ArrayList<>();
         orderNames.addAll(reportsController.orderNames);
@@ -438,7 +421,6 @@ public class EpidemicReportsChartController extends LocationsMapController {
             timer = null;
         }
         chartBox.getChildren().clear();
-        optionsVBox.getChildren().clear();
         chartBox.setVisible(false);
         mapBox.setVisible(false);
         valuesNames.clear();
@@ -607,15 +589,18 @@ public class EpidemicReportsChartController extends LocationsMapController {
             setPause(false);
 
             if (mapRadio.isSelected()) {
-                optionsVBox.getChildren().addAll(labelBox, mapOptionsBox);
+//                chartOptionsTab.setDisable(true);
+                mapOptionsTab.setDisable(false);
+//                optionsTabPane.getSelectionModel().select(mapOptionsTab);
                 chartName = message("Map");
                 chartBox.getChildren().clear();
                 chartBox.setVisible(false);
                 mapBox.setVisible(true);
                 mapBox.toFront();
-                webEngine.executeScript("setZoom(" + mapSize + ");");
             } else {
-                optionsVBox.getChildren().addAll(legendBox, labelBox);
+//                chartOptionsTab.setDisable(false);
+                mapOptionsTab.setDisable(true);
+                optionsTabPane.getSelectionModel().select(chartOptionsTab);
                 mapBox.setVisible(false);
                 chartBox.setVisible(true);
                 chartBox.toFront();
@@ -646,14 +631,16 @@ public class EpidemicReportsChartController extends LocationsMapController {
                 if (interval <= 0) {
                     interval = 1000;
                 }
-
-                byte[] lock = new byte[0];
+                frameCompleted = true;
                 timer = new Timer();
                 timer.schedule(new TimerTask() {
 
                     @Override
                     public void run() {
                         Platform.runLater(() -> {
+                            if (!frameCompleted || timer == null) {
+                                return;
+                            }
                             if (chartTimes == null || chartTimes.isEmpty()
                                     || timesReports == null || locationsReports.isEmpty()) {
                                 if (timer != null) {
@@ -662,20 +649,19 @@ public class EpidemicReportsChartController extends LocationsMapController {
                                 }
                                 return;
                             }
-                            synchronized (lock) {
-                                fixChartIndex();
-                                String time = chartTimes.get(chartIndex);
-                                List<EpidemicReport> timeReports = timesReports.get(time);
-                                drawChart(time, timeReports);
-
-                                if (chartTimes.size() == 1) {
-                                    if (timer != null) {
-                                        timer.cancel();
-                                        timer = null;
-                                    }
-                                    return;
+                            fixFrameIndex();
+                            frameCompleted = false;
+                            String time = chartTimes.get(frameIndex);
+                            List<EpidemicReport> timeReports = timesReports.get(time);
+                            drawChart(time, timeReports);
+                            frameCompleted = true;
+                            ++frameIndex;
+                            if (chartTimes.size() == 1
+                                    || (!loopCheck.isSelected() && frameIndex >= chartTimes.size())) {
+                                if (timer != null) {
+                                    timer.cancel();
+                                    timer = null;
                                 }
-                                ++chartIndex;
                             }
                         });
                     }
@@ -696,7 +682,7 @@ public class EpidemicReportsChartController extends LocationsMapController {
                     || timeReports == null || timeReports.isEmpty()) {
                 return;
             }
-            titleLabel.setText(queryCondition.getTitle().replaceAll("\n", " ") + " - " + time);
+            titleLabel.setText(queryCondition.getTitle().replaceAll("\n", " ") + "\n" + time);
             if (mapRadio.isSelected()) {
                 drawMap(timeReports);
             } else {
@@ -725,21 +711,23 @@ public class EpidemicReportsChartController extends LocationsMapController {
         }
     }
 
-    protected void drawFrame(int index) {
-        chartIndex = index;
+    @Override
+    public void drawFrames() {
+        drawChart();
+    }
+
+    @Override
+    public void drawFrame(String time) {
+        frameIndex = chartTimes.indexOf(time);
         drawFrame();
     }
 
-    protected void drawFrame(String time) {
-        chartIndex = chartTimes.indexOf(time);
-        drawFrame();
-    }
-
-    protected void drawFrame() {
+    @Override
+    public void drawFrame() {
         try {
             setPause(true);
-            fixChartIndex();
-            String time = chartTimes.get(chartIndex);
+            fixFrameIndex();
+            String time = chartTimes.get(frameIndex);
             List<EpidemicReport> timeReports = timesReports.get(time);
             drawChart(time, timeReports);
         } catch (Exception e) {
@@ -747,11 +735,12 @@ public class EpidemicReportsChartController extends LocationsMapController {
         }
     }
 
-    protected void fixChartIndex() {
-        if (chartIndex > chartTimes.size() - 1) {
-            chartIndex -= chartTimes.size();
-        } else if (chartIndex < 0) {
-            chartIndex += chartTimes.size();
+    @Override
+    public void fixFrameIndex() {
+        if (frameIndex > chartTimes.size() - 1) {
+            frameIndex -= chartTimes.size();
+        } else if (frameIndex < 0) {
+            frameIndex += chartTimes.size();
         }
     }
 
@@ -807,7 +796,7 @@ public class EpidemicReportsChartController extends LocationsMapController {
             }
             float total = 0;
             for (EpidemicReport report : timeReports) {
-                Number value = report.value(valueName);
+                Number value = report.getValue(valueName);
                 if (value == null) {
                     continue;
                 }
@@ -824,7 +813,7 @@ public class EpidemicReportsChartController extends LocationsMapController {
             List<String> palette = new ArrayList();
             for (EpidemicReport report : timeReports) {
                 String name = (multipleDatasets ? report.getDataSet() + " - " : "") + report.getLocationFullName();
-                Number value = report.value(valueName);
+                Number value = report.getValue(valueName);
                 if (value == null) {
                     continue;
                 }
@@ -921,11 +910,11 @@ public class EpidemicReportsChartController extends LocationsMapController {
         if (last) {
             String valueLabel = finalLabel + " " + finalValue;
             Label text = new Label(valueLabel);
-            text.setStyle("-fx-background-color: transparent;  -fx-font-size: " + textSize + "px; -fx-font-weight: bolder;");
+            text.setStyle("-fx-background-color: transparent;  -fx-font-size: " + mapOptionsController.textSize + "px; -fx-font-weight: bolder;");
             data.setNode(text);
         } else if (labelType == LabelType.Pop) {
             Label text = new Label("");
-            text.setStyle("-fx-background-color: transparent;  -fx-font-size: " + textSize + "px; -fx-font-weight: bolder;");
+            text.setStyle("-fx-background-color: transparent;  -fx-font-size: " + mapOptionsController.textSize + "px; -fx-font-weight: bolder;");
             data.setNode(text);
             FxmlControl.setTooltip(text, finalLabel + " " + finalValue);
         } else {
@@ -945,7 +934,7 @@ public class EpidemicReportsChartController extends LocationsMapController {
                     break;
             }
             Label text = new Label(valueLabel);
-            text.setStyle("-fx-background-color: transparent;  -fx-font-size: " + textSize + "px;");
+            text.setStyle("-fx-background-color: transparent;  -fx-font-size: " + mapOptionsController.textSize + "px;");
             data.setNode(text);
         }
         return data;
@@ -1008,7 +997,7 @@ public class EpidemicReportsChartController extends LocationsMapController {
                 }
                 for (int j = 0; j < reports.size(); j++) {
                     EpidemicReport report = reports.get(j);
-                    Number value = report.value(valueName);
+                    Number value = report.getValue(valueName);
                     if (value == null) {
                         continue;
                     }
@@ -1047,7 +1036,7 @@ public class EpidemicReportsChartController extends LocationsMapController {
                 = LabeledBarChart.create(categoryAxisCheck.isSelected(), chartCoordinate)
                         .setIntValue(false)
                         .setLabelType(labelType)
-                        .setTextSize(textSize);
+                        .setTextSize(mapOptionsController.textSize);
         barChart.setAlternativeRowFillVisible(false);
         barChart.setAlternativeColumnFillVisible(false);
         barChart.setBarGap(0.0);
@@ -1077,7 +1066,7 @@ public class EpidemicReportsChartController extends LocationsMapController {
                 = LabeledHorizontalBarChart.create(categoryAxisCheck.isSelected(), chartCoordinate)
                         .setIntValue(false)
                         .setLabelType(labelType)
-                        .setTextSize(textSize);
+                        .setTextSize(mapOptionsController.textSize);
         barChart.setAlternativeRowFillVisible(false);
         barChart.setAlternativeColumnFillVisible(false);
         barChart.setBarGap(0.0);
@@ -1123,7 +1112,7 @@ public class EpidemicReportsChartController extends LocationsMapController {
                 for (int i = 0; i < valuesNames.size(); i++) {
                     XYChart.Series series = seriesList.get(i);
                     String valueName = valuesNames.get(i);
-                    Number value = report.value(valueName);
+                    Number value = report.getValue(valueName);
                     if (value == null) {
                         continue;
                     }
@@ -1164,7 +1153,7 @@ public class EpidemicReportsChartController extends LocationsMapController {
                 for (int j = 0; j < valuesNames.size(); j++) {
                     XYChart.Series series = seriesList.get(j);
                     String valueName = valuesNames.get(j);
-                    Number value = report.value(valueName);
+                    Number value = report.getValue(valueName);
                     if (value == null) {
                         continue;
                     }
@@ -1196,7 +1185,7 @@ public class EpidemicReportsChartController extends LocationsMapController {
             String location = report.getLocationFullName();
             String label = (multipleDatasets ? report.getDataSet() + " - " : "") + location;
 
-            Number value = report.value(valueName);
+            Number value = report.getValue(valueName);
             if (value == null) {
                 continue;
             }
@@ -1227,7 +1216,7 @@ public class EpidemicReportsChartController extends LocationsMapController {
             String location = report.getLocationFullName();
             String label = (multipleDatasets ? report.getDataSet() + " - " : "") + location;
             palette.put(label, settingsController.locationColors.get(location));
-            Number value = report.value(valueName);
+            Number value = report.getValue(valueName);
             if (value == null) {
                 continue;
             }
@@ -1246,7 +1235,8 @@ public class EpidemicReportsChartController extends LocationsMapController {
 
     protected void drawMap(List<EpidemicReport> timeReports) {
         try {
-            if (timeReports == null || timeReports.isEmpty()) {
+            if (timeReports == null || timeReports.isEmpty()
+                    || webEngine == null || !mapOptionsController.mapLoaded) {
                 return;
             }
             webEngine.executeScript("clearMap();");
@@ -1260,10 +1250,13 @@ public class EpidemicReportsChartController extends LocationsMapController {
                             + location.getLongitude() + "," + location.getLatitude() + ");");
                     mapCentered = true;
                 }
-                String name = "<font color=\"black\">" + (multipleDatasets ? report.getDataSet() + " - " : "") + location.getFullName() + "</font>";
+                Color textColor = textColor();
+                String name = (multipleDatasets ? report.getDataSet() + " - " : "") + location.getFullName();
+                name = textColor == null ? name
+                        : "<span style=\"color:" + FxmlColor.rgb2Hex(textColor) + "\">" + name + "</span>";
                 String value = "";
                 for (String valueName : valuesNames) {
-                    value += " <font color=\"" + settingsController.color(valueName) + "\">" + report.value(valueName) + "</font> ";
+                    value += " <span style=\"color:" + settingsController.color(valueName) + "\">" + report.getValue(valueName) + "</span> ";
                 }
                 String label;
                 switch (labelType) {
@@ -1274,6 +1267,7 @@ public class EpidemicReportsChartController extends LocationsMapController {
                         label = "<div>" + name + value + "</div>";
                         break;
                     case NotDisplay:
+                    case Pop:
                         label = "";
                         break;
                     case Value:
@@ -1281,14 +1275,15 @@ public class EpidemicReportsChartController extends LocationsMapController {
                         label = value;
                         break;
                 }
-                String info = popInfoCheck.isSelected() || labelType == LabelType.Pop
+                String info = mapOptionsController.popInfoCheck.isSelected()
                         ? "<div>" + name + value + "</div></br>" + location.info("</br>") : "";
-                markerSize = markSize(report.value(orderNames.get(0)).doubleValue());
-                LocationTools.addMarkerInGaoDeMap(webEngine,
-                        location.getLongitude(), location.getLatitude(),
-                        label, info,
-                        locationImage(), true, -99, markerSize, textSize);
+                mapOptionsController.markerSize = markSize(report.getValue(orderNames.get(0)).doubleValue());
+                drawPoint(location.getLongitude(), location.getLatitude(),
+                        label, circleImage(), info, null);
             }
+//            if (mapOptionsController.mapName == MapName.GaoDe) {
+//                webEngine.executeScript("map.setFitView();");
+//            }
         } catch (Exception e) {
             logger.debug(e.toString());
         }
@@ -1297,29 +1292,38 @@ public class EpidemicReportsChartController extends LocationsMapController {
     // maximum marker size of GaoDe Map is 64
     protected int markSize(double value) {
         if (maxValue == 0) {
-            markerSize = 20;
-            return markerSize;
+            mapOptionsController.markerSize = 20;
+            return mapOptionsController.markerSize;
         }
         double d, m;
-        switch (chartCoordinate) {
-            case LogarithmicE:
-                d = Math.log(value);
-                m = Math.log(maxValue);
-                break;
-            case Logarithmic10:
-                d = Math.log10(value);
-                m = Math.log10(maxValue);
-                break;
-            case SquareRoot:
-                d = Math.sqrt(value);
-                m = Math.sqrt(maxValue);
-                break;
-            default:
-                d = value;
-                m = maxValue;
+//        switch (chartCoordinate) {
+//            case LogarithmicE:
+//                d = Math.log(value);
+//                m = Math.log(maxValue);
+//                break;
+//            case Logarithmic10:
+//                d = Math.log10(value);
+//                m = Math.log10(maxValue);
+//                break;
+//            case SquareRoot:
+//                d = Math.sqrt(value);
+//                m = Math.sqrt(maxValue);
+//                break;
+//            default:
+//                d = value;
+//                m = maxValue;
+//        }
+        d = Math.log(value);
+        m = Math.log(maxValue);
+        mapOptionsController.markerSize = Math.min(60, Math.max(10, (int) (d * 60 / m)));
+        return mapOptionsController.markerSize;
+    }
+
+    @Override
+    public void drawPoints() {
+        if (mapRadio.isSelected()) {
+            drawChart();
         }
-        markerSize = Math.min(60, Math.max(6, (int) (d * 60 / m)));
-        return markerSize;
     }
 
     @FXML
@@ -1439,66 +1443,15 @@ public class EpidemicReportsChartController extends LocationsMapController {
     }
 
     @Override
-    public String locationImage() {
-        String path = "/" + ControlStyle.getIconPath();
-        return FxmlControl.getInternalFile(path + "iconCircle.png", "map",
-                AppVariables.ControlColor.name() + "Circle.png").getAbsolutePath();
-    }
-
-    protected void setPause(boolean setAsPaused) {
-        if (setAsPaused) {
-            ControlStyle.setIcon(pauseButton, ControlStyle.getIcon("iconPlay.png"));
-            FxmlControl.setTooltip(pauseButton, new Tooltip(message("Continue")));
-            previousButton.setDisable(false);
-            nextButton.setDisable(false);
-            pauseButton.setUserData("paused");
-        } else {
-            ControlStyle.setIcon(pauseButton, ControlStyle.getIcon("iconPause.png"));
-            FxmlControl.setTooltip(pauseButton, new Tooltip(message("Pause")));
-            previousButton.setDisable(true);
-            nextButton.setDisable(true);
-            pauseButton.setUserData("playing");
-        }
-        pauseButton.applyCss();
-    }
-
-    @FXML
-    public void pauseAction() {
-        Platform.runLater(() -> {
-            if (pauseButton.getUserData() != null && "paused".equals(pauseButton.getUserData())) {
-                drawChart();
-
-            } else {
-                setPause(true);
-                if (timer != null) {
-                    timer.cancel();
-                    timer = null;
-                }
-                chartIndex--;
+    public boolean leavingScene() {
+        try {
+            if (loading != null) {
+                loading.closeStage();
+                loading = null;
             }
-        });
-    }
-
-    @FXML
-    @Override
-    public void previousAction() {
-        if (timer != null) {
-            timer.cancel();
-            timer = null;
+        } catch (Exception e) {
         }
-        drawFrame(chartIndex - 1);
-        setPause(true);
-    }
-
-    @FXML
-    @Override
-    public void nextAction() {
-        if (timer != null) {
-            timer.cancel();
-            timer = null;
-        }
-        drawFrame(chartIndex + 1);
-        setPause(true);
+        return super.leavingScene();
     }
 
     /*

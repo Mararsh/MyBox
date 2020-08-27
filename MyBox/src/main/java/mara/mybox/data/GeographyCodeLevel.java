@@ -9,7 +9,7 @@ import mara.mybox.value.AppVariables;
  * @CreateDate 2020-3-21
  * @License Apache License Version 2.0
  */
-public class GeographyCodeLevel {
+public class GeographyCodeLevel implements Cloneable {
 
     private static List<GeographyCodeLevel> Levels;
 
@@ -17,11 +17,12 @@ public class GeographyCodeLevel {
     protected String chineseName, englishName, name, key;
 
     public GeographyCodeLevel() {
+        level = 10;
     }
 
     public GeographyCodeLevel(int value) {
-        level = value;
-        switch (value) {
+        level = value > 10 || value < 1 ? 10 : value;
+        switch (level) {
             case 1:
                 chineseName = "全球";
                 englishName = "Global";
@@ -58,6 +59,7 @@ public class GeographyCodeLevel {
                 chineseName = "建筑";
                 englishName = "Building";
                 break;
+            default:
             case 10:
                 chineseName = "兴趣点";
                 englishName = "Point Of Interest";
@@ -164,15 +166,22 @@ public class GeographyCodeLevel {
                 level = 10;
                 break;
             case "Point Of Interest":
+            default:
                 englishName = name;
                 chineseName = "兴趣点";
                 level = 10;
                 break;
-            default:
-                chineseName = name;
-                level = -1;
         }
         key = getKey(level);
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        try {
+            return super.clone();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public static GeographyCodeLevel create(int value,
@@ -244,7 +253,7 @@ public class GeographyCodeLevel {
                 key = "building";
                 break;
             default:
-                key = null;
+                key = "poi";
                 break;
         }
         return key;
@@ -258,13 +267,14 @@ public class GeographyCodeLevel {
         return key;
     }
 
-    /*
-        get/set
-     */
     public int getLevel() {
+        level = level > 10 || level < 1 ? 10 : level;
         return level;
     }
 
+    /*
+        get/set
+     */
     public void setLevel(int level) {
         this.level = level;
     }

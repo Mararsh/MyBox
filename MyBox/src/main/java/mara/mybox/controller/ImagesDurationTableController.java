@@ -141,7 +141,7 @@ public class ImagesDurationTableController extends ImagesTableController {
                 d += m.getDuration();
             }
         }
-        String s = message("TotalDuration") + ": " + DateTools.showDuration(d) + "  "
+        String s = message("TotalDuration") + ": " + DateTools.timeMsDuration(d) + "  "
                 + message("TotalPixels") + ": " + StringTools.format(pixels) + "  ";
         s += MessageFormat.format(message("TotalFilesNumberSize"),
                 totalFilesNumber, FileTools.showFileSize(totalFilesSize));

@@ -6,6 +6,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.concurrent.ScheduledFuture;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -38,12 +39,10 @@ import mara.mybox.controller.MyBoxLoadingController;
 import mara.mybox.controller.PdfViewController;
 import mara.mybox.controller.TextEditerController;
 import mara.mybox.controller.WebBrowserController;
-import mara.mybox.data.StringTable;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.image.ImageInformation;
 import mara.mybox.tools.CompressTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.HtmlTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
@@ -60,14 +59,17 @@ import mara.mybox.value.CommonValues;
  */
 public class FxmlStage {
 
-    public static BaseController initScene(final Stage stage,
-            final String newFxml,
-            StageStyle stageStyle) {
+    public static BaseController initScene(final Stage stage, final String newFxml, StageStyle stageStyle) {
+        return initScene(stage, newFxml, AppVariables.currentBundle, stageStyle);
+    }
+
+    public static BaseController initScene(final Stage stage, final String newFxml,
+            ResourceBundle bundle, StageStyle stageStyle) {
         try {
             if (stage == null) {
                 return null;
             }
-            FXMLLoader fxmlLoader = new FXMLLoader(FxmlStage.class.getResource(newFxml), AppVariables.currentBundle);
+            FXMLLoader fxmlLoader = new FXMLLoader(FxmlStage.class.getResource(newFxml), bundle);
             Pane pane = fxmlLoader.load();
             try {
                 pane.getStylesheets().add(FxmlStage.class.getResource(AppVariables.getStyle()).toExternalForm());
@@ -114,9 +116,8 @@ public class FxmlStage {
         }
     }
 
-    public static BaseController openStage(Stage myStage,
-            String newFxml, boolean isOwned, Modality modality,
-            StageStyle stageStyle) {
+    public static BaseController openStage(Stage myStage, String newFxml, ResourceBundle bundle,
+            boolean isOwned, Modality modality, StageStyle stageStyle) {
         try {
             Stage stage = new Stage();
             stage.initModality(modality);
@@ -125,11 +126,25 @@ public class FxmlStage {
             } else {
                 stage.initOwner(null);
             }
-            return initScene(stage, newFxml, stageStyle);
+            return initScene(stage, newFxml, bundle, stageStyle);
         } catch (Exception e) {
             logger.error(e.toString());
             return null;
         }
+    }
+
+    public static BaseController openTableStage(Stage myStage, String newFxml, boolean isOwned, Modality modality,
+            StageStyle stageStyle) {
+        return openStage(myStage, newFxml, AppVariables.getTableBundle(), isOwned, modality, stageStyle);
+    }
+
+    public static BaseController openTableStage(String newFxml) {
+        return openTableStage(null, newFxml, false, Modality.NONE, null);
+    }
+
+    public static BaseController openStage(Stage myStage, String newFxml, boolean isOwned, Modality modality,
+            StageStyle stageStyle) {
+        return openStage(myStage, newFxml, AppVariables.currentBundle, isOwned, modality, stageStyle);
     }
 
     public static BaseController openStage(Stage myStage,
@@ -711,44 +726,6 @@ public class FxmlStage {
             logger.error(e.toString());
             return null;
         }
-    }
-
-    public static void openResourcesAboutColor(Stage myStage) {
-        try {
-            StringTable table = new StringTable(null, message("ResourcesAboutColor"));
-            newLinkRow(table, "ICCWebsite", "http://www.color.org");
-            newLinkRow(table, "ICCProfileTags", "https://sno.phy.queensu.ca/~phil/exiftool/TagNames/ICC_Profile.html");
-            newLinkRow(table, "IccProfilesECI", "http://www.eci.org/en/downloads");
-            newLinkRow(table, "IccProfilesAdobe", "https://supportdownloads.adobe.com/detail.jsp?ftpID=3680");
-            newLinkRow(table, "ColorSpace", "http://brucelindbloom.com/index.html?WorkingSpaceInfo.html#Specifications");
-            newLinkRow(table, "StandardsRGB", "https://www.w3.org/Graphics/Color/sRGB.html");
-            newLinkRow(table, "RGBXYZMatrices", "http://brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html");
-            newLinkRow(table, "ColorCalculator", "http://www.easyrgb.com/en/math.php");
-            newLinkRow(table, "", "http://brucelindbloom.com/index.html?ColorCalculator.html");
-            newLinkRow(table, "", "http://davengrace.com/cgi-bin/cspace.pl");
-            newLinkRow(table, "ColorData", "https://www.rit.edu/science/pocs/useful-data");
-            newLinkRow(table, "", "http://www.thefullwiki.org/Standard_illuminant");
-            newLinkRow(table, "ColorTopics", "https://www.codeproject.com/Articles/1202772/Color-Topics-for-Programmers");
-            newLinkRow(table, "", "https://www.w3.org/TR/css-color-4/#lab-to-rgb");
-            newLinkRow(table, "ChromaticAdaptation", "http://brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html");
-            newLinkRow(table, "ChromaticityDiagram", "http://demonstrations.wolfram.com/CIEChromaticityDiagram/");
-
-            File htmFile = HtmlTools.writeHtml(table.html());
-            browseURI(myStage, htmFile.toURI());
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    public static void newLinkRow(StringTable table, String name, String link) {
-        List<String> row = new ArrayList<>();
-        if (name != null && !name.isBlank()) {
-            row.addAll(Arrays.asList(message(name), "<a href=\"" + link + "\" target=_blank>" + link + "</a>"));
-        } else {
-            row.addAll(Arrays.asList("", "<a href=\"" + link + "\" target=_blank>" + link + "</a>"));
-        }
-        table.add(row);
     }
 
 }

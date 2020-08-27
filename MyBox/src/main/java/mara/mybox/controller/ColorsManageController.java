@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.binding.Bindings;
@@ -20,15 +19,13 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import mara.mybox.data.ColorData;
 import mara.mybox.data.StringTable;
-import static mara.mybox.db.DerbyBase.dbHome;
-import static mara.mybox.db.DerbyBase.login;
-import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.TableColorData;
-import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
+import mara.mybox.fxml.FxmlStage;
 import mara.mybox.fxml.TableColorCell;
 import mara.mybox.image.ImageColor;
 import mara.mybox.value.AppVariables;
@@ -236,20 +233,26 @@ public class ColorsManageController extends TableManageController<ColorData> {
 
             MenuItem menu = new MenuItem(message("ImportWebCommonColors"));
             menu.setOnAction((ActionEvent event) -> {
-                commonColors("web");
+                importColors("web");
             });
             popMenu.getItems().add(menu);
-            popMenu.getItems().add(new SeparatorMenuItem());
 
             menu = new MenuItem(message("ImportChineseTraditionalColors"));
             menu.setOnAction((ActionEvent event) -> {
-                commonColors("chinese");
+                importColors("chinese");
             });
             popMenu.getItems().add(menu);
 
             menu = new MenuItem(message("ImportJapaneseTraditionalColors"));
             menu.setOnAction((ActionEvent event) -> {
-                commonColors("japanese");
+                importColors("japanese");
+            });
+            popMenu.getItems().add(menu);
+            popMenu.getItems().add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("File"));
+            menu.setOnAction((ActionEvent event) -> {
+                importColors("file");
             });
             popMenu.getItems().add(menu);
             popMenu.getItems().add(new SeparatorMenuItem());
@@ -269,7 +272,24 @@ public class ColorsManageController extends TableManageController<ColorData> {
         }
     }
 
-    protected void commonColors(String type) {
+    protected void importColors(String type) {
+        final File file;
+        if ("file".equals(type)) {
+            List<FileChooser.ExtensionFilter> csvExtensionFilter = new ArrayList<>();
+            FileChooser fileChooser = new FileChooser();
+            File path = AppVariables.getUserConfigPath(sourcePathKey);
+            if (path.exists()) {
+                fileChooser.setInitialDirectory(path);
+            }
+            fileChooser.getExtensionFilters().addAll(csvExtensionFilter);
+            file = fileChooser.showOpenDialog(getMyStage());
+            if (file == null || !file.exists()) {
+                return;
+            }
+            recordFileOpened(file);
+        } else {
+            file = null;
+        }
         synchronized (this) {
             if (task != null) {
                 return;
@@ -277,39 +297,17 @@ public class ColorsManageController extends TableManageController<ColorData> {
             task = new SingletonTask<Void>() {
                 @Override
                 protected boolean handle() {
-                    try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
-                        conn.setAutoCommit(false);
-                        switch (type) {
-                            case "chinese":
-                                for (Color color
-                                        : FxmlColor.chineseColorValues()) {
-                                    String rgba = color.toString();
-                                    String name = FxmlColor.chineseColorNames().get(color);
-                                    TableColorData.write(conn, rgba, name, true);
-                                }
-                                break;
-                            case "japanese":
-                                for (Color color
-                                        : FxmlColor.japaneseColorValues()) {
-                                    String rgba = color.toString();
-                                    String name = FxmlColor.japaneseColorNames().get(color);
-                                    TableColorData.write(conn, rgba, name, true);
-                                }
-                                break;
-                            default:
-                                for (Color color : FxmlColor.webColorValues()) {
-                                    String rgba = color.toString();
-                                    String name = FxmlColor.webColorNames().get(color);
-                                    TableColorData.write(conn, rgba, name, true);
-                                }
-                                break;
-                        }
-                        conn.commit();
-                    } catch (Exception e) {
-                        error = e.toString();
-                        logger.debug(e.toString());
+                    List<ColorData> data;
+                    if (file != null) {
+                        data = ColorData.readCSV(file);
+                    } else {
+                        data = ColorData.predefined(type);
+                    }
+                    if (data == null) {
                         return false;
                     }
+                    TableColorData.writeData(data, false);
+                    TableColorData.trimPalette();
                     return true;
                 }
 
@@ -384,10 +382,10 @@ public class ColorsManageController extends TableManageController<ColorData> {
     }
 
     @Override
-    protected boolean deleteSelectedData() {
+    protected int deleteSelectedData() {
         List<ColorData> selected = tableView.getSelectionModel().getSelectedItems();
         if (selected == null || selected.isEmpty()) {
-            return false;
+            return 0;
         }
         return TableColorData.deleteData(selected);
     }
@@ -418,10 +416,9 @@ public class ColorsManageController extends TableManageController<ColorData> {
             for (TableColumn column : tableView.getColumns()) {
                 if (!column.equals(rgbaColumn) && !column.equals(rgbColumn)) {
                     names.add(column.getText());
-
                 }
             }
-            StringTable table = new StringTable(names, message("ManageColors"), 0);
+            StringTable table = new StringTable(names, message("Color"), 0);
             for (ColorData data : rows) {
                 List<String> row = new ArrayList<>();
                 for (TableColumn column : tableView.getColumns()) {
@@ -429,8 +426,8 @@ public class ColorsManageController extends TableManageController<ColorData> {
                         row.add(data.getColorValue() + "");
                     } else if (column.equals(colorColumn)) {
                         row.add(data.getRgba());
-                    } else if (column.equals(inPaletteColumn)) {
-                        row.add(message(data.getInPalette() + ""));
+//                    } else if (column.equals(inPaletteColumn)) {
+//                        row.add(message(data.getInPalette() + ""));
                     } else if (column.equals(colorNameColumn)) {
                         row.add(data.getColorName());
                     } else if (column.equals(sRGBColumn)) {
@@ -480,5 +477,41 @@ public class ColorsManageController extends TableManageController<ColorData> {
         } catch (Exception e) {
             logger.error(e.toString());
         }
+    }
+
+    @FXML
+    public void csvAction() {
+        List<FileChooser.ExtensionFilter> csvExtensionFilter = new ArrayList<>();
+        csvExtensionFilter.add(new FileChooser.ExtensionFilter("csv", "*.csv"));
+        final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
+                message("Color") + ".csv", csvExtensionFilter, false);
+        if (file == null) {
+            return;
+        }
+        recordFileWritten(file);
+        synchronized (this) {
+            if (task != null) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+                @Override
+                protected boolean handle() {
+                    ColorData.exportCSV(file);
+                    return true;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    if (file.exists()) {
+                        FxmlStage.openTextEditer(null, file);
+                    }
+                }
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
+
     }
 }

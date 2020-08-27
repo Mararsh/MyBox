@@ -39,15 +39,15 @@ License:    Apache License Version 2.0
                                 </ImageView>
                             </graphic>
                         </Button>
-                  <Button fx:id="paletteButton" mnemonicParsing="false" onAction="#showPalette">
-                     <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../buttons/iconPalette.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
+                        <Button fx:id="paletteButton" mnemonicParsing="false" onAction="#showPalette">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconPalette.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
                         <Button fx:id="inButton" layoutX="1252.0" layoutY="10.0" mnemonicParsing="false" onAction="#inPaletteAction">
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -96,7 +96,16 @@ License:    Apache License Version 2.0
                         <CheckBox fx:id="mergeCheck" mnemonicParsing="false" text="%Merge" />
                         <CheckBox fx:id="allColumnsCheck" mnemonicParsing="false" selected="true" text="%AllColumns" />
                         <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                        <Button fx:id="htmlButton" mnemonicParsing="false" onAction="#htmlAction">
+                        <Button fx:id="csvButton" mnemonicParsing="false" onAction="#csvAction">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconCSV.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                        <Button fx:id="htmlButton" layoutX="1568.0" layoutY="10.0" mnemonicParsing="false" onAction="#htmlAction">
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -157,9 +166,9 @@ License:    Apache License Version 2.0
                     </BorderPane.margin>
                 </Label>
                 <Label fx:id="pageLabel1" layoutX="1231.0" layoutY="19.0" text="%PageSize" />
-                <ComboBox fx:id="pageSizeSelector" editable="true" prefWidth="80.0" />
+                <ComboBox fx:id="pageSizeSelector" editable="true" prefWidth="120.0" />
                 <Label text="%Page" />
-                <ComboBox fx:id="pageSelector" editable="true" layoutX="778.0" layoutY="10.0" prefWidth="80.0" />
+                <ComboBox fx:id="pageSelector" editable="true" layoutX="778.0" layoutY="10.0" prefWidth="120.0" />
                 <Label fx:id="pageLabel" />
                 <Button fx:id="firstButton" mnemonicParsing="false" onAction="#firstAction">
                     <graphic>

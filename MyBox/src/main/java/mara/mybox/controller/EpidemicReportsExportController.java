@@ -19,6 +19,7 @@ import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.TableEpidemicReport;
 import mara.mybox.db.TableGeographyCode;
+import mara.mybox.tools.EpidemicReportTools;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import org.apache.commons.csv.CSVPrinter;
@@ -231,27 +232,27 @@ public class EpidemicReportsExportController extends DataExportController {
             if (externalCheck != null && externalCheck.isSelected()) {
                 File file = new File(filePrefix + ".csv");
                 updateLogs(message("Exporting") + " " + file);
-                EpidemicReport.writeExternalCSV(file, reports, extraFields);
+                EpidemicReportTools.writeExternalCSV(file, reports, extraFields);
             }
             if (xmlCheck != null && xmlCheck.isSelected()) {
                 File file = new File(filePrefix + ".xml");
                 updateLogs(message("Exporting") + " " + file);
-                EpidemicReport.writeXml(file, reports, extraFields);
+                EpidemicReportTools.writeXml(file, reports, extraFields);
             }
             if (jsonCheck != null && jsonCheck.isSelected()) {
                 File file = new File(filePrefix + ".json");
                 updateLogs(message("Exporting") + " " + file);
-                EpidemicReport.writeJson(file, reports, extraFields);
+                EpidemicReportTools.writeJson(file, reports, extraFields);
             }
             if (xlsxCheck != null && xlsxCheck.isSelected()) {
                 File file = new File(filePrefix + ".xlsx");
                 updateLogs(message("Exporting") + " " + file);
-                EpidemicReport.writeExcel(file, reports, extraFields);
+                EpidemicReportTools.writeExcel(file, reports, extraFields);
             }
             if (htmlCheck != null && htmlCheck.isSelected()) {
                 File file = new File(filePrefix + ".html");
                 updateLogs(message("Exporting") + " " + file);
-                EpidemicReport.writeHtml(file, title, reports, extraFields);
+                EpidemicReportTools.writeHtml(file, title, reports, extraFields);
             }
 
         } catch (Exception e) {
@@ -265,53 +266,53 @@ public class EpidemicReportsExportController extends DataExportController {
 
     @Override
     protected void writeInternalCSVHeader(CSVPrinter printer) {
-        EpidemicReport.writeInternalCSVHeader(printer);
+        EpidemicReportTools.writeInternalCSVHeader(printer);
     }
 
     @Override
     protected void writeInternalCSV(Connection conn, CSVPrinter printer, ResultSet results) {
         EpidemicReport report = TableEpidemicReport.statisticViewQuery(conn, results, false);
-        EpidemicReport.writeInternalCSV(printer, report);
+        EpidemicReportTools.writeInternalCSV(printer, report);
     }
 
     @Override
     protected void writeExternalCSVHeader(CSVPrinter printer) {
-        EpidemicReport.writeExternalCSVHeader(printer, extraFields);
+        EpidemicReportTools.writeExternalCSVHeader(printer, extraFields);
     }
 
     @Override
     protected void writeExternalCSV(Connection conn, CSVPrinter printer, ResultSet results) {
         EpidemicReport report = TableEpidemicReport.statisticViewQuery(conn, results, true);
-        EpidemicReport.writeExternalCSV(printer, report, extraFields);
+        EpidemicReportTools.writeExternalCSV(printer, report, extraFields);
     }
 
     @Override
     protected void writeXML(Connection conn, FileWriter writer, ResultSet results, String indent) {
         EpidemicReport report = TableEpidemicReport.statisticViewQuery(conn, results, true);
-        EpidemicReport.writeXml(writer, indent, report, extraFields);
+        EpidemicReportTools.writeXml(writer, indent, report, extraFields);
     }
 
     @Override
     protected String writeJSON(Connection conn, FileWriter writer, ResultSet results, String indent) {
         EpidemicReport report = TableEpidemicReport.statisticViewQuery(conn, results, true);
-        return EpidemicReport.writeJson(writer, indent, report, extraFields).toString();
+        return EpidemicReportTools.writeJson(writer, indent, report, extraFields).toString();
     }
 
     @Override
-    protected List<String> columnNames() {
-        return EpidemicReport.externalNames(extraFields);
+    protected List<String> columnLabels() {
+        return EpidemicReportTools.externalNames(extraFields);
     }
 
     @Override
     protected void writeExcel(Connection conn, XSSFSheet sheet, ResultSet results, int count) {
         EpidemicReport report = TableEpidemicReport.statisticViewQuery(conn, results, true);
-        EpidemicReport.writeExcel(sheet, count, report, extraFields);
+        EpidemicReportTools.writeExcel(sheet, count, report, extraFields);
     }
 
     @Override
     protected List<String> htmlRow(Connection conn, ResultSet results) {
         EpidemicReport report = TableEpidemicReport.statisticViewQuery(conn, results, true);
-        return EpidemicReport.values(report, extraFields);
+        return EpidemicReportTools.values(report, extraFields);
     }
 
 }

@@ -11,9 +11,15 @@ import javafx.concurrent.Task;
  */
 public class BaseTask<P> extends Task<P> {
 
-    protected long startTime, endTime, cost;
+    protected Date startTime, endTime;
+    protected long cost;
     protected boolean ok;
     protected String error;
+
+    public BaseTask() {
+        startTime = new Date();
+        ok = false;
+    }
 
     public static BaseTask create() {
         BaseTask task = new BaseTask();
@@ -39,7 +45,7 @@ public class BaseTask<P> extends Task<P> {
     }
 
     protected boolean initValues() {
-        startTime = new Date().getTime();
+        startTime = new Date();
         return true;
     }
 
@@ -50,7 +56,7 @@ public class BaseTask<P> extends Task<P> {
     @Override
     protected void succeeded() {
         super.succeeded();
-        cost = new Date().getTime() - startTime;
+        cost = new Date().getTime() - startTime.getTime();
         taskQuit();
         Platform.runLater(() -> {
             if (ok) {
@@ -94,25 +100,25 @@ public class BaseTask<P> extends Task<P> {
     }
 
     protected void taskQuit() {
-        endTime = new Date().getTime();
+        endTime = new Date();
     }
 
     /*
         get/set
      */
-    public long getStartTime() {
+    public Date getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(long startTime) {
+    public void setStartTime(Date startTime) {
         this.startTime = startTime;
     }
 
-    public long getEndTime() {
+    public Date getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(long endTime) {
+    public void setEndTime(Date endTime) {
         this.endTime = endTime;
     }
 

@@ -69,7 +69,6 @@ public class MyBoxController extends BaseController {
         } catch (Exception e) {
             logger.debug(e.toString());
         }
-
     }
 
     @Override
@@ -82,6 +81,7 @@ public class MyBoxController extends BaseController {
                             hideMenu(null);
                         }
                     });
+
         } catch (Exception e) {
             logger.debug(e.toString());
         }
@@ -982,19 +982,14 @@ public class MyBoxController extends BaseController {
     private void showDataMenu(MouseEvent event) {
         hideMenu(event);
 
+        MenuItem Dataset = new MenuItem(AppVariables.message("Dataset"));
+        Dataset.setOnAction((ActionEvent event1) -> {
+            loadScene(CommonValues.DatasetFxml);
+        });
+
         MenuItem GeographyCode = new MenuItem(AppVariables.message("GeographyCode"));
         GeographyCode.setOnAction((ActionEvent event1) -> {
             loadScene(CommonValues.GeographyCodeFxml);
-        });
-
-        MenuItem LocationsData = new MenuItem(AppVariables.message("LocationsData"));
-        LocationsData.setOnAction((ActionEvent event1) -> {
-            loadScene(CommonValues.LocationsDataFxml);
-        });
-
-        MenuItem LocationsDataInMap = new MenuItem(AppVariables.message("LocationsDataInMap"));
-        LocationsDataInMap.setOnAction((ActionEvent event1) -> {
-            loadScene(CommonValues.LocationsDataInMapFxml);
         });
 
         MenuItem LocationInMap = new MenuItem(AppVariables.message("LocationInMap"));
@@ -1002,9 +997,24 @@ public class MyBoxController extends BaseController {
             loadScene(CommonValues.LocationInMapFxml);
         });
 
+        MenuItem LocationData = new MenuItem(AppVariables.message("LocationData"));
+        LocationData.setOnAction((ActionEvent event1) -> {
+            loadScene(CommonValues.LocationDataFxml);
+        });
+
+        MenuItem LocationTools = new MenuItem(AppVariables.message("LocationTools"));
+        LocationTools.setOnAction((ActionEvent event1) -> {
+            loadScene(CommonValues.LocationToolsFxml);
+        });
+
+        MenuItem LocationsDataInMap = new MenuItem(AppVariables.message("LocationsDataInMap"));
+        LocationsDataInMap.setOnAction((ActionEvent event1) -> {
+            loadScene(CommonValues.LocationsDataInMapFxml);
+        });
+
         Menu locationApplicationsMenu = new Menu(AppVariables.message("LocationApplications"));
         locationApplicationsMenu.getItems().addAll(
-                LocationsData, LocationsDataInMap
+                LocationData, LocationsDataInMap
         );
 
         MenuItem EpidemicReport = new MenuItem(AppVariables.message("EpidemicReport"));
@@ -1042,10 +1052,9 @@ public class MyBoxController extends BaseController {
         popMenu = new ContextMenu();
         popMenu.setAutoHide(true);
         popMenu.getItems().addAll(
-                GeographyCode, LocationInMap, locationApplicationsMenu, new SeparatorMenuItem(),
+                GeographyCode, LocationInMap, LocationData, LocationTools, new SeparatorMenuItem(),
                 EpidemicReport, new SeparatorMenuItem(),
                 MatricesCalculation, new SeparatorMenuItem(),
-                //                fetchDataOnInternetMenu, new SeparatorMenuItem(),
                 barcodeCreator, barcodeDecoder, new SeparatorMenuItem(),
                 messageDigest
         );
@@ -1142,7 +1151,7 @@ public class MyBoxController extends BaseController {
         popMenu.setAutoHide(true);
         popMenu.getItems().addAll(
                 mediaPlayer, mediaLists, new SeparatorMenuItem(),
-                //                screenRecorder,
+                screenRecorder,
                 FFmpegConversionMenu, FFmpegMergeMenu,
                 FFprobe, FFmpegInformation, new SeparatorMenuItem(),
                 recordImages, new SeparatorMenuItem(), alarmClock, new SeparatorMenuItem(),

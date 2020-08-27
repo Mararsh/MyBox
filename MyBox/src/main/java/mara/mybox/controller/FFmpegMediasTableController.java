@@ -24,7 +24,7 @@ import mara.mybox.value.CommonFxValues;
  */
 public class FFmpegMediasTableController extends MediaTableController {
 
-    protected FFmpegBaseController parent;
+    protected FFmpegBatchController parent;
 
     public FFmpegMediasTableController() {
         sourceExtensionFilter = CommonFxValues.FFmpegMediaExtensionFilter;
@@ -47,10 +47,10 @@ public class FFmpegMediasTableController extends MediaTableController {
     @Override
     protected void readMediaInfo(MediaInformation info) {
         try {
-            parent = (FFmpegBaseController) parentController;
+            parent = (FFmpegBatchController) parentController;
 
             if (info == null || info.getAddress() == null
-                    || parent == null || parent.executable == null) {
+                    || parent == null || parent.ffmpegOptionsController.executable == null) {
                 return;
             }
             synchronized (this) {
@@ -68,7 +68,7 @@ public class FFmpegMediasTableController extends MediaTableController {
                                 address = info.getFile().getAbsolutePath();
                             }
                             FFprobeResult probeResult
-                                    = FFprobe.atPath(parent.executable.toPath().getParent())
+                                    = FFprobe.atPath(parent.ffmpegOptionsController.executable.toPath().getParent())
                                             .setShowFormat(true).setShowStreams(true)
                                             .setInput(address)
                                             .execute();
@@ -81,7 +81,7 @@ public class FFmpegMediasTableController extends MediaTableController {
                             if (format.getDuration() != null) {
                                 info.setDuration(Math.round(format.getDuration() * 1000));
                                 s.append(message("Duration")).append(": ").append(
-                                        DateTools.showSeconds(Math.round(format.getDuration()))).append("\n");
+                                        DateTools.timeDuration(Math.round(format.getDuration() * 1000))).append("\n");
                             }
                             if (format.getSize() != null) {
                                 info.setFileSize(format.getSize());

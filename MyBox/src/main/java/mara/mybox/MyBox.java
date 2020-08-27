@@ -150,8 +150,8 @@ public class MyBox {
 //            System.setProperty("jdk.tls.client.protocols", "TLSv1");
             System.setProperty("jdk.tls.server.protocols", "TLSv1,TLSv1.1,TLSv1.2,TLSv1.3");
 //            System.setProperty("https.protocol", "TLSv1");
-            System.setProperty("com.sun.security.enableAIAcaIssuers", "true");
-            System.setProperty("sun.net.http.allowRestrictedHeaders", "true");
+//            System.setProperty("com.sun.security.enableAIAcaIssuers", "true");
+//            System.setProperty("sun.net.http.allowRestrictedHeaders", "true");
 //            System.setProperty("javax.net.debug", "ssl,record, plaintext, handshake,session,trustmanager,sslctx");
 //            System.setProperty("javax.net.debug", "ssl,handshake,session,trustmanager,sslctx");
 

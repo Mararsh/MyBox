@@ -41,35 +41,32 @@ public class DocumentController extends BaseController {
     }
 
     protected void checkStatus() {
+        String docVersion = "5.0";
+        String lang = AppVariables.getLanguage();
         String docPath = AppVariables.MyBoxDownloadsPath + File.separator;
-        String webPath = "https://mararsh.github.io/MyBox/";
+        String webPath = "https://mararsh.github.io/MyBox_documents/" + lang + "/";
 
-        String fileName = "MyBox-UserGuide-" + CommonValues.AppDocVersion + "-Overview-"
-                + AppVariables.getLanguage() + ".pdf";
+        String fileName = "MyBox-UserGuide-" + docVersion + "-Overview-" + lang + ".pdf";
         File file = new File(docPath + fileName);
         setButton(overviewButton, file, webPath + fileName);
 
-        fileName = "MyBox-UserGuide-" + CommonValues.AppDocVersion + "-PdfTools-"
-                + AppVariables.getLanguage() + ".pdf";
+        fileName = "MyBox-UserGuide-" + docVersion + "-PdfTools-" + lang + ".pdf";
         file = new File(docPath + fileName);
         setButton(pdfButton, file, webPath + fileName);
 
-        fileName = "MyBox-UserGuide-" + CommonValues.AppDocVersion + "-ImageTools-"
-                + AppVariables.getLanguage() + ".pdf";
+        fileName = "MyBox-UserGuide-" + docVersion + "-ImageTools-" + lang + ".pdf";
         file = new File(docPath + fileName);
         setButton(imageButton, file, webPath + fileName);
 
-        fileName = "MyBox-UserGuide-" + CommonValues.AppDocVersion + "-NetworkTools-"
-                + AppVariables.getLanguage() + ".pdf";
+        fileName = "MyBox-UserGuide-" + docVersion + "-NetworkTools-" + lang + ".pdf";
         file = new File(docPath + fileName);
         setButton(networkButton, file, webPath + fileName);
 
-        fileName = "MyBox-UserGuide-" + CommonValues.AppDocVersion + "-DesktopTools-"
-                + AppVariables.getLanguage() + ".pdf";
+        fileName = "MyBox-UserGuide-" + docVersion + "-DesktopTools-" + lang + ".pdf";
         file = new File(docPath + fileName);
         setButton(desktopButton, file, webPath + fileName);
 
-        fileName = "MyBox-DevGuide-2.0-" + AppVariables.getLanguage() + ".pdf";
+        fileName = "MyBox-DevGuide-2.0-" + lang + ".pdf";
         file = new File(docPath + fileName);
         setButton(devButton, file, webPath + fileName);
 

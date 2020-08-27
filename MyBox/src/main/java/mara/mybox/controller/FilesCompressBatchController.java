@@ -132,7 +132,7 @@ public class FilesCompressBatchController extends FilesBatchController {
             if (targetFile == null) {
                 return AppVariables.message("Skip");
             }
-            long s = new Date().getTime();
+            Date startTime = new Date();
             File tmpFile = FileTools.getTempFile();
             if (compressor.equalsIgnoreCase(ArchiveStreamFactory.SEVEN_Z)) {
                 try ( SevenZOutputFile sevenZOutput = new SevenZOutputFile(tmpFile)) {
@@ -168,9 +168,9 @@ public class FilesCompressBatchController extends FilesBatchController {
 
             } else {
                 try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(srcFile));
-                      BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(tmpFile));
-                      CompressorOutputStream compressOut = new CompressorStreamFactory().
-                             createCompressorOutputStream(compressor, out)) {
+                         BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(tmpFile));
+                         CompressorOutputStream compressOut = new CompressorStreamFactory().
+                                createCompressorOutputStream(compressor, out)) {
                     IOUtils.copy(inputStream, compressOut);
                 }
             }
@@ -183,7 +183,7 @@ public class FilesCompressBatchController extends FilesBatchController {
                         targetFile, FileTools.showFileSize(srcFile.length()),
                         FileTools.showFileSize(targetFile.length()),
                         (100 - targetFile.length() * 100 / srcFile.length()),
-                        DateTools.showTime(new Date().getTime() - s)
+                        DateTools.datetimeMsDuration(new Date(), startTime)
                 ));
             }
             targetFileGenerated(targetFile);

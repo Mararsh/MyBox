@@ -46,12 +46,12 @@ License:    Apache License Version 2.0
                                                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                     <children>
                                                         <Label text="%DownloadAddress" />
-                                                        <Hyperlink onAction="#link" text="https://sourceforge.net/projects/mara-mybox/files/data/" />
+                                                        <Hyperlink fx:id="link" onAction="#link" text="https://sourceforge.net/projects/mara-mybox/files/data/" />
                                                     </children>
                                                 </HBox>
                                                 <Label text="%CSVSeparatedByCommas" />
                                                 <Label styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="DataSet,Time,Locationid,Confirmed,Healed,Dead,IncreasedConfirmed,IncreasedHealed,IncreasedDead,DataSource" wrapText="true" />
-                                    <Label text="%EpidemicReportInternalImportComments" />
+                                                <Label text="%EpidemicReportInternalImportComments" />
                                             </children>
                                         </VBox>
                                     </content>
@@ -65,6 +65,7 @@ License:    Apache License Version 2.0
                                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
                                             <children>
                                                 <CheckBox fx:id="replaceCheck" mnemonicParsing="false" text="%ReplaceExistedData" />
+                                                <CheckBox fx:id="closeWhenCompleteCheck" mnemonicParsing="false" selected="false" text="%CloseWhenComplete" />
                                                 <Label text="%EpidemicReportEqualComments" wrapText="true">
                                                     <VBox.margin>
                                                         <Insets top="5.0" />

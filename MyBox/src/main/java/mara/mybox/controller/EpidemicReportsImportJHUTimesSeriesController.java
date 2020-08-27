@@ -11,9 +11,11 @@ import java.util.Map;
 import mara.mybox.data.EpidemicReport;
 import mara.mybox.data.GeographyCode;
 import mara.mybox.data.GeographyCodeLevel;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.TableEpidemicReport;
 import mara.mybox.db.TableGeographyCode;
 import mara.mybox.tools.DateTools;
+import mara.mybox.tools.GeographyCodeTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
 import org.apache.commons.csv.CSVFormat;
@@ -31,9 +33,14 @@ public class EpidemicReportsImportJHUTimesSeriesController extends EpidemicRepor
         baseTitle = AppVariables.message("ImportEpidemicReportJHUTimes");
     }
 
+    @Override
+    public void setLink() {
+        link.setText("https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series/");
+    }
+
     //Province/State,Country/Region,Lat,Long,1/22/20,1/23/20,...
     @Override
-    protected long importFile(Connection conn, File file) {
+    public long importFile(Connection conn, File file) {
         long importCount = 0, insertCount = 0, updateCount = 0, skipCount = 0, failedCount = 0, lineCount = 0, dataCount = 0;
         EpidemicReport.ValueName valueName;
         try ( CSVParser parser = CSVParser.parse(file, StandardCharsets.UTF_8,
@@ -47,7 +54,7 @@ public class EpidemicReportsImportJHUTimesSeriesController extends EpidemicRepor
             equalQuery.setMaxRows(1);
             if (TableGeographyCode.China(conn) == null) {
                 updateLogs(message("LoadingPredefinedGeographyCodes"), true);
-                GeographyCode.predefined(conn);
+                GeographyCodeTools.importPredefined(conn);
             }
             String filename = file.getAbsolutePath();
             if (filename.contains("_confirmed")) {
@@ -106,9 +113,9 @@ public class EpidemicReportsImportJHUTimesSeriesController extends EpidemicRepor
                     int level = levelCode.getLevel();
                     updateLogs(lineCount + "  " + levelCode.getName() + " "
                             + country + " " + (province != null ? province : ""), true);
-                    Map<String, Object> ret = GeographyCode.code(conn, geoInsert,
+                    Map<String, Object> ret = GeographyCodeTools.encode(conn, geoInsert,
                             level, longitude, latitude, null, country, province, null,
-                            null, null, null, null, true);
+                            null, null, null, null, null, true, false);
                     if (ret == null) {
                         updateLogs("Failed: can not load/insert grography code.  "
                                 + lineCount + "  " + levelCode.getName() + " "
@@ -216,6 +223,9 @@ public class EpidemicReportsImportJHUTimesSeriesController extends EpidemicRepor
                                 updateLogs(message("Insert") + ": " + message("Failed") + "  " + info, true);
                                 failedCount++;
                             }
+                        }
+                        if (importCount % DerbyBase.BatchSize == 0) {
+                            conn.commit();
                         }
                     }
                 } catch (Exception e) {

@@ -5,17 +5,14 @@ import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Control;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.RadioButton;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
-import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
@@ -23,13 +20,16 @@ import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Modality;
+import mara.mybox.data.CoordinateSystem;
 import mara.mybox.data.GeographyCode;
-import mara.mybox.db.DerbyBase;
 import mara.mybox.db.TableGeographyCode;
 import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.TableBooleanCell;
-import mara.mybox.fxml.TableCoordinateCell;
+import mara.mybox.fxml.TableCoordinateSystemCell;
+import mara.mybox.fxml.TableLatitudeCell;
+import mara.mybox.fxml.TableLongitudeCell;
+import mara.mybox.tools.GeographyCodeTools;
 import mara.mybox.tools.HtmlTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
@@ -49,6 +49,8 @@ public class GeographyCodeController extends DataAnalysisController<GeographyCod
     @FXML
     protected Tab mapTab;
     @FXML
+    protected GeographyCodeMapController mapController;
+    @FXML
     protected TableColumn<GeographyCode, String> levelColumn, chinesenameColumn, englishnameColumn,
             code1Column, code2Column, code3Column, code4Column, code5Column,
             alias1Column, alias2Column, alias3Column, alias4Column, alias5Column;
@@ -57,33 +59,39 @@ public class GeographyCodeController extends DataAnalysisController<GeographyCod
     @FXML
     protected TableColumn<GeographyCode, Boolean> predefinedColumn;
     @FXML
-    protected Button locationButton, examplesButton,
-            palettePredefinedButton, paletteInputtedButton;
+    protected TableColumn<GeographyCode, CoordinateSystem> coordinateSystemColumn;
+    @FXML
+    protected Button locationButton, palettePredefinedButton, paletteInputtedButton;
     @FXML
     protected Rectangle predefinedRect, inputtedRect;
-    @FXML
-    protected LocationsMapController mapController;
-    @FXML
-    protected ToggleGroup orderGroup;
-    @FXML
-    protected CheckBox descendCheck;
 
     public GeographyCodeController() {
         baseTitle = message("GeographyCode");
-        baseName = "GeographyCode";
-        dataName = "Geography_Code";
+    }
+
+    @Override
+    public void setTableDefinition() {
+        tableDefinition = new TableGeographyCode();
+    }
+
+    @Override
+    protected DataExportController dataExporter() {
+        return (GeographyCodeExportController) openStage(CommonValues.GeographyCodeExportFxml);
     }
 
     @Override
     protected void initColumns() {
         try {
+
             levelColumn.setCellValueFactory(new PropertyValueFactory<>("levelName"));
             chinesenameColumn.setCellValueFactory(new PropertyValueFactory<>("chineseName"));
             englishnameColumn.setCellValueFactory(new PropertyValueFactory<>("englishName"));
             longitudeColumn.setCellValueFactory(new PropertyValueFactory<>("longitude"));
-            longitudeColumn.setCellFactory(new TableCoordinateCell());
+            longitudeColumn.setCellFactory(new TableLongitudeCell());
             latitudeColumn.setCellValueFactory(new PropertyValueFactory<>("latitude"));
-            latitudeColumn.setCellFactory(new TableCoordinateCell());
+            latitudeColumn.setCellFactory(new TableLatitudeCell());
+            coordinateSystemColumn.setCellValueFactory(new PropertyValueFactory<>("coordinateSystem"));
+            coordinateSystemColumn.setCellFactory(new TableCoordinateSystemCell());
             code1Column.setCellValueFactory(new PropertyValueFactory<>("code1"));
             code2Column.setCellValueFactory(new PropertyValueFactory<>("code2"));
             code3Column.setCellValueFactory(new PropertyValueFactory<>("code3"));
@@ -158,75 +166,31 @@ public class GeographyCodeController extends DataAnalysisController<GeographyCod
     }
 
     @Override
-    public void initSQL() {
-        queryPrefix = "SELECT * FROM " + dataName;
-        sizePrefix = "SELECT count(gcid) FROM " + dataName;
-        clearPrefix = "DELETE FROM " + dataName;
-    }
-
-    @Override
-    protected DerbyBase dataTable() {
-        return new TableGeographyCode();
-    }
-
-    @Override
     public void afterSceneLoaded() {
         try {
             super.afterSceneLoaded();
 
-            mapController.initSplitPanes();
-            mapController.controlRightPane();
+            mapController.initMap(this);
 
-//            GeographyCode.exportPredefined();
-            String backFile = AppVariables.getSystemConfigValue("GeographyCode621Exported", "");
-            if (!backFile.isBlank()) {
-                browseURI(new File(backFile).getParentFile().toURI());
-                alertInformation(message("DataExportedComments") + "\n\n" + backFile);
-                AppVariables.deleteSystemConfigValue("GeographyCode621Exported");
-            }
         } catch (Exception e) {
             logger.error(e.toString());
         }
     }
 
-    @Override
-    protected void checkOrderBy() {
-        try {
-            queryOrder = null;
-            orderTitle = null;
-            String order = descendCheck.isSelected() ? "DESC" : "ASC";
-            String selected = ((RadioButton) orderGroup.getSelectedToggle()).getText();
-            if (selected == null || selected.isBlank()) {
-                return;
-            }
-            orderTitle = selected + " "
-                    + (descendCheck.isSelected() ? message("Descending") : message("Ascending"));
-            if (message("Dataid").equals(selected)) {
-                queryOrder = "gcid " + order;
-            } else if (message("Level").equals(selected)) {
-                queryOrder = "level " + order;
-            } else if (message("ChineseName").equals(selected)) {
-                queryOrder = "chinese_name " + order;
-            } else if (message("EnglishName").equals(selected)) {
-                queryOrder = "english_name " + order;
-            } else if (message("Longitude").equals(selected)) {
-                queryOrder = "longitude " + order;
-            } else if (message("Latitude").equals(selected)) {
-                queryOrder = "latitude " + order;
-            } else if (message("Area").equals(selected)) {
-                queryOrder = "latitude " + order;
-            } else if (message("Population").equals(selected)) {
-                queryOrder = "population " + order;
-            }
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
+    public boolean mapCurrentPage() {
+        return !paginate || mapController.mapOptionsController.currentPageRadio.isSelected();
     }
 
+    @FXML
     @Override
-    public int readDataSize() {
-//        logger.debug(sizeQuerySQL);
-        return TableGeographyCode.size(sizeQuerySQL);
+    public void queryData() {
+        if (isSettingValues) {
+            return;
+        }
+        super.queryData();
+        if (!mapCurrentPage()) {
+            queryMap();
+        }
     }
 
     @Override
@@ -237,33 +201,76 @@ public class GeographyCodeController extends DataAnalysisController<GeographyCod
     }
 
     @Override
-    public boolean preLoadingTableData() {
-        if (super.preLoadingTableData()) {
-            mapController.clearAction();
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    @Override
     public void postLoadedTableData() {
         if (queryCondition == null) {
             return;
         }
         super.postLoadedTableData();
-        mapController.drawGeographyCodes(3, tableData, finalTitle);
-
+        if (mapCurrentPage()) {
+            mapController.drawGeographyCodes(tableData, finalTitle);
+        }
     }
 
     @Override
     protected String loadMoreInfo() {
-        if (tableData.isEmpty()) {
-            return "";
+        String s = "<SPAN class=\"boldText\">" + message("MapQuery") + ": </SPAN></br>";
+        if (mapCurrentPage()) {
+            s += "<SPAN class=\"valueText\">" + message("CurrentPage") + "</SPAN></br>"
+                    + "<SPAN class=\"boldText\">" + message("DataNumber") + ": </SPAN>"
+                    + "<SPAN class=\"valueText\">" + (tableData != null ? tableData.size() : "") + "</SPAN></br></br>";
         } else {
-            return "<b>" + message("MapQuery") + ": </b></br>"
-                    + "<font color=\"#2e598a\">" + message("CurrentPage") + "</font></br>"
-                    + "<b>" + message("DataNumber") + ": </b>" + tableData.size() + "</br></br>";
+            s += "<SPAN class=\"valueText\">" + message("CurrentQuery") + "</SPAN></br>"
+                    + "<SPAN class=\"boldText\">" + message("DataNumber") + ": </SPAN>"
+                    + "<SPAN class=\"valueText\">"
+                    + (mapController.geographyCodes != null ? mapController.geographyCodes.size() : "")
+                    + "</SPAN></br></br>";
+        }
+        return s;
+    }
+
+    @Override
+    public void reloadChart() {
+        mapController.clearAction();
+        if (mapCurrentPage()) {
+            mapController.drawGeographyCodes(tableData, finalTitle);
+            return;
+        }
+        queryMap();
+    }
+
+    public void queryMap() {
+        if (isSettingValues || queryCondition == null || dataQuerySQL == null) {
+            return;
+        }
+        synchronized (this) {
+            if (backgroundTask != null) {
+                return;
+            }
+            backgroundTask = new SingletonTask<Void>() {
+                private List<GeographyCode> mapData;
+
+                @Override
+                protected boolean handle() {
+                    mapData = TableGeographyCode.queryCodes(dataQuerySQL,
+                            mapController.mapOptionsController.dataMax, true);
+                    return true;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    mapController.drawGeographyCodes(mapData, queryCondition.getTitle());
+                    loadInfo();
+                }
+
+                @Override
+                protected void taskQuit() {
+                    backgroundTask = null;
+                }
+            };
+            openHandlingStage(backgroundTask, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(backgroundTask);
+            thread.setDaemon(true);
+            thread.start();
         }
     }
 
@@ -312,7 +319,7 @@ public class GeographyCodeController extends DataAnalysisController<GeographyCod
         try {
             GeographyCodeEditController controller = (GeographyCodeEditController) openStage(CommonValues.GeographyCodeEditFxml);
             controller.parent = this;
-            controller.loadCode(selected);
+            controller.setGeographyCode(selected);
             controller.getMyStage().toFront();
         } catch (Exception e) {
             logger.error(e.toString());
@@ -336,13 +343,9 @@ public class GeographyCodeController extends DataAnalysisController<GeographyCod
             if (code == null) {
                 return;
             }
-            int mapZoom = 4;
-//            if (code.getLevel() != null && message("Country").equals(code.getLevel())) {
-//                mapZoom = 3;
-//            }
             LocationInMapController controller = (LocationInMapController) openStage(CommonValues.LocationInMapFxml);
-            controller.load(code.getLongitude(), code.getLatitude(), mapZoom);
-            controller.getMyStage().setAlwaysOnTop(true);
+            controller.consumer = this;
+            controller.setCoordinate(code.getLongitude(), code.getLatitude());
             controller.getMyStage().toFront();
         } catch (Exception e) {
             logger.error(e.toString());
@@ -350,10 +353,10 @@ public class GeographyCodeController extends DataAnalysisController<GeographyCod
     }
 
     @Override
-    protected boolean deleteSelectedData() {
+    protected int deleteSelectedData() {
         List<GeographyCode> selected = tableView.getSelectionModel().getSelectedItems();
         if (selected == null || selected.isEmpty()) {
-            return false;
+            return 0;
         }
         return TableGeographyCode.delete(selected);
     }
@@ -496,7 +499,7 @@ public class GeographyCodeController extends DataAnalysisController<GeographyCod
 
                 @Override
                 protected boolean handle() {
-                    GeographyCode.predefined(null, loading);
+                    GeographyCodeTools.importPredefined(null, loading);
                     return true;
                 }
 
@@ -522,8 +525,8 @@ public class GeographyCodeController extends DataAnalysisController<GeographyCod
                 @Override
                 protected boolean handle() {
                     File file = FxmlControl.getInternalFile("/data/db/Geography_Code_china_towns_internal.csv",
-                            "data", "Geography_Code_china_towns_internal.csv", false);
-                    GeographyCode.importInternalCSV(loading, file, true);
+                            "data", "Geography_Code_china_towns_internal.csv", true);
+                    GeographyCodeTools.importInternalCSV(loading, file, true);
                     return true;
                 }
 
@@ -537,11 +540,6 @@ public class GeographyCodeController extends DataAnalysisController<GeographyCod
             thread.setDaemon(true);
             thread.start();
         }
-    }
-
-    @Override
-    protected DataExportController dataExporter() {
-        return (GeographyCodeExportController) openStage(CommonValues.GeographyCodeExportFxml);
     }
 
     @FXML

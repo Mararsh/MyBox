@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -31,11 +32,11 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import mara.mybox.data.ColorData;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.TableColorData;
-import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.blueText;
 import static mara.mybox.fxml.FxmlControl.darkRedText;
@@ -395,7 +396,6 @@ public class ColorPaletteController extends BaseController {
                 commonColors("web");
             });
             popMenu.getItems().add(menu);
-            popMenu.getItems().add(new SeparatorMenuItem());
 
             menu = new MenuItem(message("ImportChineseTraditionalColors"));
             menu.setOnAction((ActionEvent event) -> {
@@ -406,6 +406,13 @@ public class ColorPaletteController extends BaseController {
             menu = new MenuItem(message("ImportJapaneseTraditionalColors"));
             menu.setOnAction((ActionEvent event) -> {
                 commonColors("japanese");
+            });
+            popMenu.getItems().add(menu);
+            popMenu.getItems().add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("File"));
+            menu.setOnAction((ActionEvent event) -> {
+                commonColors("file");
             });
             popMenu.getItems().add(menu);
             popMenu.getItems().add(new SeparatorMenuItem());
@@ -426,6 +433,23 @@ public class ColorPaletteController extends BaseController {
     }
 
     protected void commonColors(String type) {
+        final File file;
+        if ("file".equals(type)) {
+            List<FileChooser.ExtensionFilter> csvExtensionFilter = new ArrayList<>();
+            FileChooser fileChooser = new FileChooser();
+            File path = AppVariables.getUserConfigPath(sourcePathKey);
+            if (path.exists()) {
+                fileChooser.setInitialDirectory(path);
+            }
+            fileChooser.getExtensionFilters().addAll(csvExtensionFilter);
+            file = fileChooser.showOpenDialog(getMyStage());
+            if (file == null || !file.exists()) {
+                return;
+            }
+            recordFileOpened(file);
+        } else {
+            file = null;
+        }
         synchronized (this) {
             if (task != null) {
                 return;
@@ -433,82 +457,28 @@ public class ColorPaletteController extends BaseController {
             task = new SingletonTask<Void>() {
                 @Override
                 protected boolean handle() {
+                    List<ColorData> data;
+                    if (file != null) {
+                        data = ColorData.readCSV(file);
+                    } else {
+                        data = ColorData.predefined(type);
+                    }
+                    if (data == null) {
+                        return false;
+                    }
+                    TableColorData.writeData(data, false);
                     List<Color> palette = new ArrayList<>();
                     for (Node node : colorsPane.getChildren()) {
                         Rectangle rect = (Rectangle) node;
                         palette.add((Color) rect.getFill());
                     }
                     List<ColorData> newColors = new ArrayList<>();
-                    switch (type) {
-                        case "chinese":
-                            for (Color color
-                                    : FxmlColor.chineseColorValues()) {
-                                String rgba = color.toString();
-                                String name = FxmlColor.chineseColorNames().get(color);
-                                if (!palette.contains(color)) {
-                                    newColors.add(new ColorData(rgba, name));
-                                }
-                            }
-                            break;
-                        case "japanese":
-                            for (Color color
-                                    : FxmlColor.japaneseColorValues()) {
-                                String rgba = color.toString();
-                                String name = FxmlColor.japaneseColorNames().get(color);
-                                if (!palette.contains(color)) {
-                                    newColors.add(new ColorData(rgba, name));
-                                }
-                            }
-                            break;
-                        default:
-                            for (Color color : FxmlColor.webColorValues()) {
-                                String rgba = color.toString();
-                                String name = FxmlColor.webColorNames().get(color);
-                                if (!palette.contains(color)) {
-                                    newColors.add(new ColorData(rgba, name));
-                                }
-                            }
-                            break;
-                    }
-                    TableColorData.addInPalette(newColors);
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    load();
-                }
-            };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
-            thread.setDaemon(true);
-            thread.start();
-        }
-    }
-
-    @FXML
-    public void commonColorsAction() {
-        synchronized (this) {
-            if (task != null) {
-                return;
-            }
-            task = new SingletonTask<Void>() {
-
-                @Override
-                protected boolean handle() {
-                    List<Color> colors = new ArrayList<>();
-                    for (Node node : colorsPane.getChildren()) {
-                        Rectangle rect = (Rectangle) node;
-                        colors.add((Color) rect.getFill());
-                    }
-                    List<Color> commonColors = FxmlColor.webColorValues();
-                    for (int i = commonColors.size() - 1; i >= 0; --i) {
-                        Color color = commonColors.get(i);
-                        if (!colors.contains(color)) {
-                            colors.add(0, color);
+                    for (ColorData color : data) {
+                        if (!palette.contains(color.getColor())) {
+                            newColors.add(color);
                         }
                     }
-                    TableColorData.updatePaletteColor(colors);
+                    TableColorData.addInPalette(newColors);
                     return true;
                 }
 

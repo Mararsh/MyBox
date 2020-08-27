@@ -1,8 +1,11 @@
 package mara.mybox.tools;
 
-import javafx.scene.web.WebEngine;
-import mara.mybox.data.GeographyCode;
-import mara.mybox.value.CommonValues;
+import java.util.ArrayList;
+import java.util.List;
+import mara.mybox.data.CoordinateSystem;
+import static mara.mybox.data.CoordinateSystem.Value.GCJ_02;
+import mara.mybox.data.Location;
+import thridparty.CoordinateConverter;
 
 /**
  * @Author Mara
@@ -16,27 +19,390 @@ public class LocationTools {
                 && latitude >= -90 && latitude <= 90;
     }
 
-    public static boolean validCoordinate(GeographyCode code) {
-        if (code == null) {
-            return false;
+    public static double[] parseDMS(String value) {
+        double[] dms = {-200d, 0d, 0d, 0d};
+        if (value == null || value.trim().isBlank()) {
+            return dms;
         }
-        return code.getLongitude() >= -180 && code.getLongitude() <= 180
-                && code.getLatitude() >= -90 && code.getLatitude() <= 90;
+        try {
+            String s = value.trim().toLowerCase();
+            boolean negative = false, latitude = false;
+            if (s.startsWith("s")) {
+                negative = true;
+                latitude = true;
+                s = s.substring(1);
+            } else if (s.startsWith("南纬")) {
+                negative = true;
+                latitude = true;
+                s = s.substring(2);
+            } else if (s.startsWith("南")) {
+                negative = true;
+                latitude = true;
+                s = s.substring(1);
+            } else if (s.endsWith("s")) {
+                negative = true;
+                latitude = true;
+                s = s.substring(0, s.length() - 1);
+            } else if (s.startsWith("n")) {
+                negative = false;
+                latitude = true;
+                s = s.substring(1);
+            } else if (s.startsWith("北纬")) {
+                negative = false;
+                latitude = true;
+                s = s.substring(2);
+            } else if (s.startsWith("北")) {
+                negative = false;
+                latitude = true;
+                s = s.substring(1);
+            } else if (s.endsWith("n")) {
+                negative = false;
+                latitude = true;
+                s = s.substring(0, s.length() - 1);
+            } else if (s.startsWith("w")) {
+                negative = true;
+                s = s.substring(1);
+            } else if (s.startsWith("西经")) {
+                negative = true;
+                s = s.substring(2);
+            } else if (s.startsWith("西")) {
+                negative = true;
+                s = s.substring(1);
+            } else if (s.endsWith("w")) {
+                negative = true;
+                s = s.substring(0, s.length() - 1);
+            } else if (s.startsWith("e")) {
+                negative = false;
+                s = s.substring(1);
+            } else if (s.startsWith("东经")) {
+                negative = false;
+                s = s.substring(2);
+            } else if (s.startsWith("东")) {
+                negative = false;
+                s = s.substring(1);
+            } else if (s.endsWith("e")) {
+                negative = false;
+                s = s.substring(0, s.length() - 1);
+            } else if (s.startsWith("纬度")) {
+                latitude = true;
+                s = s.substring(2);
+            } else if (s.startsWith("latitude")) {
+                latitude = true;
+                s = s.substring("latitude".length());
+            } else if (s.startsWith("经度")) {
+                latitude = false;
+                s = s.substring(2);
+            } else if (s.startsWith("longitude")) {
+                latitude = false;
+                s = s.substring("longitude".length());
+            }
+            s = s.trim();
+            if (s.startsWith("-")) {
+                negative = true;
+                s = s.substring(1);
+            } else if (s.startsWith("+")) {
+                negative = false;
+                s = s.substring(1);
+            }
+            s = s.trim();
+            int pos = s.indexOf("度");
+            if (pos < 0) {
+                pos = s.indexOf("°");
+            }
+            if (pos >= 0) {
+                try {
+                    int v = Integer.parseInt(s.substring(0, pos).trim());
+                    if (latitude) {
+                        if (v >= -90 && v <= 90) {
+                            dms[1] = v;
+                        } else {
+                            dms[0] = -200;
+                            return dms;
+                        }
+                    } else {
+                        if (v >= -180 && v <= 180) {
+                            dms[1] = v;
+                        } else {
+                            dms[0] = -200;
+                            return dms;
+                        }
+                    }
+                    if (pos == s.length() - 1) {
+                        dms[2] = 0;
+                        dms[3] = 0;
+                        dms[0] = DMS2Coordinate(negative, dms[1], dms[2], dms[3]);
+                        return dms;
+                    }
+                    s = s.substring(pos + 1).trim();
+                } catch (Exception e) {
+                    dms[0] = -200;
+                    return dms;
+                }
+            } else {
+                dms[1] = 0;
+            }
+            pos = s.indexOf("分");
+            if (pos < 0) {
+                pos = s.indexOf("'");
+            }
+            if (pos >= 0) {
+                try {
+                    int v = Integer.parseInt(s.substring(0, pos).trim());
+                    if (v >= 0 && v < 60) {
+                        dms[2] = v;
+                    } else {
+                        dms[0] = -200;
+                        return dms;
+                    }
+                    if (pos == s.length() - 1) {
+                        dms[3] = 0;
+                        dms[0] = DMS2Coordinate(negative, dms[1], dms[2], dms[3]);
+                        return dms;
+                    }
+                    s = s.substring(pos + 1).trim();
+                } catch (Exception e) {
+                    dms[0] = -200;
+                    return dms;
+                }
+            } else {
+                dms[2] = 0;
+            }
+            if (s.endsWith("\"") || s.endsWith("秒")) {
+                s = s.substring(0, s.length() - 1);
+            }
+            try {
+                double v = Double.parseDouble(s.trim());
+                if (v >= 0 && v < 60) {
+                    dms[3] = v;
+                    dms[0] = DMS2Coordinate(negative, dms[1], dms[2], dms[3]);
+                    return dms;
+                } else {
+                    dms[0] = -200;
+                    return dms;
+                }
+            } catch (Exception e) {
+                dms[0] = -200;
+                return dms;
+            }
+        } catch (Exception e) {
+            dms[0] = -200;
+            return dms;
+        }
     }
 
-    public static void addMarkerInGaoDeMap(WebEngine webEngine,
-            double longitude, double latitude, String label, String info,
-            String image, boolean multiple, int mapSize, int markSize, int textSize) {
-        String jsLabel = (label == null || label.trim().isBlank()
-                ? "null" : "'" + label.replaceAll("'", CommonValues.MyBoxSeparator) + "'");
-        String jsInfo = (info == null || info.trim().isBlank()
-                ? "null" : "'" + info.replaceAll("'", CommonValues.MyBoxSeparator) + "'");
-        String jsImage = (image == null || image.trim().isBlank()
-                ? "null" : "'" + StringTools.replaceAll(image, "\\", "/") + "'");
-        webEngine.executeScript("addMarker("
-                + longitude + "," + latitude
-                + ", " + jsLabel + ", " + jsInfo + ", " + jsImage
-                + ", " + multiple + ", " + mapSize + ", " + markSize + ", " + textSize + ");");
+    public static double DMS2Coordinate(double degrees, double minutes, double seconds) {
+        return DMS2Coordinate(degrees >= 0, degrees, minutes, seconds);
+    }
+
+    public static double DMS2Coordinate(boolean negitive, double degrees, double minutes, double seconds) {
+        double value = Math.abs(degrees) + minutes / 60d + seconds / 3600d;
+        return negitive ? -value : value;
+    }
+
+    public static double[] coordinate2DMS(double value) {
+        double[] dms = new double[3];
+        int i = (int) value;
+        dms[0] = i;
+        double d = (Math.abs(value) - Math.abs(i)) * 60d;
+        i = (int) d;
+        dms[1] = i;
+        dms[2] = (d - i) * 60d;
+        return dms;
+    }
+
+    public static String coordinateToDmsString(double value) {
+        double[] dms = coordinate2DMS(value);
+        return dmsString(dms[0], dms[1], dms[2]);
+    }
+
+    public static String longitudeToDmsString(double value) {
+        double[] dms = coordinate2DMS(value);
+        int degrees = (int) dms[0];
+        String s = Math.abs(degrees) + "°" + (int) dms[1] + "'" + DoubleTools.scale(dms[2], 4) + "\"";
+        return s + (degrees >= 0 ? "E" : "W");
+    }
+
+    public static String latitudeToDmsString(double value) {
+        double[] dms = coordinate2DMS(value);
+        int degrees = (int) dms[0];
+        String s = Math.abs(degrees) + "°" + (int) dms[1] + "'" + DoubleTools.scale(dms[2], 4) + "\"";
+        return s + (degrees >= 0 ? "N" : "S");
+    }
+
+    public static String dmsString(double degrees, double minutes, double seconds) {
+        return (int) degrees + "°" + (int) minutes + "'" + DoubleTools.scale(seconds, 4) + "\"";
+    }
+
+    /*
+        Convert
+     */
+    public static Location toCGCS2000(Location location) {
+        Location converted = toWGS84(location);
+//        if (converted != null) {
+//            converted.setCoordinateSystem(CoordinateSystem.CGCS2000());
+//        }
+        return converted;
+    }
+
+    public static List<Location> toCGCS2000(List<Location> locations) {
+        if (locations == null) {
+            return locations;
+        }
+        List<Location> newLocations = new ArrayList<>();
+        for (Location location : locations) {
+            if (!location.validCoordinate()) {
+                continue;
+            }
+            Location newLocation = toCGCS2000(location);
+            if (newLocation != null) {
+                newLocations.add(newLocation);
+            }
+        }
+        return newLocations;
+    }
+
+    public static Location toWGS84(Location location) {
+        try {
+            if (location == null || !location.validCoordinate()
+                    || location.getCoordinateSystem() == null) {
+                return location;
+            }
+            CoordinateSystem cs = location.getCoordinateSystem();
+            double[] coordinate;
+            switch (cs.getValue()) {
+                case GCJ_02:
+                    coordinate = CoordinateConverter.GCJ02ToWGS84(location.getLongitude(), location.getLatitude());
+                    break;
+                case BD_09:
+                    coordinate = CoordinateConverter.BD09ToGCJ02(location.getLongitude(), location.getLatitude());
+                    coordinate = CoordinateConverter.GCJ02ToWGS84(coordinate[0], coordinate[1]);
+                    break;
+                case Mapbar:
+                    coordinate = GeographyCodeTools.toGCJ02ByWebService(location.getCoordinateSystem(),
+                            location.getLongitude(), location.getLatitude());
+                    coordinate = CoordinateConverter.GCJ02ToWGS84(coordinate[0], coordinate[1]);
+                    break;
+                case CGCS2000:
+                case WGS_84:
+                default:
+                    return location;
+            }
+            Location newCode = (Location) location.clone();
+            newCode.setLongitude(coordinate[0]);
+            newCode.setLatitude(coordinate[1]);
+            newCode.setCoordinateSystem(CoordinateSystem.WGS84());
+            return newCode;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static List<Location> toWGS84(List<Location> locations) {
+        if (locations == null) {
+            return locations;
+        }
+        List<Location> newLocations = new ArrayList<>();
+        for (Location location : locations) {
+            if (!location.validCoordinate()) {
+                continue;
+            }
+            Location newLocation = toWGS84(location);
+            if (newLocation != null) {
+                newLocations.add(newLocation);
+            }
+        }
+        return newLocations;
+    }
+
+    public static Location toGCJ02(Location location) {
+        try {
+            if (location == null || !location.validCoordinate()
+                    || location.getCoordinateSystem() == null) {
+                return location;
+            }
+            CoordinateSystem cs = location.getCoordinateSystem();
+            double[] coordinate;
+            switch (cs.getValue()) {
+                case CGCS2000:
+                case WGS_84:
+                    coordinate = CoordinateConverter.WGS84ToGCJ02(location.getLongitude(), location.getLatitude());
+                    break;
+                case BD_09:
+                    coordinate = CoordinateConverter.BD09ToGCJ02(location.getLongitude(), location.getLatitude());
+                    break;
+                case Mapbar:
+                    coordinate = GeographyCodeTools.toGCJ02ByWebService(location.getCoordinateSystem(),
+                            location.getLongitude(), location.getLatitude());
+                    break;
+                case GCJ_02:
+                default:
+                    return location;
+            }
+            Location newLocation = (Location) location.clone();
+            newLocation.setLongitude(coordinate[0]);
+            newLocation.setLatitude(coordinate[1]);
+            newLocation.setCoordinateSystem(CoordinateSystem.GCJ02());
+            return newLocation;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static List<Location> toGCJ02(List<Location> codes) {
+        if (codes == null) {
+            return codes;
+        }
+        List<Location> newLocations = new ArrayList<>();
+        for (Location code : codes) {
+            if (!code.validCoordinate()) {
+                continue;
+            }
+            Location newLocation = toGCJ02(code);
+            if (newLocation != null) {
+                newLocations.add(newLocation);
+            }
+        }
+        return newLocations;
+    }
+
+    public static List<Location> toGCJ02ByWebService(CoordinateSystem sourceCS, List<Location> codes) {
+        try {
+            if (codes == null || codes.isEmpty()) {
+                return null;
+            }
+            int size = codes.size();
+            int batch = size % 40 == 0 ? size / 40 : size / 40 + 1;
+            List<Location> newLocations = new ArrayList<>();
+            for (int k = 0; k < batch; k++) {
+                String locationsString = null;
+                for (int i = k * 40; i < Math.min(size, k * 40 + 40); i++) {
+                    Location code = codes.get(i);
+                    if (locationsString == null) {
+                        locationsString = "";
+                    } else {
+                        locationsString += "|";
+                    }
+                    locationsString += DoubleTools.scale(code.getLongitude(), 6) + "," + DoubleTools.scale(code.getLatitude(), 6);
+                }
+                String results = GeographyCodeTools.toGCJ02ByWebService(sourceCS, locationsString);
+                String[] locationsValues = results.split(";");
+                CoordinateSystem GCJ02 = CoordinateSystem.GCJ02();
+                for (int i = 0; i < locationsValues.length; i++) {
+                    String locationValue = locationsValues[i];
+                    String[] values = locationValue.split(",");
+                    double longitudeC = Double.parseDouble(values[0]);
+                    double latitudeC = Double.parseDouble(values[1]);
+                    Location newCode = (Location) codes.get(i).clone();
+                    newCode.setLongitude(longitudeC);
+                    newCode.setLatitude(latitudeC);
+                    newCode.setCoordinateSystem(GCJ02);
+                    newLocations.add(newCode);
+                }
+            }
+            return newLocations;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
 }

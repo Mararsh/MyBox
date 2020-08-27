@@ -212,7 +212,7 @@ public class MessageDigestController extends BaseController {
                         display();
                         String s = MessageFormat.format(message("DigestResult"),
                                 datalen, digest.length);
-                        s += "  " + message("Cost") + ":" + DateTools.showTime(cost);
+                        s += "  " + message("Cost") + ":" + DateTools.datetimeMsDuration(cost);
                         bottomLabel.setText(s);
                     }
 

@@ -13,10 +13,12 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
+import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
@@ -32,22 +34,26 @@ import mara.mybox.value.CommonValues;
  * @CreateDate 2019-12-1
  * @License Apache License Version 2.0
  */
-public class FFmpegConvertMediaFilesController extends FFmpegBaseController {
+public class FFmpegConvertMediaFilesController extends FFmpegBatchController {
 
     public FFmpegConvertMediaFilesController() {
         baseTitle = AppVariables.message("FFmpegConvertMediaFiles");
-        mustSetResolution = false;
     }
 
     @Override
-    public void checkExecutableInput() {
+    public void initControls() {
         try {
-            super.checkExecutableInput();
-            readMuxers();
-            readEncoders();
+            super.initControls();
+
+            startButton.disableProperty().unbind();
+            startButton.disableProperty().bind(
+                    Bindings.isEmpty(targetPathInput.textProperty())
+                            .or(targetPathInput.styleProperty().isEqualTo(badStyle))
+                            .or(ffmpegOptionsController.extensionInput.styleProperty().isEqualTo(badStyle))
+            );
 
         } catch (Exception e) {
-            logger.error(e.toString());
+            logger.debug(e.toString());
         }
     }
 
@@ -55,7 +61,7 @@ public class FFmpegConvertMediaFilesController extends FFmpegBaseController {
     public String handleFile(File srcFile, File targetPath) {
         try {
             countHandling(srcFile);
-            String ext = extensionInput.getText().trim();
+            String ext = ffmpegOptionsController.extensionInput.getText().trim();
             if (ext.isEmpty() || message("OriginalFormat").equals(ext)) {
                 ext = FileTools.getFileSuffix(srcFile.getName());
             }
@@ -79,8 +85,8 @@ public class FFmpegConvertMediaFilesController extends FFmpegBaseController {
             @Override
             public void run() {
                 double p = (number * 1d) / total;
-                String s = DateTools.showSeconds(number / 1000) + "/"
-                        + DateTools.showSeconds(total / 1000);
+                String s = DateTools.timeDuration(number) + "/"
+                        + DateTools.timeDuration(total);
                 progressBar.setProgress(p);
                 progressValue.setText(s);
             }
@@ -97,10 +103,8 @@ public class FFmpegConvertMediaFilesController extends FFmpegBaseController {
         final long duration;
         if (inDuration < 0) {
             final AtomicLong countedDuration = new AtomicLong();
-            if (verboseCheck == null || verboseCheck.isSelected()) {
-                updateLogs(message("CountingMediaDuration"), true);
-            }
-            FFmpeg.atPath(executable.toPath().getParent())
+            updateLogs(message("CountingMediaDuration"), true);
+            FFmpeg.atPath(ffmpegOptionsController.executable.toPath().getParent())
                     .addInput(input)
                     .addOutput(new NullOutput())
                     .setOverwriteOutput(true)
@@ -109,9 +113,7 @@ public class FFmpegConvertMediaFilesController extends FFmpegBaseController {
                     })
                     .execute();
             duration = countedDuration.get();
-            if (verboseCheck == null || verboseCheck.isSelected()) {
-                updateLogs(message("Duration") + ": " + DateTools.showDuration(duration), true);
-            }
+            updateLogs(message("Duration") + ": " + DateTools.timeMsDuration(duration), true);
         } else {
             duration = inDuration;
         }
@@ -128,25 +130,23 @@ public class FFmpegConvertMediaFilesController extends FFmpegBaseController {
                         if (duration > 0) {
                             updateFileProgress(progress.getTimeMillis(), duration);
                         } else {
-                            if (verboseCheck == null || verboseCheck.isSelected()) {
-                                updateLogs(message("Handled") + ":"
-                                        + DateTools.showSeconds(progress.getTimeMillis() / 1000), true);
-                            }
-                            progressValue.setText(DateTools.showSeconds(progress.getTimeMillis() / 1000));
+                            updateLogs(message("Handled") + ":"
+                                    + DateTools.timeDuration(progress.getTimeMillis()), true);
+                            progressValue.setText(DateTools.timeDuration(progress.getTimeMillis()));
                         }
                         lastProgress = now;
                     }
                     if (now > lastStatus + 3000) {
-                        long cost = now - mediaStart;
+                        long cost = now - ffmpegOptionsController.mediaStart;
                         if (duration > 0) {
                             double p = DoubleTools.scale2(progress.getTimeMillis() * 100.0d / duration);
                             long left = Math.round(cost * (100 - p) / p);
                             String s = message("Percentage") + ": " + p + "%  "
-                                    + message("Cost") + ": " + DateTools.showTime(cost) + "   "
-                                    + message("EstimatedLeft") + ": " + DateTools.showTime(left);
+                                    + message("Cost") + ": " + DateTools.datetimeMsDuration(cost) + "   "
+                                    + message("EstimatedLeft") + ": " + DateTools.datetimeMsDuration(left);
                             statusLabel.setText(s);
                         } else {
-                            String s = message("Cost") + ": " + DateTools.showTime(cost);
+                            String s = message("Cost") + ": " + DateTools.datetimeMsDuration(cost);
                             statusLabel.setText(s);
                         }
                         lastStatus = now;
@@ -155,51 +155,55 @@ public class FFmpegConvertMediaFilesController extends FFmpegBaseController {
 
             }
         };
-        mediaStart = System.currentTimeMillis();
-        FFmpeg ffmpeg = FFmpeg.atPath(executable.toPath().getParent())
+        ffmpegOptionsController.mediaStart = System.currentTimeMillis();
+        FFmpeg ffmpeg = FFmpeg.atPath(ffmpegOptionsController.executable.toPath().getParent())
                 .addInput(input)
                 .addOutput(UrlOutput.toPath(targetFile.toPath()))
                 .setProgressListener(listener)
                 .setOverwriteOutput(true);
-        if (disableVideo) {
+        if (ffmpegOptionsController.disableVideo) {
             ffmpeg.addArgument("-vn");
-        } else if (videoCodec != null) {
-            ffmpeg.addArguments("-vcodec", videoCodec);
+        } else if (ffmpegOptionsController.videoCodec != null) {
+            ffmpeg.addArguments("-vcodec", ffmpegOptionsController.videoCodec);
         }
-        if (disbaleAudio) {
-            ffmpeg.addArgument("-an");
-        } else if (audioCodec != null) {
-            ffmpeg.addArguments("-acodec", audioCodec);
+        if (ffmpegOptionsController.videoBitrate > 0) {
+            ffmpeg.addArguments("-b:v", ffmpegOptionsController.videoBitrate + "k");
         }
-        if (disbaleSubtitle) {
-            ffmpeg.addArgument("-sn");
-        } else if (subtitleCodec != null) {
-            ffmpeg.addArguments("-scodec", subtitleCodec);
+        if (ffmpegOptionsController.aspect != null) {
+            ffmpeg.addArguments("-aspect", ffmpegOptionsController.aspect);
         }
-        if (aspect != null) {
-            ffmpeg.addArguments("-aspect", aspect);
+        if (ffmpegOptionsController.videoFrameRate > 0) {
+            ffmpeg.addArguments("-r", ffmpegOptionsController.videoFrameRate + "");
         }
-        if (videoFrameRate > 0) {
-            ffmpeg.addArguments("-r", videoFrameRate + "");
-        }
-        if (width > 0 && height > 0) {
-            ffmpeg.addArguments("-s", width + "x" + height);
-        }
-        if (videoBitrate > 0) {
-            ffmpeg.addArguments("-b:v", videoBitrate + "k");
-        }
-        if (audioBitrate > 0) {
-            ffmpeg.addArguments("-b:a", audioBitrate + "k");
-        }
-        if (audioSampleRate > 0) {
-            ffmpeg.addArguments("-ar", audioSampleRate + "");
-        }
-        String volumn = volumnInput.getText().trim();
-        if (!volumn.isBlank()) {
-            ffmpeg.addArguments("-af", "volume=" + volumn);
+        if (ffmpegOptionsController.width > 0 && ffmpegOptionsController.height > 0) {
+            ffmpeg.addArguments("-s", ffmpegOptionsController.width + "x" + ffmpegOptionsController.height);
         }
 
-        String more = moreInput.getText().trim();
+        if (ffmpegOptionsController.disbaleAudio) {
+            ffmpeg.addArgument("-an");
+        } else if (ffmpegOptionsController.audioCodec != null) {
+            ffmpeg.addArguments("-acodec", ffmpegOptionsController.audioCodec);
+        }
+        if (ffmpegOptionsController.audioBitrate > 0) {
+            ffmpeg.addArguments("-b:a", ffmpegOptionsController.audioBitrate + "k");
+        }
+        if (ffmpegOptionsController.audioSampleRate > 0) {
+            ffmpeg.addArguments("-ar", ffmpegOptionsController.audioSampleRate + "");
+        }
+        if (ffmpegOptionsController.volumn != null) {
+            ffmpeg.addArguments("-af", "volume=" + ffmpegOptionsController.volumn);
+        }
+        if (ffmpegOptionsController.stereoCheck != null) {
+            ffmpeg.addArguments("-ac", ffmpegOptionsController.stereoCheck.isSelected() ? "2" : "1");
+        }
+
+        if (ffmpegOptionsController.disbaleSubtitle) {
+            ffmpeg.addArgument("-sn");
+        } else if (ffmpegOptionsController.subtitleCodec != null) {
+            ffmpeg.addArguments("-scodec", ffmpegOptionsController.subtitleCodec);
+        }
+
+        String more = ffmpegOptionsController.moreInput.getText().trim();
         if (!more.isBlank()) {
             String[] args = StringTools.splitBySpace(more);
             if (args != null && args.length > 0) {
@@ -209,9 +213,7 @@ public class FFmpegConvertMediaFilesController extends FFmpegBaseController {
             }
         }
 
-        if (verboseCheck == null || verboseCheck.isSelected()) {
-            updateLogs(message("ConvertingMedia") + "  " + message("TargetFile") + ":" + targetFile, true);
-        }
+        updateLogs(message("ConvertingMedia") + "  " + message("TargetFile") + ":" + targetFile, true);
         FFmpegResult result = ffmpeg.execute();
     }
 
@@ -231,9 +233,9 @@ public class FFmpegConvertMediaFilesController extends FFmpegBaseController {
 
     @Override
     public boolean checkBeforeNextAction() {
-        if ((encoderTask != null && encoderTask.isRunning())
-                || (muxerTask != null && muxerTask.isRunning())
-                || (queryTask != null && queryTask.isRunning())) {
+        if ((ffmpegOptionsController.encoderTask != null && ffmpegOptionsController.encoderTask.isRunning())
+                || (ffmpegOptionsController.muxerTask != null && ffmpegOptionsController.muxerTask.isRunning())
+                || (ffmpegOptionsController.queryTask != null && ffmpegOptionsController.queryTask.isRunning())) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(getMyStage().getTitle());
             alert.setContentText(AppVariables.message("TaskRunning"));
@@ -247,17 +249,17 @@ public class FFmpegConvertMediaFilesController extends FFmpegBaseController {
 
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == buttonSure) {
-                if (encoderTask != null) {
-                    encoderTask.cancel();
-                    encoderTask = null;
+                if (ffmpegOptionsController.encoderTask != null) {
+                    ffmpegOptionsController.encoderTask.cancel();
+                    ffmpegOptionsController.encoderTask = null;
                 }
-                if (muxerTask != null) {
-                    muxerTask.cancel();
-                    muxerTask = null;
+                if (ffmpegOptionsController.muxerTask != null) {
+                    ffmpegOptionsController.muxerTask.cancel();
+                    ffmpegOptionsController.muxerTask = null;
                 }
-                if (queryTask != null) {
-                    queryTask.cancel();
-                    queryTask = null;
+                if (ffmpegOptionsController.queryTask != null) {
+                    ffmpegOptionsController.queryTask.cancel();
+                    ffmpegOptionsController.queryTask = null;
                 }
             } else {
                 return false;

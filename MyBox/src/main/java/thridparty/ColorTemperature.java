@@ -8,7 +8,7 @@ package thridparty;
 public class ColorTemperature {
 
     public static double[] rt = { /* reciprocal temperature (K) */
-        Double.MIN_VALUE, 10.0e-6, 20.0e-6, 30.0e-6, 40.0e-6, 50.0e-6,
+        -Double.MAX_VALUE, 10.0e-6, 20.0e-6, 30.0e-6, 40.0e-6, 50.0e-6,
         60.0e-6, 70.0e-6, 80.0e-6, 90.0e-6, 100.0e-6, 125.0e-6,
         150.0e-6, 175.0e-6, 200.0e-6, 225.0e-6, 250.0e-6, 275.0e-6,
         300.0e-6, 325.0e-6, 350.0e-6, 375.0e-6, 400.0e-6, 425.0e-6,

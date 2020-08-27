@@ -774,7 +774,7 @@ public class MatrixCalculationController extends BaseController {
                 if (startTime > 0) {
                     long cost = new Date().getTime() - startTime;
                     bottomLabel.setText(AppVariables.message("Successful") + ":" + currentCalculation + "  "
-                            + message("Cost") + ":" + DateTools.showTime(cost));
+                            + message("Cost") + ":" + DateTools.datetimeMsDuration(cost));
                     startTime = -1;
                 }
 

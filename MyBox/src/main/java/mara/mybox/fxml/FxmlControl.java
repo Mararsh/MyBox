@@ -487,9 +487,7 @@ public class FxmlControl {
     }
 
     // Solution from https://stackoverflow.com/questions/941754/how-to-get-a-path-to-a-resource-in-a-java-jar-file
-    public static File getInternalFile(String resourceFile, String subPath,
-            String userFile,
-            boolean deleteExisted) {
+    public static File getInternalFile(String resourceFile, String subPath, String userFile, boolean deleteExisted) {
         if (resourceFile == null || userFile == null) {
             return null;
         }

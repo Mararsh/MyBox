@@ -18,15 +18,11 @@ import java.security.SecureRandom;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
-import java.security.cert.PKIXBuilderParameters;
 import java.security.cert.X509Certificate;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.locks.ReentrantLock;
 import javafx.scene.web.WebEngine;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -104,7 +100,7 @@ public class NetworkTools {
 
     public static void myBoxSSL() {
         HttpsURLConnection.setDefaultSSLSocketFactory(NetworkTools.MyBoxSSLSocketFactory());
-        HttpsURLConnection.setDefaultHostnameVerifier(NetworkTools.MyBoxHostnameVerifier());
+//        HttpsURLConnection.setDefaultHostnameVerifier(NetworkTools.MyBoxHostnameVerifier());
     }
 
     public static class MyBoxTrustManager implements X509TrustManager {
@@ -139,8 +135,29 @@ public class NetworkTools {
         @Override
         public void checkClientTrusted(X509Certificate[] chain, String authType)
                 throws CertificateException {
+            this.chain = chain;
+            if (chain == null || chain.length == 0) {
+                return;
+            }
+            List<String> bypass = CertificateBypass.bypass();
+            for (X509Certificate cert : chain) {
+                String[] certlines = cert.toString().split("\n");
+                for (String line : certlines) {
+                    if (!line.contains("DNSName")) {
+                        continue;
+                    }
+                    for (String host : bypass) {
+                        if (line.contains(" " + host)
+                                || line.contains("www." + host)
+                                || line.contains("*." + host)) {
+//                            logger.debug(host + "  " + line);
+                            return;
+                        }
+                    }
+                }
+//                logger.debug(cert.toString());
+            }
             tm.checkClientTrusted(chain, authType);
-
         }
 
         @Override
@@ -166,9 +183,11 @@ public class NetworkTools {
                         }
                     }
                 }
+//                logger.debug(cert.toString());
             }
             tm.checkServerTrusted(chain, authType);
         }
+
     }
 
     public static SSLSocketFactory MyBoxSSLSocketFactory() {
@@ -209,16 +228,18 @@ public class NetworkTools {
         HostnameVerifier verifier = new HostnameVerifier() {
             @Override
             public boolean verify(String hostname, SSLSession session) {
-                List<String> bypass = CertificateBypass.bypass();
-//                logger.debug(hostname);
-                for (String host : bypass) {
-                    if (hostname.equals(" " + host)
-                            || hostname.equals("www." + host)
-                            || hostname.equals("*." + host)) {
+//                return true;
+                logger.debug(hostname);
+//                List<String> bypass = CertificateBypass.bypass();
+//                for (String host : bypass) {
+//                    if (hostname.equals(" " + host)
+//                            || hostname.equals("www." + host)
+//                            || hostname.equals("*." + host)) {
 //                        logger.debug(hostname + "  " + session.getPeerHost() + "  " + session.getProtocol() + "  " + session.getCipherSuite());
-                        return true;
-                    }
-                }
+//                        return true;
+//                    }
+//                    logger.debug(hostname + "  " + session.getPeerHost() + "  " + session.getProtocol() + "  " + session.getCipherSuite());
+//                }
                 return AppVariables.defaultHostnameVerifier.verify(hostname, session);
             }
         };

@@ -71,7 +71,11 @@ public class ConditionTreeView extends TreeView {
             }
             CheckBoxTreeItem<ConditionNode> citem = (CheckBoxTreeItem<ConditionNode>) item;
             ConditionNode node = item.getValue();
-            if (citem.isSelected()) {
+            if (!citem.isLeaf() && citem.isIndeterminate()) {
+                for (TreeItem<ConditionNode> child : item.getChildren()) {
+                    checkSelection(child);
+                }
+            } else if (citem.isSelected()) {
                 if (finalConditions == null || finalConditions.isBlank()) {
                     if (node.getCondition() == null || node.getCondition().isBlank()) {
                         finalConditions = "";
@@ -83,7 +87,6 @@ public class ConditionTreeView extends TreeView {
                         finalConditions += " OR ( " + node.getCondition() + " ) ";
                     }
                 }
-
                 if (finalTitle == null || finalTitle.isBlank()) {
                     finalTitle = "\"" + node.getTitle() + "\"";
                 } else {
@@ -92,12 +95,6 @@ public class ConditionTreeView extends TreeView {
                 if (!selectedTitles.contains(node.getTitle())) {
                     selectedTitles.add(node.getTitle());
                 }
-                return;
-            } else if (item.isLeaf() || !citem.isIndeterminate()) {
-                return;
-            }
-            for (TreeItem<ConditionNode> child : item.getChildren()) {
-                checkSelection(child);
             }
         } catch (Exception e) {
             logger.debug(e.toString());
@@ -105,11 +102,12 @@ public class ConditionTreeView extends TreeView {
     }
 
     public void setSelection() {
+        TreeItem<ConditionNode> root = getRoot();
         if (selectedTitles == null || selectedTitles.isEmpty()
-                || getRoot() == null) {
-            return;
+                || root == null) {
+            selectNone();
         }
-        setSelection(getRoot());
+        setSelection(root);
     }
 
     public void setSelection(TreeItem<ConditionNode> item) {
@@ -134,13 +132,36 @@ public class ConditionTreeView extends TreeView {
     }
 
     public void selectAll() {
-        CheckBoxTreeItem<ConditionNode> root = (CheckBoxTreeItem<ConditionNode>) getRoot();
-        root.setSelected(true);
+        TreeItem<ConditionNode> root = getRoot();
+        if (root == null) {
+            return;
+        }
+        CheckBoxTreeItem<ConditionNode> rootCheck = (CheckBoxTreeItem<ConditionNode>) getRoot();
+        rootCheck.setSelected(true);
     }
 
     public void selectNone() {
-        CheckBoxTreeItem<ConditionNode> root = (CheckBoxTreeItem<ConditionNode>) getRoot();
-        root.setSelected(false);
+        TreeItem<ConditionNode> root = getRoot();
+        if (root == null) {
+            return;
+        }
+        CheckBoxTreeItem<ConditionNode> rootCheck = (CheckBoxTreeItem<ConditionNode>) root;
+        rootCheck.setSelected(false);
+    }
+
+    public void select(List<String> titles) {
+        selectedTitles = titles;
+        setSelection();
+    }
+
+    public void select(String title) {
+        if (title == null) {
+            selectNone();
+            return;
+        }
+        selectedTitles = new ArrayList();
+        selectedTitles.add(title);
+        setSelection();
     }
 
     public void checkExpanded() {

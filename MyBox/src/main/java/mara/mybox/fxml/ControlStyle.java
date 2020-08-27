@@ -610,6 +610,50 @@ public class ControlStyle {
                     return new ControlStyle(id, message("OK"), "", "iconOK.png");
             }
         }
+        if (id.startsWith("saveAs")) {
+            switch (id) {
+                case "saveAsButton":
+                    return new ControlStyle(id, message("SaveAs"), "F11 / CTRL+f / ALT+f", "iconSaveAs.png");
+
+                default:
+                    return new ControlStyle(id, message("SaveAs"), "", "iconSaveAs.png");
+            }
+        }
+        if (id.startsWith("create")) {
+            switch (id) {
+                case "createButton":
+                    return new ControlStyle(id, message("Create"), "CTRL+n", "iconAdd.png");
+                default:
+                    return new ControlStyle(id, message("Create"), "", "iconAdd.png");
+            }
+
+        }
+        if (id.startsWith("add")) {
+            switch (id) {
+                case "addButton":
+                    return new ControlStyle(id, message("Add"), "CTRL+n", "iconAdd.png");
+                case "addFilesButton":
+                    return new ControlStyle(id, message("AddFiles"), "", "iconFileAdd.png");
+                case "addDirectoryButton":
+                    return new ControlStyle(id, message("AddDirectory"), "", "iconFolderAdd.png");
+                case "rowAddButton":
+                    return new ControlStyle(id, message("Add"), "", "iconRowAdd.png");
+                default:
+                    return new ControlStyle(id, message("Add"), "", "iconAdd.png");
+            }
+        }
+        if (id.startsWith("plus")) {
+            return new ControlStyle(id, message("Add"), "", "iconPlus.png");
+        }
+        if (id.startsWith("query")) {
+            return new ControlStyle(id, message("Query"), "", "iconQuery.png");
+        }
+        if (id.startsWith("reset")) {
+            return new ControlStyle(id, message("Reset"), "", "iconRecover.png");
+        }
+        if (id.startsWith("analyse")) {
+            return new ControlStyle(id, message("Analyse"), "", "iconAnalyse.png");
+        }
         if (id.startsWith("yes")) {
             return new ControlStyle(id, message("Yes"), "", "iconYes.png");
         }
@@ -625,9 +669,7 @@ public class ControlStyle {
         if (id.startsWith("clear")) {
             return new ControlStyle(id, message("Clear"), "", "iconClear.png");
         }
-        if (id.startsWith("plus")) {
-            return new ControlStyle(id, message("Add"), "", "iconPlus.png");
-        }
+
         if (id.startsWith("mybox")) {
             return new ControlStyle(id, "MyBox", "", "iconMyBox.png");
         }
@@ -642,7 +684,7 @@ public class ControlStyle {
             return new ControlStyle(id, message("Random"), "", "iconRandom.png");
         }
         if (id.startsWith("example")) {
-            return new ControlStyle(id, message("Example"), "", "iconDefault.png");
+            return new ControlStyle(id, message("Example"), "", "iconExamples.png");
         }
         if (id.startsWith("sql")) {
             return new ControlStyle(id, "SQL", "", "iconSQL.png");
@@ -742,20 +784,13 @@ public class ControlStyle {
         if (id.startsWith("query")) {
             return new ControlStyle(id, message("Query"), "", "iconData.png");
         }
-
         if (id.startsWith("map")) {
             return new ControlStyle(id, message("Map"), "", "iconMap.png");
         }
-
-        if (id.startsWith("saveAs")) {
-            switch (id) {
-                case "saveAsButton":
-                    return new ControlStyle(id, message("SaveAs"), "F11 / CTRL+f / ALT+f", "iconSaveAs.png");
-
-                default:
-                    return new ControlStyle(id, message("SaveAs"), "", "iconSaveAs.png");
-            }
+        if (id.startsWith("dataset")) {
+            return new ControlStyle(id, message("DataSet"), "", "iconDataset.png");
         }
+
         if (id.startsWith("sureButton")) {
             return new ControlStyle(id, message("Sure"), "", "iconYes.png");
         }
@@ -778,6 +813,22 @@ public class ControlStyle {
             }
         }
 
+        if (id.startsWith("selectImage")) {
+            return new ControlStyle(id, message("Image"), "", "iconFolderImage.png");
+        }
+
+        if (id.startsWith("equal")) {
+            return new ControlStyle(id, message("EqualTo"), "", "iconEqual.png");
+        }
+
+        if (id.startsWith("selectAll")) {
+            return new ControlStyle(id, message("SelectAll"), "CTRL+a / ALT+a", "iconSelectAll.png");
+        }
+
+        if (id.startsWith("selectNone")) {
+            return new ControlStyle(id, message("UnselectAll"), "CTRL+o / ALT+O", "iconSelectNone.png");
+        }
+
         switch (id) {
 
             case "selectButton":
@@ -785,9 +836,6 @@ public class ControlStyle {
 
             case "unselectButton":
                 return new ControlStyle(id, message("Unselect"), "", "iconSelectNone.png");
-
-            case "selectAllButton":
-                return new ControlStyle("selectAllButton", message("SelectAll"), "CTRL+a / ALT+a", "iconSelectAll.png");
 
             case "selectAllFilesButton":
                 return new ControlStyle("selectAllFilesButton", message("SelectAll"), "CTRL+a", "iconSelectAll.png");
@@ -800,9 +848,6 @@ public class ControlStyle {
 
             case "cancelButton":
                 return new ControlStyle("cancelButton", message("Cancel"), "ESC", "iconCancel.png");
-
-            case "createButton":
-                return new ControlStyle("createButton", message("Create"), "CTRL+n", "iconEdit.png");
 
             case "copyButton":
                 return new ControlStyle("copyButton", message("Copy"), "CTRL+c / ALT+c ", "iconCopy.png");
@@ -924,14 +969,8 @@ public class ControlStyle {
             case "polygonClearButton":
                 return new ControlStyle("polygonClearButton", message("Delete"), "", "iconClear.png");
 
-            case "addFilesButton":
-                return new ControlStyle("addFilesButton", message("AddFiles"), "", "iconFileAdd.png");
-
             case "insertFilesButton":
                 return new ControlStyle("insertFilesButton", message("InsertFiles"), "", "iconFileInsert.png");
-
-            case "addDirectoryButton":
-                return new ControlStyle("addDirectoryButton", message("AddDirectory"), "", "iconFolderAdd.png");
 
             case "insertDirectoryButton":
                 return new ControlStyle("insertDirectoryButton", message("InsertDirectory"), "", "iconFolderInsert.png");
@@ -1305,9 +1344,6 @@ public class ControlStyle {
 
             case "globalButton":
                 return new ControlStyle(id, message("Global"), "", "iconGlobal.png");
-
-            case "rowAddButton":
-                return new ControlStyle(id, message("Add"), "", "iconRowAdd.png");
 
             case "rowDeleteButton":
                 return new ControlStyle(id, message("Delete"), "", "iconRowDelete.png");

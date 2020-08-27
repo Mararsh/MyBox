@@ -37,6 +37,7 @@ import mara.mybox.db.TableEpidemicReport;
 import mara.mybox.db.TableGeographyCode;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.GeographyCodeTools;
 import static mara.mybox.tools.NetworkTools.trustAllManager;
 import static mara.mybox.tools.NetworkTools.trustAllVerifier;
 import mara.mybox.tools.StringTools;
@@ -93,7 +94,7 @@ public class EpidemicReportsImportBaiduController extends DataTaskController {
         try {
             if (TableGeographyCode.China() == null) {
                 updateLogs(message("LoadingPredefinedGeographyCodes"), true);
-                GeographyCode.predefined();
+                GeographyCodeTools.importPredefined();
             }
             reports = new ArrayList();
             updateLogs(address, true);

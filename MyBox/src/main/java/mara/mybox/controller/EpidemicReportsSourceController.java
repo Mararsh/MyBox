@@ -25,7 +25,7 @@ public class EpidemicReportsSourceController extends ConditionTreeController {
         try {
             super.initializeNext();
             List<String> s = new ArrayList();
-            s.add(message("AllSources"));
+            s.add(message("Dataset"));
             treeView.setSelectedTitles(s);
         } catch (Exception e) {
             logger.error(e.toString());
@@ -44,8 +44,8 @@ public class EpidemicReportsSourceController extends ConditionTreeController {
         }
         try {
             CheckBoxTreeItem<ConditionNode> allItem = new CheckBoxTreeItem(
-                    ConditionNode.create(message("AllSources"))
-                            .setTitle(message("AllSources"))
+                    ConditionNode.create(message("Dataset"))
+                            .setTitle(message("Dataset"))
                             .setCondition("")
             );
             allItem.setExpanded(true);

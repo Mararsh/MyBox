@@ -25,29 +25,27 @@
 
         </style>
     </head>
-    <body>
+    <body >
         <div id="container"></div>
         <script  type="text/javascript">
             var standardLayer, satelliteLayer, roadLayer, trafficLayer;
             var infoWindow;
-            var map = new AMap.Map('container', {
+            var map, mapTitle;
+
+            map = new AMap.Map('container', {
                 resizeEnable: true,
                 center: [116.397428, 39.90923],
                 zooms: [3, 18],
                 zoom: 11
             });
-
             standardLayer = map.getLayers()[0];
             map.on('complete', loadComplete);
             map.on('click', showInfoClick);
             map.on('mousemove', showInfoMove);
-            map.on('zoomend', zoomSize);
+            map.on('zoomend', zoomChanged);
 
-
-            var titleWindow = new AMap.InfoWindow({
-                position: map.getCenter(),
-                offset: new AMap.Pixel(100, -100)
-            });
+            mapTitle = new AMap.Text();
+            map.add(mapTitle);
 
             function loadComplete() {
                 alert("Loaded");
@@ -63,7 +61,7 @@
                 alert(text);
             }
 
-            function zoomSize(e) {
+            function zoomChanged(e) {
                 alert("zoomSize:" + map.getZoom());
             }
 
@@ -90,15 +88,49 @@
                 titleWindow.open(map, map.getCenter());
             }
 
+            function setTitle(title) {
+                var labelString = "<DIV style=\"color:blue;background-color: transparent;font-size:24px;px;line-height:1;font-weight: bold;\">";
+                labelString = labelString + title + "</DIV>";
+                mapTitle.setText(labelString);
+                mapTitle.setPosition(map.containerToLngLat(new AMap.Pixel(50, 150)));
+                mapTitle.setAnchor('top-left');
+                map.add(mapTitle);
+            }
+
+
             function replaceAll(string, oldSub, newSub) {
                 if (string !== null && oldSub !== null && newSub !== null) {
                     return string.replace(new RegExp(oldSub, 'gm'), newSub);
                 }
             }
 
-            function addMarker(longtitude, latitude, label, info, image, multiple, mapSize, markerSize, textSize) {
-                if (!multiple)
-                    map.clearMap();
+            function drawLine(longitude1, latitude1, longitude2, latitude2, color) {
+                var path = [
+                    [longitude1, latitude1],
+                    [longitude2, latitude2]
+                ];
+                var polyline = new AMap.Polyline({
+                    path: path,
+                    strokeColor: color
+//                    isOutline: true,
+//                    outlineColor: '#ffeeff',
+//                    borderWeight: 3,
+
+//                    strokeOpacity: 1,
+//                    strokeWeight: 6,
+                            // 折线样式还支持 'dashed'
+//                    strokeStyle: "solid",
+                            // strokeStyle是dashed时有效
+//                    strokeDasharray: [10, 5],
+//                    lineJoin: 'round',
+//                    lineCap: 'round'
+                });
+                polyline.setMap(map);
+                // 缩放地图到合适的视野级别
+                map.setFitView([polyline]);
+            }
+
+            function addMarker(longtitude, latitude, label, info, image, markerSize, textSize, textColor, bold) {
                 var marker;
                 if (image === null) {
                     marker = new AMap.CircleMarker({
@@ -120,33 +152,33 @@
                         position: [longtitude, latitude],
                         offset: new AMap.Pixel(-markerSize / 2, -markerSize / 2)
                     });
-                    if (label !== null && label.length > 0) {
-                        marker.setLabel({
-                            content: "<div style=\"font-size:" + textSize + "px\">" + label.replace(new RegExp("##MyBox#", "gm"), "'") + "</div>",
-                            offset: new AMap.Pixel(-10, -10)
-//                        direction: 'top'
-                        });
-                    }
                 }
-
+                if (label !== null && label.length > 0) {
+                    var labelString = "<div style=\"font-size:" + textSize + "px;";
+                    if (textColor !== null) {
+                        labelString = labelString + "color:" + textColor + ";";
+                    }
+                    if (bold) {
+                        labelString = labelString + "font-weight: bold;";
+                    }
+                    labelString = labelString + "\">" + label.replace(new RegExp("##MyBox#", "gm"), "'") + "</div>";
+                    marker.setLabel({
+                        content: labelString,
+                        offset: new AMap.Pixel(-30, markerSize + 5)
+//                        direction: 'top'
+                    });
+                }
+                map.add(marker);
                 if (info !== null && info.length > 0) {
                     marker.on('mousemove', function () {
                         infoWindow = new AMap.InfoWindow({
-                            content: info.replace(new RegExp("##MyBox#", "gm"), "'")
+                            content: "<div style=\"font-size:" + textSize + "px\">" + info.replace(new RegExp("##MyBox#", "gm"), "'") + "</div>"
                         });
                         infoWindow.open(map, [longtitude, latitude]);
                     });
                     marker.on('mouseout', function () {
                         infoWindow.close();
                     });
-                }
-
-                map.add(marker);
-                if (mapSize >= 3 && mapSize <= 18) {
-                    map.setZoom(mapSize);
-                    map.setCenter([longtitude, latitude]);
-                } else if (mapSize > -9) {
-                    map.setFitView();
                 }
             }
 

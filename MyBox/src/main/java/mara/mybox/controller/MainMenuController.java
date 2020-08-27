@@ -4,7 +4,6 @@ import com.sun.management.OperatingSystemMXBean;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.lang.management.ManagementFactory;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -159,7 +158,7 @@ public class MainMenuController extends BaseController {
         settingsMenu.getItems().addAll(items);
         if (AppVariables.currentBundle == CommonValues.BundleZhCN) {
             chineseMenuItem.setSelected(true);
-        } else if (AppVariables.currentBundle == CommonValues.BundleEnUS) {
+        } else if (AppVariables.currentBundle == CommonValues.BundleEn) {
             englishMenuItem.setSelected(true);
         }
 
@@ -1203,8 +1202,13 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
-    private void openLocationsData(ActionEvent event) {
-        loadScene(CommonValues.LocationsDataFxml);
+    private void openDataset(ActionEvent event) {
+        loadScene(CommonValues.DatasetFxml);
+    }
+
+    @FXML
+    private void openLocationData(ActionEvent event) {
+        loadScene(CommonValues.LocationDataFxml);
     }
 
     @FXML
@@ -1220,6 +1224,11 @@ public class MainMenuController extends BaseController {
     @FXML
     private void openLocationInMap(ActionEvent event) {
         loadScene(CommonValues.LocationInMapFxml);
+    }
+
+    @FXML
+    private void openLocationTools(ActionEvent event) {
+        loadScene(CommonValues.LocationToolsFxml);
     }
 
     @FXML
@@ -1252,89 +1261,10 @@ public class MainMenuController extends BaseController {
     @FXML
     public void documents(ActionEvent event) {
         openStage(CommonValues.DocumentsFxml);
-//        try {
-//            String link = "https://github.com/Mararsh/MyBox/releases/download/v5.8/MyBox-DevGuide-2.0"
-//                    + "-" + AppVariables.getLanguage() + ".pdf";
-//            browseURI(new URI(link));
-//        } catch (Exception e) {
-//            logger.error(e.toString());
-//        }
-
-    }
-
-    @FXML
-    public void userGuideOverview(ActionEvent event) {
-        try {
-            String link = "https://github.com/Mararsh/MyBox/releases/download/v"
-                    + CommonValues.AppDocVersion + "/MyBox-UserGuide-" + CommonValues.AppDocVersion
-                    + "-Overview-" + AppVariables.getLanguage() + ".pdf";
-            browseURI(new URI(link));
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    @FXML
-    public void userGuidePdfTools(ActionEvent event) {
-        try {
-            String link = "https://github.com/Mararsh/MyBox/releases/download/v"
-                    + CommonValues.AppDocVersion + "/MyBox-UserGuide-" + CommonValues.AppDocVersion
-                    + "-PdfTools-" + AppVariables.getLanguage() + ".pdf";
-            browseURI(new URI(link));
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    @FXML
-    public void userGuideImageTools(ActionEvent event) {
-        try {
-            String link = "https://github.com/Mararsh/MyBox/releases/download/v"
-                    + CommonValues.AppDocVersion + "/MyBox-UserGuide-" + CommonValues.AppDocVersion
-                    + "-ImageTools-" + AppVariables.getLanguage() + ".pdf";
-            browseURI(new URI(link));
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    @FXML
-    public void userGuideDesktopTools(ActionEvent event) {
-        try {
-            String link = "https://github.com/Mararsh/MyBox/releases/download/v"
-                    + CommonValues.AppDocVersion + "/MyBox-UserGuide-" + CommonValues.AppDocVersion
-                    + "-DesktopTools-" + AppVariables.getLanguage() + ".pdf";
-            browseURI(new URI(link));
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    @FXML
-    public void userGuideNetworkTools(ActionEvent event) {
-        try {
-            String link = "https://github.com/Mararsh/MyBox/releases/download/v"
-                    + CommonValues.AppDocVersion + "/MyBox-UserGuide-" + CommonValues.AppDocVersion
-                    + "-NetworkTools-" + AppVariables.getLanguage() + ".pdf";
-            browseURI(new URI(link));
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    @FXML
-    public void userGuideDeveloperGuide(ActionEvent event) {
-        try {
-            String link = "https://github.com/Mararsh/MyBox/releases/download/v"
-                    + CommonValues.AppDocVersion + "/MyBox-UserGuide-" + CommonValues.AppDocVersion
-                    + "-DeveloperGuide-" + AppVariables.getLanguage() + ".pdf";
-            browseURI(new URI(link));
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
     }
 
     // This is for developement to generate Icons automatically in different color style
+    // Uncomment menu item "Help->MakeIcons" in "MainMenu.fxml" to make this function work
     @FXML
     public void makeIcons() {
         try {

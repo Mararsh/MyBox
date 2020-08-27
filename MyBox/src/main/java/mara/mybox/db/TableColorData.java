@@ -736,10 +736,11 @@ public class TableColorData extends DerbyBase {
         }
     }
 
-    public static boolean deleteData(List<ColorData> values) {
+    public static int deleteData(List<ColorData> values) {
         if (values == null || values.isEmpty()) {
-            return false;
+            return 0;
         }
+        int count = 0;
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);) {
             String inStr = "( '" + values.get(0).getRgba() + "' ";
             for (int i = 1; i < values.size(); ++i) {
@@ -747,13 +748,12 @@ public class TableColorData extends DerbyBase {
             }
             inStr += " )";
             String sql = "DELETE FROM Color_Data WHERE rgba IN " + inStr;
-            conn.createStatement().executeUpdate(sql);
-            return true;
+            count += conn.createStatement().executeUpdate(sql);
         } catch (Exception e) {
             failed(e);
 //            // logger.debug(e.toString());
-            return false;
         }
+        return count;
     }
 
     public static boolean delete(List<String> values) {

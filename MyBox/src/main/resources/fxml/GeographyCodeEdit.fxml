@@ -45,7 +45,7 @@ License:    Apache License Version 2.0
                                     <children>
                                         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
                                             <children>
-                                                <ImageView fx:id="leftPaneControl" fitHeight="20.0" fitWidth="20.0" onMouseClicked="#controlLeftPane" pickOnBounds="true" preserveRatio="true">
+                                                <ImageView fx:id="leftPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
                                                         <Image url="@../buttons/iconDoubleLeft.png" />
                                                     </image>
@@ -83,6 +83,15 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </graphic>
                                                 </Button>
+                                    <Button fx:id="copyButton" mnemonicParsing="false" onAction="#copyAction">
+                                       <graphic>
+                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/iconCopy.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </Button>
                                                 <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Save" />
                                             </children>
                                         </HBox>
@@ -114,11 +123,12 @@ License:    Apache License Version 2.0
                                                                 <RadioButton fx:id="continentRadio" mnemonicParsing="false" text="%Continent" toggleGroup="$levelGroup" />
                                                                 <RadioButton fx:id="countryRadio" mnemonicParsing="false" text="%Country" toggleGroup="$levelGroup" />
                                                                 <RadioButton fx:id="provinceRadio" mnemonicParsing="false" text="%Province" toggleGroup="$levelGroup" />
-                                                                <RadioButton fx:id="cityRadio" mnemonicParsing="false" selected="true" text="%City" toggleGroup="$levelGroup" />
+                                                                <RadioButton fx:id="cityRadio" mnemonicParsing="false" text="%City" toggleGroup="$levelGroup" />
                                                                 <RadioButton fx:id="countyRadio" mnemonicParsing="false" text="%County" toggleGroup="$levelGroup" />
                                                                 <RadioButton fx:id="townRadio" mnemonicParsing="false" text="%Town" toggleGroup="$levelGroup" />
                                                                 <RadioButton fx:id="villageRadio" mnemonicParsing="false" text="%Village" toggleGroup="$levelGroup" />
                                                                 <RadioButton fx:id="buildingRadio" mnemonicParsing="false" text="%Building" toggleGroup="$levelGroup" />
+                                                <RadioButton fx:id="pointOfInterestRadio" layoutX="620.0" layoutY="51.0" mnemonicParsing="false" selected="true" text="%PointOfInterest" toggleGroup="$levelGroup" />
                                                                 <!--<RadioButton fx:id="pointOfInterestRadio" mnemonicParsing="false" text="%PointOfInterest" toggleGroup="$levelGroup" />-->
                                                             </children>
                                                         </FlowPane>
@@ -139,6 +149,16 @@ License:    Apache License Version 2.0
                                                                 </Button>
                                                             </children>
                                                         </HBox>
+                                          <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="218.0" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                             <children>
+                                                <Label minWidth="-Infinity" text="%Altitude" HBox.hgrow="NEVER" />
+                                                <TextField fx:id="altitudeInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                <Label minWidth="-Infinity" text="%Precision" HBox.hgrow="NEVER" />
+                                                <TextField fx:id="precisionInput" prefWidth="200.0" />
+                                                <Label layoutX="386.0" layoutY="19.0" minWidth="-Infinity" text="%CoordinateSystem" />
+                                                <ComboBox fx:id="coordinateSystemSelector" prefWidth="200.0" />
+                                             </children>
+                                          </HBox>
                                                         <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="300.0" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
                                                             <children>
                                                                 <Label text="%ChineseName" />
@@ -213,7 +233,7 @@ License:    Apache License Version 2.0
                                                         </HBox>
                                                         <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="416.0" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                             <children>
-                                                                <Label alignment="CENTER_RIGHT" minWidth="-Infinity" text="%SquareKilometers" HBox.hgrow="NEVER" />
+                                                                <Label alignment="CENTER_RIGHT" minWidth="-Infinity" text="%SquareMeters" HBox.hgrow="NEVER" />
                                                                 <TextField fx:id="areaInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                                             </children>
                                                         </HBox>
@@ -225,13 +245,6 @@ License:    Apache License Version 2.0
                                                         </HBox>
                                                         <Label alignment="CENTER_RIGHT" text="%Comments" />
                                                         <TextArea fx:id="commentsArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="100.0" prefHeight="200.0" prefWidth="600.0" wrapText="true" VBox.vgrow="ALWAYS" />
-                                                        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="1047.0" maxWidth="1.7976931348623157E308" spacing="5.0" />
-                                                        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="1052.0" maxWidth="1.7976931348623157E308" spacing="5.0" />
-                                                        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="1169.0" maxWidth="1.7976931348623157E308" spacing="5.0" />
-                                                        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="1174.0" maxWidth="1.7976931348623157E308" spacing="5.0" />
-                                                        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="1179.0" maxWidth="1.7976931348623157E308" spacing="5.0" />
-                                                        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="1164.0" maxWidth="1.7976931348623157E308" spacing="5.0" />
-                                                        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="1159.0" maxWidth="1.7976931348623157E308" spacing="5.0" />
                                                     </children>
                                                     <padding>
                                                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

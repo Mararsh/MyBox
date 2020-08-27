@@ -19,7 +19,7 @@ import mara.mybox.data.CustomizedLanguage;
 import mara.mybox.db.TableSystemConf;
 import mara.mybox.db.TableUserConf;
 import mara.mybox.fxml.ControlStyle;
-import static mara.mybox.value.CommonValues.BundleEnUS;
+import static mara.mybox.value.CommonValues.BundleEn;
 import static mara.mybox.value.CommonValues.BundleZhCN;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -54,7 +54,6 @@ public class AppVariables {
     public static String lastError;
     public static SSLSocketFactory defaultSSLSocketFactory;
     public static HostnameVerifier defaultHostnameVerifier;
-    public static String DaoDeMapVersion, DaoDeMapWebKey, DaoDeMapWebServiceKey;
 
     public AppVariables() {
     }
@@ -74,9 +73,6 @@ public class AppVariables {
             controlDisplayText = AppVariables.getUserConfigBoolean("ControlDisplayText", false);
             ImagePopCooridnate = AppVariables.getUserConfigBoolean("ImagePopCooridnate", false);
             disableHiDPI = DerbyFailAsked = false;
-            DaoDeMapVersion = AppVariables.getUserConfigValue("DaoDeMapVersion", "1.4.15");
-            DaoDeMapWebKey = AppVariables.getUserConfigValue("DaoDeMapWebKey", "06b9e078a51325a843dfefd57ffd876c");
-            DaoDeMapWebServiceKey = AppVariables.getUserConfigValue("DaoDeMapWebServiceKey", "d7444d9a7fae01fa850236d909ad4450");
             lastError = null;
             if (defaultSSLSocketFactory == null) {
                 defaultSSLSocketFactory = HttpsURLConnection.getDefaultSSLSocketFactory();
@@ -94,12 +90,12 @@ public class AppVariables {
     }
 
     public static String getLanguage() {
-        String lang = getUserConfigValue("language", Locale.getDefault().getLanguage().toLowerCase());
-        return lang != null ? lang : Locale.getDefault().getLanguage().toLowerCase();
+        String lang = getUserConfigValue("language", Locale.getDefault().getLanguage());
+        return lang != null ? lang.toLowerCase() : Locale.getDefault().getLanguage().toLowerCase();
     }
 
     public static boolean isChinese() {
-        return AppVariables.getLanguage().startsWith("zh");
+        return getLanguage().startsWith("zh");
     }
 
     public static ResourceBundle setLanguage(String lang) {
@@ -115,35 +111,20 @@ public class AppVariables {
         if (lang == null) {
             lang = Locale.getDefault().getLanguage().toLowerCase();
         }
-        switch (lang.toLowerCase()) {
-            case "zh":
-                AppVariables.currentBundle = CommonValues.BundleZhCN;
-                break;
-            case "en":
-                AppVariables.currentBundle = CommonValues.BundleEnUS;
-                break;
-            default: {
-                try {
-                    AppVariables.currentBundle = new CustomizedLanguage(lang);
-                } catch (Exception e) {
-                }
-                if (AppVariables.currentBundle == null) {
-                    AppVariables.currentBundle = CommonValues.BundleEnUS;
-                }
+        if (lang.startsWith("zh")) {
+            AppVariables.currentBundle = CommonValues.BundleZhCN;
+        } else if (lang.startsWith("en")) {
+            AppVariables.currentBundle = CommonValues.BundleEn;
+        } else {
+            try {
+                AppVariables.currentBundle = new CustomizedLanguage(lang);
+            } catch (Exception e) {
+            }
+            if (AppVariables.currentBundle == null) {
+                AppVariables.currentBundle = CommonValues.BundleEn;
             }
         }
         return AppVariables.currentBundle;
-    }
-
-    public static String message(String thestr) {
-        try {
-            if (currentBundle == null) {
-                currentBundle = CommonValues.BundleEnUS;
-            }
-            return currentBundle.getString(thestr);
-        } catch (Exception e) {
-            return thestr;
-        }
     }
 
     public static String message(String language, String thestr) {
@@ -154,16 +135,12 @@ public class AppVariables {
             if (language == null) {
                 language = Locale.getDefault().getLanguage().toLowerCase();
             }
-            String value = thestr;
-            switch (language.toLowerCase()) {
-                case "zh":
-                case "zh_cn":
-                    value = BundleZhCN.getString(thestr);
-                    break;
-                case "en":
-                case "en_us":
-                    value = BundleEnUS.getString(thestr);
-                    break;
+            String value;
+            String lang = language.toLowerCase();
+            if (lang.startsWith("zh")) {
+                value = BundleZhCN.getString(thestr);
+            } else {
+                value = BundleEn.getString(thestr);
             }
 //            logger.debug(language + " " + thestr + " " + value);
             return value;
@@ -171,6 +148,50 @@ public class AppVariables {
 //            logger.debug(e.toString());
             return thestr;
         }
+    }
+
+    public static String message(String thestr) {
+        try {
+            if (currentBundle == null) {
+                currentBundle = CommonValues.BundleEn;
+            }
+            return currentBundle.getString(thestr);
+        } catch (Exception e) {
+            return thestr;
+        }
+    }
+
+    public static ResourceBundle getTableBundle() {
+        return getTableBundle(getLanguage());
+    }
+
+    public static ResourceBundle getTableBundle(String language) {
+        String lang = language;
+        if (language == null) {
+            lang = Locale.getDefault().getLanguage();
+        }
+        lang = lang.toLowerCase();
+        ResourceBundle bundle;
+        if (lang.startsWith("zh")) {
+            bundle = CommonValues.TableBundleZhCN;
+        } else {
+            bundle = CommonValues.TableBundleEn;
+        }
+        return bundle;
+    }
+
+    public static String tableMessage(String language, String thestr) {
+        try {
+            String s = thestr.toLowerCase();
+            ResourceBundle bundle = getTableBundle(language);
+            return bundle.getString(s);
+        } catch (Exception e) {
+            return thestr;
+        }
+    }
+
+    public static String tableMessage(String thestr) {
+        return tableMessage(getLanguage(), thestr);
     }
 
     public static TimeZone getTimeZone() {

@@ -46,7 +46,7 @@ public class WebBrowserController extends BaseController {
     protected Map<Tab, WebBrowserBoxController> tabControllers;
 
     @FXML
-    protected Button loadButton, plusButton;
+    protected Button loadButton;
     @FXML
     protected TabPane tabPane;
     @FXML

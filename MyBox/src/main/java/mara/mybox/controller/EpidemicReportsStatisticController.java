@@ -28,6 +28,7 @@ import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.TableEpidemicReport;
 import mara.mybox.db.TableGeographyCode;
 import mara.mybox.tools.DateTools;
+import mara.mybox.tools.GeographyCodeTools;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
@@ -123,7 +124,7 @@ public class EpidemicReportsStatisticController extends DataTaskController {
             Earch = TableGeographyCode.earth(conn);
             if (Earch == null) {
                 updateLogs(message("LoadingPredefinedGeographyCodes"), true);
-                GeographyCode.predefined(conn);
+                GeographyCodeTools.importPredefined(conn);
                 Earch = TableGeographyCode.earth(conn);
                 if (Earch == null) {
                     updateLogs(message("Failed"), true);
@@ -332,7 +333,7 @@ public class EpidemicReportsStatisticController extends DataTaskController {
                         changed = true;
                         info += message("Dead") + ": " + rdead + "->" + dead + "  ";
                     }
-                    info = report.getEpid() + " " + level + "  " + code.getName() + " "
+                    info = report.getId() + " " + level + "  " + code.getName() + " "
                             + date + "  " + info;
                     if (changed) {
                         report.setSource(4);

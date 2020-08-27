@@ -37,7 +37,7 @@ public class CustomizedLanguage extends ResourceBundle {
             value = items.get(key);
         }
         if (value == null) {
-            value = CommonValues.BundleEnUS.getString(key);
+            value = CommonValues.BundleEn.getString(key);
         }
         if (value == null) {
             value = key;
@@ -47,11 +47,11 @@ public class CustomizedLanguage extends ResourceBundle {
 
     @Override
     public Enumeration<String> getKeys() {
-        return CommonValues.BundleBase.getKeys();
+        return CommonValues.BundleEn.getKeys();
     }
 
     @Override
     protected Set<String> handleKeySet() {
-        return CommonValues.BundleBase.keySet();
+        return CommonValues.BundleEn.keySet();
     }
 }

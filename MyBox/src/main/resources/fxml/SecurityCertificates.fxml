@@ -66,7 +66,7 @@ License:    Apache License Version 2.0
                             <children>
                                 <HBox alignment="CENTER_LEFT" spacing="5.0">
                                     <children>
-                                        <Button fx:id="plusButton" mnemonicParsing="false" onAction="#plusAction">
+                                        <Button fx:id="addButton" mnemonicParsing="false" onAction="#addAction">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -87,16 +87,16 @@ License:    Apache License Version 2.0
                                         <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                     </children>
                                 </HBox>
-                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="200.0" prefViewportWidth="873.0" VBox.vgrow="ALWAYS">
-                           <content>
-                              <TableView fx:id="tableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                                <columns>
-                                  <TableColumn fx:id="aliasColumn" prefWidth="300.0" text="%Alias" />
-                                  <TableColumn fx:id="timeColumn" minWidth="0.0" prefWidth="150.0" text="%CreateTime" />
-                                </columns>
-                              </TableView>
-                           </content>
-                        </ScrollPane>
+                                <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="200.0" prefViewportWidth="873.0" VBox.vgrow="ALWAYS">
+                                    <content>
+                                        <TableView fx:id="tableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                            <columns>
+                                                <TableColumn fx:id="aliasColumn" prefWidth="300.0" text="%Alias" />
+                                                <TableColumn fx:id="timeColumn" minWidth="0.0" prefWidth="150.0" text="%CreateTime" />
+                                            </columns>
+                                        </TableView>
+                                    </content>
+                                </ScrollPane>
                             </children>
                         </VBox>
                         <TextArea fx:id="certArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />

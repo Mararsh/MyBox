@@ -123,7 +123,7 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="plusButton" mnemonicParsing="false" onAction="#newAction">
+                <Button fx:id="addButton" mnemonicParsing="false" onAction="#newAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>

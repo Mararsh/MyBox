@@ -1470,7 +1470,7 @@ public class GameElimniationController extends BaseController {
             totalScore += add;
             long cost = new Date().getTime() - startTime.getTime();
             scoreLabel.setText(message("Score") + ": " + totalScore + "  " + message("Cost") + ": "
-                    + DateTools.showSeconds(cost / 1000));
+                    + DateTools.timeDuration(cost));
 
             if (add > 0) {
                 if (scoreCheck.isSelected()) {

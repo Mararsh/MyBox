@@ -44,46 +44,41 @@ License:    Apache License Version 2.0
                                             </padding>
                                             <children>
                                                 <Label text="%DownloadAddress" />
-                                                <Hyperlink onAction="#link" text="https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series/" wrapText="true" />
-                                                <Label text="%TextSeparatedByCommas" />
-                                                <Label styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="Province/State,Country/Region,Lat,Long,1/22/20,1/23/20..." wrapText="true" />
-                                    <Label text="%JHUTimesComments" wrapText="true">
-                                       <VBox.margin>
-                                          <Insets top="10.0" />
-                                       </VBox.margin>
-                                    </Label>
+                                                <Hyperlink fx:id="link" onAction="#link" text="https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series/" wrapText="true" />
+                                                <Label text="%EpidemicReportJHUTimesComments" wrapText="true" VBox.vgrow="NEVER" />
                                             </children>
                                         </VBox>
                                     </content>
                                 </ScrollPane>
                             </content>
                         </Tab>
-                  <Tab fx:id="optionsTab" text="%Options">
-                     <content>
-                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="537.0" prefViewportWidth="418.0">
-                           <content>
-                              <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
-                                 <children>
-                                    <CheckBox fx:id="replaceCheck" mnemonicParsing="false" selected="true" text="%ReplaceExistedData" />
-                                    <Label text="%EpidemicReportEqualComments" wrapText="true">
-                                       <VBox.margin>
-                                          <Insets top="5.0" />
-                                       </VBox.margin>
-                                    </Label>
-                                    <CheckBox fx:id="statisticCheck" layoutX="20.0" layoutY="20.0" mnemonicParsing="false" selected="true" text="%EpidemicReportStatistic">
-                                       <VBox.margin>
-                                          <Insets top="10.0" />
-                                       </VBox.margin>
-                                    </CheckBox>
-                                 </children>
-                                 <padding>
-                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                 </padding>
-                              </VBox>
-                           </content>
-                        </ScrollPane>
-                     </content>
-                  </Tab>
+                        <Tab fx:id="optionsTab" text="%Options">
+                            <content>
+                                <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="537.0" prefViewportWidth="418.0">
+                                    <content>
+                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
+                                            <children>
+                                                <CheckBox fx:id="replaceCheck" mnemonicParsing="false" selected="true" text="%ReplaceExistedData" />
+                                                <CheckBox fx:id="closeWhenCompleteCheck" mnemonicParsing="false" selected="false" text="%CloseWhenComplete" />
+                                                <Label text="%EpidemicReportEqualComments" wrapText="true">
+                                                    <VBox.margin>
+                                                        <Insets top="5.0" />
+                                                    </VBox.margin>
+                                                </Label>
+                                                <CheckBox fx:id="statisticCheck" layoutX="20.0" layoutY="20.0" mnemonicParsing="false" selected="true" text="%EpidemicReportStatistic">
+                                                    <VBox.margin>
+                                                        <Insets top="10.0" />
+                                                    </VBox.margin>
+                                                </CheckBox>
+                                            </children>
+                                            <padding>
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                            </padding>
+                                        </VBox>
+                                    </content>
+                                </ScrollPane>
+                            </content>
+                        </Tab>
                         <Tab fx:id="logsTab" text="%Logs">
                             <content>
                                 <VBox fx:id="logsBox1" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
@@ -93,7 +88,7 @@ License:    Apache License Version 2.0
                                             <children>
                                                 <Label text="%MaxLines" />
                                                 <TextField fx:id="maxLinesinput" prefWidth="80.0" text="5000" />
-                                    <CheckBox fx:id="verboseCheck" mnemonicParsing="false" text="%VerboseLogs" />
+                                                <CheckBox fx:id="verboseCheck" mnemonicParsing="false" text="%VerboseLogs" />
                                                 <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearLogs">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

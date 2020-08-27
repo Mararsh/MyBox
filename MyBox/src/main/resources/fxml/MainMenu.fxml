@@ -146,12 +146,8 @@ License:    Apache License Version 2.0
                             <items>
                                 <MenuItem mnemonicParsing="false" onAction="#openGeographyCode" text="%GeographyCode" />
                                 <MenuItem mnemonicParsing="false" onAction="#openLocationInMap" text="%LocationInMap" />
-                                <Menu mnemonicParsing="false" text="%LocationApplications">
-                                    <items>
-                                        <MenuItem mnemonicParsing="false" onAction="#openLocationsData" text="%LocationsData" />
-                                        <MenuItem mnemonicParsing="false" onAction="#openLocationsDataInMap" text="%LocationsDataInMap" />
-                                    </items>
-                                </Menu>
+                                <MenuItem mnemonicParsing="false" onAction="#openLocationData" text="%LocationData" />
+                                <MenuItem mnemonicParsing="false" onAction="#openLocationTools" text="%LocationTools" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openEpidemicReports" text="%EpidemicReport" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
@@ -161,11 +157,6 @@ License:    Apache License Version 2.0
                                 <MenuItem mnemonicParsing="false" onAction="#openBarcodeDecoder" text="%BarcodeDecoder" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openMessageDigest" text="%MessageDigest" />
-                                <!--                                <Menu mnemonicParsing="false" text="%FetchDataOnInternet">
-                                    <items>
-                                    </items>
-                                </Menu>
-                                <SeparatorMenuItem mnemonicParsing="false" />-->
                                 <!--                                <Menu mnemonicParsing="false" text="%Miscellaneous">
                                     <items>
                                     </items>
@@ -211,7 +202,7 @@ License:    Apache License Version 2.0
                                 <MenuItem mnemonicParsing="false" onAction="#openMediaPlayer" text="%MediaPlayer" />
                                 <MenuItem mnemonicParsing="false" onAction="#openMediaList" text="%ManageMediaLists" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
-                                <!--<MenuItem mnemonicParsing="false" onAction="#openScreenRecorder" text="%FFmpegScreenRecorder" />-->
+                                <MenuItem mnemonicParsing="false" onAction="#openScreenRecorder" text="%FFmpegScreenRecorder" />
                                 <Menu mnemonicParsing="false" text="%FFmpegConvertMedias">
                                     <items>
                                         <MenuItem mnemonicParsing="false" onAction="#openFFmpegConvertMediaStreams" text="%FFmpegConvertMediaStreams" />
@@ -353,6 +344,7 @@ License:    Apache License Version 2.0
                         </Menu>
                         <Menu fx:id="helpMenu" mnemonicParsing="false" text="%Help">
                             <items>
+                                <!--Uncomment following line to make the function work />-->
                                 <!--<MenuItem mnemonicParsing="false" onAction="#makeIcons" text="%MakeIcons" />-->
                                 <MenuItem mnemonicParsing="false" onAction="#Shortcuts" text="%Shortcuts" />
                                 <MenuItem mnemonicParsing="false" onAction="#MyBoxProperties" text="%MyBoxProperties" />

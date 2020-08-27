@@ -1,8 +1,7 @@
 package mara.mybox.controller;
 
-import javafx.beans.value.ObservableValue;
+import java.util.List;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckBoxTreeItem;
 import mara.mybox.fxml.ConditionNode;
 import mara.mybox.fxml.ConditionTreeView;
@@ -21,31 +20,20 @@ public class ConditionTreeController extends BaseController {
 
     @FXML
     protected ConditionTreeView treeView;
-    @FXML
-    protected CheckBox allCheck;
 
     public ConditionTreeController() {
     }
 
+    @FXML
     @Override
-    public void initializeNext() {
-        try {
-            super.initializeNext();
+    public void selectAllAction() {
+        treeView.selectAll();
+    }
 
-            if (allCheck != null) {
-                allCheck.selectedProperty().addListener(
-                        (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                            if (allCheck.isSelected()) {
-                                treeView.selectAll();
-                            } else {
-                                treeView.selectNone();
-                            }
-                        });
-            }
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
+    @FXML
+    @Override
+    public void selectNoneAction() {
+        treeView.selectNone();
     }
 
     public void clearAll() {
@@ -76,15 +64,24 @@ public class ConditionTreeController extends BaseController {
         }
     }
 
-    public void check() {
+    public String check() {
         treeView.check();
         finalConditions = treeView.getFinalConditions();
         finalTitle = treeView.getFinalTitle();
+        return finalConditions;
     }
 
     public void refreshTree() {
         check();
         loadTree();
+    }
+
+    public void select(String title) {
+        treeView.select(title);
+    }
+
+    public void select(List<String> titles) {
+        treeView.select(titles);
     }
 
     /*

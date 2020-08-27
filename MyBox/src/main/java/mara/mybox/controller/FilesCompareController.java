@@ -328,7 +328,7 @@ public class FilesCompareController extends BaseController {
                     @Override
                     protected void whenSucceeded() {
                         String s = (same ? message("Same") : message("Different")) + "\n"
-                                + message("Cost") + ":" + DateTools.showTime(cost) + "\n\n"
+                                + message("Cost") + ":" + DateTools.datetimeMsDuration(cost) + "\n\n"
                                 + message("File") + " 1: \n"
                                 + MessageFormat.format(message("DigestResult"),
                                         file1.length(), digest1.length) + "\n"

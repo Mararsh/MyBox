@@ -435,7 +435,7 @@ public class FilesArrangeController extends FilesBatchController {
             s = message(currentStatus);
         }
         s += ". " + message("HandledFiles") + ": " + copyAttr.getCopiedFilesNumber() + " "
-                + message("Cost") + ": " + DateTools.showTime(cost) + ". "
+                + message("Cost") + ": " + DateTools.datetimeMsDuration(new Date(), processStartTime) + ". "
                 + message("Average") + ": " + avg + " " + message("SecondsPerItem") + ". "
                 + message("StartTime") + ": " + DateTools.datetimeToString(processStartTime) + ", "
                 + message("EndTime") + ": " + DateTools.datetimeToString(new Date());
@@ -446,7 +446,7 @@ public class FilesArrangeController extends FilesBatchController {
     public void donePost() {
         showCost();
         updateLogs(message("StartTime") + ": " + DateTools.datetimeToString(processStartTime) + "   "
-                + AppVariables.message("Cost") + ": " + DateTools.showTime(new Date().getTime() - processStartTime.getTime()), false, true);
+                + AppVariables.message("Cost") + ": " + DateTools.datetimeMsDuration(new Date(), processStartTime), false, true);
         updateLogs(AppVariables.message("TotalCheckedFiles") + ": " + copyAttr.getTotalFilesNumber() + "   "
                 + AppVariables.message("TotalCheckedDirectories") + ": " + copyAttr.getTotalDirectoriesNumber() + "   "
                 + AppVariables.message("TotalCheckedSize") + ": " + FileTools.showFileSize(copyAttr.getTotalSize()), false, true);

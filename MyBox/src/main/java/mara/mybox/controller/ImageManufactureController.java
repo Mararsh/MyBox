@@ -1585,7 +1585,7 @@ public class ImageManufactureController extends ImageViewerController {
                 info += "  " + message(opType);
             }
             if (cost > 0) {
-                info += "    " + message("Cost") + ": " + DateTools.showTime(cost);
+                info += "    " + message("Cost") + ": " + DateTools.datetimeMsDuration(cost);
             }
             bottomLabel.setText(info);
 

@@ -1,19 +1,14 @@
 package mara.mybox.controller;
 
-import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.util.Optional;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import mara.mybox.data.EpidemicReport;
-import static mara.mybox.db.DerbyBase.dbHome;
-import static mara.mybox.db.DerbyBase.login;
-import static mara.mybox.db.DerbyBase.protocol;
+import mara.mybox.db.TableBase;
+import mara.mybox.db.TableEpidemicReport;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -22,26 +17,18 @@ import mara.mybox.value.CommonValues;
  * @CreateDate 2020-04-15
  * @License Apache License Version 2.0
  */
-public class EpidemicReportsImportController extends DataImportController {
+public class EpidemicReportsImportController extends DataImportController<EpidemicReport> {
 
     public EpidemicReportsImportController() {
         baseTitle = AppVariables.message("ImportEpidemicReportJHUTimes");
     }
 
     @Override
-    public long importFile(File file) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
-            long ret = importFile(conn, file);
-            conn.commit();
-            return ret;
-        } catch (Exception e) {
-            logger.debug(e.toString());
+    public TableBase getTableDefinition() {
+        if (tableDefinition == null) {
+            tableDefinition = new TableEpidemicReport();
         }
-        return -1;
-    }
-
-    protected long importFile(Connection conn, File file) {
-        return -1;
+        return tableDefinition;
     }
 
     @Override

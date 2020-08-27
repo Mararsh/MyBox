@@ -92,7 +92,7 @@ public class EpidemicReportEditController extends GeographyCodeUserController {
     public void afterSceneLoaded() {
         try {
             super.afterSceneLoaded();
-            FxmlControl.setTooltip(timeInput, message("LocationDataTimeComments"));
+            FxmlControl.setTooltip(timeInput, message("TimeComments"));
             FxmlControl.setTooltip(epidInput, message("AssignedByMyBox"));
             FxmlControl.setTooltip(locationInput, message("ClickNodePickValue"));
 
@@ -246,7 +246,7 @@ public class EpidemicReportEditController extends GeographyCodeUserController {
                 return;
             }
             isSettingValues = true;
-            epid = report.getEpid();
+            epid = report.getId();
             selectedCode = report.getLocation();
             time = report.getTime();
             confirmed = report.getConfirmed();
@@ -350,7 +350,7 @@ public class EpidemicReportEditController extends GeographyCodeUserController {
             @Override
             protected boolean handle() {
                 EpidemicReport report = new EpidemicReport();
-                report.setEpid(epid);
+                report.setId(epid);
                 report.setDataSet(dataset);
                 report.setLocation(selectedCode);
                 report.setConfirmed(confirmed);

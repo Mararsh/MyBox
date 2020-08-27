@@ -4,11 +4,13 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
+import mara.mybox.data.CoordinateSystem;
 import mara.mybox.data.GeographyCode;
 import mara.mybox.data.GeographyCodeLevel;
 import mara.mybox.db.TableGeographyCode;
@@ -27,16 +29,19 @@ import mara.mybox.value.CommonValues;
 public class GeographyCodeEditController extends GeographyCodeUserController {
 
     protected GeographyCodeController parent;
-    protected double longitude, latitude;
+    protected double longitude, latitude, altitude, precision;
     protected long area, population;
     protected GeographyCode parentCode;
+    protected CoordinateSystem coordinateSystem;
 
     @FXML
     protected TextField gcidInput, subordinateInput, chineseInput, englishInput,
-            longitudeInput, latitudeInput,
+            longitudeInput, latitudeInput, altitudeInput, precisionInput,
             code1Input, code2Input, code3Input, code4Input, code5Input,
             alias1Input, alias2Input, alias3Input, alias4Input, alias5Input,
             areaInput, populationInput;
+    @FXML
+    protected ComboBox<String> coordinateSystemSelector;
     @FXML
     protected RadioButton globalRadio, continentRadio, countryRadio, provinceRadio, cityRadio,
             countyRadio, townRadio, villageRadio, buildingRadio, pointOfInterestRadio;
@@ -60,8 +65,9 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
     public void initializeNext() {
         try {
             super.initializeNext();
-            longitude = -200;
-            latitude = -200;
+            longitude = latitude = -200;
+            altitude = precision = 0;
+            coordinateSystem = CoordinateSystem.defaultCode();
 
             longitudeInput.textProperty().addListener(
                     (ObservableValue<? extends String> ov, String oldv, String newv) -> {
@@ -72,6 +78,29 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
                     (ObservableValue<? extends String> ov, String oldv, String newv) -> {
                         checkLatitude();
                     });
+
+            altitudeInput.textProperty().addListener(
+                    (ObservableValue<? extends String> ov, String oldv, String newv) -> {
+                        checkAltitude();
+                    });
+
+            precisionInput.textProperty().addListener(
+                    (ObservableValue<? extends String> ov, String oldv, String newv) -> {
+                        checkPrecision();
+                    });
+
+            for (CoordinateSystem.Value item : CoordinateSystem.Value.values()) {
+                coordinateSystemSelector.getItems().add(message(item.name()));
+            }
+            coordinateSystemSelector.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    return;
+                }
+                coordinateSystem = new CoordinateSystem(newValue);
+                AppVariables.setUserConfigValue("GeographyCodeCoordinateSystem", newValue);
+            });
+            coordinateSystemSelector.getSelectionModel().select(
+                    AppVariables.getUserConfigValue("GeographyCodeCoordinateSystem", message("CGCS2000")));
 
             areaInput.textProperty().addListener(
                     (ObservableValue<? extends String> ov, String oldv, String newv) -> {
@@ -104,6 +133,7 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
         locationController.loadTree(this);
         globalRadio.setDisable(true);
         continentRadio.setDisable(true);
+
     }
 
     protected void checklongitude() {
@@ -134,7 +164,7 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
                 latitude = -200;
                 return;
             }
-            double v = Double.valueOf(latitudeInput.getText().trim());
+            double v = Double.valueOf(s);
             if (v >= -90 && v <= 90) {
                 latitude = v;
                 latitudeInput.setStyle(null);
@@ -143,6 +173,36 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
             }
         } catch (Exception e) {
             latitudeInput.setStyle(badStyle);
+        }
+    }
+
+    protected void checkAltitude() {
+        try {
+            String s = altitudeInput.getText().trim();
+            if (s.isBlank()) {
+                altitudeInput.setStyle(null);
+                altitude = Double.MAX_VALUE;
+                return;
+            }
+            altitude = Double.valueOf(s);
+            altitudeInput.setStyle(null);
+        } catch (Exception e) {
+            altitudeInput.setStyle(badStyle);
+        }
+    }
+
+    protected void checkPrecision() {
+        try {
+            String s = precisionInput.getText().trim();
+            if (s.isBlank()) {
+                precisionInput.setStyle(null);
+                precision = Double.MAX_VALUE;
+                return;
+            }
+            precision = Double.valueOf(s);
+            precisionInput.setStyle(null);
+        } catch (Exception e) {
+            precisionInput.setStyle(badStyle);
         }
     }
 
@@ -178,24 +238,21 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
     public void locationAction() {
         try {
             LocationInMapController controller = (LocationInMapController) openStage(CommonValues.LocationInMapFxml);
-            controller.geographyCodeEditController = this;
-            if (longitude >= -180 && longitude <= 180 && latitude >= -90 && latitude <= 90) {
-                controller.load(longitude, latitude, 3);
-            }
-            controller.getMyStage().setAlwaysOnTop(true);
+            controller.consumer = this;
+            controller.setCoordinate(longitude, latitude);
             controller.getMyStage().toFront();
         } catch (Exception e) {
             logger.error(e.toString());
         }
     }
 
-    public void loadCode(GeographyCode code) {
+    @Override
+    public void setGeographyCode(GeographyCode code) {
         try {
-            if (code == null || code.getLevelCode() == null) {
+            if (code == null) {
                 return;
             }
-            // can not locate the code since the tree is loaded lazily
-
+            // can not locate the code in the tree since the tree is loaded lazily
             isSettingValues = true;
             gcidInput.setText(code.getGcid() + "");
             predefinedCheck.setSelected(code.isPredefined());
@@ -229,12 +286,10 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
                 case 9:
                     buildingRadio.setSelected(true);
                     break;
-//                    case 10:
-//                        pointOfInterestRadio.setSelected(true);
-//                        break;
+                case 10:
                 default:
-                    cityRadio.setSelected(true);
-                    break;
+                    level = 10;
+                    pointOfInterestRadio.setSelected(true);
             }
             if (level < 3) {
                 predefinedCheck.setDisable(true);
@@ -248,10 +303,25 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
 
             if (code.getLongitude() >= -180 && code.getLongitude() <= 180) {
                 longitudeInput.setText(code.getLongitude() + "");
+            } else {
+                longitudeInput.clear();
             }
             if (code.getLatitude() >= -90 && code.getLatitude() <= 90) {
                 latitudeInput.setText(code.getLatitude() + "");
+            } else {
+                latitudeInput.clear();
             }
+            if (code.getAltitude() != Double.MAX_VALUE) {
+                altitudeInput.setText(code.getAltitude() + "");
+            } else {
+                altitudeInput.clear();
+            }
+            if (code.getPrecision() != Double.MAX_VALUE) {
+                precisionInput.setText(code.getPrecision() + "");
+            } else {
+                precisionInput.clear();
+            }
+            coordinateSystemSelector.getSelectionModel().select(message(code.getCoordinateSystem().name()));
             if (code.getChineseName() != null) {
                 chineseInput.setText(code.getChineseName());
             }
@@ -350,11 +420,8 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
                 level = new GeographyCodeLevel(8);
             } else if (buildingRadio.isSelected()) {
                 level = new GeographyCodeLevel(9);
-//            } else if (pointOfInterestRadio.isSelected()) {
-//                level = new GeographyCodeLevel(10);
             } else {
-                popError(message("InvalidData"));
-                return;
+                level = new GeographyCodeLevel(10);
             }
             if (selectedCode == null) {
                 if (!globalRadio.isSelected()) {
@@ -362,6 +429,7 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
                     return;
                 }
             } else if (selectedCode.getLevel() >= level.getLevel()) {
+                logger.debug(selectedCode.getLevel() + " " + level.getLevel());
                 popError(message("LevelSmallerThanParent"));
                 return;
             }
@@ -377,6 +445,9 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
             newCode.setLevelCode(level);
             newCode.setLongitude(longitude);
             newCode.setLatitude(latitude);
+            newCode.setAltitude(altitude);
+            newCode.setPrecision(precision);
+            newCode.setCoordinateSystem(coordinateSystem);
             newCode.setArea(area);
             newCode.setPopulation(population);
 
@@ -432,11 +503,19 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
                 locationController.removeNode(newCode);
                 locationController.addNode(selectedCode, newCode);
             }
+            gcidInput.setText(newCode.getGcid() + "");
             popSuccessful();
 
         } catch (Exception e) {
             logger.error(e.toString());
         }
+    }
+
+    @FXML
+    @Override
+    public void copyAction() {
+        gcidInput.setText("");
+        popInformation(message("DataCopyComments"));
     }
 
 }

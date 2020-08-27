@@ -26,6 +26,7 @@ import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.TableGeographyCode;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.GeographyCodeTools;
 import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonValues;
 import org.apache.commons.csv.CSVFormat;
@@ -312,10 +313,10 @@ public class ChineseGeographyCodes {
                         cities.add(cityCode);
                     }
                 }
-                GeographyCode.writeInternalCSV(new File("D:\\玛瑞\\Mybox\\地理代码\\ChinaNationalBureauOfStatistic\\provinces_internal.csv"), provinces);
-                GeographyCode.writeExternalCSV(new File("D:\\玛瑞\\Mybox\\地理代码\\ChinaNationalBureauOfStatistic\\provinces_external.csv"), provinces);
-                GeographyCode.writeInternalCSV(new File("D:\\玛瑞\\Mybox\\地理代码\\ChinaNationalBureauOfStatistic\\cities_internal.csv"), cities);
-                GeographyCode.writeExternalCSV(new File("D:\\玛瑞\\Mybox\\地理代码\\ChinaNationalBureauOfStatistic\\cities_external.csv"), cities);
+                GeographyCodeTools.writeInternalCSV(new File("D:\\玛瑞\\Mybox\\地理代码\\ChinaNationalBureauOfStatistic\\provinces_internal.csv"), provinces);
+                GeographyCodeTools.writeExternalCSV(new File("D:\\玛瑞\\Mybox\\地理代码\\ChinaNationalBureauOfStatistic\\provinces_external.csv"), provinces);
+                GeographyCodeTools.writeInternalCSV(new File("D:\\玛瑞\\Mybox\\地理代码\\ChinaNationalBureauOfStatistic\\cities_internal.csv"), cities);
+                GeographyCodeTools.writeExternalCSV(new File("D:\\玛瑞\\Mybox\\地理代码\\ChinaNationalBureauOfStatistic\\cities_external.csv"), cities);
                 FileTools.writeFile(new File("D:\\玛瑞\\Mybox\\地理代码\\ChinaNationalBureauOfStatistic\\citiesLinks.txt"), currentLinks.toString(), Charset.forName("utf-8"));
             }
         } catch (Exception e) {
@@ -453,8 +454,8 @@ public class ChineseGeographyCodes {
                         counties.add(countyCode);
                     }
                 }
-                GeographyCode.writeInternalCSV(new File("D:\\玛瑞\\Mybox\\地理代码\\ChinaNationalBureauOfStatistic\\counties_internal.csv"), counties);
-                GeographyCode.writeExternalCSV(new File("D:\\玛瑞\\Mybox\\地理代码\\ChinaNationalBureauOfStatistic\\counties_external.csv"), counties);
+                GeographyCodeTools.writeInternalCSV(new File("D:\\玛瑞\\Mybox\\地理代码\\ChinaNationalBureauOfStatistic\\counties_internal.csv"), counties);
+                GeographyCodeTools.writeExternalCSV(new File("D:\\玛瑞\\Mybox\\地理代码\\ChinaNationalBureauOfStatistic\\counties_external.csv"), counties);
                 FileTools.writeFile(new File("D:\\玛瑞\\Mybox\\地理代码\\ChinaNationalBureauOfStatistic\\countiesLinks.txt"), currentLinks.toString(), Charset.forName("utf-8"));
 
             }
@@ -610,8 +611,8 @@ public class ChineseGeographyCodes {
                             towns.add(townCode);
                         }
                     }
-                    GeographyCode.writeInternalCSV(new File("D:\\玛瑞\\Mybox\\地理代码\\ChinaNationalBureauOfStatistic\\internal\\" + provinceName + "_towns_internal.csv"), towns);
-                    GeographyCode.writeExternalCSV(new File("D:\\玛瑞\\Mybox\\地理代码\\ChinaNationalBureauOfStatistic\\external\\" + provinceName + "_towns_external.csv"), towns);
+                    GeographyCodeTools.writeInternalCSV(new File("D:\\玛瑞\\Mybox\\地理代码\\ChinaNationalBureauOfStatistic\\internal\\" + provinceName + "_towns_internal.csv"), towns);
+                    GeographyCodeTools.writeExternalCSV(new File("D:\\玛瑞\\Mybox\\地理代码\\ChinaNationalBureauOfStatistic\\external\\" + provinceName + "_towns_external.csv"), towns);
                     FileTools.writeFile(new File("D:\\玛瑞\\Mybox\\地理代码\\ChinaNationalBureauOfStatistic\\" + provinceName + "_towns_Links.txt"), currentLinks.toString());
                     logger.debug(provinceName + " " + towns.size() + " 花费:" + ((new Date().getTime() - start) / 1000) + "秒");
                 }
@@ -681,9 +682,9 @@ public class ChineseGeographyCodes {
                             villages.add(villageCode);
                         }
                     }
-                    GeographyCode.writeInternalCSV(
+                    GeographyCodeTools.writeInternalCSV(
                             new File("D:\\玛瑞\\Mybox\\地理代码\\中国国家统计局\\villages\\internal\\" + provinceName + "_villages_internal.csv"), villages);
-                    GeographyCode.writeExternalCSV(
+                    GeographyCodeTools.writeExternalCSV(
                             new File("D:\\玛瑞\\Mybox\\地理代码\\中国国家统计局\\villages\\external\\" + provinceName + "_villages_external.csv"), villages);
                     logger.debug(provinceName + " towns:" + towns.size() + " villages:" + villages.size() + " 花费:" + ((new Date().getTime() - start) / 1000) + "秒");
                 }
@@ -702,14 +703,14 @@ public class ChineseGeographyCodes {
                             CSVFormat.DEFAULT.withFirstRecordAsHeader().withDelimiter(',').withTrim().withNullString(""))) {
                 List<String> names = parser.getHeaderNames();
                 for (CSVRecord record : parser) {
-                    GeographyCode code = GeographyCode.readIntenalRecord(names, record);
+                    GeographyCode code = GeographyCodeTools.readIntenalRecord(names, record);
                     String sql = "SELECT * FROM Geography_Code WHERE "
                             + " level=6  AND country=" + chinaid + " AND gcid=" + code.getGcid()
                             + "  ORDER BY gcid ";
                     GeographyCode dbcode = TableGeographyCode.queryCode(conn, sql, true);
                     if (dbcode == null) {
                         logger.debug(code.getFullName() + "  " + code.getGcid());
-                        GeographyCode query = GeographyCode.geoCode(code.getFullName());
+                        GeographyCode query = GeographyCodeTools.geoCode(CoordinateSystem.CGCS2000(), code.getFullName());
                         if (query == null || query.getLongitude() < -180) {
                             logger.debug(code.getFullName() + "  " + code.getGcid());
                         } else {
@@ -743,14 +744,14 @@ public class ChineseGeographyCodes {
                             CSVFormat.DEFAULT.withFirstRecordAsHeader().withDelimiter(',').withTrim().withNullString(""))) {
                 List<String> names = parser.getHeaderNames();
                 for (CSVRecord record : parser) {
-                    GeographyCode code = GeographyCode.readIntenalRecord(names, record);
+                    GeographyCode code = GeographyCodeTools.readIntenalRecord(names, record);
                     String sql = "SELECT * FROM Geography_Code WHERE "
                             + " country=" + chinaid + " AND gcid=" + code.getGcid() + "  AND "
                             + " level=7  ORDER BY gcid ";
                     GeographyCode dbcode = TableGeographyCode.queryCode(conn, sql, true);
                     if (dbcode == null) {
                         logger.debug(code.getFullName() + "  " + code.getGcid());
-                        GeographyCode query = GeographyCode.geoCode(code.getFullName());
+                        GeographyCode query = GeographyCodeTools.geoCode(CoordinateSystem.CGCS2000(), code.getFullName());
                         if (query == null || query.getLongitude() < -180) {
                             logger.debug(code.getFullName() + "  " + code.getGcid());
                         } else {
@@ -785,7 +786,7 @@ public class ChineseGeographyCodes {
                 provinces = TableGeographyCode.queryCodes(conn, sql, true);
                 for (GeographyCode province : provinces) {
                     provinceName = province.getChineseName();
-                    GeographyCode gcode = GeographyCode.geoCode(provinceName);
+                    GeographyCode gcode = GeographyCodeTools.geoCode(CoordinateSystem.CGCS2000(), provinceName);
                     if (gcode == null || gcode.getLongitude() < -180) {
                         logger.debug(province.getGcid() + " " + provinceName);
                     } else {
@@ -805,8 +806,8 @@ public class ChineseGeographyCodes {
                     }
                 }
             }
-            GeographyCode.writeInternalCSV(new File("D:\\玛瑞\\Mybox\\地理代码\\mybox地理代码\\Geography_Code_China\\internal_csv\\Geography_Code_china_provinces_internal.csv"), provinces);
-            GeographyCode.writeExternalCSV(new File("D:\\玛瑞\\Mybox\\地理代码\\mybox地理代码\\Geography_Code_China\\external_csv\\Geography_Code_china_provinces_external.csv"), provinces);
+            GeographyCodeTools.writeInternalCSV(new File("D:\\玛瑞\\Mybox\\地理代码\\mybox地理代码\\Geography_Code_China\\internal_csv\\Geography_Code_china_provinces_internal.csv"), provinces);
+            GeographyCodeTools.writeExternalCSV(new File("D:\\玛瑞\\Mybox\\地理代码\\mybox地理代码\\Geography_Code_China\\external_csv\\Geography_Code_china_provinces_external.csv"), provinces);
         } catch (Exception e) {
             logger.debug(e.toString());
         }
@@ -817,7 +818,7 @@ public class ChineseGeographyCodes {
             List<GeographyCode> fixed = new ArrayList<>();
             try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                      Statement statement = conn.createStatement()) {
-                cities = GeographyCode.readInternalCSV(new File("D:\\玛瑞\\Mybox\\地理代码\\ChinaNationalBureauOfStatistic\\internal\\cities_internal.csv"));
+                cities = GeographyCodeTools.readInternalCSV(new File("D:\\玛瑞\\Mybox\\地理代码\\ChinaNationalBureauOfStatistic\\internal\\cities_internal.csv"));
                 for (GeographyCode city : cities) {
                     String sql = "SELECT * FROM Geography_Code WHERE "
                             + " country=" + chinaid + " AND  "
@@ -830,7 +831,7 @@ public class ChineseGeographyCodes {
                         continue;
                     }
                     String fullname = city.getFullName();
-                    GeographyCode gcode = GeographyCode.geoCode(fullname);
+                    GeographyCode gcode = GeographyCodeTools.geoCode(CoordinateSystem.CGCS2000(), fullname);
 //                    logger.debug(fullname + "  " + city.getDataid()
 //                            + "  db " + cityCode.getLongitude() + " " + cityCode.getLatitude());
                     if (gcode == null || gcode.getLongitude() < -180) {
@@ -853,8 +854,8 @@ public class ChineseGeographyCodes {
                     fixed.add(cityCode);
                 }
             }
-            GeographyCode.writeInternalCSV(new File("D:\\玛瑞\\Mybox\\地理代码\\mybox地理代码\\Geography_Code_China\\internal_csv\\Geography_Code_china_cities_internal.csv"), fixed);
-            GeographyCode.writeExternalCSV(new File("D:\\玛瑞\\Mybox\\地理代码\\mybox地理代码\\Geography_Code_China\\external_csv\\Geography_Code_china_cities_external.csv"), fixed);
+            GeographyCodeTools.writeInternalCSV(new File("D:\\玛瑞\\Mybox\\地理代码\\mybox地理代码\\Geography_Code_China\\internal_csv\\Geography_Code_china_cities_internal.csv"), fixed);
+            GeographyCodeTools.writeExternalCSV(new File("D:\\玛瑞\\Mybox\\地理代码\\mybox地理代码\\Geography_Code_China\\external_csv\\Geography_Code_china_cities_external.csv"), fixed);
 
         } catch (Exception e) {
             logger.debug(e.toString());
@@ -866,7 +867,7 @@ public class ChineseGeographyCodes {
             List<GeographyCode> fixed = new ArrayList<>();
             try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                      Statement statement = conn.createStatement()) {
-                counties = GeographyCode.readInternalCSV(new File("D:\\玛瑞\\Mybox\\地理代码\\ChinaNationalBureauOfStatistic\\internal\\counties_internal.csv"));
+                counties = GeographyCodeTools.readInternalCSV(new File("D:\\玛瑞\\Mybox\\地理代码\\ChinaNationalBureauOfStatistic\\internal\\counties_internal.csv"));
                 for (GeographyCode county : counties) {
                     String sql = "SELECT * FROM Geography_Code WHERE "
                             + " country=" + chinaid + " AND  "
@@ -886,7 +887,7 @@ public class ChineseGeographyCodes {
                         fullname += countyCode.getCityCode().getAlias1();
                     }
                     fullname += countyCode.getChineseName();
-                    GeographyCode gcode = GeographyCode.geoCode("a389d47ae369e57e0c2c7e32e845d1b0", fullname);
+                    GeographyCode gcode = GeographyCodeTools.geoCode(CoordinateSystem.CGCS2000(), fullname);
 //                    logger.debug(fullname + "  " + city.getDataid()
 //                            + "  db " + cityCode.getLongitude() + " " + cityCode.getLatitude());
                     if (gcode == null || gcode.getLongitude() < -180) {
@@ -909,8 +910,8 @@ public class ChineseGeographyCodes {
                     fixed.add(countyCode);
                 }
             }
-            GeographyCode.writeInternalCSV(new File("D:\\玛瑞\\Mybox\\地理代码\\mybox地理代码\\Geography_Code_China\\internal_csv\\Geography_Code_china_counties_internal.csv"), fixed);
-            GeographyCode.writeExternalCSV(new File("D:\\玛瑞\\Mybox\\地理代码\\mybox地理代码\\Geography_Code_China\\external_csv\\Geography_Code_china_counties_external.csv"), fixed);
+            GeographyCodeTools.writeInternalCSV(new File("D:\\玛瑞\\Mybox\\地理代码\\mybox地理代码\\Geography_Code_China\\internal_csv\\Geography_Code_china_counties_internal.csv"), fixed);
+            GeographyCodeTools.writeExternalCSV(new File("D:\\玛瑞\\Mybox\\地理代码\\mybox地理代码\\Geography_Code_China\\external_csv\\Geography_Code_china_counties_external.csv"), fixed);
 
         } catch (Exception e) {
             logger.debug(e.toString());
@@ -955,7 +956,7 @@ public class ChineseGeographyCodes {
 //                        logger.debug(town.getDataid() + " " + town.getCity() + " " + town.getCityName()
 //                                + " " + (town.getCityCode() != null) + " " + town.getCityCode().getAlias1() + " " + fullname);
                         String key = keys.get((count++) / 5500);
-                        GeographyCode gcode = GeographyCode.geoCode(key, fullname);
+                        GeographyCode gcode = GeographyCodeTools.geoCode(CoordinateSystem.CGCS2000(), fullname);
 
                         if (count % 500 == 0) {
                             logger.debug(town.getGcid() + " " + fullname);
@@ -981,10 +982,10 @@ public class ChineseGeographyCodes {
                             TableGeographyCode.update(conn, town);
                         }
                     }
-                    GeographyCode.writeInternalCSV(
+                    GeographyCodeTools.writeInternalCSV(
                             new File("D:\\玛瑞\\Mybox\\地理代码\\mybox地理代码\\Geography_Code_China\\internal_csv\\china_province_towns_internal\\"
                                     + provinceName + "_towns_internal.csv"), towns);
-                    GeographyCode.writeExternalCSV(
+                    GeographyCodeTools.writeExternalCSV(
                             new File("D:\\玛瑞\\Mybox\\地理代码\\mybox地理代码\\Geography_Code_China\\external_csv\\china_province_towns_external\\"
                                     + provinceName + "_towns_external.csv"), towns);
                 }
@@ -1031,7 +1032,7 @@ public class ChineseGeographyCodes {
                 String key = "";
                 for (GeographyCode province : provinces) {
                     provinceName = province.getChineseName();
-                    villages = GeographyCode.readInternalCSV(
+                    villages = GeographyCodeTools.readInternalCSV(
                             new File("D:\\玛瑞\\Mybox\\地理代码\\中国国家统计局\\villages\\internal\\" + provinceName + "_villages_internal.csv"));
                     logger.debug(provinceName + "  " + villages.size());
                     long start = new Date().getTime();
@@ -1052,10 +1053,10 @@ public class ChineseGeographyCodes {
                             lastKey = keyIndex;
                             if (!coordinates.isEmpty()) {
                                 int filelIndex = keyIndex + 34;
-                                GeographyCode.writeInternalCSV(
+                                GeographyCodeTools.writeInternalCSV(
                                         new File("D:\\玛瑞\\Mybox\\地理代码\\mybox地理代码\\中文\\中国村庄\\china_province_villages_internal\\"
                                                 + provinceName + "_villages_internal_" + filelIndex + ".csv"), coordinates, false);
-                                GeographyCode.writeExternalCSV(
+                                GeographyCodeTools.writeExternalCSV(
                                         new File("D:\\玛瑞\\Mybox\\地理代码\\mybox地理代码\\中文\\中国村庄\\china_province_villages_external\\"
                                                 + provinceName + "_villages_external_" + filelIndex + ".csv"), coordinates, false);
                                 logger.debug(provinceName + " villages: " + filelIndex + " " + coordinates.size() + " 花费:" + ((new Date().getTime() - start) / 1000) + "秒");
@@ -1064,7 +1065,7 @@ public class ChineseGeographyCodes {
                             }
 
                         }
-                        GeographyCode gcode = GeographyCode.geoCode(key, fullname);
+                        GeographyCode gcode = GeographyCodeTools.geoCode(CoordinateSystem.CGCS2000(), fullname);
                         if (gcode == null || gcode.getLongitude() < -180) {
                             logger.debug(village.getGcid() + " " + fullname);
                         } else {
@@ -1079,10 +1080,10 @@ public class ChineseGeographyCodes {
                     }
                     if (!coordinates.isEmpty()) {
                         int filelIndex = keyIndex + 35;
-                        GeographyCode.writeInternalCSV(
+                        GeographyCodeTools.writeInternalCSV(
                                 new File("D:\\玛瑞\\Mybox\\地理代码\\mybox地理代码\\中文\\中国村庄\\china_province_villages_internal\\"
                                         + provinceName + "_villages_internal_" + filelIndex + ".csv"), coordinates, false);
-                        GeographyCode.writeExternalCSV(
+                        GeographyCodeTools.writeExternalCSV(
                                 new File("D:\\玛瑞\\Mybox\\地理代码\\mybox地理代码\\中文\\中国村庄\\china_province_villages_external\\"
                                         + provinceName + "_villages_external_" + filelIndex + ".csv"), coordinates, false);
                         logger.debug(provinceName + " villages: " + filelIndex + " " + coordinates.size() + " 花费:" + ((new Date().getTime() - start) / 1000) + "秒");
@@ -1136,7 +1137,7 @@ public class ChineseGeographyCodes {
                         continue;
                     }
                     long start = new Date().getTime();
-                    villages = GeographyCode.readInternalCSV(internalFile);
+                    villages = GeographyCodeTools.readInternalCSV(internalFile);
                     logger.debug(provinceName + "  " + villages.size());
                     missed = false;
                     for (GeographyCode village : villages) {
@@ -1160,7 +1161,7 @@ public class ChineseGeographyCodes {
                         int retry = 0;
                         fixed = false;
                         while (retry < 5) {
-                            GeographyCode gcode = GeographyCode.geoCode(key, fullname);
+                            GeographyCode gcode = GeographyCodeTools.geoCode(CoordinateSystem.CGCS2000(), fullname);
                             if (gcode == null || !gcode.validCoordinate()) {
                                 logger.debug("failed: " + village.getGcid() + " " + fullname);
                                 Thread.sleep(1000);
@@ -1192,10 +1193,10 @@ public class ChineseGeographyCodes {
                         logger.debug("Rename:  " + provinceName + " villages: " + villages.size() + " 花费:" + ((new Date().getTime() - start) / 1000) + "秒");
                     } else {
                         if (fixed) {
-                            GeographyCode.writeInternalCSV(
+                            GeographyCodeTools.writeInternalCSV(
                                     new File("D:\\玛瑞\\Mybox\\地理代码\\mybox地理代码\\中文\\中国村庄\\内部格式\\"
                                             + provinceName + "_villages_internal.csv"), villages, false);
-                            GeographyCode.writeExternalCSV(
+                            GeographyCodeTools.writeExternalCSV(
                                     new File("D:\\玛瑞\\Mybox\\地理代码\\mybox地理代码\\中文\\中国村庄\\外部格式\\"
                                             + provinceName + "_villages_external.csv"), villages, false);
                             logger.debug("Fixed:  " + provinceName + " villages: " + villages.size() + " 花费:" + ((new Date().getTime() - start) / 1000) + "秒");

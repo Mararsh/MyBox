@@ -17,6 +17,7 @@ import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.TableGeographyCode;
 import mara.mybox.fxml.ConditionNode;
+import mara.mybox.tools.GeographyCodeTools;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
@@ -64,7 +65,7 @@ public class GeographyCodeConditionTreeController extends ConditionTreeControlle
                     try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
                         earch = TableGeographyCode.earth(conn);
                         if (earch == null) {
-                            GeographyCode.predefined(conn, loading);
+                            GeographyCodeTools.importPredefined(conn, loading);
                             earch = TableGeographyCode.earth(conn);
                             if (earch == null) {
                                 return false;
@@ -167,8 +168,7 @@ public class GeographyCodeConditionTreeController extends ConditionTreeControlle
             CheckBoxTreeItem<ConditionNode> valueItem = new CheckBoxTreeItem(
                     ConditionNode.create(message("Self"))
                             .setTitle((prefix.isBlank() ? message("Earth") + " - " : prefix) + message("Self"))
-                            .setCondition("level=" + parentLevel.getLevel()
-                                    + " AND Geography_Code.gcid=" + parantCode.getGcid())
+                            .setCondition("Geography_Code.gcid=" + parantCode.getGcid())
             );
             parent.getChildren().add(valueItem);
 

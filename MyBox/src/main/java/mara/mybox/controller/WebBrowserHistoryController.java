@@ -7,7 +7,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 import mara.mybox.data.BrowserHistory;
 import mara.mybox.db.TableBrowserHistory;
-import mara.mybox.fxml.TableDateCell;
+import mara.mybox.fxml.TableTimeCell;
 import mara.mybox.fxml.TableImageFileCell;
 import static mara.mybox.value.AppVariables.logger;
 
@@ -39,7 +39,7 @@ public class WebBrowserHistoryController extends TableManageController<BrowserHi
             titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
             addressColumn.setCellValueFactory(new PropertyValueFactory<>("address"));
             timeColumn.setCellValueFactory(new PropertyValueFactory<>("visitTime"));
-            timeColumn.setCellFactory(new TableDateCell());
+            timeColumn.setCellFactory(new TableTimeCell());
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -79,7 +79,7 @@ public class WebBrowserHistoryController extends TableManageController<BrowserHi
     }
 
     @Override
-    protected boolean deleteSelectedData() {
+    protected int deleteSelectedData() {
         List<BrowserHistory> selected = tableView.getSelectionModel().getSelectedItems();
         return TableBrowserHistory.delete(selected);
     }

@@ -8,6 +8,7 @@ import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -24,7 +25,9 @@ import javafx.scene.control.TextField;
 import mara.mybox.data.BaseTask;
 import mara.mybox.data.QueryCondition;
 import mara.mybox.data.StringTable;
+import mara.mybox.data.TableData;
 import mara.mybox.data.VisitHistory;
+import mara.mybox.db.ColumnDefinition;
 import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.DerbyBase.dbHome;
 import static mara.mybox.db.DerbyBase.login;
@@ -58,6 +61,7 @@ public class DataExportController extends DataQueryController {
     protected long startTime, dataSize;
     protected int logsMaxLines, logsTotalLines, logsCacheLines = 200;
     protected boolean cancelled, currentPage = false;
+    protected List<String> columnNames;
 
     @FXML
     protected TabPane tabPane;
@@ -73,6 +77,7 @@ public class DataExportController extends DataQueryController {
     protected ComboBox<String> maxLinesSelector;
 
     public DataExportController() {
+        baseTitle = message("Export");
 
         SourceFileType = VisitHistory.FileType.Text;
         SourcePathType = VisitHistory.FileType.Text;
@@ -92,6 +97,17 @@ public class DataExportController extends DataQueryController {
     /*
         Methods need implementation
      */
+    protected List<String> columnLabels() {
+        if (columnNames == null) {
+            columnNames = new ArrayList<>();
+            List<ColumnDefinition> columns = dataController.tableDefinition.getColumns();
+            for (ColumnDefinition column : columns) {
+                columnNames.add(column.getLabel());
+            }
+        }
+        return columnNames;
+    }
+
     protected void writeInternalCSVHeader(CSVPrinter printer) {
 
     }
@@ -101,11 +117,19 @@ public class DataExportController extends DataQueryController {
     }
 
     protected void writeExternalCSVHeader(CSVPrinter printer) {
-
+        try {
+            printer.printRecord(columnLabels());
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
     }
 
     protected void writeExternalCSV(Connection conn, CSVPrinter printer, ResultSet results) {
-
+        try {
+            TableData data = (TableData) (dataController.tableDefinition.readData(results));
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
     }
 
     protected void writeXML(Connection conn, FileWriter writer, ResultSet results, String indent) {
@@ -113,10 +137,6 @@ public class DataExportController extends DataQueryController {
     }
 
     protected String writeJSON(Connection conn, FileWriter writer, ResultSet results, String indent) {
-        return null;
-    }
-
-    protected List<String> columnNames() {
         return null;
     }
 
@@ -148,7 +168,7 @@ public class DataExportController extends DataQueryController {
                             if (newv == null || newv.trim().isBlank()) {
                                 return;
                             }
-                            targetNameInput.setText(newv.trim().replaceAll(":", " "));
+                            targetNameInput.setText(newv.trim().replaceAll("\\\"|\n|:", ""));
                         });
             }
 
@@ -265,14 +285,14 @@ public class DataExportController extends DataQueryController {
     public void createAction() {
         currentPage = false;
         qcid = -1;
-        titleInput.setText("");
-        if (!prefixInput.isDisable()) {
-            prefixInput.setText("");
+        titleInput.clear();
+        if (prefixInput.isEditable()) {
+            prefixInput.clear();
         }
-        whereInput.setText("");
-        orderInput.setText("");
-        fetchInput.setText("");
-        topInput.setText("-1");
+        whereInput.clear();
+        orderInput.clear();
+        fetchInput.clear();
+        topInput.clear();
         listView.setDisable(false);
         titleInput.setDisable(false);
         whereInput.setDisable(false);
@@ -546,7 +566,7 @@ public class DataExportController extends DataQueryController {
             StringBuilder s = new StringBuilder();
             String indent = "    ";
             s.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n")
-                    .append("<").append(baseName).append(">\n");
+                    .append("<").append(baseName).append("s>\n");
             writer.write(s.toString());
             int count = 0;
             try ( ResultSet results = conn.createStatement().executeQuery(sql)) {
@@ -562,7 +582,7 @@ public class DataExportController extends DataQueryController {
                     }
                 }
             }
-            writer.write("</" + baseName + ">\n");
+            writer.write("</" + baseName + "s>\n");
             return true;
         } catch (Exception e) {
             updateLogs(e.toString());
@@ -609,7 +629,7 @@ public class DataExportController extends DataQueryController {
             conn.setReadOnly(true);
             StringBuilder s = new StringBuilder();
             String indent = "    ";
-            s.append("{\"").append(baseName).append("\": [\n");
+            s.append("{\"").append(baseName).append("s\": [\n");
             writer.write(s.toString());
             int count = 0;
             try ( ResultSet results = conn.createStatement().executeQuery(sql)) {
@@ -674,13 +694,12 @@ public class DataExportController extends DataQueryController {
     }
 
     protected boolean writeExcel(File file, String sql) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 FileWriter writer = new FileWriter(file, Charset.forName("utf-8"))) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             String filename = file.getAbsolutePath();
             conn.setReadOnly(true);
             XSSFWorkbook wb = new XSSFWorkbook();
             XSSFSheet sheet = wb.createSheet("sheet1");
-            List<String> columns = columnNames();
+            List<String> columns = columnLabels();
             XSSFRow titleRow = sheet.createRow(0);
             XSSFCellStyle horizontalCenter = wb.createCellStyle();
             horizontalCenter.setAlignment(HorizontalAlignment.CENTER);
@@ -753,7 +772,7 @@ public class DataExportController extends DataQueryController {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             String filename = file.getAbsolutePath();
             conn.setReadOnly(true);
-            List<String> names = columnNames();
+            List<String> names = columnLabels();
             StringTable table = new StringTable(names, titleInput.getText() + "<br>" + sql);
             int count = 0;
             try ( ResultSet results = conn.createStatement().executeQuery(sql)) {

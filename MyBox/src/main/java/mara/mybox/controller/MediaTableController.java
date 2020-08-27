@@ -236,7 +236,7 @@ public class MediaTableController extends BatchTableController<MediaInformation>
             }
 
             StringBuilder s = new StringBuilder();
-            s.append(message("Duration")).append(": ").append(DateTools.showTime(info.getDuration())).append("\n");
+            s.append(message("Duration")).append(": ").append(DateTools.datetimeMsDuration(info.getDuration())).append("\n");
             if (media.getWidth() > 0 && media.getHeight() > 0) {
                 info.setWidth(media.getWidth());
                 info.setHeight(media.getHeight());
@@ -310,7 +310,7 @@ public class MediaTableController extends BatchTableController<MediaInformation>
         names.addAll(Arrays.asList(message("Name"), message("Value")));
         StringTable table = new StringTable(names);
         List<String> row = new ArrayList<>();
-        row.addAll(Arrays.asList(message("Duration"), DateTools.showTime(info.getDuration())));
+        row.addAll(Arrays.asList(message("Duration"), DateTools.datetimeMsDuration(info.getDuration())));
         table.add(row);
         row = new ArrayList<>();
         row.addAll(Arrays.asList(message("Resolution"), info.getResolution()));
@@ -456,7 +456,7 @@ public class MediaTableController extends BatchTableController<MediaInformation>
                 d += m.getDuration();
             }
         }
-        String s = message("TotalDuration") + ": " + DateTools.showDuration(d) + "  "
+        String s = message("TotalDuration") + ": " + DateTools.timeMsDuration(d) + "  "
                 + MessageFormat.format(message("TotalFilesNumberSize"),
                         totalFilesNumber, FileTools.showFileSize(totalFilesSize));
         tableLabel.setText(s);

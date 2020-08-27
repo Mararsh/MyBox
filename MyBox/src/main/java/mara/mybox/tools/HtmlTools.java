@@ -22,25 +22,55 @@ import net.sf.image4j.codec.ico.ICODecoder;
  */
 public class HtmlTools {
 
+    public enum HtmlStyle {
+        Default, Console, Blackboard, Link
+    }
+
     public static String Indent = "    ";
-    public static final String DefaultStyle
+    public static final String BaseStyle
             = ".center { text-align:center;  max-width:95%; }\n"
-            + "table { border-collapse:collapse;  margin: 8px;}\n"
-            + "table, th, td { border: 1px solid; padding:8px;}\n"
+            + "table { border-collapse:collapse;  margin: 8px;  max-width:95%;}\n"
+            + "table, th, td { border: 1px solid; padding: 8px;}\n"
             + "th { font-weight:bold;  text-align:center;}\n"
-            + "tr { height: 1.2em;  }\n";
-//            + "td { padding: 5px; }\n";
+            + "tr { height: 1.2em;  }\n"
+            + ".boldText { font-weight:bold;  }\n";
+    public static final String DefaultStyle
+            = BaseStyle
+            + ".valueText { color:#2e598a;  }\n";
     public static final String ConsoleStyle
             = "body { background-color:black; color:#CCFF99; }\n"
             + "table, th, td { border: #66FF66; }\n"
             + "a:link {color: #FFFFFF}\n"
             + "a:visited  {color: #DDDDDD}\n"
-            + DefaultStyle;
+            + ".valueText { color:skyblue;  }\n"
+            + BaseStyle;
+    public static final String BlackboardStyle
+            = "body { background-color:#336633; color:white; }\n"
+            + "table, th, td { border: #66FF66; }\n"
+            + "a:link {color: #FFFFFF}\n"
+            + "a:visited  {color: #DDDDDD}\n"
+            + ".valueText { color:wheat;  }\n"
+            + BaseStyle;
     public static final String LinkStyle
             = "body { background-color:transparent;  }\n"
             + "table { border-collapse:collapse; max-width:95%; }\n"
             + "table, th, td { border: 0px solid; }\n"
-            + "td { padding:20px;  }\n";
+            + "td { padding:20px;  }\n"
+            + BaseStyle;
+
+    public static String style(HtmlStyle style) {
+        switch (style) {
+            case Default:
+                return DefaultStyle;
+            case Console:
+                return ConsoleStyle;
+            case Blackboard:
+                return BlackboardStyle;
+            case Link:
+                return LinkStyle;
+        }
+        return DefaultStyle;
+    }
 
     public static File writeHtml(String html) {
         try {
@@ -97,6 +127,10 @@ public class HtmlTools {
         s.append(Indent).append("</BODY>\n");
         s.append("</HTML>\n");
         return s.toString();
+    }
+
+    public static String html(String title, HtmlStyle style, String body) {
+        return html(title, style(style), body);
     }
 
     public static String body(String html) {

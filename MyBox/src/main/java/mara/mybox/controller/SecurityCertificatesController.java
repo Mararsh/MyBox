@@ -26,7 +26,7 @@ import javafx.stage.Modality;
 import mara.mybox.data.CertificateEntry;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.fxml.FxmlStage;
-import mara.mybox.fxml.TableDateCell;
+import mara.mybox.fxml.TableTimeCell;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.NetworkTools;
@@ -56,7 +56,7 @@ public class SecurityCertificatesController extends BaseController {
     @FXML
     protected TextArea certArea;
     @FXML
-    protected Button plusButton, htmlButton;
+    protected Button htmlButton;
     @FXML
     protected CheckBox backupCheck;
 
@@ -81,7 +81,7 @@ public class SecurityCertificatesController extends BaseController {
 
             aliasColumn.setCellValueFactory(new PropertyValueFactory<>("alias"));
             timeColumn.setCellValueFactory(new PropertyValueFactory<>("createTime"));
-            timeColumn.setCellFactory(new TableDateCell());
+            timeColumn.setCellFactory(new TableTimeCell());
 
             tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
             tableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
@@ -96,7 +96,7 @@ public class SecurityCertificatesController extends BaseController {
             sourceFileInput.setText(SystemTools.keystore());
             passwordInput.setText(SystemTools.keystorePassword());
             htmlButton.setDisable(true);
-            plusButton.setDisable(true);
+            addButton.setDisable(true);
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -128,7 +128,7 @@ public class SecurityCertificatesController extends BaseController {
         tableView.getItems().clear();
         certArea.setText("");
         htmlButton.setDisable(true);
-        plusButton.setDisable(true);
+        addButton.setDisable(true);
         if (sourceFileInput.getText().isEmpty() || passwordInput.getText().isEmpty()) {
             return;
         }
@@ -190,7 +190,8 @@ public class SecurityCertificatesController extends BaseController {
                                         s.append("#### ").append(message("Alias")).append(": ").append(entry.getAlias()).append("\n");
                                         s.append("----------------------------\n");
                                         if (entry.getCertificateChain() != null) {
-                                            for (Certificate cert : entry.getCertificateChain()) {
+                                            for (Certificate cert
+                                                    : entry.getCertificateChain()) {
                                                 s.append(cert).append("\n\n");
                                             }
                                         }
@@ -223,7 +224,7 @@ public class SecurityCertificatesController extends BaseController {
                                 certArea.setText(texts);
                             }
                             htmlButton.setDisable(false);
-                            plusButton.setDisable(false);
+                            addButton.setDisable(false);
                             bottomLabel.setText(message("Total") + ": " + tableData.size());
                         } else {
                             popError(error);
@@ -321,7 +322,8 @@ public class SecurityCertificatesController extends BaseController {
     }
 
     @FXML
-    public void plusAction() {
+    @Override
+    public void addAction() {
         try {
             SecurityCertificatesAddController controller
                     = (SecurityCertificatesAddController) openStage(CommonValues.SecurityCertificateAddFxml);

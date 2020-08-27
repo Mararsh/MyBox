@@ -27,7 +27,8 @@ License:    Apache License Version 2.0
     <center>
         <VBox fx:id="contentBox" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" BorderPane.alignment="CENTER">
             <children>
-                <HBox fx:id="codeBox211" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
+                <HBox fx:id="codeBox211" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" />
+                <HBox fx:id="codeBox21" alignment="CENTER_LEFT" layoutX="20.0" layoutY="65.0" maxWidth="1.7976931348623157E308" spacing="5.0">
                     <children>
                         <Button fx:id="linkButton" mnemonicParsing="false" onAction="#download">
                             <graphic>
@@ -38,13 +39,6 @@ License:    Apache License Version 2.0
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Label styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%FFmpegComments" />
-                    </children>
-                </HBox>
-                <HBox fx:id="codeBox21" alignment="CENTER_LEFT" layoutX="20.0" layoutY="65.0" maxWidth="1.7976931348623157E308" spacing="5.0">
-                    <children>
-                        <Label fx:id="executableLabel" text="%FFprobeExecutable" />
-                        <TextField fx:id="executableInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                         <Button fx:id="selectFileExecutableButton" mnemonicParsing="false" onAction="#selectExecutable">
                             <graphic>
                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -54,6 +48,8 @@ License:    Apache License Version 2.0
                                 </ImageView>
                             </graphic>
                         </Button>
+                        <Label fx:id="executableLabel" text="%FFprobeExecutable" />
+                        <TextField fx:id="executableInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                     </children>
                 </HBox>
                 <VBox fx:id="functionBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS">

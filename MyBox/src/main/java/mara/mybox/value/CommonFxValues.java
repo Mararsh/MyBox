@@ -69,6 +69,7 @@ public class CommonFxValues {
             add(new FileChooser.ExtensionFilter("csv", "*.csv"));
         }
     };
+
     public static List<FileChooser.ExtensionFilter> AlphaImageExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
         {
             add(new FileChooser.ExtensionFilter("images", "*.png", "*.tif", "*.tiff", "*.ico", "*.icon"));

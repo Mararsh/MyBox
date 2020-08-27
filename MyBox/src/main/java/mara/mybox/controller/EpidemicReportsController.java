@@ -24,12 +24,9 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
@@ -45,12 +42,14 @@ import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.DerbyBase.dbHome;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
+import mara.mybox.db.TableBase;
 import mara.mybox.db.TableEpidemicReport;
 import mara.mybox.db.TableGeographyCode;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlStage.openScene;
-import mara.mybox.fxml.TableDateCell;
 import mara.mybox.fxml.TableMessageCell;
+import mara.mybox.fxml.TableTimeCell;
+import mara.mybox.tools.HtmlTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
@@ -80,14 +79,9 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
     @FXML
     protected EpidemicReportsSettingsController settingsController;
     @FXML
-    protected TabPane conditionTabsPane;
-    @FXML
-    protected Tab conditionOrderTab;
-    @FXML
     protected Tab chartsTab;
     @FXML
-    protected Button chinaButton, globalButton,
-            statisticButton, dataExportChartsButton, fillButton;
+    protected Button chinaButton, globalButton, statisticButton, dataExportChartsButton, fillButton;
     @FXML
     protected ComboBox<String> chartMaxSelector;
     @FXML
@@ -104,20 +98,34 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
             confirmedPopulationPermillageColumn, deadPopulationPermillageColumn, healedPopulationPermillageColumn,
             confirmedAreaPermillageColumn, deadAreaPermillageColumn, healedAreaPermillageColumn;
     @FXML
-    protected ListView orderByList;
-    @FXML
     protected Label timeOrderLabel;
 
-//    orderByList
     public EpidemicReportsController() {
         baseTitle = message("EpidemicReport");
         TipsLabelKey = "EpidemicReportTips";
 
-        baseName = "EpidemicReport";
-        dataName = "Epidemic_Report";
-
         prefixEditable = false;
         supportTop = true;
+    }
+
+    @Override
+    public void setTableDefinition() {
+        tableDefinition = TableBase.readDefinition("Epidemic_Report_Statistic_View");
+        tableDefinition.setIdColumn("epid");
+        tableDefinition.getPrimaryColumns().add("epid");
+    }
+
+    @Override
+    public void setTableValues() {
+        queryPrefix = TableEpidemicReport.StatisticViewSelect;
+        sizePrefix = TableEpidemicReport.SizeSelectPrefix;
+        clearPrefix = TableEpidemicReport.ClearPrefix;
+        String html = tableDefinition.columnsTable() + "</BR><HR>"
+                + new TableEpidemicReport().createTableStatement().replaceAll("\n", "</BR>") + "</BR></BR>"
+                + new TableGeographyCode().createTableStatement().replaceAll("\n", "</BR>") + "</BR></BR>"
+                + TableEpidemicReport.CreateStatisticView.replaceAll("\n", "</BR>");
+        tableDefinitionString = HtmlTools.html(tableName, html);
+        viewDefinition = tableDefinition;
     }
 
     @Override
@@ -140,18 +148,11 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
             settingsController.setReportsController(this);
             settingsController.setChartController(chartController);
 
-            initOptions();
+            initOrder();
 
         } catch (Exception e) {
             logger.error(e.toString());
         }
-    }
-
-    @Override
-    public void initSQL() {
-        queryPrefix = TableEpidemicReport.StatisticViewSelect;
-        sizePrefix = TableEpidemicReport.SizeSelectPrefix;
-        clearPrefix = TableEpidemicReport.ClearPrefix;
     }
 
     @Override
@@ -160,7 +161,7 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
             datasetColumn.setCellValueFactory(new PropertyValueFactory<>("dataSet"));
             locationColumn.setCellValueFactory(new PropertyValueFactory<>("locationFullName"));
             timeColumn.setCellValueFactory(new PropertyValueFactory<>("time"));
-            timeColumn.setCellFactory(new TableDateCell());
+            timeColumn.setCellFactory(new TableTimeCell());
             sourceColumn.setCellValueFactory(new PropertyValueFactory<>("sourceName"));
             sourceColumn.setCellFactory(new TableMessageCell());
             confirmedColumn.setCellValueFactory(new PropertyValueFactory<>("confirmed"));
@@ -221,8 +222,10 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
         }
     };
 
-    protected void initOptions() {
+    @Override
+    protected void initOrder() {
         try {
+            super.initOrder();
             topNumber = 10;
             chartMaxSelector.getItems().addAll(Arrays.asList(
                     "10", message("EpidemicReportsTopUnlimit"),
@@ -247,26 +250,6 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
                 }
             });
 
-            orderByList.getItems().clear();
-            orderByList.getItems().addAll(Arrays.asList(
-                    message("ConfirmedDescending"), message("ConfirmedAscending"),
-                    message("HealedDescending"), message("HealedAscending"),
-                    message("DeadDescending"), message("DeadAscending"),
-                    message("IncreasedConfirmedDescending"), message("IncreasedConfirmedAscending"),
-                    message("IncreasedHealedDescending"), message("IncreasedHealedAscending"),
-                    message("IncreasedDeadDescending"), message("IncreasedDeadAscending"),
-                    message("HealedConfirmedPermillageDescending"), message("HealedConfirmedPermillageDescending"),
-                    message("DeadConfirmedPermillageDescending"), message("DeadConfirmedPermillageAscending"),
-                    message("ConfirmedPopulationPermillageDescending"), message("ConfirmedPopulationPermillageAscending"),
-                    message("DeadPopulationPermillageDescending"), message("DeadPopulationPermillageAscending"),
-                    message("HealedPopulationPermillageDescending"), message("HealedPopulationPermillageAscending"),
-                    message("ConfirmedAreaPermillageDescending"), message("ConfirmedAreaPermillageAscending"),
-                    message("HealedAreaPermillageDescending"), message("HealedAreaPermillageAscending"),
-                    message("DeadAreaPermillageDescending"), message("DeadAreaPermillageAscending")
-            ));
-            orderByList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-            orderByList.getSelectionModel().select(message("ConfirmedDescending"));
-
             isSettingValues = true;
             chartMaxSelector.getSelectionModel().select(AppVariables.getUserConfigValue("EpidemicReportMaxChart", "10"));
             isSettingValues = false;
@@ -278,28 +261,21 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
 
     protected void adjustOrderList() {
         if (topNumber > 0) {
-            timeOrderLabel.setText(message("TimeDescending"));
-            orderByList.getItems().removeAll(message("TimeDescending"), message("TimeAscending"));
-            orderByList.getSelectionModel().select(message("ConfirmedDescending"));
+            timeOrderLabel.setText(message("Time") + " " + message("Descending"));
+            orderByList.getItems().removeAll(message("Time") + " " + message("Descending"),
+                    message("Time") + " " + message("Ascending"));
+            orderByList.getSelectionModel().clearSelection();
+            orderByList.getSelectionModel().select(message("Confirmed") + " " + message("Descending"));
         } else {
             timeOrderLabel.setText("");
-            if (!orderByList.getItems().contains(message("TimeDescending"))) {
-                orderByList.getItems().add(0, message("TimeAscending"));
-                orderByList.getItems().add(0, message("TimeDescending"));
+            if (!orderByList.getItems().contains(message("Time") + " " + message("Descending"))) {
+                orderByList.getItems().add(0, message("Time") + " " + message("Ascending"));
+                orderByList.getItems().add(0, message("Time") + " " + message("Descending"));
             }
-            orderByList.getSelectionModel().select(message("TimeDescending"));
-            orderByList.getSelectionModel().select(message("ConfirmedDescending"));
+            orderByList.getSelectionModel().clearSelection();
+            orderByList.getSelectionModel().select(message("Time") + " " + message("Ascending"));
+            orderByList.getSelectionModel().select(message("Confirmed") + " " + message("Descending"));
         }
-    }
-
-    @Override
-    protected DerbyBase dataTable() {
-        return new TableEpidemicReport();
-    }
-
-    @Override
-    protected String tableDefinition() {
-        return DerbyBase.tableDefinition("Epidemic_Report_Statistic_View");
     }
 
     @Override
@@ -307,9 +283,8 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
         try {
             super.afterSceneLoaded();
 
-            settingsController.afterSceneLoaded();
-            chartController.initSplitPanes();
-            chartController.controlRightPane();
+//            settingsController.afterSceneLoaded();
+            chartController.initMap(this);
 
             setButtons();
             FxmlControl.setTooltip(chinaButton, message("ChineseProvincesEpidemicReports"));
@@ -319,12 +294,6 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
             tabsPane.getTabs().add(infoTab);
             loadTrees(false);
 
-            String backFile = AppVariables.getSystemConfigValue("EpidemicReport621Exported", "");
-            if (!backFile.isBlank()) {
-                browseURI(new File(backFile).getParentFile().toURI());
-                alertInformation(message("DataExportedComments") + "\n\n" + backFile);
-                AppVariables.deleteSystemConfigValue("EpidemicReport621Exported");
-            }
         } catch (Exception e) {
             logger.debug(e.toString());
         }
@@ -374,7 +343,7 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
                 @Override
                 protected void whenSucceeded() {
                     sourceController.loadTree(datasets);
-                    timeController.loadTree(times);
+                    timeController.loadTree("time", times, false);
                     if (datasets == null || datasets.isEmpty()) {
                         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                         alert.setContentText(AppVariables.message("ImportEpidemicReportJHUPredefined") + " ?");
@@ -404,12 +373,9 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
 
     @Override
     protected String checkWhere() {
-        geoController.check();
-        timeController.check();
-        sourceController.check();
-        String sourceConditions = sourceController.getFinalConditions();
-        String geoConditions = geoController.getFinalConditions();
-        String timeConditions = timeController.getFinalConditions();
+        String sourceConditions = sourceController.check();
+        String geoConditions = geoController.check();
+        String timeConditions = timeController.check();
         if (sourceConditions == null) {
             popError(message("MissDataset") + "\n" + message("SetConditionsComments"));
             return null;
@@ -455,114 +421,11 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
     @Override
     protected void checkOrderBy() {
         try {
+            super.checkOrderBy();
             if (topNumber > 0) {
-                queryOrder = "time DESC";
-                orderTitle = "\"" + message("TimeDescending") + "\"";
-            } else {
-                queryOrder = "";
-                orderTitle = "";
-            }
-            List<String> langsList = orderByList.getSelectionModel().getSelectedItems();
-            for (String name : langsList) {
-                if (message("TimeDescending").equals(name)) {
-                    if (topNumber <= 0) {
-                        queryOrder = queryOrder.isBlank() ? "time DESC" : queryOrder + ", time DESC";
-                    }
-
-                } else if (message("TimeAscending").equals(name)) {
-                    if (topNumber <= 0) {
-                        queryOrder = queryOrder.isBlank() ? "time ASC" : queryOrder + ", time ASC";
-                    }
-
-                } else if (message("ConfirmedDescending").equals(name)) {
-                    queryOrder = queryOrder.isBlank() ? "confirmed DESC" : queryOrder + ", confirmed DESC";
-
-                } else if (message("ConfirmedAscending").equals(name)) {
-                    queryOrder = queryOrder.isBlank() ? "confirmed ASC" : queryOrder + ", confirmed ASC";
-
-                } else if (message("HealedDescending").equals(name)) {
-                    queryOrder = queryOrder.isBlank() ? "healed DESC" : queryOrder + ", healed DESC";
-
-                } else if (message("HealedAscending").equals(name)) {
-                    queryOrder = queryOrder.isBlank() ? "healed ASC" : queryOrder + ", healed ASC";
-
-                } else if (message("DeadDescending").equals(name)) {
-                    queryOrder = queryOrder.isBlank() ? "dead DESC" : queryOrder + ", dead DESC";
-
-                } else if (message("DeadAscending").equals(name)) {
-                    queryOrder = queryOrder.isBlank() ? "dead ASC" : queryOrder + ", dead ASC";
-
-                } else if (message("IncreasedConfirmedDescending").equals(name)) {
-                    queryOrder = queryOrder.isBlank() ? "increased_confirmed DESC" : queryOrder + ", increased_confirmed DESC";
-
-                } else if (message("IncreasedConfirmedAscending").equals(name)) {
-                    queryOrder = queryOrder.isBlank() ? "increased_confirmed ASC" : queryOrder + ", increased_confirmed ASC";
-
-                } else if (message("IncreasedHealedDescending").equals(name)) {
-                    queryOrder = queryOrder.isBlank() ? "increased_healed DESC" : queryOrder + ", increased_healed DESC";
-
-                } else if (message("IncreasedHealedAscending").equals(name)) {
-                    queryOrder = queryOrder.isBlank() ? "increased_healed ASC" : queryOrder + ", increased_healed ASC";
-
-                } else if (message("IncreasedDeadDescending").equals(name)) {
-                    queryOrder = queryOrder.isBlank() ? "increased_dead DESC" : queryOrder + ", increased_dead DESC";
-
-                } else if (message("IncreasedDeadAscending").equals(name)) {
-                    queryOrder = queryOrder.isBlank() ? "increased_dead ASC" : queryOrder + ", increased_dead ASC";
-
-                } else if (message("HealedConfirmedPermillageDescending").equals(name)) {
-                    queryOrder = queryOrder.isBlank() ? "healed_confirmed_permillage DESC" : queryOrder + ", healed_confirmed_permillage DESC";
-
-                } else if (message("HealedConfirmedPermillageAscending").equals(name)) {
-                    queryOrder = queryOrder.isBlank() ? "healed_confirmed_permillage ASC" : queryOrder + ", healed_confirmed_permillage ASC";
-
-                } else if (message("DeadConfirmedPermillageDescending").equals(name)) {
-                    queryOrder = queryOrder.isBlank() ? "dead_confirmed_permillage DESC" : queryOrder + ", dead_confirmed_permillage DESC";
-
-                } else if (message("DeadConfirmedPermillageAscending").equals(name)) {
-                    queryOrder = queryOrder.isBlank() ? "dead_confirmed_permillage ASC" : queryOrder + ", dead_confirmed_permillage ASC";
-
-                } else if (message("ConfirmedPopulationPermillageDescending").equals(name)) {
-                    queryOrder = queryOrder.isBlank() ? "confirmed_population_permillage DESC" : queryOrder + ", confirmed_population_permillage DESC";
-
-                } else if (message("ConfirmedPopulationPermillageAscending").equals(name)) {
-                    queryOrder = queryOrder.isBlank() ? "confirmed_population_permillage ASC" : queryOrder + ", confirmed_population_permillage ASC";
-
-                } else if (message("HealedPopulationPermillageDescending").equals(name)) {
-                    queryOrder = queryOrder.isBlank() ? "healed_population_permillage DESC" : queryOrder + ", healed_population_permillage DESC";
-
-                } else if (message("HealedPopulationPermillageAscending").equals(name)) {
-                    queryOrder = queryOrder.isBlank() ? "healed_population_permillage ASC" : queryOrder + ", healed_population_permillage ASC";
-
-                } else if (message("DeadPopulationPermillageDescending").equals(name)) {
-                    queryOrder = queryOrder.isBlank() ? "dead_population_permillage DESC" : queryOrder + ", dead_population_permillage DESC";
-
-                } else if (message("DeadPopulationPermillageAscending").equals(name)) {
-                    queryOrder = queryOrder.isBlank() ? "dead_population_permillage ASC" : queryOrder + ", dead_population_permillage ASC";
-
-                } else if (message("ConfirmedAreaPermillageDescending").equals(name)) {
-                    queryOrder = queryOrder.isBlank() ? "confirmed_area_permillage DESC" : queryOrder + ", confirmed_area_permillage DESC";
-
-                } else if (message("ConfirmedAreaPermillageAscending").equals(name)) {
-                    queryOrder = queryOrder.isBlank() ? "confirmed_area_permillage ASC" : queryOrder + ", confirmed_area_permillage ASC";
-
-                } else if (message("HealedAreaPermillageDescending").equals(name)) {
-                    queryOrder = queryOrder.isBlank() ? "healed_area_permillage DESC" : queryOrder + ", healed_area_permillage DESC";
-
-                } else if (message("HealedAreaPermillageAscending").equals(name)) {
-                    queryOrder = queryOrder.isBlank() ? "healed_area_permillage ASC" : queryOrder + ", healed_area_permillage ASC";
-
-                } else if (message("DeadAreaPermillageDescending").equals(name)) {
-                    queryOrder = queryOrder.isBlank() ? "dead_area_permillage DESC" : queryOrder + ", dead_area_permillage DESC";
-
-                } else if (message("DeadAreaPermillageAscending").equals(name)) {
-                    queryOrder = queryOrder.isBlank() ? "dead_area_permillage ASC" : queryOrder + ", dead_area_permillage ASC";
-
-                } else {
-                    continue;
-                }
-                orderTitle = orderTitle.isBlank() ? "\"" + name + "\"" : orderTitle + " \"" + name + "\"";
-
+                queryOrder = queryOrder.isBlank() ? "time DESC" : "time DESC, " + queryOrder;
+                String t = message("Time") + " " + message("Descending");
+                orderTitle = orderTitle.isBlank() ? "\"" + t + "\"" : orderTitle + " \"" + t + "\"";
             }
 
         } catch (Exception e) {
@@ -586,7 +449,7 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
             queryCondition.setOrder("time DESC, " + queryCondition.getOrder());
             order = "time desc," + order;
         }
-        String[] names = order.replaceAll("desc", "").replaceAll("asc", "").split(",");
+        String[] names = order.replaceAll("desc|asc", "").split(",");
         for (String name : names) {
             String n = name.trim();
             if (!orderNames.contains(n)) {
@@ -616,7 +479,7 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
         if (!order.startsWith("time desc")) {
             return false;
         }
-        String[] names = order.replaceAll("desc", "").replaceAll("asc", "").split(",");
+        String[] names = order.replaceAll("desc|asc", "").split(",");
         return names.length >= 2;
     }
 
@@ -654,7 +517,7 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
             readTopData();
             return totalSize;
         } else {
-            return TableEpidemicReport.size(sizeQuerySQL);
+            return DerbyBase.size(sizeQuerySQL);
         }
     }
 
@@ -722,7 +585,7 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
                         report.setLocation(location);
                         timeReports.add(report);
                         totalSize++;
-                        Number n = report.value(valueName);
+                        Number n = report.getValue(valueName);
                         if (n != null) {
                             double value = n.doubleValue();
                             if (value > maxValue) {
@@ -818,9 +681,12 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
     @Override
     protected String loadMoreInfo() {
         if (queryCondition != null && queryCondition.getTop() > 0) {
-            String info = "<b>" + message("DateNumber") + ": </b>" + dataTimes.size() + "</br>";
-            info += "<b>" + message("LocationsNumber") + ": </b>" + dataLocations.size() + "</br>";
-            info += "<b>" + message("DataNumber") + ": </b>" + totalSize + "</br></br>";
+            String info = "<SPAN class=\"boldText\">" + message("DateNumber") + ": </SPAN>";
+            info += "<SPAN class=\"valueText\">" + dataTimes.size() + "</SPAN></br>";
+            info += "<SPAN class=\"boldText\">" + message("LocationsNumber") + ": </SPAN>";
+            info += "<SPAN class=\"valueText\">" + dataLocations.size() + "</SPAN></br>";
+            info += "<SPAN class=\"boldText\">" + message("DataNumber") + ": </SPAN>";
+            info += "<SPAN class=\"valueText\">" + totalSize + "</SPAN></br></br>";
             return info;
         } else {
             return "";
@@ -853,12 +719,12 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
     }
 
     @Override
-    protected boolean deleteSelectedData() {
+    protected int deleteSelectedData() {
         List<EpidemicReport> selected = tableView.getSelectionModel().getSelectedItems();
         if (selected == null || selected.isEmpty()) {
-            return false;
+            return 0;
         }
-        return TableEpidemicReport.deleteData(selected);
+        return new TableEpidemicReport().deleteData(selected);
     }
 
     public void setSelectedData(EpidemicReport.SourceType sourceType) {
@@ -1003,11 +869,6 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
         return true;
     }
 
-    @Override
-    protected void setClearSQL() {
-        clearSQL = clearPrefix + " WHERE " + clearCondition.getWhere() + " )";
-    }
-
     @FXML
     public void statisticAction() {
         EpidemicReportsStatisticController controller
@@ -1098,82 +959,9 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
                 = (EpidemicReportsImportExternalCSVController) openStage(CommonValues.EpidemicReportsImportExternalCSVFxml);
         controller.parent = this;
         File file = FxmlControl.getInternalFile("/data/db/Epidemic_Report_JHU.csv",
-                "data", "Epidemic_Report_JHU.csv", false);
-        controller.predefined = true;
-        controller.startFile(file, true);
-    }
-
-    @FXML
-    public void upAction() {
-        List<Integer> selected = new ArrayList<>();
-        selected.addAll(orderByList.getSelectionModel().getSelectedIndices());
-        if (selected.isEmpty()) {
-            return;
-        }
-        List<Integer> newselected = new ArrayList<>();
-        for (Integer index : selected) {
-            if (index == 0 || newselected.contains(index - 1)) {
-                newselected.add(index);
-                continue;
-            }
-            String lang = (String) orderByList.getItems().get(index);
-            orderByList.getItems().set(index, orderByList.getItems().get(index - 1));
-            orderByList.getItems().set(index - 1, lang);
-            newselected.add(index - 1);
-        }
-        orderByList.getSelectionModel().clearSelection();
-        for (int index : newselected) {
-            orderByList.getSelectionModel().select(index);
-        }
-        orderByList.refresh();
-    }
-
-    @FXML
-    public void downAction() {
-        List<Integer> selected = new ArrayList<>();
-        selected.addAll(orderByList.getSelectionModel().getSelectedIndices());
-        if (selected.isEmpty()) {
-            return;
-        }
-        List<Integer> newselected = new ArrayList<>();
-        for (int i = selected.size() - 1; i >= 0; --i) {
-            int index = selected.get(i);
-            if (index == orderByList.getItems().size() - 1
-                    || newselected.contains(index + 1)) {
-                newselected.add(index);
-                continue;
-            }
-            String lang = (String) orderByList.getItems().get(index);
-            orderByList.getItems().set(index, orderByList.getItems().get(index + 1));
-            orderByList.getItems().set(index + 1, lang);
-            newselected.add(index + 1);
-        }
-        orderByList.getSelectionModel().clearSelection();
-        for (int index : newselected) {
-            orderByList.getSelectionModel().select(index);
-        }
-        orderByList.refresh();
-
-    }
-
-    @FXML
-    public void topAction() {
-        List<Integer> selectedIndices = new ArrayList<>();
-        selectedIndices.addAll(orderByList.getSelectionModel().getSelectedIndices());
-        if (selectedIndices.isEmpty()) {
-            return;
-        }
-        List<String> selected = new ArrayList<>();
-        selected.addAll(orderByList.getSelectionModel().getSelectedItems());
-        int size = selectedIndices.size();
-        for (int i = size - 1; i >= 0; --i) {
-            int index = selectedIndices.get(i);
-            orderByList.getItems().remove(index);
-        }
-        orderByList.getSelectionModel().clearSelection();
-        orderByList.getItems().addAll(0, selected);
-        orderByList.getSelectionModel().selectRange(0, size);
-        orderByList.refresh();
+                "data", "Epidemic_Report_JHU.csv", true);
+        controller.predefined = false;
+        controller.startFile(file, true, true);
     }
 
     @Override

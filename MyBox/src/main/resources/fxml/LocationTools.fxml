@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.scene.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.web.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.effect.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<BorderPane fx:id="thisPane" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.LocationToolsController">
+    <top>
+        <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
+    </top>
+    <center>
+        <VBox fx:id="contentBox" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" BorderPane.alignment="CENTER">
+            <BorderPane.margin>
+                <Insets />
+            </BorderPane.margin>
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            </padding>
+            <children>
+                <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                    <children>
+                        <Label text="%Degrees" wrapText="true" HBox.hgrow="NEVER" />
+                        <TextField fx:id="degreesInput" prefWidth="100.0" />
+                        <Label layoutX="10.0" layoutY="19.0" text="%Minutes2" wrapText="true" />
+                        <TextField fx:id="minutesInput" prefWidth="100.0" />
+                        <Label layoutX="10.0" layoutY="19.0" text="%Seconds" wrapText="true" />
+                        <TextField fx:id="secondsInput" prefWidth="200.0" />
+                    </children>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="20.0" spacing="5.0">
+                    <children>
+                        <Label text="%DegreesMinutesSeconds" wrapText="true" HBox.hgrow="NEVER" />
+                        <TextField fx:id="dmsInput" prefWidth="300.0" />
+                  <Button fx:id="examplesButton" mnemonicParsing="false" onMouseEntered="#popDMSExamples">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/iconExamples.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                    </children>
+                </HBox>
+            <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="140.0" spacing="5.0">
+               <children>
+                  <Label text="%Decimal" wrapText="true" />
+                  <TextField fx:id="decimalInput" prefWidth="200.0" />
+               </children>
+            </HBox>
+            <Separator>
+               <VBox.margin>
+                  <Insets bottom="10.0" top="10.0" />
+               </VBox.margin>
+            </Separator>
+            <FlowPane hgap="5.0" prefWrapLength="800.0" vgap="5.0" VBox.vgrow="NEVER">
+               <children>
+                  <Label text="%CoordinateSystem" />
+                  <RadioButton fx:id="cgcs2000Radio" mnemonicParsing="false" selected="true" text="%CGCS2000">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="sourceCsGroup" />
+                     </toggleGroup>
+                  </RadioButton>
+                  <RadioButton fx:id="gcj02Radio" mnemonicParsing="false" text="%GCJ_02" toggleGroup="$sourceCsGroup" />
+                  <RadioButton fx:id="wgs84Radio" mnemonicParsing="false" text="%WGS_84" toggleGroup="$sourceCsGroup" />
+                  <RadioButton fx:id="bd09Radio" mnemonicParsing="false" text="%BD_09" toggleGroup="$sourceCsGroup" />
+                  <RadioButton fx:id="mapbarRadio" mnemonicParsing="false" text="%Mapbar" toggleGroup="$sourceCsGroup" />
+               </children>
+            </FlowPane>
+                <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="203.0" spacing="5.0">
+                    <children>
+                        <Label layoutX="10.0" layoutY="19.0" text="%Longitude" wrapText="true">
+                            <HBox.margin>
+                                <Insets left="10.0" />
+                            </HBox.margin>
+                        </Label>
+                        <TextField fx:id="longitudeInput" prefWidth="150.0" />
+                        <Label layoutX="10.0" layoutY="19.0" text="%Latitude" wrapText="true" />
+                        <TextField fx:id="latitudeInput" prefWidth="150.0" />
+                  <Button fx:id="locationButton" layoutX="448.0" layoutY="10.0" mnemonicParsing="false" onAction="#locationAction">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/iconLocation.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                    </children>
+                </HBox>
+            <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="329.0" spacing="5.0">
+               <children>
+                        <Button fx:id="equalCsButton" mnemonicParsing="false" onAction="#csConvert">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconEqual.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                        <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconTips.png" />
+                            </image>
+                        </ImageView>
+                  <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                  <Hyperlink onAction="#aboutCoordinateSystem" text="%AboutCoordinateSystem" />
+               </children>
+            </HBox>
+            <WebView fx:id="csView" prefHeight="300.0" prefWidth="-1.0" VBox.vgrow="NEVER" />
+            </children>
+        </VBox>
+    </center>
+    <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+    </padding>
+</BorderPane>

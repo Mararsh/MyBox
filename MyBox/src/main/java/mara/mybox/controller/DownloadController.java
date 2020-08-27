@@ -25,9 +25,9 @@ import mara.mybox.data.DownloadItem;
 import mara.mybox.data.DownloadTask;
 import mara.mybox.data.StringTable;
 import mara.mybox.fxml.FxmlStage;
-import mara.mybox.fxml.TableDateCell;
 import mara.mybox.fxml.TableDurationCell;
 import mara.mybox.fxml.TableFileSizeCell;
+import mara.mybox.fxml.TableTimeCell;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
@@ -81,9 +81,9 @@ public class DownloadController extends BaseController {
             currentColumn.setCellValueFactory(new PropertyValueFactory<>("currentSize"));
             currentColumn.setCellFactory(new TableFileSizeCell());
             startColumn.setCellValueFactory(new PropertyValueFactory<>("startTime"));
-            startColumn.setCellFactory(new TableDateCell());
+            startColumn.setCellFactory(new TableTimeCell());
             endColumn.setCellValueFactory(new PropertyValueFactory<>("endTime"));
-            endColumn.setCellFactory(new TableDateCell());
+            endColumn.setCellFactory(new TableTimeCell());
             costColumn.setCellValueFactory(new PropertyValueFactory<>("cost"));
             costColumn.setCellFactory(new TableDurationCell());
             statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
@@ -123,7 +123,8 @@ public class DownloadController extends BaseController {
     }
 
     @FXML
-    protected void plusAction() {
+    @Override
+    public void addAction() {
         try {
             TextInputDialog dialog = new TextInputDialog("https://");
             dialog.setTitle(message("DownloadManage"));
@@ -302,11 +303,12 @@ public class DownloadController extends BaseController {
                 if (!super.initValues()) {
                     return false;
                 }
-                item.setStartTime(startTime)
+                item.setStartTime(startTime.getTime())
                         .setCurrentSize(currentSize);
                 return true;
             }
 
+            @Override
             protected void progress() {
                 Platform.runLater(new Runnable() {
                     @Override
@@ -323,6 +325,7 @@ public class DownloadController extends BaseController {
                 });
             }
 
+            @Override
             protected void whenSucceeded() {
                 if (targetFile != null && targetFile.exists()) {
                     item.setStatus(message("Finished"));
@@ -338,16 +341,18 @@ public class DownloadController extends BaseController {
                 item.setStatus(message("Failed"));
             }
 
+            @Override
             protected void whenCanceled() {
                 item.setStatus(message("Canceled"));
             }
 
+            @Override
             protected void finalAction() {
                 if (error != null) {
                     popError(error);
                 }
-                endTime = new Date().getTime();
-                item.setEndTime(endTime);
+                endTime = new Date();
+                item.setEndTime(endTime.getTime());
                 tableView.refresh();
             }
 

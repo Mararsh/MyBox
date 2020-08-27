@@ -19,9 +19,12 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import mara.mybox.data.ConvolutionKernel;
+import mara.mybox.data.CoordinateSystem;
+import mara.mybox.data.Dataset;
 import mara.mybox.data.EpidemicReport;
 import mara.mybox.data.GeographyCode;
 import mara.mybox.data.GeographyCodeLevel;
+import mara.mybox.data.Location;
 import static mara.mybox.db.DerbyBase.BatchSize;
 import static mara.mybox.db.DerbyBase.columnNames;
 import static mara.mybox.db.DerbyBase.dbHome;
@@ -29,6 +32,8 @@ import static mara.mybox.db.DerbyBase.dropTables;
 import static mara.mybox.db.DerbyBase.initTables;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
+import mara.mybox.tools.EpidemicReportTools;
+import mara.mybox.tools.GeographyCodeTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
@@ -45,12 +50,16 @@ public class DataMigration {
         AppVariables.setSystemConfigValue("CurrentVersion", CommonValues.AppVersion);
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             List<String> installed = TableStringValues.read(conn, "InstalledVersions");
+            if (installed.isEmpty()) {
+                TableStringValues.add("InstalledVersions", CommonValues.AppVersion);
+                return true;
+            }
             if (installed.contains(CommonValues.AppVersion)) {
                 return true;
             }
+            updateIn632(conn);
             List<String> columns = columnNames(conn, "Geography_Code");
             if (columns.contains("owner")) {
-                TableStringValues.add("InstalledVersions", "6.3.1");
                 return true;
             }
             if (installed.contains("6.3")) {
@@ -63,7 +72,7 @@ public class DataMigration {
                 return true;
             }
             migrateBefore621();
-
+            conn.setAutoCommit(true);
         } catch (Exception e) {
             logger.debug(e.toString());
         }
@@ -71,8 +80,122 @@ public class DataMigration {
         return true;
     }
 
+    private static void updateIn632(Connection conn) {
+        try {
+            updateForeignKeysIn632(conn);
+            updateGeographyCodeIn632(conn);
+            updateLocationIn632(conn);
+            TableStringValues.add("InstalledVersions", "6.3.2");
+            conn.setAutoCommit(true);
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+    private static void updateForeignKeysIn632(Connection conn) {
+        try ( Statement query = conn.createStatement();
+                 Statement update = conn.createStatement();) {
+            conn.setAutoCommit(true);
+            String sql = "SELECT tablename, constraintName FROM SYS.SYSTABLES t, SYS.SYSCONSTRAINTS c  where t.TABLEID=c.TABLEID AND type='F'";
+            try ( ResultSet results = query.executeQuery(sql)) {
+                while (results.next()) {
+                    String tablename = results.getString("tablename");
+                    String constraintName = results.getString("constraintName");
+                    sql = "ALTER TABLE " + tablename + " DROP FOREIGN KEY \"" + constraintName + "\"";
+//                    logger.debug(sql);
+                    update.executeUpdate(sql);
+                }
+            }
+            sql = "ALTER TABLE Geography_Code ADD CONSTRAINT Geography_Code_owner_fk FOREIGN KEY (owner)"
+                    + " REFERENCES GEOGRAPHY_CODE (gcid) ON DELETE RESTRICT ON UPDATE RESTRICT";
+            update.executeUpdate(sql);
+            sql = "ALTER TABLE Epidemic_Report ADD CONSTRAINT Epidemic_Report_locationid_fk FOREIGN KEY (locationid)"
+                    + " REFERENCES GEOGRAPHY_CODE (gcid) ON DELETE RESTRICT ON UPDATE RESTRICT";
+            update.executeUpdate(sql);
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+    private static void updateGeographyCodeIn632(Connection conn) {
+        try ( Statement statement = conn.createStatement();
+                 PreparedStatement update = conn.prepareStatement(TableGeographyCode.Update)) {
+            conn.setAutoCommit(false);
+            try ( ResultSet results = statement.executeQuery("SELECT * FROM Geography_Code WHERE gcid < 5000")) {
+                while (results.next()) {
+                    GeographyCode code = TableGeographyCode.readResults(results);
+//                    logger.debug(code.getGcid() + " " + code.getName() + " "
+//                            + code.getLongitude() + " " + code.getLatitude() + " " + code.getCoordinateSystem().intValue());
+                    code = GeographyCodeTools.toCGCS2000(code);
+//                    logger.debug(code.getLongitude() + " " + code.getLatitude() + " " + code.getCoordinateSystem().intValue());
+                    TableGeographyCode.update(conn, update, code);
+                }
+            }
+            conn.commit();
+            conn.setAutoCommit(true);
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+    private static void updateLocationIn632(Connection conn) {
+        TableLocationData tableLocationData = new TableLocationData();
+        try ( Statement statement = conn.createStatement();
+                 PreparedStatement locationIinsert = conn.prepareStatement(tableLocationData.insertStatement())) {
+            int insertCount = 0;
+            conn.setAutoCommit(false);
+            try ( ResultSet results = statement.executeQuery("SELECT * FROM Location")) {
+                Map<String, Dataset> datasets = new HashMap<>();
+                while (results.next()) {
+                    Location data = new Location();
+                    String datasetName = results.getString("data_set");
+                    Dataset dataset = datasets.get(datasetName);
+                    if (dataset == null) {
+                        dataset = tableLocationData.queryAndCreate(conn, datasetName);
+                        datasets.put(datasetName, dataset);
+                    }
+                    data.setDataset(dataset);
+                    data.setLabel(results.getString("data_label"));
+                    data.setAddress(results.getString("address"));
+                    data.setLongitude(results.getDouble("longitude"));
+                    data.setLatitude(results.getDouble("latitude"));
+                    data.setAltitude(results.getDouble("altitude"));
+                    data.setPrecision(results.getDouble("precision"));
+                    data.setSpeed(results.getDouble("speed"));
+                    data.setDirection(results.getShort("direction"));
+                    data.setCoordinateSystem(new CoordinateSystem(results.getShort("coordinate_system")));
+                    data.setDataValue(results.getDouble("data_value"));
+                    data.setDataSize(results.getDouble("data_size"));
+                    Date d = results.getTimestamp("data_time");
+                    if (d != null) {
+                        data.setStartTime(d.getTime() * (results.getShort("data_time_bc") >= 0 ? 1 : -1));
+                    }
+                    data.setImage(results.getString("image_location"));
+                    data.setComments(results.getString("comments"));
+                    tableLocationData.setInsertStatement(conn, locationIinsert, data);
+                    locationIinsert.addBatch();
+                    if (++insertCount % BatchSize == 0) {
+                        locationIinsert.executeBatch();
+                        conn.commit();
+                    }
+                }
+            }
+            locationIinsert.executeBatch();
+            conn.commit();
+            conn.setAutoCommit(true);
+            try {
+                statement.executeUpdate("DROP TABLE Location");
+            } catch (Exception e) {
+//                logger.debug(e.toString());
+            }
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
     private static void migrateFrom63(Connection conn) {
         try ( Statement statement = conn.createStatement()) {
+            conn.setAutoCommit(true);
             String sql = "ALTER TABLE Geography_Code add column altitude DOUBLE ";
             statement.executeUpdate(sql);
             sql = "ALTER TABLE Geography_Code  add column precision DOUBLE";
@@ -88,6 +211,7 @@ public class DataMigration {
             sql = "DROP VIEW Epidemic_Report_Statistic_View";
             statement.executeUpdate(sql);
             statement.executeUpdate(TableEpidemicReport.CreateStatisticView);
+
         } catch (Exception e) {
             logger.debug(e.toString());
             return;
@@ -110,6 +234,7 @@ public class DataMigration {
             update.executeBatch();
             conn.commit();
             TableStringValues.add("InstalledVersions", "6.3.1");
+            conn.setAutoCommit(true);
         } catch (Exception e) {
             logger.debug(e.toString());
         }
@@ -119,6 +244,7 @@ public class DataMigration {
         exportGeographyCode621(conn);
         exportEpidemicReport621(conn);
         try ( Statement statement = conn.createStatement()) {
+            conn.setAutoCommit(true);
             try {
                 statement.executeUpdate("DROP TABLE Epidemic_Report");
             } catch (Exception e) {
@@ -130,12 +256,12 @@ public class DataMigration {
                 logger.debug(e.toString());
             }
 
-            new TableGeographyCode().init(conn);
+            new TableGeographyCode().createTable(conn);
             statement.executeUpdate(TableGeographyCode.Create_Index_levelIndex);
             statement.executeUpdate(TableGeographyCode.Create_Index_gcidIndex);
             statement.executeUpdate(TableGeographyCode.Create_Index_codeIndex);
 
-            new TableEpidemicReport().init(conn);
+            new TableEpidemicReport().createTable(conn);
             statement.executeUpdate(TableEpidemicReport.Create_Index_DatasetTimeDesc);
             statement.executeUpdate(TableEpidemicReport.Create_Index_DatasetTimeAsc);
             statement.executeUpdate(TableEpidemicReport.Create_Index_TimeAsc);
@@ -187,10 +313,10 @@ public class DataMigration {
                 }
             }
             if (!codes.isEmpty()) {
-                File tmpFile = new File(AppVariables.MyboxDataPath + File.separator + "data"
-                        + File.separator + "GeographyCode6.2.1Exported.csv");
-                GeographyCode.writeExternalCSV(tmpFile, codes);
-                AppVariables.setSystemConfigValue("GeographyCode621Exported", tmpFile.getAbsolutePath());
+                File path = new File(AppVariables.MyboxDataPath + File.separator + "migration" + File.separator);
+                path.mkdirs();
+                File tmpFile = new File(path.getAbsoluteFile() + File.separator + "GeographyCode6.2.1Exported.csv");
+                GeographyCodeTools.writeExternalCSV(tmpFile, codes);
             }
         } catch (Exception e) {
             logger.debug(e.toString());
@@ -243,10 +369,10 @@ public class DataMigration {
                 }
             }
             if (!reports.isEmpty()) {
-                File tmpFile = new File(AppVariables.MyboxDataPath + File.separator + "data"
-                        + File.separator + "EpidemicReport6.2.1Exported.csv");
-                EpidemicReport.writeExternalCSV(tmpFile, reports, null);
-                AppVariables.setSystemConfigValue("EpidemicReport621Exported", tmpFile.getAbsolutePath());
+                File path = new File(AppVariables.MyboxDataPath + File.separator + "migration" + File.separator);
+                path.mkdirs();
+                File tmpFile = new File(path.getAbsoluteFile() + File.separator + "EpidemicReport6.2.1Exported.csv");
+                EpidemicReportTools.writeExternalCSV(tmpFile, reports, null);
             }
         } catch (Exception e) {
             logger.debug(e.toString());
@@ -268,45 +394,41 @@ public class DataMigration {
 
             if (!AppVariables.getSystemConfigBoolean("UpdatedTables5.4", false)) {
                 logger.info("Updating tables in 5.4...");
-                DerbyBase t = new DerbyBase();
                 String sql = "ALTER TABLE User_Conf  alter  column  key_Name set data type VARCHAR(1024)";
-                t.update(sql);
-                sql = "ALTER TABLE User_Conf  alter  column  string_Value set data type VARCHAR(32672)";
-                t.update(sql);
+                DerbyBase.update(sql);
                 sql = "ALTER TABLE User_Conf  alter  column  default_string_Value set data type VARCHAR(32672)";
-                t.update(sql);
+                DerbyBase.update(sql);
                 sql = "ALTER TABLE System_Conf  alter  column  key_Name set data type VARCHAR(1024)";
-                t.update(sql);
+                DerbyBase.update(sql);
                 sql = "ALTER TABLE System_Conf  alter  column  string_Value set data type VARCHAR(32672)";
-                t.update(sql);
+                DerbyBase.update(sql);
                 sql = "ALTER TABLE System_Conf  alter  column  default_string_Value set data type VARCHAR(32672)";
-                t.update(sql);
+                DerbyBase.update(sql);
                 sql = "ALTER TABLE image_history  add  column  temp VARCHAR(128)";
-                t.update(sql);
+                DerbyBase.update(sql);
                 sql = "UPDATE image_history SET temp=CHAR(update_type)";
-                t.update(sql);
+                DerbyBase.update(sql);
                 sql = "ALTER TABLE image_history drop column update_type";
-                t.update(sql);
+                DerbyBase.update(sql);
                 sql = "RENAME COLUMN image_history.temp TO update_type";
-                t.update(sql);
+                DerbyBase.update(sql);
                 sql = "ALTER TABLE image_history  add  column  object_type VARCHAR(128)";
-                t.update(sql);
+                DerbyBase.update(sql);
                 sql = "ALTER TABLE image_history  add  column  op_type VARCHAR(128)";
-                t.update(sql);
+                DerbyBase.update(sql);
                 sql = "ALTER TABLE image_history  add  column  scope_type  VARCHAR(128)";
-                t.update(sql);
+                DerbyBase.update(sql);
                 sql = "ALTER TABLE image_history  add  column  scope_name  VARCHAR(1024)";
-                t.update(sql);
+                DerbyBase.update(sql);
                 sql = "DROP TABLE image_init";
-                t.update(sql);
+                DerbyBase.update(sql);
                 AppVariables.setSystemConfigValue("UpdatedTables5.4", true);
             }
 
             if (!AppVariables.getSystemConfigBoolean("UpdatedTables5.8", false)) {
                 logger.info("Updating tables in 5.8...");
-                DerbyBase t = new DerbyBase();
                 String sql = "ALTER TABLE SRGB  add  column  palette_index  INT";
-                t.update(sql);
+                DerbyBase.update(sql);
 
                 List<String> saveColors = TableStringValues.read("ColorPalette");
                 if (saveColors != null && !saveColors.isEmpty()) {
@@ -318,9 +440,8 @@ public class DataMigration {
 
             if (!AppVariables.getSystemConfigBoolean("UpdatedTables5.9", false)) {
                 logger.info("Updating tables in 5.9...");
-                DerbyBase t = new DerbyBase();
                 String sql = "DROP TABLE Browser_URLs";
-                t.update(sql);
+                DerbyBase.update(sql);
                 AppVariables.setSystemConfigValue("UpdatedTables5.9", true);
             }
 
@@ -353,170 +474,186 @@ public class DataMigration {
     }
 
     public static boolean migrateGeographyCode615() {
-        int size = TableGeographyCode.size();
-        if (size > 0) {
-            try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                     Statement statement = conn.createStatement()) {
-                String sql = "UPDATE Geography_Code SET level='" + message("City")
-                        + "' WHERE level IS NULL";
-                statement.executeUpdate(sql);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            TableGeographyCode t = new TableGeographyCode();
+            int size = t.size();
+            if (size > 0) {
+                try ( Statement statement = conn.createStatement()) {
+                    String sql = "UPDATE Geography_Code SET level='" + message("City")
+                            + "' WHERE level IS NULL";
+                    statement.executeUpdate(sql);
+                } catch (Exception e) {
+                    logger.debug(e.toString());
+                    return false;
+                }
 
-            } catch (Exception e) {
-                logger.debug(e.toString());
-                return false;
+                File path = new File(AppVariables.MyboxDataPath + File.separator + "migration" + File.separator);
+                path.mkdirs();
+                File tmpFile = new File(path.getAbsoluteFile() + File.separator + "Geography_Code" + (new Date().getTime()) + ".del");
+                DerbyBase.exportData("Geography_Code", tmpFile.getAbsolutePath());
+
             }
-
-            File tmpFile = new File(AppVariables.MyboxDataPath + File.separator + "data"
-                    + File.separator + "Geography_Code" + (new Date().getTime()) + ".del");
-            tmpFile.mkdirs();
-            DerbyBase.exportData("Geography_Code", tmpFile.getAbsolutePath());
-            AppVariables.setSystemConfigValue("GeographyCodeBackup6.1.5", tmpFile.getAbsolutePath());
-
+            t.dropTable(conn);
+            t.createTable(conn);
+            return true;
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return false;
         }
-        new TableGeographyCode().drop();
-        new TableGeographyCode().init();
-        return true;
     }
 
     public static boolean migrateGeographyCode621() {
-        int size = TableGeographyCode.size();
-        if (size > 0) {
-            try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                     Statement statement = conn.createStatement()) {
-                Map<String, String> provincesMap = new HashMap<>();
-                String sql = "SELECT * FROM Geography_Code WHERE "
-                        + " level='" + message("zh", "Province") + "' "
-                        + " OR level='" + message("en", "Province") + "' ";
-                try ( ResultSet results = statement.executeQuery(sql)) {
-                    while (results.next()) {
-                        GeographyCode province = TableGeographyCode.readResults(results);
-                        if (province.getFullName() != null) {
-                            provincesMap.put(province.getFullName(), province.getName());
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            TableGeographyCode t = new TableGeographyCode();
+            int size = t.size();
+            if (size > 0) {
+                try ( Statement statement = conn.createStatement()) {
+                    Map<String, String> provincesMap = new HashMap<>();
+                    String sql = "SELECT * FROM Geography_Code WHERE "
+                            + " level='" + message("zh", "Province") + "' "
+                            + " OR level='" + message("en", "Province") + "' ";
+                    try ( ResultSet results = statement.executeQuery(sql)) {
+                        while (results.next()) {
+                            GeographyCode province = TableGeographyCode.readResults(results);
+                            if (province.getFullName() != null) {
+                                provincesMap.put(province.getFullName(), province.getName());
+                            }
                         }
                     }
-                }
-                Set<String> provinces = provincesMap.keySet();
-                provinces.remove("");
-                for (String fullAddress : provinces) {
-                    sql = "UPDATE Geography_Code "
-                            + " SET province='" + provincesMap.get(fullAddress) + "' "
-                            + " WHERE province='" + fullAddress + "'";
-                    statement.executeUpdate(sql);
-                }
+                    Set<String> provinces = provincesMap.keySet();
+                    provinces.remove("");
+                    for (String fullAddress : provinces) {
+                        sql = "UPDATE Geography_Code "
+                                + " SET province='" + provincesMap.get(fullAddress) + "' "
+                                + " WHERE province='" + fullAddress + "'";
+                        statement.executeUpdate(sql);
+                    }
 
-                Map<String, String> citiesMap = new HashMap<>();
-                sql = "SELECT * FROM Geography_Code WHERE "
-                        + " level='" + message("City") + "' ";
-                try ( ResultSet results = statement.executeQuery(sql)) {
-                    while (results.next()) {
-                        GeographyCode city = TableGeographyCode.readResults(results);
-                        if (city.getFullName() != null) {
-                            citiesMap.put(city.getFullName(), city.getName());
+                    Map<String, String> citiesMap = new HashMap<>();
+                    sql = "SELECT * FROM Geography_Code WHERE "
+                            + " level='" + message("City") + "' ";
+                    try ( ResultSet results = statement.executeQuery(sql)) {
+                        while (results.next()) {
+                            GeographyCode city = TableGeographyCode.readResults(results);
+                            if (city.getFullName() != null) {
+                                citiesMap.put(city.getFullName(), city.getName());
+                            }
                         }
                     }
-                }
-                Set<String> cities = citiesMap.keySet();
-                cities.remove("");
-                for (String fullAddress : cities) {
-                    sql = "UPDATE Geography_Code "
-                            + " SET city='" + citiesMap.get(fullAddress) + "' "
-                            + " WHERE city='" + fullAddress + "'";
-                    statement.executeUpdate(sql);
-                }
+                    Set<String> cities = citiesMap.keySet();
+                    cities.remove("");
+                    for (String fullAddress : cities) {
+                        sql = "UPDATE Geography_Code "
+                                + " SET city='" + citiesMap.get(fullAddress) + "' "
+                                + " WHERE city='" + fullAddress + "'";
+                        statement.executeUpdate(sql);
+                    }
 
-                sql = "DELETE FROM Geography_Code "
-                        + " WHERE country='" + message("Macao")
-                        + "' OR country='" + message("Macau") + "'";
-                statement.executeUpdate(sql);
-            } catch (Exception e) {
-                logger.debug(e.toString());
-                return false;
+                    sql = "DELETE FROM Geography_Code "
+                            + " WHERE country='" + message("Macao")
+                            + "' OR country='" + message("Macau") + "'";
+                    statement.executeUpdate(sql);
+                } catch (Exception e) {
+                    logger.debug(e.toString());
+                    return false;
+                }
             }
+            return true;
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return false;
         }
-        return true;
     }
 
     public static boolean migrateEpidemicReport615() {
-        int size = TableEpidemicReport.size();
-        if (size > 0) {
-            try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                     Statement statement = conn.createStatement()) {
-                String sql = "ALTER TABLE Epidemic_Report  add  column  level VARCHAR(1024)";
-                statement.executeUpdate(sql);
-                sql = "ALTER TABLE Epidemic_Report  add  column  district VARCHAR(2048)";
-                statement.executeUpdate(sql);
-                sql = "ALTER TABLE Epidemic_Report  add  column  township VARCHAR(2048)";
-                statement.executeUpdate(sql);
-                sql = "ALTER TABLE Epidemic_Report  add  column  neighborhood VARCHAR(2048)";
-                statement.executeUpdate(sql);
-                sql = "ALTER TABLE Epidemic_Report  add  column  increased_confirmed INTEGER";
-                statement.executeUpdate(sql);
-                sql = "ALTER TABLE Epidemic_Report  add  column  increased_suspected INTEGER";
-                statement.executeUpdate(sql);
-                sql = "ALTER TABLE Epidemic_Report  add  column  increased_healed INTEGER";
-                statement.executeUpdate(sql);
-                sql = "ALTER TABLE Epidemic_Report  add  column  increased_dead INTEGER";
-                statement.executeUpdate(sql);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            TableEpidemicReport t = new TableEpidemicReport();
+            int size = t.size();
+            if (size > 0) {
+                try ( Statement statement = conn.createStatement()) {
+                    String sql = "ALTER TABLE Epidemic_Report  add  column  level VARCHAR(1024)";
+                    statement.executeUpdate(sql);
+                    sql = "ALTER TABLE Epidemic_Report  add  column  district VARCHAR(2048)";
+                    statement.executeUpdate(sql);
+                    sql = "ALTER TABLE Epidemic_Report  add  column  township VARCHAR(2048)";
+                    statement.executeUpdate(sql);
+                    sql = "ALTER TABLE Epidemic_Report  add  column  neighborhood VARCHAR(2048)";
+                    statement.executeUpdate(sql);
+                    sql = "ALTER TABLE Epidemic_Report  add  column  increased_confirmed INTEGER";
+                    statement.executeUpdate(sql);
+                    sql = "ALTER TABLE Epidemic_Report  add  column  increased_suspected INTEGER";
+                    statement.executeUpdate(sql);
+                    sql = "ALTER TABLE Epidemic_Report  add  column  increased_healed INTEGER";
+                    statement.executeUpdate(sql);
+                    sql = "ALTER TABLE Epidemic_Report  add  column  increased_dead INTEGER";
+                    statement.executeUpdate(sql);
 
-                sql = "ALTER TABLE Epidemic_Report  alter column time NOT NULL";
-                statement.executeUpdate(sql);
+                    sql = "ALTER TABLE Epidemic_Report  alter column time NOT NULL";
+                    statement.executeUpdate(sql);
 
-                sql = "UPDATE Epidemic_Report SET level='" + message("Global")
-                        + "' WHERE country IS NULL AND province IS NULL ";
-                statement.executeUpdate(sql);
+                    sql = "UPDATE Epidemic_Report SET level='" + message("Global")
+                            + "' WHERE country IS NULL AND province IS NULL ";
+                    statement.executeUpdate(sql);
 
-                sql = "UPDATE Epidemic_Report SET level='" + message("Country")
-                        + "' WHERE country IS NOT NULL AND province IS NULL";
-                statement.executeUpdate(sql);
+                    sql = "UPDATE Epidemic_Report SET level='" + message("Country")
+                            + "' WHERE country IS NOT NULL AND province IS NULL";
+                    statement.executeUpdate(sql);
 
-                sql = "UPDATE Epidemic_Report SET level='" + message("Province")
-                        + "' WHERE province IS NOT NULL";
-                statement.executeUpdate(sql);
+                    sql = "UPDATE Epidemic_Report SET level='" + message("Province")
+                            + "' WHERE province IS NOT NULL";
+                    statement.executeUpdate(sql);
 
-                sql = "UPDATE Epidemic_Report SET level='" + message("City")
-                        + "' WHERE level IS NULL";
-                statement.executeUpdate(sql);
+                    sql = "UPDATE Epidemic_Report SET level='" + message("City")
+                            + "' WHERE level IS NULL";
+                    statement.executeUpdate(sql);
 
-                sql = "ALTER TABLE Epidemic_Report  alter column level NOT NULL";
-                statement.executeUpdate(sql);
+                    sql = "ALTER TABLE Epidemic_Report  alter column level NOT NULL";
+                    statement.executeUpdate(sql);
 
-            } catch (Exception e) {
-                logger.debug(e.toString());
-                return false;
+                } catch (Exception e) {
+                    logger.debug(e.toString());
+                    return false;
+                }
+                File path = new File(AppVariables.MyboxDataPath + File.separator + "migration" + File.separator);
+                path.mkdirs();
+                File tmpFile = new File(path.getAbsoluteFile() + File.separator + "Epidemic_Report_backup6.1_" + (new Date().getTime()) + ".del");
+                DerbyBase.exportData("Epidemic_Report", tmpFile.getAbsolutePath());
             }
-            File tmpFile = new File(AppVariables.MyboxDataPath + File.separator + "data"
-                    + File.separator + "Epidemic_Report_backup6.1_" + (new Date().getTime()) + ".del");
-            tmpFile.mkdirs();
-            DerbyBase.exportData("Epidemic_Report", tmpFile.getAbsolutePath());
-            AppVariables.setSystemConfigValue("EpidemicReportBackup6.1.5", tmpFile.getAbsolutePath());
+            t.dropTable(conn);
+            t.createTable(conn);
+            return true;
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return false;
         }
-
-        new TableEpidemicReport().drop();
-        new TableEpidemicReport().init();
-        return true;
     }
 
     public static boolean migrateEpidemicReport621() {
-        int size = TableGeographyCode.size();
-        if (size > 0) {
-            try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                     Statement statement = conn.createStatement()) {
-                String sql = "UPDATE Epidemic_Report SET level='" + message("Country")
-                        + "', country='" + message("Monaco") + "', province=null, city=null, "
-                        + " longitude=7.42, latitude=43.74 "
-                        + " WHERE province='摩纳哥'";
-                statement.executeUpdate(sql);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            TableGeographyCode t = new TableGeographyCode();
+            int size = t.size();
+            if (size > 0) {
+                try ( Statement statement = conn.createStatement()) {
+                    String sql = "UPDATE Epidemic_Report SET level='" + message("Country")
+                            + "', country='" + message("Monaco") + "', province=null, city=null, "
+                            + " longitude=7.42, latitude=43.74 "
+                            + " WHERE province='摩纳哥'";
+                    statement.executeUpdate(sql);
 
-                sql = "DELETE FROM Epidemic_Report "
-                        + " WHERE country='" + message("Macao")
-                        + "' OR country='" + message("Macau") + "'";
-                statement.executeUpdate(sql);
-            } catch (Exception e) {
-                logger.debug(e.toString());
-                return false;
+                    sql = "DELETE FROM Epidemic_Report "
+                            + " WHERE country='" + message("Macao")
+                            + "' OR country='" + message("Macau") + "'";
+                    statement.executeUpdate(sql);
+                } catch (Exception e) {
+                    logger.debug(e.toString());
+                    return false;
+                }
             }
+            return true;
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return false;
         }
-        return true;
     }
 
     private static void resetDB() {

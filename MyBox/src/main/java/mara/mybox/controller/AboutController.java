@@ -28,9 +28,9 @@ public class AboutController extends BaseController {
     public void initializeNext() {
         version.setText(CommonValues.AppVersion);
         date.setText(CommonValues.AppVersionDate);
-        userGuideLink.setText("https://github.com/Mararsh/MyBox/releases/download/v"
-                + CommonValues.AppDocVersion + "/MyBox-UserGuide-" + CommonValues.AppDocVersion
-                + "-Overview-" + AppVariables.getLanguage() + ".pdf");
+        userGuideLink.setText(AppVariables.isChinese()
+                ? "https://mararsh.github.io/MyBox_documents/zh/MyBox-UserGuide-5.0-Overview-zh.pdf"
+                : "https://mararsh.github.io/MyBox_documents/en/MyBox-UserGuide-5.0-Overview-en.pdf");
 
         FxmlControl.miao5();
 

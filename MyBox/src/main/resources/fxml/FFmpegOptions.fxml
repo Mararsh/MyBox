@@ -20,11 +20,9 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0"
-      xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.FFmpegOptionsController">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.FFmpegOptionsController">
     <children>
-        <HBox fx:id="codeBox2111" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
+        <HBox fx:id="codeBox211" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
             <children>
                 <Button fx:id="linkButton" mnemonicParsing="false" onAction="#download">
                     <graphic>
@@ -35,11 +33,6 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-                <Label styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%FFmpegComments" wrapText="true" />
-            </children>
-        </HBox>
-        <HBox fx:id="codeBox211" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
-            <children>
                 <Button fx:id="selectFileExecutableButton" mnemonicParsing="false" onAction="#selectExecutable">
                     <graphic>
                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -49,76 +42,94 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
+            <Label fx:id="executableLabel" text="%FFmpegExecutable" />
                 <TextField fx:id="executableInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
             </children>
         </HBox>
-        <Label styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%MediaConversionComments" wrapText="true" />
+        <HBox fx:id="codeBox21111" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
+            <children>
+                <Button fx:id="defaultButton" mnemonicParsing="false" onAction="#defaultAction">
+                    <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconDefault.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../buttons/iconTips.png" />
+                    </image>
+                </ImageView>
+            <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+            <Hyperlink onAction="#aboutMedia" text="%AboutMedia" />
+            </children>
+        </HBox>
         <HBox alignment="CENTER_LEFT" layoutX="32.0" layoutY="32.0" maxWidth="1.7976931348623157E308" spacing="5.0">
             <children>
                 <Label text="%MuxerFormat" />
                 <ComboBox fx:id="muxerSelector" prefWidth="300.0" />
-            </children>
-        </HBox>
-        <HBox alignment="CENTER_LEFT" layoutX="32.0" layoutY="32.0" maxWidth="1.7976931348623157E308" spacing="5.0">
-            <children>
                 <Label text="%TargetFilesExtension" />
                 <TextField fx:id="extensionInput" prefWidth="150.0" />
             </children>
         </HBox>
-        <HBox alignment="CENTER_LEFT" layoutX="32.0" layoutY="90.0" maxWidth="1.7976931348623157E308" spacing="5.0">
+        <HBox alignment="CENTER_LEFT" layoutX="32.0" layoutY="32.0" maxWidth="1.7976931348623157E308" spacing="5.0" />
+        <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
             <children>
-                <Label text="%VideoEncoder" />
-                <ComboBox fx:id="videoEncoderSelector" prefWidth="300.0" />
+                <HBox alignment="CENTER_LEFT" layoutX="32.0" layoutY="90.0" maxWidth="1.7976931348623157E308" spacing="5.0">
+                    <children>
+                        <Label text="%VideoEncoder" />
+                        <ComboBox fx:id="videoEncoderSelector" prefWidth="200.0" />
+                        <Label text="%VideoFrameRate" />
+                        <ComboBox fx:id="videoFrameRateSelector" prefWidth="150.0" />
+                    </children>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
+                    <children>
+                        <Label text="%VideoResolution" />
+                        <ComboBox fx:id="resolutionSelector" prefWidth="200.0" />
+                        <Label text="%AspectRatio" />
+                        <ComboBox fx:id="aspectSelector" prefWidth="300.0" />
+                    </children>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
+                    <children>
+                        <Label text="%VideoBitrate" />
+                        <ComboBox fx:id="videoBitrateSelector" editable="true" prefWidth="200.0" />
+                        <Label text="%EncodingPreset" />
+                        <ComboBox prefWidth="160.0" fx:id="x264presetSelector" />
+                    </children>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
+                    <children>
+                        <Label text="%CRF" />
+                        <ComboBox fx:id="crfSelector" prefWidth="160.0" />
+                    </children>
+                </HBox>
             </children>
-        </HBox>
-        <HBox alignment="CENTER_LEFT" layoutX="32.0" layoutY="420.0" maxWidth="1.7976931348623157E308" spacing="5.0">
+        </VBox>
+        <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
             <children>
-                <Label text="%VideoResolution" />
-                <ComboBox fx:id="resolutionSelector" prefWidth="240.0" />
+                <HBox alignment="CENTER_LEFT" layoutX="32.0" layoutY="32.0" maxWidth="1.7976931348623157E308" spacing="5.0">
+                    <children>
+                        <Label text="%AudioEncoder" />
+                        <ComboBox fx:id="audioEncoderSelector" prefWidth="300.0" />
+                        <Label text="%AudioSampleRate" />
+                        <ComboBox fx:id="audioSampleRateSelector" editable="true" prefWidth="200.0" />
+                    </children>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
+                    <children>
+                        <Label text="%AudioBitrate" />
+                        <ComboBox fx:id="audioBitrateSelector" editable="true" prefWidth="200.0" />
+                        <Label text="%ChangeVolume" />
+                  <ComboBox fx:id="volumnSelector" editable="true" layoutX="186.0" layoutY="10.0" prefWidth="200.0" />
+                  <CheckBox fx:id="stereoCheck" mnemonicParsing="false" selected="true" text="%Stereo" />
+                    </children>
+                </HBox>
             </children>
-        </HBox>
-        <HBox alignment="CENTER_LEFT" layoutX="32.0" layoutY="188.0" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
-            <children>
-                <Label text="%AspectRatio" />
-                <ComboBox fx:id="aspectSelector" prefWidth="300.0" />
-            </children>
-        </HBox>
-        <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="569.0" maxWidth="1.7976931348623157E308" spacing="5.0">
-            <children>
-                <Label text="%VideoBitrate" />
-                <ComboBox fx:id="videoBitrateSelector" editable="true" prefWidth="200.0" />
-            </children>
-        </HBox>
-        <HBox alignment="CENTER_LEFT" layoutX="32.0" layoutY="152.0" maxWidth="1.7976931348623157E308" spacing="5.0">
-            <children>
-                <Label text="%VideoFrameRate" />
-                <ComboBox fx:id="videoFrameRateSelector" prefWidth="150.0" />
-            </children>
-        </HBox>
-        <HBox alignment="CENTER_LEFT" layoutX="32.0" layoutY="32.0" maxWidth="1.7976931348623157E308" spacing="5.0">
-            <children>
-                <Label text="%AudioEncoder" />
-                <ComboBox fx:id="audioEncoderSelector" prefWidth="300.0" />
-            </children>
-        </HBox>
-        <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="569.0" maxWidth="1.7976931348623157E308" spacing="5.0">
-            <children>
-                <Label text="%AudioBitrate" />
-                <ComboBox fx:id="audioBitrateSelector" editable="true" prefWidth="200.0" />
-            </children>
-        </HBox>
-        <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="821.0" maxWidth="1.7976931348623157E308" spacing="5.0">
-            <children>
-                <Label text="%AudioSampleRate" />
-                <ComboBox fx:id="audioSampleRateSelector" editable="true" prefWidth="200.0" />
-            </children>
-        </HBox>
-        <HBox alignment="CENTER_LEFT" layoutX="32.0" layoutY="478.0" maxWidth="1.7976931348623157E308" spacing="5.0">
-            <children>
-                <Label text="%ChangeVolume" />
-                <TextField fx:id="volumnInput" maxWidth="1.7976931348623157E308" promptText="%ChangeVolumeComments" HBox.hgrow="ALWAYS" />
-            </children>
-        </HBox>
+        </VBox>
         <HBox alignment="CENTER_LEFT" layoutX="32.0" layoutY="148.0" maxWidth="1.7976931348623157E308" spacing="5.0">
             <children>
                 <Label text="%SubtitleEncoder" />
@@ -142,4 +153,3 @@ License:    Apache License Version 2.0
         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
     </padding>
 </VBox>
-

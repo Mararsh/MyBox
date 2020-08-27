@@ -3,7 +3,6 @@ package mara.mybox.controller;
 import com.github.kokorin.jaffree.Rational;
 import com.github.kokorin.jaffree.StreamType;
 import com.github.kokorin.jaffree.ffprobe.FFprobe;
-import com.github.kokorin.jaffree.ffprobe.FFprobeResult;
 import com.github.kokorin.jaffree.ffprobe.Format;
 import com.github.kokorin.jaffree.ffprobe.Frame;
 import com.github.kokorin.jaffree.ffprobe.Packet;
@@ -48,9 +47,7 @@ import static mara.mybox.value.AppVariables.message;
  * @CreateDate 2019-12-1
  * @License Apache License Version 2.0
  */
-public class FFmpegProbeMediaInformationController extends FFmpegBaseController {
-
-    protected FFprobeResult probeResult;
+public class FFmpegProbeMediaInformationController extends FFmpegOptionsController {
 
     @FXML
     protected TabPane tabPane;
@@ -355,7 +352,7 @@ public class FFmpegProbeMediaInformationController extends FFmpegBaseController 
         table.add(Arrays.asList(message("Format"), format.getFormatName()));
         table.add(Arrays.asList(message("FormatLongName"), format.getFormatLongName()));
         if (format.getDuration() != null) {
-            table.add(Arrays.asList(message("Duration"), DateTools.showSeconds(Math.round(format.getDuration()))));
+            table.add(Arrays.asList(message("Duration"), DateTools.timeDuration(Math.round(format.getDuration() * 1000))));
         }
         if (format.getSize() != null) {
             table.add(Arrays.asList(message("Size"), FileTools.showFileSize(format.getSize())));
@@ -492,7 +489,7 @@ public class FFmpegProbeMediaInformationController extends FFmpegBaseController 
             table.add(Arrays.asList(message("CodecTimeBase"), r.denominator + "." + r.numerator));
         }
         if (stream.getDuration() != null) {
-            table.add(Arrays.asList(message("Duration"), DateTools.showSeconds(Math.round(stream.getDuration()))));
+            table.add(Arrays.asList(message("Duration"), DateTools.timeDuration(Math.round(stream.getDuration() * 1000))));
         }
         if (stream.getStartTime() != null) {
             table.add(Arrays.asList(message("StartTime"), stream.getStartTime() + ""));

@@ -51,9 +51,7 @@ import mara.mybox.tools.ConfigTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.OCRTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.DaoDeMapVersion;
-import static mara.mybox.value.AppVariables.DaoDeMapWebKey;
-import static mara.mybox.value.AppVariables.DaoDeMapWebServiceKey;
+import static mara.mybox.value.AppVariables.getUserConfigBoolean;
 import static mara.mybox.value.AppVariables.getUserConfigValue;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
@@ -75,28 +73,29 @@ public class SettingsController extends BaseController {
     @FXML
     protected Tab interfaceTab, baseTab, pdfTab, imageTab, dataTab, ocrTab;
     @FXML
-    protected ToggleGroup langGroup, pdfMemGroup, controlColorGroup;
+    protected ToggleGroup langGroup, pdfMemGroup, controlColorGroup, derbyGroup, splitPanesGroup;
     @FXML
     protected CheckBox stopAlarmCheck, newWindowCheck, restoreStagesSizeCheck,
             copyToSystemClipboardCheck, anchorSolidCheck, controlsTextCheck, recordLoadCheck,
             clearCurrentRootCheck, hidpiCheck;
     @FXML
     protected TextField jvmInput, imageMaxHisInput, dataDirInput, fileRecentInput, thumbnailWidthInput,
-            ocrDirInput, mapWebKeyInput, mapWebServiceKeyInput;
+            ocrDirInput, tiandituWebKeyInput, gaodeWebKeyInput, gaodeServiceKeyInput;
     @FXML
     protected VBox localBox, dataBox, ocrBox;
     @FXML
     protected ComboBox<String> styleBox, imageWidthBox, fontSizeBox, iconSizeBox,
             strokeWidthBox, anchorWidthBox;
     @FXML
-    protected HBox pdfMemBox, imageHisBox;
+    protected HBox pdfMemBox, imageHisBox, derbyBox;
     @FXML
     protected Button settingsImageHisOKButton, settingsRecentOKButton, settingsChangeRootButton,
             settingsAlphaColorButton, settingsStrokeColorButton, settingsAnchorColorButton,
             settingsDataPathButton, settingsJVMButton;
     @FXML
     protected RadioButton chineseRadio, englishRadio, redRadio, orangeRadio, pinkRadio, lightBlueRadio, blueRadio,
-            pdfMem500MRadio, pdfMem1GRadio, pdfMem2GRadio, pdfMemUnlimitRadio;
+            pdfMem500MRadio, pdfMem1GRadio, pdfMem2GRadio, pdfMemUnlimitRadio,
+            splitPaneClickedRadio, splitPaneEnteredRadio, embeddedRadio, networkRadio;
     @FXML
     protected Rectangle alphaRect, strokeRect, anchorRect;
     @FXML
@@ -104,12 +103,6 @@ public class SettingsController extends BaseController {
     @FXML
     protected Label alphaLabel, currentJvmLabel, currentDataPathLabel, currentTempPathLabel,
             currentOCRFilesLabel, derbyStatus;
-    @FXML
-    protected ToggleGroup derbyGroup;
-    @FXML
-    protected RadioButton embeddedRadio, networkRadio;
-    @FXML
-    protected HBox derbyBox;
 
     public SettingsController() {
         baseTitle = AppVariables.message("Settings");
@@ -204,9 +197,15 @@ public class SettingsController extends BaseController {
 
             }
 
-            controlsTextCheck.setSelected(AppVariables.getUserConfigBoolean("ControlDisplayText", false));
+            controlsTextCheck.setSelected(getUserConfigBoolean("ControlDisplayText", false));
 
             imageWidthBox.getSelectionModel().select(AppVariables.getUserConfigInt("MaxImageSampleWidth", 4096) + "");
+
+            if (getUserConfigBoolean("ControlSplitPanesEntered", true)) {
+                splitPaneEnteredRadio.fire();
+            } else {
+                splitPaneClickedRadio.fire();
+            }
 
             checkLanguage();
             checkPdfMem();
@@ -417,6 +416,16 @@ public class SettingsController extends BaseController {
     protected void setEnglish(ActionEvent event) {
         AppVariables.setLanguage("en");
         refresh();
+    }
+
+    @FXML
+    protected void setSplitPaneEntered() {
+        AppVariables.setUserConfigValue("ControlSplitPanesEntered", true);
+    }
+
+    @FXML
+    protected void setSplitPaneClicked() {
+        AppVariables.setUserConfigValue("ControlSplitPanesEntered", false);
     }
 
     /*
@@ -1300,8 +1309,9 @@ public class SettingsController extends BaseController {
      */
     public void initMapTab() {
         try {
-            mapWebKeyInput.setText(AppVariables.DaoDeMapWebKey);
-            mapWebServiceKeyInput.setText(AppVariables.DaoDeMapWebServiceKey);
+            tiandituWebKeyInput.setText(AppVariables.getUserConfigValue("TianDiTuWebKey", CommonValues.TianDiTuWebKey));
+            gaodeWebKeyInput.setText(AppVariables.getUserConfigValue("GaoDeMapWebKey", CommonValues.GaoDeMapWebKey));
+            gaodeServiceKeyInput.setText(AppVariables.getUserConfigValue("GaoDeMapServiceKey", CommonValues.GaoDeMapServiceKey));
         } catch (Exception e) {
             logger.debug(e.toString());
         }
@@ -1309,23 +1319,25 @@ public class SettingsController extends BaseController {
 
     @FXML
     public void setMapKeysAction() {
-        String webKey = mapWebKeyInput.getText();
-        String serviceKey = mapWebServiceKeyInput.getText();
-        if (webKey == null || webKey.trim().isBlank()
-                || serviceKey == null || serviceKey.trim().isBlank()) {
+        String tiandituKey = tiandituWebKeyInput.getText();
+        String daodeWeb = gaodeWebKeyInput.getText();
+        String gaoServiceKey = gaodeServiceKeyInput.getText();
+        if (tiandituKey == null || tiandituKey.trim().isBlank()
+                || daodeWeb == null || daodeWeb.trim().isBlank()
+                || gaoServiceKey == null || gaoServiceKey.trim().isBlank()) {
             popError(message("InvalidData"));
             return;
         }
-        AppVariables.DaoDeMapWebKey = webKey;
-        AppVariables.setUserConfigValue("DaoDeMapWebKey", webKey);
-        AppVariables.DaoDeMapWebServiceKey = serviceKey;
-        AppVariables.setUserConfigValue("DaoDeMapWebServiceKey", serviceKey);
+        AppVariables.setUserConfigValue("TianDiTuWebKey", tiandituKey);
+        AppVariables.setUserConfigValue("GaoDeMapWebKey", daodeWeb);
+        AppVariables.setUserConfigValue("GaoDeMapServiceKey", gaoServiceKey);
     }
 
     @FXML
     public void defaultMapAction() {
-        mapWebKeyInput.setText("06b9e078a51325a843dfefd57ffd876c");
-        mapWebServiceKeyInput.setText("d7444d9a7fae01fa850236d909ad4450");
+        tiandituWebKeyInput.setText(CommonValues.TianDiTuWebKey);
+        gaodeWebKeyInput.setText(CommonValues.GaoDeMapWebKey);
+        gaodeServiceKeyInput.setText(CommonValues.GaoDeMapServiceKey);
         setMapKeysAction();
     }
 

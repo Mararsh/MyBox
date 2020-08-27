@@ -49,7 +49,7 @@ public class DownloadTask<Void> extends BaseTask<Void> {
             error = message("InvalidData");
             return false;
         }
-        startTime = new Date().getTime();
+        startTime = new Date();
         currentSize = 0;
         try {
             url = new URL(address);
@@ -173,7 +173,7 @@ public class DownloadTask<Void> extends BaseTask<Void> {
 
     @Override
     protected void taskQuit() {
-        endTime = new Date().getTime();
+        endTime = new Date();
         progress();
     }
 

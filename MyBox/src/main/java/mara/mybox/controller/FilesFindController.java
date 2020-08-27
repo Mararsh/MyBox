@@ -13,8 +13,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.data.FileInformation;
 import mara.mybox.fxml.FxmlControl;
-import mara.mybox.fxml.TableDateCell;
 import mara.mybox.fxml.TableFileSizeCell;
+import mara.mybox.fxml.TableTimeCell;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
@@ -76,10 +76,10 @@ public class FilesFindController extends FilesBatchController {
             sizeColumn.setCellFactory(new TableFileSizeCell());
 
             modifyTimeColumn.setCellValueFactory(new PropertyValueFactory<>("modifyTime"));
-            modifyTimeColumn.setCellFactory(new TableDateCell());
+            modifyTimeColumn.setCellFactory(new TableTimeCell());
 
             createTimeColumn.setCellValueFactory(new PropertyValueFactory<>("createTime"));
-            createTimeColumn.setCellFactory(new TableDateCell());
+            createTimeColumn.setCellFactory(new TableTimeCell());
 
             filesView.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
@@ -174,7 +174,6 @@ public class FilesFindController extends FilesBatchController {
 
     @Override
     public void showCost() {
-        long cost = new Date().getTime() - processStartTime.getTime();
         String s;
         if (paused) {
             s = message("Paused");
@@ -184,7 +183,7 @@ public class FilesFindController extends FilesBatchController {
         s += ".  "
                 + message("TotalCheckedFiles") + ": " + totalFilesHandled + "   "
                 + message("TotalMatched") + ": " + totalMatched + ".   "
-                + message("Cost") + ": " + DateTools.showTime(cost) + ". "
+                + message("Cost") + ": " + DateTools.datetimeMsDuration(new Date(), processStartTime) + ". "
                 + message("StartTime") + ": " + DateTools.datetimeToString(processStartTime) + ", "
                 + message("EndTime") + ": " + DateTools.datetimeToString(new Date());
         statusLabel.setText(s);

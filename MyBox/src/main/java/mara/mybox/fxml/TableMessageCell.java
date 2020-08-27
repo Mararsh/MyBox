@@ -10,22 +10,22 @@ import mara.mybox.value.AppVariables;
  * @CreateDate 2020-02-08
  * @License Apache License Version 2.0
  */
-public class TableMessageCell<T, P> extends TableCell<T, P>
-        implements Callback<TableColumn<T, P>, TableCell<T, P>> {
+public class TableMessageCell<T> extends TableCell<T, String>
+        implements Callback<TableColumn<T, String>, TableCell<T, String>> {
 
     @Override
-    public TableCell<T, P> call(TableColumn<T, P> param) {
+    public TableCell<T, String> call(TableColumn<T, String> param) {
 
-        TableCell<T, P> cell = new TableCell<T, P>() {
+        TableCell<T, String> cell = new TableCell<T, String>() {
             @Override
-            public void updateItem(P item, boolean empty) {
+            public void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
                 if (empty || item == null) {
                     setText(null);
                     setGraphic(null);
                     return;
                 }
-                setText(AppVariables.message((String) item));
+                setText(AppVariables.message(item));
                 setGraphic(null);
             }
         };

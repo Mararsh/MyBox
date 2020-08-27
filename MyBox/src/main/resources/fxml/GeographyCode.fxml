@@ -36,16 +36,15 @@ License:    Apache License Version 2.0
                                     <children>
                                         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
                                             <children>
-                                                <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction" onMouseEntered="#popClearMenu">
+                                                <Button fx:id="queryButton" layoutX="479.0" layoutY="10.0" mnemonicParsing="false" onAction="#queryData" onMouseEntered="#popQueryMenu">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
-                                                                <Image url="@../buttons/iconClear.png" />
+                                                                <Image url="@../buttons/iconQuery.png" />
                                                             </image>
                                                         </ImageView>
                                                     </graphic>
                                                 </Button>
-                                                <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                                 <Button fx:id="refreshButton" layoutX="445.0" layoutY="10.0" mnemonicParsing="false" onAction="#refreshAction">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -55,18 +54,28 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </graphic>
                                                 </Button>
-                                    <Button fx:id="goButton" layoutX="479.0" layoutY="10.0" mnemonicParsing="false" onAction="#queryData" onMouseEntered="#popQueryMenu">
-                                       <graphic>
-                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../buttons/iconGo.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                    </Button>
+                                                <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction" onMouseEntered="#popClearMenu">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconClear.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="dataExportButton" mnemonicParsing="false" onAction="#exportData" onMouseEntered="#popExportMenu">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconDataExport.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
                                             </children>
                                         </HBox>
-                                        <TabPane tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+                                        <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
                                             <tabs>
                                                 <Tab text="%Conditions">
                                                     <content>
@@ -75,30 +84,52 @@ License:    Apache License Version 2.0
                                                 </Tab>
                                                 <Tab text="%Order">
                                                     <content>
-                                                        <VBox fx:id="optionsBox1" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                                            <children>
-                                                                <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="465.0" prefViewportWidth="618.0">
+                                                            <content>
+                                                                <VBox fx:id="optionsBox1" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                                    <padding>
+                                                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                                                    </padding>
                                                                     <children>
-                                                                        <RadioButton mnemonicParsing="false" selected="true" text="%Dataid">
-                                                                            <toggleGroup>
-                                                                                <ToggleGroup fx:id="orderGroup" />
-                                                                            </toggleGroup>
-                                                                        </RadioButton>
-                                                                        <RadioButton mnemonicParsing="false" text="%Level" toggleGroup="$orderGroup" />
-                                                                        <RadioButton mnemonicParsing="false" text="%ChineseName" toggleGroup="$orderGroup" />
-                                                                        <RadioButton mnemonicParsing="false" text="%EnglishName" toggleGroup="$orderGroup" />
-                                                                        <RadioButton mnemonicParsing="false" text="%Longitude" toggleGroup="$orderGroup" />
-                                                                        <RadioButton mnemonicParsing="false" text="%Latitude" toggleGroup="$orderGroup" />
-                                                                        <RadioButton mnemonicParsing="false" text="%Area" toggleGroup="$orderGroup" />
-                                                                        <RadioButton mnemonicParsing="false" text="%Population" toggleGroup="$orderGroup" />
+                                                                        <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                                                                            <children>
+                                                                                <Button fx:id="moveDownButton" mnemonicParsing="false" onAction="#downAction">
+                                                                                    <graphic>
+                                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                            <image>
+                                                                                                <Image url="@../buttons/iconDown.png" />
+                                                                                            </image>
+                                                                                        </ImageView>
+                                                                                    </graphic>
+                                                                                </Button>
+                                                                                <Button fx:id="moveUpButton" mnemonicParsing="false" onAction="#upAction">
+                                                                                    <graphic>
+                                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                            <image>
+                                                                                                <Image url="@../buttons/iconUp.png" />
+                                                                                            </image>
+                                                                                        </ImageView>
+                                                                                    </graphic>
+                                                                                </Button>
+                                                                                <Button fx:id="moveTopButton" mnemonicParsing="false" onAction="#topAction">
+                                                                                    <graphic>
+                                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                            <image>
+                                                                                                <Image url="@../buttons/iconDoubleUp.png" />
+                                                                                            </image>
+                                                                                        </ImageView>
+                                                                                    </graphic>
+                                                                                </Button>
+                                                                            </children>
+                                                                        </HBox>
+                                                                        <ListView fx:id="orderByList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
+                                                                        <Label minHeight="-Infinity" text="%MultipleSelectionComments" wrapText="true" VBox.vgrow="NEVER" />
+                                                                        <Separator VBox.vgrow="NEVER" />
+                                                                        <Label text="%OrderNotWorkForClear" VBox.vgrow="NEVER" />
                                                                     </children>
                                                                 </VBox>
-                                                                <CheckBox fx:id="descendCheck" mnemonicParsing="false" selected="true" text="%Descending" />
-                                                            </children>
-                                                            <padding>
-                                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                                            </padding>
-                                                        </VBox>
+                                                            </content>
+                                                        </ScrollPane>
                                                     </content>
                                                 </Tab>
                                             </tabs>
@@ -114,20 +145,12 @@ License:    Apache License Version 2.0
                             <children>
                                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
                                     <children>
-                                        <ImageView fx:id="leftPaneControl" fitHeight="20.0" fitWidth="20.0" onMouseClicked="#controlLeftPane" pickOnBounds="true" preserveRatio="true">
+                                        <ImageView fx:id="leftPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
                                                 <Image url="@../buttons/iconDoubleLeft.png" />
                                             </image>
                                         </ImageView>
-                                        <Button fx:id="plusButton" mnemonicParsing="false" onAction="#addAction">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/iconPlus.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
+                                        <Label maxWidth="1.7976931348623157E308" styleClass="bold-blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" HBox.hgrow="ALWAYS" />
                                         <Button fx:id="dataImportButton" mnemonicParsing="false" onMouseEntered="#popImportMenu">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -137,12 +160,11 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                                        <Label maxWidth="1.7976931348623157E308" styleClass="bold-blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" HBox.hgrow="ALWAYS" />
-                                        <Button fx:id="dataExportButton" mnemonicParsing="false" onAction="#exportData" onMouseEntered="#popExportMenu">
+                                        <Button fx:id="addButton" mnemonicParsing="false" onAction="#addAction">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
-                                                        <Image url="@../buttons/iconDataExport.png" />
+                                                        <Image url="@../buttons/iconAdd.png" />
                                                     </image>
                                                 </ImageView>
                                             </graphic>
@@ -155,7 +177,12 @@ License:    Apache License Version 2.0
                                             <content>
                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                     <children>
-                                                        <CheckBox fx:id="consoleCheck" mnemonicParsing="false" text="%ConsoleStyle" />
+                                                        <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                                            <children>
+                                                                <Label text="%Style" />
+                                                                <ComboBox fx:id="htmlStyleSelector" prefWidth="150.0" />
+                                                            </children>
+                                                        </HBox>
                                                         <WebView fx:id="infoView" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS" />
                                                     </children>
                                                     <padding>
@@ -234,6 +261,7 @@ License:    Apache License Version 2.0
                                                                 <TableColumn fx:id="englishnameColumn" prefWidth="150.0" text="%EnglishName" />
                                                                 <TableColumn fx:id="longitudeColumn" editable="false" prefWidth="100.0" text="%Longitude" />
                                                                 <TableColumn fx:id="latitudeColumn" prefWidth="100.0" text="%Latitude" />
+                                                                <TableColumn fx:id="coordinateSystemColumn" prefWidth="140.0" text="%CoordinateSystem" />
                                                                 <TableColumn fx:id="code1Column" editable="false" prefWidth="100.0" text="%Code" />
                                                                 <TableColumn fx:id="code2Column" editable="false" prefWidth="100.0" text="%Code" />
                                                                 <TableColumn fx:id="code3Column" editable="false" prefWidth="100.0" text="%Code" />
@@ -252,9 +280,9 @@ License:    Apache License Version 2.0
                                                                 <Label fx:id="dataSizeLabel" layoutX="10.0" layoutY="19.0" />
                                                                 <Label fx:id="selectedLabel" layoutX="15.0" layoutY="19.0" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                                                 <Label text="%PageSize" />
-                                                                <ComboBox fx:id="pageSizeSelector" editable="true" prefWidth="80.0" />
+                                                                <ComboBox fx:id="pageSizeSelector" editable="true" prefWidth="120.0" />
                                                                 <Label text="%Page" />
-                                                                <ComboBox fx:id="pageSelector" editable="true" layoutX="778.0" layoutY="10.0" prefWidth="80.0" />
+                                                                <ComboBox fx:id="pageSelector" editable="true" layoutX="778.0" layoutY="10.0" prefWidth="120.0" />
                                                                 <Label fx:id="pageLabel" />
                                                                 <Button fx:id="firstButton" mnemonicParsing="false" onAction="#firstAction">
                                                                     <graphic>
@@ -300,15 +328,7 @@ License:    Apache License Version 2.0
                                         </Tab>
                                         <Tab fx:id="mapTab" text="%Map">
                                             <content>
-                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                                                    <children>
-                                                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
-                                                            <content>
-                                                                <fx:include fx:id="map" source="LocationsMap.fxml" />
-                                                            </content>
-                                                        </ScrollPane>
-                                                    </children>
-                                                </VBox>
+                                                <fx:include fx:id="map" source="GeographyCodeMap.fxml" />
                                             </content>
                                         </Tab>
                                         <Tab fx:id="settingsTab" text="%Settings">

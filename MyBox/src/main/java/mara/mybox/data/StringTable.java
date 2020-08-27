@@ -1,9 +1,11 @@
 package mara.mybox.data;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import mara.mybox.tools.HtmlTools;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara
@@ -70,6 +72,16 @@ public class StringTable {
 
     public void editHtml() {
         HtmlTools.editHtml(tableHtml(this));
+    }
+
+    public void newLinkRow(String name, String link) {
+        List<String> row = new ArrayList<>();
+        if (name != null && !name.isBlank()) {
+            row.addAll(Arrays.asList(message(name), "<a href=\"" + link + "\" target=_blank>" + link + "</a>"));
+        } else {
+            row.addAll(Arrays.asList("", "<a href=\"" + link + "\" target=_blank>" + link + "</a>"));
+        }
+        add(row);
     }
 
     /*
@@ -146,7 +158,6 @@ public class StringTable {
             return null;
         }
     }
-
 
     /*
         get/set

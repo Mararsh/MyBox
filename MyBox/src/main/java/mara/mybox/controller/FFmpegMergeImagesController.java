@@ -35,7 +35,7 @@ import mara.mybox.value.CommonFxValues;
  * @CreateDate 2019-12-1
  * @License Apache License Version 2.0
  */
-public class FFmpegMergeImagesController extends FFmpegBaseController {
+public class FFmpegMergeImagesController extends FFmpegBatchController {
 
     protected ObservableList<MediaInformation> audiosData;
 
@@ -50,22 +50,19 @@ public class FFmpegMergeImagesController extends FFmpegBaseController {
 
     public FFmpegMergeImagesController() {
         baseTitle = AppVariables.message("FFmpegMergeImagesInformation");
-        mustSetResolution = true;
 
         SourceFileType = VisitHistory.FileType.Image;
         SourcePathType = VisitHistory.FileType.Image;
         TargetPathType = VisitHistory.FileType.Media;
         TargetFileType = VisitHistory.FileType.Media;
+        AddFileType = VisitHistory.FileType.Image;
+        AddPathType = VisitHistory.FileType.Image;
 
         targetPathKey = "MediaFilePath";
         sourcePathKey = "ImageFilePath";
 
         sourceExtensionFilter = CommonFxValues.ImageExtensionFilter;
         targetExtensionFilter = CommonFxValues.FFmpegMediaExtensionFilter;
-
-        executableName = "FFmpegExecutable";
-        executableDefault = "D:\\Programs\\ffmpeg\\bin\\ffmpeg.exe";
-
     }
 
     @Override
@@ -78,11 +75,11 @@ public class FFmpegMergeImagesController extends FFmpegBaseController {
 
             audiosData = audiosTableController.tableData;
 
+            startButton.disableProperty().unbind();
             startButton.disableProperty().bind(
-                    Bindings.isEmpty(tableView.getItems())
-                            .or(Bindings.isEmpty(targetFileInput.textProperty()))
+                    Bindings.isEmpty(targetFileInput.textProperty())
                             .or(targetFileInput.styleProperty().isEqualTo(badStyle))
-                            .or(optionsValid.not())
+                            .or(ffmpegOptionsController.extensionInput.styleProperty().isEqualTo(badStyle))
             );
 
         } catch (Exception e) {
@@ -91,22 +88,10 @@ public class FFmpegMergeImagesController extends FFmpegBaseController {
     }
 
     @Override
-    public void checkExecutableInput() {
-        try {
-            super.checkExecutableInput();
-            readMuxers();
-            readEncoders();
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    @Override
     public void selectTargetFileFromPath(File path) {
         try {
             String name = null;
-            String ext = extensionInput.getText().trim();
+            String ext = ffmpegOptionsController.extensionInput.getText().trim();
             if (!ext.isEmpty() && !message("OriginalFormat").equals(ext)) {
                 name = "." + ext;
             }
@@ -123,12 +108,17 @@ public class FFmpegMergeImagesController extends FFmpegBaseController {
     @Override
     public void doCurrentProcess() {
         try {
-            if (currentParameters == null || tableData.isEmpty()
-                    || targetFile == null || width <= 0 || height <= 0) {
+            if (currentParameters == null || tableData.isEmpty() || targetFile == null) {
                 popError(message("InvalidParameters"));
                 return;
             }
-            String ext = extensionInput.getText().trim();
+            if (ffmpegOptionsController.width <= 0) {
+                ffmpegOptionsController.width = 720;
+            }
+            if (ffmpegOptionsController.height <= 0) {
+                ffmpegOptionsController.height = 480;
+            }
+            String ext = ffmpegOptionsController.extensionInput.getText().trim();
             if (ext.isEmpty() || message("OriginalFormat").equals(ext)) {
                 ext = FileTools.getFileSuffix(targetFile.getName());
             }
@@ -218,13 +208,11 @@ public class FFmpegMergeImagesController extends FFmpegBaseController {
                 }
                 ImageInformation info = (ImageInformation) tableData.get(i);
                 totalFilesHandled++;
-                if (verboseCheck == null || verboseCheck.isSelected()) {
-                    if (info.getFile() != null) {
-                        if (info.getIndex() >= 0) {
-                            updateLogs(message("Handling") + ": " + info.getFile() + "-" + info.getIndex(), true);
-                        } else {
-                            updateLogs(message("Handling") + ": " + info.getFile(), true);
-                        }
+                if (info.getFile() != null) {
+                    if (info.getIndex() >= 0) {
+                        updateLogs(message("Handling") + ": " + info.getFile() + "-" + info.getIndex(), true);
+                    } else {
+                        updateLogs(message("Handling") + ": " + info.getFile(), true);
                     }
                 }
                 try {
@@ -232,7 +220,8 @@ public class FFmpegMergeImagesController extends FFmpegBaseController {
                     if (image == null) {
                         continue;
                     }
-                    BufferedImage fitImage = ImageManufacture.fitSize(image, width, height);
+                    BufferedImage fitImage = ImageManufacture.fitSize(image,
+                            ffmpegOptionsController.width, ffmpegOptionsController.height);
                     File tmpFile = FileTools.getTempFile(".png");
                     if (ImageFileWriters.writeImageFile(fitImage, tmpFile) && tmpFile.exists()) {
                         lastFile = tmpFile;
@@ -271,9 +260,7 @@ public class FFmpegMergeImagesController extends FFmpegBaseController {
                     continue;
                 }
                 totalFilesHandled++;
-                if (verboseCheck == null || verboseCheck.isSelected()) {
-                    updateLogs(message("Handling") + ": " + file, true);
-                }
+                updateLogs(message("Handling") + ": " + file, true);
                 s.append("file '").append(file.getAbsolutePath()).append("'\n");
             }
             String ss = s.toString();
@@ -305,14 +292,14 @@ public class FFmpegMergeImagesController extends FFmpegBaseController {
                         if (now > lastProgress + 500) {
                             if (verboseCheck == null || verboseCheck.isSelected()) {
                                 updateLogs(message("Handled") + ":"
-                                        + DateTools.showSeconds(progress.getTimeMillis() / 1000), true);
+                                        + DateTools.timeDuration(progress.getTimeMillis()), true);
                             }
-                            progressValue.setText(DateTools.showSeconds(progress.getTimeMillis() / 1000));
+                            progressValue.setText(DateTools.timeDuration(progress.getTimeMillis()));
                             lastProgress = now;
                         }
                         if (now > lastStatus + 3000) {
-                            long cost = now - mediaStart;
-                            String s = message("Cost") + ": " + DateTools.showTime(cost);
+                            long cost = now - ffmpegOptionsController.mediaStart;
+                            String s = message("Cost") + ": " + DateTools.datetimeMsDuration(cost);
                             statusLabel.setText(s);
                             lastStatus = now;
                         }
@@ -320,8 +307,8 @@ public class FFmpegMergeImagesController extends FFmpegBaseController {
 
                 }
             };
-            mediaStart = System.currentTimeMillis();
-            FFmpeg ffmpeg = FFmpeg.atPath(executable.toPath().getParent())
+            ffmpegOptionsController.mediaStart = System.currentTimeMillis();
+            FFmpeg ffmpeg = FFmpeg.atPath(ffmpegOptionsController.executable.toPath().getParent())
                     .addArguments("-f", "concat")
                     .addArguments("-safe", "0")
                     .addArguments("-i", imagesListFile.getAbsolutePath());
@@ -330,52 +317,55 @@ public class FFmpegMergeImagesController extends FFmpegBaseController {
                         .addArguments("-safe", "0")
                         .addArguments("-i", audiosListFile.getAbsolutePath());
             }
-            ffmpeg.addArguments("-s", width + "x" + height)
+            ffmpeg.addArguments("-s", ffmpegOptionsController.width + "x" + ffmpegOptionsController.height)
                     .addArguments("-pix_fmt", "yuv420p");
-            if (audioBitrate > 0) {
-                ffmpeg.addArguments("-b:a", audioBitrate + "k");
+
+            if (ffmpegOptionsController.audioBitrate > 0) {
+                ffmpeg.addArguments("-b:a", ffmpegOptionsController.audioBitrate + "k");
             }
-            if (audioSampleRate > 0) {
-                ffmpeg.addArguments("-ar", audioSampleRate + "");
+            if (ffmpegOptionsController.audioSampleRate > 0) {
+                ffmpeg.addArguments("-ar", ffmpegOptionsController.audioSampleRate + "");
             }
             ffmpeg.addOutput(UrlOutput.toPath(videoFile.toPath()))
                     .setProgressListener(listener)
                     .setOverwriteOutput(true);
-            if (disableVideo) {
+            if (ffmpegOptionsController.disableVideo) {
                 ffmpeg.addArgument("-vn");
-            } else if (videoCodec != null) {
-                ffmpeg.addArguments("-vcodec", videoCodec);
+            } else if (ffmpegOptionsController.videoCodec != null) {
+                ffmpeg.addArguments("-vcodec", ffmpegOptionsController.videoCodec);
             }
-            if (aspect != null) {
-                ffmpeg.addArguments("-aspect", aspect);
+            if (ffmpegOptionsController.aspect != null) {
+                ffmpeg.addArguments("-aspect", ffmpegOptionsController.aspect);
             }
-            if (videoFrameRate > 0) {
-                ffmpeg.addArguments("-r", videoFrameRate + "");
+            if (ffmpegOptionsController.videoFrameRate > 0) {
+                ffmpeg.addArguments("-r", ffmpegOptionsController.videoFrameRate + "");
             }
-            if (videoBitrate > 0) {
-                ffmpeg.addArguments("-b:v", videoBitrate + "k");
+            if (ffmpegOptionsController.videoBitrate > 0) {
+                ffmpeg.addArguments("-b:v", ffmpegOptionsController.videoBitrate + "k");
             }
 
-            if (disbaleAudio) {
+            if (ffmpegOptionsController.disbaleAudio) {
                 ffmpeg.addArgument("-an");
-            } else if (audioCodec != null) {
-                ffmpeg.addArguments("-acodec", audioCodec);
+            } else if (ffmpegOptionsController.audioCodec != null) {
+                ffmpeg.addArguments("-acodec", ffmpegOptionsController.audioCodec);
             }
-            if (disbaleSubtitle) {
-                ffmpeg.addArgument("-sn");
-            } else if (subtitleCodec != null) {
-                ffmpeg.addArguments("-scodec", subtitleCodec);
+            if (ffmpegOptionsController.volumn != null) {
+                ffmpeg.addArguments("-af", "volume=" + ffmpegOptionsController.volumn);
             }
-
-            String volumn = volumnInput.getText().trim();
-            if (!volumn.isBlank()) {
-                ffmpeg.addArguments("-af", "volume=" + volumn);
+            if (ffmpegOptionsController.stereoCheck != null) {
+                ffmpeg.addArguments("-ac", ffmpegOptionsController.stereoCheck.isSelected() ? "2" : "1");
             }
             if (stopCheck.isSelected()) {
                 ffmpeg.addArgument("-shortest");
             }
 
-            String more = moreInput.getText().trim();
+            if (ffmpegOptionsController.disbaleSubtitle) {
+                ffmpeg.addArgument("-sn");
+            } else if (ffmpegOptionsController.subtitleCodec != null) {
+                ffmpeg.addArguments("-scodec", ffmpegOptionsController.subtitleCodec);
+            }
+
+            String more = ffmpegOptionsController.moreInput.getText().trim();
             if (!more.isBlank()) {
                 String[] args = StringTools.splitBySpace(more);
                 if (args != null && args.length > 0) {
@@ -384,14 +374,10 @@ public class FFmpegMergeImagesController extends FFmpegBaseController {
                     }
                 }
             }
-            if (verboseCheck == null || verboseCheck.isSelected()) {
-                updateLogs(message("ConvertingMedia") + "  " + message("TargetFile") + ":" + videoFile, true);
-            }
+            updateLogs(message("ConvertingMedia") + "  " + message("TargetFile") + ":" + videoFile, true);
             FFmpegResult result = ffmpeg.execute();
             targetFileGenerated(videoFile);
-            if (verboseCheck == null || verboseCheck.isSelected()) {
-                updateLogs(message("Size") + ": " + FileTools.showFileSize(result.getVideoSize()), true);
-            }
+            updateLogs(message("Size") + ": " + FileTools.showFileSize(result.getVideoSize()), true);
         } catch (Exception e) {
             updateLogs(e.toString());
         }

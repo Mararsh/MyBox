@@ -11,7 +11,7 @@
         <Accordion fx:id="accordionPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" VBox.vgrow="ALWAYS">
             <panes>
                 <TitledPane fx:id="viewPane" expanded="false" maxWidth="1.7976931348623157E308" text="%View" />
-                <TitledPane fx:id="clipboardPane"  maxWidth="1.7976931348623157E308"  text="%Clipboard"> 
+                <TitledPane fx:id="clipboardPane" maxWidth="1.7976931348623157E308" text="%Clipboard"> 
                     <content>
                         <VBox fx:id="clipboardBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                             <children>
@@ -140,7 +140,6 @@
                                         </Button>
                                     </children>
                                 </HBox>
-                                <ListView fx:id="thumbnailsList" VBox.vgrow="SOMETIMES" />
                                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
                                     <children>
                                         <Button fx:id="pasteButton" mnemonicParsing="false" onAction="#pasteAction">
@@ -191,6 +190,7 @@
                                     </children>
                                 </HBox>
                                 <Label fx:id="listLabel" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%PasteComments3" wrapText="true" />
+                                <ListView fx:id="thumbnailsList" VBox.vgrow="SOMETIMES" />
                                 <HBox alignment="CENTER_LEFT" layoutX="22.0" layoutY="80.0" maxWidth="1.7976931348623157E308" spacing="5.0">
                                     <children>
                                         <Label text="%MaxSaved" />
@@ -201,16 +201,16 @@
                         </VBox>
                     </content>
                 </TitledPane>
-                <TitledPane fx:id="cropPane" expanded="false" maxWidth="1.7976931348623157E308"  text="%Crop" />
-                <TitledPane fx:id="scalePane" expanded="false"  maxWidth="1.7976931348623157E308"  text="%Scale2" />
-                <TitledPane fx:id="colorPane" expanded="false" maxWidth="1.7976931348623157E308"  text="%Color" />
-                <TitledPane fx:id="effectPane" expanded="false" maxWidth="1.7976931348623157E308"  text="%Effects" />
+                <TitledPane fx:id="cropPane" expanded="false" maxWidth="1.7976931348623157E308" text="%Crop" />
+                <TitledPane fx:id="scalePane" expanded="false" maxWidth="1.7976931348623157E308" text="%Scale2" />
+                <TitledPane fx:id="colorPane" expanded="false" maxWidth="1.7976931348623157E308" text="%Color" />
+                <TitledPane fx:id="effectPane" expanded="false" maxWidth="1.7976931348623157E308" text="%Effects" />
                 <TitledPane fx:id="enhancementPane" expanded="false" maxWidth="1.7976931348623157E308" text="%Enhancement" />
-                <TitledPane fx:id="richTextPane" expanded="false" maxWidth="1.7976931348623157E308"  text="%RichText" />
-                <TitledPane fx:id="textPane" expanded="false" maxWidth="1.7976931348623157E308"  text="%Text" />
-                <TitledPane fx:id="penPane" expanded="false" maxWidth="1.7976931348623157E308"  text="%Pen" />
+                <TitledPane fx:id="richTextPane" expanded="false" maxWidth="1.7976931348623157E308" text="%RichText" />
+                <TitledPane fx:id="textPane" expanded="false" maxWidth="1.7976931348623157E308" text="%Text" />
+                <TitledPane fx:id="penPane" expanded="false" maxWidth="1.7976931348623157E308" text="%Pen" />
 
-                <TitledPane fx:id="transformPane" expanded="false" maxWidth="1.7976931348623157E308"  text="%Transform" />
+                <TitledPane fx:id="transformPane" expanded="false" maxWidth="1.7976931348623157E308" text="%Transform" />
                 <TitledPane fx:id="arcPane" expanded="false" maxWidth="1.7976931348623157E308" text="%Arc" />
                 <TitledPane fx:id="shadowPane" expanded="false" maxWidth="1.7976931348623157E308" text="%Shadow" />
                 <TitledPane fx:id="marginsPane" expanded="false" maxWidth="1.7976931348623157E308" text="%Margins" />

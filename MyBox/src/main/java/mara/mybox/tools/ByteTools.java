@@ -362,7 +362,7 @@ public class ByteTools {
         String lineText;
         for (String lineHex : lines) {
             lineText = new String(ByteTools.hexFormatToBytes(lineHex), charset);
-            lineText = lineText.replaceAll("\n", " ").replaceAll("\r", " ");
+            lineText = lineText.replaceAll("\n|\r", " ");
             if (!gotStart && hexBegin >= hIndex && hexBegin <= (hIndex + lineHex.length())) {
                 cBegin = cindex + lineIndex(lineText, charset, hexBegin - hIndex);
                 gotStart = true;

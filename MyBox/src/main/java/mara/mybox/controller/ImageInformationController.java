@@ -72,7 +72,7 @@ public class ImageInformationController extends HtmlViewerController {
                 s.append(makeImageInformationTable(i, iInfo)).append("</br>\n");
             }
 
-            html = HtmlTools.html(finfo.getFileName(), style, s.toString());
+            html = HtmlTools.html(finfo.getFileName(), htmlStyle, s.toString());
             webView.getEngine().loadContent​(html);
             if (indexSelector.getItems().isEmpty()) {
                 iccBox.setVisible(false);

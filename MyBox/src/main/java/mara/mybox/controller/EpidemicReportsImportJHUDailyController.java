@@ -10,10 +10,12 @@ import java.util.Map;
 import mara.mybox.data.EpidemicReport;
 import mara.mybox.data.GeographyCode;
 import mara.mybox.data.GeographyCodeLevel;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.TableEpidemicReport;
 import mara.mybox.db.TableGeographyCode;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.GeographyCodeTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
 import org.apache.commons.csv.CSVFormat;
@@ -31,11 +33,16 @@ public class EpidemicReportsImportJHUDailyController extends EpidemicReportsImpo
         baseTitle = AppVariables.message("ImportEpidemicReportJHUDaily");
     }
 
+    @Override
+    public void setLink() {
+        link.setText("https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_daily_reports");
+    }
+
     //Format 1: FIPS,Admin2,Province_State,Country_Region,Last_Update,Lat,Long_,Confirmed,Deaths,Recovered,Active,Combined_Key
     //Format 2: Province/State,Country/Region,Last Update,Confirmed,Deaths,Recovered,Latitude,Longitude
     //Format 3: Province/State,Country/Region,Last Update,Confirmed,Deaths,Recovered
     @Override
-    protected long importFile(Connection conn, File file) {
+    public long importFile(Connection conn, File file) {
         long importCount = 0, insertCount = 0, updateCount = 0, skipCount = 0, failedCount = 0, lineCount = 0;
         File convertedFile = FileTools.removeBOM(file);
         try ( CSVParser parser = CSVParser.parse(convertedFile, FileTools.charset(convertedFile),
@@ -49,7 +56,7 @@ public class EpidemicReportsImportJHUDailyController extends EpidemicReportsImpo
             equalQuery.setMaxRows(1);
             if (TableGeographyCode.China(conn) == null) {
                 updateLogs(message("LoadingPredefinedGeographyCodes"), true);
-                GeographyCode.predefined(conn);
+                GeographyCodeTools.importPredefined(conn);
             }
             List<String> names = parser.getHeaderNames();
             if (!names.contains("Confirmed") || !names.contains("Recovered")) {
@@ -139,7 +146,7 @@ public class EpidemicReportsImportJHUDailyController extends EpidemicReportsImpo
                         updateLogs(lineCount + " " + message("InvalidFormat") + " " + message("MissTime"), true);
                         break;
                     }
-                    // Do not care time
+                    // Do not care timeDuration
                     date = DateTools.stringToDatetime(DateTools.datetimeToString(date, "yyyy-MM-dd") + EpidemicReport.COVID19TIME);
                     if (verboseCheck.isSelected() || (importCount % 100 == 0)) {
                         updateLogs(message("Insert") + " " + insertCount + " "
@@ -180,9 +187,9 @@ public class EpidemicReportsImportJHUDailyController extends EpidemicReportsImpo
                     GeographyCodeLevel levelCode = new GeographyCodeLevel(levelValue);
                     int level = levelCode.getLevel();
 
-                    Map<String, Object> ret = GeographyCode.code(conn, geoInsert,
+                    Map<String, Object> ret = GeographyCodeTools.encode(conn, geoInsert,
                             level, longitude, latitude, null, country, province, city,
-                            null, null, null, null, true);
+                            null, null, null, null, null, true, false);
                     if (ret == null) {
                         return importCount;
                     }
@@ -255,6 +262,9 @@ public class EpidemicReportsImportJHUDailyController extends EpidemicReportsImpo
                             updateLogs(message("Insert") + ": " + message("Failed") + "  " + info, true);
                             failedCount++;
                         }
+                    }
+                    if (importCount % DerbyBase.BatchSize == 0) {
+                        conn.commit();
                     }
                 } catch (Exception e) {
                     updateLogs(e.toString(), true);

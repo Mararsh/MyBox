@@ -50,7 +50,7 @@ public class ShortcutsController extends HtmlViewerController {
             if (table == null) {
                 table();
             }
-            html = HtmlTools.html(message("Shortcuts"), style, StringTable.tableDiv(table));
+            html = HtmlTools.html(message("Shortcuts"), htmlStyle, StringTable.tableDiv(table));
             webView.getEngine().loadContent​(html);
         } catch (Exception e) {
             logger.error(e.toString());

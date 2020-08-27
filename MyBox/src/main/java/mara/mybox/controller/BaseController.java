@@ -62,6 +62,7 @@ import javafx.stage.Popup;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import mara.mybox.data.BaseTask;
+import mara.mybox.data.GeographyCode;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.data.VisitHistory.FileType;
 import mara.mybox.db.DerbyBase;
@@ -75,6 +76,7 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.NetworkTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.MyboxDataPath;
+import static mara.mybox.value.AppVariables.getUserConfigBoolean;
 import static mara.mybox.value.AppVariables.getUserConfigValue;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
@@ -129,7 +131,7 @@ public class BaseController implements Initializable {
     @FXML
     protected MainMenuController mainMenuController;
     @FXML
-    protected TextField sourceFileInput, sourcePathInput,
+    protected TextField sourceFileInput, sourcePathInput, targetAppendInput,
             targetPathInput, targetPrefixInput, targetFileInput, statusLabel;
     @FXML
     protected OperationController operationBarController;
@@ -137,16 +139,17 @@ public class BaseController implements Initializable {
     protected ToggleButton moreButton;
     @FXML
     protected Button allButton, clearButton, selectFileButton, createButton, copyButton, pasteButton, cancelButton,
-            deleteButton, saveButton, infoButton, metaButton, selectAllButton, setButton,
+            deleteButton, saveButton, infoButton, metaButton, setButton, addButton,
             okButton, startButton, firstButton, lastButton, previousButton, nextButton, goButton, previewButton,
             cropButton, saveAsButton, recoverButton, renameButton, tipsButton, viewButton, popButton, refButton,
-            undoButton, redoButton, transparentButton, whiteButton, blackButton, playButton, stopButton;
+            undoButton, redoButton, transparentButton, whiteButton, blackButton, playButton, stopButton,
+            selectAllButton, selectNoneButton;
     @FXML
     protected VBox paraBox;
     @FXML
     protected Label bottomLabel, tipsLabel;
     @FXML
-    protected ImageView tipsView, linksView;
+    protected ImageView tipsView, linksView, leftPaneControl, rightPaneControl;
     @FXML
     protected ChoiceBox saveAsOptionsBox;
     @FXML
@@ -158,13 +161,9 @@ public class BaseController implements Initializable {
     @FXML
     protected RadioButton targetReplaceRadio, targetRenameRadio, targetSkipRadio;
     @FXML
-    protected TextField targetAppendInput;
-    @FXML
     protected SplitPane splitPane;
     @FXML
     protected ScrollPane leftPane, rightPane;
-    @FXML
-    protected ImageView leftPaneControl, rightPaneControl;
     @FXML
     protected ComboBox<String> dpiSelector;
 
@@ -222,7 +221,6 @@ public class BaseController implements Initializable {
         }
 
         isPickingColor = new SimpleBooleanProperty();
-
     }
 
     public void initControls() {
@@ -244,9 +242,10 @@ public class BaseController implements Initializable {
             }
 
             if (sourceFileInput != null) {
-                sourceFileInput.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
-                    checkSourceFileInput();
-                });
+                sourceFileInput.textProperty().addListener(
+                        (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+                            checkSourceFileInput();
+                        });
             }
 
             if (sourcePathInput != null) {
@@ -447,16 +446,55 @@ public class BaseController implements Initializable {
                 dpiSelector.getSelectionModel().select(AppVariables.getUserConfigValue(baseName + "DPI", "96"));
             }
 
+            if (splitPane != null && leftPane != null && leftPaneControl != null) {
+                if (getUserConfigBoolean("ControlSplitPanesEntered", true)) {
+                    leftPaneControl.setOnMouseEntered(new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent event) {
+                            controlLeftPane();
+                        }
+                    });
+                } else {
+                    leftPaneControl.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent event) {
+                            controlLeftPane();
+                        }
+                    });
+                }
+            }
+
+            if (splitPane != null && rightPane != null && rightPaneControl != null) {
+                if (getUserConfigBoolean("ControlSplitPanesEntered", true)) {
+                    rightPaneControl.setOnMouseEntered(new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent event) {
+                            controlRightPane();
+                        }
+                    });
+                } else {
+                    rightPaneControl.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent event) {
+                            controlRightPane();
+                        }
+                    });
+                }
+            }
+
         } catch (Exception e) {
             logger.error(e.toString());
         }
     }
 
+    // This is called automatically after window is opened
     public void afterStageShown() {
 
         getMyStage();
     }
 
+    // This is called automatically after TOP scene is loaded.
+    // Notice embedded scenes will NOT call this automatically.
     public void afterSceneLoaded() {
         try {
             getMyScene();
@@ -714,7 +752,7 @@ public class BaseController implements Initializable {
             }
             ControlStyle.setIcon(rightPaneControl, ControlStyle.getIcon("iconDoubleRight.png"));
         }
-        splitPane.applyCss();
+        FxmlControl.refreshStyle(splitPane);
         if (splitPane.getDividers().size() == 1) {
             if (leftDividerListener != null) {
                 splitPane.getDividers().get(0).positionProperty().removeListener(leftDividerListener);
@@ -914,6 +952,8 @@ public class BaseController implements Initializable {
             case "N":
                 if (createButton != null && !createButton.isDisabled()) {
                     createAction();
+                } else if (addButton != null && !addButton.isDisabled()) {
+                    addAction();
                 }
                 return;
             case "c":
@@ -958,6 +998,12 @@ public class BaseController implements Initializable {
                     allAction();
                 } else if (selectAllButton != null && !selectAllButton.isDisabled()) {
                     selectAllAction();
+                }
+                return;
+            case "o":
+            case "O":
+                if (selectNoneButton != null && !selectNoneButton.isDisabled()) {
+                    selectNoneAction();
                 }
                 return;
             case "x":
@@ -1034,6 +1080,14 @@ public class BaseController implements Initializable {
                     okAction();
                 }
                 break;
+            case "n":
+            case "N":
+                if (createButton != null && !createButton.isDisabled()) {
+                    createAction();
+                } else if (addButton != null && !addButton.isDisabled()) {
+                    addAction();
+                }
+                return;
             case "c":
             case "C":
                 if (copyButton != null && !copyButton.isDisabled()) {
@@ -1072,6 +1126,12 @@ public class BaseController implements Initializable {
                     selectAllAction();
                 }
                 break;
+            case "o":
+            case "O":
+                if (selectNoneButton != null && !selectNoneButton.isDisabled()) {
+                    selectNoneAction();
+                }
+                return;
             case "x":
             case "X":
                 if (cropButton != null && !cropButton.isDisabled()) {
@@ -2056,6 +2116,11 @@ public class BaseController implements Initializable {
     }
 
     @FXML
+    public void addAction() {
+
+    }
+
+    @FXML
     public void copyAction() {
 
     }
@@ -2132,6 +2197,11 @@ public class BaseController implements Initializable {
 
     @FXML
     public void selectAllAction() {
+
+    }
+
+    @FXML
+    public void selectNoneAction() {
 
     }
 
@@ -2353,6 +2423,7 @@ public class BaseController implements Initializable {
                 }
             }
             if (name != null) {
+                name = name.replaceAll("\\\"|\n|:", "");
                 fileChooser.setInitialFileName(name);
             }
 
@@ -2449,6 +2520,14 @@ public class BaseController implements Initializable {
 
     public void popFailed() {
         popError(message("Failed"));
+    }
+
+    public void popInsertSuccessful() {
+        popBigInformation(message("InsertSuccessfully"));
+    }
+
+    public void popUpdateSuccessful() {
+        popBigInformation(message("UpdateSuccessfully"));
     }
 
     public void popInformation(String text) {
@@ -2678,6 +2757,14 @@ public class BaseController implements Initializable {
         return true;
     }
 
+    // pick coordinate from outside
+    public void setCoordinate(double longitude, double latitude) {
+    }
+
+    // pick GeographyCode from outside
+    public void setGeographyCode(GeographyCode code) {
+    }
+
     public void restoreCheckingSSL() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(getBaseTitle());
@@ -2725,8 +2812,8 @@ public class BaseController implements Initializable {
 
         @Override
         protected void taskQuit() {
-            endTime = new Date().getTime();
-            task = null;    // Notice: This must be done in each task!!
+            endTime = new Date();
+            task = null;    // Notice: This must be done in each task!! Replace as real task name!
         }
 
     };

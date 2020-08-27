@@ -9,7 +9,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import mara.mybox.data.CertificateBypass;
 import mara.mybox.db.TableBrowserBypassSSL;
-import mara.mybox.fxml.TableDateCell;
+import mara.mybox.fxml.TableTimeCell;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
@@ -36,7 +36,7 @@ public class SecurityCertificatesBypassController extends TableManageController<
 
             hostColumn.setCellValueFactory(new PropertyValueFactory<>("host"));
             timeColumn.setCellValueFactory(new PropertyValueFactory<>("createTime"));
-            timeColumn.setCellFactory(new TableDateCell());
+            timeColumn.setCellFactory(new TableTimeCell());
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -56,7 +56,7 @@ public class SecurityCertificatesBypassController extends TableManageController<
     }
 
     @Override
-    protected boolean deleteSelectedData() {
+    protected int deleteSelectedData() {
         List<CertificateBypass> selected = tableView.getSelectionModel().getSelectedItems();
         return TableBrowserBypassSSL.delete(selected);
     }

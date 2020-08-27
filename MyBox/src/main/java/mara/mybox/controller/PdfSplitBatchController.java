@@ -300,9 +300,11 @@ public class PdfSplitBatchController extends PdfBatchController {
             for (int i = 0; i < startEndList.size();) {
                 int start = startEndList.get(i++);
                 int end = startEndList.get(i++);
-                if (start < currentParameters.fromPage
-                        || end > currentParameters.toPage) {
-                    continue;
+                if (start < currentParameters.fromPage) {
+                    start = currentParameters.fromPage;
+                }
+                if (end > currentParameters.toPage) {
+                    end = currentParameters.toPage;
                 }
                 Splitter splitter = new Splitter();
                 splitter.setStartPage(start);  // 1-based start

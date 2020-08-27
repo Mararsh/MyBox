@@ -17,7 +17,8 @@ License:    Apache License Version 2.0
     <children>
         <HBox alignment="CENTER_LEFT" spacing="5.0">
             <children>
-                <CheckBox fx:id="consoleCheck" mnemonicParsing="false" text="%ConsoleStyle" />
+                <Label text="%Style" />
+                <ComboBox fx:id="htmlStyleSelector" prefWidth="150.0" />
                 <Label maxWidth="1.7976931348623157E308" visible="false" HBox.hgrow="ALWAYS" />
                 <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" onMouseEntered="#popSaveAs">
                     <graphic>

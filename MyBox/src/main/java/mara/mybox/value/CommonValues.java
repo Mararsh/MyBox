@@ -14,9 +14,8 @@ import java.util.TimeZone;
  */
 public class CommonValues {
 
-    public static final String AppVersion = "6.3.1";
-    public static final String AppVersionDate = "2020-06-11";
-    public static final String AppDocVersion = "5.0";
+    public static final String AppVersion = "6.3.2";
+    public static final String AppVersionDate = "2020-08-27";
 
     public static final String AppDerbyUser = "mara";
     public static final String AppDerbyPassword = "mybox";
@@ -183,9 +182,9 @@ public class CommonValues {
     public static final String GeographyCodeImportGeonamesFileFxml = "/fxml/GeographyCodeImportGeonamesFile.fxml";
     public static final String GeographyCodeExportFxml = "/fxml/GeographyCodeExport.fxml";
     public static final String GeographyCodeSelectortFxml = "/fxml/GeographyCodeSelector.fxml";
-    public static final String LocationsDataFxml = "/fxml/LocationsData.fxml";
+    public static final String LocationDataFxml = "/fxml/LocationData.fxml";
     public static final String LocationsDataInMapFxml = "/fxml/LocationsDataInMap.fxml";
-    public static final String LocationEditFxml = "/fxml/LocationEdit.fxml";
+    public static final String LocationDataEditFxml = "/fxml/LocationDataEdit.fxml";
     public static final String LocationInMapFxml = "/fxml/LocationInMap.fxml";
     public static final String EpidemicReportsFxml = "/fxml/EpidemicReports.fxml";
     public static final String EpidemicReportEditFxml = "/fxml/EpidemicReportEdit.fxml";
@@ -201,39 +200,65 @@ public class CommonValues {
     public static final String EpidemicReportsStatisticFxml = "/fxml/EpidemicReportsStatistic.fxml";
     public static final String DataQueryFxml = "/fxml/DataQuery.fxml";
     public static final String DataExportFxml = "/fxml/DataExport.fxml";
+    public static final String TableManageSelectFxml = "/fxml/TableManageSelect.fxml";
+    public static final String TableDataEditFxml = "/fxml/TableDataEdit.fxml";
+    public static final String DatasetFxml = "/fxml/Dataset.fxml";
+    public static final String DatasetEditFxml = "/fxml/DatasetEdit.fxml";
+    public static final String LocationDataImportCSVFxml = "/fxml/LocationDataImportCSV.fxml";
+    public static final String LocationDataImportMovebankFxml = "/fxml/LocationDataImportMovebank.fxml";
+    public static final String LocationDataExportFxml = "/fxml/LocationDataExport.fxml";
+    public static final String LocationToolsFxml = "/fxml/LocationTools.fxml";
 
     public static final Locale LocaleZhCN = new Locale("zh", "CN");
-    public static final Locale LocaleEnUS = new Locale("en", "US");
+    public static final Locale LocaleEn = new Locale("en");
 //    public static final Locale LocaleFrFR = new Locale("fr", "FR");
 //    public static final Locale LocaleEsES = new Locale("es", "ES");
 //    public static final Locale LocaleRuRU = new Locale("ru", "RU");
 
-    public static final ResourceBundle BundleBase = ResourceBundle.getBundle("bundles/Messages");
     public static final ResourceBundle BundleZhCN = ResourceBundle.getBundle("bundles/Messages", LocaleZhCN);
-    public static final ResourceBundle BundleEnUS = ResourceBundle.getBundle("bundles/Messages", LocaleEnUS);
+    public static final ResourceBundle BundleEn = ResourceBundle.getBundle("bundles/Messages", LocaleEn);
 //    public static final ResourceBundle BundleFrFR = ResourceBundle.getBundle("bundles/Messages", LocaleFrFR);
 //    public static final ResourceBundle BundleEsES = ResourceBundle.getBundle("bundles/Messages", LocaleEsES);
 //    public static final ResourceBundle BundleRuRU = ResourceBundle.getBundle("bundles/Messages", LocaleRuRU);
-    public static final ResourceBundle BundleDefault = ResourceBundle.getBundle("bundles/Messages", Locale.getDefault());
+
+    public static final ResourceBundle TableBundleZhCN = ResourceBundle.getBundle("bundles/TableMessages", LocaleZhCN);
+    public static final ResourceBundle TableBundleEn = ResourceBundle.getBundle("bundles/TableMessages", LocaleEn);
 
     public static final TimeZone zoneUTC = TimeZone.getTimeZone("GMT+0"); // UTC
     public static final TimeZone zoneZhCN = TimeZone.getTimeZone("GMT+8"); // Beijing zone, UTC+0800
     public static final String DatetimeFormat = "yyyy-MM-dd HH:mm:ss";
-    public static final String DatetimeFormat2 = "yyyy-MM-dd HH:mm:ss.SSS";
+    public static final String DateFormat = "yyyy-MM-dd";
+    public static final String MonthFormat = "yyyy-MM";
+    public static final String YearFormat = "yyyy";
+    public static final String TimeFormat = "HH:mm:ss";
+    public static final String TimeWithMS = "HH:mm:ss.SSS";
+    public static final String DatetimeFormatWithMS = "yyyy-MM-dd HH:mm:ss.SSS";
     public static final String DatetimeFormat3 = "yyyy-MM-dd-HH-mm-ss-SSS";
     public static final String DatetimeFormat4 = "yyyyMMddHHmmssSSS";
-    public static final String DatetimeFormat5 = "yyyy-MM-dd G HH:mm:ss";
     public static final String DatetimeFormat6 = "yyyy.MM.dd HH:mm:ss";
+    public static final String EraDatetimeEn = "y-M-d H:m:s G";
+    public static final String EraDateEn = "y-M-d G";
+    public static final String EraMonthEn = "y-M G";
+    public static final String EraYearEn = "y G";
+    public static final String EraDatetimeZh = "Gy-M-d H:m:s";
+    public static final String EraDateZh = "Gy-M-d";
+    public static final String EraMonthZh = "Gy-M";
+    public static final String EraYearZh = "Gy";
+    public static final String EraDatetime = "y-M-d H:m:s";
+    public static final String EraDate = "y-M-d";
+    public static final String EraMonth = "y-M";
+    public static final String EraYear = "y";
+    public static final String EraTime = "H:m:s";
+    public static final String EraTimeWithSeconds = "H:m:s.S";
 
     public static String Indent = "    ";
-
     public static final int IOBufferLength = 8024;
-
     public static final String HttpsProtocal = "TLSv1.2";
-
     public static final String MyBoxSeparator = "##MyBox#";
-
     public static final String MyBoxInternetDataPath = "https://github.com/Mararsh/MyBox_data";
+    public static final String TianDiTuWebKey = "0ddeb917def62b4691500526cc30a9b1";
+    public static final String GaoDeMapWebKey = "06b9e078a51325a843dfefd57ffd876c";
+    public static final String GaoDeMapServiceKey = "d7444d9a7fae01fa850236d909ad4450";
 
     public static List<String> SupportedImages = new ArrayList<String>() {
         {

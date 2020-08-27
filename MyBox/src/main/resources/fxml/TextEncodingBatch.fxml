@@ -31,14 +31,18 @@ License:    Apache License Version 2.0
                <tabs>
                   <Tab fx:id="sourceTab" text="%SourceFiles">
                      <content>
-                                <fx:include fx:id="table" source="FilesTable.fxml" HBox.hgrow="ALWAYS" />
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                           <children>
+                                          <Label styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%TextEncodingComments" wrapText="true" VBox.vgrow="NEVER" />
+                                      <fx:include fx:id="table" source="FilesTable.fxml" HBox.hgrow="ALWAYS" />
+                           </children>
+                        </VBox>
                      </content>
                   </Tab>
                   <Tab fx:id="optionsTab" text="%Options">
                      <content>
                         <VBox fx:id="optionsVBox" spacing="10.0">
                            <children>
-                                          <Label styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%TextEncodingComments" wrapText="true" />
                                         <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                                             <children>
                                                 <Label text="%SourceCharset" />

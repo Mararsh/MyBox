@@ -129,7 +129,7 @@ public class MatricesCalculationController extends BaseController {
 
     @FXML
     public void verticalMergeAction() {
-        long startTime = new Date().getTime();
+        Date startTime = new Date();
         double[][] result = MatrixTools.vertivalMerge(matrixAController.matrix, matrixBController.matrix);
         if (result == null) {
             popError(message("InvalidData"));
@@ -139,14 +139,13 @@ public class MatricesCalculationController extends BaseController {
         }
         matrixResultController.matrix = result;
         matrixResultController.setMatrix();
-        long cost = new Date().getTime() - startTime;
         matrixResultController.getBottomLabel().setText(AppVariables.message("Successful") + ":"
-                + message("VerticalMerge") + "  " + message("Cost") + ":" + DateTools.showTime(cost));
+                + message("VerticalMerge") + "  " + message("Cost") + ":" + DateTools.datetimeMsDuration(new Date(), startTime));
     }
 
     @FXML
     public void horizontalMergeAction() {
-        long startTime = new Date().getTime();
+        Date startTime = new Date();
         double[][] result = MatrixTools.horizontalMerge(matrixAController.matrix, matrixBController.matrix);
         if (result == null) {
             popError(message("InvalidData"));
@@ -156,14 +155,13 @@ public class MatricesCalculationController extends BaseController {
         }
         matrixResultController.matrix = result;
         matrixResultController.setMatrix();
-        long cost = new Date().getTime() - startTime;
         matrixResultController.getBottomLabel().setText(AppVariables.message("Successful") + ":"
-                + message("HorizontalMerge") + "  " + message("Cost") + ":" + DateTools.showTime(cost));
+                + message("HorizontalMerge") + "  " + message("Cost") + ":" + DateTools.datetimeMsDuration(new Date(), startTime));
     }
 
     @FXML
     public void plusAction() {
-        long startTime = new Date().getTime();
+        Date startTime = new Date();
         double[][] result = MatrixTools.add(matrixAController.matrix, matrixBController.matrix);
         if (result == null) {
             popError(message("InvalidData"));
@@ -173,14 +171,13 @@ public class MatricesCalculationController extends BaseController {
         }
         matrixResultController.matrix = result;
         matrixResultController.setMatrix();
-        long cost = new Date().getTime() - startTime;
         matrixResultController.getBottomLabel().setText(AppVariables.message("Successful") + ":" + message("Plus") + "  "
-                + message("Cost") + ":" + DateTools.showTime(cost));
+                + message("Cost") + ":" + DateTools.datetimeMsDuration(new Date(), startTime));
     }
 
     @FXML
     public void minusAction() {
-        long startTime = new Date().getTime();
+        Date startTime = new Date();
         double[][] result = MatrixTools.subtract(matrixAController.matrix, matrixBController.matrix);
         if (result == null) {
             popError(message("InvalidData"));
@@ -190,15 +187,14 @@ public class MatricesCalculationController extends BaseController {
         }
         matrixResultController.matrix = result;
         matrixResultController.setMatrix();
-        long cost = new Date().getTime() - startTime;
         matrixResultController.getBottomLabel().setText(AppVariables.message("Successful") + ":" + message("Minus") + "  "
-                + message("Cost") + ":" + DateTools.showTime(cost));
+                + message("Cost") + ":" + DateTools.datetimeMsDuration(new Date(), startTime));
 
     }
 
     @FXML
     public void multiplyAction() {
-        long startTime = new Date().getTime();
+        Date startTime = new Date();
         double[][] result = MatrixTools.multiply(matrixAController.matrix, matrixBController.matrix);
         if (result == null) {
             popError(message("InvalidData"));
@@ -208,14 +204,13 @@ public class MatricesCalculationController extends BaseController {
         }
         matrixResultController.matrix = result;
         matrixResultController.setMatrix();
-        long cost = new Date().getTime() - startTime;
         matrixResultController.getBottomLabel().setText(AppVariables.message("Successful") + ":" + message("Multiply") + "  "
-                + message("Cost") + ":" + DateTools.showTime(cost));
+                + message("Cost") + ":" + DateTools.datetimeMsDuration(new Date(), startTime));
     }
 
     @FXML
     public void hadamardProductAction() {
-        long startTime = new Date().getTime();
+        Date startTime = new Date();
         double[][] result = MatrixTools.hadamardProduct(matrixAController.matrix, matrixBController.matrix);
         if (result == null) {
             popError(message("InvalidData"));
@@ -225,14 +220,13 @@ public class MatricesCalculationController extends BaseController {
         }
         matrixResultController.matrix = result;
         matrixResultController.setMatrix();
-        long cost = new Date().getTime() - startTime;
         matrixResultController.getBottomLabel().setText(AppVariables.message("Successful") + ":" + message("HadamardProduct") + "  "
-                + message("Cost") + ":" + DateTools.showTime(cost));
+                + message("Cost") + ":" + DateTools.datetimeMsDuration(new Date(), startTime));
     }
 
     @FXML
     public void kroneckerProductAction() {
-        long startTime = new Date().getTime();
+        Date startTime = new Date();
         double[][] result = MatrixTools.kroneckerProduct(matrixAController.matrix, matrixBController.matrix);
         if (result == null) {
             popError(message("InvalidData"));
@@ -242,9 +236,8 @@ public class MatricesCalculationController extends BaseController {
         }
         matrixResultController.matrix = result;
         matrixResultController.setMatrix();
-        long cost = new Date().getTime() - startTime;
         matrixResultController.getBottomLabel().setText(AppVariables.message("Successful") + ":" + message("KroneckerProduct") + "  "
-                + message("Cost") + ":" + DateTools.showTime(cost));
+                + message("Cost") + ":" + DateTools.datetimeMsDuration(new Date(), startTime));
     }
 
 }

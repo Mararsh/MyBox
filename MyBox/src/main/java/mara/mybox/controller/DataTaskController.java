@@ -19,7 +19,6 @@ import static mara.mybox.value.AppVariables.message;
  */
 public class DataTaskController extends BaseController {
 
-    protected long startTime;
     protected int logsMaxLines, logsTotalLines, logsCacheLines = 200;
     protected boolean cancelled;
     protected String cancelName;
@@ -44,9 +43,16 @@ public class DataTaskController extends BaseController {
         initLogs();
     }
 
+    public boolean checkOptions() {
+        return true;
+    }
+
     @FXML
     @Override
     public void startAction() {
+        if (!checkOptions()) {
+            return;
+        }
         if (message(cancelName).equals(startButton.getText())) {
             cancelAction();
             return;
@@ -56,7 +62,7 @@ public class DataTaskController extends BaseController {
                 return;
             }
             initLogs();
-            startTime = new Date().getTime();
+
             startButton.setText(message(cancelName));
             tabPane.getSelectionModel().select(logsTab);
             task = new SingletonTask<Void>() {
@@ -81,7 +87,7 @@ public class DataTaskController extends BaseController {
                 protected void finalAction() {
                     startButton.setText(message("Start"));
                     updateLogs(message("Completed") + " " + message("Cost")
-                            + " " + DateTools.showTime(new Date().getTime() - startTime),
+                            + " " + DateTools.datetimeMsDuration(new Date(), startTime),
                             true);
                 }
             };

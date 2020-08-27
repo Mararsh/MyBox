@@ -405,7 +405,7 @@ public class BytesEditerController extends FileEditerController {
             String lineText;
             for (String line : lines) {
                 lineText = new String(ByteTools.hexFormatToBytes(line), sourceInformation.getCharset());
-                lineText = lineText.replaceAll("\n", " ").replaceAll("\r", " ") + "\n";
+                lineText = lineText.replaceAll("\n|\r", " ") + "\n";
                 text.append(lineText);
             }
             displayArea.setText(text.toString());

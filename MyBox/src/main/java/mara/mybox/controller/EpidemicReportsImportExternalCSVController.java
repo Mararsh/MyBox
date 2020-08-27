@@ -8,13 +8,14 @@ import java.sql.ResultSet;
 import java.util.List;
 import java.util.Map;
 import mara.mybox.data.EpidemicReport;
-import mara.mybox.data.GeographyCode;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.TableEpidemicReport;
 import mara.mybox.db.TableGeographyCode;
 import mara.mybox.tools.DateTools;
+import mara.mybox.tools.EpidemicReportTools;
+import mara.mybox.tools.GeographyCodeTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonValues;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -33,16 +34,31 @@ public class EpidemicReportsImportExternalCSVController extends EpidemicReportsI
     }
 
     @Override
-    public void initializeNext() {
-        link.setText(CommonValues.MyBoxInternetDataPath
-                + (AppVariables.isChinese() ? "" : "/tree/master/en"));
+    protected boolean validHeader(List<String> names) {
+        if ((!names.contains("DataSet") && !names.contains(message("en", "DataSet")) && !names.contains(message("zh", "DataSet")))
+                || (!names.contains("Level") && !names.contains(message("en", "Level")) && !names.contains(message("zh", "Level")))
+                || (!names.contains("Confirmed") && !names.contains(message("en", "Confirmed")) && !names.contains(message("zh", "Confirmed")))) {
+            updateLogs(message("InvalidFormat"), true);
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    protected String insertStatement() {
+        return TableEpidemicReport.Insert;
+    }
+
+    @Override
+    protected String updateStatement() {
+        return TableEpidemicReport.UpdateAsEPid;
     }
 
     // Data Set,Time,Confirmed,Healed,Dead,Increased Confirmed,Increased Healed,Increased Dead,Data Source,
     // Level,Continent,Country,Province,City,County,Town,Village,Building,Longitude,Latitude
     // 数据集,时间,确认,治愈,死亡,新增确诊,新增治愈,新增死亡,数据源,级别,洲,国家,省,市,区县,乡镇,村庄,建筑物,经度,纬度
     @Override
-    protected long importFile(Connection conn, File file) {
+    public long importFile(Connection conn, File file) {
         long importCount = 0, insertCount = 0, updateCount = 0, skipCount = 0, failedCount = 0, lineCount = 0;
         try ( CSVParser parser = CSVParser.parse(file, StandardCharsets.UTF_8,
                 CSVFormat.DEFAULT.withFirstRecordAsHeader().withDelimiter(',').withTrim().withNullString(""))) {
@@ -57,12 +73,12 @@ public class EpidemicReportsImportExternalCSVController extends EpidemicReportsI
             try ( PreparedStatement geoInsert = conn.prepareStatement(TableGeographyCode.Insert);
                      PreparedStatement equalQuery = conn.prepareStatement(TableEpidemicReport.ExistQuery);
                      PreparedStatement update
-                    = replaceCheck.isSelected() ? conn.prepareStatement(TableEpidemicReport.UpdateAsEPid) : null;
-                     PreparedStatement insert = conn.prepareStatement(TableEpidemicReport.Insert)) {
+                    = replaceCheck.isSelected() ? conn.prepareStatement(updateStatement()) : null;
+                     PreparedStatement insert = conn.prepareStatement(insertStatement())) {
                 conn.setAutoCommit(false);
                 if (TableGeographyCode.China(conn) == null) {
                     updateLogs(message("LoadingPredefinedGeographyCodes"), true);
-                    GeographyCode.predefined(conn);
+                    GeographyCodeTools.importPredefined(conn);
                 }
                 for (CSVRecord record : parser) {
                     ++lineCount;
@@ -72,7 +88,7 @@ public class EpidemicReportsImportExternalCSVController extends EpidemicReportsI
                         return importCount;
                     }
                     equalQuery.setMaxRows(1);
-                    Map<String, Object> ret = EpidemicReport.readExtenalRecord(conn, geoInsert, lang, names, record);
+                    Map<String, Object> ret = EpidemicReportTools.readExtenalRecord(conn, geoInsert, lang, names, record);
                     if (ret.get("message") != null) {
                         updateLogs((String) ret.get("message"), true);
                     }
@@ -112,7 +128,7 @@ public class EpidemicReportsImportExternalCSVController extends EpidemicReportsI
                             }
                             continue;
                         }
-                        report.setEpid(exist.getEpid());
+                        report.setId(exist.getId());
                         if (TableEpidemicReport.updateAsEPid(update, report)) {
                             updateCount++;
                             importCount++;
@@ -134,6 +150,9 @@ public class EpidemicReportsImportExternalCSVController extends EpidemicReportsI
                             updateLogs(message("Insert") + ": " + message("Failed") + "  " + info, true);
                             failedCount++;
                         }
+                    }
+                    if (importCount % DerbyBase.BatchSize == 0) {
+                        conn.commit();
                     }
                 }
                 conn.commit();

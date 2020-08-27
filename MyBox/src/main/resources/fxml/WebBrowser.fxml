@@ -33,7 +33,7 @@ License:    Apache License Version 2.0
                             <children>
                                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
                                     <children>
-                                        <Button fx:id="plusButton" mnemonicParsing="false" onAction="#newTabAction">
+                                        <Button fx:id="addButton" mnemonicParsing="false" onAction="#newTabAction">
                                             <graphic>
                                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -97,7 +97,7 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                                        <ImageView fx:id="rightPaneControl" fitHeight="20.0" fitWidth="20.0" onMouseClicked="#controlRightPane" pickOnBounds="true" preserveRatio="true">
+                                        <ImageView fx:id="rightPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
                                                 <Image url="@../buttons/iconDoubleRight.png" />
                                             </image>

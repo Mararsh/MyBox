@@ -20,15 +20,14 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<BorderPane fx:id="thisPane" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="mara.mybox.controller.FFmpegInformationController">
+<BorderPane fx:id="thisPane" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.FFmpegInformationController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
     <center>
         <VBox fx:id="contentBox" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" BorderPane.alignment="CENTER">
             <children>
-                <HBox fx:id="codeBox211" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
+                <HBox fx:id="codeBox21" alignment="CENTER_LEFT" layoutX="20.0" layoutY="65.0" maxWidth="1.7976931348623157E308" spacing="5.0">
                     <children>
                         <Button fx:id="linkButton" mnemonicParsing="false" onAction="#download">
                             <graphic>
@@ -39,13 +38,6 @@ License:    Apache License Version 2.0
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Label styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%FFmpegComments" />
-                    </children>
-                </HBox>
-                <HBox fx:id="codeBox21" alignment="CENTER_LEFT" layoutX="20.0" layoutY="65.0" maxWidth="1.7976931348623157E308" spacing="5.0">
-                    <children>
-                        <Label fx:id="executableLabel" text="%FFmpegExecutable" />
-                        <TextField fx:id="executableInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                         <Button fx:id="selectFileExecutableButton" mnemonicParsing="false" onAction="#selectExecutable">
                             <graphic>
                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -55,6 +47,8 @@ License:    Apache License Version 2.0
                                 </ImageView>
                             </graphic>
                         </Button>
+                        <Label fx:id="executableLabel" text="%FFmpegExecutable" />
+                        <TextField fx:id="executableInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                         <Button fx:id="startButton" mnemonicParsing="false" onAction="#startAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Read" />
                     </children>
                 </HBox>

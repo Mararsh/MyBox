@@ -13,7 +13,7 @@ import mara.mybox.tools.StringTools;
  * @Description
  * @License Apache License Version 2.0
  */
-public class TableNumberCell<T, Long> extends TableCell<T, Long>
+public class TableNumberCell<T> extends TableCell<T, Long>
         implements Callback<TableColumn<T, Long>, TableCell<T, Long>> {
 
     @Override
@@ -24,12 +24,12 @@ public class TableNumberCell<T, Long> extends TableCell<T, Long>
             @Override
             protected void updateItem(final Long item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty || item == null || (long) item <= 0) {
+                if (empty || item == null || item <= 0) {
                     setText(null);
                     setGraphic(null);
                     return;
                 }
-                text.setText(StringTools.format((long) item));
+                text.setText(StringTools.format(item));
                 setGraphic(text);
             }
         };

@@ -106,10 +106,8 @@ public class FFmpegConvertMediaStreamsController extends FFmpegConvertMediaFiles
             String address = info.getAddress();
             countHandling(address);
             tableController.markFileHandling(currentParameters.currentIndex);
-            if (verboseCheck == null || verboseCheck.isSelected()) {
-                updateLogs(MessageFormat.format(message("HandlingObject"), address), true);
-                updateLogs(info.getInfo(), true);
-            }
+            updateLogs(MessageFormat.format(message("HandlingObject"), address), true);
+            updateLogs(info.getInfo(), true);
 //            String s = message("Duration") + ": " + DateTools.showDuration(info.getDuration());
 //            s += "  " + info.getResolution() + "  " + info.getVideoEncoding() + "  " + info.getAudioEncoding();
 
@@ -134,7 +132,7 @@ public class FFmpegConvertMediaStreamsController extends FFmpegConvertMediaFiles
                     suffix = "";
                 }
             }
-            String ext = extensionInput.getText().trim();
+            String ext = ffmpegOptionsController.extensionInput.getText().trim();
             if (ext.isEmpty() || message("OriginalFormat").equals(ext)) {
                 ext = suffix;
             }
@@ -143,9 +141,7 @@ public class FFmpegConvertMediaStreamsController extends FFmpegConvertMediaFiles
             if (target == null) {
                 result = AppVariables.message("Skip");
             } else {
-                if (verboseCheck == null || verboseCheck.isSelected()) {
-                    updateLogs(message("TargetFile") + ": " + target, true);
-                }
+                updateLogs(message("TargetFile") + ": " + target, true);
                 convert(address, target, info.getDuration());
                 targetFileGenerated(target);
                 result = AppVariables.message("Successful");

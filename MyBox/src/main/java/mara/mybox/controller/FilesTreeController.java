@@ -17,7 +17,7 @@ import javafx.stage.Modality;
 import javafx.util.Callback;
 import mara.mybox.data.FileInformation;
 import mara.mybox.fxml.TreeTableFileSizeCell;
-import mara.mybox.fxml.TreeTableTimeCell;
+import mara.mybox.fxml.TreeTableEraCell;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 
@@ -82,10 +82,10 @@ public class FilesTreeController extends BaseController {
             sizeColumn.setCellFactory(new TreeTableFileSizeCell());
 
             modifyTimeColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("modifyTime"));
-            modifyTimeColumn.setCellFactory(new TreeTableTimeCell());
+            modifyTimeColumn.setCellFactory(new TreeTableEraCell());
 
             createTimeColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("createTime"));
-            createTimeColumn.setCellFactory(new TreeTableTimeCell());
+            createTimeColumn.setCellFactory(new TreeTableEraCell());
 
             filesTreeView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
             if (listenDoubleClick) {

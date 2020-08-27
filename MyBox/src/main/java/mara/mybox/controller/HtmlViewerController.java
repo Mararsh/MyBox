@@ -6,10 +6,9 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import mara.mybox.data.StringTable;
@@ -17,8 +16,10 @@ import mara.mybox.data.VisitHistory;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlTools;
+import mara.mybox.tools.HtmlTools.HtmlStyle;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 
 /**
@@ -29,16 +30,17 @@ import mara.mybox.value.CommonFxValues;
  */
 public class HtmlViewerController extends BaseController {
 
-    protected String style, body;
+    protected String body;
     protected List<String> fields;
     protected StringTable table;
     protected String html;
     protected String title;
+    protected HtmlStyle htmlStyle;
 
     @FXML
     protected WebView webView;
     @FXML
-    protected CheckBox consoleCheck;
+    protected ComboBox<String> htmlStyleSelector;
 
     public HtmlViewerController() {
         baseTitle = AppVariables.message("Html");
@@ -62,20 +64,24 @@ public class HtmlViewerController extends BaseController {
         try {
             super.initControls();
 
-            style = HtmlTools.DefaultStyle;
-            consoleCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
-                    AppVariables.setUserConfigValue("InformationConsoleKey", consoleCheck.isSelected());
-                    if (consoleCheck.isSelected()) {
-                        style = HtmlTools.ConsoleStyle;
-                    } else {
-                        style = HtmlTools.DefaultStyle;
-                    }
-                    displayHtml();
-                }
-            });
-            consoleCheck.setSelected(AppVariables.getUserConfigBoolean("InformationConsoleKey", false));
+            htmlStyle = HtmlStyle.Default;
+            htmlStyleSelector.getItems().addAll(Arrays.asList(
+                    message("Default"), message("Console"), message("Blackboard")
+            ));
+            htmlStyleSelector.getSelectionModel().selectedItemProperty().addListener(
+                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
+                        if (message("Console").equals(newValue)) {
+                            htmlStyle = HtmlStyle.Console;
+                        } else if (message("Blackboard").equals(newValue)) {
+                            htmlStyle = HtmlStyle.Blackboard;
+                        } else {
+                            htmlStyle = HtmlStyle.Default;
+                        }
+                        AppVariables.setUserConfigValue("HtmlStyle", newValue);
+                        displayHtml();
+                    });
+            htmlStyleSelector.getSelectionModel().select(
+                    AppVariables.getUserConfigValue("HtmlStyle", message("Default")));
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -103,24 +109,24 @@ public class HtmlViewerController extends BaseController {
     @FXML
     protected void editHtml() {
         if (table != null) {
-            html = HtmlTools.html(title, style, StringTable.tableDiv(table));
+            html = HtmlTools.html(title, htmlStyle, StringTable.tableDiv(table));
 
         } else if (body != null) {
-            html = HtmlTools.html(title, style, body);
+            html = HtmlTools.html(title, htmlStyle, body);
         }
         HtmlTools.editHtml(html);
     }
 
     public void displayHtml() {
         if (table != null) {
-            html = HtmlTools.html(title, style, StringTable.tableDiv(table));
+            html = HtmlTools.html(title, htmlStyle, StringTable.tableDiv(table));
 
         } else if (body != null) {
-            html = HtmlTools.html(title, style, body);
+            html = HtmlTools.html(title, htmlStyle, body);
 
         } else if (html != null) {
             this.body = HtmlTools.body(html);
-            html = HtmlTools.html(title, style, body);
+            html = HtmlTools.html(title, htmlStyle, body);
 
         }
         displayHtml(html);
@@ -148,7 +154,7 @@ public class HtmlViewerController extends BaseController {
             if (body == null) {
                 return;
             }
-            html = HtmlTools.html(title, style, body);
+            html = HtmlTools.html(title, htmlStyle, body);
             displayHtml(html);
         } catch (Exception e) {
             logger.error(e.toString());
@@ -162,7 +168,7 @@ public class HtmlViewerController extends BaseController {
         }
         this.title = table.getTitle();
         this.fields = table.getNames();
-        html = HtmlTools.html(title, style, StringTable.tableDiv(table));
+        html = HtmlTools.html(title, htmlStyle, StringTable.tableDiv(table));
         displayHtml(html);
     }
 

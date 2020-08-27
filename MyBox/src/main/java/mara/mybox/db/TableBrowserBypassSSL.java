@@ -171,26 +171,26 @@ public class TableBrowserBypassSSL extends DerbyBase {
         }
     }
 
-    public static boolean delete(List<CertificateBypass> hosts) {
+    public static int delete(List<CertificateBypass> hosts) {
         if (hosts == null || hosts.isEmpty()) {
-            return false;
+            return 0;
         }
+        int count = 0;
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             conn.setAutoCommit(false);
             final String sql = "DELETE FROM Browser_Bypass_SSL WHERE host=?";
             try ( PreparedStatement statement = conn.prepareStatement(sql)) {
                 for (int i = 0; i < hosts.size(); ++i) {
                     statement.setString(1, hosts.get(i).getHost());
-                    statement.executeUpdate();
+                    count += statement.executeUpdate();
                 }
             }
             conn.commit();
-            return true;
         } catch (Exception e) {
             failed(e);
             // logger.debug(e.toString());
-            return false;
         }
+        return count;
     }
 
 }

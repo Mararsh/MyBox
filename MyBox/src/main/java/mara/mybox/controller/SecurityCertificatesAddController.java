@@ -54,17 +54,20 @@ public class SecurityCertificatesAddController extends BaseController {
         if (certController == null) {
             return;
         }
+        String name = "";
         if (addressRadio.isSelected()) {
             if (addressInput.getText().isEmpty()) {
                 popError(message("NotExist"));
                 return;
             }
+            name = addressInput.getText();
         } else {
             sourceFile = new File(sourceFileInput.getText());
             if (!sourceFile.exists() || !sourceFile.isFile()) {
                 popError(message("NotExist"));
                 return;
             }
+            name = sourceFile.getName();
         }
 
         File ksFile = new File(certController.getSourceFileInput().getText());
@@ -79,6 +82,7 @@ public class SecurityCertificatesAddController extends BaseController {
         dialog.setHeaderText(message("Alias"));
         dialog.setContentText("");
         dialog.getEditor().setPrefWidth(300);
+        dialog.getEditor().setText(name);
         Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
         stage.setAlwaysOnTop(true);
         stage.toFront();

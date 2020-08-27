@@ -14,7 +14,7 @@ import javax.imageio.ImageIO;
  * @CreateDate 2019-3-15 14:17:47
  * @License Apache License Version 2.0
  */
-public class TableImageFileCell<T, String> extends TableCell<T, String>
+public class TableImageFileCell<T> extends TableCell<T, String>
         implements Callback<TableColumn<T, String>, TableCell<T, String>> {
 
     protected int imageSize = 100;
@@ -43,7 +43,7 @@ public class TableImageFileCell<T, String> extends TableCell<T, String>
                     return;
                 }
                 try {
-                    File file = new File(item.toString());
+                    File file = new File(item);
                     BufferedImage image = ImageIO.read(file);
                     imageview.setImage(SwingFXUtils.toFXImage(image, null));
                     setGraphic(imageview);

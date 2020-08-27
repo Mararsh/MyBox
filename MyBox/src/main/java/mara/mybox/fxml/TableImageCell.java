@@ -2,6 +2,7 @@ package mara.mybox.fxml;
 
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.util.Callback;
 
@@ -12,7 +13,7 @@ import javafx.util.Callback;
  * @Description
  * @License Apache License Version 2.0
  */
-public class TableImageCell<T, Image> extends TableCell<T, Image>
+public class TableImageCell<T> extends TableCell<T, Image>
         implements Callback<TableColumn<T, Image>, TableCell<T, Image>> {
 
     @Override
@@ -30,8 +31,7 @@ public class TableImageCell<T, Image> extends TableCell<T, Image>
                     setGraphic(null);
                     return;
                 }
-                javafx.scene.image.Image image = (javafx.scene.image.Image) item;
-                imageview.setImage(image);
+                imageview.setImage(item);
                 setGraphic(imageview);
             }
         };

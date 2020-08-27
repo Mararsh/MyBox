@@ -49,8 +49,7 @@ License:    Apache License Version 2.0
                                                         <Hyperlink fx:id="link" onAction="#link" text="https://github.com/Mararsh/MyBox_data" />
                                                     </children>
                                                 </HBox>
-                                                <Label text="%CSVSeparatedByCommas" />
-                                                <Label styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="Data Set, Time, Confirmed, Healed, Dead, Increased Confirmed, Increased Healed, Increased Dead, Data Source, Level, Continent, Country, Province, City, County, Town, Village, Building, Longitude, Latitude" wrapText="true" />
+                                                <Label text="%EpidemicReportCVSComments" wrapText="true" />
                                             </children>
                                         </VBox>
                                     </content>
@@ -64,12 +63,13 @@ License:    Apache License Version 2.0
                                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
                                             <children>
                                                 <CheckBox fx:id="replaceCheck" mnemonicParsing="false" text="%ReplaceExistedData" />
+                                                <CheckBox fx:id="closeWhenCompleteCheck" mnemonicParsing="false" selected="false" text="%CloseWhenComplete" />
                                                 <Label text="%EpidemicReportEqualComments" wrapText="true">
                                                     <VBox.margin>
                                                         <Insets top="5.0" />
                                                     </VBox.margin>
                                                 </Label>
-                                    <CheckBox fx:id="statisticCheck" mnemonicParsing="false" selected="true" text="%EpidemicReportStatistic" />
+                                                <CheckBox fx:id="statisticCheck" mnemonicParsing="false" selected="true" text="%EpidemicReportStatistic" />
                                             </children>
                                             <padding>
                                                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

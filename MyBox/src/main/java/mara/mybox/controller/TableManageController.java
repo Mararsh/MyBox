@@ -9,14 +9,18 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -25,6 +29,8 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mara.mybox.db.DerbyBase;
+import mara.mybox.db.TableBase;
+import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.value.AppVariables;
@@ -39,17 +45,18 @@ import mara.mybox.value.CommonFxValues;
  */
 public class TableManageController<P> extends BaseController {
 
+    protected TableBase tableDefinition;
     protected BaseController parent;
-
     protected ObservableList<P> tableData;
     protected int currentPage, pageSize, pagesNumber, totalSize, currentPageStart, currentPageSize;
-    protected String dataName;
+    protected String tableName, idColumn;
     protected boolean paginate;
 
     @FXML
     protected TableView<P> tableView;
     @FXML
-    protected Button editButton;
+    protected Button editButton, examplesButton, refreshButton, resetButton,
+            dataImportButton, dataExportButton, chartsButton, queryButton;
     @FXML
     protected ComboBox<String> pageSizeSelector, pageSelector;
     @FXML
@@ -60,15 +67,41 @@ public class TableManageController<P> extends BaseController {
     protected CheckBox deleteConfirmCheck;
 
     public TableManageController() {
-        dataName = "Data";
+        tableName = "";
 
         targetPathKey = "dataTargetPath";
         sourcePathKey = "dataSourcePath";
     }
 
     @Override
+    public void initValues() {
+        try {
+            super.initValues();
+            setTableDefinition();
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    // define tableDefinition here
+    public void setTableDefinition() {
+    }
+
+    protected void initColumns() {
+        try {
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    @Override
     public void initializeNext() {
         try {
+            if (tableDefinition != null) {
+                tableName = tableDefinition.getTableName();
+                idColumn = tableDefinition.getIdColumn();
+            }
             if (tableView == null) {
                 return;
             }
@@ -110,14 +143,6 @@ public class TableManageController<P> extends BaseController {
 
             initButtons();
             initPagination();
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    protected void initColumns() {
-        try {
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -205,7 +230,8 @@ public class TableManageController<P> extends BaseController {
                     });
 
             pageSize = 50;
-            pageSizeSelector.getItems().addAll(Arrays.asList("50", "30", "100", "20", "60", "200", "300"));
+            pageSizeSelector.getItems().addAll(Arrays.asList("50", "30", "100", "20", "60", "200", "300",
+                     "500", "1000", "2000", "5000", "10000", "20000", "50000"));
             pageSizeSelector.getSelectionModel().selectedItemProperty().addListener(
                     (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
                         if (newValue == null) {
@@ -379,6 +405,66 @@ public class TableManageController<P> extends BaseController {
     }
 
     @FXML
+    public void editAction() {
+        try {
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+
+    }
+
+    @FXML
+    public void viewAction() {
+        try {
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+
+    }
+
+    @FXML
+    @Override
+    public void copyAction() {
+        try {
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    @FXML
+    public void examplesAction() {
+        synchronized (this) {
+            if (task != null) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+
+                @Override
+                protected boolean handle() {
+                    loadExamples();
+                    return true;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    refreshAction();
+                }
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
+    }
+
+    public void loadExamples() {
+
+    }
+
+    @FXML
     @Override
     public void deleteAction() {
         List<P> selected = tableView.getSelectionModel().getSelectedItems();
@@ -402,14 +488,16 @@ public class TableManageController<P> extends BaseController {
                 return;
             }
         }
-        if (deleteSelectedData()) {
+        int count = deleteSelectedData();
+        popInformation(message("Deleted") + ":" + count);
+        if (count > 0) {
             refreshAction();
         }
     }
 
-    protected boolean deleteSelectedData() {
-        List<P> selected = tableView.getSelectionModel().getSelectedItems();
-        return true;
+    protected int deleteSelectedData() {
+//        List<P> selected = tableView.getSelectionModel().getSelectedItems();
+        return 0;
     }
 
     @FXML
@@ -453,8 +541,52 @@ public class TableManageController<P> extends BaseController {
     }
 
     @FXML
-    public void addAction() {
+    public void refreshAction() {
+        loadTableData();
+    }
+
+    @FXML
+    protected void popImportMenu(MouseEvent mouseEvent) {
+
+    }
+
+    @FXML
+    protected void popExportMenu(MouseEvent mouseEvent) {
         try {
+            if (popMenu != null && popMenu.isShowing()) {
+                popMenu.hide();
+            }
+            popMenu = new ContextMenu();
+            popMenu.setAutoHide(true);
+
+            MenuItem menu;
+
+            popMenu.getItems().add(new SeparatorMenuItem());
+            menu = new MenuItem(message("MenuClose"));
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setOnAction((ActionEvent event) -> {
+                popMenu.hide();
+                popMenu = null;
+            });
+            popMenu.getItems().add(menu);
+
+            FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    @FXML
+    protected void popQueryMenu(MouseEvent mouseEvent) {
+        try {
+            if (popMenu != null && popMenu.isShowing()) {
+                popMenu.hide();
+            }
+            popMenu = new ContextMenu();
+            popMenu.setAutoHide(true);
+
+            FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -463,18 +595,32 @@ public class TableManageController<P> extends BaseController {
     }
 
     @FXML
-    public void editAction() {
+    protected void popClearMenu(MouseEvent mouseEvent) {
         try {
+            if (popMenu != null && popMenu.isShowing()) {
+                popMenu.hide();
+            }
+            popMenu = new ContextMenu();
+            popMenu.setAutoHide(true);
 
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
+            MenuItem menu = new MenuItem(message("ClearAsCondition") + "\nCTRL+r / ALT+r");
+            menu.setOnAction((ActionEvent event) -> {
+                clearAction();
+            });
+            popMenu.getItems().add(menu);
 
-    }
+            popMenu.getItems().add(new SeparatorMenuItem());
 
-    @FXML
-    public void viewAction() {
-        try {
+            popMenu.getItems().add(new SeparatorMenuItem());
+            menu = new MenuItem(message("MenuClose"));
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setOnAction((ActionEvent event) -> {
+                popMenu.hide();
+                popMenu = null;
+            });
+            popMenu.getItems().add(menu);
+
+            FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -507,41 +653,6 @@ public class TableManageController<P> extends BaseController {
     @Override
     public void lastAction() {
         currentPage = Integer.MAX_VALUE;
-        loadTableData();
-    }
-
-    public void loadExamples() {
-
-    }
-
-    @FXML
-    public void examplesAction() {
-        synchronized (this) {
-            if (task != null) {
-                return;
-            }
-            task = new SingletonTask<Void>() {
-
-                @Override
-                protected boolean handle() {
-                    loadExamples();
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    refreshAction();
-                }
-            };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
-            thread.setDaemon(true);
-            thread.start();
-        }
-    }
-
-    @FXML
-    public void refreshAction() {
         loadTableData();
     }
 
@@ -584,13 +695,13 @@ public class TableManageController<P> extends BaseController {
     }
 
     protected void importData(File file) {
-        DerbyBase.importData(dataName, file.getAbsolutePath(), false);
+        DerbyBase.importData(tableName, file.getAbsolutePath(), false);
     }
 
     @FXML
     protected void exportAction() {
         final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
-                message(dataName) + ".txt", CommonFxValues.AllExtensionFilter, false);
+                message(tableName) + ".txt", CommonFxValues.AllExtensionFilter, false);
         if (file == null) {
             return;
         }
@@ -603,7 +714,7 @@ public class TableManageController<P> extends BaseController {
 
                 @Override
                 protected boolean handle() {
-                    DerbyBase.exportData(dataName, file.getAbsolutePath());
+                    DerbyBase.exportData(tableName, file.getAbsolutePath());
                     return true;
                 }
 
@@ -618,6 +729,11 @@ public class TableManageController<P> extends BaseController {
             thread.setDaemon(true);
             thread.start();
         }
+    }
+
+    @FXML
+    protected void analyseAction() {
+
     }
 
 }

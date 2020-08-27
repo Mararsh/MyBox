@@ -1,15 +1,16 @@
 # [中文ReadMe](https://github.com/Mararsh/MyBox)   ![ReadMe](https://mararsh.github.io/MyBox/iconGo.png) 
 
 # MyBox: Set of Easy Tools
-This is desktop application based on JavaFx to provide simple and easy functions. It's free and open sources
+This is desktop application based on JavaFx to provide simple and easy functions. It's free and open sources.         
 
 ## What's New
-2020-6-11 v6.3.1  Migrate to java 14.0.1 + javaFx 14.0.1(Except for module "javafx-web") + Netbeans 11.3.        
-Still support migration from lower versions instead of "Truncated Version".               
-Improve table "Geography Codes" to get quicker queries.  Unit of "Area" is changed from "square kilometers" to "square meters".            
-Keys of map can be set.           
-Solved problems. Length of "Recently visited files" is not limited. Values in pie chart of "Epidemic Reports" should be percentage.            
-[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.1)        
+2020-8-27 v6.3.2  Improve "Location Data". Display data in map as "Location Distribution" or "Time Sequence". 3 examples of datasets. Data files on movebank.org can be imported.      
+Improve how to display data in map. Support both TianDiTu and GaoDe map.                    
+"Location Tool": Convert coordinate value between decimal and DMS. Convert coordinate values as other coordinate systems.                  
+FFmpeg application: Record desktop. Support Windows only now.       
+Import/Export color data in CSV format.        
+Full automatic script of building and packing. <Development Guide> v2.1.                    
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.2)        
 
 
 ## Download and Execution
@@ -21,9 +22,9 @@ Self-contain packages include all files and need not java env nor installation. 
 
 | Platform | Link | Size | Launcher |    
 | --- | --- | ---  | ---  |    
-| win | [MyBox-6.3.1-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.1/MyBox-6.3.1-win-exe.zip)  | 213MB | MyBox.exe |       
-| linux | [MyBox-6.3.1-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.3.1/MyBox-6.3.1-linux.tar.gz)  | 220MB  | bin/MyBox  |     
-| mac | [MyBox-6.3.1-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.3.1/MyBox-6.3.1-mac.dmg)  | 223MB  |  MyBox-6.3.1.app   |   
+| win | [MyBox-6.3.2-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.2/MyBox-6.3.2-win-exe.zip)  | 284MB | MyBox.exe |       
+| linux | [MyBox-6.3.2-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.3.2/MyBox-6.3.2-linux.tar.gz)  | 298MB  | bin/MyBox  |     
+| mac | [MyBox-6.3.2-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.3.2/MyBox-6.3.2-mac.dmg)  | 294MB  |  MyBox-6.3.2.app   |   
 
 User can double click the launcher to start MyBox or run it by command line. The default "Open Method" of image/text/PDF files can be associated to MyBox and a file can be opened directly by MyBox by double clicking the file's name.
 (File with name including non-ascii can not be opened by double clicking currently)
@@ -33,16 +34,16 @@ When JRE or JDK 14 or higher(`Oracle jdk` or `open jdk`) is installed, jar can r
   
 | Platform | Link | Size | Requirements |   
 | --- | --- | ---  | ---  |    
-| win | [MyBox-6.3.1-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.1/MyBox-6.3.1-win-jar.zip)  | 147MB | Java 14.0.1 or higher |    
-| linux | [MyBox-6.3.1-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.1/MyBox-6.3.1-linux-jar.zip)  | 154MB  | Java 14.0.1 or higher |    
-| mac | [MyBox-6.3.1-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.1/MyBox-6.3.1-mac-jar.zip)  |  151MB  | Java 14.0.1 or higher |    
+| win | [MyBox-6.3.2-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.2/MyBox-6.3.2-win-jar.zip)  | 147MB | Java 14.0.1 or higher |    
+| linux | [MyBox-6.3.2-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.2/MyBox-6.3.2-linux-jar.zip)  | 158MB  | Java 14.0.1 or higher |    
+| mac | [MyBox-6.3.2-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.2/MyBox-6.3.2-mac-jar.zip)  |  150MB  | Java 14.0.1 or higher |    
  
     
 Run following command to launch this program with Jar package: 
-<PRE><CODE>     java   -jar   MyBox-6.3.1.jar</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-6.3.2.jar</CODE></PRE>
 	
 A file path can follow the command as argument to be opened directly by MyBox. Example, following command will open the image:    
-<PRE><CODE>     java   -jar   MyBox-6.3.1.jar   /tmp/a1.jpg</CODE></PRE>   
+<PRE><CODE>     java   -jar   MyBox-6.3.2.jar   /tmp/a1.jpg</CODE></PRE>   
 
 ### Other addresses to download   
 Download from cloud storage: https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F   
@@ -53,11 +54,31 @@ Self-contain packages can not be lanuched under path including non-English chara
 A bug has been reported to jpackage dev team:
 [JDK-8232936](http://bugs.java.com/bugdatabase/view_bug.do?bug_id=JDK-8232936)   
 
-Current version still does not support OCR on Linux/Mac. The reason is that the based tesseract libraries are different on different platforms and there are not out of box packages available.   
-This requirement is delayed due to limited development time.    
-
 ## Migration
 If new version can not be started or runs abnormally, rename/move current data path to have new data path created automatically.       
+
+Automatically exported data files due to migration can be found under sub-directory "migration" of data path.
+
+
+## Configuration <a id="Config"></a>     
+
+### Default configuration file “MyBox.ini”
+The default configuration file is under "User Home". Example, it is `C:\Users\<User Name>\mybox\MyBox.ini` on Windows.   
+
+The only way to change configuration file temporarily is to add parameter "config=\"FilePath\"" when run jar.
+
+### Contents of Configuration File
+Configuration file includes following parameters:
+1. Data Path, like:   
+<PRE><CODE>     MyBoxDataRoot=/home/mara/data/ </CODE></PRE>
+2. Maximum memory usage of JVM, like:    
+<PRE><CODE>     JVMmemory=-Xms3026m </CODE></PRE>
+3. Whether close "HiDPI", like:   
+<PRE><CODE>     DisableHidpi=false </CODE></PRE>
+4. Derby driver mode, like:  
+<PRE><CODE>     DerbyMode=embedded </CODE></PRE>  
+
+Modify these parameters, except for DerbyMode, in time will cause MyBox restarts itself automatically.    
 
 # Resource Addresses        
 | Contents | Link | 
@@ -68,23 +89,23 @@ If new version can not be started or runs abnormally, rename/move current data p
 | Data | https://github.com/Mararsh/MyBox_data |    
 | Mirror Site | https://sourceforge.net/projects/mara-mybox/files/ |        
 | Cloud Storage | https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F |    
-| Online Helps | https://mararsh.github.io/MyBox/mybox_help_zh.html |    
+| Online Helps | https://mararsh.github.io/MyBox/mybox_help_en.html |    
 
 # Documents
 | Name | Version | Time | Link |
 | --- | --- | --- |  --- |  
+| Development Logs | 6.3.2 | 2020-08-27 | [html](#devLog) |
+| Development Guide | 2.1 | 2020-08-27 | [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-DevGuide-2.1-en.pdf) |
+| Shortcuts | 6.3 | 2020-05-25 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts_en.html) |
 | User Guide - Overview | 5.0 | 2019-4-19 | [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-UserGuide-5.0-Overview-en.pdf) |
 | User Guide - Image Tools | 5.0 | 2019-4-18 | [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-UserGuide-5.0-ImageTools-en.pdf) |
 | User Guide - PDF Tools | 5.0 | 2019-4-20 | [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-UserGuide-5.0-PdfTools-en.pdf) |
 | User Guide - Desktop Tools | 5.0 | 2019-4-16 | [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-UserGuide-5.0-DesktopTools-en.pdf) |
 | User Guide - Network Tools | 5.0 | 2019-4-16 | [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-UserGuide-5.0-NetworkTools-en.pdf) |
-| Development Guide | 2.0 | 2019-11-18 | [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-DevGuide-2.0-en.pdf) |
-| Shortcuts | 6.3 | 2020-05-25 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts_en.html) |
-| Development Logs | 6.3.1 | 2020-06-11 | [html](#devLog) |
 
-# Implementation
 
-MyBox is based on following open sources:    
+# Implementation        
+MyBox is based on following open sources:       
 
 | Name | Role | Link |    
 | --- | --- | --- |    
@@ -95,6 +116,7 @@ MyBox is based on following open sources:
 |   |   |  https://www.oracle.com/technetwork/java/javafxscenebuilder-1x-archive-2199384.html  |     
 | NetBeans | IDE| https://netbeans.org/ |     
 | jpackage | self-contain package| http://jdk.java.net/jpackage/ |     
+| maven | build sources | https://maven.apache.org/ |     
 | jai-imageio | Image manufacture | https://github.com/jai-imageio/jai-imageio-core |   
 | PDFBox | PDF manufacture | https://pdfbox.apache.org/ |   
 | PDF2DOM | PDF to html | http://cssbox.sourceforge.net/pdf2dom/ |   
@@ -130,13 +152,17 @@ MyBox is based on following open sources:
 | JHU | COVID-19 data | https://github.com/CSSEGISandData/COVID-19 |      
 | Website | Color data | https://tool.lanrentuku.com/color/china.html |      
 | Book | Materials | https://book.douban.com/subject/3894923/ |      
+| TIanDiTu| Map | http://lbs.tianditu.gov.cn/api/js4.0/guide.html |      
+| movebank | Location data | https://www.datarepository.movebank.org |      
+| CoordinateConverter | convert coordinates | https://www.jianshu.com/p/c39a2c72dc65?from=singlemessage |      
 
  
 # Current Version
-Current version is 6.3.1. Its features are mentioned below in summary:   
+Current version is 6.3.2. Its features are mentioned below in summary:   
  
 * [Cross platforms](#Cross-platform)
 * [Internationalized](#Internationalized)
+* [Local Host](#localhost)
 * [Document Tools](#documentTools)
     - [PDF Tools](#pdfTools)
     - [Edit Text](#editText)
@@ -160,9 +186,12 @@ Current version is 6.3.1. Its features are mentioned below in summary:
     - [Others](#imageOthers)
     - [Big Image](#bigImage)
 * [Data Tools](#dataTools)
+    - [Common Data Management](#dataManage)
+    - [Map Data](#mapData)
     - [Geography Codes](#geographyCode)
     - [Location in Map](#locationInMap)
     - [Location Data](#locationData)
+    - [Location Tools](#locationTools)
     - [Epidemic Reports](#epidemicReport)
     - [Matrcies Calculation](#matrixTool)
     - [Create Barcodes](#createBarcodes)
@@ -196,7 +225,10 @@ Current version is 6.3.1. Its features are mentioned below in summary:
 MyBox is implemented in pure Java and based on open source codes, so it can run any platform which supports Java 14.
 Versions before v5.3 are based on Java 8.
 
-Recognizing texts in image/PDF(OCR) works only on Windows currently.    
+Current version still does not support OCR on Linux/Mac. The reason is that the based tesseract libraries are different on different platforms and there are not out of box packages available.   
+This requirement is delayed due to limited development time.       
+
+"FFmpeg: Record Screen" supports Windows only now.         
 
 ## Internationalized <a id="Internationalized"></a> 
 1. All codes of MyBox are internationalized. Currently MyBox supports Chinese and English. 
@@ -206,6 +238,12 @@ Recognizing texts in image/PDF(OCR) works only on Windows currently.
 5. Translated files can be shared with others: Put the files under "mybox_languages" of data path and MyBox is aware of them immediately.    
       
 ![Snap-Cover](https://mararsh.github.io/MyBox/snap-cover-en.jpg)
+
+
+## Local Host<a id="localhost" />
+1. No network if unnecessary.
+2. Not read/write if unnecessary.
+
 
 ##  Document Tools <a id="documentTools"></a> 
 
@@ -326,7 +364,7 @@ Recognizing texts in image/PDF(OCR) works only on Windows currently.
 2. Channels of histograms can be selected.
 3. Statistic against selected area.
 4. Calculate mostly different colors in image by K-Means Clustering.
-5. Calculate mostly occurer colors in image by Popularity Quantization.
+5. Calculate mostly occurred colors in image by Popularity Quantization.
 6. Image data can be saved as html file.
 
 ![Snap-imageAnanlyse](https://mararsh.github.io/MyBox/snap-imageAnanlyse-en.jpg)     
@@ -441,12 +479,20 @@ Recognizing texts in image/PDF(OCR) works only on Windows currently.
 
 
 ### Color Management<a id="ColorManagement" />   
-1. Add/Delete/Edit any colors in color library. Provide "Common web color", "Common Chinese colors", and "Common Japanese Colors".     
+1. Add/Delete/Edit any colors in color library. Provide "Common web color", "Traditional Chinese colors", and "Traditional Japanese Colors".     
 2. Name colors. 
 3. Add/Remove colors in palette.  
 4. Display colors in simple/all columns.   
 5. Display colors in merged/separated columns.   
-6. Exaport all or selected data as html.
+6. Export all or selected data as html or csv file.
+7. Import color file in CSV format:
+	-  File encoding is UTF-8 or ASCII.
+	-  The first line defines data headers which are delimited by English commas.
+	-  Followed each line defines one data row. Data fields are delimited by English commas.
+	-  Following fields are necessary:              
+                 rgba              
+	-  Following fields are optional:              
+                 name              
 
 ### Color Palette <a id="ColorPalette"></a>     
 1. Color is shown in a small rectangle and its name(if has), hexidecimal value, rgb values, opacity, cmyk values, and cie values are popped when mouse is moved upon it.
@@ -511,95 +557,277 @@ Recognizing texts in image/PDF(OCR) works only on Windows currently.
 
 ## Data Tools <a id="dataTools"></a>     
 
-### General Management Base of Data Table<a id="dataManage" />    
-1. Add/Delete/Edit/Clear/Refresh
+### Common Data Management<a id="dataManage" />    
+1. Define data.
+2. Data constraints：
+ 	- Invalid value of integer/long/short is the minimum value(MIN_VALUE)
+ 	- Invalid value of double is the maximum value(Double.MAX_VALUE)
+	- Coordinate system:
+ 	  	- Valid values：
+ 	  	   	- CGCS2000(China Geodetic Coordinate System), real locations and approximate to WGS-84(GPS).
+ 	  	   	- GCJ-02(China encrypted coordinate), encrypted data with offsets of real locations.
+ 	  	   	- WGS-84(GPS), real locations.
+ 	  	   	- BD-09(Baidu encryted coordinate),  based on GCJ-02.
+ 	  	   	- Mapbar coordinate,  based on GCJ-02.
+ 	  	- When coordinate is unknown or invalid, the default value is CGCS2000.    
+	- Coordinate values： 
+ 	  	- Decimal values of longitude and latitude, instead of Degrees Minutes Seconds(DMS), are used when data handled.   
+  	  	- MyBox provides "Location Tools" to convert coordinate values between decimal and DMS.                        
+ 	  	- Valid range of longitude is -180~180, and valid range of latitude is -90~90.   
+	- Time:
+ 	  	- Formats:      
+ 	  	   	- Date and Time, like: 2014-06-11 13:51:33
+ 	  	   	- Date, like: 2014-06-11
+ 	  	   	- Year, like: 2014
+ 	  	   	- Month, like: 2014-06
+ 	  	   	- Time, like: 13:51:33
+ 	  	   	- Time with Milliseconds, like: 13:51:33.261
+ 	  	   	- Date and Time with Milliseconds, like: 2014-06-11 13:51:33.261
+ 	  	- Era:        
+ 	  	 	  	 "0 AD" = "1 BC" = "0" = "-0" = "0000" = "-0000"  = "0001-01-01 00:00:00 BC" =  "公元前1" = "公元前0001-01-01 00:00:00"            
+ 	  	 	  	 "1 AD" =  "1"  = "0001" = "0001-01-01 00:00:00" = "0001-01-01 00:00:00 AD" =  "公元1" = "公元0001-01-01 00:00:00"           
+ 	  	 	  	 "202 BC" = "-203" = "-0203" = "-0203-01-01 00:00:00"  = "0202-01-01 00:00:00 BC" = "公元前202" =  "公元前0202-01-01 00:00:00"           
+ 	  	 	  	 "202 AD" = "202" = "0202" = "0202-01-01 00:00:00" = "0202-01-01 00:00:00 AD" = "公元202" = "公元0202-01-01 00:00:00"            
+ 	  	- Valid examples of Era:                  
+ 	  	 	  	 2020-07-13 11:30:59            
+  	  	 	  	 -2020-07-13 11:30:59            
+	  	 	  	 -581-01-23            
+ 	  	 	  	 960            
+ 	  	 	  	 公元960            
+ 	  	 	  	 公元前770-12-11                        
+ 	  	 	  	 公元前1046-03-10 10:10:10            
+ 	  	 	  	 202 BC            
+ 	  	 	  	 960-01-23 AD            
+ 	  	 	  	 1046-03-10 10:10:10 BC            
+3. Add/Delete/Edit/Copy/Clear/Refresh data.
 2. Pagination
 3. Export/Import
+4. Query data:
+ 	-  Define and manage query conditions.
+ 	-  Current query conditions is displayed on tab "information".
+ 	-  Data satisfying current query condition are displayed in tab "Data" in pages.     
+ 	-  Data rows can be displayed in different colors as values of some column.
+5. Import data in csv format:
+ 	- File encoding is UTF-8 or ASCII.
+	- The first line defines data headers which are delimited by English commas.
+	- Followed each line defines one data row. Data fields are delimited by English commas.
+	- Necessary fields must occupy their locations, but need not have valid values(related to data).  
+	- Select whether replace existed data. Predefined data or example data always replace existed values.     
+6. Export data:
+ 	- Define and manage export conditions.
+ 	- Export data fields can be selected.
+	- Export file format can be selected: csv, xml, json, xlsx, html.
+ 	- Select maximum lines to split files.
+ 	- Can export current data page.
+7. Delete/Clear data:
+ 	-  Define and manage delete conditions.
+ 	-  Predefined data can not be deleted.
+ 	-  Referred data(like foregin keys) can not be deleted. 
+8. Define, manage, and use "Conditions":
+ 	-  "Conditions" are used to execute querying, deleting, or exporting.
+ 	-  Set conditions in panes:
+ 	  	- Data conditions are organized as trees.  Multiple nodes can be selected.
+ 	  	- Multiple data fields can be selected as sorting conditions, and their orders can be changed.
+ 	-  Edit condition: Title, where, order by, fetch.  They will be merged as final conditon.
+ 	-  Manage conditons: Add/delete/edit/copy.
+ 	-  Conditions ever executed are saved automatically.
+	-  Recently visited conditions are listed in pop window of the buttons.
+
+
+### Map Data<a id="mapData" />
+1. Kinds of data can be presented in map, including Geography Codes, Location Data, and Coordinate Querying.
+2. Data in map can be:
+ 	-  All data which satisfy current query condition. "Maximum number of data" can be set to avoid performance issues.
+ 	-  Data in current page.
+3.  TianDiTu:
+ 	-  Accepts coordinates of CGCS2000 and display them at correct locations without offsets.
+ 	-  When display other coordinates, MyBox converts them to CGCS2000 to show correct locations.
+ 	-  Projection can be selected: EPSG:900913/3857(Web Mercator) or EPSG:4326(Geodetic).
+ 	-  Controls can selected: Zoom, Scale, Map Type, Symbols.
+ 	-  Map Types: Standard, Satellite, Mixed Satellite, Terrain, Mixed Terrain.
+ 	-  Languages in different regions.
+ 	-  Range of map levels is 1-18.
+4. GaoDe Map:
+ 	-  Accepts coordinates of GCJ-02 and display them at correct locations without offsets.
+ 	-  When display other coordinates, MyBox converts them to GCJ-02 to show correct locations.
+ 	-  Projection is EPSG:900913/3857(Web Mercator).
+ 	-  Map layers: 
+ 	  	- Can select multiples:  standard, satellite, roadnet, traffic.  
+ 	  	- Roadnet layer and traffic layer are only supported for China. 
+ 	  	- Satellite layer is supported for part of foreign addresses. 
+ 	  	- Opacity can be set for each map layer.  
+ 	-  Map language: Chinese, English, Chinese and English.   
+ 	-  Range of map levels is 3-18
+ 	-  Can selected "Fit View" to adjust map level and center as best automatically while display all data.
+5. Adjust map level by:
+ 	-  Scroll mouse wheel.
+ 	-  Click map controls.
+ 	-  Select "Map Size" 
+6. Marker image:
+ 	-  Selections: point(bubble), circle, or any image.
+ 	-  For Location Data, more selections: Data Set Image, Data Image. Point will be used if no valid value.
+ 	-  Size can be set(Same size for width and height)
+7. Marker text：
+ 	-  Selections: Label, Coordinate, Address.
+ 	-  For Location Data, more selections: Start Time, End Time, Data Value, etc.
+ 	-  Multiples selections can be picked. Each selection will be showns in a line.
+ 	-  Size can be set.
+ 	-  Can select whether text is bold.
+ 	-  Color can be set. For Location Data, "Data Color" can be chosen.
+8. Pop information:
+  	-  Detailed information can be popped when mouse is upon marker. 
+  	-  Can select whether pop information.
+9. Snapshot:
+  	-  DPI can be set.
+  	-  Current map and data in map can be saved and displayed in html.
+10. Keys of map can be changed in "Settings".  The default keys are free and shared by all MyBox users.
+11. When display map, all hosts of the map provider are trusted.
+    
+
 
 ### Geography Code<a id="geographyCode" />              
 1. Data definition： 
-	-  Basical attributes: id, level, longitude, latitude, chinese_name, english_name, 5 codes, 5 aliases, area(square kilometer), population, comments.   
+	-  Basical attributes: id, level, longitude, latitude, chinese_name, english_name, 5 codes, 5 aliases, 
 	-  Subordinate: owner, continent, country, province, city, county, town, village, building. ("Ancestors")          
-       Data is unnecessary to be subordinated level by level. Cross-over can happen.              
-       Example, a village is subordinated to Antarctica, and a city belongs to a country without province level.          
+	-  Auxiliary attributes: altitute, precision, coordinate system, area(square meters), population, comments, isPredefined.  
 2. Data constraints:
- 	-  Must have values: id, level,  chinese_name or english_name.          
+ 	-  Not null values: id, level,  chinese_name or english_name.          
  	-  Values of "level": global(only "Earth"), continent, country, province(state), city, county(district), town, village(neighborhood), building, point of interest.
-	-  One of following can determine an address:
- 	  	- Match “id"(assigned by MyBox automatically). This is accurate matching.
-  	  	- Match "level" + ancestors + "chinese_name"/"english_name"/any one "alias". This is accurate matching.
- 	  	- Match "level" + "chinese_name"/"english_name"/any one "alias". This is fuzzy matching. Duplicated names in same level can cause false matching.            
-       Matching of name or alias is case-insensitive.              
-       Sometimes 5 "code" are useful to match data.              
+ 	-  Data is unnecessary to be subordinated level by level. Cross-over can happen.       
+           Example, a village is subordinated to Antarctica, and a city belongs to a country without province level.          
+	-  Match data:
+ 	  	- One of following can determine an address:
+ 	  	 	- Match “id"(assigned by MyBox automatically). This is accurate matching.
+ 	  	 	- Match "level" + ancestors + "chinese_name"/"english_name"/any one "alias". This is accurate matching.
+ 	  	 	- Match "level" + "chinese_name"/"english_name"/any one "alias". This is fuzzy matching. Duplicated names in same level can cause false matching.            
+ 	  	- Matching of name or alias is case-insensitive.              
+ 	  	- Sometimes 5 "code" are useful to match data.              
 3. Edit data：
  	-  "subordinate" of data is set by selecting node in locations tree.   
  	-  "level" of data should be lower than its ancestors.
  	-  Data must have either chinese_name or english_name.
  	-  Select or display coordinate in map.
  	-  Set as "Predefined data" or "Inputted data" against selected rows.
-4. Import data:
- 	-  Embedded predefined data in MyBox include continents, countries, Chinese provinces/cities/counties.
-            Countries have values of "area" and "population".         
- 	-  MyBox external format data file.            
-            Download address:  https://github.com/Mararsh/MyBox_data/tree/master/GeographyCode                    
- 	-   Location data from geoname.org.          
-            Download address:  https://www.geonames.org/countries/           
- 	-  Except for predefined data, option "Whether replace existed data" can be selected when import.  Predefined data always replace.                
-5. Define, manage, and apply "Condition": 
- 	-  "Condition" is used for operations of Query, Clear, and Export.
- 	-  Set conditions in panes:
- 	  	- All geograhy codes in MyBox are organized as a Locations Tree by their subordination relationship. Multiple nodes can be selected.   
- 	  	- Select values for ordering and their sequences.   
- 	-  Edit condition: title, where, order by, fetch, which are combined together as the final condition.
- 	-  Manage conditions: Add/Delete/Modify.
- 	-  Conditions ever executed are saved automatically.
-	-  Recently visited conditions are listed in pop window of the buttons.
-6. Query data:
- 	-  Define and manage query conditions.
- 	-  Current query condition is displayed in "Information" tab.
- 	-  Data which satisfy condition are displayed in pages of data table.        
- 	-  Data rows are shown in different colors accoding to whether they are "Predefined data".
-7. Display charts:
- 	-  Addresses of current data page are shown in map.
- 	-  Save current map and its data as html, with option of dpi.    
-8. Delete data:
- 	-  Define and manage deletion condition.
- 	-  Predefined data can not be deleted.
- 	-  Referred data(Example, as foregin key of "Epidemic Report") can not be deleted.
-9. Export data:
- 	-  Define and manage export condition.
- 	-  Select formats: csv, xml, json, xlsx, html.
- 	-  Select maximum lines to split files.
- 	-  Export current data page.
-10. Settings:
+4. Define "Condition": 
+ 	-  All geograhy codes in MyBox are organized as a Locations Tree by their subordination relationship. Multiple nodes can be selected.  
+5. Import data:
+ 	-  Embedded predefined data in MyBox include continents, countries, Chinese provinces/cities/counties.         
+           Countries have values of "area" and "population".       
+ 	-  CSV format:            
+ 	  	-  Download address:       
+                        https://github.com/Mararsh/MyBox_data/tree/master/GeographyCode/en      
+ 	  	-  Necessary fields:        
+                         Level,Longitude,Latitude            
+                         And "Chinese Name" or "English Name"            
+ 	  	-  Optional fields:     
+                         Altitude,Precision,Coordinate System,Square Kilometers,Population,           
+                         Code 1,Code 2,Code 3,Code 4,Code 5,Alias 1,Alias 2,Alias 3,Alias 4,Alias 5,            
+                         Continent,Country,Province,City,County,Town,Village,Building,Comments                   
+ 	- Data from geoname.org:          
+ 	  	- Download address:            
+                         http://download.geonames.org/export/zip/         
+ 	  	-  Tab-delimited text in UTF8 encoding.
+ 	  	-  Data fields：         
+                           countryCode postalCode placeName                      
+                           adminName1 adminCode1 adminName2 adminCode2 adminName3 adminCode3              
+                           latitude longitude accuracy             
+ 	  	-  Coordinate system is WGS_84.
+ 	  	-  Same address is written only once even when it has multiple "postal code" or coordinates.
+6. Settings:
  	-  Customize colors of data rows. Provide "Default" and "Random" buttons.
 
 ![Snap-geoCode](https://mararsh.github.io/MyBox/snap-geoCode-en.jpg)       
    
 
-### Location in Map<a id="locationInMap" />      
-1. Base on GaoDe Map.
-2. Query and display location data by clicking map, inputting address, or inputting coordinate. 
-3. Set markers as: point(bubble), circle, or any image. Markers size can be set.  
-4. Set texts as: none, coordinate, or address.
-5. Pop detailed location information when put mouse upon marker. Geography code is supported only for addesses in China.
-6. Map layers: standard, satellite, roadnet, traffic.  
- 	-  Roadnet layer and traffic layer are only supported for China. 
- 	-  Satellite layer is supported for part of foreign addresses. 
- 	-  Opacity can be set for each map layer.  
-7. Set map language as:  Chinese, English, Chinese and English.        
-8. Keys of map can be changed in "Settings".          
+### Location in Map<a id="locationInMap" />    
+1. Query geography code by:
+ 	-  Click map.
+ 	-  Input address.           
+            TianDiTu supports foreign addresses while GaoDe map only supports addresses in China.
+ 	-  Input longitude and latitude. 
+2. Query result can be saved in Geography Code table.       
 
+![Snap-geoCode](https://mararsh.github.io/MyBox/snap-locationMap-en.jpg)
+
+      
 ### Location Data<a id="locationData" />      
-1. Attributes: data set, data label, address, longitude, latitude, altitude, precision, speed, data value, data size, data time, data image, data comments. Time of BC is supported.   
-2. Example:  China Earlier Cultures(incomplete).       
+1. Data definition： 
+	-  Basical attributes: data set, label, longitude, latitude, start time, end time.          
+	-  Auxiliary attributes: altitute, precision, coordinate system, speed, direction, data value, data size, image, comments.
+2. Data constraints:
+ 	-  Each location data belongs to a data set.          
+ 	-  Data set defines common attributes of some location data, examples:
+  	  	- Date format
+ 	  	- Whether omit "AD" for date AD
+ 	  	- Text color
+ 	  	- Image               
+            These attributes help to distinguish data points in map.
+3. Define conditions:
+  	- List of data sets. Multiple nodes can be selected.
+ 	- Time tree(Start time).   Multiple nodes can be selected.
+4. Map data:
+  	- At beginning, the first data is made as map center.  
+  	- Location Distribution: All data are displayed in map.
+  	- Time Sequence:
+ 	  	- Data are displayed in frames "Start Time" in ascending order.
+ 	  	- Options:    
+ 	  	  	- When "Accumulated" is selected, drawn points will not be erased and points are shown more and more.
+ 	  	  	- When "Time Overlay" is selected, all data whose duration(between "start time" and "end time" has intersection with duration of current frame will be treated as valid points of current frame.           
+                           Example, current frame has "start time" of "1044 BC" and "end time" of "221 BC", then all data who or part of who appears in this duration will be displayed in current frame.
+ 	  	  	- When "Move Center" is selected, each frame will adjust its map center.    
+ 	  	  	- When "Link" is selected, lines between adjacent 2 points will be shown.          
+                           Notice: Lines only work for China addresses in TianDiTu.    
+ 	  	- Control frames:
+ 	  	  	- Set interval.    
+ 	  	  	- Select a frame(by start time).    
+ 	  	  	- Pause/Continue playing.
+ 	  	  	- Previous/Next frame.  
+ 	  	  	- Whether loop.  
+5. Snapshots:
+  	- For "Location Distribution": 
+ 	  	- html:Data and snapshot of current frame
+ 	  	- Snapshot of current frame. All supported image formats can be selected.
+  	- For "Time Sequence", more choices: 
+ 	  	- jpg:Snapshots of all frames
+ 	  	- png:Snapshots of all frames
+ 	  	- Animated gif:Snapshots of all frames(May out of memory)
+6. Import data:   
+ 	-  CSV format:            
+ 	  	-  Necessary fields:          
+                         Dataset,Longitude,Latitude            
+ 	  	-  Optional fields:       
+                           Label,Address,Altitude,Precision,Speed,Direction,Coordinate System,         
+                           Data Value,Data Size,Start Time,End Time,Image,Comments           
+ 	- Data from movebank.org:          
+ 	  	- Download address:            
+                         https://www.datarepository.movebank.org/        
+ 	  	-  Comma-delimited CSV file.
+ 	  	-  Necessary fields:            
+                           timestamp,location-long,location-lat,study-name           
+ 	  	-  Coordinate system is WGS_84.
+ 	- Examples: Chinese Historical Capitals     
+ 	- Examples: Autumn movement patterns of European Gadwalls
+ 	- Examples: Sperm whales Gulf of Mexico
 
-### Location Data in Map<a id="locationDataInMap" />      
-1. Display data distribution in map. Data values can be used as map markers/texts/pops.
-2. Set markers as: point(bubble), circle, any image, or data image.  
-3. Set texts as: none, coordinate, address, data label, data value, data size, data time.
-4. Pop information: ：coordinate, address, data label, data value, data size, data time, data comments, data image.          
-  
+![Snap-locationData](https://mararsh.github.io/MyBox/snap-locationData-en.jpg)     
+
+### Location Tools <a id="locationTools" />
+1. Convert coordinate value between decimal and DMS. Valid exaples of DMS:             
+ 	  	 	  	48°51'12.28"             
+ 	  	 	  	-77° 3' 43.9308"             
+ 	  	 	  	48°51'12.28"N             
+ 	  	 	  	2°20'55.68"E             
+ 	  	 	  	S 34° 36' 13.4028"             
+ 	  	 	  	W 58° 22' 53.7348"             
+ 	  	 	  	118度48分54.152秒                          
+ 	  	 	  	-32度04分10.461秒             
+ 	  	 	  	东经118度48分54.152秒             
+ 	  	 	  	北纬32度04分10.461秒             
+ 	  	 	  	西经118度48分54.152秒             
+ 	  	 	  	南纬32度04分10.461秒   
+2. Convert coordinate values as other coordinate systems.
+
+![Snap-locationTools](https://mararsh.github.io/MyBox/snap-locationTools-en.jpg)    
 
 ### Epidemic Reports<a id="epidemicReport" />      
 1. Data definition： 
@@ -611,17 +839,17 @@ Recognizing texts in image/PDF(OCR) works only on Windows currently.
 	  	- healed/confirmed permillage,  dead/confirmed permillage
 	  	- confirmed/population permillage, healed/population permillage, dead/population permillage, 
 	  	- confirmed/area permillage,  healed/area permillage, dead/area permillage           
-       When value of "area"/"population" of location is invalid(zero or negitive), corresponding statistics data are meaningless.               
-       Predefined data "countries" have valid "area"/"population" and they have meaningful statistics values.                     
+            When value of "area"/"population" of location is invalid(zero or negitive), corresponding statistics data are meaningless.               
+            Predefined data "countries" have valid "area"/"population" and they have meaningful statistics values.                     
 	-  Accumulation statistics:
 	  	- Values of some countries                         
-          Calculated by values of country's provinces.                      
+                   Calculated by values of country's provinces.                      
 	  	- Values of continents                
-          Calculated by values of continent's countries.           
+                   Calculated by values of continent's countries.           
 	  	- Values of Earth                   
-          Calculated by values of continents.  
+                   Calculated by values of continents.  
 2. Data constraints:
- 	-  Must have values: dataSet, time, location
+ 	- Not null values: dataSet, time, location
  	- Values of "source": "Inputted data", "Predefined data", "Filled data", "Statistics data".  
  	- "location" is foreign key of "Geography Code", which must have row defined in that table.
  	- In "confirm", "healed", "dead", at least one should be larger than zero.
@@ -634,50 +862,59 @@ Recognizing texts in image/PDF(OCR) works only on Windows currently.
  	-  In interface of "Epidemic Reports of Chinese Provinces" or  "Epidemic Reports of Countries", multiple rows can be inputted for same dataSet and time.
  	-  Modify values of "source" for selected data rows.  
 4. Import data:
- 	-  Embedded predefined data in MyBox: COVID-19 historical data from Johns Hopkins University.(Till 2020-05-24)
- 	-  MyBox external format data file      
-            Download address: https://github.com/Mararsh/MyBox_data/tree/master/COVID19       
- 	-  COVID-19 historical data from Johns Hopkins University(Global)     
-            Download address: https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series        
- 	-  COVID-19 daily data from Johns Hopkins University(Global)      
-            Download address: https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_daily_reports        
- 	-  COVID-19 daily data from Baidu(Global)      
+ 	-  Embedded predefined data in MyBox: COVID-19 historical data from Johns Hopkins University.(Till 2020-08-27)
+ 	-  CSV format:       
+ 	  	-  Download address:            
+                         https://github.com/Mararsh/MyBox_data/tree/master/COVID19/en       
+ 	  	-  Necessary fields:                 
+                           Data Set,Time,Confirmed            
+                   And location data which are enough to define a geography code:                                   
+                           Level,Continent,Country,Province,City,County,Town,Village,Building,Longitude,Latitude        
+ 	  	-  Optional fields:             
+                          Healed,Dead,Increased Confirmed,Increased Healed,Increased Dead,Data Source             
+	  	-  Coordinate system is CGCS2000.           
+ 	-  COVID-19 historical data from Johns Hopkins University(Global) :     
+  	  	-  Download address:             
+                           https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series               
+ 	  	-   Necessary fields:                 
+                           Province/State,Country/Region,Lat,Long           
+                   And date list like "1/22/20,1/23/20..."                           
+	  	-  Coordinate system is WGS_84.           
+	  	-  Australia, Canada and China are reported at the province/state level, and others are at country level.    
+	  	-  Items whose values are all zero will be skipped.           
+ 	-  COVID-19 daily data from Johns Hopkins University(Global) :    
+  	  	-  Download address:             
+                           https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_daily_reports                
+ 	  	-  Data fields are change as time flowing...                    
+                    Following is format of "01-22-2020.csv":                    
+                             Province/State,Country/Region,Last Update,Confirmed,Deaths,Recovered          
+                    Following is format of "05-15-2020.csv":                 
+                             FIPS,Admin2,Province_State,Country_Region,Last_Update,Lat,Long_,Confirmed,Deaths,Recovered,Active,Combined_Key                                      
+	  	-  Coordinate system is WGS_84.             
+	  	-  Items whose values are all zero will be skipped.     
+ 	-  COVID-19 daily data from Baidu(Global)          
            Download address: https://voice.baidu.com/act/newpneumonia/newpneumonia/?from=osari_pc_3       
- 	-  COVID-19 historical data from Tecent(China)           
-            Download address: https://api.inews.qq.com/newsqa/v1/query/pubished/daily/list?       
- 	-  Except for predefined data, option "Whether replace existed data" can be selected when import.  Predefined data always replace.             
- 	-  Option "Statistics against dataset"      
- 	-  Time of all data are changed as “23:59:00”.      
+ 	-  COVID-19 historical data from Tecent(China)                
+           Download address: https://api.inews.qq.com/newsqa/v1/query/pubished/daily/list?       
+ 	-  Option: Statistics against dataset.      
+ 	-  Time of all data are changed as “23:59:00”.     
 5. Statistics data:
  	-  Option to accumulate date
  	-  Option to calculate subtraction statistic for different location levels.
-6. Define, manage, and apply "Condition": 
- 	-  "Condition" is used for operations of Query, Clear, and Export.
- 	-  Set conditions in panes:
- 	  	- “Data Sources Tree”:  Data sets and their different sources are organized a tree.  Multiple nodes can be selected.     
- 	  	- “Locations Tree”:  All geograhy codes in MyBox are organized as a tree by their subordination relationship. Multiple nodes can be selected.   
- 	  	- “Times Tree”:  All times involved in Epidemic Reports of MyBox are organized as a tree. Multiple nodes can be selected.   
- 	  	- "Number of Top Data in Each Day":
- 	  	  	- Unlimit. Charts will not be displayed. Data are queried as condition.
- 	  	  	- Valid value:
- 	  	  		- Data are queried as condition, and then be truncated as top data of each day, by which charts and data are displayed.
- 	  	  		- "Time Descending" is always as the first ordering element automactically.
- 	  	  		- At least one more column should be picked as ordering element.
- 	  	  		- Beside "Time Descending", the first ordering element is called "major quering attribute". 
- 	  	- Elements of ordering：
- 	  	  	- Support multiple selection 
- 	  	  	- Sequences can be adjusted       
-        - Number of Top Data in Each Day" and "Elements of ordering" work for Query and Export, and not for Clear.    
+6. Define Conditions: 
+ 	-  “Data Sources Tree”:  Data sets and their different sources are organized a tree.  Multiple nodes can be selected.     
+ 	-  “Locations Tree”:  All geograhy codes in MyBox are organized as a tree by their subordination relationship. Multiple nodes can be selected.   
+ 	-  “Times Tree”:  All times involved in Epidemic Reports of MyBox are organized as a tree. Multiple nodes can be selected.   
+ 	-   "Number of Top Data in Each Day":
+ 	  	- Unlimit. Charts will not be displayed. Data are queried as condition.
+ 	  	- Valid value:
+ 	  	  	- Data are queried as condition, and then be truncated as top data of each day, by which charts and data are displayed.
+ 	  	  	- "Time Descending" is always as the first ordering element automactically.
+ 	  	  	- At least one more column should be picked as ordering element.
+ 	  	  	- Beside "Time Descending", the first ordering element is called "major quering attribute". 
+        -  Number of Top Data in Each Day" and "Elements of ordering" work for Query and Export, and not for Clear.    
  	-  Edit condition: title, where, order by, fetch, "Number of Top Data in Each Day"(0 or -1 means Unlimit), which are combined together as the final condition.
- 	-  Manage conditions: Add/Delete/Modify.
- 	-  Conditions ever executed are saved automatically.
-	-  Recently visited conditions are listed in pop window of the buttons.
-7. Query data:
- 	-  Define and manage query conditions.
- 	-  Current query condition is displayed in "Information" tab.
- 	-  Data which satisfy condition are displayed in pages of data table.        
- 	-  Data rows are shown in different colors accoding to column "source".
-8. Display charts:
+7. Display charts:
  	-  Only when query condition satisfies requirements, charts are displayed. Charts' data are always "Daily top data" and have "Major query attribute".
  	-  Beside "Major query attribute" , more attribues can be selected, to display multiple dimension data in same chart, or show multiple charts at same time.
  	-  Chart type: horizontal bars, vertical bars, horizontal lines, vertical lines, pie, map.
@@ -693,17 +930,9 @@ Recognizing texts in image/PDF(OCR) works only on Windows currently.
  	-  Snap chart.
  	  	- When dynamical chart is playing, the snapshot is animated gif.    
  	  	- When dynamical chart is paused, or when the chart is statical, the snapshot is current frame.     
-9. Delete data:
- 	-  Define and manage deletion condition.
- 	-  Predefined data can not be deleted.
-10. Export data:
- 	-  Define and manage export condition.
- 	-  Select formats: csv, xml, json, xlsx, html.
- 	-  Select maximum lines to split files.
- 	-  Export current data page.
-11. Settings:
+8. Settings:
  	-  Snap dpi, maximum width of snapped animated images, time to loading chart's data.                       
-       These parameters are related to memory usage and computer's calculation capacity.                           
+            These parameters are related to memory usage and computer's calculation capacity.                           
  	-  Customize colors of data rows as column "source". Provide "Default" and "Random" buttons.
  	-  Customize colors of data values in charts. Provide "Default" and "Random" buttons.
  	-  Customize colors of location values in charts. Provide "Random" buttons.
@@ -802,16 +1031,41 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 ![Snap-mediaPlayer](https://mararsh.github.io/MyBox/snap-mediaPlayer-en.jpg)       
 
 ### Wrap Functions of ffmpeg<a id="ffmpeg" />
-1. Convert videos/audios in batch - Files/DIrectories
-2. Convert videos/audios in batch - Streams and medias information
-3. Merge images and audios as video - Files/DIrectories
-4. Merge images and audios as video - images information
-5. When convert/merge medias, all parameters can be selected/set, including format, codec, subtitle, frame rate, sample rate, change volumn, etc.
-6. When merge images as video, duration can be set for each image, or set to all images. Option "End video when audios finish".
-7. When merge images as video, images are adjusted automatically to fit for screen size meanwhile keep width-height ratio.
-8. Read media information like format, audio stream, video stream, frames, packets,  pixel formats by ffprobe.
-9. Read information of ffmpeg, like version, supported formats/codecs/filters, and query with customized parameters.    
 Notice: This set of functions is based on ffmpeg, and user need download ffmpeg by yourself. (Suggest to use static version)
+1. When handle media:
+	- All parameters can be selected/set, including format, codec, subtitle, frame rate, sample rate, change volumn, etc.
+	- Button "Default": When NVIDIA is available, chooce "h264_nvenc" as video encoder, to make use of hardware acceleartion. 
+	- Most of players support: muxer "mp4", video codec "H.264", audio codec "AAC".
+	- Try different options of encoders, preset, and CRF, to get suitable settings of your computer, as following factors :
+ 	  	- The encoder should be fast enough to record without frames dropping.   
+ 	  	- Consume limited system resources, and leave enough CPU and memory for other applications.
+ 	  	- Quality and size of the generated file are tolerable.
+2. Record Screen:
+	-  When have not NVIDIA and CPU is not so powerful:
+ 	  	- Choose "libx264rgb" as video encoder, to bypass conversion from RGB to yuv444p.
+ 	  	- Select quicker encoding preset. 
+ 	  	- After recording, use conversion tool to change generated video from RGB to yuv444p with encoder "libx264".
+	-  Select whether record video：
+ 	  	- Set size of threads queue.
+ 	  	- Record area: full screen, window by title, rectangle.
+ 	-  Select wether record audio:
+ 	  	- Detect audio cards automaticall, and pick the first one as the audio device.
+ 	  	- Set size of threads queue.
+ 	-  Set duration:
+ 	  	- If "unlimited", record untill user click button "Stop".
+ 	  	- If valid value, recording will end when duration completes. User can click button "Stop" and finish recording at any time.  
+	-  Only support windows now.
+3. Convert videos/audios in batch:
+	-  Source files are listed as files/directories.
+	-  Source files are listed as streams and medias information.
+4. Combine images and audios as video：
+	-  Source files are listed as files/directories.
+	-  Source files are listed as streams and medias information.
+	-  Duration can be set for each image, or set for all images. 
+	-  Option: End video when audios finish.
+	-  Images are adjusted automatically to fit for screen size meanwhile keep width-height ratio.
+5. Read media information like format, audio stream, video stream, frames, packets,  pixel formats by ffprobe.
+6. Read information of ffmpeg, like version, supported formats/codecs/filters, and query with customized parameters.    
 
 ![Snap-makeMedia](https://mararsh.github.io/MyBox/snap-makeMedia-en.jpg)       
 
@@ -870,19 +1124,39 @@ Notice: Some downloads look standstill at 0% but they are actually dragging data
 8. Stop the progress at any time. The interrupted month will be record and input as start month for next execution.
 9. Set the retry times of failure.      
 
+![Snap-weibo](https://mararsh.github.io/MyBox/snap-weibo-en.jpg)   
 
-## Settings <a id="settings"></a>     
-1. Whether restore last size of each scene. Whether open new stage to display scene. Whether pop recent visited files/directories.
-2. Language, font size, interface style, color and size of controls' pictures.
-3. Width and color of stroke and anchor. Whether anchors are solid.
-4. Whether display coordinate and rulers.
-5. Images histories number. Maximum width to display images.
-6. Color to replace Alpha when Alpha is not supported. (Suggest as White)
-7. Maximum main memory of PDF handling.
-8. Whether close alarm clocks when exit program.
-9. Base parameters including maximum JVM memory usage, whether close dpi-aware, data root path. MyBox will reboot itself automatically when user changes these parameters.
-10. Derby driver mode. Notice:  Starting/Stopping Derby network mode under some env is very slow.
-11. Clear personal settings. Open user's directory.
+## Settings <a id="settings"></a>      
+1. Interface:
+	-   Language, font size, icon size
+	-  Control color, whether display control text, interface style
+	-  Whether restore last size of each scene. 
+	-  Whether open new stage to display scene. 
+	-  Show/Hide spltted panes by: mouse enter, or click mouse.
+2. Base:
+	-  Maximum memory usage of JVM
+	-  Whether close dpi-aware
+3. Data:
+	-  Data path
+	-  Derby driver mode
+	-  Whether pop recent visited files/directories. And the number.
+	-  Whether close alarm clocks when exit program.
+4. PDF tools:
+	-  Maximum main memory of PDF handling.
+5. Image tools:
+	- Width and color of stroke and anchor. Whether anchors are solid.
+	- Color to replace Alpha when Alpha is not supported. (Suggest as White)
+	- Images histories number. 
+	- Wdith of thumbnail
+	- Maximum width to display sampled images
+	- Whether copy image in system clipboard
+6. OCR:
+	-  Data files path of OCR
+	-  Set data files and their order
+7. Map:
+	-  Data keys of map
+8. Clear personal settings.
+9. Open data directory.
 
 ## Window <a id="windows"></a>     
 1. Open/Close monitor bar of Memory.
@@ -897,27 +1171,6 @@ Notice: Some downloads look standstill at 0% but they are actually dragging data
 3. Documents：Help user start download tasks. If MyBox documents are put into data path, MyBox will find them automatically.     
 
 
-## Configuration <a id="Config"></a>     
-
-### Default configuration file “MyBox.ini”
-The default configuration file is under "User Home". Example, it is "C:\Users\<User Name>\mybox\MyBox.ini" on Windows.   
-
-The only way to change configuration file temporarily is to add parameter "config=\"FilePath\"" when run jar.
-
-### Contents of Configuration File
-Configuration file includes following parameters:
-1. Data Path, like:   
-<PRE><CODE>     MyBoxDataRoot=/home/mara/data/ </CODE></PRE>
-2. Maximum memory usage of JVM, like:    
-<PRE><CODE>     JVMmemory=-Xms3026m </CODE></PRE>
-3. Whether close "HiDPI", like:   
-<PRE><CODE>     DisableHidpi=false </CODE></PRE>
-4. Derby driver mode, like:  
-<PRE><CODE>     DerbyMode=embedded </CODE></PRE>  
-
-Modify these parameters, except for DerbyMode, in time will cause MyBox restarts itself automatically.    
-
-
 ## Supporting HiDPI<a id="Hidpi" /> 
 Java supports HiDPI since 9 and interface will adapt current screen resolution aotumatically.   
 MyBox supports enable/disable dpi-aware on line, which will cause MyBox reboots itself automatically.   
@@ -925,7 +1178,15 @@ MyBox supports enable/disable dpi-aware on line, which will cause MyBox reboots 
 Developers need notice: JavaFx screen is not same as physical screen and has different dpi definition which considers X/Y scale ratio too.    
 
 
-# Development Logs <a id="devLog"></a>         
+# Development Logs <a id="devLog"></a>        
+2020-8-27 v6.3.2  Improve "Location Data". Display data in map as "Location Distribution" or "Time Sequence". 3 examples of datasets. Data files on movebank.org can be imported.       
+Improve how to display data in map. Support both TianDiTu and GaoDe map.                    
+"Location Tool": Convert coordinate value between decimal and DMS. Convert coordinate values as other coordinate systems.                  
+FFmpeg application: Record desktop. Support Windows only now.       
+Import/Export color data in CSV format.         
+Full automatic script of building and packing. <Development Guide> v2.1.                  
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.2)       
+  
 2020-6-11 v6.3.1  Migrate to java 14.0.1 + javaFx 14.0.1(Except for module "javafx-web") + Netbeans 11.3.        
 Still support migration from lower versions instead of "Truncated Version".               
 Improve table "Geography Codes" to get quicker queries.  Unit of "Area" is changed from "square kilometers" to "square meters".            

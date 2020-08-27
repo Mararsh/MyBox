@@ -37,7 +37,7 @@ import static mara.mybox.value.AppVariables.message;
  * @CreateDate 2019-12-4
  * @License Apache License Version 2.0
  */
-public class FFmpegInformationController extends FFmpegBaseController {
+public class FFmpegInformationController extends FFmpegOptionsController {
 
     protected ObservableList<FFmpegFormat> formatsData;
     protected ObservableList<FFmpegCodec> codecsData;
@@ -86,8 +86,6 @@ public class FFmpegInformationController extends FFmpegBaseController {
     public void initValues() {
         try {
             super.initValues();
-            executableName = "FFmpegExecutable";
-            executableDefault = "D:\\Programs\\ffmpeg\\bin\\ffmpeg.exe";
 
             formatsData = FXCollections.observableArrayList();
             codecsData = FXCollections.observableArrayList();

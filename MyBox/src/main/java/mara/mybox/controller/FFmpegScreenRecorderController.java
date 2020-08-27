@@ -1,28 +1,30 @@
 package mara.mybox.controller;
 
-import com.github.kokorin.jaffree.ffmpeg.FFmpeg;
-import com.github.kokorin.jaffree.ffmpeg.FFmpegResult;
-import com.github.kokorin.jaffree.ffmpeg.UrlOutput;
-import java.awt.Rectangle;
-import java.awt.Robot;
-import java.awt.Toolkit;
-import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javax.imageio.ImageIO;
-import mara.mybox.tools.DateTools;
+import javafx.scene.control.CheckBox;
+import mara.mybox.data.VisitHistory;
+import static mara.mybox.fxml.FxmlControl.badStyle;
+import mara.mybox.tools.StringTools;
+import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
+import mara.mybox.value.CommonFxValues;
 
 /**
  * @Author Mara
@@ -31,325 +33,342 @@ import static mara.mybox.value.AppVariables.message;
  */
 public class FFmpegScreenRecorderController extends DataTaskController {
 
+    protected String os;
     protected Process recorder;
-
-    protected List<SnapTask> snapTasks;
-    protected List<WriteTask> writeTasks;
-    protected Rectangle snapArea;
-    protected int framesPerSecond, delayPerFrame;
-    protected ConcurrentLinkedQueue<Snap> snaps;
+    protected SimpleBooleanProperty stopping;
 
     @FXML
-    protected FFmpegOptionsController ffmpegOptionsController;
+    protected FFmpegScreenRecorderOptionsController optionsController;
+    @FXML
+    protected CheckBox openCheck;
 
     public FFmpegScreenRecorderController() {
-        baseTitle = AppVariables.message("RecordImagesInSystemClipBoard");
+        baseTitle = AppVariables.message("FFmpegScreenRecorder");
         cancelName = "Stop";
+
+        SourceFileType = VisitHistory.FileType.Media;
+        SourcePathType = VisitHistory.FileType.Media;
+        TargetPathType = VisitHistory.FileType.Media;
+        TargetFileType = VisitHistory.FileType.Media;
+        AddFileType = VisitHistory.FileType.Media;
+        AddPathType = VisitHistory.FileType.Media;
+
+        targetPathKey = "MediaFilePath";
+        sourcePathKey = "MediaFilePath";
+
+        sourceExtensionFilter = CommonFxValues.FFmpegMediaExtensionFilter;
+        targetExtensionFilter = sourceExtensionFilter;
     }
 
-    // https://github.com/bahusvel/JavaScreenCapture
-    @FXML
     @Override
-    public void startAction() {
+    public void initializeNext() {
         try {
-            if (message("Stop").equals(startButton.getText())) {
-                cancelAction();
+            super.initializeNext();
+
+            stopping = new SimpleBooleanProperty(false);
+
+            os = SystemTools.os();
+//            switch (os) {
+//                case "linux":
+//                    videoDevice = "x11grab";
+//                    break;
+//                case "mac":
+//                    videoDevice = "avfoundation";
+//                    break;
+//                case "win":
+//                    videoDevice = "gdigrab";
+//                    break;
+//                default:
+//                    videoDevice = null;
+//            };
+
+//            openCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+//                @Override
+//                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+//                    AppVariables.setUserConfigValue("FFmpegScreenRecorderOpen", newValue);
+//                }
+//            });
+//            openCheck.setSelected(AppVariables.getUserConfigBoolean("FFmpegScreenRecorderOpen", true));
+            startButton.disableProperty().unbind();
+            startButton.disableProperty().bind(
+                    Bindings.isEmpty(targetFileInput.textProperty())
+                            .or(targetFileInput.styleProperty().isEqualTo(badStyle))
+                            .or(optionsController.executableInput.styleProperty().isEqualTo(badStyle))
+                            .or(optionsController.titleInput.styleProperty().isEqualTo(badStyle))
+                            .or(optionsController.xInput.styleProperty().isEqualTo(badStyle))
+                            .or(optionsController.yInput.styleProperty().isEqualTo(badStyle))
+                            .or(optionsController.widthInput.styleProperty().isEqualTo(badStyle))
+                            .or(optionsController.heightInput.styleProperty().isEqualTo(badStyle))
+                            .or(stopping)
+            );
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    @Override
+    public void selectTargetFileFromPath(File path) {
+        try {
+            String name = optionsController.extensionInput.getText().trim();
+            if (name.isBlank()) {
+                name = null;
+            } else {
+                name = "." + name;
+            }
+            final File file = chooseSaveFile(path, name, targetExtensionFilter, true);
+            if (file == null) {
                 return;
             }
-            initLogs();
-            startTime = new Date().getTime();
-            startButton.setText(message("Stop"));
-            tabPane.getSelectionModel().select(logsTab);
-
-            framesPerSecond = 25;
-            delayPerFrame = 1000 / framesPerSecond;
-            snapArea = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
-
-            snaps = new ConcurrentLinkedQueue<>();
-            snapTasks = new ArrayList();
-            writeTasks = new ArrayList();
-            for (int i = 0; i < framesPerSecond; i++) {
-//                int index = i + 1;
-                Timer taskTimer = new Timer();
-                taskTimer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        WriteTask writeTask = new WriteTask();
-                        writeTasks.add(writeTask);
-                        writeTask.run();
-
-                        SnapTask snapTask = new SnapTask();
-                        snapTasks.add(snapTask);
-                        snapTask.run();
-//                        updateLogs(message("Task") + " " + index + " starting...", true);
-                    }
-
-                }, delayPerFrame * i);
-            }
+            selectTargetFile(file);
         } catch (Exception e) {
-            logger.debug(e.toString());
-        }
-    }
-
-    public class Snap {
-
-        private Date time;
-        private BufferedImage image;
-
-        public Snap(Date time, BufferedImage image) {
-            this.time = time;
-            this.image = image;
-        }
-
-        public Date getTime() {
-            return time;
-        }
-
-        public void setTime(Date time) {
-            this.time = time;
-        }
-
-        public BufferedImage getImage() {
-            return image;
-        }
-
-        public void setImage(BufferedImage image) {
-            this.image = image;
-        }
-
-    }
-
-    public class SnapTask implements Runnable {
-
-        private Timer taskTimer;
-        private Robot robot;
-
-        public SnapTask() {
-        }
-
-        public void stop() {
-            if (taskTimer != null) {
-                taskTimer.cancel();
-                taskTimer = null;
-            }
-        }
-
-        @Override
-        public void run() {
-            try {
-                robot = new Robot();
-                if (taskTimer != null) {
-                    taskTimer.cancel();
-                }
-                taskTimer = new Timer();
-                taskTimer.schedule(new TimerTask() {
-
-                    @Override
-                    public void run() {
-                        BufferedImage image = robot.createScreenCapture(snapArea);
-                        snaps.add(new Snap(new Date(), image));
-                    }
-
-                }, 0, 1000);
-
-            } catch (Exception e) {
-                logger.debug(e.toString());
-            }
-        }
-    }
-
-    public class WriteTask implements Runnable {
-
-        private Timer taskTimer;
-        private boolean stopSnapping;
-
-        public WriteTask() {
-        }
-
-        public void stop() {
-            stopSnapping = true;
-        }
-
-        @Override
-        public void run() {
-            try {
-                if (taskTimer != null) {
-                    taskTimer.cancel();
-                }
-                stopSnapping = false;
-                taskTimer = new Timer();
-                taskTimer.schedule(new TimerTask() {
-
-                    @Override
-                    public void run() {
-                        Snap snap = snaps.poll();
-                        if (snap != null) {
-                            try {
-                                File file = new File("D:\\tmp\\3\\snap" + "-" + DateTools.datetimeToString(snap.getTime()).replaceAll(":", "-") + ".png");
-                                ImageIO.write(snap.getImage(), "png", file);
-//                updateLogs("Task:" + taskIndex + " image:" + imageIndex + " file:" + file.getAbsolutePath(), true);
-                            } catch (Exception e) {
-                                logger.debug(e.toString());
-                            }
-                        } else if (stopSnapping) {
-                            taskTimer.cancel();
-                            taskTimer = null;
-                        }
-                    }
-
-                }, 0, delayPerFrame);
-
-            } catch (Exception e) {
-                logger.debug(e.toString());
-            }
+//            logger.error(e.toString());
         }
     }
 
     @Override
-    public void cancelAction() {
-        if (snapTasks != null) {
-            snapTasks.forEach((t) -> {
-                t.stop();
-            });
-        }
-        if (writeTasks != null) {
-            writeTasks.forEach((t) -> {
-                t.stop();
-            });
-        }
-
-        startButton.setText(message("Start"));
-    }
-
-//    @Override
-    protected boolean doTask2() {
-        if (ffmpegOptionsController.executable == null) {
+    public boolean checkOptions() {
+        if (!optionsController.audioCheck.isSelected() && !optionsController.videoCheck.isSelected()) {
+            popError(message("NothingHandled"));
             return false;
         }
-        String audioDevice = queryAudioDevice();
-        if (audioDevice != null) {
-            startRecording(audioDevice);
+        if (targetFile == null) {
+            popError(message("InvalidParameters"));
+            return false;
         }
         return true;
     }
 
-    // http://trac.ffmpeg.org/wiki/Capture/Desktop
-    protected String queryAudioDevice() {
-        try {
-            // ffmpeg -list_devices true -f dshow -i dummy
-            List<String> command = new ArrayList<>();
-            command.add(ffmpegOptionsController.executable.getAbsolutePath());
-            command.add("-list_devices");
-            command.add("true");
-            command.add("-f");
-            command.add("dshow");
-            command.add("-i");
-            command.add("dummy");
-            ProcessBuilder pb = new ProcessBuilder(command)
-                    .redirectErrorStream(true);
-            final Process process = pb.start();
-            try ( BufferedReader inReader = new BufferedReader(
-                    new InputStreamReader(process.getInputStream(), Charset.forName("UTF-8")))) {
-                String line;
-                boolean audioNext = false;
-                while ((line = inReader.readLine()) != null) {
-                    updateLogs(line + "\n", true);
-                    if (line.contains("DirectShow audio devices")) {
-                        audioNext = true;
-                    } else if (audioNext) {
-                        int pos = line.indexOf("\"");
-                        if (pos < 0) {
-                            continue;
-                        }
-                        line = line.substring(pos + 1);
-                        pos = line.indexOf("\"");
-                        if (pos < 0) {
-                            continue;
-                        }
-                        return line.substring(0, pos);
-                    }
-                }
-            }
-            process.waitFor();
-        } catch (Exception e) {
+    @Override
+    protected boolean doTask() {
+        if ("win".equals(os)) {
+            return winTask();
         }
-        return null;
+        return false;
     }
 
-    protected void startRecording(String audioDevice) {
-        if (audioDevice == null) {
-            return;
-        }
+    protected boolean winTask() {
         try {
-            logger.debug(audioDevice);
-            // ffmpeg -f gdigrab -i desktop -f dshow -i audio="立体声混音 (Realtek High Definition Audio)"  try.mp4   -y
-            // ffmpeg -f gdigrab -i desktop -f dshow -i audio="xxx" -vcodec libx264    out.mp4   -y
-            // chcp 65001
-            List<String> command = new ArrayList<>();
-//            command.add("chcp");
-//            command.add("65001");
-            command.add(ffmpegOptionsController.executable.getAbsolutePath());
-//            command.add("-f");
-//            command.add("gdigrab");
-//            command.add("-i");
-//            command.add("desktop");
-            command.add("-f");
-            command.add("dshow");
-            command.add("-i");
-            command.add("audio=" + audioDevice);
-//            command.add("-vcodec");
-//            command.add("libx264");
-            command.add("D:\\tmp\\2\\try.mp4");
-            command.add("-y");
+            if (timer != null) {
+                timer.cancel();
+                timer = null;
+            }
+            // http://trac.ffmpeg.org/wiki/Capture/Desktop
+            // ffmpeg  -f gdigrab  -thread_queue_size 128 -probesize 200M  -i desktop -f dshow  -thread_queue_size 128 -i audio="立体声混音 (Realtek High Definition Audio)" -vcodec libx264 -acodec aac out.mp4   -y
+            List<String> parameters = new ArrayList();
+            parameters.add(optionsController.executable.getAbsolutePath());
+            if ("win".equals(os)) {
+                if (optionsController.videoCheck.isSelected()) {
+                    parameters.add("-f");
+                    parameters.add("gdigrab");
+                    // https://stackoverflow.com/questions/57903639/why-getting-and-how-to-fix-the-warning-error-on-ffmpeg-not-enough-frames-to-es
+                    parameters.add("-probesize");
+                    parameters.add("100M");
+                    parameters.add("-thread_queue_size");
+                    parameters.add(optionsController.videoThreadQueueSize + "");
 
-            ProcessBuilder pb = new ProcessBuilder(command)
+                    if (optionsController.rectangleRadio.isSelected()
+                            && optionsController.width > 0 && optionsController.height > 0) {
+                        // -offset_x 10 -offset_y 20 -video_size 640x480 -show_region 1 -i desktop
+                        parameters.add("-offset_x");
+                        parameters.add(optionsController.x + "");
+                        parameters.add("-offset_y");
+                        parameters.add(optionsController.y + "");
+                        parameters.add("-video_size");
+                        parameters.add(optionsController.width + "x" + optionsController.height);
+                        parameters.add("-show_region");
+                        parameters.add("0");
+                        parameters.add("-i");
+                        parameters.add("desktop");
+
+                    } else if (optionsController.windowRadio.isSelected()) {
+                        parameters.add("-i");
+                        parameters.add("title=" + optionsController.titleInput.getText().trim());
+
+                    } else if (optionsController.fullscreenRadio.isSelected()) {
+                        parameters.add("-i");
+                        parameters.add("desktop");
+                    } else {
+                        return false;
+                    }
+
+                }
+                if (optionsController.audioCheck.isSelected() && optionsController.audioDevice != null) {
+                    parameters.add("-f");
+                    parameters.add("dshow");
+                    parameters.add("-thread_queue_size");
+                    parameters.add(optionsController.audioThreadQueueSize + "");
+                    parameters.add("-i");
+                    parameters.add("audio=" + optionsController.audioDevice);
+                }
+            }
+
+            if (!optionsController.videoCheck.isSelected() || optionsController.disableVideo) {
+                parameters.add("-vn");
+            } else {
+                if (optionsController.videoCodec != null) {
+                    parameters.add("-vcodec");
+                    parameters.add(optionsController.videoCodec);
+                }
+                if (optionsController.videoFrameRate > 0) {
+                    parameters.add("-r");
+                    parameters.add(optionsController.videoFrameRate + "");
+                }
+                if (optionsController.videoBitrate > 0) {
+                    parameters.add("-b:v");
+                    parameters.add(optionsController.videoBitrate + "k");
+                }
+                if (optionsController.aspect != null) {
+                    parameters.add("-aspect");
+                    parameters.add(optionsController.aspect);
+                }
+            }
+
+            if (!optionsController.audioCheck.isSelected()
+                    || optionsController.audioDevice == null
+                    || optionsController.disbaleAudio) {
+                parameters.add("-an");
+            } else {
+                if (optionsController.audioCodec != null) {
+                    parameters.add("-acodec");
+                    parameters.add(optionsController.audioCodec);
+                }
+                if (optionsController.audioBitrate > 0) {
+                    parameters.add("-b:a");
+                    parameters.add(optionsController.audioBitrate + "k");
+                }
+                if (optionsController.audioSampleRate > 0) {
+                    parameters.add("-ar");
+                    parameters.add(optionsController.audioSampleRate + "");
+                }
+                parameters.add("-ac");
+                parameters.add(optionsController.stereoCheck.isSelected() ? "2" : "1");
+                if (optionsController.volumn != null) {
+                    parameters.add("-af");
+                    parameters.add("volume=" + optionsController.volumn);
+                }
+            }
+
+            String more = optionsController.moreInput.getText().trim();
+            if (!more.isBlank()) {
+                String[] args = StringTools.splitBySpace(more);
+                if (args != null && args.length > 0) {
+                    parameters.addAll(Arrays.asList(args));
+                }
+            }
+            parameters.add(targetFile.getAbsolutePath());
+            parameters.add("-y");
+            ProcessBuilder pb = new ProcessBuilder(parameters)
                     .redirectErrorStream(true);
             recorder = pb.start();
             updateLogs("PID:" + recorder.pid(), true);
+            if (optionsController.duration > 0) {
+                updateLogs(message("Duarion") + ": " + optionsController.duration + " " + message("Seconds"), true);
+            }
 
             try ( BufferedReader inReader = new BufferedReader(
                     new InputStreamReader(recorder.getInputStream(), Charset.forName("UTF-8")))) {
                 String line;
                 while ((line = inReader.readLine()) != null) {
-                    updateLogs(line + "\n", true);
-                    logger.debug(line);
+                    boolean recording = line.contains(" bitrate=");
+                    if (verboseCheck.isSelected() || !recording) {
+                        updateLogs(line + "\n", true);
+                    }
+                    if (recording && (timer == null) && (optionsController.duration > 0)) {
+                        timer = new Timer();
+                        timer.schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                cancelAction();
+                            }
+
+                        }, optionsController.duration * 1000);
+                    }
                 }
+                openTarget(null);
+                Timer taskTimer = new Timer();
+                taskTimer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        stopping.set(false);
+                        recorder.destroy();
+                        recorder = null;
+                    }
+
+                }, 5000);
             }
             recorder.waitFor();
         } catch (Exception e) {
+            logger.error(e.toString());
+        }
+        return true;
+    }
+
+    protected boolean linuxTask() {
+        // To be implemented
+        return false;
+    }
+
+    protected boolean macTask() {
+        // To be implemented
+        return false;
+    }
+
+    @Override
+    public void cancelAction() {
+        if (recorder == null) {
+            stopping.set(false);
+            return;
+        }
+        if (stopping.get()) {
+            return;
+        }
+        stopping.set(true);
+        if (recorder != null) {
+            try ( BufferedWriter writer = new BufferedWriter(
+                    new OutputStreamWriter(recorder.getOutputStream(), Charset.forName("UTF-8")));) {
+                writer.append('q');
+            } catch (Exception e) {
+                logger.error(e.toString());
+            }
         }
     }
 
-    protected void record(String audioDevice) {
+    @FXML
+    @Override
+    public void openTarget(ActionEvent event) {
         try {
-            FFmpeg ffmpeg = FFmpeg.atPath(ffmpegOptionsController.executable.toPath().getParent())
-                    .addOutput(UrlOutput.toPath(targetFile.toPath()))
-                    .setOverwriteOutput(true);
-            ffmpeg.addArguments("-f", "gdigrab");
-            ffmpeg.addArguments("-i", "desktop");
-            ffmpeg.addArguments("-f", "dshow");
-            ffmpeg.addArguments("-i", "audio=" + audioDevice);
-            ffmpeg.addArguments("-vcodec", "libx264");
-//        ffmpeg.addArgument("D:\\tmp\\2\\try.mp4");
-            ffmpeg.addArgument("-y");
+            if (targetFile != null && targetFile.exists()) {
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        browseURI(targetFile.getParentFile().toURI());
+                        recordFileOpened(targetFile);
 
-            FFmpegResult result = ffmpeg.execute();
+//                        if (optionsController.openCheck.isSelected()) {
+//                            MediaPlayerController controller
+//                                    = (MediaPlayerController) FxmlStage.openStage(CommonValues.MediaPlayerFxml);
+//                            controller.load(targetFile.toURI());
+//                        }
+                    }
+                });
+            } else {
+                popInformation(AppVariables.message("NoFileGenerated"));
+            }
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            logger.error(e.toString());
         }
     }
 
-//    @Override
-    public void cancelAction2() {
-        if (task != null) {
-            task.cancel();
+    @Override
+    public boolean checkBeforeNextAction() {
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
         }
-        if (recorder != null) {
-
-            recorder.destroyForcibly();
-
-        }
+        cancelAction();
+        return true;
     }
 
 }

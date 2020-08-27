@@ -12,28 +12,26 @@ import mara.mybox.tools.DoubleTools;
  * @Description
  * @License Apache License Version 2.0
  */
-public class TablePercentageCell<T, C> extends TableCell<T, C>
-        implements Callback<TableColumn<T, C>, TableCell<T, C>> {
+public class TablePercentageCell<T> extends TableCell<T, Double>
+        implements Callback<TableColumn<T, Double>, TableCell<T, Double>> {
 
     @Override
-    public TableCell<T, C> call(TableColumn<T, C> param) {
+    public TableCell<T, Double> call(TableColumn<T, Double> param) {
 
-        TableCell<T, C> cell = new TableCell<T, C>() {
+        TableCell<T, Double> cell = new TableCell<T, Double>() {
             @Override
-            public void updateItem(C item, boolean empty) {
+            public void updateItem(Double item, boolean empty) {
                 super.updateItem(item, empty);
                 setGraphic(null);
                 if (empty || item == null) {
                     setText(null);
                     return;
                 }
-                Double v = (Double) item;
-                setText(DoubleTools.scale(v * 100.0d, 2) + "");
-//                if (v > Double.MIN_VALUE) {
-//                    setText(v + "");
-//                } else {
-//                    setText(null);
-//                }
+                if (item != Double.MAX_VALUE) {
+                    setText(DoubleTools.scale(item * 100.0d, 2) + "");
+                } else {
+                    setText(null);
+                }
             }
         };
         return cell;

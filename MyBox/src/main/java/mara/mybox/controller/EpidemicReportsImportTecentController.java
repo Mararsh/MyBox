@@ -23,6 +23,7 @@ import mara.mybox.db.TableEpidemicReport;
 import mara.mybox.db.TableGeographyCode;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.GeographyCodeTools;
 import static mara.mybox.tools.NetworkTools.trustAllManager;
 import static mara.mybox.tools.NetworkTools.trustAllVerifier;
 import mara.mybox.value.AppVariables;
@@ -52,7 +53,7 @@ public class EpidemicReportsImportTecentController extends EpidemicReportsImport
             conn.setAutoCommit(false);
             if (TableGeographyCode.China(conn) == null) {
                 updateLogs(message("LoadingPredefinedGeographyCodes"), true);
-                GeographyCode.predefined(conn);
+                GeographyCodeTools.importPredefined(conn);
             }
             List<GeographyCode> provinces = TableGeographyCode.queryCodes(conn,
                     "SELECT * FROM Geography_Code WHERE level=4 AND country=100", false);

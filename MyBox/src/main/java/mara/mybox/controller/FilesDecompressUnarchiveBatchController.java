@@ -110,7 +110,7 @@ public class FilesDecompressUnarchiveBatchController extends FilesBatchControlle
     public String handleFile(File srcFile, File targetPath) {
         try {
             countHandling(srcFile);
-            long s = new Date().getTime();
+            Date startTime = new Date();
             fileName = srcFile.getName();
 
             if (verboseCheck == null || verboseCheck.isSelected()) {
@@ -125,7 +125,7 @@ public class FilesDecompressUnarchiveBatchController extends FilesBatchControlle
                 decompressedFile = (File) uncompress.get("decompressedFile");
                 if (verboseCheck == null || verboseCheck.isSelected()) {
                     updateLogs(MessageFormat.format(message("FileDecompressedSuccessfully"),
-                            srcFile, DateTools.showTime(new Date().getTime() - s), true, true
+                            srcFile, DateTools.datetimeMsDuration(new Date(), startTime), true, true
                     ));
                 }
                 archiveSource = decompressedFile;
@@ -137,14 +137,14 @@ public class FilesDecompressUnarchiveBatchController extends FilesBatchControlle
                 archiveSource = srcFile;
             }
 
-            s = new Date().getTime();
+            startTime = new Date();
             archiveFail = archiveSuccess = 0;
             unarchive(archiveSource, archiveExt);
             if (archiveSuccess > 0 || archiveFail > 0) {
                 if (verboseCheck == null || verboseCheck.isSelected()) {
                     updateLogs(MessageFormat.format(message("FileUnarchived"),
                             srcFile, archiveSuccess, archiveFail,
-                            DateTools.showTime(new Date().getTime() - s), true, true
+                            DateTools.datetimeMsDuration(new Date(), startTime), true, true
                     ));
                 }
                 if (archiveFail > 0) {
@@ -306,7 +306,7 @@ public class FilesDecompressUnarchiveBatchController extends FilesBatchControlle
                         continue;
                     }
                     try ( FileOutputStream out = new FileOutputStream(file);
-                          InputStream in = zipFile.getInputStream(entry)) {
+                             InputStream in = zipFile.getInputStream(entry)) {
                         IOUtils.copy(in, out);
                     }
                     archiveSuccess++;

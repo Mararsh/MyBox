@@ -355,7 +355,6 @@ public class WeiboSnapRunController extends BaseController {
 
             } else {
                 NetworkTools.myBoxSSL();
-
 //                NetworkTools.installCertificateByHost("www.sina.com", "sina");
 //                NetworkTools.installCertificateByHost("www.sina.com.cn", "sina.cn");
 //                NetworkTools.installCertificateByHost("www.weibo.cn", "weibo.cn");
@@ -457,7 +456,7 @@ public class WeiboSnapRunController extends BaseController {
                                     loadingController.setText(AppVariables.message("PageHeightLoaded") + ": " + newHeight);
                                     loadingController.addLine(AppVariables.message("CharactersLoaded") + ": " + contents.length());
                                     loadingController.addLine(AppVariables.message("SnapingStartTime") + ": " + DateTools.datetimeToString(loadStartTime)
-                                            + " (" + AppVariables.message("ElapsedTime") + ": " + DateTools.showTime(new Date().getTime() - loadStartTime) + ")");
+                                            + " (" + AppVariables.message("ElapsedTime") + ": " + DateTools.datetimeMsDuration(new Date().getTime() - loadStartTime) + ")");
                                     showMemInfo();
 //                                    logger.debug("newHeight: " + newHeight);
                                     if (contents.contains("Request-URI Too Large") || contents.contains("Request-URI Too Long")) {
@@ -728,17 +727,17 @@ public class WeiboSnapRunController extends BaseController {
             loadingController.addLine(AppVariables.message("CurrentPagePicturesNumber") + ": " + currentPagePicturesNumber);
         }
         loadingController.addLine(AppVariables.message("SnapingStartTime") + ": " + DateTools.datetimeToString(startTime)
-                + " (" + AppVariables.message("ElapsedTime") + ": " + DateTools.showTime(passed) + ")");
+                + " (" + AppVariables.message("ElapsedTime") + ": " + DateTools.datetimeMsDuration(passed) + ")");
         if (completedMonthsCount > 0) {
             long speed = passed / completedMonthsCount;
-            loadingController.addLine(AppVariables.message("SpeedOfSnapingMonth") + ": " + DateTools.showTime(speed));
+            loadingController.addLine(AppVariables.message("SpeedOfSnapingMonth") + ": " + DateTools.datetimeMsDuration(speed));
             long total = passed * totalMonthsCount / completedMonthsCount;
             long left = passed * (totalMonthsCount - completedMonthsCount) / completedMonthsCount;
             Calendar c = Calendar.getInstance();
             c.setTime(new Date(startTime));
             c.add(Calendar.SECOND, (int) (total / 1000));
             loadingController.addLine(AppVariables.message("PredictedCompleteTime") + ": " + DateTools.datetimeToString(c.getTime())
-                    + " (" + AppVariables.message("LeftTime") + ": " + DateTools.showTime(left) + ")");
+                    + " (" + AppVariables.message("LeftTime") + ": " + DateTools.datetimeMsDuration(left) + ")");
         }
     }
 
@@ -827,7 +826,7 @@ public class WeiboSnapRunController extends BaseController {
                                     if (loadedPicturesNumber > 0) {
                                         loadingController.addLine(AppVariables.message("LoadedPicturesNumber") + ": " + loadedPicturesNumber);
                                     }
-//                                    loadingController.addLine(AppVariables.getMessage("Loadint time") + ": " + (new Date().getTime() - loadStartTime) / 1000);
+//                                    loadingController.addLine(AppVariables.getMessage("Loadint timeDuration") + ": " + (new Date().getTime() - loadStartTime) / 1000);
                                     if (totalLikeCount <= 0) {
                                         contents = (String) webEngine.executeScript("document.documentElement.outerHTML");
                                         int pos4 = contents.indexOf("赞过的微博<em class=\"S_txt2\">(共");
@@ -1291,9 +1290,7 @@ public class WeiboSnapRunController extends BaseController {
                     }
                     files.add(currentPdf);
                     pdfs.put(currentMonthString, files);
-                    if (snapType == SnapType.Like) {
-                        savedPagePdfCount++;
-                    }
+                    savedPagePdfCount++;
                     loadNextPage();
                 }
 
@@ -1327,7 +1324,6 @@ public class WeiboSnapRunController extends BaseController {
                     }
                     if (files.isEmpty() || (maxMergedSize > 0 && totalSize > maxMergedSize)) {
                         pdfs.remove(month);
-                        savedPagePdfCount += files.size();
                         return null;
                     }
 
@@ -1339,6 +1335,7 @@ public class WeiboSnapRunController extends BaseController {
                     if (files.size() == 1) {
                         files.get(0).renameTo(monthFile);
                         savedMonthPdfCount++;
+                        savedPagePdfCount--;
                         pdfs.remove(month);
                         return null;
                     }
@@ -1378,12 +1375,11 @@ public class WeiboSnapRunController extends BaseController {
                         for (File file : files) {
                             try {
                                 file.delete();
+                                savedPagePdfCount--;
                             } catch (Exception e) {
                                 logger.error(e.toString());
                             }
                         }
-                    } else {
-                        savedPagePdfCount += files.size();
                     }
 
                     pdfs.remove(month);

@@ -214,10 +214,10 @@ public class MyBoxLanguagesController extends BaseController {
                             if (file != null) {
                                 items = ConfigTools.readValues(file);
                             }
-                            Enumeration<String> keys = CommonValues.BundleEnUS.getKeys();
+                            Enumeration<String> keys = CommonValues.BundleEn.getKeys();
                             while (keys.hasMoreElements()) {
                                 String key = keys.nextElement();
-                                LanguageItem item = new LanguageItem(key, CommonValues.BundleEnUS.getString(key));
+                                LanguageItem item = new LanguageItem(key, CommonValues.BundleEn.getString(key));
                                 if (items != null) {
                                     item.setValue(items.get(key));
                                 }
@@ -251,7 +251,8 @@ public class MyBoxLanguagesController extends BaseController {
     }
 
     @FXML
-    public void plusAction() {
+    @Override
+    public void addAction() {
         TextInputDialog dialog = new TextInputDialog("");
         dialog.setTitle(message("ManageLanguages"));
         dialog.setHeaderText(message("InputLangaugeName"));

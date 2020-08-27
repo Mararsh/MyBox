@@ -27,7 +27,7 @@ import javafx.util.Callback;
 import mara.mybox.data.FileInformation;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.TreeTableFileSizeCell;
-import mara.mybox.fxml.TreeTableTimeCell;
+import mara.mybox.fxml.TreeTableEraCell;
 import mara.mybox.tools.CompressTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
@@ -111,10 +111,10 @@ public class FileUnarchiveController extends FilesTreeController {
             sizeColumn.setCellFactory(new TreeTableFileSizeCell());
 
             modifyTimeColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("modifyTime"));
-            modifyTimeColumn.setCellFactory(new TreeTableTimeCell());
+            modifyTimeColumn.setCellFactory(new TreeTableEraCell());
 
             createTimeColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("createTime"));
-            createTimeColumn.setCellFactory(new TreeTableTimeCell());
+            createTimeColumn.setCellFactory(new TreeTableEraCell());
 
             filesTreeView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
@@ -340,7 +340,7 @@ public class FileUnarchiveController extends FilesTreeController {
                 @Override
                 protected void whenSucceeded() {
                     bottomLabel.setText(MessageFormat.format(message("FileUnarchived"),
-                            sourceFile, archiveSuccess, archiveFail, DateTools.showTime(cost)));
+                            sourceFile, archiveSuccess, archiveFail, DateTools.datetimeMsDuration(cost)));
                     if (archiveSuccess > 0) {
                         browseURI(targetPath.toURI());
                         recordFileOpened(targetPath);

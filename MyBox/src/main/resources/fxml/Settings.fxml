@@ -111,6 +111,17 @@ License:    Apache License Version 2.0
                                                 <CheckBox fx:id="newWindowCheck" mnemonicParsing="false" text="%OpenStageInNewWindow" />
                                             </children>
                                         </HBox>
+                              <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="159.0" spacing="10.0">
+                                 <children>
+                                    <Label text="%ShowHideSplitPanes" />
+                                    <RadioButton fx:id="splitPaneEnteredRadio" mnemonicParsing="false" onAction="#setSplitPaneEntered" selected="true" text="%MouseEnterred">
+                                       <toggleGroup>
+                                          <ToggleGroup fx:id="splitPanesGroup" />
+                                       </toggleGroup>
+                                    </RadioButton>
+                                    <RadioButton fx:id="splitPaneClickedRadio" layoutX="124.0" layoutY="15.0" mnemonicParsing="false" onAction="#setSplitPaneClicked" text="%MouseClicked" toggleGroup="$splitPanesGroup" />
+                                 </children>
+                              </HBox>
                                     </children>
                                     <padding>
                                         <Insets bottom="10.0" left="10.0" right="10.0" top="20.0" />
@@ -469,24 +480,38 @@ License:    Apache License Version 2.0
                         </Tab>
                   <Tab fx:id="ocrTab1" text="%Map">
                      <content>
-                        <VBox fx:id="ocrBox1" spacing="5.0">
+                        <VBox fx:id="ocrBox" layoutX="10.0" layoutY="10.0" spacing="5.0">
                            <children>
+                              <Label text="%MapKeysComments" wrapText="true">
+                                 <VBox.margin>
+                                    <Insets bottom="10.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                 <children>
+                                    <Label text="%TianDiTuWebKey" />
+                                    <TextField fx:id="tiandituWebKeyInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                 </children>
+                              </HBox>
+                              <Hyperlink onAction="#link" text="https://console.tianditu.gov.cn/api/key" />
+                              <HBox alignment="CENTER_RIGHT" spacing="5.0" />
+                              <Separator prefWidth="200.0" />
                               <HBox alignment="CENTER_LEFT" spacing="10.0">
                                  <children>
                                     <Label text="%GaoDeWebKey" />
-                                    <TextField fx:id="mapWebKeyInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                    <TextField fx:id="gaodeWebKeyInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                  </children>
                               </HBox>
-                              <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="30.0" spacing="10.0" VBox.vgrow="NEVER">
+                              <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
                                  <children>
                                     <Label text="%GaoDeWebServiceKey" />
-                                    <TextField fx:id="mapWebServiceKeyInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                    <TextField fx:id="gaodeServiceKeyInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                  </children>
                               </HBox>
                               <Hyperlink onAction="#link" text="https://lbs.amap.com/dev/index" />
                               <HBox alignment="CENTER_RIGHT" spacing="5.0">
                                  <children>
-                                    <Button fx:id="defaultMapButton" layoutX="1441.0" layoutY="10.0" mnemonicParsing="false" onAction="#defaultMapAction">
+                                    <Button fx:id="defaultMapButton" mnemonicParsing="false" onAction="#defaultMapAction">
                                        <graphic>
                                           <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                              <image>

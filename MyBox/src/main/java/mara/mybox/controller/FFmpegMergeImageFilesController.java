@@ -89,7 +89,8 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
                     return AppVariables.message("Failed");
                 }
                 for (int i = 0; i < images.size(); i++) {
-                    BufferedImage fitImage = ImageManufacture.fitSize(images.get(i), width, height);
+                    BufferedImage fitImage = ImageManufacture.fitSize(images.get(i),
+                            ffmpegOptionsController.width, ffmpegOptionsController.height);
                     File tmpFile = FileTools.getTempFile(".png");
                     if (ImageFileWriters.writeImageFile(fitImage, tmpFile) && tmpFile.exists()) {
                         lastFile = tmpFile;

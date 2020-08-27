@@ -761,6 +761,7 @@ public class MediaPlayerController extends BaseController {
             return;
         }
         Platform.runLater(new Runnable() {
+            @Override
             public void run() {
                 popError(error);
             }
@@ -879,8 +880,8 @@ public class MediaPlayerController extends BaseController {
                     return;
                 }
                 elapsedTimeLabel.setText(msCheck.isSelected()
-                        ? DateTools.showDuration((long) elapsed.toMillis())
-                        : DateTools.showSeconds((long) elapsed.toSeconds())
+                        ? DateTools.timeMsDuration((long) elapsed.toMillis())
+                        : DateTools.timeDuration((long) elapsed.toMillis())
                 );
                 Duration total = player.getTotalDuration();
                 timeSlider.setDisable(total.isUnknown());
@@ -893,8 +894,8 @@ public class MediaPlayerController extends BaseController {
 
                 Duration left = total.subtract(elapsed);
                 leftTimeLabel.setText(msCheck.isSelected()
-                        ? DateTools.showDuration((long) left.toMillis())
-                        : DateTools.showSeconds((long) left.toSeconds())
+                        ? DateTools.timeMsDuration((long) left.toMillis())
+                        : DateTools.timeDuration((long) left.toMillis())
                 );
 
             }

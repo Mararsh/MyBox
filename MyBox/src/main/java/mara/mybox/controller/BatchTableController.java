@@ -38,7 +38,7 @@ import mara.mybox.data.FileInformation.FileSelectorType;
 import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.fxml.TableDateCell;
+import mara.mybox.fxml.TableTimeCell;
 import mara.mybox.fxml.TableFileSizeCell;
 import mara.mybox.fxml.TableNumberCell;
 import mara.mybox.tools.ByteTools;
@@ -199,11 +199,11 @@ public abstract class BatchTableController<P> extends BaseController {
 
             if (modifyTimeColumn != null) {
                 modifyTimeColumn.setCellValueFactory(new PropertyValueFactory<>("modifyTime"));
-                modifyTimeColumn.setCellFactory(new TableDateCell());
+                modifyTimeColumn.setCellFactory(new TableTimeCell());
             }
             if (createTimeColumn != null) {
                 createTimeColumn.setCellValueFactory(new PropertyValueFactory<>("createTime"));
-                createTimeColumn.setCellFactory(new TableDateCell());
+                createTimeColumn.setCellFactory(new TableTimeCell());
             }
 
         } catch (Exception e) {
@@ -728,13 +728,13 @@ public abstract class BatchTableController<P> extends BaseController {
             if (files == null || files.isEmpty()) {
                 return;
             }
-            recordFileAdded(files.get(0));
             List<P> infos = new ArrayList<>();
             for (File file : files) {
                 P t = create(file);
                 if (t != null) {
                     infos.add(t);
                 }
+                recordFileAdded(file);
             }
             if (infos.isEmpty()) {
                 return;

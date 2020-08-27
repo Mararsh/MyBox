@@ -400,7 +400,7 @@ public class PdfViewController extends ImageViewerController {
                     }
                     ocrArea.setText(result);
                     resultLabel.setText(MessageFormat.format(message("OCRresults"),
-                            result.length(), DateTools.showTime(cost)));
+                            result.length(), DateTools.datetimeMsDuration(cost)));
 
                     orcPage = currentPage;
                 }
