@@ -573,7 +573,7 @@ This requirement is delayed due to limited development time.
 	- Coordinate values： 
  	  	- Decimal values of longitude and latitude, instead of Degrees Minutes Seconds(DMS), are used when data handled.   
   	  	- MyBox provides "Location Tools" to convert coordinate values between decimal and DMS.                        
- 	  	- Valid range of longitude is -180~180, and valid range of latitude is -90~90.   
+ 	  	- Valid range of longitude is `-180~180`, and valid range of latitude is `-90~90`.   
 	- Time:
  	  	- Formats:      
  	  	   	- Date and Time, like: 2014-06-11 13:51:33
@@ -1030,8 +1030,8 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 
 ![Snap-mediaPlayer](https://mararsh.github.io/MyBox/snap-mediaPlayer-en.jpg)       
 
-### Wrap Functions of ffmpeg<a id="ffmpeg" />
-Notice: This set of functions is based on ffmpeg, and user need download ffmpeg by yourself. (Suggest to use static version)
+### Wrap Functions of ffmpeg<a id="ffmpeg" />      
+Notice: This set of functions is based on ffmpeg, and user need download ffmpeg by yourself. (Suggest to use static version)       
 1. When handle media:
 	- All parameters can be selected/set, including format, codec, subtitle, frame rate, sample rate, change volumn, etc.
 	- Button "Default": When NVIDIA is available, chooce "h264_nvenc" as video encoder, to make use of hardware acceleartion. 
