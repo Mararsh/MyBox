@@ -9,7 +9,7 @@ Improve how to display data in map. Support both TianDiTu and GaoDe map.
 "Location Tool": Convert coordinate value between decimal and DMS. Convert coordinate values as other coordinate systems.                  
 FFmpeg application: Record desktop. Support Windows only now.       
 Import/Export color data in CSV format.        
-Full automatic script of building and packing. <Development Guide> v2.1.                    
+Full automatic script of building and packing. Development Guide v2.1.                    
 [Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.2)        
 
 
@@ -600,8 +600,6 @@ This requirement is delayed due to limited development time.
  	  	 	  	 960-01-23 AD            
  	  	 	  	 1046-03-10 10:10:10 BC            
 3. Add/Delete/Edit/Copy/Clear/Refresh data.
-2. Pagination
-3. Export/Import
 4. Query data:
  	-  Define and manage query conditions.
  	-  Current query conditions is displayed on tab "information".
@@ -622,7 +620,7 @@ This requirement is delayed due to limited development time.
 7. Delete/Clear data:
  	-  Define and manage delete conditions.
  	-  Predefined data can not be deleted.
- 	-  Referred data(like foregin keys) can not be deleted. 
+ 	-  Referred data(like foreign keys) can not be deleted. 
 8. Define, manage, and use "Conditions":
  	-  "Conditions" are used to execute querying, deleting, or exporting.
  	-  Set conditions in panes:
@@ -1031,41 +1029,42 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 ![Snap-mediaPlayer](https://mararsh.github.io/MyBox/snap-mediaPlayer-en.jpg)       
 
 ### Wrap Functions of ffmpeg<a id="ffmpeg" />      
-Notice: This set of functions is based on ffmpeg, and user need download ffmpeg by yourself. (Suggest to use static version)       
-1. When handle media:
-	- All parameters can be selected/set, including format, codec, subtitle, frame rate, sample rate, change volumn, etc.
-	- Button "Default": When NVIDIA is available, chooce "h264_nvenc" as video encoder, to make use of hardware acceleartion. 
-	- Most of players support: muxer "mp4", video codec "H.264", audio codec "AAC".
-	- Try different options of encoders, preset, and CRF, to get suitable settings of your computer, as following factors :
- 	  	- The encoder should be fast enough to record without frames dropping.   
- 	  	- Consume limited system resources, and leave enough CPU and memory for other applications.
- 	  	- Quality and size of the generated file are tolerable.
-2. Record Screen:
-	-  When have not NVIDIA and CPU is not so powerful:
- 	  	- Choose "libx264rgb" as video encoder, to bypass conversion from RGB to yuv444p.
- 	  	- Select quicker encoding preset. 
- 	  	- After recording, use conversion tool to change generated video from RGB to yuv444p with encoder "libx264".
-	-  Select whether record video：
- 	  	- Set size of threads queue.
- 	  	- Record area: full screen, window by title, rectangle.
- 	-  Select wether record audio:
- 	  	- Detect audio cards automaticall, and pick the first one as the audio device.
- 	  	- Set size of threads queue.
- 	-  Set duration:
- 	  	- If "unlimited", record untill user click button "Stop".
- 	  	- If valid value, recording will end when duration completes. User can click button "Stop" and finish recording at any time.  
-	-  Only support windows now.
-3. Convert videos/audios in batch:
-	-  Source files are listed as files/directories.
-	-  Source files are listed as streams and medias information.
-4. Combine images and audios as video：
-	-  Source files are listed as files/directories.
-	-  Source files are listed as streams and medias information.
-	-  Duration can be set for each image, or set for all images. 
-	-  Option: End video when audios finish.
-	-  Images are adjusted automatically to fit for screen size meanwhile keep width-height ratio.
-5. Read media information like format, audio stream, video stream, frames, packets,  pixel formats by ffprobe.
-6. Read information of ffmpeg, like version, supported formats/codecs/filters, and query with customized parameters.    
+Notice: This set of functions is based on ffmpeg, and user need download ffmpeg by yourself. (Suggest to use static version)        
+            
+1. When handle media:      
+	-  All parameters can be selected/set, including format, codec, subtitle, frame rate, sample rate, change volumn, etc.       
+	-  Button "Default": When NVIDIA is available, chooce "h264_nvenc" as video encoder, to make use of hardware acceleartion.           
+	-  Most of players support: muxer "mp4", video codec "H.264", audio codec "AAC".      
+	-  Try different options of encoders, preset, and CRF, to get suitable settings of your computer, as following factors :      
+ 	  	- The encoder should be fast enough to record without frames dropping.         
+ 	  	- Consume limited system resources, and leave enough CPU and memory for other applications.      
+ 	  	- Quality and size of the generated file are tolerable.      
+2. Record Screen:      
+	-  When have not NVIDIA and CPU is not so powerful:      
+ 	  	- Choose "libx264rgb" as video encoder, to bypass conversion from RGB to yuv444p.      
+ 	  	- Select quicker encoding preset.       
+ 	  	- After recording, use conversion tool to change generated video from RGB to yuv444p with encoder "libx264".      
+	-  Select whether record video：      
+ 	  	- Set size of threads queue.      
+ 	  	- Record area: full screen, window by title, rectangle.      
+	-  Select wether record audio:      
+ 	  	- Detect audio cards automaticall, and pick the first one as the audio device.      
+ 	  	- Set size of threads queue.      
+	-  Set duration:      
+ 	  	- If "unlimited", record untill user click button "Stop".      
+ 	  	- If valid value, recording will end when duration completes. User can click button "Stop" and finish recording at any time.        
+	-  Only support windows now.      
+3. Convert videos/audios in batch:      
+	-  Source files are listed as files/directories.      
+	-  Source files are listed as streams and medias information.      
+4. Combine images and audios as video：      
+	-  Source files are listed as files/directories.      
+	-  Source files are listed as streams and medias information.      
+	-  Duration can be set for each image, or set for all images.       
+	-  Option: End video when audios finish.      
+	-  Images are adjusted automatically to fit for screen size meanwhile keep width-height ratio.      
+5. Read media information like format, audio stream, video stream, frames, packets,  pixel formats by ffprobe.      
+6. Read information of ffmpeg, like version, supported formats/codecs/filters, and query with customized parameters.          
 
 ![Snap-makeMedia](https://mararsh.github.io/MyBox/snap-makeMedia-en.jpg)       
 
@@ -1184,7 +1183,7 @@ Improve how to display data in map. Support both TianDiTu and GaoDe map.
 "Location Tool": Convert coordinate value between decimal and DMS. Convert coordinate values as other coordinate systems.                  
 FFmpeg application: Record desktop. Support Windows only now.       
 Import/Export color data in CSV format.         
-Full automatic script of building and packing. <Development Guide> v2.1.                  
+Full automatic script of building and packing. Development Guide v2.1.                  
 [Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.2)       
   
 2020-6-11 v6.3.1  Migrate to java 14.0.1 + javaFx 14.0.1(Except for module "javafx-web") + Netbeans 11.3.        
