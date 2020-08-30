@@ -20,7 +20,7 @@ Packages of each version have been uploaded at [Releases](https://github.com/Mar
 ### Source Codes   
 [MyBox-6.3.2-src.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.2/MyBox-6.3.2-src.zip)   33M        
 
-About structure, editing, and building of source codes, please refer to [Developement Guide](https://mararsh.github.io/MyBox_documents/zh/MyBox-DevGuide-2.1-en.pdf) .                     
+About structure, editing, and building of source codes, please refer to [Developement Guide](https://mararsh.github.io/MyBox_documents/en/MyBox-DevGuide-2.1-en.pdf) .                     
     
 
 ### Self-contain packages 
@@ -93,9 +93,10 @@ Modifing these parameters, except for DerbyMode, in time will cause MyBox restar
 | Source Codes and Compiled Packages | https://github.com/Mararsh/MyBox/releases |    
 | Submit Software Requirements and Problem Reports | https://github.com/Mararsh/MyBox/issues |    
 | Data | https://github.com/Mararsh/MyBox_data |    
+| Documents | https://github.com/Mararsh/MyBox_documents |    
 | Mirror Site | https://sourceforge.net/projects/mara-mybox/files/ |        
 | Cloud Storage | https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F |    
-| Online Helps | https://mararsh.github.io/MyBox/mybox_help_en.html |    
+ 
 
 # Documents
 | Name | Version | Time | Link |

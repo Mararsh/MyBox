@@ -91,9 +91,9 @@ FFmpeg应用：录屏。目前只支持windows。
 | 源代码和编译好的包 | https://github.com/Mararsh/MyBox/releases |    
 | 在线提交软件需求和问题报告 | https://github.com/Mararsh/MyBox/issues |    
 | 数据 | https://github.com/Mararsh/MyBox_data |    
+| 文档 | https://github.com/Mararsh/MyBox_documents |    
 | 镜像 | https://sourceforge.net/projects/mara-mybox/files/ |        
 | 云盘 | https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F |    
-| 在线帮助 | https://mararsh.github.io/MyBox/mybox_help_zh.html |    
 
 # 文档    
 
