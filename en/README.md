@@ -17,6 +17,12 @@ Full automatic script of building and packing. Development Guide v2.1.
 Packages of each version have been uploaded at [Releases](https://github.com/Mararsh/MyBox/releases?) directory now. You can find them by clicking `releases` tab in main page of this project. 
        
     
+### Source Codes   
+[MyBox v6.3.2 source codes](https://github.com/Mararsh/MyBox/archive/v6.3.2.zip)      
+
+Please refer to Developement Guide to know about structure, editing, and building of source codes:                      
+[Developement Guide](https://mararsh.github.io/MyBox_documents/zh/MyBox-DevGuide-2.1-zh.pdf)     
+
 ### Self-contain packages 
 Self-contain packages include all files and need not java env nor installation.   (Please unpack it under path with pure-English name.)   
 
@@ -78,7 +84,7 @@ Configuration file includes following parameters:
 4. Derby driver mode, like:  
 <PRE><CODE>     DerbyMode=embedded </CODE></PRE>  
 
-Modify these parameters, except for DerbyMode, in time will cause MyBox restarts itself automatically.    
+Modifing these parameters, except for DerbyMode, in time will cause MyBox restarts itself automatically.    
 
 # Resource Addresses        
 | Contents | Link | 
@@ -152,7 +158,7 @@ MyBox is based on following open sources:
 | JHU | COVID-19 data | https://github.com/CSSEGISandData/COVID-19 |      
 | Website | Color data | https://tool.lanrentuku.com/color/china.html |      
 | Book | Materials | https://book.douban.com/subject/3894923/ |      
-| TIanDiTu| Map | http://lbs.tianditu.gov.cn/api/js4.0/guide.html |      
+| TianDiTu| Map | http://lbs.tianditu.gov.cn/api/js4.0/guide.html |      
 | movebank | Location data | https://www.datarepository.movebank.org |      
 | CoordinateConverter | convert coordinates | https://www.jianshu.com/p/c39a2c72dc65?from=singlemessage |      
 
@@ -160,7 +166,7 @@ MyBox is based on following open sources:
 # Current Version
 Current version is 6.3.2. Its features are mentioned below in summary:   
  
-* [Cross platforms](#Cross-platform)
+* [Cross Platforms](#Cross-platform)
 * [Internationalized](#Internationalized)
 * [Local Host](#localhost)
 * [Document Tools](#documentTools)
@@ -220,7 +226,7 @@ Current version is 6.3.2. Its features are mentioned below in summary:
 * [Supporting HiDPI](#Hidpig)    
 
   
-## Cross platforms <a id="Cross-platform"></a>       
+## Cross Platforms <a id="Cross-platform"></a>       
 
 MyBox is implemented in pure Java and based on open source codes, so it can run any platform which supports Java 14.
 Versions before v5.3 are based on Java 8.
@@ -253,7 +259,7 @@ This requirement is delayed due to limited development time.
 3. View PDF file in image mode. DPI can be set to adjust resolution. Page can be cropped as images.
 4. In image mode, recognize texts in PDF(OCR). 
    When OCR in batch, following can be set:
-	-  Whether convert pages as images, or extract images from pages\
+	-  Whether convert pages as images, or extract images from pages
 	-  DPI or scale ratio
 	-  Nine algorithms about image enhancement
 	-  Binary threshold
@@ -314,7 +320,7 @@ This requirement is delayed due to limited development time.
 	   When break lines by bytes number, crossing pages need not concerned.
 10. General functions of editing, like copy/paste/cut/delete/selectAll/undo/redo/recover. And their shortcuts.
 
-### Html Editor <a id="htmlEditor"></a>     
+### Edit Html<a id="htmlEditor"></a>     
 1. Edit local web pages or online pages in rich text. (Not support FrameSet)
 2. Edit Html codes directly. (Support FrameSet)
 3. Web browser to view contents of Editors or load the online page. Support history browsing, font zooming 、and snapshoting of the whole page as an image or a PDF file.
@@ -609,6 +615,7 @@ This requirement is delayed due to limited development time.
  	- File encoding is UTF-8 or ASCII.
 	- The first line defines data headers which are delimited by English commas.
 	- Followed each line defines one data row. Data fields are delimited by English commas.
+	- The order of fields is not cared.
 	- Necessary fields must occupy their locations, but need not have valid values(related to data).  
 	- Select whether replace existed data. Predefined data or example data always replace existed values.     
 6. Export data:
@@ -810,7 +817,7 @@ This requirement is delayed due to limited development time.
 ![Snap-locationData](https://mararsh.github.io/MyBox/snap-locationData-en.jpg)     
 
 ### Location Tools <a id="locationTools" />
-1. Convert coordinate value between decimal and DMS. Valid exaples of DMS:             
+1. Convert coordinate value between decimal and DMS. Valid examples of DMS:             
  	  	 	  	48°51'12.28"             
  	  	 	  	-77° 3' 43.9308"             
  	  	 	  	48°51'12.28"N             
@@ -1048,11 +1055,11 @@ Notice: This set of functions is based on ffmpeg, and user need download ffmpeg 
  	  	- Set size of threads queue.      
  	  	- Record area: full screen, window by title, rectangle.      
 	-  Select wether record audio:      
- 	  	- Detect audio cards automaticall, and pick the first one as the audio device.      
+ 	  	- Detect audio cards automatically, and pick the first one as the audio device.      
  	  	- Set size of threads queue.      
 	-  Set duration:      
  	  	- If "unlimited", record untill user click button "Stop".      
- 	  	- If valid value, recording will end when duration completes. User can click button "Stop" and finish recording at any time.        
+ 	  	- If valid value, recording will end when duration completes. User can click button "Stop" to finish recording at any time.        
 	-  Only support windows now.      
 3. Convert videos/audios in batch:      
 	-  Source files are listed as files/directories.      
@@ -1131,7 +1138,7 @@ Notice: Some downloads look standstill at 0% but they are actually dragging data
 	-  Control color, whether display control text, interface style
 	-  Whether restore last size of each scene. 
 	-  Whether open new stage to display scene. 
-	-  Show/Hide spltted panes by: mouse enter, or click mouse.
+	-  Show/Hide splitted panes by: mouse entering, or clicking mouse.
 2. Base:
 	-  Maximum memory usage of JVM
 	-  Whether close dpi-aware
