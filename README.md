@@ -797,6 +797,7 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
  	- 示例：中国历代都城     
  	- 示例：欧洲赤膀鸭的秋季迁徙模式     
  	- 示例：墨西哥湾的抹香鲸        
+ 	- 若数据包含的数据集在数据库中还未定义，则自动添加到数据库中。      
 
 ![截屏-geoCode](https://mararsh.github.io/MyBox/snap-locationData.jpg)       
 
@@ -889,6 +890,7 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
             下载地址：https://api.inews.qq.com/newsqa/v1/query/pubished/daily/list?       
  	-  导入时可选是否统计数据集。      
  	-  导入数据的时间均被改为"23:59:00"。      
+ 	-  若数据包含的地理代码在数据库中还未定义，则自动添加到数据库中。      
 5. 统计数据：
  	-  可选累加数据：
  	  	-  省/州的数据累加为国家的数据

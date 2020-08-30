@@ -814,6 +814,7 @@ This requirement is delayed due to limited development time.
  	- Examples: Chinese Historical Capitals     
  	- Examples: Autumn movement patterns of European Gadwalls
  	- Examples: Sperm whales Gulf of Mexico
+ 	- If data include a dataset which is not in database, the new dataset will be added in database automatically.
 
 ![Snap-locationData](https://mararsh.github.io/MyBox/snap-locationData-en.jpg)     
 
@@ -903,7 +904,8 @@ This requirement is delayed due to limited development time.
  	-  COVID-19 historical data from Tecent(China)                
            Download address: https://api.inews.qq.com/newsqa/v1/query/pubished/daily/list?       
  	-  Option: Statistics against dataset.      
- 	-  Time of all data are changed as “23:59:00”.     
+ 	-  Time of all data are changed as “23:59:00”.    
+ 	-  If data include a geography code which is not in database, the new geography code will be added in database automatically. 
 5. Statistics data:
  	-  Option to accumulate date
  	-  Option to calculate subtraction statistic for different location levels.
