@@ -18,10 +18,10 @@ Packages of each version have been uploaded at [Releases](https://github.com/Mar
        
     
 ### Source Codes   
-[MyBox v6.3.2 source codes](https://github.com/Mararsh/MyBox/archive/v6.3.2.zip)      
+[MyBox-6.3.2-src.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.2/MyBox-6.3.2-src.zip)   33M        
 
-Please refer to Developement Guide to know about structure, editing, and building of source codes:                      
-[Developement Guide](https://mararsh.github.io/MyBox_documents/zh/MyBox-DevGuide-2.1-zh.pdf)     
+About structure, editing, and building of source codes, please refer to [Developement Guide](https://mararsh.github.io/MyBox_documents/zh/MyBox-DevGuide-2.1-zh.pdf) .                     
+    
 
 ### Self-contain packages 
 Self-contain packages include all files and need not java env nor installation.   (Please unpack it under path with pure-English name.)   

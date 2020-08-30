@@ -16,10 +16,10 @@ FFmpeg应用：录屏。目前只支持windows。
 每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases?)目录下（点击上面的`releases`页签）。    
  
 ### 源码   
-[MyBox v6.3.2 源码](https://github.com/Mararsh/MyBox/archive/v6.3.2.zip)      
+[MyBox-6.3.2-src.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.2/MyBox-6.3.2-src.zip)   33M        
 
-关于源码的结构、编辑、和构建，请参考《开发指南》：           
-[开发指南](https://mararsh.github.io/MyBox_documents/zh/MyBox-DevGuide-2.1-zh.pdf)     
+关于源码的结构、编辑、和构建，请参考[开发指南](https://mararsh.github.io/MyBox_documents/zh/MyBox-DevGuide-2.1-zh.pdf)            
+ 
  
 ### 自包含程序包   
 自包含的程序包无需java环境、无需安装、解包可用。（解包的目录名不要包含汉字）  
