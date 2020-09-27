@@ -20,7 +20,8 @@
 ### 源码   
 [MyBox-6.3.3-src.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.3/MyBox-6.3.3-src.zip)   34M  
 
-关于源码的结构、编辑、和构建，请参考[开发指南](https://mararsh.github.io/MyBox_documents/zh/MyBox-DevGuide-2.1-zh.pdf)            
+关于源码的结构、编辑、和构建，请参考[开发指南](https://mararsh.github.io/MyBox_documents/zh/MyBox-DevGuide-2.1-zh.pdf) 
+[打包步骤](https://mararsh.github.io/MyBox/pack_steps.html)             
  
  
 ### 自包含程序包   

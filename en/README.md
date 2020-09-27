@@ -21,7 +21,8 @@ Packages of each version have been uploaded at [Releases](https://github.com/Mar
 ### Source Codes   
 [MyBox-6.3.3-src.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.3/MyBox-6.3.3-src.zip)   33M        
 
-About structure, editing, and building of source codes, please refer to [Developement Guide](https://mararsh.github.io/MyBox_documents/en/MyBox-DevGuide-2.1-en.pdf) .                     
+About structure, editing, and building of source codes, please refer to [Developement Guide](https://mararsh.github.io/MyBox_documents/en/MyBox-DevGuide-2.1-en.pdf) 
+[Packing Steps](https://mararsh.github.io/MyBox/pack_steps_en.html)                       
     
 
 ### Self-contain packages 

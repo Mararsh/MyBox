@@ -1,0 +1,54 @@
+ <html> 
+<head> 
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<link rel="stylesheet" type="text/css" href="mybox.css">
+</head> 
+<body class="article"> 
+
+<h2 align="center">MyBox打包步骤</h2>
+<P class="p1">为Windows打包</P>
+	<div class="paragraph">
+		<p>在Windows操作系统下：</p>
+			<ul  class="inside">
+				<li>确保jdk和maven已正确安装。</li>
+				<li>下载Mybox源码。</li>
+				<li>在可写可读目录下解包。</li>
+				<li>修改Mybox源码中的文件“MyBox/pack/win/make-win-exe.bat”, 设置以下参数为你的环境下的目录: jpackagePath、jdkPath</li>
+				<li>双击执行脚本“MyBox/pack/win/make-win-exe.bat”。</li>				
+				<li>生成的可执行文件是“MyBox/pack/win/app/MyBox/MyBox.exe”。</li>				
+			</ul>
+	</div>
+
+<P class="p1">为Linux打包</P>
+	<div class="paragraph">
+		<p>在Linux操作系统下：</p>
+			<ul  class="inside">
+				<li>确保jdk和maven已正确安装。</li>
+				<li>下载Mybox源码。</li>
+				<li>在可写可读目录下解包。</li>
+				<li>修改Mybox源码中的文件“MyBox/pack/linux/make-linux-bin.sh”, 设置以下参数为你的环境下的目录: jpackagePath、jdkPath</li>
+				<li>打开一个命令终端，进入源码目录：“cd  MyBox/pack/linux/”</li>	
+				<li>修改脚本的执行权限： “chmod 755 make-linux-bin.sh”</li>	
+				<li>执行脚本“./make-linux-bin.sh”。</li>				
+				<li>生成的可执行文件是“MyBox/pack/linux/app/MyBox/bin/MyBox”。</li>					
+			</ul>
+	</div>
+
+<P class="p1">为Mac打包</P>
+	<div class="paragraph">
+		<p>在Mac操作系统下：</p>
+			<ul  class="inside">
+				<li>确保jdk和maven已正确安装。</li>
+				<li>下载Mybox源码。</li>
+				<li>在可写可读目录下解包。</li>
+				<li>修改Mybox源码中的文件“MyBox/pack/mac/make-mac-dmg.sh”, 设置以下参数为你的环境下的目录: jpackagePath、jdkPath</li>
+				<li>打开一个命令终端，进入源码目录：“cd  MyBox/pack/mac/”</li>	
+				<li>修改脚本的执行权限： “chmod 755 make-mac-dmg.sh”</li>	
+				<li>执行脚本“./make-mac-dmg.sh”。</li>				
+				<li>生成的安装包是“MyBox/pack/mac/app/MyBox-$version.dmg”。</li>		
+			</ul>
+	</div>
+
+<a href="https://github.com/Mararsh/yard"><img src="home.jpg" width=60px></a>	
+</body> 
+</html>
