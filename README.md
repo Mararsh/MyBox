@@ -1,7 +1,7 @@
 # [ReadMe in English](https://github.com/Mararsh/MyBox/tree/master/en)  ![ReadMe](https://mararsh.github.io/MyBox/iconGo.png)   
 
 # MyBox：简易工具集
-这是利用JavaFx开发的图形化桌面应用，目标是提供简)易用的功能。免费开源。     
+这是利用JavaFx开发的图形化桌面应用，目标是提供简单易用的功能。免费开源。     
 
 ## 新内容
 2020-9-27 版本6.3.3        
