@@ -27,6 +27,7 @@ import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
@@ -91,8 +92,9 @@ public class BarcodeCreatorController extends ImageViewerController {
     }
 
     @Override
-    public void initializeNext2() {
+    public void initControls() {
         try {
+            super.initControls();
 
             initCodeBox();
             initD1ParaBox();

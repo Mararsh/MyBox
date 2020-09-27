@@ -25,6 +25,7 @@ import static mara.mybox.image.ImageConvert.dpi2dpm;
 import mara.mybox.image.ImageInformation;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara

@@ -4,6 +4,7 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.util.Callback;
 import mara.mybox.tools.DoubleTools;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -27,7 +28,7 @@ public class TablePercentageCell<T> extends TableCell<T, Double>
                     setText(null);
                     return;
                 }
-                if (item != Double.MAX_VALUE) {
+                if (item != CommonValues.InvalidDouble) {
                     setText(DoubleTools.scale(item * 100.0d, 2) + "");
                 } else {
                     setText(null);

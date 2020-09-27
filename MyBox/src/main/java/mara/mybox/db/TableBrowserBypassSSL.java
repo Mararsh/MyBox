@@ -4,11 +4,13 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import mara.mybox.data.CertificateBypass;
 import mara.mybox.tools.DateTools;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 
 /**
@@ -64,8 +66,8 @@ public class TableBrowserBypassSSL extends DerbyBase {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             conn.setReadOnly(true);
             String sql = "SELECT * FROM Browser_Bypass_SSL ORDER BY create_time DESC";
-            try ( PreparedStatement statement = conn.prepareStatement(sql);
-                     ResultSet results = statement.executeQuery()) {
+            try ( Statement statement = conn.createStatement();
+                     ResultSet results = statement.executeQuery(sql)) {
                 while (results.next()) {
                     CertificateBypass b = new CertificateBypass();
                     b.setHost(results.getString("host"));
@@ -75,7 +77,7 @@ public class TableBrowserBypassSSL extends DerbyBase {
             }
         } catch (Exception e) {
             failed(e);
-            // logger.debug(e.toString());
+            logger.debug(e.toString());
         }
         return bypass;
     }

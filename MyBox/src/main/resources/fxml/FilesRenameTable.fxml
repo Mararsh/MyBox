@@ -114,33 +114,6 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="recoverySelectedButton" disable="true" mnemonicParsing="false" onAction="#recoverySelectedAction">
-                    <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/iconFileRestore.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-                <Button fx:id="recoveryAllButton" disable="true" mnemonicParsing="false" onAction="#recoveryAllAction">
-                    <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/iconRecover.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-                <Button fx:id="yesButton" layoutX="742.0" layoutY="10.0" mnemonicParsing="false" onAction="#okAction">
-                    <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/iconYes.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
                 <CheckBox fx:id="tableSubdirCheck" mnemonicParsing="false" selected="true">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -177,18 +150,40 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </CheckBox>
-                <ToggleButton fx:id="moreButton" mnemonicParsing="false">
+            </children>
+        </FlowPane>
+      <HBox fx:id="confirmBox" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+         <children>
+              <Label fx:id="commentsLabel" layoutX="10.0" layoutY="467.0" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%RenameTableComments" />
+                <Button fx:id="recoverySelectedButton" mnemonicParsing="false" onAction="#recoverySelectedAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/iconMore.png" />
+                                <Image url="@../buttons/iconFileRestore.png" />
                             </image>
                         </ImageView>
                     </graphic>
-                </ToggleButton>
-            </children>
-        </FlowPane>
-        <Label fx:id="commentsLabel" layoutX="10.0" layoutY="467.0" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%RenameTableComments" />
+                </Button>
+                <Button fx:id="recoveryAllButton" mnemonicParsing="false" onAction="#recoveryAllAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconRecover.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="yesButton" mnemonicParsing="false" onAction="#okAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconYes.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+         </children>
+      </HBox>
         <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
             <columns>
                 <TableColumn fx:id="handledColumn" editable="false" prefWidth="220.0" text="%Handled" />

@@ -24,6 +24,7 @@ import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DoubleTools;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -161,17 +162,9 @@ public class ColorController extends BaseController {
                 }
             });
 
-        } catch (Exception e) {
-            logger.debug(e.toString());
-
-        }
-    }
-
-    @Override
-    public void initializeNext() {
-        try {
             rgbSelector.getSelectionModel().select("sRGB");
             colorPicker.setValue(Color.RED);
+
         } catch (Exception e) {
             logger.debug(e.toString());
 

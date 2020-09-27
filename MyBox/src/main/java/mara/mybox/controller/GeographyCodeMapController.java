@@ -2,13 +2,19 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.stage.Modality;
 import mara.mybox.data.GeographyCode;
 import mara.mybox.data.StringTable;
-import mara.mybox.tools.GeographyCodeTools;
+import mara.mybox.data.tools.GeographyCodeTools;
+import mara.mybox.db.TableGeographyCode;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -17,7 +23,6 @@ import static mara.mybox.value.AppVariables.message;
  */
 public class GeographyCodeMapController extends MapBaseController {
 
-    protected DataAnalysisController dataController;
     protected List<GeographyCode> geographyCodes;
 
     public GeographyCodeMapController() {
@@ -25,9 +30,9 @@ public class GeographyCodeMapController extends MapBaseController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
-            super.initializeNext();
+            super.initControls();
 
             mapOptionsController.markerTextBox.getChildren().remove(mapOptionsController.locationTextPane);
             mapOptionsController.markerImagePane.getChildren().removeAll(
@@ -39,21 +44,21 @@ public class GeographyCodeMapController extends MapBaseController {
         }
     }
 
-    public void initMap(DataAnalysisController dataController) {
-        this.dataController = dataController;
+    public void initMap(BaseController dataController) {
         parentController = dataController;
-
         initSplitPanes();
     }
 
     @Override
     public void drawPoints() {
         try {
-            if (geographyCodes == null || geographyCodes.isEmpty()
+            if (webEngine == null
+                    || geographyCodes == null || geographyCodes.isEmpty()
                     || !mapOptionsController.mapLoaded) {
                 return;
             }
             webEngine.executeScript("clearMap();");
+            frameLabel.setText("");
             if (geographyCodes == null || geographyCodes.isEmpty()) {
                 return;
             }
@@ -71,30 +76,69 @@ public class GeographyCodeMapController extends MapBaseController {
                         if (mapOptionsController.mapName == MapOptionsController.MapName.GaoDe) {
                             points = GeographyCodeTools.toGCJ02(geographyCodes);
                         } else if (mapOptionsController.mapName == MapOptionsController.MapName.TianDiTu) {
-                            points = GeographyCodeTools.toCGCS2000(geographyCodes);
+                            points = GeographyCodeTools.toCGCS2000(geographyCodes, false);
                         }
                         return true;
                     }
 
                     @Override
                     protected void whenSucceeded() {
-                        boolean center = false;
-                        for (GeographyCode geographyCode : points) {
-                            if (!geographyCode.validCoordinate()) {
-                                continue;
-                            }
-                            drawPoint(geographyCode.getLongitude(), geographyCode.getLatitude(),
-                                    markerLabel(geographyCode), markerImage(), geographyCode.info("</BR>"),
-                                    textColor());
-                            if (!center) {
-                                webEngine.executeScript("setCenter(" + geographyCode.getLongitude() + ", " + geographyCode.getLatitude() + ");");
-                                center = true;
-                            }
+                        if (points == null || points.isEmpty()) {
+                            return;
                         }
-                        if (mapOptionsController.mapName == MapOptionsController.MapName.GaoDe
-                                && mapOptionsController.fitViewCheck.isSelected()) {
-                            webEngine.executeScript("map.setFitView();");
+                        if (timer != null) {
+                            timer.cancel();
+                            timer = null;
                         }
+                        timer = new Timer();
+                        timer.schedule(new TimerTask() {
+
+                            private int index = 0;
+                            private boolean frameEnd = true, centered = false;
+
+                            @Override
+                            public void run() {
+                                Platform.runLater(() -> {
+                                    try {
+                                        if (!frameEnd || timer == null) {
+                                            return;
+                                        }
+                                        if (points == null || points.isEmpty()) {
+                                            if (timer != null) {
+                                                timer.cancel();
+                                                timer = null;
+                                            }
+                                            return;
+                                        }
+                                        frameEnd = false;
+                                        GeographyCode geographyCode = points.get(index);
+                                        drawPoint(geographyCode.getLongitude(), geographyCode.getLatitude(),
+                                                markerLabel(geographyCode), markerImage(), geographyCode.info("</BR>"),
+                                                textColor());
+                                        if (!centered) {
+                                            webEngine.executeScript("setCenter(" + geographyCode.getLongitude() + ", " + geographyCode.getLatitude() + ");");
+                                            centered = true;
+                                        }
+                                        index++;
+                                        frameLabel.setText(message("DataNumber") + ":" + index);
+                                        if (index >= points.size()) {
+                                            if (timer != null) {
+                                                timer.cancel();
+                                                timer = null;
+                                            }
+                                            if (mapOptionsController.mapName == MapOptionsController.MapName.GaoDe
+                                                    && mapOptionsController.fitViewCheck.isSelected()) {
+                                                webEngine.executeScript("map.setFitView();");
+                                            }
+                                        }
+                                        frameEnd = true;
+                                    } catch (Exception e) {
+//                                        logger.debug(e.toString());
+                                    }
+                                });
+                            }
+                        }, 0, 1); // Interface may be blocked if put all points in map altogether.
+
                     }
                 };
                 if (parentController != null) {
@@ -117,7 +161,7 @@ public class GeographyCodeMapController extends MapBaseController {
             return "";
         }
         List<String> names = new ArrayList<>();
-        names.addAll(GeographyCodeTools.externalNames());
+        names.addAll(new TableGeographyCode().importAllFields());
         StringTable table = new StringTable(names);
         for (GeographyCode geographyCode : geographyCodes) {
             if (task == null || task.isCancelled()) {
@@ -153,7 +197,7 @@ public class GeographyCodeMapController extends MapBaseController {
                 label += "</BR>";
             }
             label += geographyCode.getLongitude() + "," + geographyCode.getLatitude();
-            if (geographyCode.getAltitude() != Double.MAX_VALUE) {
+            if (geographyCode.getAltitude() != CommonValues.InvalidDouble) {
                 label += "," + geographyCode.getAltitude();
             }
         }
@@ -168,6 +212,7 @@ public class GeographyCodeMapController extends MapBaseController {
             this.title = this.title.replaceAll("\n", " ");
         }
         titleLabel.setText(this.title);
+        frameLabel.setText("");
         geographyCodes = codes;
         drawPoints();
     }
@@ -179,11 +224,15 @@ public class GeographyCodeMapController extends MapBaseController {
             webEngine.executeScript("clearMap();");
         }
         geographyCodes = null;
+        titleLabel.setText("");
+        frameLabel.setText("");
     }
 
     @Override
     public void reloadData() {
-        dataController.reloadChart();
+        if (parentController != null && parentController instanceof DataAnalysisController) {
+            ((DataAnalysisController) parentController).reloadChart();
+        }
     }
 
 }

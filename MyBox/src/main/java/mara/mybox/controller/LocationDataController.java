@@ -29,7 +29,6 @@ import mara.mybox.data.Location;
 import static mara.mybox.db.DerbyBase.dbHome;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
-import mara.mybox.db.TableBase;
 import mara.mybox.db.TableDataset;
 import mara.mybox.db.TableLocationData;
 import mara.mybox.fxml.FxmlControl;
@@ -41,6 +40,7 @@ import mara.mybox.fxml.TableLatitudeCell;
 import mara.mybox.fxml.TableLongitudeCell;
 import mara.mybox.tools.HtmlTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import static mara.mybox.value.AppVariables.tableMessage;
@@ -62,7 +62,7 @@ public class LocationDataController extends DataAnalysisController<Location> {
     @FXML
     protected LocationDataMapController mapController;
     @FXML
-    protected TimeTreeController timeController;
+    protected ControlTimeTree timeController;
     @FXML
     protected TableColumn<Location, Long> dataidColumn;
     @FXML
@@ -76,7 +76,7 @@ public class LocationDataController extends DataAnalysisController<Location> {
     @FXML
     protected TableColumn<Location, Integer> directionColumn;
     @FXML
-    protected Button datesetButton, locationButton;
+    protected Button datesetButton;
     @FXML
     protected Tab mapTab;
 
@@ -90,7 +90,7 @@ public class LocationDataController extends DataAnalysisController<Location> {
         tableLocationData = new TableLocationData();
         tableDefinition = tableLocationData;
         tableDataset = new TableDataset();
-        viewDefinition = TableBase.readDefinition("Location_Data_View");
+        viewDefinition = new TableLocationData(false).readDefinitionFromDB("Location_Data_View");
     }
 
     @Override
@@ -113,7 +113,7 @@ public class LocationDataController extends DataAnalysisController<Location> {
     @Override
     protected void initColumns() {
         try {
-            dataidColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+            dataidColumn.setCellValueFactory(new PropertyValueFactory<>("ldid"));
             datasetColumn.setCellValueFactory(new PropertyValueFactory<>("datasetName"));
             labelColumn.setCellValueFactory(new PropertyValueFactory<>("label"));
             addressColumn.setCellValueFactory(new PropertyValueFactory<>("address"));
@@ -210,13 +210,8 @@ public class LocationDataController extends DataAnalysisController<Location> {
 
                 @Override
                 protected boolean handle() {
-                    try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
-                        datasets = TableLocationData.datasets();
-                        times = TableLocationData.times();
-                    } catch (Exception e) {
-                        logger.debug(e.toString());
-                        return false;
-                    }
+                    datasets = tableLocationData.datasets();
+                    times = TableLocationData.times();
                     return true;
                 }
 
@@ -269,8 +264,7 @@ public class LocationDataController extends DataAnalysisController<Location> {
         } else {
             try {
                 DatasetEditController controller = (DatasetEditController) FxmlStage.openStage(CommonValues.DatasetEditFxml);
-                controller.setValues(this, null);
-                controller.getMyStage().toFront();
+                controller.initEditor(this, null);
             } catch (Exception e) {
                 logger.error(e.toString());
             }
@@ -388,19 +382,9 @@ public class LocationDataController extends DataAnalysisController<Location> {
         loadTrees(true);
     }
 
-    @Override
-    protected void checkSelected() {
-        super.checkSelected();
-        if (isSettingValues) {
-            return;
-        }
-        int selection = tableView.getSelectionModel().getSelectedIndices().size();
-        locationButton.setDisable(selection == 0);
-    }
-
     @FXML
     @Override
-    public void addAction() {
+    public void addAction(ActionEvent event) {
         try {
             LocationDataEditController controller
                     = (LocationDataEditController) openScene(null, CommonValues.LocationDataEditFxml);
@@ -412,7 +396,7 @@ public class LocationDataController extends DataAnalysisController<Location> {
 
     @FXML
     @Override
-    public void editAction() {
+    public void editAction(ActionEvent event) {
         Location selected = (Location) tableView.getSelectionModel().getSelectedItem();
         if (selected == null) {
             return;
@@ -426,27 +410,18 @@ public class LocationDataController extends DataAnalysisController<Location> {
         }
     }
 
+    @FXML
     @Override
-    protected int deleteSelectedData() {
-        List<Location> selected = tableView.getSelectionModel().getSelectedItems();
-        if (selected == null || selected.isEmpty()) {
-            return 0;
+    public void viewAction() {
+        Location selected = tableView.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            return;
         }
-        return new TableLocationData().deleteData(selected);
-    }
-
-    @Override
-    protected boolean clearData() {
-//        if (currentDataSet == null || message("All").equals(currentDataSet)) {
-//            return new TableLocationData().clear();
-//        } else {
-//            return TableLocationData.deleteData(currentDataSet);
-//        }
-        return true;
+        HtmlTools.viewHtml(message("LocationData"), selected.info("</br>"));
     }
 
     @FXML
-    public void locationAction() {
+    public void locationAction(ActionEvent event) {
         try {
             Location selected = (Location) tableView.getSelectionModel().getSelectedItem();
             if (selected == null) {
@@ -454,19 +429,16 @@ public class LocationDataController extends DataAnalysisController<Location> {
             }
             LocationInMapController controller
                     = (LocationInMapController) openScene(null, CommonValues.LocationInMapFxml);
-            controller.setCoordinate(selected.getLongitude(), selected.getLatitude());
-            controller.getMyStage().toFront();
+            controller.loadCoordinate(null, selected.getLongitude(), selected.getLatitude());
         } catch (Exception e) {
             logger.error(e.toString());
         }
     }
 
     @FXML
-    public void datasetAction() {
-        DatasetController controller
-                = (DatasetController) openStage(CommonValues.DatasetFxml);
-        controller.parent = this;
-        controller.load(tableMessage("Location_data"));
+    public void datasetAction(ActionEvent event) {
+        DatasetController controller = (DatasetController) openStage(CommonValues.DatasetFxml);
+        controller.load(this, tableMessage("Location_data"));
     }
 
     @FXML
@@ -517,7 +489,7 @@ public class LocationDataController extends DataAnalysisController<Location> {
             popMenu.getItems().add(menu);
 
             popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("MenuClose"));
+            menu = new MenuItem(message("PopupClose"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction((ActionEvent event) -> {
                 popMenu.hide();
@@ -571,11 +543,12 @@ public class LocationDataController extends DataAnalysisController<Location> {
                     sourceController.select(datasetName);
                     timeController.selectAllAction();
                     mapController.isSettingValues = true;
-                    mapController.distributionRadio.fire();
+                    mapController.sequenceRadio.fire();
                     mapController.accumulateCheck.setSelected(true);
                     mapController.overlayCheck.setSelected(true);
                     mapController.centerCheck.setSelected(false);
                     mapController.linkCheck.setSelected(false);
+                    mapController.intervalSelector.getSelectionModel().select("50");
                     mapController.mapOptionsController.isSettingValues = true;
                     mapController.mapOptionsController.currentQueryRadio.fire();
                     mapController.mapOptionsController.dataMaximumSelector.getSelectionModel().select("300");
@@ -633,7 +606,8 @@ public class LocationDataController extends DataAnalysisController<Location> {
                                 .setTimeFormat(Era.Format.Datetime)
                                 .setOmitAD(true)
                                 .setTextColor(Color.web("#432918"))
-                                .setImage(image);
+                                .setImage(image)
+                                .setComments("https://www.datarepository.movebank.org/handle/10255/move.346");
                         tableDataset.insertData(conn, dataset);
                     } catch (Exception e) {
                         logger.debug(e.toString());
@@ -649,12 +623,7 @@ public class LocationDataController extends DataAnalysisController<Location> {
                     sourceController.select(datasetName);
                     timeController.selectAllAction();
                     mapController.isSettingValues = true;
-                    mapController.sequenceRadio.fire();
-                    mapController.accumulateCheck.setSelected(true);
-                    mapController.overlayCheck.setSelected(false);
-                    mapController.centerCheck.setSelected(false);
-                    mapController.linkCheck.setSelected(false);
-                    mapController.intervalSelector.getSelectionModel().select("50");
+                    mapController.distributionRadio.fire();
                     mapController.mapOptionsController.isSettingValues = true;
                     mapController.mapOptionsController.currentQueryRadio.fire();
                     mapController.mapOptionsController.dataMaximumSelector.getSelectionModel().select("3000");
@@ -712,7 +681,8 @@ public class LocationDataController extends DataAnalysisController<Location> {
                                 .setTimeFormat(Era.Format.Datetime)
                                 .setOmitAD(true)
                                 .setTextColor(Color.web("#432918"))
-                                .setImage(image);
+                                .setImage(image)
+                                .setComments("https://www.datarepository.movebank.org/handle/10255/move.1059");
                         tableDataset.insertData(conn, dataset);
                     } catch (Exception e) {
                         logger.debug(e.toString());
@@ -728,12 +698,7 @@ public class LocationDataController extends DataAnalysisController<Location> {
                     sourceController.select(datasetName);
                     timeController.selectAllAction();
                     mapController.isSettingValues = true;
-                    mapController.sequenceRadio.fire();
-                    mapController.accumulateCheck.setSelected(true);
-                    mapController.overlayCheck.setSelected(false);
-                    mapController.centerCheck.setSelected(false);
-                    mapController.linkCheck.setSelected(false);
-                    mapController.intervalSelector.getSelectionModel().select("50");
+                    mapController.distributionRadio.fire();
                     mapController.mapOptionsController.isSettingValues = true;
                     mapController.mapOptionsController.currentQueryRadio.fire();
                     mapController.mapOptionsController.dataMaximumSelector.getSelectionModel().select("8000");

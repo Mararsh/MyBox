@@ -11,6 +11,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -29,6 +30,7 @@ import mara.mybox.fxml.TableDurationCell;
 import mara.mybox.fxml.TableFileSizeCell;
 import mara.mybox.fxml.TableTimeCell;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
@@ -60,8 +62,9 @@ public class DownloadController extends BaseController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
+            super.initControls();
             tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
             tableView.setItems(downloadData);
 
@@ -124,7 +127,7 @@ public class DownloadController extends BaseController {
 
     @FXML
     @Override
-    public void addAction() {
+    public void addAction(ActionEvent event) {
         try {
             TextInputDialog dialog = new TextInputDialog("https://");
             dialog.setTitle(message("DownloadManage"));

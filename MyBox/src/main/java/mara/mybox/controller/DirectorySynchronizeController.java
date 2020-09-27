@@ -30,6 +30,7 @@ import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -69,8 +70,9 @@ public class DirectorySynchronizeController extends FilesBatchController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
+            super.initControls();
 
             deleteNonExistedCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -289,7 +291,7 @@ public class DirectorySynchronizeController extends FilesBatchController {
                 }
                 switch (newStatus) {
                     case "Started":
-                        operationBarController.getStatusLabel().setText(message("Handling...") + " "
+                        operationBarController.statusLabel.setText(message("Handling...") + " "
                                 + message("StartTime")
                                 + ": " + DateTools.datetimeToString(processStartTime));
                         startButton.setText(AppVariables.message("Cancel"));
@@ -360,7 +362,7 @@ public class DirectorySynchronizeController extends FilesBatchController {
 
     @Override
     public void showCost() {
-        if (operationBarController.getStatusLabel() == null) {
+        if (operationBarController.statusLabel == null) {
             return;
         }
         long cost = new Date().getTime() - processStartTime.getTime();
@@ -379,7 +381,7 @@ public class DirectorySynchronizeController extends FilesBatchController {
                 + message("Average") + ": " + avg + " " + message("SecondsPerItem") + ". "
                 + message("StartTime") + ": " + DateTools.datetimeToString(processStartTime) + ", "
                 + message("EndTime") + ": " + DateTools.datetimeToString(new Date());
-        operationBarController.getStatusLabel().setText(s);
+        operationBarController.statusLabel.setText(s);
     }
 
     @Override

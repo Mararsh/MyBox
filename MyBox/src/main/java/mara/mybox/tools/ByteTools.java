@@ -10,6 +10,8 @@ import java.util.zip.InflaterOutputStream;
 import javafx.scene.control.IndexRange;
 import mara.mybox.data.FileEditInformation.Line_Break;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -19,7 +21,7 @@ import static mara.mybox.value.AppVariables.logger;
  */
 public class ByteTools {
 
-    public static int Invalid_Byte = -999;
+    public static int Invalid_Byte = CommonValues.InvalidShort;
 
     //  Big-Endian
     public static int bytesToInt(byte[] b) {

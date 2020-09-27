@@ -29,6 +29,7 @@ import mara.mybox.data.EpidemicReport;
 import static mara.mybox.data.EpidemicReport.create;
 import mara.mybox.data.GeographyCode;
 import mara.mybox.data.GeographyCodeLevel;
+import mara.mybox.data.tools.GeographyCodeTools;
 import static mara.mybox.db.DerbyBase.dbHome;
 import static mara.mybox.db.DerbyBase.failed;
 import static mara.mybox.db.DerbyBase.login;
@@ -37,11 +38,11 @@ import mara.mybox.db.TableEpidemicReport;
 import mara.mybox.db.TableGeographyCode;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.GeographyCodeTools;
 import static mara.mybox.tools.NetworkTools.trustAllManager;
 import static mara.mybox.tools.NetworkTools.trustAllVerifier;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
@@ -70,8 +71,9 @@ public class EpidemicReportsImportBaiduController extends DataTaskController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
+            super.initControls();
             address = Address;
             addressInput.textProperty().addListener(
                     (ObservableValue<? extends String> ov, String oldv, String newv) -> {

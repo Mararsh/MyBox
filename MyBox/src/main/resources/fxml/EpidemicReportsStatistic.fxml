@@ -20,8 +20,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0"
-            xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.EpidemicReportsStatisticController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.EpidemicReportsStatisticController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -37,7 +36,11 @@ License:    Apache License Version 2.0
                                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
                                             <children>
                                                 <FlowPane fx:id="datasetPane" hgap="5.0" maxWidth="1.7976931348623157E308" vgap="5.0" VBox.vgrow="NEVER" />
-                                                <CheckBox fx:id="accumulateCheck" mnemonicParsing="false" selected="true" text="%AccumulateData" />
+                                    <CheckBox fx:id="closeWhenCompleteCheck" mnemonicParsing="false" selected="false" text="%CloseWhenComplete" />
+                                                <CheckBox fx:id="accumulateCheck" mnemonicParsing="false" selected="true" text="%AccumulateData">
+                                       <VBox.margin>
+                                          <Insets top="20.0" />
+                                       </VBox.margin></CheckBox>
                                                 <Label maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%AccumulateJHUDataComments" wrapText="true" />
                                                 <HBox />
                                                 <Label text="%SubtractData">

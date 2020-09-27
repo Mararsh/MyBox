@@ -25,11 +25,11 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
-import static mara.mybox.controller.BaseController.openImageViewer;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlImageManufacture;
+import mara.mybox.fxml.FxmlStage;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.image.ImageBlend.ImagesRelativeLocation;
 import mara.mybox.image.ImageInformation;
@@ -39,6 +39,7 @@ import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 
 /**
@@ -88,8 +89,10 @@ public class ImagesBlendController extends ImageViewerController {
     }
 
     @Override
-    public void initializeNext2() {
+    public void initControls() {
         try {
+            super.initControls();
+
             initSourcesSection();
             initOptionsSection();
             initTargetSection();
@@ -397,7 +400,7 @@ public class ImagesBlendController extends ImageViewerController {
     @FXML
     private void openForegroundImage(ActionEvent event) {
         if (foreFile != null) {
-            openImageViewer(foreFile);
+            FxmlStage.openImageViewer(foreFile);
         }
     }
 
@@ -544,7 +547,7 @@ public class ImagesBlendController extends ImageViewerController {
     @FXML
     private void openBackgroundImage(ActionEvent event) {
         if (backFile != null) {
-            openImageViewer(backFile);
+            FxmlStage.openImageViewer(backFile);
         }
     }
 
@@ -607,7 +610,7 @@ public class ImagesBlendController extends ImageViewerController {
                     @Override
                     protected void whenSucceeded() {
                         popInformation(AppVariables.message("Saved"));
-                        openImageViewer(file);
+                        FxmlStage.openImageViewer(file);
                     }
 
                 };
@@ -623,7 +626,7 @@ public class ImagesBlendController extends ImageViewerController {
 
     @FXML
     private void newWindow(ActionEvent event) {
-        openImageViewer(image);
+        FxmlStage.openImageViewer(image);
     }
 
     @FXML

@@ -17,6 +17,7 @@ import mara.mybox.image.ImageManufacture;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 
@@ -55,8 +56,9 @@ public class ImageAlphaAddBatchController extends ImageManufactureBatchControlle
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
+            super.initControls();
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
                     .or(targetPathInput.styleProperty().isEqualTo(badStyle))

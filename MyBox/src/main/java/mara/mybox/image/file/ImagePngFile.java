@@ -21,6 +21,7 @@ import mara.mybox.image.ImageInformationPng;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import org.w3c.dom.NodeList;
 
 /**

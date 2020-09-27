@@ -56,8 +56,13 @@ public class DoubleOutline extends DoubleRectangle {
 
     @Override
     public boolean include(double x, double y) {
-        return isValid() && rectangle.include(x, y)
-                && (image.getRGB((int) (x - offsetX), (int) (y - offsetY)) == insideColor);
+        try {
+            return isValid() && rectangle.include(x, y)
+                    && (image.getRGB((int) (x - offsetX), (int) (y - offsetY)) == insideColor);
+        } catch (Exception e) {
+//            logger.debug(e.toString());
+            return false;
+        }
     }
 
     @Override

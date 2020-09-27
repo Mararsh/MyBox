@@ -59,7 +59,7 @@ License:    Apache License Version 2.0
                         </VBox>
                     </content>
                 </ScrollPane>
-                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                <VBox fx:id="viewBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                     <children>
                         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
                             <children>
@@ -133,7 +133,7 @@ License:    Apache License Version 2.0
                                     </HBox.margin>
                                 </HBox>
                                 <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                <Button fx:id="snapshotButton" mnemonicParsing="false" onAction="#snapAction">
+                                <Button fx:id="snapshotButton" mnemonicParsing="false" onMouseEntered="#popSnapMenu">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -149,51 +149,53 @@ License:    Apache License Version 2.0
                                 </ImageView>
                             </children>
                         </HBox>
+                        <HBox fx:id="playBox" alignment="CENTER_LEFT" spacing="2.0" VBox.vgrow="NEVER">
+                            <children>
+                                <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                <Label text="%IntervalMilliseconds" />
+                                <ComboBox fx:id="intervalSelector" editable="true" prefWidth="120.0" />
+                                <Label text="%Date" />
+                                <ComboBox fx:id="frameSelector" prefWidth="150.0" />
+                                <Button fx:id="pauseButton" mnemonicParsing="false" onAction="#pauseAction">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconPause.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="previousButton" mnemonicParsing="false" onAction="#previousAction">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconPrevious.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="nextButton" mnemonicParsing="false" onAction="#nextAction">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconNext.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <CheckBox fx:id="loopCheck" mnemonicParsing="false" selected="true" text="%Loop" />
+                            </children>
+                        </HBox>
                         <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
                             <content>
                                 <VBox fx:id="chartSnapBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                     <children>
-                              <HBox fx:id="titleBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
-                                 <children>
-                                              <Label fx:id="titleLabel" maxWidth="1.7976931348623157E308" styleClass="bold-blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" HBox.hgrow="ALWAYS" VBox.vgrow="NEVER" />
-                                            <HBox fx:id="playBox" alignment="CENTER_LEFT" spacing="2.0">
-                                                <children>
-                                                    <Label text="%IntervalMilliseconds" />
-                                                    <ComboBox fx:id="intervalSelector" editable="true" prefWidth="100.0" />
-                                                    <Label text="%Date" />
-                                                    <ComboBox fx:id="frameSelector" prefWidth="120.0" />
-                                                    <Button fx:id="pauseButton" mnemonicParsing="false" onAction="#pauseAction">
-                                                        <graphic>
-                                                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                <image>
-                                                                    <Image url="@../buttons/iconPause.png" />
-                                                                </image>
-                                                            </ImageView>
-                                                        </graphic>
-                                                    </Button>
-                                                    <Button fx:id="previousButton" mnemonicParsing="false" onAction="#previousAction">
-                                                        <graphic>
-                                                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                <image>
-                                                                    <Image url="@../buttons/iconPrevious.png" />
-                                                                </image>
-                                                            </ImageView>
-                                                        </graphic>
-                                                    </Button>
-                                                    <Button fx:id="nextButton" mnemonicParsing="false" onAction="#nextAction">
-                                                        <graphic>
-                                                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                <image>
-                                                                    <Image url="@../buttons/iconNext.png" />
-                                                                </image>
-                                                            </ImageView>
-                                                        </graphic>
-                                                    </Button>
-                                          <CheckBox fx:id="loopCheck" mnemonicParsing="false" selected="true" text="%Loop" />
-                                                </children>
-                                            </HBox>
-                                 </children>
-                              </HBox>
+                                        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
+                                            <children>
+                                                <Label fx:id="titleLabel" maxWidth="1.7976931348623157E308" styleClass="bold-blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" HBox.hgrow="ALWAYS" VBox.vgrow="NEVER" />
+                                                <Label fx:id="frameLabel" styleClass="bold-blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" />
+                                            </children>
+                                        </HBox>
                                         <StackPane fx:id="chartPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                                             <children>
                                                 <VBox fx:id="mapBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">

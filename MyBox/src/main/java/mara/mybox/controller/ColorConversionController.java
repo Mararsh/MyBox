@@ -9,6 +9,7 @@ import mara.mybox.color.ColorConversion.SpaceType;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -31,8 +32,9 @@ public class ColorConversionController extends ChromaticityBaseController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
+            super.initControls();
             calculateButton.disableProperty().bind(Bindings.isEmpty(scaleInput.textProperty())
                     .or(scaleInput.styleProperty().isEqualTo(badStyle))
                     .or(Bindings.isEmpty(sourceController.vInput1.textProperty()))

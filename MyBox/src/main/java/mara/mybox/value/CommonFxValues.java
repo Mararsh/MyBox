@@ -7,10 +7,8 @@ import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 
 /**
- * These values are related to JavaFx and can not be visited before JavaFx
- * thread is started.
- *
- * @author mara
+ * @Author Mara
+ * @License Apache License Version 2.0
  */
 public class CommonFxValues {
 

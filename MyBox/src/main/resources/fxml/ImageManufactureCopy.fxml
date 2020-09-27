@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" spacing="5.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufactureCopyController">
+    <children>
+      <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+         <children>
+            <RadioButton fx:id="includeRadio" contentDisplay="TOP" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%CopyScopeIncluded">
+               <toggleGroup>
+                  <ToggleGroup fx:id="copyGroup" />
+               </toggleGroup>
+            </RadioButton>
+            <RadioButton fx:id="excludeRadio" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%CopyScopeExcluded" toggleGroup="$copyGroup" />
+            <RadioButton fx:id="wholeRadio" mnemonicParsing="false" text="%CopyWholeImage" toggleGroup="$copyGroup" />
+         </children>
+      </VBox>
+      <HBox alignment="CENTER_LEFT" spacing="5.0">
+         <children>
+            <Label text="%Background" />
+            <fx:include fx:id="colorSet" source="ColorSet.fxml" />
+         </children>
+      </HBox>
+      <CheckBox fx:id="marginsCheck" mnemonicParsing="false" selected="true" text="%CutTransparentMargins" />
+      <CheckBox fx:id="copyToSystemClipboardCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%CopyToSystemClipboard" wrapText="true" VBox.vgrow="NEVER" />
+      <CheckBox fx:id="clipboardCheck" mnemonicParsing="false" text="%OpenClipboardAfterCopy" />
+          <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
+              <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                      <image>
+                          <Image url="@../buttons/iconOK.png" />
+                      </image>
+                  </ImageView>
+              </graphic>
+          </Button>
+    </children>
+</VBox>

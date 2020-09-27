@@ -12,12 +12,13 @@ import javafx.scene.control.TreeItem;
 import javafx.stage.Modality;
 import mara.mybox.data.GeographyCode;
 import mara.mybox.data.GeographyCodeLevel;
+import mara.mybox.data.tools.GeographyCodeTools;
 import static mara.mybox.db.DerbyBase.dbHome;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.TableGeographyCode;
 import mara.mybox.fxml.ConditionNode;
-import mara.mybox.tools.GeographyCodeTools;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
@@ -26,7 +27,7 @@ import static mara.mybox.value.AppVariables.message;
  * @CreateDate 2020-03-27
  * @License Apache License Version 2.0
  */
-public class GeographyCodeConditionTreeController extends ConditionTreeController {
+public class GeographyCodeConditionTreeController extends ControlConditionTree {
 
     protected LoadingController loading;
 
@@ -35,9 +36,9 @@ public class GeographyCodeConditionTreeController extends ConditionTreeControlle
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
-            super.initializeNext();
+            super.initControls();
             List<String> s = new ArrayList();
             s.add(message("AllLocations"));
             treeView.setSelectedTitles(s);
@@ -177,7 +178,7 @@ public class GeographyCodeConditionTreeController extends ConditionTreeControlle
                             .setTitle(prefix + message("PredefinedData"))
                             .setCondition((parantCode.getGcid() == 1 ? ""
                                     : parentLevel.getKey() + "=" + parantCode.getGcid() + " AND ")
-                                    + " predefined=1")
+                                    + " gcsource=2")
             );
             parent.getChildren().add(predefinedItem);
 
@@ -186,7 +187,7 @@ public class GeographyCodeConditionTreeController extends ConditionTreeControlle
                             .setTitle(prefix + message("InputtedData"))
                             .setCondition((parantCode.getGcid() == 1 ? ""
                                     : parentLevel.getKey() + "=" + parantCode.getGcid() + " AND ")
-                                    + " predefined<>1")
+                                    + " gcsource<>2")
             );
             parent.getChildren().add(inputtedItem);
 

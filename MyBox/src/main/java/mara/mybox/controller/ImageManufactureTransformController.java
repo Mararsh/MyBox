@@ -13,7 +13,6 @@ import javafx.stage.Modality;
 import mara.mybox.controller.ImageManufactureController.ImageOperation;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlImageManufacture;
-import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 
 /**
@@ -33,31 +32,9 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
     @FXML
     protected Button shearButton;
 
-    public ImageManufactureTransformController() {
-        baseTitle = AppVariables.message("ImageManufactureTransform");
-        operation = ImageOperation.Transform;
-    }
-
     @Override
-    public void initControls() {
+    public void initPane() {
         try {
-            super.initControls();
-            myPane = transformPane;
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-
-    }
-
-    @Override
-    public void initPane(ImageManufactureController parent) {
-        try {
-            super.initPane(parent);
-            if (parent == null) {
-                return;
-            }
-
             List<String> shears = Arrays.asList(
                     "0.5", "-0.5", "0.4", "-0.4", "0.2", "-0.2", "0.1", "-0.1",
                     "0.7", "-0.7", "0.9", "-0.9", "0.8", "-0.8", "1", "-1",
@@ -110,6 +87,13 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
 
     }
 
+    @Override
+    protected void paneExpanded() {
+        imageController.showRightPane();
+        imageController.showImagePane();
+        imageController.hideScopePane();
+    }
+
     @FXML
     public void rotateRight() {
         synchronized (this) {
@@ -131,11 +115,12 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
 
                 @Override
                 protected void whenSucceeded() {
-                    parent.updateImage(ImageOperation.Transform, "rotateRight", rotateAngle + "",
+                    imageController.popSuccessful();
+                    imageController.updateImage(ImageOperation.Transform, "rotateRight", rotateAngle + "",
                             newImage, cost);
                 }
             };
-            parent.openHandlingStage(task, Modality.WINDOW_MODAL);
+            imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -163,12 +148,13 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
 
                 @Override
                 protected void whenSucceeded() {
-                    parent.updateImage(ImageOperation.Transform, "rotateLeft", (360 - rotateAngle) + "",
+                    imageController.popSuccessful();
+                    imageController.updateImage(ImageOperation.Transform, "rotateLeft", (360 - rotateAngle) + "",
                             newImage, cost);
                 }
 
             };
-            parent.openHandlingStage(task, Modality.WINDOW_MODAL);
+            imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -196,11 +182,12 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
 
                 @Override
                 protected void whenSucceeded() {
-                    parent.updateImage(ImageOperation.Transform, "horizontal", null, newImage, cost);
+                    imageController.popSuccessful();
+                    imageController.updateImage(ImageOperation.Transform, "horizontal", null, newImage, cost);
                 }
 
             };
-            parent.openHandlingStage(task, Modality.WINDOW_MODAL);
+            imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -228,11 +215,12 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
 
                 @Override
                 protected void whenSucceeded() {
-                    parent.updateImage(ImageOperation.Transform, "vertical", null, newImage, cost);
+                    imageController.popSuccessful();
+                    imageController.updateImage(ImageOperation.Transform, "vertical", null, newImage, cost);
                 }
 
             };
-            parent.openHandlingStage(task, Modality.WINDOW_MODAL);
+            imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -260,12 +248,12 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
 
                 @Override
                 protected void whenSucceeded() {
-                    parent.updateImage(ImageOperation.Transform, "shear", shearX + "", newImage, cost);
-
+                    imageController.popSuccessful();
+                    imageController.updateImage(ImageOperation.Transform, "shear", shearX + "", newImage, cost);
                 }
 
             };
-            parent.openHandlingStage(task, Modality.WINDOW_MODAL);
+            imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -300,19 +288,15 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
 
                 @Override
                 protected void whenSucceeded() {
-                    parent.updateImage(ImageOperation.Transform, "rotate", angle + "", newImage, cost);
+                    imageController.popSuccessful();
+                    imageController.updateImage(ImageOperation.Transform, "rotate", angle + "", newImage, cost);
                 }
             };
-            parent.openHandlingStage(task, Modality.WINDOW_MODAL);
+            imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
-    }
-
-    @Override
-    public void quitPane() {
-        imageView.setRotate(0);
     }
 
 }

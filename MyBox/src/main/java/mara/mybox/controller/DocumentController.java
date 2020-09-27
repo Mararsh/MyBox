@@ -11,6 +11,7 @@ import mara.mybox.fxml.FxmlStage;
 import static mara.mybox.fxml.FxmlStage.openScene;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -31,8 +32,9 @@ public class DocumentController extends BaseController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
+            super.initControls();
             label.setText(MessageFormat.format(message("DocumentComments"), AppVariables.MyBoxDownloadsPath));
             checkStatus();
         } catch (Exception e) {

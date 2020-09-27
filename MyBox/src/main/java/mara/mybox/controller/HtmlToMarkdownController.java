@@ -5,7 +5,9 @@ import com.vladsch.flexmark.util.data.MutableDataSet;
 import java.io.File;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonFxValues;
 
@@ -28,8 +30,8 @@ public class HtmlToMarkdownController extends FilesBatchController {
         AddFileType = VisitHistory.FileType.Html;
         AddPathType = VisitHistory.FileType.Html;
 
-        sourcePathKey = "HtmlFilePath";
-        targetPathKey = "MarkdownFilePath";
+        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Html);
+        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Markdown);
 
         sourceExtensionFilter = CommonFxValues.HtmlExtensionFilter;
         targetExtensionFilter = CommonFxValues.MarkdownExtensionFilter;

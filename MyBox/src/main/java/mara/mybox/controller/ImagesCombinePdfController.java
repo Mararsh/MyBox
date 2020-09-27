@@ -21,13 +21,16 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import mara.mybox.data.VisitHistory;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageInformation;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.tools.PdfTools.PdfImageFormat;
+import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
@@ -70,8 +73,9 @@ public class ImagesCombinePdfController extends ImagesListController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
+            super.initControls();
             initOptionsSection();
             initTargetSection();
         } catch (Exception e) {
@@ -460,12 +464,12 @@ public class ImagesCombinePdfController extends ImagesListController {
             }
         }
 
-        final File file = chooseSaveFile(AppVariables.getUserConfigPath("PdfFilePath"),
+        final File file = chooseSaveFile(VisitHistoryTools.getSavedPath(VisitHistory.FileType.PDF),
                 null, targetExtensionFilter, true);
         if (file == null) {
             return;
         }
-        AppVariables.setUserConfigValue("PdfFilePath", file.getParent());
+        AppVariables.setUserConfigValue(VisitHistoryTools.getPathKey(VisitHistory.FileType.PDF), file.getParent());
         recordFileWritten(file);
         synchronized (this) {
             if (task != null) {

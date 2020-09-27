@@ -74,8 +74,6 @@ public class ControlStyle {
             style = getScopeControlStyle(id);
         } else if (id.startsWith("color")) {
             style = getColorControlStyle(id);
-        } else if (id.startsWith("imageManu")) {
-            style = getImageManuControlStyle(id);
         } else if (node instanceof ImageView) {
             style = getImageViewStyle(id);
         } else if (node instanceof RadioButton) {
@@ -105,15 +103,6 @@ public class ControlStyle {
             case "settingsOpenButton":
                 return new ControlStyle("settingsOpenButton", message("OpenUserPath"), "", "iconOpen.png");
 
-            case "settingsStrokeColorButton":
-                return new ControlStyle("settingsStrokeColorButton", message("ColorPalette"), "", "iconPalette.png");
-
-            case "settingsAnchorColorButton":
-                return new ControlStyle("settingsAnchorColorButton", message("ColorPalette"), "", "iconPalette.png");
-
-            case "settingsAlphaColorButton":
-                return new ControlStyle("settingsAlphaColorButton", message("ColorPalette"), "", "iconPalette.png");
-
             case "settingsRecentOKButton":
                 return new ControlStyle("settingsRecentOKButton", message("OK"), "", "iconOK.png");
 
@@ -139,43 +128,11 @@ public class ControlStyle {
                 return new ControlStyle("settingsImageHisClearButton", message("Clear"), "", "iconClear.png");
 
             default:
-                return getButtonControlStyle(id);
-        }
-
-    }
-
-    public static ControlStyle getImageManuControlStyle(String id) {
-        if (id == null || id.isEmpty()) {
-            return null;
-        }
-        switch (id) {
-
-            case "imageManuHisDeleteButton":
-                return new ControlStyle("hisDeleteButton", message("Delete"), "", "iconDelete.png");
-
-            case "imageManuHisClearButton":
-                return new ControlStyle("hisClearButton", message("Clear"), "", "iconClear.png");
-
-            case "imageManuHisAsCurrentButton":
-                return new ControlStyle("hisAsCurrentButton", message("SetAsCurrentImage"), "", "iconWithdraw.png");
-
-            case "imageManuHisPreviousButton":
-                return new ControlStyle("imageManuHisPreviousButton", message("Previous"), "", "iconPrevious.png");
-
-            case "imageManuHisNextButton":
-                return new ControlStyle("imageManuHisNextButton", message("Next"), "", "iconNext.png");
-
-            case "imageManuSelectRefButton":
-                return new ControlStyle("imageManuSelectRefButton", message("Select"), "", "iconOpen.png");
-
-            case "imageManuRefMetaButton":
-                return new ControlStyle("imageManuRefMetaButton", message("MetaData"), "", "iconMeta.png");
-
-            case "imageManuRefIInfoButton":
-                return new ControlStyle("imageManuRefIInfoButton", message("Information"), "", "iconInfo.png");
-
-            default:
-                return getButtonControlStyle(id);
+                if (id.endsWith("Button")) {
+                    return getButtonControlStyle(id);
+                } else {
+                    return null;
+                }
         }
 
     }
@@ -196,7 +153,11 @@ public class ControlStyle {
                 return new ControlStyle("hisAsCurrentButton", message("SetAsCurrentImage"), "", "iconWithdraw.png");
 
             default:
-                return getButtonControlStyle(id);
+                if (id.endsWith("Button")) {
+                    return getButtonControlStyle(id);
+                } else {
+                    return null;
+                }
         }
 
     }
@@ -258,7 +219,11 @@ public class ControlStyle {
                 return new ControlStyle("colorReplaceRadio", "", message("ReplaceColor"), "", "iconReplace.png");
 
             default:
-                return getButtonControlStyle(id);
+                if (id.endsWith("Button")) {
+                    return getButtonControlStyle(id);
+                } else {
+                    return null;
+                }
         }
 
     }
@@ -305,20 +270,8 @@ public class ControlStyle {
             case "scopeOutlineRadio":
                 return new ControlStyle("scopeOutlineRadio", "", message("Outline"), "", "iconButterfly.png");
 
-            case "scopeSaveButton":
-                return new ControlStyle("scopeSaveButton", message("Save"), "", "iconSave.png");
-
             case "scopeCreateButton":
                 return new ControlStyle("scopeCreateButton", message("Create"), "", "iconEdit.png");
-
-            case "scopeUseButton":
-                return new ControlStyle("scopeUseButton", message("Use"), "", "iconYes.png");
-
-            case "scopeClearButton":
-                return new ControlStyle("scopeClearButton", message("Clear"), "", "iconClear.png");
-
-            case "scopeDeleteButton":
-                return new ControlStyle("scopeDeleteButton", message("Delete"), "", "iconDelete.png");
 
             case "scopeDeletePointButton":
                 return new ControlStyle("scopeDeletePointButton", message("Delete"), "", "iconDelete.png");
@@ -345,7 +298,11 @@ public class ControlStyle {
                 return new ControlStyle("scopeOutlineKeepRatioCheck", message("KeepRatio"), "", "iconAspectRatio.png");
 
             default:
-                return getButtonControlStyle(id);
+                if (id.endsWith("Button")) {
+                    return getButtonControlStyle(id);
+                } else {
+                    return null;
+                }
         }
 
     }
@@ -355,11 +312,8 @@ public class ControlStyle {
             return null;
         }
         switch (id) {
-            case "miaoButton":
-                return new ControlStyle("miaoButton", message("Meow"), message("MiaoPrompt"), "", "iconCat.png");
-
-            case "pcxSelect":
-                return new ControlStyle("pcxSelect", "pcx", message("PcxComments"), "", "");
+            case "miaoRadio":
+                return new ControlStyle(id, message("Meow"), message("MiaoPrompt"), "", "iconCat.png");
 
             case "polylineRadio":
                 return new ControlStyle("polylineRadio", "", message("Polyline"), "", "iconPolyline.png");
@@ -412,6 +366,9 @@ public class ControlStyle {
             case "mapRadio":
                 return new ControlStyle(id, "", message("Map"), "", "iconMap.png");
 
+            case "pcxSelect":
+                return new ControlStyle("pcxSelect", "pcx", message("PcxComments"), "", "");
+
             default:
                 return null;
         }
@@ -454,9 +411,8 @@ public class ControlStyle {
             case "openSaveCheck":
                 return new ControlStyle("openSaveCheck", "", message("OpenAfterSave"), "", "iconOpen2.png");
 
-            case "deleteConfirmCheck":
-                return new ControlStyle("deleteConfirmCheck", "", message("ConfirmWhenDelete"), "", "iconConfirm.png");
-
+//            case "deleteConfirmCheck":
+//                return new ControlStyle("deleteConfirmCheck", "", message("ConfirmWhenDelete"), "", "iconConfirm.png");
             case "bookmarksCheck":
                 return new ControlStyle("bookmarksCheck", "", message("Bookmarks"), "", "iconTree.png");
 
@@ -501,6 +457,9 @@ public class ControlStyle {
 
             case "popCheck":
                 return new ControlStyle(id, message("Pop"), "", "iconPop.png");
+
+            case "pickColorCheck":
+                return new ControlStyle(id, message("PickColor"), message("ColorPickerComments"), "", "iconPickColor.png");
 
             default:
                 return null;
@@ -568,7 +527,7 @@ public class ControlStyle {
                 return new ControlStyle("rightPaneControl", "", "", "", "iconDoubleRight.png");
 
             default:
-                return getButtonControlStyle(id);
+                return null;
         }
 
     }
@@ -619,6 +578,26 @@ public class ControlStyle {
                     return new ControlStyle(id, message("SaveAs"), "", "iconSaveAs.png");
             }
         }
+        if (id.startsWith("save")) {
+            switch (id) {
+                case "saveButton":
+                    return new ControlStyle(id, message("Save"), "F2 / CTRL+s / ALT+s", "iconSave.png");
+
+                case "saveImagesButton":
+                    return new ControlStyle(id, message("SaveAsImages"),
+                            message("SaveAsImages") + "\n" + message("FilePrefixInput"), "", "");
+
+                case "saveTiffButton":
+                    return new ControlStyle(id, message("SaveAsTiff"), "", "iconTiff.png");
+
+                case "savePdfButton":
+                    return new ControlStyle(id, message("SaveAsPDF"), "", "iconPDF.png");
+
+                default:
+                    return new ControlStyle(id, message("Save"), "", "iconSave.png");
+            }
+        }
+
         if (id.startsWith("create")) {
             switch (id) {
                 case "createButton":
@@ -642,6 +621,16 @@ public class ControlStyle {
                     return new ControlStyle(id, message("Add"), "", "iconAdd.png");
             }
         }
+
+        if (id.startsWith("clear")) {
+            switch (id) {
+                case "clearButton":
+                    return new ControlStyle(id, message("Clear"), "CTRL+g", "iconClear.png");
+                default:
+                    return new ControlStyle(id, message("Clear"), "", "iconClear.png");
+            }
+        }
+
         if (id.startsWith("plus")) {
             return new ControlStyle(id, message("Add"), "", "iconPlus.png");
         }
@@ -657,17 +646,17 @@ public class ControlStyle {
         if (id.startsWith("yes")) {
             return new ControlStyle(id, message("Yes"), "", "iconYes.png");
         }
+        if (id.startsWith("confirm")) {
+            return new ControlStyle(id, message("Confirm"), "", "iconYes.png");
+        }
+        if (id.startsWith("complete")) {
+            return new ControlStyle(id, message("Complete"), "", "iconYes.png");
+        }
         if (id.startsWith("selectFile")) {
             return new ControlStyle(id, message("Select"), "", "iconOpen.png");
         }
         if (id.startsWith("selectPath")) {
             return new ControlStyle(id, message("Select"), "", "iconFolder.png");
-        }
-        if (id.equals("clearButton")) {
-            return new ControlStyle(id, message("Clear"), "CTRL+g", "iconClear.png");
-        }
-        if (id.startsWith("clear")) {
-            return new ControlStyle(id, message("Clear"), "", "iconClear.png");
         }
 
         if (id.startsWith("mybox")) {
@@ -723,7 +712,7 @@ public class ControlStyle {
                     return new ControlStyle(id, message("ZoomOut"), "CTRL+4", "iconZoomOut.png");
 
                 default:
-                    return new ControlStyle(id, message("ZoomIn"), "", "iconZoomIn.png");
+                    return new ControlStyle(id, message("ZoomOut"), "", "iconZoomOut.png");
             }
         }
 
@@ -756,7 +745,17 @@ public class ControlStyle {
         }
 
         if (id.startsWith("palette")) {
-            return new ControlStyle(id, message("ColorPalette"), "", "iconPalette.png");
+            switch (id) {
+                case "paletteManageButton":
+                    return new ControlStyle(id, message("ColorPaletteManage"), "", "iconPalette.png");
+
+                default:
+                    return new ControlStyle(id, message("ColorPalette"), "", "iconPalette.png");
+            }
+        }
+
+        if (id.startsWith("color")) {
+            return new ControlStyle(id, message("Color"), "", "iconColor.png");
         }
 
         if (id.startsWith("openFolder")) {
@@ -772,10 +771,15 @@ public class ControlStyle {
                     return new ControlStyle(id, message("Delete"), "", "iconDelete.png");
             }
         }
-        if (id.startsWith("dataImport")) {
+        if (id.startsWith("input")) {
+            return new ControlStyle(id, message("Input"), "", "iconData.png");
+        }
+
+        if (id.startsWith("dataImport") || id.startsWith("import")) {
             return new ControlStyle(id, message("Import"), "", "iconDataImport.png");
         }
-        if (id.startsWith("dataExport")) {
+
+        if (id.startsWith("dataExport") || id.startsWith("export")) {
             return new ControlStyle(id, message("Export"), "", "iconDataExport.png");
         }
         if (id.startsWith("data")) {
@@ -828,6 +832,12 @@ public class ControlStyle {
         if (id.startsWith("selectNone")) {
             return new ControlStyle(id, message("UnselectAll"), "CTRL+o / ALT+O", "iconSelectNone.png");
         }
+        if (id.startsWith("use")) {
+            return new ControlStyle(id, message("Use"), "", "iconYes.png");
+        }
+        if (id.startsWith("refresh")) {
+            return new ControlStyle(id, message("refresh"), "", "iconRefresh.png");
+        }
 
         switch (id) {
 
@@ -854,9 +864,6 @@ public class ControlStyle {
 
             case "pasteButton":
                 return new ControlStyle("pasteButton", message("Paste"), "CTRL+v / ALT+v", "iconPaste.png");
-
-            case "saveButton":
-                return new ControlStyle("saveButton", message("Save"), "F2 / CTRL+s / ALT+s", "iconSave.png");
 
             case "cropButton":
                 return new ControlStyle("cropButton", message("Crop"), "CTRL+x / ALT+x", "iconCrop.png");
@@ -902,9 +909,6 @@ public class ControlStyle {
 
             case "undoButton":
                 return new ControlStyle("undoButton", message("Undo"), "CTRL+z / ALT+z", "iconUndo.png");
-
-            case "moreButton":
-                return new ControlStyle("moreButton", "", message("MoreControls"), "F12 / CTRL+m / ALT+m", "iconMore.png");
 
             case "imageSizeButton":
                 return new ControlStyle("imageSizeButton", message("LoadedSize"), "CTRL+1", "iconPicSmall.png");
@@ -955,19 +959,13 @@ public class ControlStyle {
                 return new ControlStyle("findFirstButton", message("First"), "CTRL+1", "iconFirst.png");
 
             case "replaceButton":
-                return new ControlStyle("replaceButton", message("Replace"), "CTRL+q", "iconReplace.png");
+                return new ControlStyle("replaceButton", message("Replace"), "CTRL+q / CTRL+h", "iconReplace.png");
 
             case "replaceAllButton":
                 return new ControlStyle("replaceAllButton", message("ReplaceAll"), "CTRL+w", "iconReplaceAll.png");
 
             case "withdrawButton":
-                return new ControlStyle("withdrawButton", message("Withdraw"), "", "iconWithdraw.png");
-
-            case "polygonWithdrawButton":
-                return new ControlStyle("polygonWithdrawButton", message("Withdraw"), "", "iconWithdraw.png");
-
-            case "polygonClearButton":
-                return new ControlStyle("polygonClearButton", message("Delete"), "", "iconClear.png");
+                return new ControlStyle("withdrawButton", message("Withdraw"), "ESC / CTRL+w / ALT+w", "iconWithdraw.png");
 
             case "insertFilesButton":
                 return new ControlStyle("insertFilesButton", message("InsertFiles"), "", "iconFileInsert.png");
@@ -998,16 +996,6 @@ public class ControlStyle {
 
             case "shearButton":
                 return new ControlStyle("shearButton", message("Shear"), "", "iconShear.png");
-
-            case "saveImagesButton":
-                return new ControlStyle("saveImagesButton", message("SaveAsImages"),
-                        message("SaveAsImages") + "\n" + message("FilePrefixInput"), "", "");
-
-            case "saveTiffButton":
-                return new ControlStyle("saveTiffButton", message("SaveAsTiff"), "", "iconTiff.png");
-
-            case "savePdfButton":
-                return new ControlStyle("savePdfButton", message("SaveAsPDF"), "", "iconPDF.png");
 
             case "setAllOrSelectedButton":
                 return new ControlStyle(id, message("SetAllOrSelected"), "", "iconEqual.png");
@@ -1096,9 +1084,6 @@ public class ControlStyle {
             case "pixSelectButton":
                 return new ControlStyle("pixSelectButton", message("Select"), "", "iconOpen.png");
 
-            case "refreshButton":
-                return new ControlStyle("refreshButton", message("Refresh"), "", "iconRefresh.png");
-
             case "loadButton":
                 return new ControlStyle("loadButton", message("Load"), "", "iconGo.png");
 
@@ -1126,12 +1111,6 @@ public class ControlStyle {
             case "xmlButton":
                 return new ControlStyle("xmlButton", "XML", "", "iconXML.png");
 
-            case "exportButton":
-                return new ControlStyle("exportButton", message("Export"), "", "iconExport.png");
-
-            case "importButton":
-                return new ControlStyle("importButton", message("Import"), "", "iconImport.png");
-
             case "refreshHeaderButton":
                 return new ControlStyle("refreshHeaderButton", message("Refresh"), "", "iconRefresh.png");
 
@@ -1141,15 +1120,6 @@ public class ControlStyle {
             case "refreshCieDataButton":
                 return new ControlStyle("refreshCieDataButton", message("Refresh"), "", "iconRefresh.png");
 
-            case "exportCieDataButton":
-                return new ControlStyle("exportCieDataButton", message("Export"), "", "iconExport.png");
-
-            case "exportDiagramButton":
-                return new ControlStyle("exportDiagramButton", message("Export"), "", "iconExport.png");
-
-            case "exportXmlButton":
-                return new ControlStyle("exportXmlButton", message("Export"), "", "iconExport.png");
-
             case "validateButton":
                 return new ControlStyle("validateButton", message("Validate"), "", "iconView.png");
 
@@ -1158,12 +1128,6 @@ public class ControlStyle {
 
             case "copyAsBButton":
                 return new ControlStyle("copyAsAButton", message("CopyAsMatrixB"), "", "iconCopyB.png");
-
-            case "export10DegreeButton":
-                return new ControlStyle("export10DegreeButton", message("Export"), "", "iconExport.png");
-
-            case "export2DegreeButton":
-                return new ControlStyle("export2DegreeButton", message("Export"), "", "iconExport.png");
 
             case "calculateXYZButton":
                 return new ControlStyle("calculateXYZButton", message("Calculate"), "", "iconCalculator.png");
@@ -1222,23 +1186,17 @@ public class ControlStyle {
             case "iccSelectButton":
                 return new ControlStyle("iccSelectButton", message("Select"), "", "iconOpen.png");
 
-            case "useButton":
-                return new ControlStyle("useButton", message("Use"), "", "iconYes.png");
-
-            case "commonColorsButton":
-                return new ControlStyle("commonColorsButton", message("CommonColors"), "", "iconColor.png");
-
             case "htmlButton":
                 return new ControlStyle("htmlButton", message("DisplayHtml"), "", "iconHtml.png");
+
+            case "csvButton":
+                return new ControlStyle(id, "CSV", "", "iconCSV.png");
 
             case "ocrPathButton":
                 return new ControlStyle("ocrPathButton", message("Select"), "", "iconOpen.png");
 
             case "runButton":
                 return new ControlStyle("runButton", message("Run"), "", "iconGo.png");
-
-            case "saveOcrButton":
-                return new ControlStyle("saveOcrButton", message("Save"), "", "iconSave.png");
 
             case "blackwhiteButton":
                 return new ControlStyle("blackwhiteButton", message("BlackOrWhite"), "", "iconBlackWhite.png");
@@ -1300,17 +1258,8 @@ public class ControlStyle {
             case "refreshHtmlButton":
                 return new ControlStyle("refreshHtmlButton", message("Refresh"), "", "iconRefresh.png");
 
-            case "saveHtmlButton":
-                return new ControlStyle("saveHtmlButton", message("Save"), "", "iconSave.png");
-
-            case "saveTextButton":
-                return new ControlStyle("saveTextButton", message("Save"), "", "iconSave.png");
-
             case "refreshTextButton":
                 return new ControlStyle("refreshTextButton", message("Refresh"), "", "iconRefresh.png");
-
-            case "saveMarkdownButton":
-                return new ControlStyle("saveMarkdownButton", message("Save"), "", "iconSave.png");
 
             case "refreshMarkdownButton":
                 return new ControlStyle("refreshMarkdownButton", message("Refresh"), "", "iconRefresh.png");

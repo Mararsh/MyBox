@@ -8,12 +8,12 @@ import java.sql.ResultSet;
 import java.util.List;
 import java.util.Map;
 import mara.mybox.data.EpidemicReport;
+import mara.mybox.data.tools.EpidemicReportTools;
+import mara.mybox.data.tools.GeographyCodeTools;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.TableEpidemicReport;
 import mara.mybox.db.TableGeographyCode;
 import mara.mybox.tools.DateTools;
-import mara.mybox.tools.EpidemicReportTools;
-import mara.mybox.tools.GeographyCodeTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
 import org.apache.commons.csv.CSVFormat;
@@ -128,7 +128,7 @@ public class EpidemicReportsImportExternalCSVController extends EpidemicReportsI
                             }
                             continue;
                         }
-                        report.setId(exist.getId());
+                        report.setEpid(exist.getEpid());
                         if (TableEpidemicReport.updateAsEPid(update, report)) {
                             updateCount++;
                             importCount++;

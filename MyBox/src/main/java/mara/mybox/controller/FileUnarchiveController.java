@@ -34,6 +34,7 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 import org.apache.commons.compress.archivers.ArchiveEntry;
@@ -70,9 +71,9 @@ public class FileUnarchiveController extends FilesTreeController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
-            super.initializeNext();
+            super.initControls();
 
             initUnarchiveBox();
 

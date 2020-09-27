@@ -12,6 +12,7 @@ import javafx.scene.web.WebView;
 import mara.mybox.data.QueryCondition;
 import mara.mybox.data.QueryCondition.DataOperation;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -43,8 +44,9 @@ public class TableManageConditionController extends BaseController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
+            super.initControls();
             if (listView != null) {
                 listView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
                 listView.getSelectionModel().selectedItemProperty().addListener(

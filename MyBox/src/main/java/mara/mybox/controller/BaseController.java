@@ -15,7 +15,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
@@ -34,7 +33,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Control;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
@@ -43,10 +41,8 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
-import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -54,7 +50,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
@@ -65,15 +60,15 @@ import mara.mybox.data.BaseTask;
 import mara.mybox.data.GeographyCode;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.data.VisitHistory.FileType;
-import mara.mybox.db.DerbyBase;
+import mara.mybox.db.TableUserConf;
 import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.fxml.RecentVisitMenu;
-import mara.mybox.image.ImageInformation;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.NetworkTools;
+import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.MyboxDataPath;
 import static mara.mybox.value.AppVariables.getUserConfigBoolean;
@@ -109,14 +104,11 @@ public class BaseController implements Initializable {
     protected FullscreenListener fullscreenListener;
     protected String targetFileType, targetNameAppend;
     protected ChangeListener<Number> leftDividerListener, rightDividerListener;
-
     protected boolean isSettingValues;
     protected File sourceFile, sourcePath, targetPath, targetFile;
     protected SaveAsType saveAsType;
     protected TargetExistType targetExistType;
-
-    protected ColorPaletteController paletteController;
-    protected SimpleBooleanProperty isPickingColor;
+    protected KeyEvent currentKeyEvent;
 
     protected enum SaveAsType {
         Load, Open, None
@@ -136,14 +128,12 @@ public class BaseController implements Initializable {
     @FXML
     protected OperationController operationBarController;
     @FXML
-    protected ToggleButton moreButton;
-    @FXML
     protected Button allButton, clearButton, selectFileButton, createButton, copyButton, pasteButton, cancelButton,
             deleteButton, saveButton, infoButton, metaButton, setButton, addButton,
             okButton, startButton, firstButton, lastButton, previousButton, nextButton, goButton, previewButton,
             cropButton, saveAsButton, recoverButton, renameButton, tipsButton, viewButton, popButton, refButton,
             undoButton, redoButton, transparentButton, whiteButton, blackButton, playButton, stopButton,
-            selectAllButton, selectNoneButton;
+            selectAllButton, selectNoneButton, withdrawButton;
     @FXML
     protected VBox paraBox;
     @FXML
@@ -194,8 +184,8 @@ public class BaseController implements Initializable {
             baseName = FxmlControl.getFxmlName(url.getPath());
 
             initValues();
+            initBaseControls();
             initControls();
-            initializeNext();
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -203,27 +193,29 @@ public class BaseController implements Initializable {
     }
 
     public void initValues() {
-        myFxml = "/fxml/" + baseName + ".fxml";
-        myController = this;
-        if (mainMenuController != null) {
-            mainMenuController.parentFxml = myFxml;
-            mainMenuController.parentController = this;
-        }
-        AppVariables.alarmClockController = null;
+        try {
+            myFxml = "/fxml/" + baseName + ".fxml";
+            myController = this;
+            if (mainMenuController != null) {
+                mainMenuController.parentFxml = myFxml;
+                mainMenuController.parentController = this;
+            }
+            AppVariables.alarmClockController = null;
 
-        setInterfaceStyle(AppVariables.getStyle());
-        setSceneFontSize(AppVariables.sceneFontSize);
-        if (thisPane != null) {
-            thisPane.setStyle("-fx-font-size: " + AppVariables.sceneFontSize + "px;");
-            thisPane.setOnKeyReleased((KeyEvent event) -> {
-                keyEventsHandler(event);
-            });
+            setInterfaceStyle(AppVariables.getStyle());
+            setSceneFontSize(AppVariables.sceneFontSize);
+            if (thisPane != null) {
+                thisPane.setStyle("-fx-font-size: " + AppVariables.sceneFontSize + "px;");
+                thisPane.setOnKeyReleased((KeyEvent event) -> {
+                    keyEventsHandler(event);
+                });
+            }
+        } catch (Exception e) {
+            logger.error(e.toString());
         }
-
-        isPickingColor = new SimpleBooleanProperty();
     }
 
-    public void initControls() {
+    public void initBaseControls() {
         try {
 
             if (mainMenuController != null) {
@@ -312,24 +304,24 @@ public class BaseController implements Initializable {
                 FxmlControl.setTooltip(tipsView, new Tooltip(message(TipsLabelKey)));
             }
 
-            try {
-                String vv = AppVariables.getUserConfigValue(SaveAsOptionsKey, SaveAsType.Load + "");
-                if ((SaveAsType.Load + "").equals(vv)) {
+            if (saveAsOptionsBox != null) {
+                try {
+                    String vv = AppVariables.getUserConfigValue(SaveAsOptionsKey, SaveAsType.Load + "");
+                    if ((SaveAsType.Load + "").equals(vv)) {
+                        saveAsType = SaveAsType.Load;
+
+                    } else if ((SaveAsType.Open + "").equals(vv)) {
+                        saveAsType = SaveAsType.Open;
+
+                    } else if ((SaveAsType.None + "").equals(vv)) {
+                        saveAsType = SaveAsType.None;
+                    }
+
+                } catch (Exception e) {
+//                logger.error(e.toString());
                     saveAsType = SaveAsType.Load;
-
-                } else if ((SaveAsType.Open + "").equals(vv)) {
-                    saveAsType = SaveAsType.Open;
-
-                } else if ((SaveAsType.None + "").equals(vv)) {
-                    saveAsType = SaveAsType.None;
                 }
 
-            } catch (Exception e) {
-//                logger.error(e.toString());
-                saveAsType = SaveAsType.Load;
-            }
-
-            if (saveAsOptionsBox != null) {
                 List<String> optionsList = Arrays.asList(message("LoadAfterSaveAs"),
                         message("OpenAfterSaveAs"), message("JustSaveAs"));
                 saveAsOptionsBox.getItems().addAll(optionsList);
@@ -356,16 +348,6 @@ public class BaseController implements Initializable {
                     }
                 }
 
-            }
-
-            if (moreButton != null) {
-                moreButton.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue ov, Boolean oldValue,
-                            Boolean newValue) {
-                        moreAction();
-                    }
-                });
             }
 
             if (topCheck != null) {
@@ -487,10 +469,22 @@ public class BaseController implements Initializable {
         }
     }
 
+    public void initControls() {
+
+    }
+
     // This is called automatically after window is opened
     public void afterStageShown() {
 
         getMyStage();
+    }
+
+    public boolean recordStageSizeChange(int minSize) {
+        return !isSettingValues
+                && !myStage.isMaximized()
+                && !myStage.isFullScreen()
+                && !myStage.isIconified()
+                && (myStage.getWidth() > minSize);
     }
 
     // This is called automatically after TOP scene is loaded.
@@ -517,11 +511,14 @@ public class BaseController implements Initializable {
 
                     int w = AppVariables.getUserConfigInt(prefix + "StageWidth", (int) thisPane.getPrefWidth());
                     int h = AppVariables.getUserConfigInt(prefix + "StageHeight", (int) thisPane.getPrefHeight());
+                    int x = AppVariables.getUserConfigInt(prefix + "StageX", (int) myStage.getX());
+                    int y = AppVariables.getUserConfigInt(prefix + "StageY", (int) myStage.getY());
                     if (w >= minSize && h >= minSize) {
                         myStage.setWidth(w);
                         myStage.setHeight(h);
                     }
-                    myStage.centerOnScreen();
+                    myStage.setX(x);
+                    myStage.setY(y);
                 }
 
                 fullscreenListener = new FullscreenListener(prefix);
@@ -529,17 +526,29 @@ public class BaseController implements Initializable {
                 maximizedListener = new MaximizedListener(prefix);
                 myStage.maximizedProperty().addListener(maximizedListener);
 
+                myScene.xProperty().addListener(
+                        (ObservableValue<? extends Number> ov, Number old_val, Number new_val) -> {
+                            if (recordStageSizeChange(minSize)) {
+                                AppVariables.setUserConfigInt(prefix + "StageX", (int) myStage.getX());
+                            }
+                        });
+                myScene.yProperty().addListener(
+                        (ObservableValue<? extends Number> ov, Number old_val, Number new_val) -> {
+                            if (recordStageSizeChange(minSize)) {
+                                AppVariables.setUserConfigInt(prefix + "StageY", (int) myStage.getY());
+                            }
+                        });
                 myScene.widthProperty().addListener(
                         (ObservableValue<? extends Number> ov, Number old_val, Number new_val) -> {
-                            if (!myStage.isMaximized() && !myStage.isFullScreen() && !myStage.isIconified()
-                            && myStage.getWidth() > minSize) {
+                            if (!isSettingValues && !myStage.isMaximized() && !myStage.isFullScreen() && !myStage.isIconified()
+                            && (myStage.getWidth() > minSize)) {
                                 AppVariables.setUserConfigInt(prefix + "StageWidth", (int) myStage.getWidth());
                             }
                         });
                 myScene.heightProperty().addListener(
                         (ObservableValue<? extends Number> ov, Number old_val, Number new_val) -> {
-                            if (!myStage.isMaximized() && !myStage.isFullScreen() && !myStage.isIconified()
-                            && myStage.getHeight() > minSize) {
+                            if (!isSettingValues && !myStage.isMaximized() && !myStage.isFullScreen() && !myStage.isIconified()
+                            && (myStage.getHeight() > minSize)) {
                                 AppVariables.setUserConfigInt(prefix + "StageHeight", (int) myStage.getHeight());
                             }
                         });
@@ -564,10 +573,19 @@ public class BaseController implements Initializable {
             }
 
             initSplitPanes();
-
             refreshStyle();
-
+            myStage.toFront();
+            myStage.requestFocus();
+            if (mainMenuController != null) {
+                FxmlControl.mouseCenter(myStage);
+            }
             toFront();
+
+            if (selectFileButton != null) {
+                selectFileButton.requestFocus();
+            } else if (tipsView != null) {
+                tipsView.requestFocus();
+            }
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -616,76 +634,71 @@ public class BaseController implements Initializable {
 
     public void initSplitPanes() {
         try {
-            if (splitPane == null) {
+            if (splitPane == null || splitPane.getDividers().isEmpty()) {
                 return;
             }
-            if (leftPane != null && rightPane == null) {
-                if (splitPane.getDividers().size() > 0) {
-                    try {
-                        String lv = AppVariables.getUserConfigValue(baseName + "LeftPanePosition", "0.35");
-                        splitPane.setDividerPositions(Double.parseDouble(lv));
-                    } catch (Exception e) {
-                        splitPane.setDividerPositions(0.35);
-                    }
-                    leftDividerListener
-                            = (ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
-                                if (!isSettingValues) {
-                                    if (splitPane.getItems().contains(leftPane)) {
-                                        AppVariables.setUserConfigValue(baseName + "LeftPanePosition", newValue.doubleValue() + "");
-                                    }
-                                }
-                            };
-                    splitPane.getDividers().get(0).positionProperty().addListener(leftDividerListener);
-                }
-            } else if (leftPane == null && rightPane != null) {
-                if (splitPane.getDividers().size() > 0) {
-                    try {
-                        String rv = AppVariables.getUserConfigValue(baseName + "RightPanePosition", "0.65");
-                        splitPane.setDividerPositions(Double.parseDouble(rv));
-                    } catch (Exception e) {
-                        splitPane.setDividerPositions(0.65);
-                    }
-                    rightDividerListener
-                            = (ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
-                                if (!isSettingValues) {
-                                    AppVariables.setUserConfigValue(baseName + "RightPanePosition", newValue.doubleValue() + "");
-                                }
-                            };
-                    splitPane.getDividers().get(0).positionProperty().addListener(rightDividerListener);
-                }
-            } else if (leftPane != null && rightPane != null) {
-                if (splitPane.getDividers().size() > 1) {
-                    try {
-                        String lv = AppVariables.getUserConfigValue(baseName + "LeftPanePosition", "0.15");
-                        String rv = AppVariables.getUserConfigValue(baseName + "RightPanePosition", "0.85");
-                        splitPane.setDividerPositions(Double.parseDouble(lv), Double.parseDouble(rv));
-                    } catch (Exception e) {
-                        splitPane.setDividerPositions(0.15, 0.85);
-                    }
-                    leftDividerListener
-                            = (ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
-                                if (!isSettingValues) {
-                                    if (splitPane.getItems().contains(leftPane)) {
-                                        AppVariables.setUserConfigValue(baseName + "LeftPanePosition", newValue.doubleValue() + "");
-                                    } else {
-                                        AppVariables.setUserConfigValue(baseName + "RightPanePosition", newValue.doubleValue() + "");
-                                    }
-                                }
-                            };
-                    rightDividerListener
-                            = (ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
-                                if (!isSettingValues) {
-                                    AppVariables.setUserConfigValue(baseName + "RightPanePosition", newValue.doubleValue() + "");
-                                }
-                            };
-//                    splitPane.getDividers().get(0).positionProperty().removeListener(leftDividerListener);
-                    splitPane.getDividers().get(0).positionProperty().addListener(leftDividerListener);
-//                    splitPane.getDividers().get(1).positionProperty().removeListener(rightDividerListener);
-                    splitPane.getDividers().get(1).positionProperty().addListener(rightDividerListener);
-                }
-
+            if (!AppVariables.getUserConfigBoolean(baseName + "ShowRightControl", true)) {
+                hideRightPane();
             }
+            setSplitDividerPositions();
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
 
+    public void setSplitDividerPositions() {
+        try {
+            if (isSettingValues || splitPane == null) {
+                return;
+            }
+            int dividersSize = splitPane.getDividers().size();
+            if (dividersSize < 1) {
+                return;
+            }
+            isSettingValues = true;
+            try {
+                splitPane.getDividers().get(0).positionProperty().removeListener(leftDividerListener);
+                leftDividerListener = null;
+            } catch (Exception e) {
+            }
+            try {
+                splitPane.getDividers().get(dividersSize - 1).positionProperty().removeListener(rightDividerListener);
+                rightDividerListener = null;
+            } catch (Exception e) {
+            }
+            if (splitPane.getItems().contains(leftPane)) {
+                double defaultv = dividersSize == 1 ? 0.35 : 0.15;
+                try {
+                    String v = AppVariables.getUserConfigValue(baseName + "LeftPanePosition", defaultv + "");
+                    splitPane.setDividerPosition(0, Double.parseDouble(v));
+                } catch (Exception e) {
+                    splitPane.setDividerPosition(0, defaultv);
+                }
+                leftDividerListener = (ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
+                    if (!isSettingValues) {
+                        AppVariables.setUserConfigValue(baseName + "LeftPanePosition", newValue.doubleValue() + "");
+                    }
+                };
+                splitPane.getDividers().get(0).positionProperty().addListener(leftDividerListener);
+            }
+            if (splitPane.getItems().contains(rightPane)) {
+                int index = splitPane.getDividers().size() - 1;
+                double defaultv = index > 0 ? 0.85 : 0.65;
+                try {
+                    String v = AppVariables.getUserConfigValue(baseName + "RightPanePosition", defaultv + "");
+                    splitPane.setDividerPosition(index, Double.parseDouble(v));
+                } catch (Exception e) {
+                    splitPane.setDividerPosition(index, defaultv);
+                }
+                rightDividerListener = (ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
+                    if (!isSettingValues) {
+                        AppVariables.setUserConfigValue(baseName + "RightPanePosition", newValue.doubleValue() + "");
+                    }
+                };
+                splitPane.getDividers().get(index).positionProperty().addListener(rightDividerListener);
+            }
+            splitPane.applyCss();
+            isSettingValues = false;
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -693,81 +706,86 @@ public class BaseController implements Initializable {
 
     @FXML
     public void controlLeftPane() {
-        if (splitPane == null || leftPane == null || leftPaneControl == null) {
+        if (isSettingValues || splitPane == null || leftPane == null
+                || leftPaneControl == null || !leftPaneControl.isVisible()) {
+            return;
+        }
+        if (splitPane.getItems().contains(leftPane)) {
+            hideLeftPane();
+        } else {
+            showLeftPane();
+        }
+    }
+
+    public void hideLeftPane() {
+        if (isSettingValues || splitPane == null || leftPane == null
+                || leftPaneControl == null || !leftPaneControl.isVisible()
+                || !splitPane.getItems().contains(leftPane)
+                || splitPane.getItems().size() == 1) {
             return;
         }
         isSettingValues = true;
-        if (splitPane.getItems().contains(leftPane)) {
-            double[] positions = splitPane.getDividerPositions();
-            splitPane.getItems().remove(leftPane);
-            ControlStyle.setIcon(leftPaneControl, ControlStyle.getIcon("iconDoubleRight.png"));
-            if (positions.length == 2) {
-                splitPane.setDividerPosition(0, positions[1]);
-            }
-        } else {
-            splitPane.getItems().add(0, leftPane);
-            try {
-                String v = AppVariables.getUserConfigValue(baseName + "LeftPanePosition", "0.15");
-                splitPane.setDividerPosition(0, Double.parseDouble(v));
-            } catch (Exception e) {
-                splitPane.setDividerPosition(0, 0.15);
-            }
-            ControlStyle.setIcon(leftPaneControl, ControlStyle.getIcon("iconDoubleLeft.png"));
-        }
-        splitPane.applyCss();
-        if (splitPane.getDividers().size() == 1) {
-            splitPane.getDividers().get(0).positionProperty().removeListener(leftDividerListener);
-            splitPane.getDividers().get(0).positionProperty().addListener(leftDividerListener);
-
-        } else if (splitPane.getDividers().size() == 2) {
-            splitPane.getDividers().get(0).positionProperty().removeListener(leftDividerListener);
-            splitPane.getDividers().get(0).positionProperty().addListener(leftDividerListener);
-            splitPane.getDividers().get(1).positionProperty().removeListener(rightDividerListener);
-            splitPane.getDividers().get(1).positionProperty().addListener(rightDividerListener);
-        }
+        splitPane.getItems().remove(leftPane);
         isSettingValues = false;
+        ControlStyle.setIcon(leftPaneControl, ControlStyle.getIcon("iconDoubleRight.png"));
+        setSplitDividerPositions();
+        AppVariables.setUserConfigValue(baseName + "ShowLeftControl", false);
+    }
+
+    public void showLeftPane() {
+        if (isSettingValues || splitPane == null || leftPane == null
+                || leftPaneControl == null || !leftPaneControl.isVisible()
+                || splitPane.getItems().contains(leftPane)) {
+            return;
+        }
+        isSettingValues = true;
+        splitPane.getItems().add(0, leftPane);
+        isSettingValues = false;
+        ControlStyle.setIcon(leftPaneControl, ControlStyle.getIcon("iconDoubleLeft.png"));
+        setSplitDividerPositions();
+        AppVariables.setUserConfigValue(baseName + "ShowLeftControl", true);
     }
 
     @FXML
     public void controlRightPane() {
-        if (splitPane == null || rightPane == null || rightPaneControl == null) {
+        if (isSettingValues || splitPane == null || rightPane == null
+                || rightPaneControl == null || !rightPaneControl.isVisible()) {
+            return;
+        }
+        if (splitPane.getItems().contains(rightPane)) {
+            hideRightPane();
+        } else {
+            showRightPane();
+        }
+    }
+
+    public void hideRightPane() {
+        if (splitPane == null || rightPane == null
+                || rightPaneControl == null || !rightPaneControl.isVisible()
+                || !splitPane.getItems().contains(rightPane)
+                || splitPane.getItems().size() == 1) {
             return;
         }
         isSettingValues = true;
-        if (splitPane.getItems().contains(rightPane)) {
-            double[] positions = splitPane.getDividerPositions();
-            splitPane.getItems().remove(rightPane);
-            ControlStyle.setIcon(rightPaneControl, ControlStyle.getIcon("iconDoubleLeft.png"));
-            rightPaneControl.applyCss();
-            if (positions.length == 2) {
-                splitPane.setDividerPosition(0, positions[0]);
-            }
-        } else {
-            splitPane.getItems().add(rightPane);
-            try {
-                String v = AppVariables.getUserConfigValue(baseName + "RightPanePosition", "0.85");
-                splitPane.setDividerPosition(splitPane.getItems().size() - 2, Double.parseDouble(v));
-            } catch (Exception e) {
-                splitPane.setDividerPosition(splitPane.getItems().size() - 2, 0.85);
-            }
-            ControlStyle.setIcon(rightPaneControl, ControlStyle.getIcon("iconDoubleRight.png"));
-        }
-        FxmlControl.refreshStyle(splitPane);
-        if (splitPane.getDividers().size() == 1) {
-            if (leftDividerListener != null) {
-                splitPane.getDividers().get(0).positionProperty().removeListener(leftDividerListener);
-                splitPane.getDividers().get(0).positionProperty().addListener(leftDividerListener);
-            } else if (rightDividerListener != null) {
-                splitPane.getDividers().get(0).positionProperty().removeListener(rightDividerListener);
-                splitPane.getDividers().get(0).positionProperty().addListener(rightDividerListener);
-            }
-        } else if (splitPane.getDividers().size() == 2) {
-            splitPane.getDividers().get(0).positionProperty().removeListener(leftDividerListener);
-            splitPane.getDividers().get(0).positionProperty().addListener(leftDividerListener);
-            splitPane.getDividers().get(1).positionProperty().removeListener(rightDividerListener);
-            splitPane.getDividers().get(1).positionProperty().addListener(rightDividerListener);
-        }
+        splitPane.getItems().remove(rightPane);
         isSettingValues = false;
+        ControlStyle.setIcon(rightPaneControl, ControlStyle.getIcon("iconDoubleLeft.png"));
+        setSplitDividerPositions();
+        AppVariables.setUserConfigValue(baseName + "ShowRightControl", false);
+    }
+
+    public void showRightPane() {
+        if (splitPane == null || rightPane == null
+                || rightPaneControl == null || !rightPaneControl.isVisible()
+                || splitPane.getItems().contains(rightPane)) {
+            return;
+        }
+        isSettingValues = true;
+        splitPane.getItems().add(rightPane);
+        isSettingValues = false;
+        ControlStyle.setIcon(leftPaneControl, ControlStyle.getIcon("iconDoubleRight.png"));
+        setSplitDividerPositions();
+        AppVariables.setUserConfigValue(baseName + "ShowRightControl", true);
     }
 
     public class FullscreenListener implements ChangeListener<Boolean> {
@@ -913,8 +931,12 @@ public class BaseController implements Initializable {
         setUserConfigValue("TargetExistType", selected.getText());
     }
 
+    // Shortcuts like Ctrl-c/v/x/z/y/a may be for text editing
     public void keyEventsHandler(KeyEvent event) {
-//        logger.debug(event.getCode() + " " + event.getText());
+//        logger.debug(this.getClass().getName() + " " + event.isControlDown() + " text:" + event.getText()
+//                + " code:" + event.getCode());
+        currentKeyEvent = event;
+//        logger.debug(currentKeyEvent.getSource().getClass());
         keyEventsHandlerDo(event);
     }
 
@@ -932,127 +954,109 @@ public class BaseController implements Initializable {
     }
 
     public void controlHandler(KeyEvent event) {
-        if (!event.isControlDown()) {
+        if (!event.isControlDown() || event.getCode() == null) {
             return;
         }
-        String key = event.getText();
-        if (key == null || key.isEmpty()) {
-            return;
-        }
-        switch (key) {
-            case "e":
-            case "E":
+        switch (event.getCode()) {
+            case E:
                 if (startButton != null && !startButton.isDisabled()) {
                     startAction();
                 } else if (okButton != null && !okButton.isDisabled()) {
                     okAction();
                 }
                 return;
-            case "n":
-            case "N":
+            case N:
                 if (createButton != null && !createButton.isDisabled()) {
                     createAction();
                 } else if (addButton != null && !addButton.isDisabled()) {
-                    addAction();
+                    addAction(null);
                 }
                 return;
-            case "c":
-            case "C":
+            case C:
                 if (copyButton != null && !copyButton.isDisabled()) {
                     copyAction();
                 }
                 return;
-            case "v":
-            case "V":
+            case V:
                 if (pasteButton != null && !pasteButton.isDisabled()) {
                     pasteAction();
                 }
                 return;
-            case "s":
-            case "S":
+            case S:
                 if (saveButton != null && !saveButton.isDisabled()) {
                     saveAction();
                 }
                 return;
-            case "f":
-            case "F":
-                if (saveAsButton != null && !saveAsButton.isDisabled()) {
-                    saveAsAction();
-                }
-                return;
-            case "i":
-            case "I":
+            case I:
                 if (infoButton != null && !infoButton.isDisabled()) {
                     infoAction();
                 }
                 return;
-            case "d":
-            case "D":
+            case D:
                 if (deleteButton != null && !deleteButton.isDisabled()) {
                     deleteAction();
                 }
                 return;
-            case "a":
-            case "A":
+            case A:
                 if (allButton != null && !allButton.isDisabled()) {
                     allAction();
                 } else if (selectAllButton != null && !selectAllButton.isDisabled()) {
                     selectAllAction();
                 }
                 return;
-            case "o":
-            case "O":
+            case O:
                 if (selectNoneButton != null && !selectNoneButton.isDisabled()) {
                     selectNoneAction();
                 }
                 return;
-            case "x":
-            case "X":
+            case X:
                 if (cropButton != null && !cropButton.isDisabled()) {
                     cropAction();
                 }
                 return;
-            case "g":
-            case "G":
+            case G:
                 if (clearButton != null && !clearButton.isDisabled()) {
                     clearAction();
                 }
                 return;
-            case "r":
-            case "R":
+            case R:
                 if (recoverButton != null && !recoverButton.isDisabled()) {
                     recoverAction();
                 }
                 return;
-            case "z":
-            case "Z":
+            case Z:
                 if (undoButton != null && !undoButton.isDisabled()) {
                     undoAction();
                 }
                 return;
-            case "y":
-            case "Y":
+            case Y:
                 if (redoButton != null && !redoButton.isDisabled()) {
                     redoAction();
                 }
                 return;
-            case "m":
-            case "M":
-                if (moreButton != null && !moreButton.isDisabled()) {
-                    moreButton.fire();
+            case P:
+                if (popButton != null && !popButton.isDisabled()) {
+                    popAction();
                 }
                 return;
-            case "-":
+            case W:
+                if (cancelButton != null && !cancelButton.isDisabled()) {
+                    cancelAction();
+                } else if (withdrawButton != null && !withdrawButton.isDisabled()) {
+                    withdrawAction();
+                }
+                return;
+            case MINUS:
                 setSceneFontSize(AppVariables.sceneFontSize - 1);
                 return;
-            case "=":
+            case EQUALS:
                 setSceneFontSize(AppVariables.sceneFontSize + 1);
         }
 
     }
 
     public void altHandler(KeyEvent event) {
-        if (!event.isAltDown()) {
+        if (!event.isAltDown() || event.getCode() == null) {
             return;
         }
         switch (event.getCode()) {
@@ -1066,108 +1070,105 @@ public class BaseController implements Initializable {
                     lastAction();
                 }
                 return;
-        }
-        String key = event.getText();
-        if (key == null || key.isEmpty()) {
-            return;
-        }
-        switch (key) {
-            case "e":
-            case "E":
+
+            case PAGE_UP:
+                if (previousButton != null && !previousButton.isDisabled()) {
+                    previousAction();
+                }
+                return;
+            case PAGE_DOWN:
+                if (nextButton != null && !nextButton.isDisabled()) {
+                    nextAction();
+                }
+                return;
+            case E:
                 if (startButton != null && !startButton.isDisabled()) {
                     startAction();
                 } else if (okButton != null && !okButton.isDisabled()) {
                     okAction();
                 }
-                break;
-            case "n":
-            case "N":
+                return;
+            case N:
                 if (createButton != null && !createButton.isDisabled()) {
                     createAction();
                 } else if (addButton != null && !addButton.isDisabled()) {
-                    addAction();
+                    addAction(null);
                 }
                 return;
-            case "c":
-            case "C":
+            case C:
                 if (copyButton != null && !copyButton.isDisabled()) {
                     copyAction();
                 }
-                break;
-            case "v":
-            case "V":
+                return;
+            case V:
                 if (pasteButton != null && !pasteButton.isDisabled()) {
                     pasteAction();
                 }
-                break;
-            case "s":
-            case "S":
+                return;
+            case S:
                 if (saveButton != null && !saveButton.isDisabled()) {
                     saveAction();
                 }
-                break;
-            case "f":
-            case "F":
-                if (saveAsButton != null && !saveAsButton.isDisabled()) {
-                    saveAsAction();
-                }
-                break;
-            case "d":
-            case "D":
+                return;
+            case D:
                 if (deleteButton != null && !deleteButton.isDisabled()) {
                     deleteAction();
                 }
-                break;
-            case "a":
-            case "A":
+                return;
+            case A:
                 if (allButton != null && !allButton.isDisabled()) {
                     allAction();
                 } else if (selectAllButton != null && !selectAllButton.isDisabled()) {
                     selectAllAction();
                 }
-                break;
-            case "o":
-            case "O":
+                return;
+            case O:
                 if (selectNoneButton != null && !selectNoneButton.isDisabled()) {
                     selectNoneAction();
                 }
                 return;
-            case "x":
-            case "X":
+            case X:
                 if (cropButton != null && !cropButton.isDisabled()) {
                     cropAction();
                 }
-                break;
-            case "g":
-            case "G":
+                return;
+            case G:
                 if (clearButton != null && !clearButton.isDisabled()) {
                     clearAction();
                 }
                 return;
-            case "r":
-            case "R":
+            case R:
                 if (recoverButton != null && !recoverButton.isDisabled()) {
                     recoverAction();
                 }
                 break;
-            case "z":
-            case "Z":
+            case Z:
                 if (undoButton != null && !undoButton.isDisabled()) {
                     undoAction();
                 }
-                break;
-            case "y":
-            case "Y":
+                return;
+            case Y:
                 if (redoButton != null && !redoButton.isDisabled()) {
                     redoAction();
                 }
                 break;
-            case "m":
-            case "M":
-                if (moreButton != null && !moreButton.isDisabled()) {
-                    moreButton.fire();
+            case P:
+                if (popButton != null && !popButton.isDisabled()) {
+                    popAction();
                 }
+                return;
+            case W:
+                if (cancelButton != null && !cancelButton.isDisabled()) {
+                    cancelAction();
+                } else if (withdrawButton != null && !withdrawButton.isDisabled()) {
+                    withdrawAction();
+                }
+                return;
+            case MINUS:
+                setSceneFontSize(AppVariables.sceneFontSize - 1);
                 break;
+            case EQUALS:
+                setSceneFontSize(AppVariables.sceneFontSize + 1);
         }
 
     }
@@ -1182,18 +1183,17 @@ public class BaseController implements Initializable {
                 if (deleteButton != null && !deleteButton.isDisabled()) {
                     deleteAction();
                 }
-                break;
-
+                return;
             case PAGE_UP:
                 if (previousButton != null && !previousButton.isDisabled()) {
                     previousAction();
                 }
-                break;
+                return;
             case PAGE_DOWN:
                 if (nextButton != null && !nextButton.isDisabled()) {
                     nextAction();
                 }
-                break;
+                return;
             case F1:
                 if (startButton != null && !startButton.isDisabled()) {
                     startAction();
@@ -1204,60 +1204,51 @@ public class BaseController implements Initializable {
                 } else if (playButton != null && !playButton.isDisabled()) {
                     playAction();
                 }
-                break;
+                return;
             case F2:
                 if (saveButton != null && !saveButton.isDisabled()) {
                     saveAction();
                 }
-                break;
+                return;
             case F3:
                 if (recoverButton != null && !recoverButton.isDisabled()) {
                     recoverAction();
                 }
-                break;
+                return;
             case F4:
-                closeStage();
-                break;
-            case F5:
-                refresh();
-                break;
-            case F6:
-                if (popMenu != null) {
-                    popMenu.hide();
+                if (leftPaneControl != null && leftPaneControl.isVisible()) {
+                    controlLeftPane();
                 }
-                break;
+                return;
+            case F5:
+                if (rightPaneControl != null && rightPaneControl.isVisible()) {
+                    controlRightPane();
+                }
+                return;
+            case F6:
+                closePopup(event);
+                return;
+            case F9:
+                closeStage();
+                return;
+            case F10:
+                refresh();
+                return;
             case F11:
                 if (saveAsButton != null && !saveAsButton.isDisabled()) {
                     saveAsAction();
                 }
-                break;
-            case F12:
-                if (moreButton != null && !moreButton.isDisabled()) {
-                    moreButton.fire();
-                }
-                break;
+                return;
             case ESCAPE:
                 if (cancelButton != null && !cancelButton.isDisabled()) {
                     cancelAction();
+                } else if (withdrawButton != null && !withdrawButton.isDisabled()) {
+                    withdrawAction();
                 }
 //                else if (stopButton != null && !stopButton.isDisabled()) {
 //                    stopAction();
 //                }
-                break;
         }
-
-//        String text = event.getText();
-//        if (text == null || text.isEmpty()) {
-//            return;
-//        }
-//        switch (text) {
-//            case "e":
-//            case "E":
-//
-//        }
-    }
-
-    public void initializeNext() {
 
     }
 
@@ -1343,7 +1334,7 @@ public class BaseController implements Initializable {
 
     public List<MenuItem> getRecentMenu() {
         List<MenuItem> menus = new ArrayList();
-        List<VisitHistory> his = VisitHistory.getRecentMenu();
+        List<VisitHistory> his = VisitHistoryTools.getRecentMenu();
         if (his == null || his.isEmpty()) {
             return menus;
         }
@@ -1424,19 +1415,18 @@ public class BaseController implements Initializable {
         if (file == null) {
             return;
         }
-
         if (file.isDirectory()) {
             String path = file.getPath();
             AppVariables.setUserConfigValue(sourcePathKey, path);
             AppVariables.setUserConfigValue(LastPathKey, path);
-            VisitHistory.readPath(SourcePathType, path);
+            VisitHistoryTools.readPath(SourcePathType, path);
         } else {
             String path = file.getParent();
             String fname = file.getAbsolutePath();
             AppVariables.setUserConfigValue(sourcePathKey, path);
             AppVariables.setUserConfigValue(LastPathKey, path);
-            VisitHistory.readPath(SourcePathType, path);
-            VisitHistory.readFile(SourceFileType, fname);
+            VisitHistoryTools.readPath(SourcePathType, path);
+            VisitHistoryTools.readFile(SourceFileType, fname);
         }
 
     }
@@ -1448,13 +1438,13 @@ public class BaseController implements Initializable {
         if (file.isDirectory()) {
             String path = file.getPath();
             AppVariables.setUserConfigValue(LastPathKey, path);
-            VisitHistory.readPath(pathType, path);
-        } else {
+            VisitHistoryTools.readPath(pathType, path);
+        } else if (file.isFile()) {
             String path = file.getParent();
             String fname = file.getAbsolutePath();
             AppVariables.setUserConfigValue(LastPathKey, path);
-            VisitHistory.readPath(pathType, path);
-            VisitHistory.readFile(fileType, fname);
+            VisitHistoryTools.readPath(pathType, path);
+            VisitHistoryTools.readFile(fileType, fname);
         }
 
     }
@@ -1467,23 +1457,28 @@ public class BaseController implements Initializable {
         recordFileWritten(file, targetPathKey, TargetPathType, TargetFileType);
     }
 
+    public void recordFileWritten(final File file, int fileType) {
+        recordFileWritten(file, VisitHistoryTools.getPathKey(fileType), fileType, fileType);
+    }
+
     public void recordFileWritten(final File file,
             String targetPathKey, int TargetPathType, int TargetFileType) {
         if (file == null) {
             return;
         }
+
         if (file.isDirectory()) {
             String path = file.getPath();
             AppVariables.setUserConfigValue(targetPathKey, path);
             AppVariables.setUserConfigValue(LastPathKey, path);
-            VisitHistory.writePath(TargetPathType, path);
-        } else {
+            VisitHistoryTools.writePath(TargetPathType, path);
+        } else if (file.isFile()) {
             String path = file.getParent();
             String fname = file.getAbsolutePath();
             AppVariables.setUserConfigValue(targetPathKey, path);
             AppVariables.setUserConfigValue(LastPathKey, path);
-            VisitHistory.writePath(TargetPathType, path);
-            VisitHistory.writeFile(TargetFileType, fname);
+            VisitHistoryTools.writePath(TargetPathType, path);
+            VisitHistoryTools.writeFile(TargetFileType, fname);
         }
     }
 
@@ -1500,14 +1495,14 @@ public class BaseController implements Initializable {
             String path = file.getPath();
             AppVariables.setUserConfigValue(sourcePathKey, path);
             AppVariables.setUserConfigValue(LastPathKey, path);
-            VisitHistory.readPath(SourcePathType, path);
+            VisitHistoryTools.readPath(SourcePathType, path);
         } else {
             String path = file.getParent();
             String fname = file.getAbsolutePath();
             AppVariables.setUserConfigValue(sourcePathKey, path);
             AppVariables.setUserConfigValue(LastPathKey, path);
-            VisitHistory.readPath(SourcePathType, path);
-            VisitHistory.readFile(AddFileType, fname);
+            VisitHistoryTools.readPath(SourcePathType, path);
+            VisitHistoryTools.readFile(AddFileType, fname);
         }
 
     }
@@ -1692,9 +1687,9 @@ public class BaseController implements Initializable {
             public List<VisitHistory> recentPaths() {
                 int pathNumber = AppVariables.fileRecentNumber / 3 + 1;
                 if (controller.getAddPathType() <= 0) {
-                    controller.setAddPathType(controller.getSourcePathType());
+                    controller.AddPathType = controller.SourcePathType;
                 }
-                return VisitHistory.getRecentPath(controller.getAddPathType(), pathNumber);
+                return VisitHistoryTools.getRecentPath(controller.getAddPathType(), pathNumber);
             }
 
             @Override
@@ -1730,9 +1725,9 @@ public class BaseController implements Initializable {
             public List<VisitHistory> recentPaths() {
                 int pathNumber = AppVariables.fileRecentNumber / 3 + 1;
                 if (controller.getAddPathType() <= 0) {
-                    controller.setAddPathType(controller.getSourcePathType());
+                    controller.AddPathType = controller.SourcePathType;
                 }
-                return VisitHistory.getRecentPath(controller.getAddPathType(), pathNumber);
+                return VisitHistoryTools.getRecentPath(controller.getAddPathType(), pathNumber);
             }
 
             @Override
@@ -1768,9 +1763,9 @@ public class BaseController implements Initializable {
             public List<VisitHistory> recentPaths() {
                 int pathNumber = AppVariables.fileRecentNumber / 3 + 1;
                 if (controller.getAddPathType() <= 0) {
-                    controller.setAddPathType(controller.getSourcePathType());
+                    controller.AddPathType = controller.SourcePathType;
                 }
-                return VisitHistory.getRecentPath(controller.getAddPathType(), pathNumber);
+                return VisitHistoryTools.getRecentPath(controller.getAddPathType(), pathNumber);
             }
 
             @Override
@@ -1811,9 +1806,9 @@ public class BaseController implements Initializable {
             public List<VisitHistory> recentPaths() {
                 int pathNumber = AppVariables.fileRecentNumber / 3 + 1;
                 if (controller.getAddPathType() <= 0) {
-                    controller.setAddPathType(controller.getSourcePathType());
+                    controller.AddPathType = controller.SourcePathType;
                 }
-                return VisitHistory.getRecentPath(controller.getAddPathType(), pathNumber);
+                return VisitHistoryTools.getRecentPath(controller.getAddPathType(), pathNumber);
             }
 
             @Override
@@ -2116,7 +2111,7 @@ public class BaseController implements Initializable {
     }
 
     @FXML
-    public void addAction() {
+    public void addAction(ActionEvent event) {
 
     }
 
@@ -2171,11 +2166,6 @@ public class BaseController implements Initializable {
     }
 
     @FXML
-    public void moreAction() {
-
-    }
-
-    @FXML
     public void cancelAction() {
 
     }
@@ -2226,13 +2216,34 @@ public class BaseController implements Initializable {
     }
 
     @FXML
+    public void popAction() {
+
+    }
+
+    @FXML
+    public void withdrawAction() {
+
+    }
+
+    @FXML
+    public void closePopup(KeyEvent event) {
+        if (popMenu != null) {
+            popMenu.hide();
+        }
+        if (popup != null) {
+            popup.hide();
+        }
+    }
+
+    @FXML
     public void mybox(ActionEvent event) {
         openStage(CommonValues.MyboxFxml);
     }
 
-    public boolean clearSettings() {
+    public void clearUserSettings() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(getBaseTitle());
+        alert.setHeaderText(AppVariables.message("ClearPersonalSettings"));
         alert.setContentText(AppVariables.message("SureClear"));
         alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
         ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
@@ -2244,12 +2255,37 @@ public class BaseController implements Initializable {
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() != buttonSure) {
-            return false;
+            return;
         }
-        DerbyBase.clearData();
-        cleanAppPath();
-        AppVariables.initAppVaribles();
-        return true;
+        synchronized (this) {
+            if (task != null) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+
+                @Override
+                protected boolean handle() {
+                    try {
+                        new TableUserConf().clear();
+                        AppVariables.initAppVaribles();
+                        return true;
+                    } catch (Exception e) {
+                        logger.debug(e.toString());
+                        return false;
+                    }
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    refresh();
+                    popSuccessful();
+                }
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
     }
 
     public void cleanAppPath() {
@@ -2463,6 +2499,7 @@ public class BaseController implements Initializable {
     public Popup getPopup() {
         if (popup != null) {
             popup.hide();
+            popup = null;
         }
         popup = new Popup();
         popup.setAutoHide(true);
@@ -2480,6 +2517,7 @@ public class BaseController implements Initializable {
                 popup.hide();
             }
             popup = getPopup();
+            popup.setAutoFix(true);
             Label popupLabel = new Label(text);
             popupLabel.setStyle("-fx-background-color:black;"
                     + " -fx-text-fill: " + color + ";"
@@ -2665,18 +2703,6 @@ public class BaseController implements Initializable {
         return myScene;
     }
 
-    public void setMaskStroke() {
-
-    }
-
-    public void drawMaskRulerX() {
-
-    }
-
-    public void drawMaskRulerY() {
-
-    }
-
     public void multipleFilesGenerated(final List<String> fileNames) {
         try {
             if (fileNames == null || fileNames.isEmpty()) {
@@ -2732,29 +2758,6 @@ public class BaseController implements Initializable {
 
     public void dataChanged() {
 
-    }
-
-    @FXML
-    public void showPalette(ActionEvent event) {
-        showPalette((Control) event.getSource(), null, false);
-    }
-
-    public void showPalette(Control control, String title) {
-        showPalette(control, title, false);
-
-    }
-
-    public void showPalette(Control control, String title, boolean pickColor) {
-        if (paletteController == null || !paletteController.getMyStage().isShowing()) {
-            paletteController = (ColorPaletteController) openStage(CommonValues.ColorPaletteFxml);
-        }
-        paletteController.init(this, control, title, pickColor);
-
-    }
-
-    // pick color from outside
-    public boolean setColor(Control control, Color color) {
-        return true;
     }
 
     // pick coordinate from outside
@@ -2819,234 +2822,66 @@ public class BaseController implements Initializable {
     };
 
     /*
-        Static methods
-     */
-    public static void openImageViewer(File file) {
-        FxmlStage.openImageViewer(null, file);
-    }
-
-    public static void openImageViewer(String file) {
-        FxmlStage.openImageViewer(null, new File(file));
-    }
-
-    public static void openImageViewer(Image image) {
-        try {
-            final ImageViewerController controller = FxmlStage.openImageViewer(null);
-            if (controller != null) {
-                controller.loadImage(image);
-            }
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    public static void openImageViewer(ImageInformation info) {
-        try {
-            final ImageViewerController controller = FxmlStage.openImageViewer(null);
-            if (controller != null) {
-                controller.loadImage(info);
-            }
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    public static void openImageManufacture(String filename) {
-        FxmlStage.openImageManufacture(null, new File(filename));
-    }
-
-    public static void showImageInformation(ImageInformation info) {
-        if (info == null) {
-            return;
-        }
-        FxmlStage.openImageInformation(null, info);
-    }
-
-    public static void showImageMetaData(ImageInformation info) {
-        if (info == null) {
-            return;
-        }
-        FxmlStage.openImageMetaData(null, info);
-    }
-
-    /*
         get/set
      */
-    public String getTipsLabelKey() {
-        return TipsLabelKey;
+    public void setMyStage(Stage myStage) {
+        this.myStage = myStage;
     }
 
-    public void setTipsLabelKey(String TipsLabelKey) {
-        this.TipsLabelKey = TipsLabelKey;
+    public void setMyScene(Scene myScene) {
+        this.myScene = myScene;
+    }
+
+    public Pane getThisPane() {
+        return thisPane;
     }
 
     public String getLastPathKey() {
         return LastPathKey;
     }
 
-    public void setLastPathKey(String LastPathKey) {
-        this.LastPathKey = LastPathKey;
-    }
-
     public String getTargetPathKey() {
         return targetPathKey;
-    }
-
-    public void setTargetPathKey(String targetPathKey) {
-        this.targetPathKey = targetPathKey;
     }
 
     public String getSourcePathKey() {
         return sourcePathKey;
     }
 
-    public void setSourcePathKey(String sourcePathKey) {
-        this.sourcePathKey = sourcePathKey;
-    }
-
     public String getDefaultPathKey() {
         return defaultPathKey;
-    }
-
-    public void setDefaultPathKey(String defaultPathKey) {
-        this.defaultPathKey = defaultPathKey;
-    }
-
-    public String getSaveAsOptionsKey() {
-        return SaveAsOptionsKey;
-    }
-
-    public void setSaveAsOptionsKey(String SaveAsOptionsKey) {
-        this.SaveAsOptionsKey = SaveAsOptionsKey;
     }
 
     public int getSourceFileType() {
         return SourceFileType;
     }
 
-    public void setSourceFileType(int SourceFileType) {
-        this.SourceFileType = SourceFileType;
-    }
-
     public int getSourcePathType() {
         return SourcePathType;
-    }
-
-    public void setSourcePathType(int SourcePathType) {
-        this.SourcePathType = SourcePathType;
     }
 
     public int getTargetFileType() {
         return TargetFileType;
     }
 
-    public void setTargetFileType(int TargetFileType) {
-        this.TargetFileType = TargetFileType;
-    }
-
     public int getTargetPathType() {
         return TargetPathType;
-    }
-
-    public void setTargetPathType(int TargetPathType) {
-        this.TargetPathType = TargetPathType;
     }
 
     public int getAddFileType() {
         return AddFileType;
     }
 
-    public void setAddFileType(int AddFileType) {
-        this.AddFileType = AddFileType;
-    }
-
     public int getAddPathType() {
         return AddPathType;
-    }
-
-    public void setAddPathType(int AddPathType) {
-        this.AddPathType = AddPathType;
-    }
-
-    public int getOperationType() {
-        return operationType;
-    }
-
-    public void setOperationType(int operationType) {
-        this.operationType = operationType;
-    }
-
-    public List<FileChooser.ExtensionFilter> getFileExtensionFilter() {
-        return sourceExtensionFilter;
-    }
-
-    public void setFileExtensionFilter(
-            List<FileChooser.ExtensionFilter> fileExtensionFilter) {
-        this.sourceExtensionFilter = fileExtensionFilter;
-    }
-
-    public String getMyFxml() {
-        return myFxml;
-    }
-
-    public void setMyFxml(String myFxml) {
-        this.myFxml = myFxml;
-    }
-
-    public String getParentFxml() {
-        return parentFxml;
-    }
-
-    public void setParentFxml(String parentFxml) {
-        this.parentFxml = parentFxml;
-    }
-
-    public String getCurrentStatus() {
-        return currentStatus;
-    }
-
-    public void setCurrentStatus(String currentStatus) {
-        this.currentStatus = currentStatus;
-    }
-
-    public String getBaseName() {
-        return baseName;
-    }
-
-    public void setBaseName(String baseName) {
-        this.baseName = baseName;
-    }
-
-    public String getLoadFxml() {
-        return loadFxml;
     }
 
     public void setLoadFxml(String loadFxml) {
         this.loadFxml = loadFxml;
     }
 
-    public Alert getLoadingAlert() {
-        return loadingAlert;
-    }
-
-    public void setLoadingAlert(Alert loadingAlert) {
-        this.loadingAlert = loadingAlert;
-    }
-
-    public Task<Void> getTask() {
-        return task;
-    }
-
-    public void setTask(Task<Void> task) {
-        this.task = task;
-    }
-
-    public Task<Void> getBackgroundTask() {
-        return backgroundTask;
-    }
-
-    public void setBackgroundTask(Task<Void> backgroundTask) {
-        this.backgroundTask = backgroundTask;
+    public void setParentFxml(String parentFxml) {
+        this.parentFxml = parentFxml;
     }
 
     public BaseController getParentController() {
@@ -3057,20 +2892,8 @@ public class BaseController implements Initializable {
         this.parentController = parentController;
     }
 
-    public BaseController getMyController() {
-        return myController;
-    }
-
-    public void setMyController(BaseController myController) {
-        this.myController = myController;
-    }
-
-    public Timer getTimer() {
-        return timer;
-    }
-
-    public void setTimer(Timer timer) {
-        this.timer = timer;
+    public MainMenuController getMainMenuController() {
+        return mainMenuController;
     }
 
     public ContextMenu getPopMenu() {
@@ -3081,499 +2904,12 @@ public class BaseController implements Initializable {
         this.popMenu = popMenu;
     }
 
-    public boolean isIsSettingValues() {
-        return isSettingValues;
+    public Task<Void> getTask() {
+        return task;
     }
 
-    public void setIsSettingValues(boolean isSettingValues) {
-        this.isSettingValues = isSettingValues;
-    }
-
-    public File getSourceFile() {
-        return sourceFile;
-    }
-
-    public void setSourceFile(File sourceFile) {
-        this.sourceFile = sourceFile;
-    }
-
-    public File getTargetPath() {
-        return targetPath;
-    }
-
-    public void setTargetPath(File targetPath) {
-        this.targetPath = targetPath;
-    }
-
-    public File getTargetFile() {
-        return targetFile;
-    }
-
-    public void setTargetFile(File targetFile) {
-        this.targetFile = targetFile;
-    }
-
-    public SaveAsType getSaveAsType() {
-        return saveAsType;
-    }
-
-    public void setSaveAsType(SaveAsType saveAsType) {
-        this.saveAsType = saveAsType;
-    }
-
-    public Pane getThisPane() {
-        return thisPane;
-    }
-
-    public void setThisPane(Pane thisPane) {
-        this.thisPane = thisPane;
-    }
-
-    public Pane getMainMenu() {
-        return mainMenu;
-    }
-
-    public void setMainMenu(Pane mainMenu) {
-        this.mainMenu = mainMenu;
-    }
-
-    public Pane getOperationBar() {
-        return operationBar;
-    }
-
-    public void setOperationBar(Pane operationBar) {
-        this.operationBar = operationBar;
-    }
-
-    public MainMenuController getMainMenuController() {
-        return mainMenuController;
-    }
-
-    public void setMainMenuController(MainMenuController mainMenuController) {
-        this.mainMenuController = mainMenuController;
-    }
-
-    public TextField getSourceFileInput() {
-        return sourceFileInput;
-    }
-
-    public void setSourceFileInput(TextField sourceFileInput) {
-        this.sourceFileInput = sourceFileInput;
-    }
-
-    public TextField getSourcePathInput() {
-        return sourcePathInput;
-    }
-
-    public void setSourcePathInput(TextField sourcePathInput) {
-        this.sourcePathInput = sourcePathInput;
-    }
-
-    public TextField getTargetPathInput() {
-        return targetPathInput;
-    }
-
-    public void setTargetPathInput(TextField targetPathInput) {
-        this.targetPathInput = targetPathInput;
-    }
-
-    public TextField getTargetPrefixInput() {
-        return targetPrefixInput;
-    }
-
-    public void setTargetPrefixInput(TextField targetPrefixInput) {
-        this.targetPrefixInput = targetPrefixInput;
-    }
-
-    public TextField getTargetFileInput() {
-        return targetFileInput;
-    }
-
-    public void setTargetFileInput(TextField targetFileInput) {
-        this.targetFileInput = targetFileInput;
-    }
-
-    public TextField getStatusLabel() {
-        return statusLabel;
-    }
-
-    public void setStatusLabel(TextField statusLabel) {
-        this.statusLabel = statusLabel;
-    }
-
-    public OperationController getOperationBarController() {
-        return operationBarController;
-    }
-
-    public void setOperationBarController(
-            OperationController operationBarController) {
-        this.operationBarController = operationBarController;
-    }
-
-    public Button getselectFileButton() {
-        return selectFileButton;
-    }
-
-    public void setselectFileButton(Button selectFileButton) {
-        this.selectFileButton = selectFileButton;
-    }
-
-    public Button getCreateButton() {
-        return createButton;
-    }
-
-    public void setCreateButton(Button createButton) {
-        this.createButton = createButton;
-    }
-
-    public Button getCopyButton() {
-        return copyButton;
-    }
-
-    public void setCopyButton(Button copyButton) {
-        this.copyButton = copyButton;
-    }
-
-    public Button getPasteButton() {
-        return pasteButton;
-    }
-
-    public void setPasteButton(Button pasteButton) {
-        this.pasteButton = pasteButton;
-    }
-
-    public Button getDeleteButton() {
-        return deleteButton;
-    }
-
-    public void setDeleteButton(Button deleteButton) {
-        this.deleteButton = deleteButton;
-    }
-
-    public Button getSaveButton() {
-        return saveButton;
-    }
-
-    public void setSaveButton(Button saveButton) {
-        this.saveButton = saveButton;
-    }
-
-    public Button getInfoButton() {
-        return infoButton;
-    }
-
-    public void setInfoButton(Button infoButton) {
-        this.infoButton = infoButton;
-    }
-
-    public Button getMetaButton() {
-        return metaButton;
-    }
-
-    public void setMetaButton(Button metaButton) {
-        this.metaButton = metaButton;
-    }
-
-    public Button getSelectAllButton() {
-        return selectAllButton;
-    }
-
-    public void setSelectAllButton(Button selectAllButton) {
-        this.selectAllButton = selectAllButton;
-    }
-
-    public Button getOkButton() {
-        return okButton;
-    }
-
-    public void setOkButton(Button okButton) {
-        this.okButton = okButton;
-    }
-
-    public Button getStartButton() {
-        return startButton;
-    }
-
-    public void setStartButton(Button startButton) {
-        this.startButton = startButton;
-    }
-
-    public Button getFirstButton() {
-        return firstButton;
-    }
-
-    public void setFirstButton(Button firstButton) {
-        this.firstButton = firstButton;
-    }
-
-    public Button getLastButton() {
-        return lastButton;
-    }
-
-    public void setLastButton(Button lastButton) {
-        this.lastButton = lastButton;
-    }
-
-    public Button getPreviousButton() {
-        return previousButton;
-    }
-
-    public void setPreviousButton(Button previousButton) {
-        this.previousButton = previousButton;
-    }
-
-    public Button getNextButton() {
-        return nextButton;
-    }
-
-    public void setNextButton(Button nextButton) {
-        this.nextButton = nextButton;
-    }
-
-    public Button getGoButton() {
-        return goButton;
-    }
-
-    public void setGoButton(Button goButton) {
-        this.goButton = goButton;
-    }
-
-    public Button getPreviewButton() {
-        return previewButton;
-    }
-
-    public void setPreviewButton(Button previewButton) {
-        this.previewButton = previewButton;
-    }
-
-    public Button getCropButton() {
-        return cropButton;
-    }
-
-    public void setCropButton(Button cropButton) {
-        this.cropButton = cropButton;
-    }
-
-    public Button getSaveAsButton() {
-        return saveAsButton;
-    }
-
-    public void setSaveAsButton(Button saveAsButton) {
-        this.saveAsButton = saveAsButton;
-    }
-
-    public Button getRecoverButton() {
-        return recoverButton;
-    }
-
-    public void setRecoverButton(Button recoverButton) {
-        this.recoverButton = recoverButton;
-    }
-
-    public Button getRenameButton() {
-        return renameButton;
-    }
-
-    public void setRenameButton(Button renameButton) {
-        this.renameButton = renameButton;
-    }
-
-    public Button getTipsButton() {
-        return tipsButton;
-    }
-
-    public void setTipsButton(Button tipsButton) {
-        this.tipsButton = tipsButton;
-    }
-
-    public Button getViewButton() {
-        return viewButton;
-    }
-
-    public void setViewButton(Button viewButton) {
-        this.viewButton = viewButton;
-    }
-
-    public Button getPopButton() {
-        return popButton;
-    }
-
-    public void setPopButton(Button popButton) {
-        this.popButton = popButton;
-    }
-
-    public Button getRefButton() {
-        return refButton;
-    }
-
-    public void setRefButton(Button refButton) {
-        this.refButton = refButton;
-    }
-
-    public Button getUndoButton() {
-        return undoButton;
-    }
-
-    public void setUndoButton(Button undoButton) {
-        this.undoButton = undoButton;
-    }
-
-    public Button getRedoButton() {
-        return redoButton;
-    }
-
-    public void setRedoButton(Button redoButton) {
-        this.redoButton = redoButton;
-    }
-
-    public Button getTransparentButton() {
-        return transparentButton;
-    }
-
-    public void setTransparentButton(Button transparentButton) {
-        this.transparentButton = transparentButton;
-    }
-
-    public Button getWhiteButton() {
-        return whiteButton;
-    }
-
-    public void setWhiteButton(Button whiteButton) {
-        this.whiteButton = whiteButton;
-    }
-
-    public Button getBlackButton() {
-        return blackButton;
-    }
-
-    public void setBlackButton(Button blackButton) {
-        this.blackButton = blackButton;
-    }
-
-    public VBox getParaBox() {
-        return paraBox;
-    }
-
-    public void setParaBox(VBox paraBox) {
-        this.paraBox = paraBox;
-    }
-
-    public Label getBottomLabel() {
-        return bottomLabel;
-    }
-
-    public void setBottomLabel(Label bottomLabel) {
-        this.bottomLabel = bottomLabel;
-    }
-
-    public Label getTipsLabel() {
-        return tipsLabel;
-    }
-
-    public void setTipsLabel(Label tipsLabel) {
-        this.tipsLabel = tipsLabel;
-    }
-
-    public ImageView getTipsView() {
-        return tipsView;
-    }
-
-    public void setTipsView(ImageView tipsView) {
-        this.tipsView = tipsView;
-    }
-
-    public ImageView getLinksView() {
-        return linksView;
-    }
-
-    public void setLinksView(ImageView linksView) {
-        this.linksView = linksView;
-    }
-
-    public ChoiceBox getSaveAsOptionsBox() {
-        return saveAsOptionsBox;
-    }
-
-    public void setSaveAsOptionsBox(ChoiceBox saveAsOptionsBox) {
-        this.saveAsOptionsBox = saveAsOptionsBox;
-    }
-
-    public void setBaseTitle(String baseTitle) {
-        this.baseTitle = baseTitle;
-    }
-
-    public void setMyStage(Stage myStage) {
-        this.myStage = myStage;
-    }
-
-    public void setMyScene(Scene myScene) {
-        this.myScene = myScene;
-    }
-
-    public void setPopupTimer(Timer popupTimer) {
-        this.popupTimer = popupTimer;
-    }
-
-    public void setPopup(Popup popup) {
-        this.popup = popup;
-    }
-
-    public File getSourcePath() {
-        return sourcePath;
-    }
-
-    public void setSourcePath(File sourcePath) {
-        this.sourcePath = sourcePath;
-    }
-
-    public List<FileChooser.ExtensionFilter> getSourceExtensionFilter() {
-        return sourceExtensionFilter;
-    }
-
-    public void setSourceExtensionFilter(
-            List<FileChooser.ExtensionFilter> sourceExtensionFilter) {
-        this.sourceExtensionFilter = sourceExtensionFilter;
-    }
-
-    public List<FileChooser.ExtensionFilter> getTargetExtensionFilter() {
-        return targetExtensionFilter;
-    }
-
-    public void setTargetExtensionFilter(
-            List<FileChooser.ExtensionFilter> targetExtensionFilter) {
-        this.targetExtensionFilter = targetExtensionFilter;
-    }
-
-    public MaximizedListener getMaximizedListener() {
-        return maximizedListener;
-    }
-
-    public void setMaximizedListener(MaximizedListener maximizedListener) {
-        this.maximizedListener = maximizedListener;
-    }
-
-    public FullscreenListener getFullscreenListener() {
-        return fullscreenListener;
-    }
-
-    public void setFullscreenListener(FullscreenListener fullscreenListener) {
-        this.fullscreenListener = fullscreenListener;
-    }
-
-    public ColorPaletteController getPaletteController() {
-        return paletteController;
-    }
-
-    public void setPaletteController(ColorPaletteController paletteController) {
-        this.paletteController = paletteController;
-    }
-
-    public SimpleBooleanProperty getIsPickingColor() {
-        return isPickingColor;
-    }
-
-    public void setIsPickingColor(SimpleBooleanProperty isPickingColor) {
-        this.isPickingColor = isPickingColor;
+    public void setTask(Task<Void> task) {
+        this.task = task;
     }
 
 }

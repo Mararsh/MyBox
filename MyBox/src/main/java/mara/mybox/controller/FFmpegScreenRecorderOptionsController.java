@@ -6,22 +6,23 @@ import java.awt.Rectangle;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
-import java.util.Arrays;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
@@ -36,11 +37,14 @@ public class FFmpegScreenRecorderOptionsController extends FFmpegOptionsControll
     protected Rectangle snapArea;
     protected int framesPerSecond, delayPerFrame, audioThreadQueueSize, videoThreadQueueSize,
             screenWidth, screenHeight, x, y;
-    protected String audioDevice, vcodec, title;
-    protected long duration;
+    protected String os, audioDevice, vcodec, title;
 
     @FXML
     protected CheckBox audioCheck, videoCheck;
+    @FXML
+    protected VBox videoBox;
+    @FXML
+    protected HBox fullScreenBox, windowBox;
     @FXML
     protected Label audioComments, screenSizeLabel, infoLabel;
     @FXML
@@ -52,7 +56,7 @@ public class FFmpegScreenRecorderOptionsController extends FFmpegOptionsControll
     protected RadioButton fullscreenRadio, windowRadio, rectangleRadio,
             libx264rgbRadio, h264nvencRadio, libx264Radio, vcodecRadio;
     @FXML
-    protected ComboBox<String> durationSelector;
+    protected ControlTimeLength durationController, delayController;
 
     // http://trac.ffmpeg.org/wiki/Capture/Desktop
     // http://trac.ffmpeg.org/wiki/Encode/H.264
@@ -67,12 +71,30 @@ public class FFmpegScreenRecorderOptionsController extends FFmpegOptionsControll
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
-            super.initializeNext();
+            super.initControls();
 
             FxmlControl.setTooltip(tipsView, new Tooltip(message("FFmpegOptionsTips")
-                    + "\n" + message("ScreenRecorderComments")));
+                    + "\n" + message("FFmpegScreenRecorderComments")));
+
+            os = SystemTools.os();
+            switch (os) {
+                case "win":
+                    checkAudioDevice();
+                    break;
+                case "linux":
+                    windowRadio.setDisable(true);
+                    videoBox.getChildren().remove(windowBox);
+                    audioComments.setText("alsa");
+                    break;
+                case "mac":
+                    infoLabel.setText(message("SupportWinOnly"));
+                    infoLabel.setStyle(badStyle);
+                    break;
+                default:
+                    return;
+            }
 
             audioCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -90,7 +112,6 @@ public class FFmpegScreenRecorderOptionsController extends FFmpegOptionsControll
             });
             videoCheck.setSelected(AppVariables.getUserConfigBoolean("FFmpegScreenRecorderVideo", true));
 
-            checkAudioDevice();
             checkThreadQueueSizes();
 
             DisplayMode dm = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode();
@@ -149,49 +170,30 @@ public class FFmpegScreenRecorderOptionsController extends FFmpegOptionsControll
             });
 
             checkScope();
-            String os = SystemTools.os();
-//            if ("linux".equals(os)) {
-//                rectangleRadio.fire();
-//                fullscreenRadio.setDisable(true);
-//                windowRadio.setDisable(true);
-//            }
-            if (!"win".equals(os)) {
-                infoLabel.setText(message("SupportWinOnly"));
-                infoLabel.setStyle(badStyle);
-            }
 
-            duration = -1;
-            durationSelector.getItems().addAll(Arrays.asList(
-                    message("Unlimit"), "10", "5", "15", "20", "30", "45",
-                    "60   1 " + message("Minutes"), "600   10 " + message("Minutes"),
-                    "900   15 " + message("Minutes"), "1800   30 " + message("Minutes"),
-                    "3600   1 " + message("Hours"), "5400   1.5 " + message("Hours"),
-                    "7200   2" + message("Hours")
-            ));
-            durationSelector.getSelectionModel().selectedItemProperty().addListener(
-                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                        if (newValue != null && !newValue.isEmpty()) {
-                            AppVariables.setUserConfigValue("ffmpegScreenRecorderDuration", newValue);
-                        }
-                        if (newValue == null || newValue.isEmpty() || message("Unlimit").equals(newValue)) {
-                            duration = -1;
-                            return;
-                        }
-                        try {
-                            int pos = newValue.indexOf(' ');
-                            String s = newValue;
-                            if (pos >= 0) {
-                                s = newValue.substring(0, pos);
-                            }
-                            long v = Long.parseLong(s);
-                            if (v > 0) {
-                                duration = v;
-                            }
-                        } catch (Exception e) {
-                        }
-                    });
-            durationSelector.getSelectionModel().select(
-                    AppVariables.getUserConfigValue("ffmpegScreenRecorderDuration", message("Unlimit")));
+            delayController.permitInvalid(false).permitNotSetting(true)
+                    .init(baseName + "Delay", 5);
+            delayController.changed.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov,
+                        Boolean oldValue, Boolean newValue) {
+                    if (newValue) {
+                        delayController.checked();
+                    }
+                }
+            });
+
+            durationController.permitInvalid(false).permitNotSetting(true)
+                    .init(baseName + "Duration", -1);
+            durationController.changed.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov,
+                        Boolean oldValue, Boolean newValue) {
+                    if (newValue) {
+                        durationController.checked();
+                    }
+                }
+            });
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -200,7 +202,6 @@ public class FFmpegScreenRecorderOptionsController extends FFmpegOptionsControll
 
     protected void checkAudioDevice() {
         try {
-
             // ffmpeg -list_devices true -f dshow -i dummy
             ProcessBuilder pb = new ProcessBuilder(
                     executable.getAbsolutePath(),
@@ -395,8 +396,8 @@ public class FFmpegScreenRecorderOptionsController extends FFmpegOptionsControll
                 }
             }
         }
-
-        durationSelector.getSelectionModel().select(message("Unlimit"));
+        delayController.select(5);
+        durationController.select(-1);
     }
 
 }

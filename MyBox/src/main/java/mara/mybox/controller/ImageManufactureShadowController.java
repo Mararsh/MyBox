@@ -3,23 +3,17 @@ package mara.mybox.controller;
 import java.util.Arrays;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Control;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Modality;
 import mara.mybox.controller.ImageManufactureController.ImageOperation;
-import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -32,50 +26,25 @@ public class ImageManufactureShadowController extends ImageManufactureOperationC
     protected int shadow;
 
     @FXML
-    protected Rectangle bgRect;
-    @FXML
     protected ComboBox shadowBox;
     @FXML
     protected CheckBox preAlphaCheck;
     @FXML
-    protected Button paletteButton;
-
-    public ImageManufactureShadowController() {
-        baseTitle = AppVariables.message("ImageManufactureShadow");
-        operation = ImageOperation.Shadow;
-    }
+    protected ColorSetController colorSetController;
 
     @Override
-    public void initControls() {
+    public void initPane() {
         try {
-            super.initControls();
-            myPane = shadowPane;
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-
-    }
-
-    @Override
-    public void initPane(ImageManufactureController parent) {
-        try {
-            super.initPane(parent);
-            if (parent == null) {
-                return;
-            }
-
-            if (parent.imageInformation != null
-                    && CommonValues.NoAlphaImages.contains(parent.imageInformation.getImageFormat())) {
+            if (imageController.imageInformation != null
+                    && CommonValues.NoAlphaImages.contains(imageController.imageInformation.getImageFormat())) {
                 preAlphaCheck.setSelected(true);
                 preAlphaCheck.setDisable(true);
             } else {
                 preAlphaCheck.setSelected(false);
                 preAlphaCheck.setDisable(false);
             }
-            String c = AppVariables.getUserConfigValue("ImageShadowBackground", Color.BLACK.toString());
-            bgRect.setFill(Color.web(c));
-            FxmlControl.setTooltip(bgRect, FxmlColor.colorNameDisplay((Color) bgRect.getFill()));
+
+            colorSetController.init(this, baseName + "Color", Color.BLACK);
 
             shadowBox.getItems().clear();
             int width = (int) imageView.getImage().getWidth();
@@ -110,22 +79,10 @@ public class ImageManufactureShadowController extends ImageManufactureOperationC
     }
 
     @Override
-    public boolean setColor(Control control, Color color) {
-        if (control == null || color == null) {
-            return false;
-        }
-        if (paletteButton.equals(control)) {
-            bgRect.setFill(color);
-            FxmlControl.setTooltip(bgRect, FxmlColor.colorNameDisplay(color));
-            AppVariables.setUserConfigValue("ImageShadowBackground", color.toString());
-        }
-        return true;
-    }
-
-    @FXML
-    @Override
-    public void showPalette(ActionEvent event) {
-        showPalette(paletteButton, message("Shadow"), true);
+    protected void paneExpanded() {
+        imageController.showRightPane();
+        imageController.showImagePane();
+        imageController.hideScopePane();
     }
 
     @FXML
@@ -146,10 +103,10 @@ public class ImageManufactureShadowController extends ImageManufactureOperationC
                 protected boolean handle() {
                     if (preAlphaCheck.isSelected()) {
                         newImage = FxmlImageManufacture.addShadowNoAlpha(imageView.getImage(),
-                                shadow, (Color) bgRect.getFill());
+                                shadow, (Color) colorSetController.rect.getFill());
                     } else {
                         newImage = FxmlImageManufacture.addShadowAlpha(imageView.getImage(),
-                                shadow, (Color) bgRect.getFill());
+                                shadow, (Color) colorSetController.rect.getFill());
                     }
                     if (task == null || isCancelled()) {
                         return false;
@@ -159,11 +116,12 @@ public class ImageManufactureShadowController extends ImageManufactureOperationC
 
                 @Override
                 protected void whenSucceeded() {
-                    parent.updateImage(ImageOperation.Shadow, shadow + "", null, newImage, cost);
+                    imageController.popSuccessful();
+                    imageController.updateImage(ImageOperation.Shadow, shadow + "", null, newImage, cost);
                 }
 
             };
-            parent.openHandlingStage(task, Modality.WINDOW_MODAL);
+            imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();

@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import mara.mybox.data.EpidemicReport;
@@ -19,6 +20,8 @@ import static mara.mybox.db.DerbyBase.stringValue;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara
@@ -32,6 +35,17 @@ public class TableEpidemicReport extends TableBase<EpidemicReport> {
      */
     public TableEpidemicReport() {
         tableName = "Epidemic_Report";
+        defineColumns();
+    }
+
+    public TableEpidemicReport(boolean defineColumns) {
+        tableName = "Epidemic_Report";
+        if (defineColumns) {
+            defineColumns();
+        }
+    }
+
+    public final TableEpidemicReport defineColumns() {
         addColumn(new ColumnDefinition("epid", ColumnType.Long, true, true).setIsID(true));
         addColumn(new ColumnDefinition("data_set", ColumnType.String, true).setLength(1024));
         addColumn(new ColumnDefinition("time", ColumnType.Datetime, true));
@@ -44,6 +58,7 @@ public class TableEpidemicReport extends TableBase<EpidemicReport> {
         addColumn(new ColumnDefinition("increased_healed", ColumnType.Long));
         addColumn(new ColumnDefinition("increased_dead", ColumnType.Long));
         addColumn(new ColumnDefinition("source", ColumnType.Short, true));  // 1:predefined 2:added 3:filled 4:statistic others:unknown
+        return this;
     }
 
     /*
@@ -151,17 +166,58 @@ public class TableEpidemicReport extends TableBase<EpidemicReport> {
     public static final String DeleteDataset
             = "DELETE FROM Epidemic_Report WHERE data_set=? AND source<>1 ";
 
+    @Override
+    public EpidemicReport newData() {
+        return new EpidemicReport();
+    }
+
+    @Override
+    public boolean setValue(EpidemicReport data, String column, Object value) {
+        if (data == null || column == null) {
+            return false;
+        }
+        return data.setValue(column, value);
+    }
+
+    @Override
+    public Object getValue(EpidemicReport data, String column) {
+        if (data == null || column == null) {
+            return false;
+        }
+        return data.getValue(column);
+    }
+
+    @Override
+    public void setId(EpidemicReport source, EpidemicReport target) {
+        try {
+            if (source == null || target == null) {
+                return;
+            }
+            target.setEpid(source.getEpid());
+        } catch (Exception e) {
+        }
+    }
+
+    @Override
+    public boolean valid(EpidemicReport data) {
+        if (data == null) {
+            return false;
+        }
+        return data.valid();
+    }
+
     public static void moveEPid() {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                 Statement statement = conn.createStatement()) {
             long max = 0;
             String sql = "SELECT max(epid) FROM Epidemic_Report";
-            try ( ResultSet results = conn.createStatement().executeQuery(sql)) {
+            try ( ResultSet results = statement.executeQuery(sql)) {
                 if (results.next()) {
                     max = results.getLong(1);
                 }
             }
             sql = "ALTER TABLE Epidemic_Report ALTER COLUMN epid RESTART WITH " + (max + 1);
-            conn.createStatement().executeUpdate(sql);
+            statement.executeUpdate(sql);
         } catch (Exception e) {
             failed(e);
             logger.debug(e.toString());
@@ -170,9 +226,10 @@ public class TableEpidemicReport extends TableBase<EpidemicReport> {
 
     public static List<EpidemicReport> dataQuery(String sql, boolean decodeAncestors) {
         List<EpidemicReport> reports = new ArrayList<>();
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                 Statement statement = conn.createStatement()) {
             conn.setReadOnly(true);
-            try ( ResultSet results = conn.createStatement().executeQuery(sql)) {
+            try ( ResultSet results = statement.executeQuery(sql)) {
                 while (results.next()) {
                     EpidemicReport report = statisticViewQuery(conn, results, decodeAncestors);
                     reports.add(report);
@@ -282,7 +339,7 @@ public class TableEpidemicReport extends TableBase<EpidemicReport> {
         try {
 
             EpidemicReport report = new EpidemicReport();
-            report.setId(results.getLong("epid"));
+            report.setEpid(results.getLong("epid"));
             report.setDataSet(results.getString("data_set"));
             report.setLocationid(results.getLong("locationid"));
             GeographyCode location = TableGeographyCode.readResults(conn, results, decodeAncestors);
@@ -318,7 +375,7 @@ public class TableEpidemicReport extends TableBase<EpidemicReport> {
         }
         try {
             EpidemicReport report = new EpidemicReport();
-            report.setId(results.getLong("epid"));
+            report.setEpid(results.getLong("epid"));
             report.setDataSet(results.getString("data_set"));
             report.setLocationid(results.getLong("locationid"));
             report.setTime(results.getTimestamp("time").getTime());
@@ -377,7 +434,7 @@ public class TableEpidemicReport extends TableBase<EpidemicReport> {
         }
         try {
             boolean exist = false;
-            if (report.getId() <= 0) {
+            if (report.getEpid() <= 0) {
                 try ( PreparedStatement statement = conn.prepareStatement(EqualQuery)) {
                     statement.setMaxRows(1);
                     statement.setString(1, report.getDataSet());
@@ -386,14 +443,14 @@ public class TableEpidemicReport extends TableBase<EpidemicReport> {
                     try ( ResultSet results = statement.executeQuery()) {
                         if (results.next()) {
                             exist = true;
-                            report.setId(results.getLong("epid"));
+                            report.setEpid(results.getLong("epid"));
                         }
                     }
                 }
             } else {
                 try ( PreparedStatement statement = conn.prepareStatement(EPidQuery)) {
                     statement.setMaxRows(1);
-                    statement.setLong(1, report.getId());
+                    statement.setLong(1, report.getEpid());
                     try ( ResultSet results = statement.executeQuery()) {
                         if (results.next()) {
                             exist = true;
@@ -443,18 +500,18 @@ public class TableEpidemicReport extends TableBase<EpidemicReport> {
                     continue;
                 }
                 boolean exist = false;
-                if (report.getId() <= 0) {
+                if (report.getEpid() <= 0) {
                     equalQuery.setString(1, report.getDataSet());
                     equalQuery.setString(2, DateTools.datetimeToString(report.getTime()));
                     equalQuery.setLong(3, report.getLocationid());
                     try ( ResultSet results = equalQuery.executeQuery()) {
                         if (results.next()) {
                             exist = true;
-                            report.setId(results.getLong("epid"));
+                            report.setEpid(results.getLong("epid"));
                         }
                     }
                 } else {
-                    epidQuery.setLong(1, report.getId());
+                    epidQuery.setLong(1, report.getEpid());
                     try ( ResultSet results = epidQuery.executeQuery()) {
                         if (results.next()) {
                             exist = true;
@@ -548,7 +605,7 @@ public class TableEpidemicReport extends TableBase<EpidemicReport> {
             return false;
         }
         try {
-            if (report.getId() > 0) {
+            if (report.getEpid() > 0) {
                 try ( PreparedStatement statement = conn.prepareStatement(UpdateAsEPid)) {
                     return updateAsEPid(statement, report);
                 }
@@ -565,7 +622,7 @@ public class TableEpidemicReport extends TableBase<EpidemicReport> {
     }
 
     public static boolean updateAsEPid(PreparedStatement statement, EpidemicReport report) {
-        if (statement == null || !validReport(report) || report.getId() < 0) {
+        if (statement == null || !validReport(report) || report.getEpid() < 0) {
             return false;
         }
         try {
@@ -584,7 +641,7 @@ public class TableEpidemicReport extends TableBase<EpidemicReport> {
     // Should not run Batch updateData against EpidemicReport because each new data need compare previous data.
     // External data may include unexpected data inconsistent.
     private static boolean setUpdateAsEPid(PreparedStatement statement, EpidemicReport report) {
-        if (statement == null || !validReport(report) || report.getId() < 0) {
+        if (statement == null || !validReport(report) || report.getEpid() < 0) {
             return false;
         }
         try {
@@ -598,7 +655,7 @@ public class TableEpidemicReport extends TableBase<EpidemicReport> {
             statement.setLong(8, report.getIncreasedHealed());
             statement.setLong(9, report.getIncreasedDead());
             statement.setShort(10, (short) report.getSource());
-            statement.setLong(11, report.getId());
+            statement.setLong(11, report.getEpid());
             return true;
         } catch (Exception e) {
             failed(e);
@@ -822,6 +879,28 @@ public class TableEpidemicReport extends TableBase<EpidemicReport> {
             logger.debug(e.toString());
             return false;
         }
+    }
+
+    @Override
+    public List<String> importNecessaryFields() {
+        return Arrays.asList(
+                message("DataSet"), message("Time"), message("Confirmed"), message("Healed"), message("Dead"),
+                message("Longitude"), message("Latitude"), message("Level"),
+                message("Continent"), message("Country"), message("Province"), message("City"),
+                message("County"), message("Town"), message("Village"), message("Building"), message("PointOfInterest")
+        );
+    }
+
+    @Override
+    public List<String> importAllFields() {
+        return Arrays.asList(
+                message("DataSet"), message("Time"), message("Confirmed"), message("Healed"), message("Dead"),
+                message("IncreasedConfirmed"), message("IncreasedHealed"), message("IncreasedDead"),
+                message("Longitude"), message("Latitude"), message("Level"),
+                message("Continent"), message("Country"), message("Province"), message("City"),
+                message("County"), message("Town"), message("Village"), message("Building"), message("PointOfInterest"),
+                message("DataSource")
+        );
     }
 
 }

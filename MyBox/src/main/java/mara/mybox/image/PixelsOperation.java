@@ -10,6 +10,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import mara.mybox.data.IntPoint;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonFxValues;
 
 /**
@@ -23,8 +24,8 @@ import mara.mybox.value.CommonFxValues;
 public class PixelsOperation {
 
     protected BufferedImage image;
-    protected boolean isDithering, boolPara, skipTransparent = true;
-    protected int intPara1, intPara2, intPara3;
+    protected boolean isDithering, boolPara, skipTransparent = true, excludeScope;
+    protected int intPara1, intPara2, intPara3, scopeColor = 0;
     protected float floatPara1, floatPara2;
     protected Color colorPara1, colorPara2, bkColor;
     protected ImageScope scope;
@@ -50,7 +51,7 @@ public class PixelsOperation {
 
     public PixelsOperation() {
         this.bkColor = ImageColor.getAlphaColor();
-
+        excludeScope = false;
     }
 
     public PixelsOperation(BufferedImage image, ImageScope scope, OperationType operationType) {
@@ -297,7 +298,7 @@ public class PixelsOperation {
                 thisLine[0] = new Color(image.getRGB(0, 0), true);
             }
             Color newColor;
-            int pixel, transparent = 0, white = Color.WHITE.getRGB();
+            int pixel, white = Color.WHITE.getRGB();
             for (int y = 0; y < image.getHeight(); y++) {
                 for (int x = 0; x < image.getWidth(); x++) {
                     pixel = image.getRGB(x, y);
@@ -308,14 +309,16 @@ public class PixelsOperation {
                     } else {
 
                         inScope = isWhole || scope.inScope(x, y, color);
-
+                        if (excludeScope) {
+                            inScope = !inScope;
+                        }
                         if (isDithering && y == thisLineY) {
                             color = thisLine[x];
                         }
                         if (isShowScope) {
                             newColor = color;
                             if (inScope) {
-                                target.setRGB(x, y, transparent);
+                                target.setRGB(x, y, scopeColor);
                             } else {
                                 target.setRGB(x, y, white);
                             }
@@ -359,6 +362,9 @@ public class PixelsOperation {
             }
             BufferedImage target = new BufferedImage(imageWidth, imageHeight, imageType);
             boolean excluded = scope.isColorExcluded();
+            if (excludeScope) {
+                excluded = !excluded;
+            }
             if (isShowScope) {
                 if (excluded) {
                     Graphics2D g2d = target.createGraphics();
@@ -390,7 +396,7 @@ public class PixelsOperation {
 
             boolean[][] visited = new boolean[imageHeight][imageWidth];
             Queue<IntPoint> queue = new LinkedList<>();
-            int transpaernt = 0, white = Color.WHITE.getRGB();
+            int white = Color.WHITE.getRGB();
             boolean eightNeighbor = scope.isEightNeighbor();
             for (IntPoint point : points) {
                 Color startColor = new Color(image.getRGB(point.getX(), point.getY()), true);
@@ -412,7 +418,7 @@ public class PixelsOperation {
                             if (excluded) {
                                 target.setRGB(x, y, white);
                             } else {
-                                target.setRGB(x, y, transpaernt);
+                                target.setRGB(x, y, scopeColor);
                             }
                         } else {
                             if (excluded) {
@@ -1569,6 +1575,38 @@ public class PixelsOperation {
 
     public void setColorActionType(ColorActionType colorActionType) {
         this.colorActionType = colorActionType;
+    }
+
+    public int getScopeColor() {
+        return scopeColor;
+    }
+
+    public void setScopeColor(int scopeColor) {
+        this.scopeColor = scopeColor;
+    }
+
+    public boolean isSkipTransparent() {
+        return skipTransparent;
+    }
+
+    public void setSkipTransparent(boolean skipTransparent) {
+        this.skipTransparent = skipTransparent;
+    }
+
+    public boolean isExcludeScope() {
+        return excludeScope;
+    }
+
+    public void setExcludeScope(boolean excludeScope) {
+        this.excludeScope = excludeScope;
+    }
+
+    public Color getBkColor() {
+        return bkColor;
+    }
+
+    public void setBkColor(Color bkColor) {
+        this.bkColor = bkColor;
     }
 
 }

@@ -150,15 +150,6 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </CheckBox>
-                <ToggleButton fx:id="moreButton" mnemonicParsing="false">
-                    <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/iconMore.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </ToggleButton>
             </children>
         </FlowPane>
         <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">

@@ -17,6 +17,7 @@ import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.DoubleShape;
 import mara.mybox.data.IntPoint;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -424,29 +425,7 @@ public class ImageScope {
             targetScope.setImage(sourceScope.getImage());
             targetScope.setScopeType(sourceScope.getScopeType());
             targetScope.setColorScopeType(sourceScope.getColorScopeType());
-            List<IntPoint> npoints = new ArrayList<>();
-            if (sourceScope.getPoints() != null) {
-                npoints.addAll(sourceScope.getPoints());
-            }
-            targetScope.setPoints(npoints);
-            List<Color> ncolors = new ArrayList<>();
-            if (sourceScope.getColors() != null) {
-                ncolors.addAll(sourceScope.getColors());
-            }
-            targetScope.setColors(ncolors);
-            targetScope.setRectangle(sourceScope.getRectangle().cloneValues());
-            targetScope.setCircle(sourceScope.getCircle().cloneValues());
-            targetScope.setEllipse(sourceScope.getEllipse().cloneValues());
-            targetScope.setPolygon(sourceScope.getPolygon().cloneValues());
-            targetScope.setColorDistance(sourceScope.getColorDistance());
-            targetScope.setColorDistance2(sourceScope.getColorDistance2());
-            targetScope.setHsbDistance(sourceScope.getHsbDistance());
-            targetScope.setColorExcluded(sourceScope.isColorExcluded());
-            targetScope.setAreaExcluded(sourceScope.isAreaExcluded());
-            targetScope.setOpacity(sourceScope.getOpacity());
-            targetScope.setCreateTime(sourceScope.getCreateTime());
-            targetScope.setOutline(sourceScope.getOutline());
-
+            cloneValues(targetScope, sourceScope);
         } catch (Exception e) {
         }
     }

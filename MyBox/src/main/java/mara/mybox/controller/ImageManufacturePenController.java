@@ -5,13 +5,10 @@ import java.util.Arrays;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
@@ -22,17 +19,13 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.paint.Paint;
 import javafx.stage.Modality;
 import mara.mybox.controller.ImageManufactureController.ImageOperation;
 import mara.mybox.data.DoubleCircle;
-import mara.mybox.data.DoubleLines;
 import mara.mybox.data.DoublePoint;
-import mara.mybox.data.DoublePolyline;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.DoubleShape;
-import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.image.ImageMosaic.MosaicType;
@@ -67,51 +60,23 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
     @FXML
     protected ComboBox<String> strokeWidthBox, strokeTypeBox, arcBox, intensityBox, opacityBox;
     @FXML
-    protected Label commentLabel;
-    @FXML
-    protected Button withdrawButton, paletteButton, paletteFillButton;
+    protected Label commentsLabel;
     @FXML
     protected CheckBox fillCheck, dottedCheck;
     @FXML
-    protected Rectangle strokeRect, fillRect;
+    protected ColorSetController strokeColorSetController;
+    @FXML
+    protected ColorSetController fillColorSetController;
 
     public enum PenType {
-        Polyline, DrawLines, Erase, Rectangle, Circle, Ellipse, Polygon, Frosted,
-        Mosaic
-    }
-
-    public ImageManufacturePenController() {
-        baseTitle = AppVariables.message("ImageManufacturePen");
-        operation = ImageOperation.Pen;
+        Polyline, DrawLines, Erase, Rectangle, Circle, Ellipse, Polygon, Frosted, Mosaic
     }
 
     @Override
-    public void initControls() {
+    public void initPane() {
         try {
-            super.initControls();
-            myPane = penPane;
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-
-    }
-
-    @Override
-    public void initPane(ImageManufactureController parent) {
-        try {
-            super.initPane(parent);
-            if (parent == null) {
-                return;
-            }
-
             lastX = lastY = -1;
-            imageController.maskLineData = new DoublePolyline();
-            imageController.maskLineLines = new ArrayList<>();
-            imageController.maskPenData = new DoubleLines();
-            imageController.maskPenLines = new ArrayList<>();
             setBox.getChildren().clear();
-
             typeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue<? extends Toggle> ov,
@@ -186,13 +151,23 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
             });
             arcBox.getSelectionModel().select(AppVariables.getUserConfigValue("ImagePenArcWidth", "0") + "");
 
-            String c = AppVariables.getUserConfigValue("ImagePenStrokeColor", Color.RED.toString());
-            strokeRect.setFill(Color.web(c));
-            FxmlControl.setTooltip(strokeRect, FxmlColor.colorNameDisplay((Color) strokeRect.getFill()));
+            strokeColorSetController.init(this, baseName + "StrokeColor", Color.RED);
+            strokeColorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+                @Override
+                public void changed(ObservableValue<? extends Paint> observable,
+                        Paint oldValue, Paint newValue) {
+                    updateMask();
+                }
+            });
 
-            c = AppVariables.getUserConfigValue("ImagePenFillColor", Color.WHITE.toString());
-            fillRect.setFill(Color.web(c));
-            FxmlControl.setTooltip(fillRect, FxmlColor.colorNameDisplay((Color) fillRect.getFill()));
+            fillColorSetController.init(this, baseName + "FillColor", Color.WHITE);
+            fillColorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+                @Override
+                public void changed(ObservableValue<? extends Paint> observable,
+                        Paint oldValue, Paint newValue) {
+                    updateMask();
+                }
+            });
 
             dottedCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -258,46 +233,41 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
             });
             intensityBox.getSelectionModel().select(AppVariables.getUserConfigInt("ImageMosaicIntensity", 20) + "");
 
-            checkPenType();
-
         } catch (Exception e) {
             logger.error(e.toString());
         }
 
     }
 
+    @Override
+    protected void paneExpanded() {
+        checkPenType();
+    }
+
     private void checkPenType() {
         try {
-            imageController.clearValues();
-
+            imageController.showImagePane();
+            imageController.hideScopePane();
             setBox.getChildren().clear();
             imageController.initMaskControls(false);
-            maskView.setImage(null);
-            maskView.setOpacity(1);
-            imageController.maskPane.getChildren().removeAll(imageController.maskLineLines);
-            imageController.maskLineLines.clear();
-            imageController.maskLineData.clear();
-            for (List<Line> penline : imageController.maskPenLines) {
-                imageController.maskPane.getChildren().removeAll(penline);
-            }
-            imageController.maskPenLines.clear();
-            imageController.maskPenData.clear();
-
             if (typeGroup.getSelectedToggle() == null) {
                 opType = null;
-                imageController.imageLabel.setText("");
-                commentLabel.setText("");
+                commentsLabel.setText("");
                 return;
             }
-
+            imageController.noContextMenu = true;
+            maskView.setImage(imageView.getImage());
+            maskView.setOpacity(1);
+            maskView.setVisible(true);
+            imageView.setVisible(false);
+            imageView.toBack();
             RadioButton selected = (RadioButton) typeGroup.getSelectedToggle();
             if (rectangleRadio.equals(selected)) {
                 opType = PenType.Rectangle;
                 imageController.initMaskRectangleLine(true);
                 imageController.maskRectangleLine.setOpacity(0);
                 setBox.getChildren().addAll(strokeWidthPane, strokeColorPane, dottedCheck, fillPane, rectArcPane, opacityPane, okPane);
-                imageController.imageLabel.setText(message("PenShapeTips"));
-                commentLabel.setText(message("PenShapeTips"));
+                commentsLabel.setText(message("PenRectangleTips"));
                 strokeWidthKey = "ImagePenLineWidth";
                 defaultStrokeWidth = 5;
 
@@ -306,8 +276,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                 imageController.initMaskCircleLine(true);
                 imageController.maskCircleLine.setOpacity(0);
                 setBox.getChildren().addAll(strokeWidthPane, strokeColorPane, dottedCheck, fillPane, opacityPane, okPane);
-                imageController.imageLabel.setText(message("PenShapeTips"));
-                commentLabel.setText(message("PenShapeTips"));
+                commentsLabel.setText(message("PenCircleTips"));
                 strokeWidthKey = "ImagePenLineWidth";
                 defaultStrokeWidth = 5;
 
@@ -316,58 +285,56 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                 imageController.initMaskEllipseLine(true);
                 imageController.maskEllipseLine.setOpacity(0);
                 setBox.getChildren().addAll(strokeWidthPane, strokeColorPane, dottedCheck, fillPane, opacityPane, okPane);
-                imageController.imageLabel.setText(message("PenShapeTips"));
-                commentLabel.setText(message("PenShapeTips"));
+                commentsLabel.setText(message("PenEllipseTips"));
                 strokeWidthKey = "ImagePenLineWidth";
                 defaultStrokeWidth = 5;
 
             } else if (polygonRadio.equals(selected)) {
                 opType = PenType.Polygon;
                 imageController.initMaskPolygonLine(true);
-                imageController.maskEllipseLine.setOpacity(0);
+                imageController.maskPolygonLine.setOpacity(0);
                 setBox.getChildren().addAll(strokeWidthPane, strokeColorPane, dottedCheck, fillPane, opacityPane, withdrawButton, okPane);
-                imageController.imageLabel.setText(message("PolygonTips"));
-                commentLabel.setText(message("PolygonTips"));
+                commentsLabel.setText(message("PenPolygonTips"));
                 strokeWidthKey = "ImagePenLineWidth";
                 defaultStrokeWidth = 5;
 
             } else if (polylineRadio.equals(selected)) {
                 opType = PenType.Polyline;
+                imageController.initMaskline(true);
                 setBox.getChildren().addAll(strokeWidthPane, strokeColorPane, dottedCheck, opacityPane, withdrawButton, okPane);
-                imageController.imageLabel.setText(message("PolylineTips"));
-                commentLabel.setText(message("PolylineTips"));
+                commentsLabel.setText(message("PenPolylineTips"));
                 strokeWidthKey = "ImagePenLineWidth";
                 defaultStrokeWidth = 5;
 
             } else if (linesRadio.equals(selected)) {
                 opType = PenType.DrawLines;
+                imageController.initMaskPenlines(true);
                 setBox.getChildren().addAll(strokeWidthPane, strokeColorPane, dottedCheck, opacityPane, withdrawButton, okPane);
-                imageController.imageLabel.setText(message("PenLinesTips"));
-                commentLabel.setText(message("PenLinesTips"));
+                commentsLabel.setText(message("PenLinesTips"));
                 strokeWidthKey = "ImagePenLineWidth";
                 defaultStrokeWidth = 5;
 
             } else if (eraserRadio.equals(selected)) {
                 opType = PenType.Erase;
+                imageController.initMaskPenlines(true);
                 setBox.getChildren().addAll(strokeWidthPane, withdrawButton, okPane);
-                imageController.imageLabel.setText(message("PenLinesTips"));
-                commentLabel.setText(message("PenLinesTips"));
+                commentsLabel.setText(message("PenLinesTips"));
                 strokeWidthKey = "ImagePenEraserWidth";
                 defaultStrokeWidth = 50;
 
             } else if (frostedRadio.equals(selected)) {
                 opType = PenType.Frosted;
+                imageController.noContextMenu = false;
                 setBox.getChildren().addAll(strokeWidthPane, intensityPane, shapePane, okPane);
-                imageController.imageLabel.setText(message("PenMosaicTips"));
-                commentLabel.setText(message("PenMosaicTips"));
+                commentsLabel.setText(message("PenMosaicTips"));
                 strokeWidthKey = "ImagePenMosaicWidth";
                 defaultStrokeWidth = 80;
 
             } else if (mosaicRadio.equals(selected)) {
                 opType = PenType.Mosaic;
+                imageController.noContextMenu = false;
                 setBox.getChildren().addAll(strokeWidthPane, intensityPane, shapePane, okPane);
-                imageController.imageLabel.setText(message("PenMosaicTips"));
-                commentLabel.setText(message("PenMosaicTips"));
+                commentsLabel.setText(message("PenMosaicTips"));
                 strokeWidthKey = "ImagePenMosaicWidth";
                 defaultStrokeWidth = 80;
 
@@ -383,43 +350,11 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
         }
     }
 
-    @Override
-    public boolean setColor(Control control, Color color) {
-        if (control == null || color == null) {
-            return false;
-        }
-
-        if (paletteButton.equals(control)) {
-            strokeRect.setFill(color);
-            FxmlControl.setTooltip(strokeRect, FxmlColor.colorNameDisplay(color));
-            AppVariables.setUserConfigValue("ImagePenStrokeColor", color.toString());
-
-        } else if (paletteFillButton.equals(control)) {
-            fillRect.setFill(color);
-            FxmlControl.setTooltip(fillRect, FxmlColor.colorNameDisplay(color));
-            AppVariables.setUserConfigValue("ImagePenFillColor", color.toString());
-        }
-        updateMask();
-        return true;
-    }
-
-    @FXML
-    @Override
-    public void showPalette(ActionEvent event) {
-        showPalette(paletteButton, message("StrokeColor"), true);
-    }
-
-    @FXML
-    public void showFillPalette(ActionEvent event) {
-        showPalette(paletteFillButton, message("Fill"), true);
-    }
-
     public void updateMask() {
         if (isSettingValues || opType == null
                 || imageView == null || imageView.getImage() == null) {
             return;
         }
-
         switch (opType) {
             case Rectangle:
                 drawRectangle();
@@ -442,9 +377,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
             case Erase:
                 imageController.drawMaskPenLines(strokeWidth, Color.TRANSPARENT, false, 1.0f);
                 break;
-
         }
-
     }
 
     public void drawRectangle() {
@@ -462,24 +395,20 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                 @Override
                 protected boolean handle() {
                     newImage = FxmlImageManufacture.drawRectangle(imageView.getImage(),
-                            imageController.maskRectangleData, (Color) strokeRect.getFill(), strokeWidth,
+                            imageController.maskRectangleData, (Color) strokeColorSetController.rect.getFill(), strokeWidth,
                             arcWidth, dottedCheck.isSelected(),
-                            fillCheck.isSelected(), (Color) fillRect.getFill(), opacity);
+                            fillCheck.isSelected(), (Color) fillColorSetController.rect.getFill(), opacity);
                     return newImage != null;
                 }
 
                 @Override
                 protected void whenSucceeded() {
                     maskView.setImage(newImage);
-                    maskView.setFitWidth(imageView.getFitWidth());
-                    maskView.setFitHeight(imageView.getFitHeight());
-                    maskView.setLayoutX(imageView.getLayoutX());
-                    maskView.setLayoutY(imageView.getLayoutY());
                     imageController.drawMaskRectangleLineAsData();
                 }
 
             };
-            parent.openHandlingStage(task, Modality.WINDOW_MODAL);
+            imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -501,24 +430,20 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                 @Override
                 protected boolean handle() {
                     newImage = FxmlImageManufacture.drawCircle(imageView.getImage(),
-                            imageController.maskCircleData, (Color) strokeRect.getFill(), strokeWidth,
+                            imageController.maskCircleData, (Color) strokeColorSetController.rect.getFill(), strokeWidth,
                             dottedCheck.isSelected(),
-                            fillCheck.isSelected(), (Color) fillRect.getFill(), opacity);
+                            fillCheck.isSelected(), (Color) fillColorSetController.rect.getFill(), opacity);
                     return newImage != null;
                 }
 
                 @Override
                 protected void whenSucceeded() {
                     maskView.setImage(newImage);
-                    maskView.setFitWidth(imageView.getFitWidth());
-                    maskView.setFitHeight(imageView.getFitHeight());
-                    maskView.setLayoutX(imageView.getLayoutX());
-                    maskView.setLayoutY(imageView.getLayoutY());
                     imageController.drawMaskCircleLineAsData();
                 }
 
             };
-            parent.openHandlingStage(task, Modality.WINDOW_MODAL);
+            imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -540,24 +465,20 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                 @Override
                 protected boolean handle() {
                     newImage = FxmlImageManufacture.drawEllipse(imageView.getImage(),
-                            imageController.maskEllipseData, (Color) strokeRect.getFill(), strokeWidth,
+                            imageController.maskEllipseData, (Color) strokeColorSetController.rect.getFill(), strokeWidth,
                             dottedCheck.isSelected(),
-                            fillCheck.isSelected(), (Color) fillRect.getFill(), opacity);
+                            fillCheck.isSelected(), (Color) fillColorSetController.rect.getFill(), opacity);
                     return newImage != null;
                 }
 
                 @Override
                 protected void whenSucceeded() {
                     maskView.setImage(newImage);
-                    maskView.setFitWidth(imageView.getFitWidth());
-                    maskView.setFitHeight(imageView.getFitHeight());
-                    maskView.setLayoutX(imageView.getLayoutX());
-                    maskView.setLayoutY(imageView.getLayoutY());
                     imageController.drawMaskEllipseLineAsData();
                 }
 
             };
-            parent.openHandlingStage(task, Modality.WINDOW_MODAL);
+            imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -583,26 +504,22 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                 @Override
                 protected boolean handle() {
                     newImage = FxmlImageManufacture.drawPolygon(imageView.getImage(),
-                            imageController.maskPolygonData, (Color) strokeRect.getFill(), strokeWidth,
+                            imageController.maskPolygonData, (Color) strokeColorSetController.rect.getFill(), strokeWidth,
                             dottedCheck.isSelected(),
-                            fillCheck.isSelected(), (Color) fillRect.getFill(), opacity);
+                            fillCheck.isSelected(), (Color) fillColorSetController.rect.getFill(), opacity);
                     return newImage != null;
                 }
 
                 @Override
                 protected void whenSucceeded() {
                     maskView.setImage(newImage);
-                    maskView.setFitWidth(imageView.getFitWidth());
-                    maskView.setFitHeight(imageView.getFitHeight());
-                    maskView.setLayoutX(imageView.getLayoutX());
-                    maskView.setLayoutY(imageView.getLayoutY());
                     imageController.maskPolygonLine.setOpacity(0);
                     imageController.polygonP1.setOpacity(0);
                     imageController.polygonP2.setOpacity(0);
                 }
 
             };
-            parent.openHandlingStage(task, Modality.WINDOW_MODAL);
+            imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -613,16 +530,16 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
         if (opType != PenType.Polyline || imageView == null || imageView.getImage() == null) {
             return;
         }
-
-        imageController.drawMaskLine(strokeWidth, (Color) strokeRect.getFill(), dottedCheck.isSelected(), opacity);
-
+        imageController.drawMaskLine(strokeWidth, (Color) strokeColorSetController.rect.getFill(),
+                dottedCheck.isSelected(), opacity);
     }
 
     public void drawLines() {
         if (opType != PenType.DrawLines || imageView == null || imageView.getImage() == null) {
             return;
         }
-        imageController.drawMaskPenLines(strokeWidth, (Color) strokeRect.getFill(), dottedCheck.isSelected(), opacity);
+        imageController.drawMaskPenLines(strokeWidth, (Color) strokeColorSetController.rect.getFill(),
+                dottedCheck.isSelected(), opacity);
     }
 
     public void mosaic(MosaicType mosaicType, int x, int y) {
@@ -639,7 +556,6 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
 
                 @Override
                 protected boolean handle() {
-
                     DoubleShape shape;
                     if (shapeCircleRadio.isSelected()) {
                         shape = new DoubleCircle(x, y, strokeWidth);
@@ -661,14 +577,10 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                 @Override
                 protected void whenSucceeded() {
                     maskView.setImage(newImage);
-                    maskView.setFitWidth(imageView.getFitWidth());
-                    maskView.setFitHeight(imageView.getFitHeight());
-                    maskView.setLayoutX(imageView.getLayoutX());
-                    maskView.setLayoutY(imageView.getLayoutY());
                 }
 
             };
-            parent.openHandlingStage(task, Modality.WINDOW_MODAL);
+            imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -677,9 +589,121 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
 
     @FXML
     @Override
-    public void paneClicked(MouseEvent event) {
+    public void withdrawAction() {
         if (null == opType || imageView == null || imageView.getImage() == null) {
+            return;
+        }
+        switch (opType) {
+            case Polygon:
+                imageController.maskPolygonData.removeLast();
+                drawPolygon();
+                break;
+            case Polyline:
+                imageController.maskLineData.removeLast();
+                drawPolyline();
+                break;
+            case DrawLines:
+            case Erase:
+                imageController.maskPenData.removeLastLine();
+                updateMask();
+                break;
+        }
+    }
+
+    @FXML
+    @Override
+    public void cancelAction() {
+        withdrawAction();
+    }
+
+    @FXML
+    @Override
+    public void clearAction() {
+        checkPenType();
+    }
+
+    @FXML
+    @Override
+    public void okAction() {
+        if (okButton.isDisabled()) {
+            return;
+        }
+        synchronized (this) {
+            if (task != null) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+                private Image newImage;
+
+                @Override
+                protected boolean handle() {
+                    newImage = null;
+                    switch (opType) {
+                        case Rectangle:
+                        case Circle:
+                        case Ellipse:
+                        case Polygon:
+                        case Mosaic:
+                        case Frosted:
+                            newImage = maskView.getImage();
+                            break;
+                        case Polyline:
+                            if (imageController.maskLineData == null && imageController.maskLineData.getSize() < 2) {
+                                return false;
+                            }
+                            newImage = FxmlImageManufacture.drawLines(imageView.getImage(),
+                                    imageController.maskLineData, (Color) strokeColorSetController.rect.getFill(), strokeWidth,
+                                    dottedCheck.isSelected(), opacity);
+                            break;
+                        case DrawLines:
+                            if (imageController.maskPenData == null && imageController.maskPenData.getPointsSize() == 0) {
+                                return false;
+                            }
+                            newImage = FxmlImageManufacture.drawLines(imageView.getImage(),
+                                    imageController.maskPenData, (Color) strokeColorSetController.rect.getFill(), strokeWidth,
+                                    dottedCheck.isSelected(), opacity);
+                            break;
+                        case Erase:
+                            if (imageController.maskPenData == null && imageController.maskPenData.getPointsSize() == 0) {
+                                return false;
+                            }
+                            newImage = FxmlImageManufacture.drawLines(imageView.getImage(),
+                                    imageController.maskPenData, Color.TRANSPARENT, strokeWidth,
+                                    false, 1.0f);
+                            break;
+                        default:
+                            return false;
+                    }
+
+                    if (task == null || isCancelled()) {
+                        return false;
+                    }
+                    return newImage != null;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    imageController.popSuccessful();
+                    imageController.updateImage(ImageOperation.Pen, opType.name(), null, newImage, cost);
+                }
+
+            };
+
+            imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
+    }
+
+    @FXML
+    @Override
+    public void imageClicked(MouseEvent event, DoublePoint p) {
+        if (null == opType || imageView == null || imageView.getImage() == null || p == null) {
             imageView.setCursor(Cursor.OPEN_HAND);
+            return;
+        }
+        if (imageController.isPickingColor || scopeController.isPickingColor) {
             return;
         }
         switch (opType) {
@@ -688,16 +712,12 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                     imageView.setCursor(Cursor.OPEN_HAND);
                     return;
                 }
-                DoublePoint p = imageController.getImageXY(event, imageView);
-                if (p == null) {
-                    return;
-                }
                 DoublePoint p0 = imageController.maskLineData.get(0);
                 double offsetX = p.getX() - p0.getX();
                 double offsetY = p.getY() - p0.getY();
                 if (offsetX != 0 || offsetY != 0) {
                     imageController.maskLineData = imageController.maskLineData.move(offsetX, offsetY);
-                    drawPolyline();
+                    updateMask();
                 }
             }
             break;
@@ -705,10 +725,6 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
             case Erase: {
                 if (event.getButton() != MouseButton.SECONDARY) {
                     imageView.setCursor(Cursor.OPEN_HAND);
-                    return;
-                }
-                DoublePoint p = imageController.getImageXY(event, imageView);
-                if (p == null) {
                     return;
                 }
                 DoublePoint p0 = imageController.maskPenData.getPoint(0);
@@ -727,16 +743,16 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                 updateMask();
                 break;
             case Mosaic: {
-                DoublePoint p = imageController.getImageXY(event, imageView);
-                if (p == null) {
+                if (event.getButton() == MouseButton.SECONDARY) {
+                    imageView.setCursor(Cursor.OPEN_HAND);
                     return;
                 }
                 mosaic(MosaicType.Mosaic, (int) p.getX(), (int) p.getY());
             }
             break;
             case Frosted: {
-                DoublePoint p = imageController.getImageXY(event, imageView);
-                if (p == null) {
+                if (event.getButton() == MouseButton.SECONDARY) {
+                    imageView.setCursor(Cursor.OPEN_HAND);
                     return;
                 }
                 mosaic(MosaicType.FrostedGlass, (int) p.getX(), (int) p.getY());
@@ -752,13 +768,15 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
         if (null == opType || imageView == null || imageView.getImage() == null) {
             return;
         }
-        DoublePoint p = imageController.getImageXY(event, imageView);
+        if (imageController.isPickingColor || scopeController.isPickingColor) {
+            return;
+        }
+        DoublePoint p = FxmlControl.getImageXY(event, imageView);
         imageController.showXY(event, p);
 
         if (event.getButton() == MouseButton.SECONDARY || p == null) {
             return;
         }
-
         switch (opType) {
             case Polyline:
                 if (lastX == event.getX() && lastY == event.getY()) {
@@ -780,7 +798,6 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                 lastY = event.getY();
                 updateMask();
         }
-
     }
 
     @FXML
@@ -789,7 +806,10 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
         if (null == opType || imageView == null || imageView.getImage() == null) {
             return;
         }
-        DoublePoint p = imageController.getImageXY(event, imageView);
+        if (imageController.isPickingColor || scopeController.isPickingColor) {
+            return;
+        }
+        DoublePoint p = FxmlControl.getImageXY(event, imageView);
         imageController.showXY(event, p);
 
         if (event.getButton() == MouseButton.SECONDARY || p == null) {
@@ -826,14 +846,16 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
         if (null == opType || imageView == null || imageView.getImage() == null) {
             return;
         }
+        if (imageController.isPickingColor || scopeController.isPickingColor) {
+            return;
+        }
         imageController.scrollPane.setPannable(true);
-        DoublePoint p = imageController.getImageXY(event, imageView);
+        DoublePoint p = FxmlControl.getImageXY(event, imageView);
         imageController.showXY(event, p);
 
         if (event.getButton() == MouseButton.SECONDARY || p == null) {
             return;
         }
-
         switch (opType) {
             case Polyline:
                 if (lastX == event.getX() && lastY == event.getY()) {
@@ -853,146 +875,10 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                 lastY = event.getY();
                 updateMask();
         }
-
-    }
-
-    @FXML
-    public void withdrawAction() {
-        if (null == opType || imageView == null || imageView.getImage() == null) {
-            return;
-        }
-        switch (opType) {
-            case Polygon:
-                imageController.maskPolygonData.removeLast();
-                drawPolygon();
-                break;
-            case Polyline:
-                imageController.maskLineData.removeLast();
-                drawPolyline();
-                break;
-            case DrawLines:
-            case Erase:
-                imageController.maskPenData.removeLastLine();
-                updateMask();
-                break;
-        }
-    }
-
-    @FXML
-    @Override
-    public void clearAction() {
-        if (null == opType || imageView == null || imageView.getImage() == null) {
-            return;
-        }
-        switch (opType) {
-            case Polyline:
-                imageController.maskPane.getChildren().removeAll(imageController.maskLineLines);
-                imageController.maskLineLines.clear();
-                imageController.maskLineData.clear();
-                break;
-            case DrawLines:
-            case Erase:
-                for (List<Line> penline : imageController.maskPenLines) {
-                    imageController.maskPane.getChildren().removeAll(penline);
-                }
-                imageController.maskPenLines.clear();
-                imageController.maskPenData.clear();
-                break;
-            case Mosaic:
-            case Frosted:
-                maskView.setImage(imageView.getImage());
-                break;
-            default:
-                imageController.initMaskControls(false);
-                typeGroup.selectToggle(null);
-        }
-    }
-
-    @FXML
-    @Override
-    public void okAction() {
-        if (okButton.isDisabled()) {
-            return;
-        }
-        synchronized (this) {
-            if (task != null) {
-                return;
-            }
-            task = new SingletonTask<Void>() {
-                private Image newImage;
-
-                @Override
-                protected boolean handle() {
-
-                    newImage = null;
-
-                    switch (opType) {
-                        case Rectangle:
-                        case Circle:
-                        case Ellipse:
-                        case Polygon:
-                        case Mosaic:
-                        case Frosted:
-                            newImage = maskView.getImage();
-                            break;
-                        case Polyline:
-                            if (imageController.maskLineData == null && imageController.maskLineData.getSize() < 2) {
-                                return false;
-                            }
-                            newImage = FxmlImageManufacture.drawLines(imageView.getImage(),
-                                    imageController.maskLineData, (Color) strokeRect.getFill(), strokeWidth,
-                                    dottedCheck.isSelected(), opacity);
-                            break;
-                        case DrawLines:
-                            if (imageController.maskPenData == null && imageController.maskPenData.getPointsSize() == 0) {
-                                return false;
-                            }
-                            newImage = FxmlImageManufacture.drawLines(imageView.getImage(),
-                                    imageController.maskPenData, (Color) strokeRect.getFill(), strokeWidth,
-                                    dottedCheck.isSelected(), opacity);
-                            break;
-                        case Erase:
-                            if (imageController.maskPenData == null && imageController.maskPenData.getPointsSize() == 0) {
-                                return false;
-                            }
-                            newImage = FxmlImageManufacture.drawLines(imageView.getImage(),
-                                    imageController.maskPenData, Color.TRANSPARENT, strokeWidth,
-                                    false, 1.0f);
-                            break;
-                        default:
-                            return false;
-                    }
-
-                    if (task == null || isCancelled()) {
-                        return false;
-                    }
-                    return newImage != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    parent.updateImage(ImageOperation.Pen, opType.name(), null, newImage, cost);
-                    typeGroup.selectToggle(null);
-
-                }
-
-            };
-
-            parent.openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
-            thread.setDaemon(true);
-            thread.start();
-        }
     }
 
     @Override
-    public void quitPane() {
-        clearAction();
-        imageController.maskRectangleLine.setOpacity(1);
-        imageController.maskCircleLine.setOpacity(1);
-        imageController.maskEllipseLine.setOpacity(1);
-        imageController.maskEllipseLine.setOpacity(1);
-
+    protected void resetOperationPane() {
+        checkPenType();
     }
-
 }

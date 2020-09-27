@@ -2,6 +2,7 @@ package mara.mybox.tools;
 
 import java.util.Random;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -423,7 +424,7 @@ public class MatrixTools {
 
     public static double[][] divide(double[][] matrix, double p) {
         try {
-            if (matrix == null) {
+            if (matrix == null || p == 0) {
                 return null;
             }
             int rowA = matrix.length, columnA = matrix[0].length;

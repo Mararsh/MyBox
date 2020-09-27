@@ -38,7 +38,9 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlTools;
 import mara.mybox.tools.LocationTools;
 import mara.mybox.tools.StringTools;
+import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
@@ -61,7 +63,7 @@ public class MapBaseController extends BaseController {
     @FXML
     protected MapOptionsController mapOptionsController;
     @FXML
-    protected Label titleLabel;
+    protected Label titleLabel, frameLabel;
     @FXML
     protected ComboBox<String> intervalSelector, frameSelector;
     @FXML
@@ -76,7 +78,7 @@ public class MapBaseController extends BaseController {
 
         TargetPathType = VisitHistory.FileType.Html;
         TargetFileType = VisitHistory.FileType.Html;
-        targetPathKey = "HtmlFilePath";
+        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Html);
         targetExtensionFilter = CommonFxValues.HtmlExtensionFilter;
     }
 
@@ -84,9 +86,9 @@ public class MapBaseController extends BaseController {
         methods need implementation
      */
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
-            super.initializeNext();
+            super.initControls();
 
             initWebEngine();
 
@@ -141,7 +143,9 @@ public class MapBaseController extends BaseController {
                 loopCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "Loop", true));
             }
 
-            mapOptionsController.initOptions(this);
+            if (mapOptionsController != null) {
+                mapOptionsController.initOptions(this);
+            }
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -285,7 +289,8 @@ public class MapBaseController extends BaseController {
     protected void drawPoint(double longitude, double latitude,
             String label, String markerImage, String info, Color textColor) {
         try {
-            if (!mapOptionsController.mapLoaded
+            if (webEngine == null
+                    || !mapOptionsController.mapLoaded
                     || !LocationTools.validCoordinate(longitude, latitude)) {
                 return;
             }
@@ -294,7 +299,7 @@ public class MapBaseController extends BaseController {
             String pImage = markerImage;
             pImage = (pImage == null || pImage.trim().isBlank())
                     ? "null" : "'" + StringTools.replaceAll(pImage, "\\", "/") + "'";
-            String pColor = textColor == null ? "null" : "'" + FxmlColor.rgb2Hex(textColor) + "'";
+            String pColor = textColor == null ? "null" : "'" + FxmlColor.color2rgb(textColor) + "'";
             webEngine.executeScript("addMarker("
                     + longitude + "," + latitude
                     + ", " + pLabel + ", " + pInfo + ", " + pImage
@@ -340,7 +345,7 @@ public class MapBaseController extends BaseController {
 
     public Color textColor() {
         if (mapOptionsController.setColorRadio.isSelected()) {
-            return (Color) (mapOptionsController.colorRect.getFill());
+            return (Color) (mapOptionsController.colorSetController.rect.getFill());
         }
         return Color.BLACK;
     }

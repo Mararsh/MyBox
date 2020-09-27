@@ -42,7 +42,6 @@ import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.DerbyBase.dbHome;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
-import mara.mybox.db.TableBase;
 import mara.mybox.db.TableEpidemicReport;
 import mara.mybox.db.TableGeographyCode;
 import mara.mybox.fxml.FxmlControl;
@@ -73,7 +72,7 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
     @FXML
     protected EpidemicReportsSourceController sourceController;
     @FXML
-    protected TimeTreeController timeController;
+    protected ControlTimeTree timeController;
     @FXML
     protected EpidemicReportsChartController chartController;
     @FXML
@@ -110,7 +109,7 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
 
     @Override
     public void setTableDefinition() {
-        tableDefinition = TableBase.readDefinition("Epidemic_Report_Statistic_View");
+        tableDefinition = new TableEpidemicReport().readDefinitionFromDB("Epidemic_Report_Statistic_View");
         tableDefinition.setIdColumn("epid");
         tableDefinition.getPrimaryColumns().add("epid");
     }
@@ -129,9 +128,9 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
-            super.initializeNext();
+            super.initControls();
 
             datasets = new ArrayList<>();
             dataTimes = new ArrayList<>();
@@ -204,16 +203,16 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
             } else if (settingsController != null) {
                 switch (item.getSource()) {
                     case 1:
-                        setStyle("-fx-background-color: " + settingsController.getPredefinedColor());
+                        setStyle("-fx-background-color: " + settingsController.predefinedColorSetController.rgb());
                         break;
                     case 2:
-                        setStyle("-fx-background-color: " + settingsController.getInputtedColor());
+                        setStyle("-fx-background-color: " + settingsController.inputtedColorSetController.rgb());
                         break;
                     case 3:
-                        setStyle("-fx-background-color: " + settingsController.getFilledColor());
+                        setStyle("-fx-background-color: " + settingsController.filledColorSetController.rgb());
                         break;
                     case 4:
-                        setStyle("-fx-background-color: " + settingsController.getStatisticColor());
+                        setStyle("-fx-background-color: " + settingsController.statisticColorSetController.rgb());
                         break;
                     default:
                         setStyle(null);
@@ -585,7 +584,7 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
                         report.setLocation(location);
                         timeReports.add(report);
                         totalSize++;
-                        Number n = report.getValue(valueName);
+                        Number n = report.getNumber(valueName);
                         if (n != null) {
                             double value = n.doubleValue();
                             if (value > maxValue) {
@@ -702,10 +701,10 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
 
     @FXML
     @Override
-    public void editAction() {
+    public void editAction(ActionEvent event) {
         EpidemicReport selected = (EpidemicReport) tableView.getSelectionModel().getSelectedItem();
         if (selected == null) {
-            addAction();
+            addAction(event);
             return;
         }
         try {
@@ -718,13 +717,33 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
         }
     }
 
+    @FXML
     @Override
-    protected int deleteSelectedData() {
-        List<EpidemicReport> selected = tableView.getSelectionModel().getSelectedItems();
-        if (selected == null || selected.isEmpty()) {
+    public void viewAction() {
+        EpidemicReport selected = tableView.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            return;
+        }
+        HtmlTools.viewHtml(message("LocationData"), selected.info("</br>"));
+    }
+
+    @FXML
+    public void locationAction() {
+        EpidemicReport selected = tableView.getSelectionModel().getSelectedItem();
+        if (selected == null || selected.getLocation() == null) {
+            return;
+        }
+        LocationInMapController controller
+                = (LocationInMapController) openScene(null, CommonValues.LocationInMapFxml);
+        controller.loadCoordinate(null, selected.getLocation().getLongitude(), selected.getLocation().getLatitude());
+    }
+
+    @Override
+    protected int deleteData(List<EpidemicReport> data) {
+        if (data == null || data.isEmpty()) {
             return 0;
         }
-        return new TableEpidemicReport().deleteData(selected);
+        return new TableEpidemicReport().deleteData(data);
     }
 
     public void setSelectedData(EpidemicReport.SourceType sourceType) {
@@ -805,7 +824,7 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
             popMenu.getItems().add(menu);
             popMenu.getItems().add(new SeparatorMenuItem());
 
-            menu = new MenuItem(message("MenuClose"));
+            menu = new MenuItem(message("PopupClose"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction((ActionEvent event) -> {
                 popMenu.hide();
@@ -844,7 +863,7 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
 
     @FXML
     @Override
-    public void addAction() {
+    public void addAction(ActionEvent event) {
         try {
             EpidemicReportEditController controller
                     = (EpidemicReportEditController) openScene(null, CommonValues.EpidemicReportEditFxml);
@@ -939,7 +958,7 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
             popMenu.getItems().add(menu);
             popMenu.getItems().add(new SeparatorMenuItem());
 
-            menu = new MenuItem(message("MenuClose"));
+            menu = new MenuItem(message("PopupClose"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction((ActionEvent event) -> {
                 popMenu.hide();
@@ -958,8 +977,8 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
         EpidemicReportsImportExternalCSVController controller
                 = (EpidemicReportsImportExternalCSVController) openStage(CommonValues.EpidemicReportsImportExternalCSVFxml);
         controller.parent = this;
-        File file = FxmlControl.getInternalFile("/data/db/Epidemic_Report_JHU.csv",
-                "data", "Epidemic_Report_JHU.csv", true);
+        File file = FxmlControl.getInternalFile("/data/db/Epidemic_Report_JHU_2020924.csv",
+                "data", "Epidemic_Report_JHU_2020924.csv", false);
         controller.predefined = false;
         controller.startFile(file, true, true);
     }

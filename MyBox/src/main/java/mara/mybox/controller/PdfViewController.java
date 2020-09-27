@@ -50,7 +50,9 @@ import mara.mybox.image.ImageManufacture;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.PdfTools;
+import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
@@ -76,15 +78,13 @@ import org.apache.pdfbox.rendering.PDFRenderer;
 public class PdfViewController extends ImageViewerController {
 
     protected PdfInformation pdfInformation;
-    protected int currentPage, currentPageTmp, percent, dpi, orcPage;
+    protected int currentPage, currentPageTmp, percent, orcPage;
     protected SimpleBooleanProperty infoLoaded;
     protected boolean isTransparent, scrollEnd, scrollStart, scrolledSet;
     protected Task outlineTask, thumbTask;
     protected String password;
     protected String selectedLanguages;
 
-    @FXML
-    protected Label pageLabel;
     @FXML
     protected TextField pageInput;
     @FXML
@@ -106,7 +106,7 @@ public class PdfViewController extends ImageViewerController {
     @FXML
     protected TextArea ocrArea;
     @FXML
-    protected Label setOCRLabel, resultLabel, currentOCRFilesLabel;
+    protected Label pageLabel, setOCRLabel, resultLabel, currentOCRFilesLabel;
     @FXML
     protected ComboBox<String> langSelector;
 
@@ -118,7 +118,7 @@ public class PdfViewController extends ImageViewerController {
         TargetFileType = VisitHistory.FileType.Image;
         TargetPathType = VisitHistory.FileType.Image;
 
-        sourcePathKey = "PdfFilePath";
+        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.PDF);
         TipsLabelKey = "PdfViewTips";
 
         sourceExtensionFilter = CommonFxValues.PdfExtensionFilter;
@@ -126,116 +126,120 @@ public class PdfViewController extends ImageViewerController {
     }
 
     @Override
+    public void initValues() {
+        try {
+            super.initValues();
+            infoLoaded = new SimpleBooleanProperty(false);
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    @Override
     public void initControls() {
         try {
             super.initControls();
 
-            infoLoaded = new SimpleBooleanProperty(false);
+            if (tipsView != null) {
+                FxmlControl.setTooltip(tipsView,
+                        new Tooltip(message("PDFComments") + "\n\n" + message("PdfViewTips")));
+            }
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
 
-            percentBox.getItems().addAll(Arrays.asList("100", "75", "50", "125", "150", "200", "80", "25", "30", "15"));
-            percentBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue,
-                        String newValue) {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    try {
-                        int v = Integer.valueOf(newValue);
-                        if (v > 0) {
-                            percent = v;
-                            setPrecent(percent);
-                            FxmlControl.setEditorNormal(percentBox);
-                        } else {
+    @Override
+    public void initOperationBox() {
+        try {
+            super.initOperationBox();
+
+            if (percentBox != null) {
+                percentBox.getItems().addAll(Arrays.asList("100", "75", "50", "125", "150", "200", "80", "25", "30", "15"));
+                percentBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue ov, String oldValue,
+                            String newValue) {
+                        if (isSettingValues) {
+                            return;
+                        }
+                        try {
+                            int v = Integer.valueOf(newValue);
+                            if (v > 0) {
+                                percent = v;
+                                setPrecent(percent);
+                                FxmlControl.setEditorNormal(percentBox);
+                            } else {
+                                FxmlControl.setEditorBadStyle(percentBox);
+                            }
+
+                        } catch (Exception e) {
                             FxmlControl.setEditorBadStyle(percentBox);
                         }
-
-                    } catch (Exception e) {
-                        FxmlControl.setEditorBadStyle(percentBox);
                     }
-                }
-            });
+                });
+            }
 
-            pageInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue,
-                        String newValue) {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    try {
-                        int v = Integer.valueOf(pageInput.getText()) - 1;
-                        if (v >= 0 && v < pdfInformation.getNumberOfPages()) {
-                            currentPageTmp = v;
-                            pageInput.setStyle(null);
-                            goButton.setDisable(false);
-                        } else {
+            if (pageInput != null) {
+                pageInput.textProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue ov, String oldValue,
+                            String newValue) {
+                        if (isSettingValues) {
+                            return;
+                        }
+                        try {
+                            int v = Integer.valueOf(pageInput.getText()) - 1;
+                            if (v >= 0 && v < pdfInformation.getNumberOfPages()) {
+                                currentPageTmp = v;
+                                pageInput.setStyle(null);
+                                goButton.setDisable(false);
+                            } else {
+                                pageInput.setStyle(badStyle);
+                                goButton.setDisable(true);
+                            }
+                        } catch (Exception e) {
                             pageInput.setStyle(badStyle);
                             goButton.setDisable(true);
                         }
-                    } catch (Exception e) {
-                        pageInput.setStyle(badStyle);
-                        goButton.setDisable(true);
                     }
-                }
-            });
+                });
+            }
 
-            bookmarksCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue,
-                        Boolean newValue) {
-                    checkOutline();
-                    AppVariables.setUserConfigValue("PDFBookmarks", bookmarksCheck.isSelected());
-                }
-            });
-            bookmarksCheck.setSelected(AppVariables.getUserConfigBoolean("PDFBookmarks", true));
+            if (bookmarksCheck != null) {
+                bookmarksCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue,
+                            Boolean newValue) {
+                        checkOutline();
+                        AppVariables.setUserConfigValue("PDFBookmarks", bookmarksCheck.isSelected());
+                    }
+                });
+                bookmarksCheck.setSelected(AppVariables.getUserConfigBoolean("PDFBookmarks", true));
+            }
 
-            thumbCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue,
-                        Boolean newValue) {
-                    checkThumbs();
-                    AppVariables.setUserConfigValue("PDFThumbnails", thumbCheck.isSelected());
-                }
-            });
-            thumbCheck.setSelected(AppVariables.getUserConfigBoolean("PDFThumbnails", false));
+            if (thumbCheck != null) {
+                thumbCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue,
+                            Boolean newValue) {
+                        checkThumbs();
+                        AppVariables.setUserConfigValue("PDFThumbnails", thumbCheck.isSelected());
+                    }
+                });
+                thumbCheck.setSelected(AppVariables.getUserConfigBoolean("PDFThumbnails", false));
+            }
 
-            thumbScrollPane.vvalueProperty().addListener(new ChangeListener<Number>() {
-                @Override
-                public void changed(ObservableValue ov, Number oldValue,
-                        Number newValue) {
-                    loadThumbs();
-                }
-            });
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    @Override
-    public void initializeNext() {
-        try {
-            initFilePane();
-            initViewPane();
-            initSaveAsPane();
-            initTipsPane();
-            initOperationBox();
-            initMainPane();
-            initImageView();
-            initMaskPane();
-            initRulersCheck();
-
-            initializeNext2();
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    @Override
-    protected void initViewPane() {
-        try {
-            super.initViewPane();
+            if (thumbScrollPane != null) {
+                thumbScrollPane.vvalueProperty().addListener(new ChangeListener<Number>() {
+                    @Override
+                    public void changed(ObservableValue ov, Number oldValue,
+                            Number newValue) {
+                        loadThumbs();
+                    }
+                });
+            }
 
             if (transparentBackgroundCheck != null) {
                 transparentBackgroundCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -281,17 +285,20 @@ public class PdfViewController extends ImageViewerController {
         }
     }
 
-    protected void initMainPane() {
+    @Override
+    protected void initViewPane() {
         try {
+            super.initViewPane();
+
             if (imageView != null) {
                 mainPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
             }
-
-            scrollPane.addEventHandler(ScrollEvent.SCROLL, new EventHandler<ScrollEvent>() {
-                @Override
-                public void handle(ScrollEvent event) {
-                    double deltaY = event.getDeltaY();
-                    if (event.isControlDown()) {
+            if (scrollPane != null) {
+                scrollPane.addEventHandler(ScrollEvent.SCROLL, new EventHandler<ScrollEvent>() {
+                    @Override
+                    public void handle(ScrollEvent event) {
+                        double deltaY = event.getDeltaY();
+                        if (event.isControlDown()) {
 //                        event.consume();
 //                        logger.debug(event.isConsumed());
 //                        if (deltaY > 0) {
@@ -299,36 +306,38 @@ public class PdfViewController extends ImageViewerController {
 //                        } else {
 //                            zoomOut();
 //                        }
-                    } else {
-                        if (deltaY > 0) {
-                            if (scrollPane.getVvalue() == scrollPane.getVmin()) {
-                                event.consume();
-                                previousAction();
-                            }
                         } else {
+                            if (deltaY > 0) {
+                                if (scrollPane.getVvalue() == scrollPane.getVmin()) {
+                                    event.consume();
+                                    previousAction();
+                                }
+                            } else {
 
-                            if (scrollPane.getHeight() >= imageView.getFitHeight()
-                                    || scrollPane.getVvalue() == scrollPane.getVmax()) {
-                                event.consume();
-                                nextAction();
+                                if (scrollPane.getHeight() >= imageView.getFitHeight()
+                                        || scrollPane.getVvalue() == scrollPane.getVmax()) {
+                                    event.consume();
+                                    nextAction();
+                                }
                             }
                         }
-                    }
 
-                }
-            });
-
-            tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
-                @Override
-                public void changed(ObservableValue ov, Tab oldValue,
-                        Tab newValue) {
-                    if (!ocrTab.equals(newValue) || orcPage == currentPage
-                            || imageView.getImage() == null) {
-                        return;
                     }
-                    startOCR();
-                }
-            });
+                });
+            }
+            if (tabPane != null) {
+                tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
+                    @Override
+                    public void changed(ObservableValue ov, Tab oldValue,
+                            Tab newValue) {
+                        if (!ocrTab.equals(newValue) || orcPage == currentPage
+                                || imageView.getImage() == null) {
+                            return;
+                        }
+                        startOCR();
+                    }
+                });
+            }
 
             checkLanguages();
 
@@ -338,13 +347,16 @@ public class PdfViewController extends ImageViewerController {
     }
 
     public void checkLanguages() {
+        if (currentOCRFilesLabel == null) {
+            return;
+        }
         selectedLanguages = AppVariables.getUserConfigValue("ImageOCRLanguages", null);
         if (selectedLanguages != null && !selectedLanguages.isEmpty()) {
-            currentOCRFilesLabel.setText(
-                    MessageFormat.format(message("CurrentDataFiles"), selectedLanguages));
+            currentOCRFilesLabel.setText(MessageFormat.format(message("CurrentDataFiles"), selectedLanguages));
+            currentOCRFilesLabel.setStyle(null);
         } else {
-            currentOCRFilesLabel.setText(
-                    MessageFormat.format(message("CurrentDataFiles"), ""));
+            currentOCRFilesLabel.setText(MessageFormat.format(message("CurrentDataFiles"), message("NoData")));
+            currentOCRFilesLabel.setStyle(badStyle);
         }
     }
 
@@ -1031,7 +1043,7 @@ public class PdfViewController extends ImageViewerController {
 
             @Override
             public List<VisitHistory> recentPaths() {
-                return VisitHistory.getRecentPath(VisitHistory.FileType.Text);
+                return VisitHistoryTools.getRecentPath(VisitHistory.FileType.Text);
             }
 
             @Override
@@ -1051,7 +1063,7 @@ public class PdfViewController extends ImageViewerController {
                     handleSelect();
                     return;
                 }
-                AppVariables.setUserConfigValue("TextFilePath", fname);
+                AppVariables.setUserConfigValue(VisitHistoryTools.getPathKey(VisitHistory.FileType.Text), fname);
                 handleSelect();
             }
 
@@ -1068,7 +1080,7 @@ public class PdfViewController extends ImageViewerController {
                 return;
             }
             String name = saveAsPrefix();
-            final File file = chooseSaveFile(AppVariables.getUserConfigPath("TextFilePath"),
+            final File file = chooseSaveFile(AppVariables.getUserConfigPath(VisitHistoryTools.getPathKey(VisitHistory.FileType.Text)),
                     name, CommonFxValues.TextExtensionFilter, true);
             if (file == null) {
                 return;

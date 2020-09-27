@@ -47,7 +47,9 @@ import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DateTools;
+import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
@@ -107,8 +109,8 @@ public class MediaPlayerController extends BaseController {
         AddFileType = VisitHistory.FileType.Media;
         AddPathType = VisitHistory.FileType.Media;
 
-        targetPathKey = "MediaFilePath";
-        sourcePathKey = "MediaFilePath";
+        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Media);
+        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Media);
 
         sourceExtensionFilter = CommonFxValues.JdkMediaExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
@@ -116,8 +118,9 @@ public class MediaPlayerController extends BaseController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
+            super.initControls();
             if (tableController != null) {
                 tableController.setParentController(this);
                 tableData = tableController.tableData;

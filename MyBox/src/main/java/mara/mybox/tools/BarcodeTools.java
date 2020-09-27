@@ -14,6 +14,7 @@ import java.io.File;
 import java.util.HashMap;
 import mara.mybox.image.file.ImageFileReaders;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import org.krysalis.barcode4j.ChecksumMode;
 import org.krysalis.barcode4j.HumanReadablePlacement;
 import org.krysalis.barcode4j.impl.AbstractBarcodeBean;
@@ -30,6 +31,7 @@ import org.krysalis.barcode4j.impl.upcean.EAN8Bean;
 import org.krysalis.barcode4j.impl.upcean.UPCABean;
 import org.krysalis.barcode4j.impl.upcean.UPCEBean;
 import org.krysalis.barcode4j.output.bitmap.BitmapCanvasProvider;
+import thridparty.QRCodeWriter;
 
 /**
  * @Author Mara
@@ -121,8 +123,8 @@ public class BarcodeTools {
                     }
                     // https://www.cnblogs.com/tuyile006/p/3416008.html
 //                    ratio = Math.min(2 / 7d, ratio);
-                    int width = (int) ((qrImage.getWidth() - writer.leftPadding * 2) * ratio);
-                    int height = (int) ((qrImage.getHeight() - writer.topPadding * 2) * ratio);
+                    int width = (int) ((qrImage.getWidth() - writer.getLeftPadding() * 2) * ratio);
+                    int height = (int) ((qrImage.getHeight() - writer.getTopPadding() * 2) * ratio);
                     return BarcodeTools.centerPicture(qrImage, pic, width, height);
                 }
             }

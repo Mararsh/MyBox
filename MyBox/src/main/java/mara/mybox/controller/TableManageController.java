@@ -16,11 +16,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.SelectionMode;
-import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -30,10 +27,10 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.TableBase;
-import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
@@ -46,7 +43,6 @@ import mara.mybox.value.CommonFxValues;
 public class TableManageController<P> extends BaseController {
 
     protected TableBase tableDefinition;
-    protected BaseController parent;
     protected ObservableList<P> tableData;
     protected int currentPage, pageSize, pagesNumber, totalSize, currentPageStart, currentPageSize;
     protected String tableName, idColumn;
@@ -96,8 +92,9 @@ public class TableManageController<P> extends BaseController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
+            super.initControls();
             if (tableDefinition != null) {
                 tableName = tableDefinition.getTableName();
                 idColumn = tableDefinition.getIdColumn();
@@ -192,7 +189,7 @@ public class TableManageController<P> extends BaseController {
     }
 
     public void itemDoubleClicked() {
-        editAction();
+        editAction(null);
     }
 
     protected void initButtons() {
@@ -231,7 +228,7 @@ public class TableManageController<P> extends BaseController {
 
             pageSize = 50;
             pageSizeSelector.getItems().addAll(Arrays.asList("50", "30", "100", "20", "60", "200", "300",
-                     "500", "1000", "2000", "5000", "10000", "20000", "50000"));
+                    "500", "1000", "2000", "5000", "10000", "20000", "50000"));
             pageSizeSelector.getSelectionModel().selectedItemProperty().addListener(
                     (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
                         if (newValue == null) {
@@ -324,8 +321,8 @@ public class TableManageController<P> extends BaseController {
                     postLoadedTableData();
                 }
             };
-            if (parent != null) {
-                parent.openHandlingStage(task, Modality.WINDOW_MODAL, message("LoadingTableData"));
+            if (parentController != null) {
+                parentController.openHandlingStage(task, Modality.WINDOW_MODAL, message("LoadingTableData"));
             } else {
                 openHandlingStage(task, Modality.WINDOW_MODAL, message("LoadingTableData"));
             }
@@ -405,7 +402,7 @@ public class TableManageController<P> extends BaseController {
     }
 
     @FXML
-    public void editAction() {
+    public void editAction(ActionEvent event) {
         try {
 
         } catch (Exception e) {
@@ -488,15 +485,51 @@ public class TableManageController<P> extends BaseController {
                 return;
             }
         }
-        int count = deleteSelectedData();
-        popInformation(message("Deleted") + ":" + count);
-        if (count > 0) {
-            refreshAction();
+        synchronized (this) {
+            if (task != null) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+
+                private int deletedCount = 0;
+
+                @Override
+                protected boolean handle() {
+                    deletedCount = deleteSelectedData();
+                    return true;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    popInformation(message("Deleted") + ":" + deletedCount);
+                    if (deletedCount > 0) {
+                        refreshAction();
+                    }
+                }
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
         }
+
     }
 
     protected int deleteSelectedData() {
-//        List<P> selected = tableView.getSelectionModel().getSelectedItems();
+        List<P> selected = tableView.getSelectionModel().getSelectedItems();
+        if (selected == null || selected.isEmpty()) {
+            return 0;
+        }
+        return deleteData(selected);
+    }
+
+    protected int deleteData(List<P> data) {
+        if (data == null || data.isEmpty()) {
+            return 0;
+        }
+        if (tableDefinition != null) {
+            return tableDefinition.deleteData(data);
+        }
         return 0;
     }
 
@@ -543,89 +576,6 @@ public class TableManageController<P> extends BaseController {
     @FXML
     public void refreshAction() {
         loadTableData();
-    }
-
-    @FXML
-    protected void popImportMenu(MouseEvent mouseEvent) {
-
-    }
-
-    @FXML
-    protected void popExportMenu(MouseEvent mouseEvent) {
-        try {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
-
-            MenuItem menu;
-
-            popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("MenuClose"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction((ActionEvent event) -> {
-                popMenu.hide();
-                popMenu = null;
-            });
-            popMenu.getItems().add(menu);
-
-            FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    @FXML
-    protected void popQueryMenu(MouseEvent mouseEvent) {
-        try {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
-
-            FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-
-    }
-
-    @FXML
-    protected void popClearMenu(MouseEvent mouseEvent) {
-        try {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
-
-            MenuItem menu = new MenuItem(message("ClearAsCondition") + "\nCTRL+r / ALT+r");
-            menu.setOnAction((ActionEvent event) -> {
-                clearAction();
-            });
-            popMenu.getItems().add(menu);
-
-            popMenu.getItems().add(new SeparatorMenuItem());
-
-            popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("MenuClose"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction((ActionEvent event) -> {
-                popMenu.hide();
-                popMenu = null;
-            });
-            popMenu.getItems().add(menu);
-
-            FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-
     }
 
     @FXML

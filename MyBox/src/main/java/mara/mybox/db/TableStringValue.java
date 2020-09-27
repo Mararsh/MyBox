@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -186,10 +187,10 @@ public class TableStringValue extends DerbyBase {
         if (conn == null || prefix == null || prefix.trim().isEmpty()) {
             return keyValues;
         }
-        try {
-            String sql = " SELECT key_name, string_value  FROM String_Value WHERE key_name like '"
-                    + stringValue(prefix) + "%' ";
-            ResultSet results = conn.createStatement().executeQuery(sql);
+        String sql = " SELECT key_name, string_value  FROM String_Value WHERE key_name like '"
+                + stringValue(prefix) + "%' ";
+        try ( Statement statement = conn.createStatement();
+                 ResultSet results = statement.executeQuery(sql)) {
             while (results.next()) {
                 keyValues.put(results.getString("key_name"), results.getString("string_value"));
             }

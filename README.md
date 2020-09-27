@@ -1,22 +1,23 @@
 # [ReadMe in English](https://github.com/Mararsh/MyBox/tree/master/en)  ![ReadMe](https://mararsh.github.io/MyBox/iconGo.png)   
 
 # MyBox：简易工具集
-这是利用JavaFx开发的图形化桌面应用，目标是提供简单易用的功能。免费开源。     
+这是利用JavaFx开发的图形化桌面应用，目标是提供简)易用的功能。免费开源。     
 
 ## 新内容
-2020-8-27 版本6.3.2  完善“位置数据”。按“位置分布”和“时间序列”在地图上显示数据。3个数据集的示例。可导入movebank.org的数据文件。              
-完善数据在地图上的显示。支持天地图和高德地图的切换。       
-“位置工具”：转换坐标的小数值和度分秒；把坐标值转换为其它坐标系统。       
-FFmpeg应用：录屏。目前只支持windows。        
-以CSV格式导入/导出颜色数据。       
-全自动的打包脚本。《开发指南》v2.1。                     
-[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.2)            
- 
-## 下载与运行
+2020-9-27 版本6.3.3        
+-  图像处理：显示/隐藏范围面板和图片面板；当粘贴超出边界时增大图片；混合模式的示例；卷积核参数“反色”。
+-  数据工具：方便输入CSV；时间支持微秒和时区；地图逐点显示；疫情报告保存为一组截图。
+-  颜色：输入颜色列表；设置颜色、图片取色、调色板管理分为不同的界面；可改变调色板上颜色的顺序。
+-  其它：表格和图片的右键菜单；编辑器定时自动保存；录屏可延时；录屏支持Linux；开发模式。
+-  解决的主要问题：“清除个人设置”是删除用户配置数据而不是删除所有数据；一些数据表处理错误；快捷键在Linux上无效；新位置数据无法添加到新数据集。        
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.3)               
+这一版献给中国，祝她生日快乐！      
+
+ ## 下载与运行
 每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases?)目录下（点击上面的`releases`页签）。    
  
 ### 源码   
-[MyBox-6.3.2-src.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.2/MyBox-6.3.2-src.zip)   33M        
+[MyBox-6.3.3-src.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.3/MyBox-6.3.3-src.zip)   34M  
 
 关于源码的结构、编辑、和构建，请参考[开发指南](https://mararsh.github.io/MyBox_documents/zh/MyBox-DevGuide-2.1-zh.pdf)            
  
@@ -26,9 +27,9 @@ FFmpeg应用：录屏。目前只支持windows。
   
 | 平台 | 链接 | 大小 | 启动文件 |    
 | --- | --- | --- |  --- |   
-| win | [MyBox-6.3.2-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.2/MyBox-6.3.2-win-exe.zip)  | 284MB | MyBox.exe |       
-| linux | [MyBox-6.3.2-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.3.2/MyBox-6.3.2-linux.tar.gz)  | 289MB  | bin/MyBox  |     
-| mac | [MyBox-6.3.2-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.3.2/MyBox-6.3.2-mac.dmg)  | 294MB  |  MyBox-6.3.2.app   |   
+| win | [MyBox-6.3.3-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.3/MyBox-6.3.3-win-exe.zip)  | 284MB | MyBox.exe |       
+| linux | [MyBox-6.3.3-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.3.3/MyBox-6.3.3-linux.tar.gz)  | 290MB  | bin/MyBox  |     
+| mac | [MyBox-6.3.3-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.3.3/MyBox-6.3.3-mac.dmg)  | 295MB  |  MyBox-6.3.3.app   |   
 
 双击或者用命令行执行包内的启动文件即可运行程序。可以把图片/文本/PDF文件的打开方式关联到MyBox，这样双击文件名就直接是用MyBox打开了。
 （目前无法双击打开路径包含汉字的文件） 
@@ -38,14 +39,14 @@ FFmpeg应用：录屏。目前只支持windows。
  
 | 平台 | 链接 | 大小 | 运行需要 |    
 | --- | --- | --- |  --- |   
-| win | [MyBox-6.3.2-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.2/MyBox-6.3.2-win-jar.zip)  | 147MB | Java 14.0.1或更高版本 |    
-| linux | [MyBox-6.3.2-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.2/MyBox-6.3.2-linux-jar.zip)  | 158MB  | Java 14.0.1或更高版本 |    
-| mac | [MyBox-6.3.2-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.2/MyBox-6.3.2-mac-jar.zip)  |  150MB  | Java 14.0.1或更高版本 |    
+| win | [MyBox-6.3.3-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.3/MyBox-6.3.3-win-jar.zip)  | 147MB | Java 14.0.1或更高版本 |    
+| linux | [MyBox-6.3.3-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.3/MyBox-6.3.3-linux-jar.zip)  | 153MB  | Java 14.0.1或更高版本 |    
+| mac | [MyBox-6.3.3-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.3/MyBox-6.3.3-mac-jar.zip)  |  150MB  | Java 14.0.1或更高版本 |    
     
 执行以下命令来启动程序：
-<PRE><CODE>     java   -jar   MyBox-6.3.2.jar</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-6.3.3.jar</CODE></PRE>
 程序可以跟一个文件名作为参数、以用MyBox直接打开此文件。例如以下命令是打开此图片：
-<PRE><CODE>     java   -jar   MyBox-6.3.2.jar   /tmp/a1.jpg</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-6.3.3.jar   /tmp/a1.jpg</CODE></PRE>
 
 ### 其它下载地址     
 从云盘下载：  https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F     
@@ -99,9 +100,9 @@ FFmpeg应用：录屏。目前只支持windows。
 
 | 文档名 | 版本 | 修改时间  | 链接 |
 | --- | --- | --- | --- |
-| 开发日志 | 6.3.2 |  2020-8-27 | [html](#devLog) |
+| 开发日志 | 6.3.3 |  2020-9-27 | [html](#devLog) |
+| 快捷键 | 6.3.3 |  2020-9-27 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts.html) |
 | 开发指南 | 2.1 |  2020-08-27 | [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-DevGuide-2.1-zh.pdf) |
-| 快捷键 | 6.3 |  2020-5-25 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts.html) |
 | 用户手册-综述 |  5.0 |  2019-4-19 | [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-UserGuide-5.0-Overview-zh.pdf) |
 | 用户手册-图像工具 | 5.0 |  2019-4-18 | [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-UserGuide-5.0-ImageTools-zh.pdf) |
 | 用户手册-PDF工具 | 5.0 |  2019-4-20 | [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-UserGuide-5.0-PdfTools-zh.pdf) |
@@ -163,7 +164,7 @@ MyBox基于以下开源资源：
 
 
 # 当前版本
-当前是版本6.3.2，已实现的特点概述如下:
+当前是版本6.3.3，已实现的特点概述如下:
 * [跨平台](#cross-platform)
 * [国际化](#international)
 * [本机](#localhost)
@@ -220,7 +221,8 @@ MyBox基于以下开源资源：
 * [设置](#settings)
 * [窗口](#windows)
 * [帮助](#helps)
-* [对于高清晰屏幕的支持](#Hidpig)    
+* [对于高清晰屏幕的支持](#Hidpi)    
+* [开发模式](#DevMode)    
     
 ## 跨平台<a id="cross-platform" />   
 MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持Java 14的平台。（MyBox v5.3以前的版本均基于Java 8）
@@ -228,7 +230,7 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 本版本仍未能支持在Linux/Mac上文字识别，原因是：所依托的tesseract库与各种平台紧密相关，没有统一的打包途径。     
 时间有限，目前暂搁此需求。
 
-“FFmpeg录屏”目前只支持windows平台。   
+“FFmpeg录屏”目前只支持windows平台和Linux平台。   
 
 ## 国际化<a id="international" />
 1. 所有代码均国际化。目前支持中文、英文。
@@ -247,10 +249,9 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 ## 文档工具<a id="documentTools" />
 
 ### PDF工具<a id="pdfTools" />
-1. 以网页模式查看PDF文件，可逐页查看和编辑页面和html。标签和缩略图。
-2. 批量将PDF转换为网页，可选：每页保存为一个html、还是整个PDF保存为一个html；字体文件/图像文件是嵌入、单独保存、还是忽略。
-3. 以图像模式查看PDF文件，可设置dpi以调整清晰度，可以把页面剪切保存为图片。
-4. 在图像模式下，识别PDF页面中的文字（OCR）。
+1. 以图像模式查看PDF文件，可设置dpi以调整清晰度，可以把页面剪切保存为图片。
+2. 以网页模式查看PDF文件，可逐页查看和编辑页面和html。标签和缩略图。
+3. 在图像模式下，识别PDF页面中的文字（OCR）。
    批量识别时，可设置：
 	-  页面转换图片还是页面提取图片
 	-  像素密度或伸缩比例
@@ -261,7 +262,8 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 	-  是否反色
 	-  语言列表及其顺序
 	-  是否插入分页行
-5. 将PDF文件的每页转换为一张图片，包含图像密度、色彩、格式、压缩、质量、色彩转换等选项。
+4. 将PDF文件的每页转换为一张图片，包含图像密度、色彩、格式、压缩、质量、色彩转换等选项。
+5. 批量将PDF转换为网页，可选：每页保存为一个html、还是整个PDF保存为一个html；字体文件/图像文件是嵌入、单独保存、还是忽略。
 6. 将多个图片合成PDF文件，可以设置压缩选项、页面尺寸、页边、页眉、作者等。
    支持中文，程序自动定位系统中的字体文件，用户也可以输入ttf字体文件路径。
 7. 压缩PDF文件的图片，设置JPEG质量或者黑白色阈值。
@@ -291,6 +293,7 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 	-  先加载显示首页，同时后端扫描文件以统计字符数和行数；统计期间部分功能不可用；统计完毕自动刷新界面。
 	-  对于跨页字符串，确保查找、替换、过滤的正确性。
 8. 通用的编辑功能（复制/粘贴/剪切/删除/全选/撤销/重做/恢复）及其快捷键。    
+9. 定时自动保存。
 
 ![截屏-textEditor](https://mararsh.github.io/MyBox/snap-textEditor.jpg)        
 
@@ -308,6 +311,7 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 	- 先加载显示首页，同时后端扫描文件以统计字节数和行数；统计期间部分功能不可用；统计完毕自动刷新界面。
 	- 对于跨页字节组，确保查找、替换、过滤的正确性。若按字节数换行，则行过滤时不考虑跨页。
 9. 通用的编辑功能（复制/粘贴/剪切/删除/全选/撤销/重做/恢复）及其快捷键。
+10. 定时自动保存。
 
 
 ### 编辑网页<a id="htmlEditor" />
@@ -322,6 +326,7 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 3. 同步转换为文本。
 4. 查找与替换。支持正则表达式。
 5. 定位。跳转到指定的字符位置或行号
+6. 定时自动保存。
 
 ### 其它<a id="documentOthers" />
 1. 批量转换文件的字符集。
@@ -334,12 +339,13 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 
 ### 查看图像<a id="viewImage" />
 1. 设置加载宽度：原始尺寸或指定宽度。
-2. "选择模式"：处于选择模式时，剪裁、复制、另存，都是针对选择的区域，否则是针对整个图像。
+2. "选择区域"：处于选择模式时，剪裁、复制、另存，都是针对选择的区域，否则是针对整个图像。
 3. 旋转可保存。
 4. 删除、重命名、恢复。
 5. 可选显示：坐标、横标尺、纵标尺、数据。
 6. 查看图像的元数据和属性，可解码图像中嵌入的ICC特性文件。
 7. 同目录下图像文件导览，多种文件排序方式。  
+8. 右键菜单。
 
 ![截屏-imageViewer](https://mararsh.github.io/MyBox/snap-imageViewer.jpg)       
 
@@ -373,7 +379,7 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 	   -  系统中的图片文件  
 	   -  示例图片    
 	-  管理粘贴板列表：增、删、清除、刷新，可设置最多保存数。
-	-  编辑图像时随时可以按粘贴按钮（CTRL+v）以把粘贴板的第一张图贴到当前图片上，也可以双击粘贴板列表的项目以粘贴。
+	-  编辑图像时按粘贴按钮（CTRL+v）以把粘贴板的第一张图贴到当前图片上，也可以双击粘贴板列表的项目以粘贴。
 	-  在当前图片上拖拉被粘贴图片，调整大小和位置。
 	-  粘贴选项：是否保持宽高比、混合模式、不透明度、旋转角度。
 2. 剪裁：定义"范围"以设置要剪切的内容。可设置背景色，可选是否把剪切下来的部分放入粘贴板。
@@ -382,7 +388,7 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 5. 效果：海报（减色）、阈值化、灰色、黑白色、褐色、浮雕、边沿检测、马赛克、磨砂玻璃。可选算法和参数。
 6. 增强：对比度、平滑、锐化、卷积。可选算法和参数。
 7. 富文本：以网页形式编辑文本，在图片上拖放调整文本的大小和位置。可设置背景的颜色、不透明度、边沿宽度、圆角大小，可设置文字的旋转角度。
-   由于是利用截屏实现，结果比较模糊，还没有好的解决办法。
+   由于是利用截屏实现，结果比较模糊，还没有好的解决办法。（此版本暂时不支持）
 8. 文字：设置字体、风格、大小、色彩、不透明度、阴影、角度，可选是否轮廓、是否垂直，点击图片定位文字。
 9. 画笔：
 	-  折线：多笔一线。可选画笔的宽度、颜色、是否虚线、不透明度。
@@ -395,26 +401,27 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 11. 圆角：把图像四角改为圆角，可设置背景色、圆角大小。
 12. 阴影：可设置背景色、阴影大小、是否预乘透明。
 13. 边沿：模糊边沿，可设置是否预乘透明；拖动锚点以调整边沿；按宽度加边；按宽度切边；按颜色切边。可选四边、颜色。
-14. 图片历史：
-	- 对于图片的每一次修改，工具可以自动保存为图片历史。可选是否把"加载"也记录为历史。
+14. 修改历史：
+	- 对于图片的每一次修改，工具可以自动保存为图片历史。
 	- 管理历史：删除、清除、选择并恢复为当前图片，可设置最多保存的历史个数。
 	- 对上一步的撤销（CTRL+z）和重做（CTRL+y）。可以随时恢复原图（CTRL+r）。也可以选择历史列表中任意图片来恢复。
-15. 参照图：可以打开其它图片以作对比。
-16. "范围"：定义操作针对的像素内容，既可定义区域、定义颜色匹配规则，也可同时定义区域和颜色匹配。
+15. "范围"：定义操作针对的像素内容，既可定义区域、定义颜色匹配规则，也可同时定义区域和颜色匹配。
 	- 定义区域：可以是矩形、圆形、椭圆、多边形，区域可反选。
 	- 定义要匹配颜色列表，可以利用调色盘在图片上直接取色。
 	- 选择颜色匹配的对象，可以是红/蓝/绿通道、饱和度、明暗、色相，色距可定义。颜色匹配结果可反选。
 	- 抠图：匹配像素周围的像素、并按同一匹配规则持续扩散出去。多个像素点的匹配合集就是结果。
 	- 轮廓：把背景透明的图片的轮廓自动提取出来，作为操作的范围。
 	- 范围可作用于：复制、剪切、颜色、效果、和卷积。
-	- 图片历史和参照图也可以定义"范围"，以便把"范围"内的部分复制到粘贴板中  
 	- 保存和管理范围：增、删、改、清除，应用已保存的范围。    
-17. 弹出图片：当前图片、图片历史、参照图都可以显示在弹出的新窗口中，可选择弹出窗口是否总是在最上面。 
-18. 可选是否同步缩放当前图片、图片历史、参照图。
-19. 修改已有的图片，或新建图片。
-20. "按需可见"的界面布局：左右幕布式区域、上下风箱式菜单、多页签切换目标、子功能区更细化的显示/隐藏/调整。
-21. 批量图像处理。
-22. 演示：对于"颜色"、"效果"、"增强"，一键展示各种数据处理的示例。
+16. 弹出图片：当前图片可以显示在弹出的新窗口中，可选择弹出窗口是否总是在最上面。 
+17. "按需可见"的界面布局：
+	- 显示/隐藏右面板（F4）、右面板（F5）
+	- 显示/隐藏范围面板（F7）、图片面板（F8）
+	- 上下风箱式页签
+	- 叠加多页签切换
+	- 按功能显示/隐藏控件
+18. 演示：对于粘贴的混合模式、"颜色"、"效果"、"增强"，一键展示各种数据处理的示例。
+19. 批量图像处理。
 
 ![截屏-imageManufacture](https://mararsh.github.io/MyBox/snap-imageManufacture.jpg)       
 
@@ -484,10 +491,11 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
                  rgba
 	-  以下是可选数据域：     
                  name
+8. 用户可输入颜色列表。提供示例。
 
 ### 调色盘<a id="ColorPalette" />
 1. 色块显示颜色。弹出颜色的名字（如果有）、十六进制值、rgb值、hsb值、不透明值、cmyk值、cie值。
-2. 在当前图片、图片历史、或参照图上点击取色。 
+2. 拖动色块以调整颜色的顺序。 
 
 ![截屏-colors](https://mararsh.github.io/MyBox/snap-colors.jpg)       
 
@@ -553,8 +561,9 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 ### 通用的数据管理<a id="dataManage" />
 1. 定义数据
 2. 数据约束：
- 	- 整型数值（integer/long/short）的非法值是最小值（MIN_VALUE）
- 	- 双精度数值的非法值是最大值（Double.MAX_VALUE）
+ 	- 约定：
+ 	  	- 整型数值（integer/long/short）的无效值是最小值（MIN_VALUE）
+ 	  	- 双精度数值的无效值是最大值（Double.MAX_VALUE）
 	- 坐标系统：
  	  	- 可取值：
  	  	   	- CGCS2000（中国大地坐标），真实位置，近似于WGS_84(GPS)坐标。
@@ -576,7 +585,10 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
  	  	   	- 时间，如：13:51:33
  	  	   	- 带毫秒的时间，如：13:51:33.261
  	  	   	- 带毫秒的日期时间，如：2014-06-11 13:51:33.261
- 	  	- 纪元：        
+ 	  	   	- 带时区的日期时间，如：2020-09-27 12:29:29 +0800
+  	  	   	- 带毫秒和时区的日期时间，如：2020-09-27 12:29:29.713 +0800
+  	  	   	- 日期和时间之间可以有或没有“T”。“2014-06-11T13:51:33”等同于“2014-06-11 13:51:33”。
+	  	- 纪元：        
  	  	 	  	 "0 AD" = "1 BC" = "0" = "-0" = "0000" = "-0000"  = "0001-01-01 00:00:00 BC" =  "公元前1" = "公元前0001-01-01 00:00:00"            
  	  	 	  	 "1 AD" =  "1"  = "0001" = "0001-01-01 00:00:00" = "0001-01-01 00:00:00 AD" =  "公元1" = "公元0001-01-01 00:00:00"           
  	  	 	  	 "202 BC" = "-203" = "-0203" = "-0203-01-01 00:00:00"  = "0202-01-01 00:00:00 BC" = "公元前202" =  "公元前0202-01-01 00:00:00"           
@@ -733,7 +745,8 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
 1. 查询地理代码：
  	-  点击地图
  	-  输入地址       
-            天地图支持外国地址，高德地图只支持中国地址。
+ 	  	-  天地图支持中外地址的中英文（如“伦敦”、“Paris”）
+ 	  	-  高德地图只支持中国地址的中文。
  	-  输入坐标  
 2. 可以保存查询出来的地理代码。
 
@@ -854,16 +867,16 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
  	-  在"中国省会疫情报告"和"全球疫情报告"界面上，可以填写多个地址的同一数据集同一天的数据。
  	-  对选择的多个数据项修改"来源"的取值。
 4. 导入数据：
- 	-  MyBox内置预定义数据：来自约翰霍普金斯大学的COVID-19数据（直到2020-08-27）。
+ 	-  MyBox内置预定义数据：来自约翰霍普金斯大学的COVID-19数据（直到2020-09-24）。
  	-  CSV格式：      
  	  	-  下载地址：         
                            https://github.com/Mararsh/MyBox_data/tree/master/COVID19              
  	  	-  以下为必要字段：           
-                           Data Set,Time,Confirmed           
-                   以及足以定义一个地理编码的位置数据：                
-                           Level,Continent,Country,Province,City,County,Town,Village,Building,Longitude,Latitude      
+                           数据集,时间,确认,治愈,死亡                     
+                   以及足以定义一个地理编码的位置数据：                 
+                          经度,纬度,级别,洲,国家,省,市,区县,乡镇,村庄,建筑物,兴趣点          
  	  	-  以下是可选字段：           
-                          Healed,Dead,Increased Confirmed,Increased Healed,Increased Dead,Data Source             
+                         新增确诊,新增治愈,新增死亡             
 	  	-  坐标系统是CGCS2000。           
  	-  来自约翰霍普金斯大学的COVID-19历史数据（全球）：     
   	  	-  下载地址：         
@@ -924,8 +937,10 @@ MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持
  	  	- 文字大小
  	  	- 地图的参数：级别、图层、语言
  	-  截图
- 	  	- 当动态图播放时，截图为动态gif
- 	  	- 当动态图暂停时、或图为静态图时，截图为当前帧。
+ 	  	- 当前帧的截图。格式自选。
+ 	  	- jpg：所有帧的截图
+ 	  	- png：所有帧的截图
+ 	  	- 动态gif：所有帧的截图（可能内存不够）
 8. 设置：
  	-  截图的分辨率、动态截图的最大宽度、加载图数据的时间。        
             这些参数与内存消耗和计算机计算能力有关。    
@@ -1040,10 +1055,13 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
  	-  可选是否录音频：
  	  	- 自动检测声卡，并把第一个声卡作为设备。
  	  	- 设置线程队列大小。
- 	-  设置录制时长：
+ 	-  设置延时：
+ 	  	- 若是”不限制“，则用户按按钮”开始“时立即开始录制。
+ 	  	- 若是有效值，则在这个时间结束时开始录制。
+ 	-  设置时长：
  	  	- 若是”不限制“，则用户按按钮”停止“时才停止。
  	  	- 若是有效值，则时间结束时自动停止。用户按按钮”停止“也可中止录制。
-	-  目前只支持windows
+	-  目前只支持windows和Linux
 3. 批量转换音频/视频：
 	-  源文件以文件/目录表显示
 	-  源文件以流和媒体信息表显示
@@ -1137,7 +1155,6 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 5. 图像工具：
 	-  画笔/锚点的宽度和颜色、锚点是否实心
 	-  不支持Alpha时要替换的颜色（建议为白色）
-	-  图像历史个数
 	-  缩略图宽度
 	-  采样图像最大显示宽度
 	-  是否往系统粘贴板中复制图片
@@ -1146,8 +1163,11 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 	-  设置数据文件及其顺序
 7. 地图：
 	-  设置数据密钥
-8. 清除个人设置。
-9. 打开数据目录。
+8. 开发：
+	-  开启/关闭“开发模式”
+	-  源码目录
+9. 清除个人设置。
+10. 打开数据目录。
 
 ## 窗口<a id="windows" />
 1. 开/关内存监视条
@@ -1162,14 +1182,29 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 3. 文档：帮助用户启动下载任务。若数据目录下已有MyBox文档，则MyBox会自动发现它们。
 
 
-
 ## 对于高清晰屏幕的支持<a id="Hidpi" />  
 
 Java 9以后已支持HiDPI，控件和字体都会适应当前清晰度配置。MyBox支持在线关闭/打开DPI敏感，修改时MyBox会自动重启。   
 开发者需要注意的是：JavaFx虚拟屏幕的dpi不同于物理屏幕的dpi，对于窗口元素尺寸的计算还要考虑伸缩比。   
 
 
+## 开发模式<a id="DevMode" />  
+1. 在“设置”中开启/关闭开发模式。
+2. 以下功能只有处于“开始模式”才可见：
+	-  菜单项：“帮助”-“制作图标”
+	-  颜色管理的菜单项：“导入MyBox颜色”
+
+
 # 开发日志<a id="devLog" />       
+2020-9-27 版本6.3.3        
+-  图像处理：显示/隐藏范围面板和图片面板；当粘贴超出边界时增大图片；混合模式的示例；卷积核参数“反色”。
+-  数据工具：方便输入CSV；时间支持微秒和时区；地图逐点显示；疫情报告保存为一组截图。
+-  颜色：输入颜色列表；设置颜色、图片取色、调色板管理分为不同的界面；可改变调色板上颜色的顺序。
+-  其它：表格和图片的右键菜单；编辑器定时自动保存；录屏可延时；录屏支持Linux；开发模式。
+-  解决的主要问题：“清除个人设置”是删除用户配置数据而不是删除所有数据；一些数据表处理错误；快捷键在Linux上无效；新位置数据无法添加到新数据集。     
+
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.3)       
+
 2020-8-27 版本6.3.2  完善“位置数据”。按“位置分布”和“时间序列”在地图上显示数据。3个数据集的示例。可导入movebank.org的数据文件。              
 完善数据在地图上的显示。支持天地图和高德地图的切换。       
 “位置工具”：转换坐标的小数值和度分秒；把坐标值转换为其它坐标系统。       

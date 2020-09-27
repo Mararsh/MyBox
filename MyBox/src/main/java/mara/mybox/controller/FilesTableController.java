@@ -4,8 +4,8 @@ import java.io.File;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import mara.mybox.data.FileInformation;
-import mara.mybox.fxml.FxmlControl;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 
 /**
@@ -37,30 +37,9 @@ public class FilesTableController extends BatchTableController<FileInformation> 
                     }
                 });
             }
-
-            if (moreButton != null) {
-                moreButton.setSelected(AppVariables.getUserConfigBoolean("FileTableMore", true));
-                moreAction();
-            }
         } catch (Exception e) {
             logger.error(e.toString());
         }
-    }
-
-    @Override
-    public void moreAction() {
-        if (moreButton.isSelected()) {
-            if (!thisPane.getChildren().contains(tableLabel)) {
-                thisPane.getChildren().add(2, tableLabel);
-            }
-            if (!thisPane.getChildren().contains(selectPane)) {
-                thisPane.getChildren().add(3, selectPane);
-            }
-        } else {
-            thisPane.getChildren().removeAll(selectPane, tableLabel);
-        }
-        FxmlControl.refreshStyle(thisPane);
-        AppVariables.setUserConfigValue("FileTableMore", moreButton.isSelected());
     }
 
     @Override

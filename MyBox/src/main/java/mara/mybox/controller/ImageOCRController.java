@@ -46,7 +46,9 @@ import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.OCRTools;
+import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
@@ -89,7 +91,7 @@ public class ImageOCRController extends ImageViewerController {
     @FXML
     protected TextArea textArea;
     @FXML
-    protected Label resultLabel, originalViewLabel, currentOCRFilesLabel;
+    protected Label resultLabel, originalViewLabel, currentOCRFilesLabel, imageLabel;
     @FXML
     protected ListView<String> languageList;
     @FXML
@@ -100,9 +102,7 @@ public class ImageOCRController extends ImageViewerController {
     @FXML
     protected ImageView originalView;
     @FXML
-    protected HtmlViewerController regionsTableController, wordsTableController;
-    @FXML
-    protected HtmlViewerController htmlController;
+    protected HtmlViewerController regionsTableController, wordsTableController, htmlController;
     @FXML
     protected Button demoButton;
 
@@ -112,7 +112,7 @@ public class ImageOCRController extends ImageViewerController {
         TargetPathType = VisitHistory.FileType.Text;
         TargetFileType = VisitHistory.FileType.Text;
 
-        targetPathKey = "TextFilePath";
+        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Text);
         targetExtensionFilter = CommonFxValues.TextExtensionFilter;
 
         needNotRulers = true;
@@ -121,8 +121,10 @@ public class ImageOCRController extends ImageViewerController {
     }
 
     @Override
-    public void initializeNext2() {
+    public void initControls() {
         try {
+            super.initControls();
+
             initImageBox();
             initPreprocessBox();
             initOCROptionsBox();
@@ -832,7 +834,7 @@ public class ImageOCRController extends ImageViewerController {
 
             @Override
             public List<VisitHistory> recentPaths() {
-                return VisitHistory.getRecentPath(VisitHistory.FileType.Image);
+                return VisitHistoryTools.getRecentPath(VisitHistory.FileType.Image);
             }
 
             @Override
@@ -852,7 +854,7 @@ public class ImageOCRController extends ImageViewerController {
                     handleSelect();
                     return;
                 }
-                AppVariables.setUserConfigValue("ImageFilePath", fname);
+                AppVariables.setUserConfigValue(VisitHistoryTools.getPathKey(VisitHistory.FileType.Image), fname);
                 handleSelect();
             }
 
@@ -873,7 +875,7 @@ public class ImageOCRController extends ImageViewerController {
             if (sourceFile != null) {
                 name = FileTools.getFilePrefix(sourceFile.getName()) + "_preprocessed";
             }
-            final File file = chooseSaveFile(AppVariables.getUserConfigPath("ImageFilePath"),
+            final File file = chooseSaveFile(AppVariables.getUserConfigPath(VisitHistoryTools.getPathKey(VisitHistory.FileType.Image)),
                     name, CommonFxValues.ImageExtensionFilter, true);
             if (file == null) {
                 return;
@@ -921,8 +923,8 @@ public class ImageOCRController extends ImageViewerController {
             });
             selectedLanguages = AppVariables.getUserConfigValue("ImageOCRLanguages", null);
             if (selectedLanguages != null && !selectedLanguages.isEmpty()) {
-                currentOCRFilesLabel.setText(
-                        MessageFormat.format(message("CurrentDataFiles"), selectedLanguages));
+                currentOCRFilesLabel.setText(MessageFormat.format(message("CurrentDataFiles"), selectedLanguages));
+                currentOCRFilesLabel.setStyle(null);
                 isSettingValues = true;
                 String[] langs = selectedLanguages.split("\\+");
                 Map<String, String> codes = OCRTools.codeName();
@@ -935,8 +937,8 @@ public class ImageOCRController extends ImageViewerController {
                 }
                 isSettingValues = false;
             } else {
-                currentOCRFilesLabel.setText(
-                        MessageFormat.format(message("CurrentDataFiles"), ""));
+                currentOCRFilesLabel.setText(MessageFormat.format(message("CurrentDataFiles"), message("NoData")));
+                currentOCRFilesLabel.setStyle(badStyle);
             }
 
             regionLevel = -1;
@@ -1030,9 +1032,10 @@ public class ImageOCRController extends ImageViewerController {
             AppVariables.setUserConfigValue("ImageOCRLanguages", selectedLanguages);
             currentOCRFilesLabel.setText(
                     MessageFormat.format(message("CurrentDataFiles"), selectedLanguages));
+            currentOCRFilesLabel.setStyle(null);
         } else {
-            currentOCRFilesLabel.setText(
-                    MessageFormat.format(message("CurrentDataFiles"), ""));
+            currentOCRFilesLabel.setText(MessageFormat.format(message("CurrentDataFiles"), message("NoData")));
+            currentOCRFilesLabel.setStyle(badStyle);
         }
     }
 

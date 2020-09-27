@@ -23,7 +23,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SelectionMode;
-import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -74,8 +73,6 @@ public class ConvolutionKernelManagerController extends BaseController {
     @FXML
     private VBox mainPane;
     @FXML
-    private SplitPane splitPane;
-    @FXML
     private Button editButton, gaussButton;
     @FXML
     private TableView<ConvolutionKernel> tableView;
@@ -94,7 +91,7 @@ public class ConvolutionKernelManagerController extends BaseController {
     @FXML
     private ScrollPane scrollPane;
     @FXML
-    private CheckBox grayCheck;
+    private CheckBox grayCheck, invertCheck;
     @FXML
     private RadioButton zeroRadio, keepRadio;
 
@@ -103,8 +100,9 @@ public class ConvolutionKernelManagerController extends BaseController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
+            super.initControls();
             initList();
             initEditFields();
         } catch (Exception e) {
@@ -265,6 +263,7 @@ public class ConvolutionKernelManagerController extends BaseController {
         try {
             type = ConvolutionKernel.Convolution_Type.NONE;
             grayCheck.setDisable(true);
+            invertCheck.setDisable(true);
             RadioButton selected = (RadioButton) typeGroup.getSelectedToggle();
             if (selected == null) {
                 return;
@@ -278,9 +277,12 @@ public class ConvolutionKernelManagerController extends BaseController {
             } else if (message("Emboss").equals(selected.getText())) {
                 type = ConvolutionKernel.Convolution_Type.EMBOSS;
                 grayCheck.setDisable(false);
+                invertCheck.setDisable(false);
 
             } else if (message("EdgeDetection").equals(selected.getText())) {
                 type = ConvolutionKernel.Convolution_Type.EDGE_DETECTION;
+                grayCheck.setDisable(false);
+                invertCheck.setDisable(false);
 
             }
         } catch (Exception e) {
@@ -468,8 +470,11 @@ public class ConvolutionKernelManagerController extends BaseController {
         } else if (type == Convolution_Type.EMBOSS) {
             FxmlControl.setRadioSelected(typeGroup, message("Emboss"));
             grayCheck.setDisable(false);
+            invertCheck.setDisable(false);
         } else if (type == Convolution_Type.EDGE_DETECTION) {
             FxmlControl.setRadioSelected(typeGroup, message("EdgeDetection"));
+            grayCheck.setDisable(false);
+            invertCheck.setDisable(false);
         } else {
             FxmlControl.setRadioSelected(typeGroup, message("None"));
         }
@@ -478,7 +483,8 @@ public class ConvolutionKernelManagerController extends BaseController {
         } else {
             zeroRadio.fire();
         }
-        grayCheck.setSelected(kernel.getGray() > 0);
+        grayCheck.setSelected(kernel.isGray());
+        invertCheck.setSelected(kernel.isInvert());
         nameInput.setDisable(true);
         matrixValues = null;
         matrixValues = TableFloatMatrix.read(kernel.getName(), kernel.getWidth(), kernel.getHeight());
@@ -696,7 +702,8 @@ public class ConvolutionKernelManagerController extends BaseController {
         kernel.setWidth(width);
         kernel.setHeight(height);
         kernel.setType(type);
-        kernel.setGray(grayCheck.isSelected() ? 1 : 0);
+        kernel.setGray(grayCheck.isSelected());
+        kernel.setInvert(invertCheck.isSelected());
         kernel.setEdge(edge_Op);
         kernel.setDescription(description);
         if (kernel.getCreateTime() == null || kernel.getCreateTime().isEmpty()) {
@@ -715,7 +722,7 @@ public class ConvolutionKernelManagerController extends BaseController {
         ImageManufactureController c
                 = (ImageManufactureController) openStage(CommonValues.ImageManufactureFxml);
         c.loadImage(new Image("img/zz1.png"));
-        c.operationController.applyKernel(kernel);
+        c.applyKernel(kernel);
     }
 
     @FXML

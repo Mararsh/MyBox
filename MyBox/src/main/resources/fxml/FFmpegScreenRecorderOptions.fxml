@@ -61,27 +61,30 @@ License:    Apache License Version 2.0
                         <Image url="@../buttons/iconTips.png" />
                     </image>
                 </ImageView>
-            <Label fx:id="infoLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
-               <padding>
-                  <Insets left="30.0" />
-               </padding></Label>
-            <Hyperlink onAction="#aboutMedia" text="%AboutMedia" />
+                <Label fx:id="infoLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
+                    <padding>
+                        <Insets left="30.0" />
+                    </padding>
+                </Label>
+                <Hyperlink onAction="#aboutMedia" text="%AboutMedia" />
             </children>
         </HBox>
-      <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
-         <children>
-            <Label text="%DurationSeconds" />
-            <ComboBox fx:id="durationSelector" editable="true" prefWidth="300.0" />
-         </children>
-      </HBox>
-      <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
-         <children>
-            <Label text="%MuxerFormat" />
-            <ComboBox fx:id="muxerSelector" prefWidth="300.0" />
-            <Label text="%TargetFilesExtension" />
-            <TextField fx:id="extensionInput" prefWidth="150.0" />
-         </children>
-      </HBox>
+        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
+            <children>
+                <Label text="%DelaySeconds" />
+                <fx:include fx:id="delay" source="ControlTimeLength.fxml" />
+                <Label text="%DurationSeconds" />
+                <fx:include fx:id="duration" source="ControlTimeLength.fxml" />
+            </children>
+        </HBox>
+        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
+            <children>
+                <Label minWidth="-Infinity" text="%MuxerFormat" HBox.hgrow="NEVER" />
+                <ComboBox fx:id="muxerSelector" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                <Label minWidth="-Infinity" text="%TargetFilesExtension" HBox.hgrow="NEVER" />
+                <TextField fx:id="extensionInput" prefWidth="150.0" />
+            </children>
+        </HBox>
         <VBox fx:id="videoBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
             <children>
                 <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="75.0" spacing="10.0">
@@ -95,30 +98,29 @@ License:    Apache License Version 2.0
                         <TextField fx:id="videoThreadQueueSizeInput" prefWidth="140.0" />
                     </children>
                 </HBox>
-                <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" spacing="10.0" />
-                <HBox alignment="CENTER_LEFT" layoutX="15.0" layoutY="196.0" maxWidth="1.7976931348623157E308" spacing="5.0">
+                <HBox fx:id="fullScreenBox" alignment="CENTER_LEFT" layoutX="15.0" layoutY="196.0" maxWidth="1.7976931348623157E308" spacing="5.0">
                     <children>
-                        <RadioButton fx:id="fullscreenRadio" mnemonicParsing="false" selected="true" text="%FullScreen">
+                        <RadioButton fx:id="fullscreenRadio" minWidth="-Infinity" mnemonicParsing="false" selected="true" text="%FullScreen" HBox.hgrow="NEVER">
                             <toggleGroup>
                                 <ToggleGroup fx:id="scopeGroup" />
                             </toggleGroup>
                         </RadioButton>
-                        <Label fx:id="screenSizeLabel">
+                        <Label fx:id="screenSizeLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
                             <HBox.margin>
                                 <Insets left="20.0" />
                             </HBox.margin>
                         </Label>
                     </children>
                 </HBox>
-                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
+                <HBox fx:id="windowBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
                     <children>
-                        <RadioButton fx:id="windowRadio" mnemonicParsing="false" text="%WindowTitle" toggleGroup="$scopeGroup" />
+                        <RadioButton fx:id="windowRadio" minWidth="-Infinity" mnemonicParsing="false" text="%WindowTitle" toggleGroup="$scopeGroup" HBox.hgrow="NEVER" />
                         <TextField fx:id="titleInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                     </children>
                 </HBox>
                 <HBox alignment="CENTER_LEFT" layoutX="15.0" layoutY="156.0" maxWidth="1.7976931348623157E308" spacing="5.0">
                     <children>
-                        <RadioButton fx:id="rectangleRadio" mnemonicParsing="false" text="%Rectangle" toggleGroup="$scopeGroup" />
+                        <RadioButton fx:id="rectangleRadio" minWidth="-Infinity" mnemonicParsing="false" text="%Rectangle" toggleGroup="$scopeGroup" HBox.hgrow="NEVER" />
                         <Label text="X">
                             <HBox.margin>
                                 <Insets left="20.0" />
@@ -136,18 +138,18 @@ License:    Apache License Version 2.0
                 <HBox alignment="CENTER_LEFT" layoutX="15.0" layoutY="156.0" maxWidth="1.7976931348623157E308" spacing="5.0" />
                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
                     <children>
-                        <Label text="%VideoEncoder" />
-                  <ComboBox fx:id="videoEncoderSelector" prefWidth="200.0" />
-                        <Label text="%VideoFrameRate" />
-                        <ComboBox fx:id="videoFrameRateSelector" prefWidth="150.0" />
+                        <Label minWidth="-Infinity" text="%VideoEncoder" HBox.hgrow="NEVER" />
+                        <ComboBox fx:id="videoEncoderSelector" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                        <Label minWidth="-Infinity" text="%VideoFrameRate" HBox.hgrow="NEVER" />
+                        <ComboBox fx:id="videoFrameRateSelector" minWidth="-Infinity" prefWidth="200.0" HBox.hgrow="NEVER" />
                     </children>
                 </HBox>
                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
                     <children>
-                        <Label text="%EncodingPreset" />
-                        <ComboBox prefWidth="160.0" fx:id="x264presetSelector" />
-                        <Label text="%CRF" />
-                        <ComboBox fx:id="crfSelector" prefWidth="160.0" />
+                        <Label minWidth="-Infinity" text="%EncodingPreset" HBox.hgrow="NEVER" />
+                        <ComboBox maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" fx:id="x264presetSelector" />
+                        <Label minWidth="-Infinity" text="%CRF" HBox.hgrow="NEVER" />
+                        <ComboBox fx:id="crfSelector" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                     </children>
                 </HBox>
                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" />
@@ -158,13 +160,13 @@ License:    Apache License Version 2.0
             <children>
                 <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="75.0" spacing="10.0">
                     <children>
-                        <CheckBox fx:id="audioCheck" mnemonicParsing="false" selected="true" text="%Audio" />
-                        <Label fx:id="audioComments" text="%AudioDevice">
+                        <CheckBox fx:id="audioCheck" minWidth="-Infinity" mnemonicParsing="false" selected="true" text="%Audio" HBox.hgrow="NEVER" />
+                        <Label fx:id="audioComments" minWidth="-Infinity" text="%AudioDevice" wrapText="true" HBox.hgrow="NEVER">
                             <HBox.margin>
                                 <Insets left="10.0" />
                             </HBox.margin>
                         </Label>
-                        <Label text="%ThreadQueueSize">
+                        <Label minWidth="-Infinity" text="%ThreadQueueSize" HBox.hgrow="NEVER">
                             <HBox.margin>
                                 <Insets left="20.0" />
                             </HBox.margin>
@@ -175,10 +177,10 @@ License:    Apache License Version 2.0
                 <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" spacing="10.0" />
                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
                     <children>
-                        <Label text="%AudioEncoder" />
-                        <ComboBox fx:id="audioEncoderSelector" prefWidth="300.0" />
-                        <Label text="%AudioSampleRate" />
-                        <ComboBox fx:id="audioSampleRateSelector" editable="true" prefWidth="200.0" />
+                        <Label minWidth="-Infinity" text="%AudioEncoder" HBox.hgrow="NEVER" />
+                        <ComboBox fx:id="audioEncoderSelector" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                        <Label minWidth="-Infinity" text="%AudioSampleRate" HBox.hgrow="NEVER" />
+                        <ComboBox fx:id="audioSampleRateSelector" editable="true" minWidth="-Infinity" prefWidth="200.0" HBox.hgrow="NEVER" />
                     </children>
                 </HBox>
                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
@@ -186,8 +188,8 @@ License:    Apache License Version 2.0
                         <Label text="%AudioBitrate" />
                         <ComboBox fx:id="audioBitrateSelector" editable="true" prefWidth="200.0" />
                         <Label text="%ChangeVolume" />
-                  <ComboBox fx:id="volumnSelector" editable="true" prefWidth="200.0" />
-                  <CheckBox fx:id="stereoCheck" mnemonicParsing="false" selected="true" text="%Stereo" />
+                        <ComboBox fx:id="volumnSelector" editable="true" prefWidth="200.0" />
+                        <CheckBox fx:id="stereoCheck" mnemonicParsing="false" selected="true" text="%Stereo" />
                     </children>
                 </HBox>
                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" />
@@ -196,7 +198,7 @@ License:    Apache License Version 2.0
         </VBox>
         <HBox alignment="CENTER_LEFT" layoutX="32.0" layoutY="420.0" maxWidth="1.7976931348623157E308" spacing="5.0">
             <children>
-                <Label text="%MoreArguments" />
+                <Label minWidth="-Infinity" text="%MoreArguments" HBox.hgrow="NEVER" />
                 <TextField fx:id="moreInput" maxWidth="1.7976931348623157E308" promptText="%SeparateBySpace" HBox.hgrow="ALWAYS" />
             </children>
         </HBox>

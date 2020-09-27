@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Map;
 import mara.mybox.tools.ConfigTools;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -104,50 +105,44 @@ public class TableSystemConf extends DerbyBase {
     }
 
     public static String readString(Connection conn, String keyName, String defaultValue) {
-        try ( PreparedStatement queryStatement = conn.prepareStatement(QueryString)) {
-            queryStatement.setMaxRows(1);
-            queryStatement.setString(1, keyName);
-            ResultSet resultSet = queryStatement.executeQuery();
-            if (resultSet.next()) {
-                return resultSet.getString(1);
-            } else {
-                if (defaultValue != null) {
-                    try ( PreparedStatement insert = conn.prepareStatement(InsertString)) {
-                        insert.setString(1, keyName);
-                        insert.setString(2, defaultValue);
-                        insert.executeUpdate();
-                    }
-                }
-                return defaultValue;
-            }
-        } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
-            return defaultValue;
+        if (conn == null || keyName == null) {
+            return null;
         }
-    }
-
-    public static String readString(Connection conn, String keyName) {
-        String value = null;
         try ( PreparedStatement queryStatement = conn.prepareStatement(QueryString)) {
             queryStatement.setMaxRows(1);
             queryStatement.setString(1, keyName);
             try ( ResultSet resultSet = queryStatement.executeQuery()) {
                 if (resultSet.next()) {
-                    value = resultSet.getString(1);
+                    String value = resultSet.getString(1);
+                    if (value == null) {
+                        delete(conn, keyName);
+                    } else {
+                        return value;
+                    }
+                }
+            }
+            if (defaultValue != null) {
+                try ( PreparedStatement insert = conn.prepareStatement(InsertString)) {
+                    insert.setString(1, keyName);
+                    insert.setString(2, defaultValue);
+                    insert.executeUpdate();
                 }
             }
         } catch (Exception e) {
             failed(e);
 //            // logger.debug(e.toString());
         }
-        return value;
+        return defaultValue;
+    }
+
+    public static String readString(Connection conn, String keyName) {
+        return readString(conn, keyName, null);
     }
 
     public static int readInt(String keyName, int defaultValue) {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             int exist = readInt(conn, keyName);
-            if (exist != Integer.MIN_VALUE) {
+            if (exist != CommonValues.InvalidInteger) {
                 return exist;
             } else {
                 try ( PreparedStatement insert = conn.prepareStatement(InsertInt)) {
@@ -165,7 +160,7 @@ public class TableSystemConf extends DerbyBase {
     }
 
     public static int readInt(Connection conn, String keyName) {
-        int value = Integer.MIN_VALUE;
+        int value = CommonValues.InvalidInteger;
         try ( PreparedStatement queryStatement = conn.prepareStatement(QueryInt)) {
             queryStatement.setMaxRows(1);
             queryStatement.setString(1, keyName);
@@ -187,12 +182,16 @@ public class TableSystemConf extends DerbyBase {
     }
 
     public static int writeString(String keyName, String stringValue) {
+        if (keyName == null) {
+            return 0;
+        }
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            if (stringValue == null) {
+                return delete(conn, keyName) ? 1 : 0;
+            }
             String exist = readString(conn, keyName);
             if (exist != null) {
-                if (stringValue == null) {
-                    return delete(conn, keyName) ? 1 : 0;
-                } else if (!stringValue.equals(exist)) {
+                if (!stringValue.equals(exist)) {
                     try ( PreparedStatement statement = conn.prepareStatement(UpdateString)) {
                         statement.setString(1, stringValue);
                         statement.setString(2, keyName);
@@ -218,7 +217,7 @@ public class TableSystemConf extends DerbyBase {
     public static int writeInt(String keyName, int intValue) {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             int exist = readInt(conn, keyName);
-            if (exist != Integer.MIN_VALUE) {
+            if (exist != CommonValues.InvalidInteger) {
                 if (intValue != exist) {
                     try ( PreparedStatement statement = conn.prepareStatement(UpdateInt)) {
                         statement.setInt(1, intValue);

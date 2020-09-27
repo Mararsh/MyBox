@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -62,19 +63,24 @@ public class TableImageScope extends DerbyBase {
                 + " )";
     }
 
+    public static final String Delete
+            = "DELETE FROM image_scope WHERE image_location=? AND name=?";
+
     public static List<ImageScope> read(String imageLocation) {
         List<ImageScope> records = new ArrayList<>();
         if (imageLocation == null || imageLocation.trim().isEmpty()) {
             return records;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                 Statement statement = conn.createStatement()) {
             conn.setReadOnly(true);
             String sql = " SELECT * FROM image_scope WHERE image_location='" + imageLocation + "' ORDER BY modify_time DESC";
-            ResultSet results = conn.createStatement().executeQuery(sql);
-            while (results.next()) {
-                ImageScope scope = decode(results);
-                if (scope != null) {
-                    records.add(scope);
+            try ( ResultSet results = statement.executeQuery(sql)) {
+                while (results.next()) {
+                    ImageScope scope = decode(results);
+                    if (scope != null) {
+                        records.add(scope);
+                    }
                 }
             }
         } catch (Exception e) {
@@ -99,9 +105,10 @@ public class TableImageScope extends DerbyBase {
                  Statement statement = conn.createStatement()) {
             String sql = " SELECT * FROM image_scope WHERE image_location='" + imageLocation
                     + "' AND name='" + stringValue(name) + "'";
-            ResultSet results = statement.executeQuery(sql);
-            if (results.next()) {
-                return decode(results);
+            try ( ResultSet results = statement.executeQuery(sql)) {
+                if (results.next()) {
+                    return decode(results);
+                }
             }
         } catch (Exception e) {
             failed(e);
@@ -280,7 +287,6 @@ public class TableImageScope extends DerbyBase {
         if (scope == null || scope.getFile() == null || scope.getName() == null) {
             return new ArrayList<>();
         }
-
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
             String areaData = encodeAreaData(scope);
@@ -288,8 +294,13 @@ public class TableImageScope extends DerbyBase {
             String outline = encodeOutline(scope);
             String sql = " SELECT * FROM image_scope WHERE image_location='" + scope.getFile()
                     + "' AND name='" + stringValue(scope.getName()) + "'";
-            ResultSet results = statement.executeQuery(sql);
-            if (results.next()) {
+            boolean exist = false;
+            try ( ResultSet results = statement.executeQuery(sql)) {
+                if (results.next()) {
+                    exist = true;
+                }
+            }
+            if (exist) {
                 sql = "UPDATE image_scope SET scope_type='" + scope.getScopeType().name()
                         + "' , color_scope_type='" + scope.getColorScopeType().name()
                         + "' , area_data='" + areaData
@@ -464,12 +475,34 @@ public class TableImageScope extends DerbyBase {
         }
     }
 
-    public static boolean removeScope(String imageLocation, String name) {
+    public static boolean delete(ImageScope scope) {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 Statement statement = conn.createStatement()) {
-            String sql = "DELETE FROM image_scope WHERE image_location='" + imageLocation
-                    + "' AND name='" + stringValue(name) + "'";
-            statement.executeUpdate(sql);
+                 PreparedStatement statement = conn.prepareStatement(Delete)) {
+            statement.setString(1, scope.getFile());
+            statement.setString(2, scope.getName());
+            statement.executeUpdate();
+            return true;
+        } catch (Exception e) {
+            failed(e);
+            // logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean delete(List<ImageScope> scopes) {
+        if (scopes == null || scopes.isEmpty()) {
+            return true;
+        }
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            conn.setAutoCommit(false);
+            try ( PreparedStatement statement = conn.prepareStatement(Delete)) {
+                for (ImageScope scope : scopes) {
+                    statement.setString(1, scope.getFile());
+                    statement.setString(2, scope.getName());
+                    statement.executeUpdate();
+                }
+            }
+            conn.commit();
             return true;
         } catch (Exception e) {
             failed(e);

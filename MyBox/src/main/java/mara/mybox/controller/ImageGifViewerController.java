@@ -12,6 +12,7 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -31,6 +32,7 @@ import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.image.file.ImageGifFile;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
@@ -78,8 +80,10 @@ public class ImageGifViewerController extends ImageViewerController {
     }
 
     @Override
-    public void initializeNext2() {
+    public void initControls() {
         try {
+            super.initControls();
+
             operation3Box.disableProperty().bind(
                     Bindings.isNull(imageView.imageProperty())
             );
@@ -367,7 +371,7 @@ public class ImageGifViewerController extends ImageViewerController {
     }
 
     @FXML
-    public void editAction() {
+    public void editAction(ActionEvent event) {
         try {
             final ImageGifEditerController controller
                     = (ImageGifEditerController) openStage(CommonValues.ImageGifEditerFxml);

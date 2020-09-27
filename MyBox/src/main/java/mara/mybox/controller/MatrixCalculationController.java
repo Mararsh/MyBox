@@ -9,6 +9,7 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -66,7 +67,8 @@ public class MatrixCalculationController extends BaseController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
+        super.initControls();
         initEditPane();
         initValuePane();
 
@@ -1120,7 +1122,7 @@ public class MatrixCalculationController extends BaseController {
     }
 
     @FXML
-    public void editAction() {
+    public void editAction(ActionEvent event) {
         if (valueArea.getText().isEmpty()) {
             return;
         }

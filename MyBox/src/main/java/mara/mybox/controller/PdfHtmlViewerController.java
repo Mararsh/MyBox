@@ -11,8 +11,8 @@ import javafx.concurrent.Worker.State;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.HBox;
 import javafx.scene.web.HTMLEditor;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebEvent;
@@ -20,9 +20,12 @@ import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.data.VisitHistory;
+import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
@@ -47,8 +50,6 @@ public class PdfHtmlViewerController extends PdfViewController {
     protected boolean atTop, atBottom, setScroll;
 
     @FXML
-    protected HBox operationBox;
-    @FXML
     protected WebView webView;
     @FXML
     protected HTMLEditor htmlEditor;
@@ -63,8 +64,8 @@ public class PdfHtmlViewerController extends PdfViewController {
         TargetFileType = VisitHistory.FileType.Html;
         TargetPathType = VisitHistory.FileType.Html;
 
-        sourcePathKey = "PdfFilePath";
-        targetPathKey = "HtmlFilePath";
+        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.PDF);
+        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Html);
 
         sourceExtensionFilter = CommonFxValues.PdfExtensionFilter;
         targetExtensionFilter = CommonFxValues.HtmlExtensionFilter;
@@ -92,11 +93,13 @@ public class PdfHtmlViewerController extends PdfViewController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
-            initOperationBox();
-            initMainPane();
-
+            super.initControls();
+            if (tipsView != null) {
+                FxmlControl.setTooltip(tipsView,
+                        new Tooltip(message("PDFComments") + "\n\n" + message("PdfHtmlViewerTips")));
+            }
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -105,6 +108,8 @@ public class PdfHtmlViewerController extends PdfViewController {
     @Override
     public void initOperationBox() {
         try {
+            super.initOperationBox();
+
             operationBox.disableProperty().bind(Bindings.not(infoLoaded));
 
         } catch (Exception e) {
@@ -113,8 +118,10 @@ public class PdfHtmlViewerController extends PdfViewController {
     }
 
     @Override
-    public void initMainPane() {
+    public void initViewPane() {
         try {
+            super.initViewPane();
+
             mainPane.disableProperty().bind(Bindings.not(infoLoaded));
 
             domConfig = PDFDomTreeConfig.createDefaultConfig();
@@ -270,7 +277,7 @@ public class PdfHtmlViewerController extends PdfViewController {
                             try {
                                 parser.writeText(doc, output);
                             } catch (Exception e) {
-//                                logger.debug(error);
+                                logger.debug(error);
                             }
                             doc.close();
                             ok = true;

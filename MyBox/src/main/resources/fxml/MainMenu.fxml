@@ -38,11 +38,11 @@ License:    Apache License Version 2.0
                             <items>
                                 <Menu mnemonicParsing="false" text="PDF">
                                     <items>
-                                        <MenuItem mnemonicParsing="false" onAction="#openPdfHtmlViewer" text="%PdfHtmlViewer" />
                                         <MenuItem mnemonicParsing="false" onAction="#openPdfView" text="%PdfView" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openPdfHtmlViewer" text="%PdfHtmlViewer" />
                                         <SeparatorMenuItem mnemonicParsing="false" />
-                                        <MenuItem mnemonicParsing="false" onAction="#openPdfConvertHtmlsBatch" text="%PdfConvertHtmlsBatch" />
                                         <MenuItem mnemonicParsing="false" onAction="#openPdfConvertImagesBatch" text="%PdfConvertImagesBatch" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openPdfConvertHtmlsBatch" text="%PdfConvertHtmlsBatch" />
                                         <SeparatorMenuItem mnemonicParsing="false" />
                                         <MenuItem mnemonicParsing="false" onAction="#openPdfExtractImagesBatch" text="%PdfExtractImagesBatch" />
                                         <MenuItem mnemonicParsing="false" onAction="#openPdfExtractTextsBatch" text="%PdfExtractTextsBatch" />
@@ -121,14 +121,8 @@ License:    Apache License Version 2.0
                                 <MenuItem fx:id="imageOcrMenu" mnemonicParsing="false" onAction="#openImageOCR" text="%ImageOCR" />
                                 <MenuItem fx:id="imageOcrBatchMenu" mnemonicParsing="false" onAction="#openImageOCRBatch" text="%ImageOCRBatch" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
-                                <Menu mnemonicParsing="false" text="%Miscellaneous">
-                                    <items>
-                                        <MenuItem mnemonicParsing="false" onAction="#openConvolutionKernelManager" text="%ConvolutionKernelManager" />
-                                        <MenuItem mnemonicParsing="false" onAction="#openPixelsCalculator" text="%PixelsCalculator" />
-                                        <MenuItem mnemonicParsing="false" onAction="#openColorPalette" text="%ColorPalette" />
-                                        <MenuItem mnemonicParsing="false" onAction="#openManageColors" text="%ManageColors" />
-                                    </items>
-                                </Menu>
+                                <MenuItem mnemonicParsing="false" onAction="#openManageColors" text="%ManageColors" />
+                                <MenuItem mnemonicParsing="false" onAction="#openColorPalette" text="%ColorPaletteManage" />
                                 <Menu mnemonicParsing="false" text="%ColorSpace">
                                     <items>
                                         <MenuItem mnemonicParsing="false" onAction="#openChromaticityDiagram" text="%DrawChromaticityDiagram" />
@@ -138,6 +132,12 @@ License:    Apache License Version 2.0
                                         <MenuItem mnemonicParsing="false" onAction="#openRGB2RGBConversionMatrix" text="%LinearRGB2RGBMatrix" />
                                         <MenuItem mnemonicParsing="false" onAction="#openIlluminants" text="%Illuminants" />
                                         <MenuItem mnemonicParsing="false" onAction="#openChromaticAdaptationMatrix" text="%ChromaticAdaptationMatrix" />
+                                    </items>
+                                </Menu>
+                                <Menu mnemonicParsing="false" text="%Miscellaneous">
+                                    <items>
+                                        <MenuItem mnemonicParsing="false" onAction="#openConvolutionKernelManager" text="%ConvolutionKernelManager" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openPixelsCalculator" text="%PixelsCalculator" />
                                     </items>
                                 </Menu>
                             </items>
@@ -344,8 +344,7 @@ License:    Apache License Version 2.0
                         </Menu>
                         <Menu fx:id="helpMenu" mnemonicParsing="false" text="%Help">
                             <items>
-                                <!--Uncomment following line to make the function work />-->
-                                <!--<MenuItem mnemonicParsing="false" onAction="#makeIcons" text="%MakeIcons" />-->
+                                <MenuItem fx:id="makeIconsItem"  mnemonicParsing="false" onAction="#makeIcons" text="%MakeIcons" />
                                 <MenuItem mnemonicParsing="false" onAction="#Shortcuts" text="%Shortcuts" />
                                 <MenuItem mnemonicParsing="false" onAction="#MyBoxProperties" text="%MyBoxProperties" />
                                 <SeparatorMenuItem mnemonicParsing="false" />

@@ -6,6 +6,7 @@ import mara.mybox.data.VisitHistory;
 import mara.mybox.image.ImageFileInformation;
 import mara.mybox.image.ImageInformation;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.CommonFxValues;
 
 /**
@@ -26,10 +27,10 @@ public abstract class ImagesBatchController extends FilesBatchController {
         AddFileType = VisitHistory.FileType.Image;
         AddPathType = VisitHistory.FileType.Image;
 
-        targetPathKey = "ImageFilePath";
+        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Image);
         targetSubdirKey = "ImageCreatSubdir";
         previewKey = "ImagePreview";
-        sourcePathKey = "ImageFilePath";
+        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Image);
 
         browseTargets = true;
 

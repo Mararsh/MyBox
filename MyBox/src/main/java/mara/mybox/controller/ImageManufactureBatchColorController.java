@@ -13,12 +13,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.PixelsOperation;
 import mara.mybox.image.PixelsOperation.ColorActionType;
 import mara.mybox.image.PixelsOperation.OperationType;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -54,8 +55,9 @@ public class ImageManufactureBatchColorController extends ImageManufactureBatchC
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
+            super.initControls();
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())

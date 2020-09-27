@@ -22,6 +22,7 @@ import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -51,8 +52,10 @@ public class ImageSampleController extends ImageViewerController {
     }
 
     @Override
-    public void initializeNext2() {
+    public void initControls() {
         try {
+            super.initControls();
+
             opBox.disableProperty().bind(imageView.imageProperty().isNull());
             sampleBox.disableProperty().bind(imageView.imageProperty().isNull());
             showBox.disableProperty().bind(imageView.imageProperty().isNull());

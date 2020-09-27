@@ -7,29 +7,25 @@ import java.util.List;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Control;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
@@ -52,9 +48,7 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
     @FXML
     private ComboBox<String> waterSizeBox, waterShadowBox, waterAngleBox, opacityBox;
     @FXML
-    protected Rectangle colorRect;
-    @FXML
-    protected Button paletteButton;
+    protected ColorSetController colorSetController;
     @FXML
     private ToggleGroup positionGroup;
     @FXML
@@ -81,8 +75,9 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
+            super.initControls();
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
@@ -193,9 +188,7 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
                 }
             });
 
-            String c = AppVariables.getUserConfigValue("ImageTextColor", Color.RED.toString());
-            colorRect.setFill(Color.web(c));
-            FxmlControl.setTooltip(colorRect, FxmlColor.colorNameDisplay((Color) colorRect.getFill()));
+            colorSetController.init(this, baseName + "Color", Color.RED);
 
             waterAngleBox.getItems().addAll(Arrays.asList("0", "90", "180", "270", "45", "135", "225", "315",
                     "60", "150", "240", "330", "15", "105", "195", "285", "30", "120", "210", "300"));
@@ -231,25 +224,6 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
         } catch (Exception e) {
             logger.error(e.toString());
         }
-    }
-
-    @Override
-    public boolean setColor(Control control, Color color) {
-        if (control == null || color == null) {
-            return false;
-        }
-        if (paletteButton.equals(control)) {
-            colorRect.setFill(color);
-            FxmlControl.setTooltip(colorRect, FxmlColor.colorNameDisplay(color));
-            AppVariables.setUserConfigValue("ImageTextColor", color.toString());
-        }
-        return true;
-    }
-
-    @FXML
-    @Override
-    public void showPalette(ActionEvent event) {
-        showPalette(paletteButton, message("Text"), true);
     }
 
     private void checkPositionType() {
@@ -361,7 +335,7 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
             FxFont = Font.font(fontFamily, FontWeight.NORMAL, FontPosture.REGULAR, waterSize);
         }
 
-        color = FxmlImageManufacture.toAwtColor((Color) colorRect.getFill());
+        color = FxmlImageManufacture.toAwtColor((Color) colorSetController.rect.getFill());
 
         final String msg = waterInput.getText().trim();
         final Text text = new Text(msg);

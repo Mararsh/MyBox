@@ -23,7 +23,9 @@ import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.PdfTools;
+import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
@@ -63,8 +65,8 @@ public class PdfAttributesController extends BaseController {
         AddFileType = VisitHistory.FileType.PDF;
         AddPathType = VisitHistory.FileType.PDF;
 
-        targetPathKey = "PdfFilePath";
-        sourcePathKey = "PdfFilePath";
+        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.PDF);
+        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.PDF);
 
         sourceExtensionFilter = CommonFxValues.PdfExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
@@ -72,7 +74,8 @@ public class PdfAttributesController extends BaseController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
+        super.initControls();
         versionInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue ov, String oldValue, String newValue) {

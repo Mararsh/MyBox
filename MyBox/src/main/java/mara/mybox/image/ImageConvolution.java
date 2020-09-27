@@ -21,14 +21,13 @@ public class ImageConvolution extends PixelsOperation {
 
     protected ConvolutionKernel kernel;
     protected int matrixWidth, matrixHeight, edge_op, radiusX, radiusY, maxX, maxY;
-    protected boolean keepOpacity, isEmboss, isGray;
+    protected boolean keepOpacity, isEmboss, isGray, isInvert;
     protected float[][] matrix;
     protected int[][] intMatrix;
     protected int intScale;
 
     public static enum SmoothAlgorithm {
-        GaussianBlur, AverageBlur
-//        , MotionBlur
+        GaussianBlur, AverageBlur, MotionBlur
     }
 
     public static enum SharpenAlgorithm {
@@ -61,9 +60,10 @@ public class ImageConvolution extends PixelsOperation {
         maxX = image.getWidth() - 1;
         maxY = image.getHeight() - 1;
         isEmboss = (kernel.getType() == ConvolutionKernel.Convolution_Type.EMBOSS);
-        isGray = (kernel.getGray() > 0);
+        isGray = (kernel.isGray());
         keepOpacity = (kernel.getType() != ConvolutionKernel.Convolution_Type.EMBOSS
                 && kernel.getType() != ConvolutionKernel.Convolution_Type.EDGE_DETECTION);
+        isInvert = kernel.isInvert();
         return this;
     }
 
@@ -104,9 +104,9 @@ public class ImageConvolution extends PixelsOperation {
             green = Math.min(Math.max(newColor.getGreen() + v, 0), 255);
             blue = Math.min(Math.max(newColor.getBlue() + v, 0), 255);
             newColor = new Color(red, green, blue, newColor.getAlpha());
-            if (isGray) {
-                newColor = ImageColor.RGB2Gray(newColor);
-            }
+        }
+        if (isGray) {
+            newColor = ImageColor.RGB2Gray(newColor);
         }
         target.setRGB(x, y, newColor.getRGB());
         return newColor;
@@ -145,7 +145,12 @@ public class ImageConvolution extends PixelsOperation {
             } else {
                 opacity = 255;
             }
-            Color color = new Color(red, green, blue, opacity);
+            Color color;
+            if (isInvert) {
+                color = new Color(255 - red, 255 - green, 255 - blue, opacity);
+            } else {
+                color = new Color(red, green, blue, opacity);
+            }
             return color;
         } catch (Exception e) {
             logger.error(e.toString());
@@ -183,9 +188,14 @@ public class ImageConvolution extends PixelsOperation {
                     OperationType.RGB, ColorActionType.Increase);
             pixelsOperation.setIntPara1(128);
             target = pixelsOperation.operate();
-            if (convolutionKernel.getGray() > 0) {
-                target = ImageGray.byteGray(target);
-            }
+        }
+        if (convolutionKernel.isInvert()) {
+            PixelsOperation pixelsOperation = PixelsOperation.create(target, null,
+                    OperationType.RGB, ColorActionType.Invert);
+            target = pixelsOperation.operate();
+        }
+        if (convolutionKernel.isGray()) {
+            target = ImageGray.byteGray(target);
         }
         return target;
     }

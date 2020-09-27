@@ -31,6 +31,7 @@ import mara.mybox.tools.PdfTools.PdfImageFormat;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.getUserConfigValue;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -101,8 +102,9 @@ public class WeiboSnapController extends BaseController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
+            super.initControls();
 
             initWebOptions();
             initSnapOptions();
@@ -117,6 +119,7 @@ public class WeiboSnapController extends BaseController {
 
     private void initWebOptions() {
         addressList = TableStringValues.max("WeiBoAddress", 20);
+
         addressBox.getItems().addAll(addressList);
         addressBox.valueProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -180,6 +183,10 @@ public class WeiboSnapController extends BaseController {
         }
         });
         addressBox.getSelectionModel().select(0);
+        if (!addressList.contains("https://www.weibo.com/wow")) {
+            addressBox.setValue("https://www.weibo.com/wow");
+            webAddress = "https://www.weibo.com/wow";
+        }
 
         FxmlControl.setTooltip(startMonthInput, new Tooltip(AppVariables.message("WeiboEarlestMonth")));
         startMonthInput.textProperty().addListener(new ChangeListener<String>() {

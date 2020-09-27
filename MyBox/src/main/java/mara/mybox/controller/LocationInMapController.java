@@ -20,12 +20,13 @@ import javafx.scene.layout.Region;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mara.mybox.data.GeographyCode;
+import mara.mybox.data.tools.GeographyCodeTools;
 import mara.mybox.db.TableGeographyCode;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.DoubleTools;
-import mara.mybox.tools.GeographyCodeTools;
 import mara.mybox.tools.LocationTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
@@ -37,8 +38,8 @@ import mara.mybox.value.CommonValues;
  */
 public class LocationInMapController extends GeographyCodeMapController {
 
-    protected BaseController consumer;
     protected GeographyCode geographyCode;
+    protected boolean loading = false;
 
     @FXML
     protected TextField locateInput;
@@ -59,9 +60,9 @@ public class LocationInMapController extends GeographyCodeMapController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
-            super.initializeNext();
+            super.initControls();
 
             mapOptionsController.optionsBox.getChildren().removeAll(mapOptionsController.dataBox);
 
@@ -69,9 +70,9 @@ public class LocationInMapController extends GeographyCodeMapController {
 
             locateGroup.selectedToggleProperty().addListener(
                     (ObservableValue<? extends Toggle> ov, Toggle oldv, Toggle newv) -> {
-                        checkLocate();
+                        checkLocateMethod();
                     });
-            checkLocate();
+            checkLocateMethod();
 
             multipleCheck.selectedProperty().addListener(
                     (ObservableValue<? extends Boolean> ov, Boolean oldv, Boolean newv) -> {
@@ -84,9 +85,49 @@ public class LocationInMapController extends GeographyCodeMapController {
         }
     }
 
+    protected void checkLocateMethod() {
+        if (isSettingValues) {
+            return;
+        }
+        if (coordinateRadio.isSelected()) {
+            FxmlControl.setTooltip(locateInput, message("InputCoordinateComments"));
+            locateInput.setText("117.0983,36.25551");
+            locateInput.setEditable(true);
+            startButton.setDisable(false);
+        } else if (addressRadio.isSelected()) {
+            FxmlControl.setTooltip(locateInput, message("MapAddressComments"));
+            locateInput.setText(AppVariables.isChinese() ? "拙政园"
+                    : (mapOptionsController.mapName == MapOptionsController.MapName.TianDiTu ? "Paris" : "巴黎"));
+            locateInput.setEditable(true);
+            startButton.setDisable(false);
+        } else {
+            FxmlControl.setTooltip(locateInput, message("PickCoordinateComments"));
+            locateInput.setStyle(null);
+            locateInput.setText("");
+            locateInput.setEditable(false);
+            startButton.setDisable(true);
+        }
+    }
+
+    protected void setButtons() {
+        boolean none = geographyCode == null;
+        saveButton.setDisable(none);
+        clearCodeButton.setDisable(none);
+    }
+
+    public void loadCoordinate(BaseController parent, double longitude, double latitude) {
+        parentController = parent;
+        clickMapRadio.fire();
+        loading = true;
+        getMyStage().setAlwaysOnTop(true);
+        setCoordinate(longitude, latitude);
+    }
+
     @Override
     protected void mapClicked(double longitude, double latitude) {
-        setCoordinate(longitude, latitude);
+        if (!isSettingValues && clickMapRadio.isSelected()) {
+            setCoordinate(longitude, latitude);
+        }
     }
 
     @Override
@@ -96,6 +137,7 @@ public class LocationInMapController extends GeographyCodeMapController {
             timer = null;
         }
         if (!LocationTools.validCoordinate(longitude, latitude)) {
+            loading = false;
             return;
         }
         timer = new Timer();
@@ -110,45 +152,11 @@ public class LocationInMapController extends GeographyCodeMapController {
                         timer.cancel();
                         timer = null;
                     }
-                    isSettingValues = true;
-                    coordinateRadio.setSelected(true);
                     locateInput.setText(longitude + "," + latitude);
-                    locateInput.setDisable(false);
-                    startButton.setDisable(false);
-                    isSettingValues = false;
                     startAction();
                 });
             }
         }, 0, 100);
-    }
-
-    protected void checkLocate() {
-        if (isSettingValues) {
-            return;
-        }
-        if (coordinateRadio.isSelected()) {
-            FxmlControl.setTooltip(locateInput, message("InputCoordinateComments"));
-            locateInput.setText("117.0983,36.25551");
-            locateInput.setDisable(false);
-            startButton.setDisable(false);
-        } else if (addressRadio.isSelected()) {
-            FxmlControl.setTooltip(locateInput, message("GeographyCodeComments"));
-            locateInput.setText("拙政园");
-            locateInput.setDisable(false);
-            startButton.setDisable(false);
-        } else {
-            FxmlControl.setTooltip(locateInput, message("InputCoordinateComments"));
-            locateInput.setStyle(null);
-            locateInput.setText("");
-            locateInput.setDisable(true);
-            startButton.setDisable(true);
-        }
-    }
-
-    protected void setButtons() {
-        boolean none = geographyCode == null;
-        saveButton.setDisable(none);
-        clearCodeButton.setDisable(none);
     }
 
     @FXML
@@ -168,7 +176,7 @@ public class LocationInMapController extends GeographyCodeMapController {
                 @Override
                 protected boolean handle() {
                     GeographyCode code;
-                    if (coordinateRadio.isSelected()) {
+                    if (!addressRadio.isSelected()) {
                         try {
                             String[] values = value.split(",");
                             double longitude = DoubleTools.scale6(Double.valueOf(values[0].trim()));
@@ -191,26 +199,28 @@ public class LocationInMapController extends GeographyCodeMapController {
 
                 @Override
                 protected void whenSucceeded() {
-                    if (geographyCodes == null) {
-                        geographyCodes = new ArrayList<>();
-                    } else if (!multipleCheck.isSelected()) {
-                        geographyCodes.clear();
+                    if (parentController != null && !loading) {
+                        parentController.setGeographyCode(geographyCode);
+                        parentController.getMyStage().toFront();
+                        closeStage();
+                        return;
                     }
+                    loading = false;
                     dataArea.setText(geographyCode.info("\n"));
                     setButtons();
                     try {
+                        if (geographyCodes == null) {
+                            geographyCodes = new ArrayList<>();
+                        } else if (!multipleCheck.isSelected()) {
+                            geographyCodes.clear();
+                        }
                         geographyCodes.add((GeographyCode) geographyCode.clone());
                         drawPoints();
                     } catch (Exception e) {
                     }
-                    if (consumer != null) {
-                        consumer.setGeographyCode(geographyCode);
-                        consumer.getMyStage().toFront();
-                        if (saveCloseCheck.isSelected()) {
-                            closeStage();
-                        }
-                    }
+
                 }
+
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);

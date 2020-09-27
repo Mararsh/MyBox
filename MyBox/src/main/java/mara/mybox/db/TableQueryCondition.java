@@ -13,6 +13,7 @@ import mara.mybox.data.QueryCondition.DataOperation;
 import static mara.mybox.db.DerbyBase.failed;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -85,17 +86,15 @@ public class TableQueryCondition extends DerbyBase {
         if (dataName == null || conn == null || operation <= 0) {
             return conditions;
         }
-        try {
-            try ( PreparedStatement statement = conn.prepareStatement(OperationQeury)) {
-                statement.setMaxRows(max);
-                statement.setString(1, dataName);
-                statement.setShort(2, (short) operation);
-                try ( ResultSet results = statement.executeQuery()) {
-                    while (results.next()) {
-                        QueryCondition condition = read(results);
-                        if (condition != null) {
-                            conditions.add(condition);
-                        }
+        try ( PreparedStatement statement = conn.prepareStatement(OperationQeury)) {
+            statement.setMaxRows(max);
+            statement.setString(1, dataName);
+            statement.setShort(2, (short) operation);
+            try ( ResultSet results = statement.executeQuery()) {
+                while (results.next()) {
+                    QueryCondition condition = read(results);
+                    if (condition != null) {
+                        conditions.add(condition);
                     }
                 }
             }

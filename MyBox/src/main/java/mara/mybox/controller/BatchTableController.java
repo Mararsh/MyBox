@@ -18,8 +18,11 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -27,6 +30,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.DirectoryChooser;
@@ -38,13 +42,14 @@ import mara.mybox.data.FileInformation.FileSelectorType;
 import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.fxml.TableTimeCell;
 import mara.mybox.fxml.TableFileSizeCell;
 import mara.mybox.fxml.TableNumberCell;
+import mara.mybox.fxml.TableTimeCell;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
@@ -102,7 +107,6 @@ public abstract class BatchTableController<P> extends BaseController {
             if (tableView == null) {
                 return;
             }
-
             tableData = FXCollections.observableArrayList();
             tableData.addListener(new ListChangeListener<P>() {
                 @Override
@@ -132,14 +136,158 @@ public abstract class BatchTableController<P> extends BaseController {
                     }
                 }
             });
+            tableView.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
+                @Override
+                public void handle(ContextMenuEvent event) {
+                    popTableMenu(event);
+                }
+            });
 
             initColumns();
             tableView.setItems(tableData);
 
-            tableSelected();
+            checkButtons();
 
         } catch (Exception e) {
             logger.error(e.toString());
+        }
+    }
+
+    protected void popTableMenu(ContextMenuEvent event) {
+        if (isSettingValues) {
+            return;
+        }
+        List<MenuItem> items = makeTableContextMenu();
+        if (items == null || items.isEmpty()) {
+            return;
+        }
+        items.add(new SeparatorMenuItem());
+        MenuItem menu = new MenuItem(message("PopupClose"));
+        menu.setStyle("-fx-text-fill: #2e598a;");
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            if (popMenu != null && popMenu.isShowing()) {
+                popMenu.hide();
+            }
+            popMenu = null;
+        });
+        items.add(menu);
+        if (popMenu != null && popMenu.isShowing()) {
+            popMenu.hide();
+        }
+        popMenu = new ContextMenu();
+        popMenu.setAutoHide(true);
+        popMenu.getItems().addAll(items);
+        popMenu.show(tableView, event.getScreenX(), event.getScreenY());
+
+    }
+
+    protected List<MenuItem> makeTableContextMenu() {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+            MenuItem menu;
+
+            if (addFilesButton != null && addFilesButton.isVisible() && !addFilesButton.isDisabled()) {
+                menu = new MenuItem(message("AddFiles"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    addFilesAction();
+                });
+                items.add(menu);
+            }
+
+            if (addDirectoryButton != null && addDirectoryButton.isVisible() && !addDirectoryButton.isDisabled()) {
+                menu = new MenuItem(message("AddDirectory"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    addDirectoryAction();
+                });
+                items.add(menu);
+            }
+            if (insertFilesButton != null && insertFilesButton.isVisible() && !insertFilesButton.isDisabled()) {
+                menu = new MenuItem(message("InsertFiles"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    insertFilesAction();
+                });
+                items.add(menu);
+            }
+
+            if (insertDirectoryButton != null && insertDirectoryButton.isVisible() && !insertDirectoryButton.isDisabled()) {
+                menu = new MenuItem(message("InsertDirectory"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    insertDirectoryAction();
+                });
+                items.add(menu);
+            }
+
+            if (upFilesButton != null && upFilesButton.isVisible() && !upFilesButton.isDisabled()) {
+                menu = new MenuItem(message("MoveUp"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    upFilesAction(null);
+                });
+                items.add(menu);
+            }
+
+            if (downFilesButton != null && downFilesButton.isVisible() && !downFilesButton.isDisabled()) {
+                menu = new MenuItem(message("MoveDown"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    downFilesAction(null);
+                });
+                items.add(menu);
+            }
+            if (viewFileButton != null && viewFileButton.isVisible() && !viewFileButton.isDisabled()) {
+                menu = new MenuItem(message("View"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    viewFileAction();
+                });
+                items.add(menu);
+            }
+            if (selectAllFilesButton != null && selectAllFilesButton.isVisible() && !selectAllFilesButton.isDisabled()) {
+                menu = new MenuItem(message("SelectAll") + "  CTRL+a");
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    selectAllFilesAction();
+                });
+                items.add(menu);
+            }
+            if (unselectAllFilesButton != null && unselectAllFilesButton.isVisible() && !unselectAllFilesButton.isDisabled()) {
+                menu = new MenuItem(message("UnselectAll"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    unselectAllFilesAction();
+                });
+                items.add(menu);
+            }
+            if (deleteFilesButton != null && deleteFilesButton.isVisible() && !deleteFilesButton.isDisabled()) {
+                menu = new MenuItem(message("Delete"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    deleteFilesAction();
+                });
+                items.add(menu);
+            }
+            if (clearFilesButton != null && clearFilesButton.isVisible() && !clearFilesButton.isDisabled()) {
+                menu = new MenuItem(message("Clear"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    clearFilesAction();
+                });
+                items.add(menu);
+            }
+
+            if (infoButton != null && infoButton.isVisible() && !infoButton.isDisabled()) {
+                menu = new MenuItem(message("Information") + "  CTRL+i");
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    infoAction();
+                });
+                items.add(menu);
+            }
+            if (metaButton != null && metaButton.isVisible() && !metaButton.isDisabled()) {
+                menu = new MenuItem(message("MetaData"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    metaAction();
+                });
+                items.add(menu);
+            }
+
+            return items;
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
         }
     }
 
@@ -212,36 +360,7 @@ public abstract class BatchTableController<P> extends BaseController {
     }
 
     protected void tableChanged() {
-        if (tableData.isEmpty()) {
-            if (insertFilesButton != null) {
-                insertFilesButton.setDisable(true);
-            }
-            if (insertDirectoryButton != null) {
-                insertDirectoryButton.setDisable(true);
-            }
-            if (upFilesButton != null) {
-                upFilesButton.setDisable(true);
-            }
-            if (downFilesButton != null) {
-                downFilesButton.setDisable(true);
-            }
-            if (deleteFilesButton != null) {
-                deleteFilesButton.setDisable(true);
-            }
-            if (clearFilesButton != null) {
-                clearFilesButton.setDisable(true);
-            }
-            if (infoButton != null) {
-                infoButton.setDisable(true);
-            }
-            if (metaButton != null) {
-                metaButton.setDisable(true);
-            }
-        } else {
-            if (clearFilesButton != null) {
-                clearFilesButton.setDisable(false);
-            }
-        }
+        checkButtons();
         countSize();
 
         if (parentController != null) {
@@ -250,16 +369,15 @@ public abstract class BatchTableController<P> extends BaseController {
     }
 
     protected void tableSelected() {
-        P selected = tableView.getSelectionModel().getSelectedItem();
-        boolean none = (selected == null);
-        if (deleteFilesButton != null) {
-            deleteFilesButton.setDisable(none);
-        }
-        if (upFilesButton != null) {
-            upFilesButton.setDisable(none);
-        }
-        if (downFilesButton != null) {
-            downFilesButton.setDisable(none);
+        checkButtons();
+    }
+
+    protected void checkButtons() {
+        boolean isEmpty = tableData.isEmpty();
+        boolean none = isEmpty;
+        if (!isEmpty) {
+            P selected = tableView.getSelectionModel().getSelectedItem();
+            none = (selected == null);
         }
         if (insertFilesButton != null) {
             insertFilesButton.setDisable(none);
@@ -267,8 +385,26 @@ public abstract class BatchTableController<P> extends BaseController {
         if (insertDirectoryButton != null) {
             insertDirectoryButton.setDisable(none);
         }
+        if (upFilesButton != null) {
+            upFilesButton.setDisable(none);
+        }
+        if (downFilesButton != null) {
+            downFilesButton.setDisable(none);
+        }
         if (viewFileButton != null) {
             viewFileButton.setDisable(none);
+        }
+        if (selectAllFilesButton != null) {
+            selectAllFilesButton.setDisable(isEmpty);
+        }
+        if (unselectAllFilesButton != null) {
+            unselectAllFilesButton.setDisable(none);
+        }
+        if (deleteFilesButton != null) {
+            deleteFilesButton.setDisable(none);
+        }
+        if (clearFilesButton != null) {
+            clearFilesButton.setDisable(isEmpty);
         }
         if (infoButton != null) {
             infoButton.setDisable(none);
@@ -276,6 +412,7 @@ public abstract class BatchTableController<P> extends BaseController {
         if (metaButton != null) {
             metaButton.setDisable(none);
         }
+
     }
 
     protected void expandDirectories() {
@@ -514,6 +651,11 @@ public abstract class BatchTableController<P> extends BaseController {
             }
             tableLabel.setText(s);
         }
+    }
+
+    @FXML
+    public void metaAction() {
+
     }
 
     /*

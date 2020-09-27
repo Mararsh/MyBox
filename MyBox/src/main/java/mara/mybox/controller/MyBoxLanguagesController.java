@@ -10,6 +10,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -60,8 +61,9 @@ public class MyBoxLanguagesController extends BaseController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
+            super.initControls();
             tableData = FXCollections.observableArrayList();
 
             keyColumn.setCellValueFactory(new PropertyValueFactory<>("key"));
@@ -118,40 +120,26 @@ public class MyBoxLanguagesController extends BaseController {
 
     @Override
     public void controlHandler(KeyEvent event) {
+        if (event.isControlDown() && event.getCode() != null) {
+            switch (event.getCode()) {
+                case E:
+                    copyEnglish();
+                    return;
+            }
+        }
         super.controlHandler(event);
-        if (!event.isControlDown()) {
-            return;
-        }
-        String key = event.getText();
-        if (key == null || key.isEmpty()) {
-            return;
-        }
-        switch (key) {
-            case "e":
-            case "E":
-                copyEnglish();
-                return;
-
-        }
     }
 
     @Override
     public void altHandler(KeyEvent event) {
+        if (event.isAltDown() && event.getCode() != null) {
+            switch (event.getCode()) {
+                case E:
+                    copyEnglish();
+                    return;
+            }
+        }
         super.altHandler(event);
-        if (!event.isAltDown()) {
-            return;
-        }
-        String key = event.getText();
-        if (key == null || key.isEmpty()) {
-            return;
-        }
-        switch (key) {
-            case "e":
-            case "E":
-                copyEnglish();
-                return;
-
-        }
     }
 
     protected void checkListSelected() {
@@ -252,7 +240,7 @@ public class MyBoxLanguagesController extends BaseController {
 
     @FXML
     @Override
-    public void addAction() {
+    public void addAction(ActionEvent event) {
         TextInputDialog dialog = new TextInputDialog("");
         dialog.setTitle(message("ManageLanguages"));
         dialog.setHeaderText(message("InputLangaugeName"));

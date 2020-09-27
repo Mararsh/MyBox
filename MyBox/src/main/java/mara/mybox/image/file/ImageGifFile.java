@@ -27,6 +27,7 @@ import static mara.mybox.image.file.ImageFileReaders.needSampled;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import thridparty.GifDecoder;
 import thridparty.GifDecoder.GifImage;
 

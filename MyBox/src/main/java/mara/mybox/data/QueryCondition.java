@@ -13,7 +13,7 @@ public class QueryCondition {
     private DataOperation dataOperation;
 
     public enum DataOperation {
-        QueryData, DisplayChart, ClearData, ExportData, Unknown
+        QueryData, UpdateData, ClearData, ExportData, Unknown
     }
 
     public QueryCondition() {
@@ -56,7 +56,7 @@ public class QueryCondition {
             case 1:
                 return DataOperation.QueryData;
             case 2:
-                return DataOperation.DisplayChart;
+                return DataOperation.UpdateData;
             case 3:
                 return DataOperation.ClearData;
             case 4:
@@ -73,7 +73,7 @@ public class QueryCondition {
         switch (dataOperation) {
             case QueryData:
                 return 1;
-            case DisplayChart:
+            case UpdateData:
                 return 2;
             case ClearData:
                 return 3;

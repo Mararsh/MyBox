@@ -7,118 +7,75 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" spacing="5.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufactureTextController">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufactureTextController">
     <children>
-        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER" />
-        <Accordion fx:id="accordionPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" VBox.vgrow="ALWAYS">
-            <panes>
-                 <TitledPane fx:id="viewPane" expanded="false" maxWidth="1.7976931348623157E308" text="%View" />
- <TitledPane fx:id="clipboardPane"  expanded="false"  maxWidth="1.7976931348623157E308" text="%Clipboard" />
-                <TitledPane fx:id="cropPane" maxWidth="1.7976931348623157E308"  text="%Crop" />
-                <TitledPane fx:id="scalePane" expanded="false"  maxWidth="1.7976931348623157E308"  text="%Scale2" />
-                <TitledPane fx:id="colorPane" expanded="false" maxWidth="1.7976931348623157E308"  text="%Color" />
-                 <TitledPane fx:id="effectPane" expanded="false" maxWidth="1.7976931348623157E308"  text="%Effects" />
-<TitledPane fx:id="enhancementPane" expanded="false" maxWidth="1.7976931348623157E308" text="%Enhancement" />
-                <TitledPane fx:id="richTextPane" expanded="false" maxWidth="1.7976931348623157E308"  text="%RichText" />
-                <TitledPane fx:id="textPane" expanded="false" maxWidth="1.7976931348623157E308"  text="%Text">
-                    <content>
-                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
-                            <children>
-                                <HBox maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
-                                    <children>
-                                        <TextField fx:id="textInput" maxWidth="1.7976931348623157E308" promptText="%Text" text="MyBox" HBox.hgrow="ALWAYS" VBox.vgrow="NEVER" />
-                                    </children>
-                                </HBox>
-                                <FlowPane fx:id="setBox" hgap="5.0" maxWidth="1.7976931348623157E308" prefWidth="200.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" vgap="10.0">
-                                    <children>
-                                        <FlowPane hgap="5.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
-                                            <children>
-                                                <Label text="%FontColor" />
-                                                <Rectangle fx:id="colorRect" fill="#ffffff00" height="15.0" stroke="BLACK" strokeMiterLimit="0.0" strokeType="INSIDE" width="15.0" />
-                                                <Button fx:id="paletteButton" mnemonicParsing="false" onAction="#showPalette">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconPalette.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                            </children>
-                                        </FlowPane>
-                              <FlowPane hgap="5.0" layoutX="15.0" layoutY="15.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
-                                 <children>
-                                                <Label text="%FontFamily" />
-                                                <ComboBox fx:id="familyBox" prefWidth="100.0" />
-                                 </children>
-                              </FlowPane>
-                              <FlowPane hgap="5.0" layoutX="15.0" layoutY="306.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
-                                 <children>
-                                                <Label text="%FontStyle" />
-                                                <ComboBox fx:id="styleBox" prefWidth="100.0" />
-                                 </children>
-                              </FlowPane>
-                                        <FlowPane hgap="5.0" layoutX="15.0" layoutY="229.0" prefWidth="200.0" vgap="5.0">
-                                            <children>
-                                                <Label text="%FontSize" />
-                                                <ComboBox fx:id="sizeBox" editable="true" prefWidth="100.0" promptText="%Size" />
-                                            </children>
-                                        </FlowPane>
-                              <FlowPane hgap="5.0" layoutX="15.0" layoutY="306.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
-                                 <children>
-                                                <Label text="%Shadow" />
-                                                <ComboBox fx:id="shadowBox" editable="true" prefWidth="100.0" />
-                                 </children>
-                              </FlowPane>
-                              <FlowPane hgap="5.0" layoutX="15.0" layoutY="306.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
-                                 <children>
-                                                <Label text="%Opacity" />
-                                                <ComboBox fx:id="opacityBox" editable="true" prefWidth="100.0" />
-                                 </children>
-                              </FlowPane>
-                                        <FlowPane hgap="5.0" prefWidth="200.0" vgap="5.0">
-                                            <children>
-                                                <Label text="%Angle" />
-                                                <ComboBox fx:id="angleBox" editable="true" prefWidth="100.0" />
-                                            </children>
-                                        </FlowPane>
-                                        <CheckBox fx:id="verticalCheck" mnemonicParsing="false" text="%Vertical" />
-                                        <CheckBox fx:id="outlineCheck" mnemonicParsing="false" text="%Outline" />
-                                    </children>
-                                </FlowPane>
-                                <HBox fx:id="opBox" alignment="CENTER_LEFT" spacing="5.0">
-                                    <children>
-                                        <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/iconOK.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                        <Button fx:id="cancelButton" onAction="#cancelAction">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/iconCancel.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                    </children>
-                                </HBox>
-                                <Label fx:id="commentLabel" prefWidth="200.0" styleClass="blue-label," stylesheets="@../styles/MyBox.css" text="%ClickImageForText" wrapText="true" />
-                            </children>
-                        </VBox>
-                    </content>
-                </TitledPane>
-                <TitledPane fx:id="penPane" expanded="false" maxWidth="1.7976931348623157E308"  text="%Pen" />
-                <TitledPane fx:id="transformPane" expanded="false" maxWidth="1.7976931348623157E308"  text="%Transform" />
-                <TitledPane fx:id="arcPane" expanded="false" maxWidth="1.7976931348623157E308" text="%Arc" />
-                <TitledPane fx:id="shadowPane" expanded="false" maxWidth="1.7976931348623157E308" text="%Shadow" />
-                <TitledPane fx:id="marginsPane" expanded="false" maxWidth="1.7976931348623157E308" text="%Margins" />
-            </panes>
-        </Accordion>
+          <TextField fx:id="textInput" maxWidth="1.7976931348623157E308" promptText="%Text" text="MyBox" VBox.vgrow="NEVER" />
+          <FlowPane hgap="5.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
+              <children>
+                  <Label text="%FontColor" />
+                  <fx:include fx:id="colorSet" source="ColorSet.fxml" />
+              </children>
+          </FlowPane>
+          <FlowPane hgap="5.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
+              <children>
+                  <Label text="%FontFamily" />
+                  <ComboBox fx:id="familyBox" prefWidth="100.0" />
+              </children>
+          </FlowPane>
+          <FlowPane hgap="5.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
+              <children>
+                  <Label text="%FontStyle" />
+                  <ComboBox fx:id="styleBox" prefWidth="100.0" />
+              </children>
+          </FlowPane>
+          <FlowPane hgap="5.0" prefWidth="200.0" vgap="5.0">
+              <children>
+                  <Label text="%FontSize" />
+                  <ComboBox fx:id="sizeBox" editable="true" prefWidth="100.0" promptText="%Size" />
+              </children>
+          </FlowPane>
+          <FlowPane hgap="5.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
+              <children>
+                  <Label text="%Shadow" />
+                  <ComboBox fx:id="shadowBox" editable="true" prefWidth="100.0" />
+              </children>
+          </FlowPane>
+          <FlowPane hgap="5.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
+              <children>
+                  <Label text="%Opacity" />
+                  <ComboBox fx:id="opacityBox" editable="true" prefWidth="100.0" />
+              </children>
+          </FlowPane>
+          <FlowPane hgap="5.0" prefWidth="200.0" vgap="5.0">
+              <children>
+                  <Label text="%Angle" />
+                  <ComboBox fx:id="angleBox" editable="true" prefWidth="100.0" />
+              </children>
+          </FlowPane>
+          <CheckBox fx:id="verticalCheck" mnemonicParsing="false" text="%Vertical" />
+          <CheckBox fx:id="outlineCheck" mnemonicParsing="false" text="%Outline" />
+        <HBox fx:id="opBox" alignment="CENTER_LEFT" spacing="5.0">
+            <children>
+                <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconOK.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="cancelButton" onAction="#cancelAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconCancel.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            </children>
+        </HBox>
+        <Label fx:id="commentsLabel" minHeight="-Infinity" prefWidth="300.0" styleClass="blue-label," stylesheets="@../styles/MyBox.css" text="%ClickImageForText" wrapText="true" />
     </children>
 </VBox>

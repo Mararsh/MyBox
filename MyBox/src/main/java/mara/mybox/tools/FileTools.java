@@ -26,6 +26,7 @@ import mara.mybox.data.FileSynchronizeAttributes;
 import mara.mybox.data.TextEditInformation;
 import static mara.mybox.value.AppVariables.MyBoxTempPath;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -36,9 +37,8 @@ import mara.mybox.value.CommonValues;
 public class FileTools {
 
     public static enum FileSortMode {
-        ModifyTimeDesc, ModifyTimeAsc, CreateTimeDesc, CreateTimeAsc, SizeDesc,
-        SizeAsc,
-        NameDesc, NameAsc, FormatDesc, FormatAsc
+        ModifyTimeDesc, ModifyTimeAsc, CreateTimeDesc, CreateTimeAsc,
+        SizeDesc, SizeAsc, NameDesc, NameAsc, FormatDesc, FormatAsc
     }
 
     public static long getFileCreateTime(final String filename) {
@@ -538,6 +538,9 @@ public class FileTools {
     }
 
     public static boolean clearDir(File dir) {
+        if (dir == null) {
+            return false;
+        }
         if (dir.isDirectory()) {
             File[] files = dir.listFiles();
             if (files != null) {
@@ -554,6 +557,9 @@ public class FileTools {
     }
 
     public static boolean deleteDir(File dir) {
+        if (dir == null) {
+            return false;
+        }
         if (dir.isDirectory()) {
             File[] files = dir.listFiles();
             if (files != null) {
@@ -578,7 +584,6 @@ public class FileTools {
             if (files == null || files.length == 0) {
                 if (trash) {
                     Desktop.getDesktop().moveToTrash(dir);
-
                 } else {
                     dir.delete();
                 }
@@ -605,7 +610,7 @@ public class FileTools {
     public static void deleteNestedDir(File sourceDir) {
         try {
             File tmpDir = getTempDirectory();
-            logger.error(sourceDir + "   " + tmpDir);
+//            logger.error(sourceDir + "   " + tmpDir);
             deleteNestedDir(sourceDir, tmpDir);
             tmpDir.delete();
             sourceDir.delete();

@@ -5,12 +5,9 @@ import java.util.Arrays;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Control;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
@@ -19,13 +16,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
@@ -52,9 +48,7 @@ public class ImageManufactureBatchMarginsController extends ImageManufactureBatc
     @FXML
     private HBox colorBox, distanceBox, widthBox;
     @FXML
-    protected Rectangle bgRect;
-    @FXML
-    protected Button paletteButton;
+    protected ColorSetController colorSetController;
     @FXML
     private TextField distanceInput;
     @FXML
@@ -67,8 +61,9 @@ public class ImageManufactureBatchMarginsController extends ImageManufactureBatc
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
+            super.initControls();
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
@@ -124,32 +119,11 @@ public class ImageManufactureBatchMarginsController extends ImageManufactureBatc
                 }
             });
 
-            String c = AppVariables.getUserConfigValue("ImageMarginBackground", Color.TRANSPARENT.toString());
-            bgRect.setFill(Color.web(c));
-            FxmlControl.setTooltip(bgRect, FxmlColor.colorNameDisplay((Color) bgRect.getFill()));
+            colorSetController.init(this, baseName + "Color");
 
         } catch (Exception e) {
             logger.error(e.toString());
         }
-    }
-
-    @Override
-    public boolean setColor(Control control, Color color) {
-        if (control == null || color == null) {
-            return false;
-        }
-        if (paletteButton.equals(control)) {
-            bgRect.setFill(color);
-            FxmlControl.setTooltip(bgRect, FxmlColor.colorNameDisplay(color));
-            AppVariables.setUserConfigValue("ImageMarginBackground", color.toString());
-        }
-        return true;
-    }
-
-    @FXML
-    @Override
-    public void showPalette(ActionEvent event) {
-        showPalette(paletteButton, message("Margins"), true);
     }
 
     private void checkOperationType() {
@@ -224,7 +198,7 @@ public class ImageManufactureBatchMarginsController extends ImageManufactureBatc
             switch (opType) {
                 case CutMarginsByWidth:
                     target = ImageManufacture.cutMargins(source,
-                            FxmlImageManufacture.toAwtColor((Color) bgRect.getFill()),
+                            FxmlImageManufacture.toAwtColor((Color) colorSetController.rect.getFill()),
                             marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
                             marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
                     break;
@@ -236,7 +210,7 @@ public class ImageManufactureBatchMarginsController extends ImageManufactureBatc
                     break;
                 case AddMargins:
                     target = ImageManufacture.addMargins(source,
-                            FxmlImageManufacture.toAwtColor((Color) bgRect.getFill()), width,
+                            FxmlImageManufacture.toAwtColor((Color) colorSetController.rect.getFill()), width,
                             marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
                             marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
                     break;

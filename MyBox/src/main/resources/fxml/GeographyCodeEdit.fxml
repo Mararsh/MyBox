@@ -56,24 +56,6 @@ License:    Apache License Version 2.0
                                                     </image>
                                                 </ImageView>
                                                 <Label fx:id="sizeLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                <CheckBox fx:id="saveCloseCheck" mnemonicParsing="false">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconFlower.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </CheckBox>
-                                                <CheckBox fx:id="topCheck" mnemonicParsing="false" selected="true">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconTop.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </CheckBox>
                                                 <Button fx:id="closeButton" mnemonicParsing="false" onAction="#closeAction">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -83,15 +65,24 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </graphic>
                                                 </Button>
-                                    <Button fx:id="copyButton" mnemonicParsing="false" onAction="#copyAction">
+                                    <Button fx:id="recoverButton" mnemonicParsing="false" onAction="#recoverAction">
                                        <graphic>
                                           <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                              <image>
-                                                <Image url="@../buttons/iconCopy.png" />
+                                                <Image url="@../buttons/iconRecover.png" />
                                              </image>
                                           </ImageView>
                                        </graphic>
                                     </Button>
+                                                <Button fx:id="copyButton" mnemonicParsing="false" onAction="#copyAction">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconCopy.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
                                                 <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Save" />
                                             </children>
                                         </HBox>
@@ -128,7 +119,7 @@ License:    Apache License Version 2.0
                                                                 <RadioButton fx:id="townRadio" mnemonicParsing="false" text="%Town" toggleGroup="$levelGroup" />
                                                                 <RadioButton fx:id="villageRadio" mnemonicParsing="false" text="%Village" toggleGroup="$levelGroup" />
                                                                 <RadioButton fx:id="buildingRadio" mnemonicParsing="false" text="%Building" toggleGroup="$levelGroup" />
-                                                <RadioButton fx:id="pointOfInterestRadio" layoutX="620.0" layoutY="51.0" mnemonicParsing="false" selected="true" text="%PointOfInterest" toggleGroup="$levelGroup" />
+                                                                <RadioButton fx:id="pointOfInterestRadio" layoutX="620.0" layoutY="51.0" mnemonicParsing="false" selected="true" text="%PointOfInterest" toggleGroup="$levelGroup" />
                                                                 <!--<RadioButton fx:id="pointOfInterestRadio" mnemonicParsing="false" text="%PointOfInterest" toggleGroup="$levelGroup" />-->
                                                             </children>
                                                         </FlowPane>
@@ -149,16 +140,16 @@ License:    Apache License Version 2.0
                                                                 </Button>
                                                             </children>
                                                         </HBox>
-                                          <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="218.0" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                             <children>
-                                                <Label minWidth="-Infinity" text="%Altitude" HBox.hgrow="NEVER" />
-                                                <TextField fx:id="altitudeInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                <Label minWidth="-Infinity" text="%Precision" HBox.hgrow="NEVER" />
-                                                <TextField fx:id="precisionInput" prefWidth="200.0" />
-                                                <Label layoutX="386.0" layoutY="19.0" minWidth="-Infinity" text="%CoordinateSystem" />
-                                                <ComboBox fx:id="coordinateSystemSelector" prefWidth="200.0" />
-                                             </children>
-                                          </HBox>
+                                                        <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="218.0" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                            <children>
+                                                                <Label minWidth="-Infinity" text="%Altitude" HBox.hgrow="NEVER" />
+                                                                <TextField fx:id="altitudeInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                                <Label minWidth="-Infinity" text="%Precision" HBox.hgrow="NEVER" />
+                                                                <TextField fx:id="precisionInput" prefWidth="200.0" />
+                                                                <Label layoutX="386.0" layoutY="19.0" minWidth="-Infinity" text="%CoordinateSystem" />
+                                                                <ComboBox fx:id="coordinateSystemSelector" prefWidth="200.0" />
+                                                            </children>
+                                                        </HBox>
                                                         <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="300.0" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
                                                             <children>
                                                                 <Label text="%ChineseName" />

@@ -18,6 +18,7 @@ import mara.mybox.fxml.TableTimeCell;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -45,9 +46,9 @@ public class FilesFindController extends FilesBatchController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
-            super.initializeNext();
+            super.initControls();
             initFilesTab();
 
             tableController.listButton.setVisible(false);

@@ -28,6 +28,8 @@ import mara.mybox.fxml.FxmlControl;
 import mara.mybox.image.ImageColor;
 import mara.mybox.image.ImageValue;
 import mara.mybox.tools.DoubleTools;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -61,15 +63,27 @@ public class ColorData {
         init();
     }
 
-    public ColorData(String rgba) {
+    public ColorData(String web) {
         init();
-        setRgba(rgba);
+        setWeb(web);
     }
 
-    public ColorData(String rgba, String name) {
+    public ColorData(String web, String name) {
         init();
         colorName = name;
-        setRgba(rgba);
+        setWeb(web);
+    }
+
+    // https://openjfx.io/javadoc/14/javafx.graphics/javafx/scene/paint/Color.html#web(java.lang.String)
+    final public void setWeb(String web) {
+        try {
+            color = javafx.scene.paint.Color.web(web);
+            rgba = FxmlColor.color2rgba(color);  // rgba is saved as upper-case in db
+            rgb = FxmlColor.color2rgb(color);
+            bindInPalette();
+        } catch (Exception e) {
+//            logger.debug(e.toString());
+        }
     }
 
     public void bindInPalette() {
@@ -78,17 +92,21 @@ public class ColorData {
         }
         inPalette.addListener((ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) -> {
             try {
+//                logger.debug(colorName + " " + rgba + " " + newVal);
                 if (isSettingValues) {
                     return;
                 }
                 if (newVal) {
-                    TableColorData.endPalette(color);
+                    ColorData data = TableColorData.endPalette(this, false);
+                    if (data != null) {
+                        paletteIndex = data.getPaletteIndex();
+                    }
                 } else {
                     paletteIndex = -1;
                     TableColorData.removeFromPalette(rgba);
                 }
             } catch (Exception e) {
-//                    logger.debug(e.toString());
+                logger.debug(e.toString());
             }
         });
     }
@@ -97,7 +115,6 @@ public class ColorData {
         if (rgba == null || srgb != null) {
             return this;
         }
-        rgb = FxmlColor.rgb2Hex(color);
         colorValue = ImageColor.getRGB(color);
         if (colorName == null) {
             colorName = "";
@@ -238,6 +255,10 @@ public class ColorData {
      */
     public static List<ColorData> predefined(String type) {
         switch (type) {
+            case "mybox":
+                String lang = AppVariables.isChinese() ? "zh" : "en";
+                return readCSV(FxmlControl.getInternalFile("/data/db/ColorsMyBox_" + lang + ".csv",
+                        "data", "ColorsMyBox_" + lang + ".csv", false));
             case "chinese":
                 return readCSV(FxmlControl.getInternalFile("/data/db/ColorsChinese.csv",
                         "data", "ColorsChinese.csv", false));
@@ -261,7 +282,7 @@ public class ColorData {
             for (CSVRecord record : parser) {
                 try {
                     ColorData item = new ColorData();
-                    item.setRgba(record.get("rgba"));
+                    item.setWeb(record.get("rgba"));
                     if (names.contains("name")) {
                         item.setColorName(record.get("name"));
                     }
@@ -305,39 +326,14 @@ public class ColorData {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  CSVPrinter printer = new CSVPrinter(new FileWriter(file, Charset.forName("utf-8")), CSVFormat.DEFAULT)) {
             conn.setReadOnly(true);
-            printer.printRecord("name", "rgba", "rgb", "value", "SRGB", "HSB",
-                    "AdobeRGB", "AppleRGB", "EciRGB", "SRGBLinear", "AdobeRGBLinear", "AppleRGBLinear",
-                    "CalculatedCMYK", "EciCMYK", "AdobeCMYK", "XYZ", "CieLab", "Lchab", "CieLuv", "Lchuv",
-                    "PaletteIndex");
             String sql = " SELECT * FROM Color_Data";
+            printHeader(printer);
             try ( Statement statement = conn.createStatement();
                      ResultSet results = statement.executeQuery(sql)) {
                 List<String> row = new ArrayList<>();
                 while (results.next()) {
                     ColorData data = TableColorData.read(results);//
-                    row.add(data.getColorName());
-                    row.add(data.getRgba());
-                    row.add(data.getRgb());
-                    row.add(data.getColorValue() + "");
-                    row.add(data.getSrgb());
-                    row.add(data.getHsb());
-                    row.add(data.getAdobeRGB());
-                    row.add(data.getAppleRGB());
-                    row.add(data.getEciRGB());
-                    row.add(data.getSRGBLinear());
-                    row.add(data.getAdobeRGBLinear());
-                    row.add(data.getAppleRGBLinear());
-                    row.add(data.getCalculatedCMYK());
-                    row.add(data.getEciCMYK());
-                    row.add(data.getAdobeCMYK());
-                    row.add(data.getXyz());
-                    row.add(data.getCieLab());
-                    row.add(data.getLchab());
-                    row.add(data.getCieLuv());
-                    row.add(data.getLchuv());
-                    row.add((long) data.getPaletteIndex() + "");
-                    printer.printRecord(row);
-                    row.clear();
+                    printRow(printer, row, data);
                 }
             }
         } catch (Exception e) {
@@ -345,22 +341,94 @@ public class ColorData {
         }
     }
 
-
-    /*
-        customized get/set
-     */
-    public final void setRgba(String rgba) {
-        this.rgba = rgba;
-        getColor();
-        bindInPalette();
+    public static void exportCSV(List<ColorData> dataList, File file) {
+        try ( CSVPrinter printer = new CSVPrinter(new FileWriter(file, Charset.forName("utf-8")), CSVFormat.DEFAULT)) {
+            printHeader(printer);
+            List<String> row = new ArrayList<>();
+            for (ColorData data : dataList) {
+                printRow(printer, row, data);
+            }
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
     }
 
+    public static void printHeader(CSVPrinter printer) {
+        try {
+            if (printer == null) {
+                return;
+            }
+            printer.printRecord("name", "rgba", "rgb", "value", "SRGB", "HSB",
+                    "AdobeRGB", "AppleRGB", "EciRGB", "SRGBLinear", "AdobeRGBLinear", "AppleRGBLinear",
+                    "CalculatedCMYK", "EciCMYK", "AdobeCMYK", "XYZ", "CieLab", "Lchab", "CieLuv", "Lchuv",
+                    "PaletteIndex");
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+    public static void printRow(CSVPrinter printer, List<String> row, ColorData data) {
+        try {
+            if (printer == null || row == null || data == null) {
+                return;
+            }
+            row.clear();
+            row.add(data.getColorName());
+            row.add(data.getRgba());
+            row.add(data.getRgb());
+            row.add(data.getColorValue() + "");
+            row.add(data.getSrgb());
+            row.add(data.getHsb());
+            row.add(data.getAdobeRGB());
+            row.add(data.getAppleRGB());
+            row.add(data.getEciRGB());
+            row.add(data.getSRGBLinear());
+            row.add(data.getAdobeRGBLinear());
+            row.add(data.getAppleRGBLinear());
+            row.add(data.getCalculatedCMYK());
+            row.add(data.getEciCMYK());
+            row.add(data.getAdobeCMYK());
+            row.add(data.getXyz());
+            row.add(data.getCieLab());
+            row.add(data.getLchab());
+            row.add(data.getCieLuv());
+            row.add(data.getLchuv());
+            row.add((long) data.getPaletteIndex() + "");
+            printer.printRecord(row);
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+    /*
+        get/set
+     */
     public Color getColor() {
         if (color == null && rgba != null) {
-            color = javafx.scene.paint.Color.web(rgba);
+            setWeb(rgba);
         }
         return color;
     }
+
+    public ColorData setRgba(String rgba) {
+        this.rgba = rgba;
+        if (color == null) {
+            setWeb(rgba);
+        }
+        return this;
+    }
+
+    public ColorData setRgb(String rgb) {
+        if (rgb == null) {
+            return this;
+        }
+        this.rgb = rgb;
+        if (color == null) {
+            setWeb(rgb);
+        }
+        return this;
+    }
+
 
     /*
         get/set
@@ -378,7 +446,7 @@ public class ColorData {
     }
 
     public String getRgba() {
-        return rgba;
+        return rgba.toUpperCase();
     }
 
     public String getColorName() {
@@ -426,10 +494,6 @@ public class ColorData {
 
     public String getRgb() {
         return rgb;
-    }
-
-    public void setRgb(String rgb) {
-        this.rgb = rgb;
     }
 
     public float[] getAdobeRGBValues() {

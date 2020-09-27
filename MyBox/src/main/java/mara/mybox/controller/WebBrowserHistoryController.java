@@ -7,8 +7,9 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 import mara.mybox.data.BrowserHistory;
 import mara.mybox.db.TableBrowserHistory;
-import mara.mybox.fxml.TableTimeCell;
 import mara.mybox.fxml.TableImageFileCell;
+import mara.mybox.fxml.TableTimeCell;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 
 /**
@@ -79,9 +80,11 @@ public class WebBrowserHistoryController extends TableManageController<BrowserHi
     }
 
     @Override
-    protected int deleteSelectedData() {
-        List<BrowserHistory> selected = tableView.getSelectionModel().getSelectedItems();
-        return TableBrowserHistory.delete(selected);
+    protected int deleteData(List<BrowserHistory> data) {
+        if (data == null || data.isEmpty()) {
+            return 0;
+        }
+        return TableBrowserHistory.delete(data);
     }
 
     @Override
@@ -92,7 +95,7 @@ public class WebBrowserHistoryController extends TableManageController<BrowserHi
     @FXML
     protected void openAction() {
         BrowserHistory selected = tableView.getSelectionModel().getSelectedItem();
-        if (parent == null || selected == null) {
+        if (parentController == null || selected == null) {
             return;
         }
         browserConroller.newTabAction(selected.getAddress(), true);

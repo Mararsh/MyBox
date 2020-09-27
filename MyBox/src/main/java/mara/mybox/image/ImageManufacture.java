@@ -41,6 +41,7 @@ import mara.mybox.image.ImageMosaic.MosaicType;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.tools.SystemTools;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 

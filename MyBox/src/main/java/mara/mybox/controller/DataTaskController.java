@@ -10,6 +10,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -39,7 +40,8 @@ public class DataTaskController extends BaseController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
+        super.initControls();
         initLogs();
     }
 
@@ -62,39 +64,43 @@ public class DataTaskController extends BaseController {
                 return;
             }
             initLogs();
-
             startButton.setText(message(cancelName));
             tabPane.getSelectionModel().select(logsTab);
-            task = new SingletonTask<Void>() {
-
-                @Override
-                protected boolean handle() {
-                    return doTask();
-
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    afterSuccess();
-                }
-
-                @Override
-                protected void whenCanceled() {
-                    updateLogs(message(cancelName), true);
-                }
-
-                @Override
-                protected void finalAction() {
-                    startButton.setText(message("Start"));
-                    updateLogs(message("Completed") + " " + message("Cost")
-                            + " " + DateTools.datetimeMsDuration(new Date(), startTime),
-                            true);
-                }
-            };
-            Thread thread = new Thread(task);
-            thread.setDaemon(true);
-            thread.start();
+            startTask();
         }
+
+    }
+
+    public void startTask() {
+        task = new SingletonTask<Void>() {
+
+            @Override
+            protected boolean handle() {
+                return doTask();
+
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                afterSuccess();
+            }
+
+            @Override
+            protected void whenCanceled() {
+                updateLogs(message(cancelName), true);
+            }
+
+            @Override
+            protected void finalAction() {
+                startButton.setText(message("Start"));
+                updateLogs(message("Completed") + " " + message("Cost")
+                        + " " + DateTools.datetimeMsDuration(new Date(), startTime),
+                        true);
+            }
+        };
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
     }
 
     protected boolean doTask() {

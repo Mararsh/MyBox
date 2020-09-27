@@ -101,8 +101,8 @@ License:    Apache License Version 2.0
                                     <content>
                                         <VBox spacing="5.0">
                                             <children>
-                                    <FlowPane hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
-                                       <children>
+                                                <FlowPane hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
+                                                    <children>
                                                         <RadioButton fx:id="arrayColumnRadio" mnemonicParsing="false" selected="true" text="%SingleColumn">
                                                             <toggleGroup>
                                                                 <ToggleGroup fx:id="arrayGroup" />
@@ -111,27 +111,18 @@ License:    Apache License Version 2.0
                                                         <RadioButton fx:id="arrayRowRadio" mnemonicParsing="false" text="%SingleRow" toggleGroup="$arrayGroup" />
                                                         <RadioButton fx:id="arrayColumnsRadio" mnemonicParsing="false" text="%ColumnsNumber" toggleGroup="$arrayGroup" />
                                                         <ComboBox fx:id="columnsBox" disable="true" editable="true" prefWidth="100.0" />
-                                       </children>
-                                    </FlowPane>
-                                    <FlowPane hgap="5.0" layoutX="32.0" layoutY="221.0" vgap="5.0">
-                                       <children>
+                                                    </children>
+                                                </FlowPane>
+                                                <FlowPane hgap="5.0" layoutX="32.0" layoutY="221.0" vgap="5.0">
+                                                    <children>
                                                         <Label text="%Background" />
-                                                        <Rectangle fx:id="bgRect" fill="#ffffff00" height="15.0" stroke="BLACK" strokeMiterLimit="0.0" strokeType="INSIDE" width="15.0" />
-                                                        <Button fx:id="paletteButton" mnemonicParsing="false" onAction="#showPalette">
-                                                            <graphic>
-                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/iconPalette.png" />
-                                                                    </image>
-                                                                </ImageView>
-                                                            </graphic>
-                                                        </Button>
+                                                        <fx:include fx:id="colorSet" source="ColorSet.fxml" />
                                                         <Label text="%Interval" />
                                                         <ComboBox fx:id="intervalBox" editable="true" prefWidth="80.0" />
                                                         <Label text="%Margins" />
                                                         <ComboBox fx:id="MarginsBox" editable="true" prefWidth="80.0" />
-                                       </children>
-                                    </FlowPane>
+                                                    </children>
+                                                </FlowPane>
                                             </children>
                                         </VBox>
                                     </content>
@@ -140,8 +131,8 @@ License:    Apache License Version 2.0
                                     <content>
                                         <VBox spacing="10.0">
                                             <children>
-                                    <FlowPane hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
-                                       <children>
+                                                <FlowPane hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
+                                                    <children>
                                                         <RadioButton fx:id="keepSizeRadio" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%KeepSize">
                                                             <toggleGroup>
                                                                 <ToggleGroup fx:id="sizeGroup" />
@@ -157,8 +148,8 @@ License:    Apache License Version 2.0
                                                         <TextField fx:id="totalWidthInput" disable="true" prefWidth="100.0" promptText="%Width" />
                                                         <RadioButton fx:id="totalHeightRadio" mnemonicParsing="false" text="%TotalHeight" toggleGroup="$sizeGroup" />
                                                         <TextField fx:id="totalHeightInput" disable="true" prefWidth="100.0" promptText="%Height" />
-                                       </children>
-                                    </FlowPane>
+                                                    </children>
+                                                </FlowPane>
                                             </children>
                                         </VBox>
                                     </content>

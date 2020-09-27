@@ -3,6 +3,7 @@ package mara.mybox.db;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -38,22 +39,26 @@ public class TableMediaList extends DerbyBase {
     }
 
     public static List<MediaList> read() {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                 Statement statement = conn.createStatement()) {
             conn.setReadOnly(true);
             List<String> names = new ArrayList();
             String sql = " SELECT DISTINCT list_name FROM media_list";
-            ResultSet results = conn.createStatement().executeQuery(sql);
-            while (results.next()) {
-                names.add(results.getString("list_name"));
+            try ( ResultSet results = statement.executeQuery(sql)) {
+                while (results.next()) {
+                    names.add(results.getString("list_name"));
+                }
             }
             names.remove(MiaoGuaiGuaiBenBen);
             List<MediaList> mediaLists = new ArrayList();
             for (String name : names) {
                 sql = " SELECT * FROM media_list WHERE list_name='" + stringValue(name) + "' ORDER BY address_index";
-                results = conn.createStatement().executeQuery(sql);
-                List<String> addresses = new ArrayList();
-                while (results.next()) {
-                    addresses.add(results.getString("address"));
+                List<String> addresses;
+                try ( ResultSet results = statement.executeQuery(sql)) {
+                    addresses = new ArrayList();
+                    while (results.next()) {
+                        addresses.add(results.getString("address"));
+                    }
                 }
                 List<MediaInformation> medias = TableMedia.read(conn, addresses);
                 MediaList mediaList = MediaList.create().setName(name).setMedias(medias);
@@ -69,13 +74,15 @@ public class TableMediaList extends DerbyBase {
     }
 
     public static List<String> names() {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                 Statement statement = conn.createStatement()) {
             conn.setReadOnly(true);
             List<String> names = new ArrayList();
             String sql = " SELECT DISTINCT list_name FROM media_list";
-            ResultSet results = conn.createStatement().executeQuery(sql);
-            while (results.next()) {
-                names.add(results.getString("list_name"));
+            try ( ResultSet results = statement.executeQuery(sql)) {
+                while (results.next()) {
+                    names.add(results.getString("list_name"));
+                }
             }
             names.remove(MiaoGuaiGuaiBenBen);
             return names;
@@ -91,13 +98,15 @@ public class TableMediaList extends DerbyBase {
         if (name == null || name.trim().isEmpty()) {
             return null;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                 Statement statement = conn.createStatement()) {
             conn.setReadOnly(true);
             String sql = " SELECT * FROM media_list WHERE list_name='" + stringValue(name) + "' ORDER BY address_index";
-            ResultSet results = conn.createStatement().executeQuery(sql);
             List<String> addresses = new ArrayList();
-            while (results.next()) {
-                addresses.add(results.getString("address"));
+            try ( ResultSet results = statement.executeQuery(sql)) {
+                while (results.next()) {
+                    addresses.add(results.getString("address"));
+                }
             }
             if (addresses.isEmpty()) {
                 return null;
@@ -117,26 +126,24 @@ public class TableMediaList extends DerbyBase {
         if (medias == null || medias.isEmpty()) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                 Statement statement = conn.createStatement()) {
 //            TableMedia.write(statement, medias);
-
             String sql = "DELETE FROM media_list WHERE list_name='" + stringValue(name) + "'";
-            conn.createStatement().executeUpdate(sql);
-
+            statement.executeUpdate(sql);
             int index = 0;
             for (MediaInformation media : medias) {
                 try {
                     sql = "INSERT INTO media_list(list_name, address_index , address, modify_time) VALUES('"
                             + stringValue(name) + "', " + index + ", '" + stringValue(media.getAddress()) + "', '"
                             + DateTools.datetimeToString(new Date()) + "')";
-                    conn.createStatement().executeUpdate(sql);
+                    statement.executeUpdate(sql);
                     index++;
                 } catch (Exception e) {
                     failed(e);
 //                    logger.debug(e.toString());
                 }
             }
-
             return true;
         } catch (Exception e) {
             failed(e);
@@ -146,16 +153,18 @@ public class TableMediaList extends DerbyBase {
     }
 
     public static boolean delete(String name) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
-            String sql = " SELECT * FROM media_list WHERE list_name='" + stringValue(name) + "'";
-            ResultSet results = conn.createStatement().executeQuery(sql);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                 Statement statement = conn.createStatement()) {
             List<String> addresses = new ArrayList();
-            while (results.next()) {
-                addresses.add(results.getString("address"));
+            String sql = " SELECT * FROM media_list WHERE list_name='" + stringValue(name) + "'";
+            try ( ResultSet results = statement.executeQuery(sql)) {
+                while (results.next()) {
+                    addresses.add(results.getString("address"));
+                }
             }
             TableMedia.delete(conn, addresses);
             sql = "DELETE FROM media_list WHERE list_name='" + stringValue(name) + "'";
-            conn.createStatement().executeUpdate(sql);
+            statement.executeUpdate(sql);
             return true;
         } catch (Exception e) {
             failed(e);

@@ -22,6 +22,7 @@ import mara.mybox.fxml.LogarithmicECoordinate;
 import mara.mybox.fxml.SquareRootCoordinate;
 import mara.mybox.tools.StringTools;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Roland

@@ -14,11 +14,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import mara.mybox.color.CIEData;
 import mara.mybox.color.ChromaticAdaptation.ChromaticAdaptationAlgorithm;
-import mara.mybox.color.RGBColorSpace;
 import mara.mybox.color.Illuminant;
+import mara.mybox.color.RGBColorSpace;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DoubleTools;
-import static mara.mybox.value.AppVariables.message;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -60,8 +59,9 @@ public class RGBColorSpaceController extends BaseController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
+            super.initControls();
             valueGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue<? extends Toggle> ov,

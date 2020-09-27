@@ -19,6 +19,7 @@ import mara.mybox.data.CustomizedLanguage;
 import mara.mybox.db.TableSystemConf;
 import mara.mybox.db.TableUserConf;
 import mara.mybox.fxml.ControlStyle;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.CommonValues.BundleEn;
 import static mara.mybox.value.CommonValues.BundleZhCN;
 import org.apache.logging.log4j.LogManager;
@@ -38,6 +39,7 @@ public class AppVariables {
     public static String MyboxDataPath, AlarmClocksFile;
     public static File MyBoxTempPath, MyBoxDerbyPath, MyBoxLanguagesPath, MyBoxDownloadsPath;
     public static List<File> MyBoxReservePaths;
+    public static boolean devMode, dbErroring;
 
     public static Logger logger = LogManager.getLogger(AppVariables.class);
     public static ResourceBundle currentBundle;
@@ -49,7 +51,7 @@ public class AppVariables {
     public static MemoryUsageSetting pdfMemUsage;
     public static int sceneFontSize, fileRecentNumber, iconSize;
     public static boolean openStageInNewWindow, restoreStagesSize, controlDisplayText,
-            ImagePopCooridnate, disableHiDPI, DerbyFailAsked;
+            disableHiDPI, DerbyFailAsked;
     public static ControlStyle.ColorStyle ControlColor;
     public static String lastError;
     public static SSLSocketFactory defaultSSLSocketFactory;
@@ -64,6 +66,7 @@ public class AppVariables {
             systemConfigValues = new HashMap<>();
             getBundle();
             getPdfMem();
+            devMode = AppVariables.getUserConfigBoolean("DevMode", false);
             openStageInNewWindow = AppVariables.getUserConfigBoolean("OpenStageInNewWindow", false);
             restoreStagesSize = AppVariables.getUserConfigBoolean("RestoreStagesSize", true);
             sceneFontSize = AppVariables.getUserConfigInt("SceneFontSize", 15);
@@ -71,7 +74,6 @@ public class AppVariables {
             iconSize = AppVariables.getUserConfigInt("IconSize", 20);
             ControlColor = ControlStyle.getConfigColorStyle();
             controlDisplayText = AppVariables.getUserConfigBoolean("ControlDisplayText", false);
-            ImagePopCooridnate = AppVariables.getUserConfigBoolean("ImagePopCooridnate", false);
             disableHiDPI = DerbyFailAsked = false;
             lastError = null;
             if (defaultSSLSocketFactory == null) {

@@ -34,7 +34,7 @@ License:    Apache License Version 2.0
                                 <fx:include fx:id="table" source="FilesTable.fxml" />
                             </content>
                         </Tab>
-                        <Tab fx:id="optionsTab" text="%Comments">
+                        <Tab fx:id="commentsTab" text="%Comments">
                             <content>
                                 <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="537.0" prefViewportWidth="418.0">
                                     <content>
@@ -50,13 +50,14 @@ License:    Apache License Version 2.0
                                                     </children>
                                                 </HBox>
                                                 <Label text="%EpidemicReportCVSComments" wrapText="true" />
+                                                <fx:include fx:id="csvEdit" source="ControlCSVEdit.fxml" />
                                             </children>
                                         </VBox>
                                     </content>
                                 </ScrollPane>
                             </content>
                         </Tab>
-                        <Tab fx:id="optionsTab1" text="%Options">
+                        <Tab fx:id="optionsTab" text="%Options">
                             <content>
                                 <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="537.0" prefViewportWidth="418.0">
                                     <content>

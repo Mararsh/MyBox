@@ -16,21 +16,28 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
+import javafx.util.Callback;
 import mara.mybox.data.ColorData;
 import mara.mybox.data.StringTable;
+import mara.mybox.data.VisitHistory.FileType;
 import mara.mybox.db.TableColorData;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.fxml.TableColorCell;
 import mara.mybox.image.ImageColor;
+import mara.mybox.tools.HtmlTools;
+import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
+import mara.mybox.value.CommonValues;
 import thridparty.TableAutoCommitCell;
 
 /**
@@ -52,11 +59,13 @@ public class ColorsManageController extends TableManageController<ColorData> {
     @FXML
     protected TableColumn<ColorData, Boolean> inPaletteColumn;
     @FXML
-    protected Button htmlButton, inButton, outButton, commonColorsButton;
+    protected Button htmlButton, inButton, outButton;
     @FXML
     protected ColorPicker colorPicker;
     @FXML
     protected CheckBox mergeCheck, allColumnsCheck;
+    @FXML
+    protected ColorImportController colorImportController;
 
     public ColorsManageController() {
         baseTitle = AppVariables.message("ManageColors");
@@ -88,7 +97,12 @@ public class ColorsManageController extends TableManageController<ColorData> {
             inPaletteColumn.setCellValueFactory(new PropertyValueFactory<>("inPalette"));
             inPaletteColumn.setCellFactory((TableColumn<ColorData, Boolean> p) -> {
                 CheckBoxTableCell<ColorData, Boolean> cell = new CheckBoxTableCell<>();
-                cell.setSelectedStateCallback((Integer index) -> tableData.get(index).getInPaletteProperty());
+                cell.setSelectedStateCallback(new Callback<Integer, ObservableValue<Boolean>>() {
+                    @Override
+                    public ObservableValue<Boolean> call(Integer index) {
+                        return tableData.get(index).getInPaletteProperty();
+                    }
+                });
                 return cell;
             });
             inPaletteColumn.getStyleClass().add("editable-column");
@@ -120,6 +134,8 @@ public class ColorsManageController extends TableManageController<ColorData> {
     @Override
     protected void initButtons() {
         try {
+            colorImportController.setParentController(this);
+
             colorPicker.valueProperty().addListener(
                     (ObservableValue<? extends Color> ov, Color oldVal, Color newVal) -> {
                         if (isSettingValues || newVal == null) {
@@ -185,7 +201,6 @@ public class ColorsManageController extends TableManageController<ColorData> {
         super.afterSceneLoaded();
         FxmlControl.setTooltip(inButton, message("PutInColorPalette"));
         FxmlControl.setTooltip(outButton, message("RemoveFromColorPalette"));
-        FxmlControl.removeTooltip(commonColorsButton);
 
         loadTableData();
     }
@@ -208,7 +223,7 @@ public class ColorsManageController extends TableManageController<ColorData> {
 
     @Override
     public List<ColorData> readPageData() {
-        return TableColorData.read(currentPageStart, currentPageSize);
+        return TableColorData.readPage(currentPageStart, currentPageSize);
     }
 
     @Override
@@ -220,107 +235,6 @@ public class ColorsManageController extends TableManageController<ColorData> {
         int selection = tableView.getSelectionModel().getSelectedIndices().size();
         inButton.setDisable(selection == 0);
         outButton.setDisable(selection == 0);
-    }
-
-    @FXML
-    protected void popCommonColorsMenu(MouseEvent mouseEvent) {
-        try {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
-
-            MenuItem menu = new MenuItem(message("ImportWebCommonColors"));
-            menu.setOnAction((ActionEvent event) -> {
-                importColors("web");
-            });
-            popMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("ImportChineseTraditionalColors"));
-            menu.setOnAction((ActionEvent event) -> {
-                importColors("chinese");
-            });
-            popMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("ImportJapaneseTraditionalColors"));
-            menu.setOnAction((ActionEvent event) -> {
-                importColors("japanese");
-            });
-            popMenu.getItems().add(menu);
-            popMenu.getItems().add(new SeparatorMenuItem());
-
-            menu = new MenuItem(message("File"));
-            menu.setOnAction((ActionEvent event) -> {
-                importColors("file");
-            });
-            popMenu.getItems().add(menu);
-            popMenu.getItems().add(new SeparatorMenuItem());
-
-            menu = new MenuItem(message("MenuClose"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction((ActionEvent event) -> {
-                popMenu.hide();
-                popMenu = null;
-            });
-            popMenu.getItems().add(menu);
-
-            FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    protected void importColors(String type) {
-        final File file;
-        if ("file".equals(type)) {
-            List<FileChooser.ExtensionFilter> csvExtensionFilter = new ArrayList<>();
-            FileChooser fileChooser = new FileChooser();
-            File path = AppVariables.getUserConfigPath(sourcePathKey);
-            if (path.exists()) {
-                fileChooser.setInitialDirectory(path);
-            }
-            fileChooser.getExtensionFilters().addAll(csvExtensionFilter);
-            file = fileChooser.showOpenDialog(getMyStage());
-            if (file == null || !file.exists()) {
-                return;
-            }
-            recordFileOpened(file);
-        } else {
-            file = null;
-        }
-        synchronized (this) {
-            if (task != null) {
-                return;
-            }
-            task = new SingletonTask<Void>() {
-                @Override
-                protected boolean handle() {
-                    List<ColorData> data;
-                    if (file != null) {
-                        data = ColorData.readCSV(file);
-                    } else {
-                        data = ColorData.predefined(type);
-                    }
-                    if (data == null) {
-                        return false;
-                    }
-                    TableColorData.writeData(data, false);
-                    TableColorData.trimPalette();
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    loadTableData();
-                }
-            };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
-            thread.setDaemon(true);
-            thread.start();
-        }
     }
 
     @FXML
@@ -336,7 +250,7 @@ public class ColorsManageController extends TableManageController<ColorData> {
             task = new SingletonTask<Void>() {
                 @Override
                 protected boolean handle() {
-                    TableColorData.addInPalette(selected);
+                    TableColorData.addDataInPalette(selected, false);
                     return true;
                 }
 
@@ -382,12 +296,11 @@ public class ColorsManageController extends TableManageController<ColorData> {
     }
 
     @Override
-    protected int deleteSelectedData() {
-        List<ColorData> selected = tableView.getSelectionModel().getSelectedItems();
-        if (selected == null || selected.isEmpty()) {
+    protected int deleteData(List<ColorData> data) {
+        if (data == null || data.isEmpty()) {
             return 0;
         }
-        return TableColorData.deleteData(selected);
+        return TableColorData.deleteData(data);
     }
 
     @Override
@@ -401,24 +314,239 @@ public class ColorsManageController extends TableManageController<ColorData> {
         loadTableData();
     }
 
+    @Override
+    public void itemDoubleClicked() {
+        viewAction();
+    }
+
     @FXML
-    public void htmlAction() {
+    @Override
+    public void viewAction() {
+        ColorData selected = (ColorData) tableView.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            return;
+        }
+        HtmlTools.viewHtml(message("Color"), selected.display().replaceAll("\n", "</BR>"));
+    }
+
+    @FXML
+    protected void popCsvMenu(MouseEvent mouseEvent) {
         try {
-            List<ColorData> rows = tableView.getSelectionModel().getSelectedItems();
-            if (rows == null || rows.isEmpty()) {
-                rows = tableData;
+            if (popMenu != null && popMenu.isShowing()) {
+                popMenu.hide();
             }
+            popMenu = new ContextMenu();
+            popMenu.setAutoHide(true);
+
+            MenuItem menu;
+
+            menu = new MenuItem(message("ExportSelectedData"));
+            menu.setOnAction((ActionEvent event) -> {
+                exportCSV("selected");
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ExportAllData"));
+            menu.setOnAction((ActionEvent event) -> {
+                exportCSV("all");
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ExportCurrentPage"));
+            menu.setOnAction((ActionEvent event) -> {
+                exportCSV("page");
+            });
+            popMenu.getItems().add(menu);
+
+            popMenu.getItems().add(new SeparatorMenuItem());
+            menu = new MenuItem(message("PopupClose"));
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setOnAction((ActionEvent event) -> {
+                popMenu.hide();
+                popMenu = null;
+            });
+            popMenu.getItems().add(menu);
+
+            FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    public void exportCSV(String type) {
+        final List<ColorData> rows;
+        String filename = message("Color");
+        if ("selected".equals(type)) {
+            rows = tableView.getSelectionModel().getSelectedItems();
+            if (rows == null || rows.isEmpty()) {
+                popError(message("NoData"));
+                return;
+            }
+            filename += "_" + message("Selected");
+        } else {
+            rows = tableData;
+            if (rows == null || rows.isEmpty()) {
+                popError(message("NoData"));
+                return;
+            }
+            if ("page".equals(type)) {
+                filename += "_" + message("Page") + currentPage;
+            } else {
+                filename += "_" + message("All");
+            }
+        }
+        List<FileChooser.ExtensionFilter> csvExtensionFilter = new ArrayList<>();
+        csvExtensionFilter.add(new FileChooser.ExtensionFilter("csv", "*.csv"));
+        final File file = chooseSaveFile(VisitHistoryTools.getSavedPath(FileType.Text),
+                filename + ".csv", csvExtensionFilter, false);
+        if (file == null) {
+            return;
+        }
+        recordFileWritten(file, FileType.Text);
+        synchronized (this) {
+            if (task != null) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+                @Override
+                protected boolean handle() {
+                    if ("all".equals(type)) {
+                        ColorData.exportCSV(file);
+                    } else {
+                        ColorData.exportCSV(rows, file);
+                    }
+                    return true;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    if (file.exists()) {
+                        FxmlStage.openTextEditer(null, file);
+                    }
+                }
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
+
+    }
+
+    @FXML
+    protected void popHtmlMenu(MouseEvent mouseEvent) {
+        try {
+            if (popMenu != null && popMenu.isShowing()) {
+                popMenu.hide();
+            }
+            popMenu = new ContextMenu();
+            popMenu.setAutoHide(true);
+
+            MenuItem menu;
+
+            menu = new MenuItem(message("ExportSelectedData"));
+            menu.setOnAction((ActionEvent event) -> {
+                exportHtml("selected");
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ExportAllData"));
+            menu.setOnAction((ActionEvent event) -> {
+                exportHtml("all");
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ExportCurrentPage"));
+            menu.setOnAction((ActionEvent event) -> {
+                exportHtml("page");
+            });
+            popMenu.getItems().add(menu);
+
+            popMenu.getItems().add(new SeparatorMenuItem());
+            menu = new MenuItem(message("PopupClose"));
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setOnAction((ActionEvent event) -> {
+                popMenu.hide();
+                popMenu = null;
+            });
+            popMenu.getItems().add(menu);
+
+            FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    public void exportHtml(String type) {
+        try {
+            List<ColorData> rows;
+            String title = message("Color");
+            if ("selected".equals(type)) {
+                rows = tableView.getSelectionModel().getSelectedItems();
+                if (rows == null || rows.isEmpty()) {
+                    popError(message("NoData"));
+                    return;
+                }
+                title += "_" + message("Selected");
+                displayHtml(title, rows);
+            } else {
+                rows = tableData;
+                if (rows == null || rows.isEmpty()) {
+                    popError(message("NoData"));
+                    return;
+                }
+                if ("page".equals(type)) {
+                    title += "_" + message("Page") + currentPage;
+                    displayHtml(title, rows);
+                } else {
+                    synchronized (this) {
+                        if (task != null) {
+                            return;
+                        }
+                        task = new SingletonTask<Void>() {
+
+                            private List<ColorData> data;
+
+                            @Override
+                            protected boolean handle() {
+                                data = TableColorData.readAll();
+                                return true;
+                            }
+
+                            @Override
+                            protected void whenSucceeded() {
+                                displayHtml(message("Color") + "_" + message("All"), data);
+                            }
+                        };
+                        openHandlingStage(task, Modality.WINDOW_MODAL);
+                        Thread thread = new Thread(task);
+                        thread.setDaemon(true);
+                        thread.start();
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    public void displayHtml(String title, List<ColorData> rows) {
+        try {
             if (rows == null || rows.isEmpty()) {
                 popError(message("NoData"));
                 return;
             }
             List<String> names = new ArrayList<>();
             for (TableColumn column : tableView.getColumns()) {
-                if (!column.equals(rgbaColumn) && !column.equals(rgbColumn)) {
+                if (!column.equals(rgbaColumn) && !column.equals(rgbColumn)
+                        && !column.equals(inPaletteColumn)) {
                     names.add(column.getText());
                 }
             }
-            StringTable table = new StringTable(names, message("Color"), 0);
+            StringTable table = new StringTable(names, title, 0);
             for (ColorData data : rows) {
                 List<String> row = new ArrayList<>();
                 for (TableColumn column : tableView.getColumns()) {
@@ -480,38 +608,15 @@ public class ColorsManageController extends TableManageController<ColorData> {
     }
 
     @FXML
-    public void csvAction() {
-        List<FileChooser.ExtensionFilter> csvExtensionFilter = new ArrayList<>();
-        csvExtensionFilter.add(new FileChooser.ExtensionFilter("csv", "*.csv"));
-        final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
-                message("Color") + ".csv", csvExtensionFilter, false);
-        if (file == null) {
-            return;
-        }
-        recordFileWritten(file);
-        synchronized (this) {
-            if (task != null) {
-                return;
-            }
-            task = new SingletonTask<Void>() {
-                @Override
-                protected boolean handle() {
-                    ColorData.exportCSV(file);
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    if (file.exists()) {
-                        FxmlStage.openTextEditer(null, file);
-                    }
-                }
-            };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
-            thread.setDaemon(true);
-            thread.start();
-        }
-
+    public void managePalette() {
+        FxmlStage.openStage(CommonValues.ColorPaletteManageFxml);
     }
+
+    @FXML
+    @Override
+    public void closePopup(KeyEvent event) {
+        super.closePopup(event);
+        colorImportController.closePopup(event);
+    }
+
 }

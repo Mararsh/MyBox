@@ -24,6 +24,7 @@ import mara.mybox.db.TableMediaList;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -51,8 +52,9 @@ public class MediaListController extends BaseController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
+            super.initControls();
             tableData = FXCollections.observableArrayList();
             tableController.setParentController(this);
 

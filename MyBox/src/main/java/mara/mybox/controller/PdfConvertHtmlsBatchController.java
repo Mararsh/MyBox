@@ -14,7 +14,9 @@ import javafx.scene.control.ToggleGroup;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -48,7 +50,7 @@ public class PdfConvertHtmlsBatchController extends PdfBatchController {
     public PdfConvertHtmlsBatchController() {
         baseTitle = AppVariables.message("PdfConvertHtmlsBatch");
 
-        targetPathKey = "HtmlFilePath";
+        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Html);
 
         TargetPathType = VisitHistory.FileType.Html;
         TargetFileType = VisitHistory.FileType.Html;
@@ -143,6 +145,7 @@ public class PdfConvertHtmlsBatchController extends PdfBatchController {
                         if (task.isCancelled()) {
                             break;
                         }
+                        updateLogs(message("HandlingPage") + ":" + currentParameters.currentPage, true, true);
                         String fileName = currentParameters.currentTargetPath + File.separator
                                 + filePrefix + "_p" + currentParameters.currentPage;
                         File htmlFile = writeHhml(fileName, currentParameters.currentPage, currentParameters.currentPage);

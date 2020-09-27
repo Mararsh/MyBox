@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import javafx.fxml.FXML;
 import mara.mybox.data.VisitHistory;
+import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.CommonFxValues;
 
@@ -25,8 +26,8 @@ public class FFmpegBatchController extends FilesBatchController {
         AddFileType = VisitHistory.FileType.Media;
         AddPathType = VisitHistory.FileType.Media;
 
-        targetPathKey = "MediaFilePath";
-        sourcePathKey = "MediaFilePath";
+        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Media);
+        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Media);
 
         sourceExtensionFilter = CommonFxValues.FFmpegMediaExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;

@@ -3,12 +3,12 @@ package mara.mybox.controller;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
 import mara.mybox.data.FileInformation;
 import mara.mybox.fxml.FxmlControl;
-import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 
 /**
@@ -24,7 +24,7 @@ public class FilesRenameTableController extends FilesTableController {
     @FXML
     protected Button recoveryAllButton, recoverySelectedButton, yesButton;
     @FXML
-    protected Label commentsLabel;
+    protected HBox confirmBox;
 
     public FilesRenameTableController() {
     }
@@ -32,6 +32,7 @@ public class FilesRenameTableController extends FilesTableController {
     @Override
     public void initTable() {
         try {
+            thisPane.getChildren().remove(confirmBox);
             super.initTable();
 
             newColumn.setCellValueFactory(new PropertyValueFactory<>("data"));
@@ -43,54 +44,27 @@ public class FilesRenameTableController extends FilesTableController {
     }
 
     @Override
-    public void moreAction() {
-        if (moreButton.isSelected()) {
-            if (!thisPane.getChildren().contains(commentsLabel)) {
-                thisPane.getChildren().add(1, commentsLabel);
-            }
-            if (!thisPane.getChildren().contains(tableLabel)) {
-                thisPane.getChildren().add(3, tableLabel);
-            }
-            if (!thisPane.getChildren().contains(selectPane)) {
-                thisPane.getChildren().add(4, selectPane);
-            }
+    protected void checkButtons() {
+        if (thisPane.getChildren().contains(confirmBox)) {
+            addFilesButton.setDisable(true);
+            addDirectoryButton.setDisable(true);
+            insertFilesButton.setDisable(true);
+            insertDirectoryButton.setDisable(true);
+            deleteFilesButton.setDisable(true);
+            clearFilesButton.setDisable(true);
         } else {
-            thisPane.getChildren().removeAll(commentsLabel, selectPane, tableLabel);
-        }
-        FxmlControl.refreshStyle(thisPane);
-        AppVariables.setUserConfigValue("FileTableMore", moreButton.isSelected());
-    }
-
-    @Override
-    public void tableChanged() {
-        super.tableChanged();
-        if (tableData.isEmpty()) {
-            recoverySelectedButton.setDisable(true);
-            recoveryAllButton.setDisable(true);
             addFilesButton.setDisable(false);
             addDirectoryButton.setDisable(false);
-        }
-    }
-
-    @Override
-    public void tableSelected() {
-        super.tableSelected();
-        FileInformation selected = tableView.getSelectionModel().getSelectedItem();
-        boolean none = (selected == null);
-        if (none) {
-            recoverySelectedButton.setDisable(true);
-            recoveryAllButton.setDisable(true);
+            super.checkButtons();
         }
     }
 
     public void setButtonsAfterRenamed() {
-        addFilesButton.setDisable(true);
-        addDirectoryButton.setDisable(true);
-        insertFilesButton.setDisable(true);
-        insertDirectoryButton.setDisable(true);
-        deleteFilesButton.setDisable(true);
-        recoveryAllButton.setDisable(false);
-        recoverySelectedButton.setDisable(false);
+        if (!thisPane.getChildren().contains(confirmBox)) {
+            thisPane.getChildren().add(1, confirmBox);
+            FxmlControl.refreshStyle(confirmBox);
+        }
+        checkButtons();
     }
 
     @FXML
@@ -99,15 +73,12 @@ public class FilesRenameTableController extends FilesTableController {
             FilesRenameController p = (FilesRenameController) parentController;
             p.recoveryAllAction();
             tableView.refresh();
+            if (thisPane.getChildren().contains(confirmBox)) {
+                thisPane.getChildren().remove(confirmBox);
+            }
             addFilesButton.setDisable(false);
             addDirectoryButton.setDisable(false);
-            insertFilesButton.setDisable(false);
-            insertDirectoryButton.setDisable(false);
-            deleteFilesButton.setDisable(false);
-            upFilesButton.setDisable(false);
-            downFilesButton.setDisable(false);
-            recoverySelectedButton.setDisable(true);
-            recoveryAllButton.setDisable(true);
+            checkButtons();
         }
     }
 
@@ -118,11 +89,7 @@ public class FilesRenameTableController extends FilesTableController {
             p.recoverySelectedAction();
         }
         tableView.refresh();
-        addFilesButton.setDisable(true);
-        addDirectoryButton.setDisable(true);
-        insertFilesButton.setDisable(true);
-        insertDirectoryButton.setDisable(true);
-        deleteFilesButton.setDisable(true);
+        checkButtons();
     }
 
     @FXML
@@ -133,16 +100,12 @@ public class FilesRenameTableController extends FilesTableController {
         FilesRenameController p = (FilesRenameController) parentController;
         p.okAction();
         tableView.refresh();
+        if (thisPane.getChildren().contains(confirmBox)) {
+            thisPane.getChildren().remove(confirmBox);
+        }
         addFilesButton.setDisable(false);
         addDirectoryButton.setDisable(false);
-        insertFilesButton.setDisable(false);
-        insertDirectoryButton.setDisable(false);
-        deleteFilesButton.setDisable(false);
-        upFilesButton.setDisable(false);
-        downFilesButton.setDisable(false);
-        recoverySelectedButton.setDisable(true);
-        recoveryAllButton.setDisable(true);
-
+        checkButtons();
     }
 
 }

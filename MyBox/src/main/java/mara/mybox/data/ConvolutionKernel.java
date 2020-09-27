@@ -3,8 +3,6 @@ package mara.mybox.data;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FloatTools;
@@ -21,11 +19,10 @@ import static mara.mybox.value.AppVariables.message;
  */
 public class ConvolutionKernel {
 
-    private SimpleStringProperty name, description, modifyTime, createTime;
-    private SimpleIntegerProperty width, height, type, gray, edge;
+    private String name, description, modifyTime, createTime;
+    private int width, height, type, edge;
     private float[][] matrix;
-
-    public static List<ConvolutionKernel> ExampleKernels;
+    private boolean invert, gray;
 
     public static class Convolution_Type {
 
@@ -46,34 +43,32 @@ public class ConvolutionKernel {
     }
 
     public ConvolutionKernel() {
-        name = new SimpleStringProperty("");
-        description = new SimpleStringProperty("");
-        modifyTime = new SimpleStringProperty(DateTools.datetimeToString(new Date()));
-        createTime = new SimpleStringProperty(DateTools.datetimeToString(new Date()));
-        width = new SimpleIntegerProperty(0);
-        height = new SimpleIntegerProperty(0);
-        type = new SimpleIntegerProperty(0);
-        gray = new SimpleIntegerProperty(0);
-        edge = new SimpleIntegerProperty(0);
+        name = "";
+        description = "";
+        modifyTime = DateTools.datetimeToString(new Date());
+        createTime = DateTools.datetimeToString(new Date());
+        width = 0;
+        height = 0;
+        type = 0;
+        edge = 0;
+        invert = gray = false;
     }
 
-    public static void makeExample() {
-//        if (ExampleKernels != null && !ExampleKernels.isEmpty()) {
-//            return;
-//        }
-        ExampleKernels = new ArrayList<>();
+    public static List<ConvolutionKernel> makeExample() {
+        List<ConvolutionKernel> ExampleKernels = new ArrayList<>();
         ExampleKernels.add(makeAverageBlur(3));
         ExampleKernels.add(makeGaussBlur(3));
         ExampleKernels.add(makeGaussBlur(5));
+        ExampleKernels.add(makeMotionBlur(1));
+        ExampleKernels.add(makeMotionBlur(2));
+        ExampleKernels.add(makeMotionBlur(3));
         ExampleKernels.add(MakeSharpenFourNeighborLaplace());
         ExampleKernels.add(MakeSharpenEightNeighborLaplace());
         ExampleKernels.add(makeEdgeDetectionFourNeighborLaplace());
         ExampleKernels.add(makeEdgeDetectionEightNeighborLaplace());
-        ExampleKernels.add(makeEdgeDetection3c());
+        ExampleKernels.add(makeEdgeDetectionFourNeighborLaplaceInvert());
+        ExampleKernels.add(makeEdgeDetectionEightNeighborLaplaceInvert());
         ExampleKernels.add(makeUnsharpMasking5());
-        ExampleKernels.add(makeMotionBlur3());
-        ExampleKernels.add(makeMotionBlur5());
-        ExampleKernels.add(makeMotionBlur9());
         ExampleKernels.add(makeEmbossTop3());
         ExampleKernels.add(makeEmbossBottom3());
         ExampleKernels.add(makeEmbossLeft3());
@@ -82,6 +77,7 @@ public class ConvolutionKernel {
         ExampleKernels.add(makeEmbossRightBottom3());
         ExampleKernels.add(makeEmbossLeftBottom3());
         ExampleKernels.add(makeEmbossRightTop3());
+        return ExampleKernels;
 
     }
 
@@ -115,7 +111,6 @@ public class ConvolutionKernel {
         kernel.setWidth(length);
         kernel.setHeight(length);
         kernel.setType(Convolution_Type.BLUR);
-        kernel.setGray(1);
         kernel.setDescription("");
         float[][] k = makeGaussMatrix(radius);
         kernel.setMatrix(k);
@@ -155,6 +150,53 @@ public class ConvolutionKernel {
     public static float[][] makeGaussMatrix(int radius) {
         return MatrixTools.array2Matrix(makeGaussArray(radius), radius * 2 + 1);
 
+    }
+
+    public static ConvolutionKernel makeMotionBlur(int radius) {
+        int size = 2 * radius + 1;
+        ConvolutionKernel kernel = new ConvolutionKernel();
+        kernel.setName(AppVariables.message("MotionBlur") + " " + size + "*" + size);
+        kernel.setCreateTime(DateTools.datetimeToString(new Date()));
+        kernel.setModifyTime(DateTools.datetimeToString(new Date()));
+        kernel.setWidth(size);
+        kernel.setHeight(size);
+        kernel.setType(Convolution_Type.BLUR);
+        kernel.setDescription("");
+        float v = 1.0f / size;
+        float[][] k = new float[size][size];
+        for (int i = 0; i < size; ++i) {
+            for (int j = 0; j < size; ++j) {
+                if (i == j) {
+                    k[i][j] = v;
+                } else {
+                    k[i][j] = 0;
+                }
+            }
+        }
+        kernel.setMatrix(k);
+        return kernel;
+    }
+
+    public static ConvolutionKernel makeMotionAngleBlur(int radius, int angle) {
+        ConvolutionKernel kernel = new ConvolutionKernel();
+        int length = radius * 2 + 1;
+        kernel.setName(AppVariables.message("MotionBlur") + " " + length + "*" + length);
+        kernel.setCreateTime(DateTools.datetimeToString(new Date()));
+        kernel.setModifyTime(DateTools.datetimeToString(new Date()));
+        kernel.setWidth(length);
+        kernel.setHeight(length);
+        kernel.setType(Convolution_Type.BLUR);
+        kernel.setDescription("");
+        float[][] k = new float[length][length];
+        for (int i = 0; i < length; ++i) {
+            for (int j = 0; j < length; ++j) {
+                k[i][j] = (float) Math.sin(angle);
+            }
+        }
+        k[radius][radius] = 2 + k[radius][radius];
+//        logger.debug(MatrixTools.print(FloatTools.toDouble(k), 0, 8));
+        kernel.setMatrix(k);
+        return kernel;
     }
 
     public static ConvolutionKernel MakeSharpenFourNeighborLaplace() {
@@ -197,7 +239,7 @@ public class ConvolutionKernel {
 
     public static ConvolutionKernel makeEdgeDetectionFourNeighborLaplace() {
         ConvolutionKernel kernel = new ConvolutionKernel();
-        kernel.setName(AppVariables.message("EdgeDetection") + " 3*3 a");
+        kernel.setName(AppVariables.message("EdgeDetection") + " " + message("FourNeighborLaplace"));
         kernel.setCreateTime(DateTools.datetimeToString(new Date()));
         kernel.setModifyTime(DateTools.datetimeToString(new Date()));
         kernel.setWidth(3);
@@ -210,13 +252,33 @@ public class ConvolutionKernel {
             {0.0f, -1.0f, 0.0f}
         };
         kernel.setMatrix(k);
+        kernel.setInvert(false);
+        return kernel;
+    }
+
+    public static ConvolutionKernel makeEdgeDetectionFourNeighborLaplaceInvert() {
+        ConvolutionKernel kernel = new ConvolutionKernel();
+        kernel.setName(AppVariables.message("EdgeDetection") + " " + message("FourNeighborLaplaceInvert"));
+        kernel.setCreateTime(DateTools.datetimeToString(new Date()));
+        kernel.setModifyTime(DateTools.datetimeToString(new Date()));
+        kernel.setWidth(3);
+        kernel.setHeight(3);
+        kernel.setType(Convolution_Type.EDGE_DETECTION);
+        kernel.setDescription("");
+        float[][] k = {
+            {0.0f, -1.0f, 0.0f},
+            {-1.0f, 4.0f, -1.0f},
+            {0.0f, -1.0f, 0.0f}
+        };
+        kernel.setMatrix(k);
+        kernel.setInvert(true);
         return kernel;
     }
 
     // https://www.javaworld.com/article/2076764/java-se/image-processing-with-java-2d.html
     public static ConvolutionKernel makeEdgeDetectionEightNeighborLaplace() {
         ConvolutionKernel kernel = new ConvolutionKernel();
-        kernel.setName(AppVariables.message("EdgeDetection") + " 3*3 b");
+        kernel.setName(AppVariables.message("EdgeDetection") + " " + message("EightNeighborLaplace"));
         kernel.setCreateTime(DateTools.datetimeToString(new Date()));
         kernel.setModifyTime(DateTools.datetimeToString(new Date()));
         kernel.setWidth(3);
@@ -232,9 +294,9 @@ public class ConvolutionKernel {
         return kernel;
     }
 
-    public static ConvolutionKernel makeEdgeDetection3c() {
+    public static ConvolutionKernel makeEdgeDetectionEightNeighborLaplaceInvert() {
         ConvolutionKernel kernel = new ConvolutionKernel();
-        kernel.setName(AppVariables.message("EdgeDetection") + " 3*3 c");
+        kernel.setName(AppVariables.message("EdgeDetection") + " " + message("EightNeighborLaplaceInvert"));
         kernel.setCreateTime(DateTools.datetimeToString(new Date()));
         kernel.setModifyTime(DateTools.datetimeToString(new Date()));
         kernel.setWidth(3);
@@ -242,11 +304,12 @@ public class ConvolutionKernel {
         kernel.setType(Convolution_Type.EDGE_DETECTION);
         kernel.setDescription("");
         float[][] k = {
-            {0.0f, 1.0f, 0.0f},
-            {1.0f, -4.0f, 1.0f},
-            {0.0f, 1.0f, 0.0f}
+            {-1.0f, -1.0f, -1.0f},
+            {-1.0f, 8.0f, -1.0f},
+            {-1.0f, -1.0f, -1.0f}
         };
         kernel.setMatrix(k);
+        kernel.setInvert(true);
         return kernel;
     }
 
@@ -292,95 +355,6 @@ public class ConvolutionKernel {
         return kernel;
     }
 
-    public static ConvolutionKernel makeMotionBlur(int radius, int angle) {
-        ConvolutionKernel kernel = new ConvolutionKernel();
-        int length = radius * 2 + 1;
-        kernel.setName(AppVariables.message("MotionBlur") + " " + length + "*" + length);
-        kernel.setCreateTime(DateTools.datetimeToString(new Date()));
-        kernel.setModifyTime(DateTools.datetimeToString(new Date()));
-        kernel.setWidth(length);
-        kernel.setHeight(length);
-        kernel.setType(Convolution_Type.BLUR);
-        kernel.setDescription("");
-
-        float[][] k = new float[length][length];
-        for (int i = 0; i < length; ++i) {
-            for (int j = 0; j < length; ++j) {
-                k[i][j] = (float) Math.sin(angle);
-            }
-        }
-
-        k[radius][radius] = 2 + k[radius][radius];
-//        logger.debug(MatrixTools.print(FloatTools.toDouble(k), 0, 8));
-        kernel.setMatrix(k);
-        return kernel;
-    }
-
-    public static ConvolutionKernel makeMotionBlur3() {
-        ConvolutionKernel kernel = new ConvolutionKernel();
-        kernel.setName(AppVariables.message("MotionBlur") + " 3*3");
-        kernel.setCreateTime(DateTools.datetimeToString(new Date()));
-        kernel.setModifyTime(DateTools.datetimeToString(new Date()));
-        kernel.setWidth(5);
-        kernel.setHeight(5);
-        kernel.setType(Convolution_Type.BLUR);
-        kernel.setDescription("");
-        float v = 1 / 3.0f;
-        float[][] k = {
-            {v, 0, 0},
-            {0, v, 0},
-            {0, 0, v}
-        };
-        kernel.setMatrix(k);
-        return kernel;
-    }
-
-    public static ConvolutionKernel makeMotionBlur5() {
-        ConvolutionKernel kernel = new ConvolutionKernel();
-        kernel.setName(AppVariables.message("MotionBlur") + " 5*5");
-        kernel.setCreateTime(DateTools.datetimeToString(new Date()));
-        kernel.setModifyTime(DateTools.datetimeToString(new Date()));
-        kernel.setWidth(5);
-        kernel.setHeight(5);
-        kernel.setType(Convolution_Type.BLUR);
-        kernel.setDescription("");
-        float v = 1 / 5.0f;
-        float[][] k = {
-            {v, 0, 0, 0, 0},
-            {0, v, 0, 0, 0},
-            {0, 0, v, 0, 0},
-            {0, 0, 0, v, 0},
-            {0, 0, 0, 0, v}
-        };
-        kernel.setMatrix(k);
-        return kernel;
-    }
-
-    public static ConvolutionKernel makeMotionBlur9() {
-        ConvolutionKernel kernel = new ConvolutionKernel();
-        kernel.setName(AppVariables.message("MotionBlur") + " 9*9");
-        kernel.setCreateTime(DateTools.datetimeToString(new Date()));
-        kernel.setModifyTime(DateTools.datetimeToString(new Date()));
-        kernel.setWidth(9);
-        kernel.setHeight(9);
-        kernel.setType(Convolution_Type.BLUR);
-        kernel.setDescription("");
-        float v = 1 / 9.0f;
-        float[][] k = {
-            {v, 0, 0, 0, 0, 0, 0, 0, 0},
-            {0, v, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, v, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, v, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, v, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, v, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, v, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, v, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0, v}
-        };
-        kernel.setMatrix(k);
-        return kernel;
-    }
-
     // https://en.wikipedia.org/wiki/Image_embossing
     public static ConvolutionKernel makeEmbossTop3() {
         ConvolutionKernel kernel = new ConvolutionKernel();
@@ -390,7 +364,7 @@ public class ConvolutionKernel {
         kernel.setWidth(3);
         kernel.setHeight(3);
         kernel.setType(Convolution_Type.EMBOSS);
-        kernel.setGray(1);
+        kernel.setGray(true);
         kernel.setDescription("");
         float[][] k = {
             {0, 1, 0},
@@ -409,7 +383,7 @@ public class ConvolutionKernel {
         kernel.setWidth(3);
         kernel.setHeight(3);
         kernel.setType(Convolution_Type.EMBOSS);
-        kernel.setGray(1);
+        kernel.setGray(true);
         kernel.setDescription("");
         float[][] k = {
             {0, -1, 0},
@@ -428,7 +402,7 @@ public class ConvolutionKernel {
         kernel.setWidth(3);
         kernel.setHeight(3);
         kernel.setType(Convolution_Type.EMBOSS);
-        kernel.setGray(1);
+        kernel.setGray(true);
         kernel.setDescription("");
         float[][] k = {
             {0, 0, 0},
@@ -447,7 +421,7 @@ public class ConvolutionKernel {
         kernel.setWidth(3);
         kernel.setHeight(3);
         kernel.setType(Convolution_Type.EMBOSS);
-        kernel.setGray(1);
+        kernel.setGray(true);
         kernel.setDescription("");
         float[][] k = {
             {0, 0, 0},
@@ -466,7 +440,7 @@ public class ConvolutionKernel {
         kernel.setWidth(3);
         kernel.setHeight(3);
         kernel.setType(Convolution_Type.EMBOSS);
-        kernel.setGray(1);
+        kernel.setGray(true);
         kernel.setDescription("");
         float[][] k = {
             {1, 0, 0},
@@ -485,7 +459,7 @@ public class ConvolutionKernel {
         kernel.setWidth(3);
         kernel.setHeight(3);
         kernel.setType(Convolution_Type.EMBOSS);
-        kernel.setGray(1);
+        kernel.setGray(true);
         kernel.setDescription("");
         float[][] k = {
             {-1, 0, 0},
@@ -504,7 +478,7 @@ public class ConvolutionKernel {
         kernel.setWidth(3);
         kernel.setHeight(3);
         kernel.setType(Convolution_Type.EMBOSS);
-        kernel.setGray(1);
+        kernel.setGray(true);
         kernel.setDescription("");
         float[][] k = {
             {0, 0, -1},
@@ -523,7 +497,7 @@ public class ConvolutionKernel {
         kernel.setWidth(3);
         kernel.setHeight(3);
         kernel.setType(Convolution_Type.EMBOSS);
-        kernel.setGray(1);
+        kernel.setGray(true);
         kernel.setDescription("");
         float[][] k = {
             {0, 0, 1},
@@ -696,7 +670,7 @@ public class ConvolutionKernel {
         kernel.setWidth(size);
         kernel.setHeight(size);
         kernel.setType(Convolution_Type.EMBOSS);
-        kernel.setGray(gray ? 1 : 0);
+        kernel.setGray(gray);
         kernel.setDescription("");
 
         float[][] k = makeEmbossMatrix(direction, size);
@@ -705,91 +679,67 @@ public class ConvolutionKernel {
     }
 
     public String getName() {
-        if (name == null) {
-            return null;
-        } else {
-            return name.get();
-        }
+        return name;
     }
 
     public void setName(String name) {
-        if (name == null) {
-            this.name = null;
-        } else {
-            this.name = new SimpleStringProperty(name);
-        }
+        this.name = name;
     }
 
     public String getDescription() {
-        if (description == null) {
-            return "";
-        } else {
-            return description.get();
-        }
+        return description;
     }
 
     public void setDescription(String description) {
-        if (description == null) {
-            this.description = new SimpleStringProperty("");
-        } else {
-            this.description = new SimpleStringProperty(description);
-        }
-    }
-
-    public int getWidth() {
-        if (width == null) {
-            return 0;
-        } else {
-            return width.get();
-        }
-    }
-
-    public void setWidth(int width) {
-        this.width = new SimpleIntegerProperty(width);
-    }
-
-    public int getHeight() {
-        if (height == null) {
-            return 0;
-        } else {
-            return height.get();
-        }
-    }
-
-    public void setHeight(int height) {
-        this.height = new SimpleIntegerProperty(height);
+        this.description = description;
     }
 
     public String getModifyTime() {
-        if (modifyTime == null) {
-            return "";
-        } else {
-            return modifyTime.get();
-        }
+        return modifyTime;
     }
 
     public void setModifyTime(String modifyTime) {
-        if (modifyTime == null) {
-            this.modifyTime = null;
-        } else {
-            this.modifyTime = new SimpleStringProperty(modifyTime);
-        }
+        this.modifyTime = modifyTime;
     }
 
     public String getCreateTime() {
-        if (createTime == null) {
-            return "";
-        } else {
-            return createTime.get();
-        }
+        return createTime;
     }
 
     public void setCreateTime(String createTime) {
-        if (createTime == null) {
-            this.createTime = null;
-        } else {
-            this.createTime = new SimpleStringProperty(createTime);
-        }
+        this.createTime = createTime;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public int getEdge() {
+        return edge;
+    }
+
+    public void setEdge(int edge) {
+        this.edge = edge;
     }
 
     public float[][] getMatrix() {
@@ -800,37 +750,20 @@ public class ConvolutionKernel {
         this.matrix = matrix;
     }
 
-    public int getType() {
-        if (type == null) {
-            type = new SimpleIntegerProperty(Convolution_Type.NONE);
-        }
-        return type.get();
+    public boolean isGray() {
+        return gray;
     }
 
-    public void setType(int type) {
-        this.type = new SimpleIntegerProperty(type);
+    public void setGray(boolean gray) {
+        this.gray = gray;
     }
 
-    public int getGray() {
-        if (gray == null) {
-            gray = new SimpleIntegerProperty(0);
-        }
-        return gray.get();
+    public boolean isInvert() {
+        return invert;
     }
 
-    public void setGray(int gray) {
-        this.gray = new SimpleIntegerProperty(gray);
-    }
-
-    public int getEdge() {
-        if (edge == null) {
-            edge = new SimpleIntegerProperty(0);
-        }
-        return edge.get();
-    }
-
-    public void setEdge(int edge) {
-        this.edge = new SimpleIntegerProperty(edge);
+    public void setInvert(boolean invert) {
+        this.invert = invert;
     }
 
 }

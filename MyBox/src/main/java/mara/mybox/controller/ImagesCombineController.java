@@ -13,23 +13,20 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Control;
+import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.ToolBar;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.paint.Paint;
 import javafx.stage.Modality;
-import static mara.mybox.controller.BaseController.openImageViewer;
-import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlImageManufacture;
+import mara.mybox.fxml.FxmlStage;
 import mara.mybox.image.ImageCombine;
 import mara.mybox.image.ImageCombine.ArrayType;
 import mara.mybox.image.ImageCombine.CombineSizeType;
@@ -39,7 +36,7 @@ import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.message;
+import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonFxValues;
 
 /**
@@ -56,10 +53,6 @@ public class ImagesCombineController extends ImagesListController {
     private ImageCombine imageCombine;
 
     @FXML
-    private TabPane tabPane;
-    @FXML
-    private Tab fileTab, sizeTab, arrayTab;
-    @FXML
     private ToggleGroup sizeGroup, arrayGroup;
     @FXML
     private RadioButton arrayColumnRadio, arrayRowRadio, arrayColumnsRadio, keepSizeRadio, sizeBiggerRadio,
@@ -69,15 +62,15 @@ public class ImagesCombineController extends ImagesListController {
     @FXML
     private ComboBox<String> columnsBox, intervalBox, MarginsBox;
     @FXML
-    protected Rectangle bgRect;
-    @FXML
-    protected Button paletteButton;
+    protected ColorSetController colorSetController;
     @FXML
     protected Button newWindowButton;
     @FXML
     protected ToolBar imageBar;
     @FXML
     protected CheckBox openCheck;
+    @FXML
+    protected Label imageLabel;
 
     public ImagesCombineController() {
         baseTitle = AppVariables.message("ImagesCombine");
@@ -96,8 +89,9 @@ public class ImagesCombineController extends ImagesListController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
+            super.initControls();
             imageCombine = new ImageCombine();
 
             initArraySection();
@@ -181,15 +175,15 @@ public class ImagesCombineController extends ImagesListController {
             });
             MarginsBox.getSelectionModel().select(AppVariables.getUserConfigValue(ImageCombineMarginsKey, "5"));
 
-            try {
-                String c = AppVariables.getUserConfigValue("ImagesCombineBackgroundColor",
-                        Color.TRANSPARENT.toString());
-                bgRect.setFill(Color.web(c));
-            } catch (Exception e) {
-                bgRect.setFill(Color.TRANSPARENT);
-                AppVariables.setUserConfigValue("ImagesCombineBackgroundColor", Color.TRANSPARENT.toString());
-            }
-            FxmlControl.setTooltip(bgRect, FxmlColor.colorNameDisplay((Color) bgRect.getFill()));
+            colorSetController.init(this, baseName + "Color");
+            colorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+                @Override
+                public void changed(ObservableValue<? extends Paint> observable,
+                        Paint oldValue, Paint newValue) {
+                    imageCombine.setBgColor((Color) newValue);
+                    combineImages();
+                }
+            });
 
             arrayGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -441,29 +435,7 @@ public class ImagesCombineController extends ImagesListController {
 
     @FXML
     private void newWindow(ActionEvent event) {
-        openImageViewer(image);
-    }
-
-    @Override
-    public boolean setColor(Control control, Color color) {
-        if (control == null || color == null) {
-            return false;
-        }
-        if (paletteButton.equals(control)) {
-            bgRect.setFill(color);
-            FxmlControl.setTooltip(bgRect, FxmlColor.colorNameDisplay(color));
-            AppVariables.setUserConfigValue("ImagesCombineBackgroundColor", color.toString());
-
-            imageCombine.setBgColor(color);
-            combineImages();
-        }
-        return true;
-    }
-
-    @FXML
-    @Override
-    public void showPalette(ActionEvent event) {
-        showPalette(paletteButton, message("BackgroundColor"), false);
+        FxmlStage.openImageViewer(image);
     }
 
     private void combineImages() {
@@ -558,7 +530,7 @@ public class ImagesCombineController extends ImagesListController {
                 @Override
                 protected void whenSucceeded() {
                     popSuccessful();
-                    openImageViewer(targetFile);
+                    FxmlStage.openImageViewer(targetFile);
                 }
 
             };

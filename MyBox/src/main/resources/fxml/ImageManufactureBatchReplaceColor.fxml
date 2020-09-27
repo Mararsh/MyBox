@@ -42,27 +42,9 @@ License:    Apache License Version 2.0
                                         <FlowPane hgap="5.0" layoutX="20.0" layoutY="20.0" prefWrapLength="0.0" vgap="5.0">
                                             <children>
                                                 <Label fx:id="colorUnit1" text="%OriginalColor" />
-                                                <Rectangle fx:id="originalRect" fill="#ffffff00" height="15.0" stroke="BLACK" strokeMiterLimit="0.0" strokeType="INSIDE" width="15.0" />
-                                                <Button fx:id="paletteOriginalButton" mnemonicParsing="false" onAction="#originalPalette">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconPalette.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
+                                                <fx:include fx:id="originalColorSet" source="ColorSet.fxml" />
                                                 <Label fx:id="colorUnit11" text="%NewColor" />
-                                                <Rectangle fx:id="newRect" fill="#ffffff00" height="15.0" stroke="BLACK" strokeMiterLimit="0.0" strokeType="INSIDE" width="15.0" />
-                                                <Button fx:id="paletteNewButton" mnemonicParsing="false" onAction="#newPalette">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconPalette.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
+                                                <fx:include fx:id="newColorSet" source="ColorSet.fxml" />
                                             </children>
                                         </FlowPane>
                                         <FlowPane hgap="5.0" layoutX="20.0" layoutY="20.0" prefWrapLength="0.0" vgap="5.0">
@@ -144,7 +126,7 @@ License:    Apache License Version 2.0
                                                 <RadioButton fx:id="pcxRadio" mnemonicParsing="false" text="pcx" toggleGroup="$fileTypeGroup" />
                                                 <RadioButton mnemonicParsing="false" text="pnm" toggleGroup="$fileTypeGroup" />
                                                 <RadioButton mnemonicParsing="false" text="wbmp" toggleGroup="$fileTypeGroup" />
-<RadioButton mnemonicParsing="false" text="ico" toggleGroup="$fileTypeGroup" />
+                                                <RadioButton mnemonicParsing="false" text="ico" toggleGroup="$fileTypeGroup" />
                                             </children>
                                         </HBox>
                                         <HBox alignment="CENTER_LEFT" spacing="10.0">

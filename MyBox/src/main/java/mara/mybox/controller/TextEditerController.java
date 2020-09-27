@@ -34,9 +34,9 @@ public class TextEditerController extends FileEditerController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
-            super.initializeNext();
+            super.initControls();
             initCharsetTab();
         } catch (Exception e) {
             logger.error(e.toString());
@@ -45,6 +45,9 @@ public class TextEditerController extends FileEditerController {
     }
 
     protected void initCharsetTab() {
+        if (encodePane == null) {
+            return;
+        }
         encodePane.expandedProperty().addListener(
                 (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
                     AppVariables.setUserConfigValue(baseName + "EncodePane", encodePane.isExpanded());
@@ -95,6 +98,9 @@ public class TextEditerController extends FileEditerController {
     protected void initLineBreakTab() {
         try {
             super.initLineBreakTab();
+            if (lineBreakGroup == null) {
+                return;
+            }
             lineBreakGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue<? extends Toggle> ov,
@@ -162,8 +168,9 @@ public class TextEditerController extends FileEditerController {
     }
 
     @Override
-    protected void setSecondArea(String text) {
-        if (isSettingValues || displayArea == null || !contentSplitPane.getItems().contains(displayArea)) {
+    protected void setPairArea(String text) {
+        if (isSettingValues || pairArea == null
+                || !splitPane.getItems().contains(rightPane)) {
             return;
         }
         isSettingValues = true;
@@ -175,21 +182,21 @@ public class TextEditerController extends FileEditerController {
             if (sourceInformation.isWithBom()) {
                 hex = TextTools.bomHex(sourceInformation.getCharset().name()) + " " + hex;
             }
-            displayArea.setText(hex);
+            pairArea.setText(hex);
         } else {
-            displayArea.clear();
+            pairArea.clear();
         }
         isSettingValues = false;
     }
 
     @Override
-    protected void setSecondAreaSelection() {
-        if (isSettingValues
-                || displayArea == null || !contentSplitPane.getItems().contains(displayArea)) {
+    protected void setPairAreaSelection() {
+        if (isSettingValues || pairArea == null
+                || !splitPane.getItems().contains(rightPane)) {
             return;
         }
         isSettingValues = true;
-        displayArea.deselect();
+        pairArea.deselect();
         final String text = mainArea.getText();
         if (!text.isEmpty()) {
             IndexRange hexRange = TextTools.hexIndex(text, sourceInformation.getCharset(),
@@ -198,8 +205,8 @@ public class TextEditerController extends FileEditerController {
             if (sourceInformation.isWithBom()) {
                 bomLen = TextTools.bomHex(sourceInformation.getCharset().name()).length() + 1;
             }
-            displayArea.selectRange(hexRange.getStart() + bomLen, hexRange.getEnd() + bomLen);
-            displayArea.setScrollTop(mainArea.getScrollTop());
+            pairArea.selectRange(hexRange.getStart() + bomLen, hexRange.getEnd() + bomLen);
+            pairArea.setScrollTop(mainArea.getScrollTop());
         }
         isSettingValues = false;
     }

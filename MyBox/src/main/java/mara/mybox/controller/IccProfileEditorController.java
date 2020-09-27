@@ -50,7 +50,9 @@ import static mara.mybox.tools.ByteTools.bytesToHexFormat;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.SystemTools;
+import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
@@ -133,9 +135,9 @@ public class IccProfileEditorController extends ChromaticityBaseController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
-            super.initializeNext();
+            super.initControls();
             sourceFile = null;
             embedICCName = null;
 
@@ -1821,13 +1823,13 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             @Override
             public List<VisitHistory> recentFiles() {
                 int fileNumber = AppVariables.fileRecentNumber * 2 / 3 + 1;
-                return VisitHistory.getRecentFile(VisitHistory.FileType.Xml, fileNumber);
+                return VisitHistoryTools.getRecentFile(VisitHistory.FileType.Xml, fileNumber);
             }
 
             @Override
             public List<VisitHistory> recentPaths() {
                 int pathNumber = AppVariables.fileRecentNumber / 3 + 1;
-                return VisitHistory.getRecentPath(VisitHistory.FileType.Xml, pathNumber);
+                return VisitHistoryTools.getRecentPath(VisitHistory.FileType.Xml, pathNumber);
             }
 
             @Override

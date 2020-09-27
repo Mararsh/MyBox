@@ -24,6 +24,7 @@ import mara.mybox.data.AlarmClock;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -48,8 +49,9 @@ public class AlarmClockTableController extends BaseController {
     private TableColumn<AlarmClock, String> nextTimeColumn, soundColumn, lastTimeColumn, startTimeColumn;
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
+            super.initControls();
             statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
             descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
             repeatColumn.setCellValueFactory(new PropertyValueFactory<>("repeat"));

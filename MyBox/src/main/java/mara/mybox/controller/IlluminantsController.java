@@ -19,6 +19,7 @@ import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -61,6 +62,8 @@ public class IlluminantsController extends ChromaticityBaseController {
             super.initControls();
             initAdaptation();
             initStandardIlluminants();
+
+            initData();
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -106,18 +109,6 @@ public class IlluminantsController extends ChromaticityBaseController {
         rzillumColumn.setCellValueFactory(new PropertyValueFactory<>("relativeZ"));
         illuminautTemperatureColumn.setCellValueFactory(new PropertyValueFactory<>("temperature"));
         illumCommentsColumn.setCellValueFactory(new PropertyValueFactory<>("comments"));
-
-    }
-
-    @Override
-    public void initializeNext() {
-        try {
-            super.initializeNext();
-            initData();
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
 
     }
 

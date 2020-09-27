@@ -5,27 +5,24 @@ import java.util.Arrays;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Modality;
 import mara.mybox.controller.ImageManufactureController.ImageOperation;
 import mara.mybox.data.DoublePoint;
-import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.value.AppVariables;
@@ -54,42 +51,17 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
     @FXML
     protected CheckBox verticalCheck, outlineCheck;
     @FXML
-    protected Rectangle colorRect;
-    @FXML
-    protected Button paletteButton;
+    protected ColorSetController colorSetController;
     @FXML
     protected FlowPane setBox;
     @FXML
     protected HBox opBox;
     @FXML
-    protected Label commentLabel;
-
-    public ImageManufactureTextController() {
-        baseTitle = AppVariables.message("ImageManufactureText");
-        operation = ImageOperation.Text;
-    }
+    protected Label commentsLabel;
 
     @Override
-    public void initControls() {
+    public void initPane() {
         try {
-            super.initControls();
-            myPane = textPane;
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-
-    }
-
-    @Override
-    public void initPane(ImageManufactureController parent) {
-        try {
-            super.initPane(parent);
-            if (parent == null) {
-                return;
-            }
-            imageController.imageLabel.setText(message("ClickImageForText"));
-
             isSettingValues = true;
 
             fontFamily = AppVariables.getUserConfigValue("ImageTextFontFamily", "Arial");
@@ -113,10 +85,14 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
             });
             textInput.setText(AppVariables.getUserConfigValue("ImageTextValue", "MyBox"));
 
-            String c = AppVariables.getUserConfigValue("ImageTextBackground", Color.ORANGE.toString());
-            colorRect.setFill(Color.web(c));
-            FxmlControl.setTooltip(colorRect, FxmlColor.colorNameDisplay((Color) colorRect.getFill()));
-            imageController.maskRectangleLine.setFill(colorRect.getFill());
+            colorSetController.init(this, baseName + "Color", Color.ORANGE);
+            colorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+                @Override
+                public void changed(ObservableValue<? extends Paint> observable,
+                        Paint oldValue, Paint newValue) {
+                    write(true);
+                }
+            });
 
             familyBox.getItems().addAll(javafx.scene.text.Font.getFamilies());
             familyBox.valueProperty().addListener(new ChangeListener<String>() {
@@ -258,9 +234,6 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
                 }
             });
 
-            setBox.disableProperty().bind(parent.editable.not());
-            opBox.disableProperty().bind(parent.editable.not());
-
             isSettingValues = false;
 
             x = (int) (imageView.getImage().getWidth() / 2);
@@ -274,44 +247,26 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
     }
 
     @Override
-    public boolean setColor(Control control, Color color) {
-        if (control == null || color == null) {
-            return false;
-        }
-        if (paletteButton.equals(control)) {
-            colorRect.setFill(color);
-            FxmlControl.setTooltip(colorRect, FxmlColor.colorNameDisplay(color));
-            AppVariables.setUserConfigValue("ImageTextBackground", color.toString());
-            write(true);
-        }
-        return true;
+    protected void paneExpanded() {
+        imageController.showImagePane();
+        imageController.hideScopePane();
     }
 
     @FXML
     @Override
-    public void showPalette(ActionEvent event) {
-        showPalette(paletteButton, message("BackgroundColor"), true);
-    }
-
-    @FXML
-    @Override
-    public void paneClicked(MouseEvent event) {
-        if (imageView.getImage() == null) {
+    public void imageClicked(MouseEvent event, DoublePoint p) {
+        if (imageView.getImage() == null || p == null) {
             imageView.setCursor(Cursor.OPEN_HAND);
             return;
         }
-        DoublePoint p = imageController.getImageXY(event, imageView);
-        if (p == null) {
+        if (imageController.isPickingColor || scopeController.isPickingColor
+                || event.getButton() == MouseButton.SECONDARY) {
             return;
         }
-        if (!isPickingColor.get()) {
-            imageView.setCursor(Cursor.HAND);
-            x = (int) Math.round(p.getX());
-            y = (int) Math.round(p.getY());
-
-            write(true);
-        }
-
+        imageView.setCursor(Cursor.HAND);
+        x = (int) Math.round(p.getX());
+        y = (int) Math.round(p.getY());
+        write(true);
     }
 
     public void write(boolean editing) {
@@ -346,7 +301,7 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
                         }
                     }
                     newImage = FxmlImageManufacture.addText(imageView.getImage(), textInput.getText(),
-                            font, (Color) colorRect.getFill(), x, y,
+                            font, (Color) colorSetController.rect.getFill(), x, y,
                             fontOpacity, shadow, angle,
                             outlineCheck.isSelected(), verticalCheck.isSelected());
                     return newImage != null;
@@ -357,20 +312,18 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
                     if (editing) {
                         maskView.setImage(newImage);
                         maskView.setOpacity(1);
-                        maskView.setFitWidth(imageView.getFitWidth());
-                        maskView.setFitHeight(imageView.getFitHeight());
-                        maskView.setLayoutX(imageView.getLayoutX());
-                        maskView.setLayoutY(imageView.getLayoutY());
-                    } else {
-                        parent.updateImage(ImageOperation.Text, textInput.getText(), null, newImage, cost);
-                        imageController.clearValues();
-                        imageController.imageLabel.setText(message("ClickImageForText"));
+                        maskView.setVisible(true);
+                        imageView.setVisible(false);
+                        imageView.toBack();
 
+                    } else {
+                        imageController.popSuccessful();
+                        imageController.updateImage(ImageOperation.Text, textInput.getText(), null, newImage, cost);
                     }
                 }
 
             };
-            parent.openHandlingStage(task, Modality.WINDOW_MODAL);
+            imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -380,21 +333,12 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
     @FXML
     @Override
     public void okAction() {
-        if (!parent.editable.get()) {
-            return;
-        }
         write(false);
     }
 
     @FXML
     @Override
     public void cancelAction() {
-        if (!parent.editable.get()) {
-            return;
-        }
-        maskView.setImage(null);
-        imageController.clearValues();
-        imageController.imageLabel.setText(message("ClickImageForText"));
-
+        imageController.resetImagePane();
     }
 }

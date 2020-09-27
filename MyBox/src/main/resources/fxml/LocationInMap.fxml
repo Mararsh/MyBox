@@ -83,7 +83,6 @@ License:    Apache License Version 2.0
                                                     <children>
                                                         <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                                             <children>
-                                                                <Label maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%PickCoordinateComments" wrapText="true" />
                                                                 <FlowPane hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
                                                                     <children>
                                                                         <RadioButton fx:id="clickMapRadio" layoutX="168.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%ClickMap">
@@ -164,25 +163,7 @@ License:    Apache License Version 2.0
                 <HBox fx:id="closeBox" alignment="CENTER_RIGHT" spacing="5.0">
                     <children>
                         <Label fx:id="bottomLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                        <Label fx:id="sizeLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                        <CheckBox fx:id="saveCloseCheck" mnemonicParsing="false">
-                            <graphic>
-                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../buttons/iconFlower.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                        </CheckBox>
-                        <CheckBox fx:id="topCheck" mnemonicParsing="false" selected="true" VBox.vgrow="NEVER">
-                            <graphic>
-                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../buttons/iconTop.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                        </CheckBox>
+                        <Label fx:id="frameLabel" HBox.hgrow="NEVER" />
                         <Button fx:id="closeButton" mnemonicParsing="false" onAction="#closeAction">
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

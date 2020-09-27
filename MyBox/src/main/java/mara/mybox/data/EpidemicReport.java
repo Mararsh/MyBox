@@ -2,7 +2,11 @@ package mara.mybox.data;
 
 import java.util.Collections;
 import java.util.List;
+import mara.mybox.db.TableBase;
+import mara.mybox.db.TableEpidemicReport;
+import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
@@ -13,7 +17,7 @@ import static mara.mybox.value.AppVariables.message;
  */
 public class EpidemicReport extends TableData {
 
-    protected long locationid = -1;
+    protected long epid, locationid = -1;
     protected String dataSet, locationFullName;
     protected GeographyCode location;
     protected double healedConfirmedPermillage, deadConfirmedPermillage,
@@ -39,7 +43,7 @@ public class EpidemicReport extends TableData {
     }
 
     private void init() {
-        id = -1;
+        epid = -1;
         locationid = -1;
         dataSet = null;
         location = null;
@@ -58,9 +62,45 @@ public class EpidemicReport extends TableData {
     }
 
     @Override
+    public TableBase getTable() {
+        if (table == null) {
+            table = new TableEpidemicReport();
+        }
+        return table;
+    }
+
+    @Override
     public boolean valid() {
         return getLocationid() > 0
                 && (confirmed > 0 || healed > 0 || dead > 0);
+    }
+
+    @Override
+    public boolean setValue(String column, Object value) {
+        if (column == null || value == null) {
+            return false;
+        }
+        try {
+            switch (column) {
+
+            }
+        } catch (Exception e) {
+        }
+        return false;
+    }
+
+    @Override
+    public Object getValue(String column) {
+        if (column == null) {
+            return null;
+        }
+        try {
+            switch (column) {
+
+            }
+        } catch (Exception e) {
+        }
+        return null;
     }
 
     // Only copy base attributes.
@@ -76,8 +116,7 @@ public class EpidemicReport extends TableData {
         }
     }
 
-    @Override
-    public Number getValue(String name) {
+    public Number getNumber(String name) {
         try {
             if (name == null || name.isBlank()) {
                 return null;
@@ -132,6 +171,35 @@ public class EpidemicReport extends TableData {
             logger.debug(e.toString());
             return null;
         }
+    }
+
+    public String info(String lineBreak) {
+        StringBuilder s = new StringBuilder();
+        s.append(message("ID")).append(": ").append(epid).append(lineBreak);
+        if (getDataSet() != null) {
+            s.append(message("Dataset")).append(": ").append(getDataSet()).append(lineBreak);
+        }
+        if (getTime() > 0) {
+            s.append(message("Time")).append(": ").append(DateTools.datetimeToString(getTime())).append(lineBreak);
+        }
+        s.append(message("Confirmed")).append(": ").append(confirmed).append(lineBreak);
+        s.append(message("Healed")).append(": ").append(healed).append(lineBreak);
+        s.append(message("Dead")).append(": ").append(dead).append(lineBreak);
+        s.append(message("IncreasedConfirmed")).append(": ").append(increasedConfirmed).append(lineBreak);
+        s.append(message("IncreasedHealed")).append(": ").append(increasedHealed).append(lineBreak);
+        s.append(message("IncreasedDead")).append(": ").append(increasedDead).append(lineBreak);
+        s.append(message("HealedConfirmedPermillage")).append(": ").append(healedConfirmedPermillage).append(lineBreak);
+        s.append(message("DeadConfirmedPermillage")).append(": ").append(deadConfirmedPermillage).append(lineBreak);
+        s.append(message("ConfirmedPopulationPermillage")).append(": ").append(confirmedPopulationPermillage).append(lineBreak);
+        s.append(message("HealedPopulationPermillage")).append(": ").append(healedPopulationPermillage).append(lineBreak);
+        s.append(message("DeadPopulationPermillage")).append(": ").append(deadPopulationPermillage).append(lineBreak);
+        s.append(message("ConfirmedAreaPermillage")).append(": ").append(confirmedAreaPermillage).append(lineBreak);
+        s.append(message("HealedAreaPermillage")).append(": ").append(healedAreaPermillage).append(lineBreak);
+        s.append(message("DeadAreaPermillage")).append(": ").append(deadAreaPermillage).append(lineBreak);
+        if (location != null) {
+            s.append(location.info(lineBreak));
+        }
+        return s.toString();
     }
 
     /*
@@ -214,10 +282,17 @@ public class EpidemicReport extends TableData {
         return source(SourceType.StatisticData);
     }
 
+    public long getEpid() {
+        return epid;
+    }
 
     /*
-        custmized get/set
+    custmized get/set
      */
+    public void setEpid(long epid) {
+        this.epid = epid;
+    }
+
     public long getLocationid() {
         if (locationid <= 0 && location != null) {
             locationid = location.getGcid();

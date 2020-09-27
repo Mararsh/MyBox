@@ -19,7 +19,9 @@ import mara.mybox.fxml.FxmlStage;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlTools;
+import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
@@ -171,7 +173,7 @@ public class ChromaticityBaseController extends BaseController {
 
             @Override
             public List<VisitHistory> recentPaths() {
-                return VisitHistory.getRecentPath(VisitHistory.FileType.Text);
+                return VisitHistoryTools.getRecentPath(VisitHistory.FileType.Text);
             }
 
             @Override

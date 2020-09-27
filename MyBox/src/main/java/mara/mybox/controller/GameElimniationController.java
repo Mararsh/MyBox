@@ -30,7 +30,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
@@ -54,6 +53,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.Path;
 import javafx.stage.FileChooser;
@@ -74,6 +74,7 @@ import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
@@ -138,6 +139,8 @@ public class GameElimniationController extends BaseController {
     protected ImageView imageView;
     @FXML
     protected Label soundFileLabel;
+    @FXML
+    protected ColorSetController colorSetController;
 
     public GameElimniationController() {
         baseTitle = AppVariables.message("GameElimniation");
@@ -146,8 +149,9 @@ public class GameElimniationController extends BaseController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
+            super.initControls();
             chessBoard = new HashMap();
             scoreRulers = new HashMap();
             scoreRecord = new HashMap();
@@ -166,6 +170,17 @@ public class GameElimniationController extends BaseController {
 
             flushDuration = 200;
             minimumAdjacent = 3;
+
+            colorSetController.init(this, baseName + "Color", Color.RED);
+            colorSetController.hideRect();
+            colorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+                @Override
+                public void changed(ObservableValue<? extends Paint> observable,
+                        Paint oldValue, Paint newValue) {
+                    String name = "color:" + ((Color) newValue).toString();
+                    addImageItem(name);
+                }
+            });
 
             catButton.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -687,16 +702,6 @@ public class GameElimniationController extends BaseController {
         }
         recordFileOpened(file);
         addImageItem(file.getAbsolutePath());
-    }
-
-    @Override
-    public boolean setColor(Control control, Color color) {
-        if (color == null) {
-            return false;
-        }
-        String name = "color:" + color.toString();
-        addImageItem(name);
-        return true;
     }
 
     @FXML

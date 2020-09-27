@@ -5,6 +5,7 @@ import javafx.scene.control.CheckBoxTreeItem;
 import mara.mybox.db.TableDataset;
 import mara.mybox.fxml.ConditionNode;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import static mara.mybox.value.AppVariables.tableMessage;
 
@@ -13,7 +14,7 @@ import static mara.mybox.value.AppVariables.tableMessage;
  * @CreateDate 2020-07-18
  * @License Apache License Version 2.0
  */
-public class DatasetSourceController extends ConditionTreeController {
+public class DatasetSourceController extends ControlConditionTree {
 
     protected List<String> categories;
 
@@ -21,9 +22,9 @@ public class DatasetSourceController extends ConditionTreeController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
-            super.initializeNext();
+            super.initControls();
             loadTree();
             select(message("Categories"));
 

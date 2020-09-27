@@ -54,7 +54,9 @@ import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlTools;
 import mara.mybox.tools.StringTools;
+import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
@@ -107,8 +109,8 @@ public class ImageAnalyseController extends ImageViewerController {
         TargetPathType = VisitHistory.FileType.Html;
         TargetFileType = VisitHistory.FileType.Html;
 
-        targetPathKey = "HtmlFilePath";
-        sourcePathKey = "ImageFilePath";
+        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Html);
+        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Image);
 
         sourceExtensionFilter = CommonFxValues.ImageExtensionFilter;
         targetExtensionFilter = CommonFxValues.HtmlExtensionFilter;
@@ -116,9 +118,9 @@ public class ImageAnalyseController extends ImageViewerController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
-            super.initializeNext();
+            super.initControls();
 
             initImageBox();
             initDataBox();
@@ -221,9 +223,9 @@ public class ImageAnalyseController extends ImageViewerController {
     @FXML
     public void refreshData() {
         if (parentView != null) {
-            init(sourceFile, parentView.getImage());
+            initController(sourceFile, parentView.getImage());
         } else {
-            init(sourceFile, imageView.getImage());
+            initController(sourceFile, imageView.getImage());
         }
         loadData();
     }
@@ -413,14 +415,14 @@ public class ImageAnalyseController extends ImageViewerController {
                     for (int i = 0; i < sortedCounts.size(); ++i) {
                         ColorCount count = sortedCounts.get(i);
                         Color color = ImageColor.converColor(count.color);
-                        String name = "#" + color.toString().substring(2, 8) + "  "
+                        String name = "#" + FxmlColor.color2rgba(color).substring(2, 8) + "  "
                                 + (int) (count.count * 100 / total) + "%";
                         pieChartData.add(new PieChart.Data(name, count.count));
                     }
                     pie.setData(pieChartData);
                     for (int i = 0; i < sortedCounts.size(); ++i) {
                         ColorCount count = sortedCounts.get(i);
-                        String colorString = FxmlColor.rgb2Hex(ImageColor.converColor(count.color));
+                        String colorString = FxmlColor.color2rgb(ImageColor.converColor(count.color));
                         PieChart.Data data = pieChartData.get(i);
                         data.getNode().setStyle("-fx-pie-color: " + colorString + ";");
 
@@ -661,7 +663,7 @@ public class ImageAnalyseController extends ImageViewerController {
 
     protected String componentColumn(ColorComponent component, int value) {
         Color color = ImageColor.converColor(ImageStatistic.color(component, value));
-        String rgb = "#" + color.toString().substring(2, 8);
+        String rgb = "#" + FxmlColor.color2rgba(color).substring(2, 8);
         String v = StringTools.fillRightBlank(value + "", 3);
         return "<TD align=\"center\"><DIV style=\"white-space:nowrap;\">"
                 + "<DIV style=\"display: inline-block; \">" + v + "&nbsp;&nbsp;</DIV>"
@@ -735,7 +737,7 @@ public class ImageAnalyseController extends ImageViewerController {
         series.setName(message(component.name()));
 
         colorsBarchart.getData().add(index, series);
-        String colorString = FxmlColor.rgb2Hex(ImageColor.color(component));
+        String colorString = FxmlColor.color2rgb(ImageColor.color(component));
         for (Node n : colorsBarchart.lookupAll(".default-color" + index + ".chart-bar")) {
             n.setStyle("-fx-bar-fill: " + colorString + "; ");
         }
@@ -764,7 +766,7 @@ public class ImageAnalyseController extends ImageViewerController {
                 Label legendLabel = (Label) legendItem;
                 Node legend = legendLabel.getGraphic();
                 if (legend != null) {
-                    String colorString = FxmlColor.rgb2Hex(ImageColor.componentColor(legendLabel.getText()));
+                    String colorString = FxmlColor.color2rgb(ImageColor.componentColor(legendLabel.getText()));
                     legend.setStyle("-fx-background-color: " + colorString);
                 }
             }
@@ -847,7 +849,7 @@ public class ImageAnalyseController extends ImageViewerController {
                 Color fColor = ImageColor.converColor(aColor);
                 row.addAll(Arrays.asList(i + "", histogram[i] + "",
                         (int) (histogram[i] * 100 / total) + "%",
-                        fColor.toString(), red + " ", green + " ", blue + " ",
+                        FxmlColor.color2rgba(fColor), red + " ", green + " ", blue + " ",
                         (int) Math.round(fColor.getOpacity() * 100) + "%",
                         Math.round(fColor.getHue()) + " ",
                         Math.round(fColor.getSaturation() * 100) + "%",
@@ -869,7 +871,7 @@ public class ImageAnalyseController extends ImageViewerController {
             barchart.setAnimated(true);
             barchart.getXAxis().setAnimated(false);
             barchart.getData().add(series);
-            String colorString = FxmlColor.rgb2Hex(ImageColor.color(component));
+            String colorString = FxmlColor.color2rgb(ImageColor.color(component));
             for (Node n : barchart.lookupAll(".default-color0.chart-bar")) {
                 n.setStyle("-fx-bar-fill: " + colorString + "; ");
             }

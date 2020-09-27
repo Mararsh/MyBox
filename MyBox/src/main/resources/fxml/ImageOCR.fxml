@@ -92,7 +92,7 @@ License:    Apache License Version 2.0
                                                       </VBox>
                                                   </content>
                                               </TitledPane>
-                                              <TitledPane fx:id="preprocessPane" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" text="%Preprocess">
+                                              <TitledPane fx:id="preprocessPane" expanded="false" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" text="%Preprocess">
                                                   <content>
                                                       <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="5.0">
                                                           <children>

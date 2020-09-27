@@ -13,7 +13,9 @@ import javafx.stage.Stage;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.tools.NetworkTools;
+import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
@@ -42,8 +44,8 @@ public class SecurityCertificatesAddController extends BaseController {
         TargetPathType = VisitHistory.FileType.Html;
         TargetFileType = VisitHistory.FileType.Html;
 
-        sourcePathKey = "CertificateFilePath";
-        targetPathKey = "HtmlFilePath";
+        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Certificate);
+        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Html);
         sourceExtensionFilter = CommonFxValues.KeyStoreExtensionFilter;
         targetExtensionFilter = CommonFxValues.HtmlExtensionFilter;
     }
@@ -70,7 +72,7 @@ public class SecurityCertificatesAddController extends BaseController {
             name = sourceFile.getName();
         }
 
-        File ksFile = new File(certController.getSourceFileInput().getText());
+        File ksFile = new File(certController.sourceFileInput.getText());
         if (!ksFile.exists() || !ksFile.isFile()) {
             popError(message("NotExist"));
             return;

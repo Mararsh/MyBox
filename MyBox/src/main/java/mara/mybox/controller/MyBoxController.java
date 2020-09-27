@@ -34,6 +34,7 @@ import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.ConfigTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import static mara.mybox.value.AppVariables.scheduledTasks;
 import mara.mybox.value.CommonValues;
@@ -62,8 +63,9 @@ public class MyBoxController extends BaseController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
+            super.initControls();
             makeImagePopup();
             initAlocks();
         } catch (Exception e) {
@@ -236,7 +238,7 @@ public class MyBoxController extends BaseController {
         });
 
         pdfMenu.getItems().addAll(
-                pdfHtmlViewer, pdfView, new SeparatorMenuItem(),
+                pdfView, pdfHtmlViewer, new SeparatorMenuItem(),
                 pdfConvertHtmlsBatch, pdfConvertImagesBatch, pdfExtractImagesBatch, pdfExtractTextsBatch,
                 pdfOcrBatch, pdfCompressImagesBatch, new SeparatorMenuItem(),
                 PdfSplitBatch, pdfMerge, imagesCombinePdf, new SeparatorMenuItem(),
@@ -295,7 +297,7 @@ public class MyBoxController extends BaseController {
         );
 
         popMenu.getItems().add(new SeparatorMenuItem());
-        MenuItem closeMenu = new MenuItem(message("MenuClose"));
+        MenuItem closeMenu = new MenuItem(message("PopupClose"));
         closeMenu.setStyle("-fx-text-fill: #2e598a;");
         closeMenu.setOnAction((ActionEvent cevent) -> {
             popMenu.hide();
@@ -366,9 +368,9 @@ public class MyBoxController extends BaseController {
             openStage(CommonValues.PixelsCalculatorFxml);
         });
 
-        MenuItem colorPalette = new MenuItem(AppVariables.message("ColorPalette"));
+        MenuItem colorPalette = new MenuItem(AppVariables.message("ColorPaletteManage"));
         colorPalette.setOnAction((ActionEvent event1) -> {
-            openStage(CommonValues.ColorPaletteFxml);
+            openStage(CommonValues.ColorPaletteManageFxml);
         });
 
         MenuItem ManageColors = new MenuItem(AppVariables.message("ManageColors"));
@@ -378,7 +380,7 @@ public class MyBoxController extends BaseController {
 
         Menu miscellaneousMenu = new Menu(AppVariables.message("Miscellaneous"));
         miscellaneousMenu.getItems().addAll(
-                convolutionKernelManager, pixelsCalculator, colorPalette, ManageColors
+                convolutionKernelManager, pixelsCalculator
         );
 
         Menu manufactureBatchMenu = makeImageBatchToolsMenu();
@@ -394,10 +396,10 @@ public class MyBoxController extends BaseController {
                 imageViewer, imagesBrowser, imageData, new SeparatorMenuItem(),
                 ImageManufacture, manufactureBatchMenu, framesMenu, mergeMenu, partMenu, new SeparatorMenuItem(),
                 imageConverterBatch, imageOCR, imageOCRBatch, new SeparatorMenuItem(),
-                csMenu, miscellaneousMenu);
+                ManageColors, colorPalette, csMenu, miscellaneousMenu);
 
         popMenu.getItems().add(new SeparatorMenuItem());
-        MenuItem closeMenu = new MenuItem(message("MenuClose"));
+        MenuItem closeMenu = new MenuItem(message("PopupClose"));
         closeMenu.setStyle("-fx-text-fill: #2e598a;");
         closeMenu.setOnAction((ActionEvent cevent) -> {
             popMenu.hide();
@@ -583,11 +585,6 @@ public class MyBoxController extends BaseController {
             loadScene(CommonValues.ChromaticAdaptationMatrixFxml);
         });
 
-        MenuItem ColorPalette = new MenuItem(AppVariables.message("ColorPalette"));
-        ColorPalette.setOnAction((ActionEvent event) -> {
-            openStage(CommonValues.ColorPaletteFxml);
-        });
-
         MenuItem ColorConversion = new MenuItem(AppVariables.message("ColorConversion"));
         ColorConversion.setOnAction((ActionEvent event) -> {
             loadScene(CommonValues.ColorConversionFxml);
@@ -662,7 +659,7 @@ public class MyBoxController extends BaseController {
         );
 
         popMenu.getItems().add(new SeparatorMenuItem());
-        MenuItem closeMenu = new MenuItem(message("MenuClose"));
+        MenuItem closeMenu = new MenuItem(message("PopupClose"));
         closeMenu.setStyle("-fx-text-fill: #2e598a;");
         closeMenu.setOnAction((ActionEvent cevent) -> {
             popMenu.hide();
@@ -790,7 +787,7 @@ public class MyBoxController extends BaseController {
         );
 
         popMenu.getItems().add(new SeparatorMenuItem());
-        MenuItem closeMenu = new MenuItem(message("MenuClose"));
+        MenuItem closeMenu = new MenuItem(message("PopupClose"));
         closeMenu.setStyle("-fx-text-fill: #2e598a;");
         closeMenu.setOnAction((ActionEvent cevent) -> {
             popMenu.hide();
@@ -939,7 +936,7 @@ public class MyBoxController extends BaseController {
                 settings);
 
         popMenu.getItems().add(new SeparatorMenuItem());
-        MenuItem closeMenu = new MenuItem(message("MenuClose"));
+        MenuItem closeMenu = new MenuItem(message("PopupClose"));
         closeMenu.setStyle("-fx-text-fill: #2e598a;");
         closeMenu.setOnAction((ActionEvent cevent) -> {
             popMenu.hide();
@@ -963,7 +960,7 @@ public class MyBoxController extends BaseController {
         popMenu.getItems().addAll(getRecentMenu());
 
         popMenu.getItems().add(new SeparatorMenuItem());
-        MenuItem closeMenu = new MenuItem(message("MenuClose"));
+        MenuItem closeMenu = new MenuItem(message("PopupClose"));
         closeMenu.setStyle("-fx-text-fill: #2e598a;");
         closeMenu.setOnAction((ActionEvent cevent) -> {
             popMenu.hide();
@@ -1060,7 +1057,7 @@ public class MyBoxController extends BaseController {
         );
 
         popMenu.getItems().add(new SeparatorMenuItem());
-        MenuItem closeMenu = new MenuItem(message("MenuClose"));
+        MenuItem closeMenu = new MenuItem(message("PopupClose"));
         closeMenu.setStyle("-fx-text-fill: #2e598a;");
         closeMenu.setOnAction((ActionEvent cevent) -> {
             popMenu.hide();
@@ -1159,7 +1156,7 @@ public class MyBoxController extends BaseController {
         );
 
         popMenu.getItems().add(new SeparatorMenuItem());
-        MenuItem closeMenu = new MenuItem(message("MenuClose"));
+        MenuItem closeMenu = new MenuItem(message("PopupClose"));
         closeMenu.setStyle("-fx-text-fill: #2e598a;");
         closeMenu.setOnAction((ActionEvent cevent) -> {
             popMenu.hide();

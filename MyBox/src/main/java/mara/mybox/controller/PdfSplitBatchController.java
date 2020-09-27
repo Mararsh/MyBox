@@ -21,6 +21,7 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 import org.apache.pdfbox.multipdf.Splitter;
@@ -57,9 +58,9 @@ public class PdfSplitBatchController extends PdfBatchController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
-            super.initializeNext();
+            super.initControls();
             allowPaused = false;
 
             startButton.disableProperty().unbind();

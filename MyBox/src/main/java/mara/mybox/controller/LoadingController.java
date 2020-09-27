@@ -12,6 +12,7 @@ import javafx.scene.control.TextArea;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -34,24 +35,6 @@ public class LoadingController extends BaseController {
 
     public LoadingController() {
         baseTitle = AppVariables.message("LoadingPage");
-    }
-
-    @Override
-    public void initControls() {
-        try {
-            super.initControls();
-
-//            infoLabel.widthProperty().addListener(new ChangeListener<Number>() {
-//                @Override
-//                public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-//                    if (getMyStage() != null) {
-//                        getMyStage().setWidth(Math.max(infoLabel.getWidth(), timeLabel.getWidth()) + 20);
-//                    }
-//                }
-//            });
-        } catch (Exception e) {
-            logger.debug(e.toString());
-        }
     }
 
     public void init(final Task<?> task) {

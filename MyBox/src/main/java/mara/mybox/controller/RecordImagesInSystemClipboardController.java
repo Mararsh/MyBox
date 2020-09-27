@@ -21,6 +21,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
+import mara.mybox.data.VisitHistory;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.fxml.FxmlStage;
@@ -31,7 +32,9 @@ import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.IntTools;
 import mara.mybox.tools.SystemTools;
+import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
@@ -80,7 +83,7 @@ public class RecordImagesInSystemClipboardController extends BaseController {
     public RecordImagesInSystemClipboardController() {
         baseTitle = AppVariables.message("RecordImagesInSystemClipBoard");
 
-        targetPathKey = "ImageFilePath";
+        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Image);
         TipsLabelKey = "RecordImagesTips";
 
         sourceExtensionFilter = CommonFxValues.ImageExtensionFilter;
@@ -88,8 +91,9 @@ public class RecordImagesInSystemClipboardController extends BaseController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
+            super.initControls();
             checkInterval = 1000;
 
             recordTypeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
@@ -289,8 +293,7 @@ public class RecordImagesInSystemClipboardController extends BaseController {
                                 recordedNumber++;
                                 recordLabel.setText(MessageFormat.format(AppVariables.message("RecordingImages"), recordedNumber));
                                 if (viewImages) {
-                                    ImageViewerController controller = FxmlStage.openImageViewer(null);
-                                    controller.loadImage(image);
+                                    ImageViewerController controller = FxmlStage.openImageViewer(image);
                                     controller.getMyStage().setMaximized(true);
                                 }
                             }

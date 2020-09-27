@@ -2,10 +2,12 @@ package mara.mybox.controller;
 
 import java.io.File;
 import javafx.beans.binding.Bindings;
+import javafx.fxml.FXML;
 import javafx.stage.Modality;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.image.file.ImageTiffFile;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
@@ -37,14 +39,9 @@ public class ImageTiffEditerController extends ImagesListController {
         try {
             tableBox.setDisable(true);
 
-            saveButton.disableProperty().bind(
-                    Bindings.isEmpty(tableData)
-            );
-
-            saveAsButton.disableProperty().bind(
-                    saveButton.disableProperty()
-            );
-
+            saveButton.disableProperty().bind(Bindings.isEmpty(tableData));
+            saveAsButton.disableProperty().bind(saveButton.disableProperty());
+            viewButton.disableProperty().bind(saveButton.disableProperty());
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -84,6 +81,22 @@ public class ImageTiffEditerController extends ImagesListController {
             thread.setDaemon(true);
             thread.start();
 
+        }
+    }
+
+    @FXML
+    public void viewAction() {
+        try {
+            if (sourceFile != null) {
+                final ImageFramesViewerController controller
+                        = (ImageFramesViewerController) openStage(CommonValues.ImageFramesViewerFxml);
+                controller.selectSourceFile(sourceFile);
+            } else {
+                viewCheck.setSelected(true);
+                saveAsAction();
+            }
+        } catch (Exception e) {
+            logger.error(e.toString());
         }
     }
 

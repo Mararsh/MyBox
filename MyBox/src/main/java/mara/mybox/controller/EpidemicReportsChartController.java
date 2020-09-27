@@ -2,11 +2,8 @@ package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +15,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
@@ -31,14 +29,18 @@ import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -46,21 +48,19 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Transform;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
-import static mara.mybox.controller.BaseController.openImageViewer;
 import mara.mybox.data.EpidemicReport;
 import mara.mybox.data.GeographyCode;
 import mara.mybox.data.QueryCondition;
-import static mara.mybox.db.DerbyBase.dbHome;
-import static mara.mybox.db.DerbyBase.login;
-import static mara.mybox.db.DerbyBase.protocol;
-import mara.mybox.db.TableStringValue;
+import mara.mybox.data.VisitHistory;
 import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlControl.ChartCoordinate;
 import mara.mybox.fxml.FxmlControl.LabelType;
 import static mara.mybox.fxml.FxmlControl.badStyle;
+import mara.mybox.fxml.FxmlStage;
 import mara.mybox.fxml.Logarithmic10Coordinate;
 import mara.mybox.fxml.LogarithmicECoordinate;
 import mara.mybox.fxml.SquareRootCoordinate;
@@ -70,9 +70,12 @@ import mara.mybox.image.file.ImageGifFile;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
+import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
+import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 import thridparty.LabeledBarChart;
 import thridparty.LabeledHorizontalBarChart;
@@ -89,11 +92,11 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
     protected QueryCondition queryCondition;
     protected String chartQuerySQL, chartName;
     protected List<String> orderNames, valuesNames;
-    protected int topNumber, snapWidth, chartLoadTime, mapLoadTime, totalSize;
+    protected int topNumber, snapWidth, mapLoadTime, totalSize;
     protected List<String> datasets, chartTimes;
     protected Map<String, List<EpidemicReport>> timesReports, locationsReports;
     protected List<GeographyCode> chartLocations;
-    protected boolean multipleDatasets, mapCentered;
+    protected boolean multipleDatasets, mapCentered, snapEnd;
     protected double maxValue;
     protected Side legendSide;
     protected float lenUnit;
@@ -114,7 +117,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
     @FXML
     protected HBox chartTypeBox, titleBox;
     @FXML
-    protected VBox valueTypeBox, chartSnapBox;
+    protected VBox viewBox, chartBox, mapBox, valueTypeBox, chartSnapBox;
     @FXML
     protected CheckBox categoryAxisCheck, confirmedCheck, healedCheck, deadCheck,
             increasedConfirmedCheck, increasedHealedCheck, increasedDeadCheck,
@@ -128,8 +131,6 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
             deadRadio, deadRatioRadio, increasedDeadRadio,
             horizontalBarsChartRadio, verticalBarsChartRadio, linesChartRadio, linesChartHRadio, pieRadio, mapRadio,
             cartesianRadio, logarithmicERadio, logarithmic10Radio, squareRootRadio;
-    @FXML
-    protected VBox chartBox, mapBox;
 
     public EpidemicReportsChartController() {
         baseTitle = AppVariables.message("EpidemicReport");
@@ -137,9 +138,9 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
-            super.initializeNext();
+            super.initControls();
             valuesNames = new ArrayList();
             initChartOptions();
             initMapOptions();
@@ -304,64 +305,15 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
     }
 
     protected void loadCharts() {
-        synchronized (this) {
-            if (task != null) {
-                return;
-            }
-            if (timer != null) {
-                timer.cancel();
-                timer = null;
-            }
-            if (!initCharts()) {
-                return;
-            }
-            task = new SingletonTask<Void>() {
-
-                @Override
-                protected boolean handle() {
-                    try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
-                        conn.setReadOnly(true);
-                        Map<String, String> saved = TableStringValue.readWithPrefix(conn, "EpidemicReportsLocationColor");
-                        Collection<String> savedColors = saved.values();
-                        Map<String, String> locationColors = new HashMap();
-                        for (GeographyCode location : chartLocations) {
-                            String name = location.getFullName();
-                            String color = saved.get("EpidemicReportsLocationColor" + name);
-                            if (color == null) {
-                                color = FxmlColor.randomColorExcept(savedColors);
-                            }
-                            locationColors.put(name, color);
-                        }
-                        TableStringValue.writeWithPrefix("EpidemicReportsLocationColor", locationColors);
-                        settingsController.locationColors = locationColors;
-                        if (loading != null) {
-                            loading.setInfo(message("DateNumber") + ": " + chartTimes.size()
-                                    + " " + message("TotalSize") + ": " + totalSize);
-                        }
-                        return true;
-
-                    } catch (Exception e) {
-                        if (loading != null) {
-                            loading.setInfo(e.toString());
-                        }
-                        error = e.toString();
-                        return false;
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    settingsController.initColors();
-                    drawChart();
-                }
-
-            };
-            loading = reportsController.openHandlingStage(task, Modality.WINDOW_MODAL, message("LoadingChartData"));
-            Thread thread = new Thread(task);
-            thread.setDaemon(true);
-            thread.start();
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
         }
-
+        if (!initCharts()) {
+            return;
+        }
+        settingsController.reset();
+        drawChart();
     }
 
     protected boolean initCharts() {
@@ -425,6 +377,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
         mapBox.setVisible(false);
         valuesNames.clear();
         titleLabel.setText("");
+        frameLabel.setText("");
         mapCentered = false;
     }
 
@@ -587,6 +540,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                 return;
             }
             setPause(false);
+            titleLabel.setText(queryCondition.getTitle().replaceAll("\n", " "));
 
             if (mapRadio.isSelected()) {
 //                chartOptionsTab.setDisable(true);
@@ -682,7 +636,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                     || timeReports == null || timeReports.isEmpty()) {
                 return;
             }
-            titleLabel.setText(queryCondition.getTitle().replaceAll("\n", " ") + "\n" + time);
+            frameLabel.setText(time);
             if (mapRadio.isSelected()) {
                 drawMap(timeReports);
             } else {
@@ -796,7 +750,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
             }
             float total = 0;
             for (EpidemicReport report : timeReports) {
-                Number value = report.getValue(valueName);
+                Number value = report.getNumber(valueName);
                 if (value == null) {
                     continue;
                 }
@@ -813,7 +767,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
             List<String> palette = new ArrayList();
             for (EpidemicReport report : timeReports) {
                 String name = (multipleDatasets ? report.getDataSet() + " - " : "") + report.getLocationFullName();
-                Number value = report.getValue(valueName);
+                Number value = report.getNumber(valueName);
                 if (value == null) {
                     continue;
                 }
@@ -840,7 +794,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                 if (labelType == LabelType.Pop) {
                     FxmlControl.setTooltip(item.getNode(), name + " " + percent + "% " + labelValue);
                 }
-                palette.add(settingsController.locationColors.get(report.getLocationFullName()));
+                palette.add(settingsController.locationColor(report.getLocationFullName()));
             }
 
             FxmlControl.setPieColors(pie, palette, legendSide != null);
@@ -997,7 +951,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                 }
                 for (int j = 0; j < reports.size(); j++) {
                     EpidemicReport report = reports.get(j);
-                    Number value = report.getValue(valueName);
+                    Number value = report.getNumber(valueName);
                     if (value == null) {
                         continue;
                     }
@@ -1010,7 +964,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                         series.setName(lineName);
                         lineChart.getData().add(series);
                         seriesMap.put(lineName, series);
-                        palette.put(lineName, settingsController.locationColors.get(locationName));
+                        palette.put(lineName, settingsController.locationColor(locationName));
                     }
                     if (dateCompare == 0) {
                         series.getData().add(lineDataNode(date, lineName, value.doubleValue(), vertical, true));
@@ -1105,14 +1059,14 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                 series.setName(valueName);
                 seriesList.add(series);
                 barChart.getData().add(i, series);
-                palette.put(valueName, settingsController.color(valueName));
+                palette.put(valueName, settingsController.rgb(valueName));
             }
             for (EpidemicReport report : timeReports) {
                 String label = (multipleDatasets ? report.getDataSet() + " - " : "") + report.getLocationFullName();
                 for (int i = 0; i < valuesNames.size(); i++) {
                     XYChart.Series series = seriesList.get(i);
                     String valueName = valuesNames.get(i);
-                    Number value = report.getValue(valueName);
+                    Number value = report.getNumber(valueName);
                     if (value == null) {
                         continue;
                     }
@@ -1145,7 +1099,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                 series.setName(valueName);
                 seriesList.add(series);
                 barChart.getData().add(i, series);
-                palette.put(valueName, settingsController.color(valueName));
+                palette.put(valueName, settingsController.rgb(valueName));
             }
             for (int i = timeReports.size() - 1; i >= 0; i--) {
                 EpidemicReport report = timeReports.get(i);
@@ -1153,7 +1107,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                 for (int j = 0; j < valuesNames.size(); j++) {
                     XYChart.Series series = seriesList.get(j);
                     String valueName = valuesNames.get(j);
-                    Number value = report.getValue(valueName);
+                    Number value = report.getNumber(valueName);
                     if (value == null) {
                         continue;
                     }
@@ -1185,14 +1139,14 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
             String location = report.getLocationFullName();
             String label = (multipleDatasets ? report.getDataSet() + " - " : "") + location;
 
-            Number value = report.getValue(valueName);
+            Number value = report.getNumber(valueName);
             if (value == null) {
                 continue;
             }
             double coordinateValue = FxmlControl.coordinateValue(chartCoordinate, value.doubleValue());
             XYChart.Series series = new XYChart.Series();
             series.setName(label);
-            palette.put(label, settingsController.locationColors.get(location));
+            palette.put(label, settingsController.locationColor(location));
             XYChart.Data item = new XYChart.Data(label, coordinateValue);
             series.getData().add(item);
             barChart.getData().add(series);
@@ -1215,8 +1169,8 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
             EpidemicReport report = timeReports.get(i);
             String location = report.getLocationFullName();
             String label = (multipleDatasets ? report.getDataSet() + " - " : "") + location;
-            palette.put(label, settingsController.locationColors.get(location));
-            Number value = report.getValue(valueName);
+            palette.put(label, settingsController.locationColor(location));
+            Number value = report.getNumber(valueName);
             if (value == null) {
                 continue;
             }
@@ -1253,10 +1207,10 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                 Color textColor = textColor();
                 String name = (multipleDatasets ? report.getDataSet() + " - " : "") + location.getFullName();
                 name = textColor == null ? name
-                        : "<span style=\"color:" + FxmlColor.rgb2Hex(textColor) + "\">" + name + "</span>";
+                        : "<span style=\"color:" + FxmlColor.color2rgb(textColor) + "\">" + name + "</span>";
                 String value = "";
                 for (String valueName : valuesNames) {
-                    value += " <span style=\"color:" + settingsController.color(valueName) + "\">" + report.getValue(valueName) + "</span> ";
+                    value += " <span style=\"color:" + settingsController.rgb(valueName) + "\">" + report.getNumber(valueName) + "</span> ";
                 }
                 String label;
                 switch (labelType) {
@@ -1277,7 +1231,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                 }
                 String info = mapOptionsController.popInfoCheck.isSelected()
                         ? "<div>" + name + value + "</div></br>" + location.info("</br>") : "";
-                mapOptionsController.markerSize = markSize(report.getValue(orderNames.get(0)).doubleValue());
+                mapOptionsController.markerSize = markSize(report.getNumber(orderNames.get(0)).doubleValue());
                 drawPoint(location.getLongitude(), location.getLatitude(),
                         label, circleImage(), info, null);
             }
@@ -1327,12 +1281,157 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
     }
 
     @FXML
-    protected void snapAction() {
+    protected void popSnapMenu(MouseEvent mouseEvent) {
         try {
+            if (popMenu != null && popMenu.isShowing()) {
+                popMenu.hide();
+            }
+            popMenu = new ContextMenu();
+            popMenu.setAutoHide(true);
+
+            MenuItem menu;
+
+            menu = new MenuItem(message("SnapCurrentFrame"));
+            menu.setOnAction((ActionEvent event) -> {
+                snapCurrentFrame();
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("JpgAllFrames"));
+            menu.setOnAction((ActionEvent event) -> {
+                snapAllFrames("jpg");
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("PngAllFrames"));
+            menu.setOnAction((ActionEvent event) -> {
+                snapAllFrames("png");
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("GifAllFrames"));
+            menu.setOnAction((ActionEvent event) -> {
+                snapAllFrames("gif");
+            });
+            popMenu.getItems().add(menu);
+
+            popMenu.getItems().add(new SeparatorMenuItem());
+            menu = new MenuItem(message("PopupClose"));
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setOnAction((ActionEvent event) -> {
+                popMenu.hide();
+                popMenu = null;
+            });
+            popMenu.getItems().add(menu);
+
+            FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    protected void snapCurrentFrame() {
+        String name = titleLabel.getText()
+                + (frameLabel.getText().isBlank() ? "" : " " + frameLabel.getText())
+                + ".png";
+        File file = chooseSaveFile(AppVariables.getUserConfigPath(VisitHistoryTools.getPathKey(VisitHistory.FileType.Image)),
+                name, CommonFxValues.ImageExtensionFilter, true);
+        if (file == null) {
+            return;
+        }
+        recordFileWritten(file, VisitHistoryTools.getPathKey(VisitHistory.FileType.Image), VisitHistory.FileType.Image, VisitHistory.FileType.Image);
+
+        double scale = dpi / Screen.getPrimary().getDpi();
+        scale = scale > 1 ? scale : 1;
+        SnapshotParameters snapPara = new SnapshotParameters();
+        snapPara.setFill(Color.TRANSPARENT);
+        snapPara.setTransform(Transform.scale(scale, scale));
+
+        Bounds bounds = chartSnapBox.getLayoutBounds();
+        int imageWidth = (int) Math.round(bounds.getWidth() * scale);
+        int imageHeight = (int) Math.round(bounds.getHeight() * scale);
+        WritableImage snapshot = new WritableImage(imageWidth, imageHeight);
+        final Image mapSnap = chartSnapBox.snapshot(snapPara, snapshot);
+
+        synchronized (this) {
+            if (task != null) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+
+                @Override
+                protected boolean handle() {
+                    try {
+                        String format = FileTools.getFileSuffix(file);
+                        format = format == null || format.isBlank() ? "png" : format;
+                        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(mapSnap, null);
+                        ImageFileWriters.writeImageFile(bufferedImage, format, file.getAbsolutePath());
+                        return file.exists();
+                    } catch (Exception e) {
+                        error = e.toString();
+                        logger.error(e.toString());
+                        return false;
+                    }
+
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    FxmlStage.openImageViewer(file);
+                }
+
+            };
+            if (parentController != null) {
+                parentController.openHandlingStage(task, Modality.WINDOW_MODAL);
+            } else {
+                openHandlingStage(task, Modality.WINDOW_MODAL);
+            }
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
+
+    }
+
+    protected void snapAllFrames(String format) {
+        try {
+            if (isSettingValues) {
+                return;
+            }
+            DirectoryChooser chooser = new DirectoryChooser();
+            File path = AppVariables.getUserConfigPath(VisitHistoryTools.getPathKey(VisitHistory.FileType.Image));
+            if (path != null) {
+                chooser.setInitialDirectory(path);
+            }
+            File directory = chooser.showDialog(getMyStage());
+            if (directory == null) {
+                return;
+            }
+            recordFileWritten(directory, VisitHistoryTools.getPathKey(VisitHistory.FileType.Image), VisitHistory.FileType.Image, VisitHistory.FileType.Image);
+            String name = queryCondition.getTitle().replaceAll("\\\"|\n|:", "");
+            String filePath = directory.getAbsolutePath() + File.separator + name + File.separator;
+            new File(filePath).mkdirs();
+            final String filePrefix = filePath + File.separator + name;
+
+            if (timer != null) {
+                timer.cancel();
+                timer = null;
+            }
+            setPause(false);
+            frameIndex = 0;
+            frameCompleted = true;
+            webEngine.executeScript("clearMap();");
+            titleLabel.setText("");
+            frameLabel.setText("");
+            if (loading != null) {
+                loading.closeStage();
+                loading = null;
+            }
             snapWidth = settingsController.snapWidth;
-            chartLoadTime = settingsController.chartLoadTime;
             dpi = settingsController.dpi;
 
+            String rformat = format.equals("gif") ? "png" : format;
             final SnapshotParameters snapPara;
             final double scale;
             double scalev = dpi / Screen.getPrimary().getDpi();
@@ -1341,48 +1440,33 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
             snapPara.setFill(Color.WHITE);
             snapPara.setTransform(Transform.scale(scale, scale));
 
-            if (timer == null) {
-                openImageViewer(snapWidth(snapPara, scale, Integer.MAX_VALUE, chartSnapBox));
-                return;
-            }
-            timer.cancel();
-            timer = null;
+            Bounds bounds = chartSnapBox.getLayoutBounds();
+            int imageWidth = (int) Math.round(bounds.getWidth() * scale);
+            int imageHeight = (int) Math.round(bounds.getHeight() * scale);
+
             List<File> snapshots = new ArrayList<>();
             loading = openHandlingStage(Modality.WINDOW_MODAL);
-            byte[] lock = new byte[0];
-            int speed = chartLoadTime + 100;
+            snapEnd = true;
             timer = new Timer();
             timer.schedule(new TimerTask() {
-                private int index = 0;
+
+                private Timer frameTimer;
 
                 @Override
                 public void run() {
                     Platform.runLater(() -> {
-                        if (loading == null || loading.isIsCanceled()) {
-                            timer.cancel();
-                            timer = null;
-                            drawChart();
+                        if (!snapEnd || timer == null) {
                             return;
                         }
-                        if (index > chartTimes.size() - 1) {
-                            timer.cancel();
-                            timer = null;
-                            if (snapshots.isEmpty()) {
-                                return;
+                        if (loading == null || loading.isIsCanceled()
+                                || timesReports == null || timesReports.isEmpty()) {
+                            if (timer != null) {
+                                timer.cancel();
+                                timer = null;
                             }
-                            if (snapshots.size() == 1) {
-                                openImageViewer(snapshots.get(0));
-                            } else {
-                                File file = FileTools.getTempFile(".gif");
-                                if (loading != null) {
-                                    loading.setInfo(message("Saving") + ": " + file);
-                                }
-                                ImageGifFile.writeImageFiles(snapshots, file, interval, true);
-                                if (file.exists()) {
-                                    ImageGifViewerController controller
-                                            = (ImageGifViewerController) openStage(CommonValues.ImageGifViewerFxml);
-                                    controller.sourceFileChanged(file);
-                                }
+                            if (frameTimer != null) {
+                                frameTimer.cancel();
+                                frameTimer = null;
                             }
                             if (loading != null) {
                                 loading.closeStage();
@@ -1391,45 +1475,102 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
                             drawChart();
                             return;
                         }
-                        if (loading != null) {
-                            loading.setInfo(message("Snapping") + ": " + (index + 1) + "/" + chartTimes.size());
+                        snapEnd = false;
+                        Platform.runLater(() -> {
+                            loading.setInfo(message("Snapping") + ": " + (frameIndex + 1) + "/" + chartTimes.size());
+                        });
+                        if (frameTimer != null) {
+                            frameTimer.cancel();
+                            frameTimer = null;
                         }
-                        synchronized (lock) {
-                            drawFrame(index);
-                            try {
-                                Thread.sleep(100);
-                            } catch (Exception e) {
+                        drawFrame();
+                        frameTimer = new Timer();
+                        frameTimer.schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                if (frameTimer == null) {
+                                    return;
+                                }
+                                if (frameCompleted) {
+                                    if (frameTimer != null) {
+                                        frameTimer.cancel();
+                                        frameTimer = null;
+                                    }
+                                    Platform.runLater(() -> {
+                                        snap();
+                                    });
+                                }
                             }
-                            snapshots.add(snapWidth(snapPara, scale, snapWidth, chartSnapBox));
-                            ++index;
-                        }
+                        }, 50, 50);
                     });
                 }
 
-            }, 0, speed + 100);
+                private void snap() {
+                    try {
+                        Image snap = chartSnapBox.snapshot(snapPara, new WritableImage(imageWidth, imageHeight));
+                        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(snap, null);
+                        if (format.equals("gif") && bufferedImage.getWidth() > snapWidth) {
+                            bufferedImage = ImageManufacture.scaleImageWidthKeep(bufferedImage, snapWidth);
+                        }
+                        File imageFile = new File(filePrefix + "_Frame" + frameIndex + "." + rformat);
+                        ImageFileWriters.writeImageFile(bufferedImage, rformat, imageFile.getAbsolutePath());
+                        snapshots.add(imageFile);
+
+                        frameIndex++;
+                        if (frameIndex >= chartTimes.size()) {
+                            if (timer != null) {
+                                timer.cancel();
+                                timer = null;
+                            }
+                            if (frameTimer != null) {
+                                frameTimer.cancel();
+                                frameTimer = null;
+                            }
+                            if (snapshots.size() == 1) {
+                                FxmlStage.openImageViewer(snapshots.get(0));
+                            } else if (snapshots.size() > 1) {
+                                if (format.equals("gif")) {
+                                    File gifFile = new File(filePrefix + ".gif");
+                                    if (loading != null) {
+                                        Platform.runLater(() -> {
+                                            loading.setInfo(message("Saving") + ": " + gifFile);
+                                        });
+                                    }
+                                    ImageGifFile.writeImageFiles(snapshots, gifFile, interval, true);
+                                    if (gifFile.exists()) {
+                                        if (loading != null) {
+                                            Platform.runLater(() -> {
+                                                loading.setInfo(message("Opening") + ": " + gifFile);
+                                            });
+                                        }
+                                        ImageGifViewerController controller
+                                                = (ImageGifViewerController) openStage(CommonValues.ImageGifViewerFxml);
+                                        controller.sourceFileChanged(gifFile);
+                                    }
+
+                                } else {
+                                    browseURI(directory.toURI());
+                                }
+                            }
+                            if (loading != null) {
+                                loading.closeStage();
+                                loading = null;
+                            }
+                            drawChart();
+                        }
+
+                    } catch (Exception e) {
+                        logger.debug(e.toString());
+                    }
+                    snapEnd = true;
+                }
+
+            }, 0, 100);
 
         } catch (Exception e) {
             logger.debug(e.toString());
         }
-    }
 
-    protected File snapWidth(SnapshotParameters snapPara, double scale, int width, Region chart) {
-        try {
-            Bounds bounds = chart.getLayoutBounds();
-            int imageWidth = (int) Math.round(bounds.getWidth() * scale);
-            int imageHeight = (int) Math.round(bounds.getHeight() * scale);
-            Image snap = chart.snapshot(snapPara, new WritableImage(imageWidth, imageHeight));
-            BufferedImage bufferedImage = SwingFXUtils.fromFXImage(snap, null);
-            if (bufferedImage.getWidth() > width) {
-                bufferedImage = ImageManufacture.scaleImageWidthKeep(bufferedImage, snapWidth);
-            }
-            File tmpfile = FileTools.getTempFile(".png");
-            ImageFileWriters.writeImageFile(bufferedImage, "png", tmpfile.getAbsolutePath());
-            return tmpfile;
-        } catch (Exception e) {
-            logger.debug(e.toString());
-            return null;
-        }
     }
 
     @FXML

@@ -5,23 +5,19 @@ import java.util.Arrays;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Control;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
@@ -37,9 +33,7 @@ public class ImageManufactureBatchArcController extends ImageManufactureBatchCon
     private boolean isPercent;
 
     @FXML
-    protected Rectangle bgRect;
-    @FXML
-    protected Button paletteButton;
+    protected ColorSetController colorSetController;
     @FXML
     private ComboBox<String> arcBox, perBox;
     @FXML
@@ -51,8 +45,10 @@ public class ImageManufactureBatchArcController extends ImageManufactureBatchCon
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
+            super.initControls();
+
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
                     .or(targetPathInput.styleProperty().isEqualTo(badStyle))
@@ -100,32 +96,11 @@ public class ImageManufactureBatchArcController extends ImageManufactureBatchCon
             });
             checkType();
 
-            String c = AppVariables.getUserConfigValue("ImageArcBackground", Color.TRANSPARENT.toString());
-            bgRect.setFill(Color.web(c));
-            FxmlControl.setTooltip(bgRect, FxmlColor.colorNameDisplay((Color) bgRect.getFill()));
+            colorSetController.init(this, baseName + "Color");
 
         } catch (Exception e) {
             logger.error(e.toString());
         }
-    }
-
-    @Override
-    public boolean setColor(Control control, Color color) {
-        if (control == null || color == null) {
-            return false;
-        }
-        if (paletteButton.equals(control)) {
-            bgRect.setFill(color);
-            FxmlControl.setTooltip(bgRect, FxmlColor.colorNameDisplay(color));
-            AppVariables.setUserConfigValue("ImageArcBackground", color.toString());
-        }
-        return true;
-    }
-
-    @FXML
-    @Override
-    public void showPalette(ActionEvent event) {
-        showPalette(paletteButton, message("Arc"), true);
     }
 
     private void checkType() {
@@ -188,7 +163,7 @@ public class ImageManufactureBatchArcController extends ImageManufactureBatchCon
                 value = source.getWidth() * percent / 100;
             }
             BufferedImage target = ImageManufacture.addArc(source, value,
-                    FxmlImageManufacture.toAwtColor((Color) bgRect.getFill()));
+                    FxmlImageManufacture.toAwtColor((Color) colorSetController.rect.getFill()));
             return target;
         } catch (Exception e) {
             logger.error(e.toString());

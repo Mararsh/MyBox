@@ -23,6 +23,7 @@ import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -48,9 +49,9 @@ public class BytesEditerController extends FileEditerController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
-            super.initializeNext();
+            super.initControls();
             initCharInputTab();
 
         } catch (Exception e) {
@@ -347,8 +348,8 @@ public class BytesEditerController extends FileEditerController {
                 sourceInformation.setCharset(Charset.forName(newValue));
                 AppVariables.setUserConfigValue(BytesCharsetKey, newValue);
                 charsetByUser = !isSettingValues;
-                if (!isSettingValues && displayArea != null) {
-                    setSecondArea(mainArea.getText());
+                if (!isSettingValues) {
+                    setPairArea(mainArea.getText());
                 }
             }
         });
@@ -392,9 +393,8 @@ public class BytesEditerController extends FileEditerController {
     }
 
     @Override
-    protected void setSecondArea(String hexFormat) {
-        if (isSettingValues || displayArea == null
-                || !contentSplitPane.getItems().contains(displayArea)) {
+    protected void setPairArea(String hexFormat) {
+        if (isSettingValues || !splitPane.getItems().contains(rightPane)) {
             return;
         }
         isSettingValues = true;
@@ -408,9 +408,9 @@ public class BytesEditerController extends FileEditerController {
                 lineText = lineText.replaceAll("\n|\r", " ") + "\n";
                 text.append(lineText);
             }
-            displayArea.setText(text.toString());
+            pairArea.setText(text.toString());
         } else {
-            displayArea.clear();
+            pairArea.clear();
         }
         if (loadingController != null) {
             loadingController.closeStage();
@@ -419,21 +419,21 @@ public class BytesEditerController extends FileEditerController {
     }
 
     @Override
-    protected void setSecondAreaSelection() {
-        if (isSettingValues || displayArea == null || !contentSplitPane.getItems().contains(displayArea)) {
+    protected void setPairAreaSelection() {
+        if (isSettingValues || !splitPane.getItems().contains(rightPane)) {
             return;
         }
-        displayArea.deselect();
+        pairArea.deselect();
         IndexRange hexRange = mainArea.getSelection();
         if (hexRange.getLength() == 0) {
             return;
         }
         isSettingValues = true;
-        final String text = displayArea.getText();
+        final String text = pairArea.getText();
         if (!text.isEmpty()) {
             IndexRange textRange = ByteTools.textIndex(mainArea.getText(), sourceInformation.getCharset(), hexRange);
-            displayArea.selectRange(textRange.getStart(), textRange.getEnd());
-            displayArea.setScrollTop(mainArea.getScrollTop());
+            pairArea.selectRange(textRange.getStart(), textRange.getEnd());
+            pairArea.setScrollTop(mainArea.getScrollTop());
         }
         isSettingValues = false;
     }

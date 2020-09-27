@@ -38,7 +38,9 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlTools;
 import mara.mybox.tools.MediaTools;
+import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
@@ -79,9 +81,9 @@ public class FFmpegProbeMediaInformationController extends FFmpegOptionsControll
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
-            super.initializeNext();
+            super.initControls();
 
             tabPane.getTabs().clear();
 
@@ -110,7 +112,7 @@ public class FFmpegProbeMediaInformationController extends FFmpegOptionsControll
             sourceFile = file;
             recordFileOpened(file);
         } else {
-            VisitHistory.visitStreamMedia(v);
+            VisitHistoryTools.visitStreamMedia(v);
         }
     }
 
@@ -122,7 +124,7 @@ public class FFmpegProbeMediaInformationController extends FFmpegOptionsControll
             recordFileOpened(file);
         } else {
             sourceFile = null;
-            VisitHistory.visitStreamMedia(name);
+            VisitHistoryTools.visitStreamMedia(name);
         }
     }
 
@@ -135,7 +137,7 @@ public class FFmpegProbeMediaInformationController extends FFmpegOptionsControll
             @Override
             public List<VisitHistory> recentFiles() {
                 List<VisitHistory> recent = recentSourceFiles();
-                List<VisitHistory> recentMedia = VisitHistory.getRecentStreamMedia();
+                List<VisitHistory> recentMedia = VisitHistoryTools.getRecentStreamMedia();
                 recent.addAll(recentMedia);
                 return recent;
             }
@@ -165,7 +167,7 @@ public class FFmpegProbeMediaInformationController extends FFmpegOptionsControll
                 if (controller == null || event == null) {
                     return;
                 }
-                ContextMenu popMenu = controller.getPopMenu();
+                ContextMenu popMenu = controller.popMenu;
                 if (popMenu != null && popMenu.isShowing()) {
                     popMenu.hide();
                 }
@@ -238,15 +240,15 @@ public class FFmpegProbeMediaInformationController extends FFmpegOptionsControll
                     }
                 }
 
-                controller.setPopMenu(popMenu);
+                controller.popMenu = popMenu;
                 popMenu.getItems().add(new SeparatorMenuItem());
-                menu = new MenuItem(message("MenuClose"));
+                menu = new MenuItem(message("PopupClose"));
                 menu.setStyle("-fx-text-fill: #2e598a;");
                 menu.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
-                        controller.getPopMenu().hide();
-                        controller.setPopMenu(null);
+                        controller.popMenu.hide();
+                        controller.popMenu = null;
                     }
                 });
                 popMenu.getItems().add(menu);

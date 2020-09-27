@@ -10,6 +10,8 @@ import java.util.List;
 import mara.mybox.data.ConvolutionKernel;
 import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.tools.DateTools;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -33,8 +35,9 @@ public class TableConvolutionKernel extends DerbyBase {
                 + "  width  INT  NOT NULL,  "
                 + "  height  INT  NOT NULL,  "
                 + "  type SMALLINT, "
-                + "  gray SMALLINT, "
                 + "  edge SMALLINT, "
+                + "  is_gray BOOLEAN, "
+                + "  is_invert BOOLEAN, "
                 + "  modify_time TIMESTAMP, "
                 + "  create_time TIMESTAMP, "
                 + "  description VARCHAR(1024)  "
@@ -43,53 +46,17 @@ public class TableConvolutionKernel extends DerbyBase {
 
     public static List<ConvolutionKernel> read() {
         List<ConvolutionKernel> records = new ArrayList<>();
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                 PreparedStatement query = conn.prepareStatement("SELECT * FROM Convolution_Kernel ORDER BY name")) {
             conn.setReadOnly(true);
-            String sql = " SELECT * FROM Convolution_Kernel ORDER BY name";
-            ResultSet kResult = conn.createStatement().executeQuery(sql);
-            while (kResult.next()) {
-                ConvolutionKernel record = new ConvolutionKernel();
-                String name = kResult.getString("name");
-                int w = kResult.getInt("width");
-                int h = kResult.getInt("height");
-                record.setName(name);
-                record.setWidth(w);
-                record.setHeight(h);
-                record.setType(kResult.getInt("type"));
-                record.setGray(kResult.getInt("gray"));
-                record.setEdge(kResult.getInt("edge"));
-                Date t = kResult.getTimestamp("create_time");
-                if (t != null) {
-                    record.setCreateTime(DateTools.datetimeToString(t));
-                }
-                t = kResult.getTimestamp("modify_time");
-                if (t != null) {
-                    record.setModifyTime(DateTools.datetimeToString(t));
-                }
-                record.setDescription(kResult.getString("description"));
-                records.add(record);
-            }
-            try ( PreparedStatement statement = conn.prepareStatement(
-                    " SELECT * FROM Float_Matrix WHERE name=? AND row=? AND col=?")) {
-                for (ConvolutionKernel k : records) {
-                    int w = k.getWidth();
-                    int h = k.getHeight();
-                    float[][] matrix = new float[h][w];
-                    for (int j = 0; j < h; ++j) {
-                        for (int i = 0; i < w; ++i) {
-                            statement.setString(1, k.getName());
-                            statement.setInt(2, j);
-                            statement.setInt(3, i);
-                            ResultSet mResult = statement.executeQuery();
-                            if (mResult.next()) {
-                                matrix[j][i] = mResult.getFloat("value");
-                            }
-                        }
+            try ( ResultSet kResult = query.executeQuery()) {
+                while (kResult.next()) {
+                    ConvolutionKernel record = read(conn, kResult);
+                    if (record != null) {
+                        records.add(record);
                     }
-                    k.setMatrix(matrix);
                 }
             }
-
         } catch (Exception e) {
             failed(e);
             // logger.debug(e.toString());
@@ -98,76 +65,148 @@ public class TableConvolutionKernel extends DerbyBase {
     }
 
     public static ConvolutionKernel read(String name) {
-        ConvolutionKernel record = null;
         if (name == null) {
-            return record;
+            return null;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                 PreparedStatement kernelQuery = conn.prepareStatement(" SELECT * FROM Convolution_Kernel WHERE name=?");) {
             conn.setReadOnly(true);
-            PreparedStatement statement = conn.prepareStatement(
-                    " SELECT width FROM Convolution_Kernel WHERE name=?"
-            );
-            statement.setString(1, name);
-            ResultSet kResult = statement.executeQuery();
-            if (kResult.next()) {
-                statement = conn.prepareStatement(
-                        " SELECT * FROM Float_Matrix WHERE name=? AND row=? AND col=?"
-                );
-                record = new ConvolutionKernel();
-                int w = kResult.getInt("width");
-                int h = kResult.getInt("height");
-                record.setName(name);
-                record.setWidth(w);
-                record.setHeight(h);
-                record.setType(kResult.getInt("type"));
-                record.setGray(kResult.getInt("gray"));
-                record.setEdge(kResult.getInt("edge"));
-                Date t = kResult.getTimestamp("create_time");
-                if (t != null) {
-                    record.setCreateTime(DateTools.datetimeToString(t));
+            kernelQuery.setString(1, name);
+            try ( ResultSet kResult = kernelQuery.executeQuery()) {
+                if (kResult.next()) {
+                    return read(conn, kResult);
                 }
-                t = kResult.getTimestamp("modify_time");
-                if (t != null) {
-                    record.setModifyTime(DateTools.datetimeToString(t));
-                }
-                float[][] matrix = new float[h][w];
-                for (int j = 0; j < h; ++j) {
-                    for (int i = 0; i < w; ++i) {
-                        statement.setString(1, name);
-                        statement.setInt(2, j);
-                        statement.setInt(3, i);
-                        ResultSet mResult = statement.executeQuery();
-                        if (mResult.next()) {
-                            matrix[j][i] = mResult.getFloat("value");
-                        }
-                    }
-                }
-                record.setMatrix(matrix);
-                record.setDescription(kResult.getString("description"));
             }
-            if (record != null) {
-                int w = record.getWidth();
-                int h = record.getHeight();
+        } catch (Exception e) {
+            failed(e);
+        }
+        return null;
+    }
+
+    public static ConvolutionKernel read(Connection conn, ResultSet kResult) {
+        if (kResult == null) {
+            return null;
+        }
+        try {
+            ConvolutionKernel record = new ConvolutionKernel();
+            int w = kResult.getInt("width");
+            int h = kResult.getInt("height");
+            record.setName(kResult.getString("name"));
+            record.setWidth(w);
+            record.setHeight(h);
+            record.setType(kResult.getInt("type"));
+            record.setGray(kResult.getBoolean("is_gray"));
+            record.setInvert(kResult.getBoolean("is_invert"));
+            record.setEdge(kResult.getInt("edge"));
+            Date t = kResult.getTimestamp("create_time");
+            if (t != null) {
+                record.setCreateTime(DateTools.datetimeToString(t));
+            }
+            t = kResult.getTimestamp("modify_time");
+            if (t != null) {
+                record.setModifyTime(DateTools.datetimeToString(t));
+            }
+            record.setDescription(kResult.getString("description"));
+            try ( PreparedStatement matrixQuery
+                    = conn.prepareStatement(" SELECT * FROM Float_Matrix WHERE name=? AND row=? AND col=?")) {
                 float[][] matrix = new float[h][w];
                 for (int j = 0; j < h; ++j) {
                     for (int i = 0; i < w; ++i) {
-                        statement.setString(1, name);
-                        statement.setInt(2, j);
-                        statement.setInt(3, i);
-                        ResultSet mResult = statement.executeQuery();
-                        if (mResult.next()) {
-                            matrix[j][i] = mResult.getFloat("value");
+                        matrixQuery.setString(1, record.getName());
+                        matrixQuery.setInt(2, j);
+                        matrixQuery.setInt(3, i);
+                        try ( ResultSet mResult = matrixQuery.executeQuery()) {
+                            if (mResult.next()) {
+                                matrix[j][i] = mResult.getFloat("value");
+                            }
                         }
                     }
                 }
                 record.setMatrix(matrix);
             }
-            statement.close();
             return record;
         } catch (Exception e) {
             failed(e);
             // logger.debug(e.toString());
-            return record;
+            return null;
+        }
+    }
+
+    public static boolean exist(String name) {
+        if (name == null) {
+            return false;
+        }
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            conn.setReadOnly(true);
+            return exist(conn, name);
+        } catch (Exception e) {
+            failed(e);
+            return false;
+        }
+    }
+
+    public static boolean exist(Connection conn, String name) {
+        if (conn == null || name == null) {
+            return false;
+        }
+        try ( PreparedStatement kernelQuery = conn.prepareStatement(" SELECT width FROM Convolution_Kernel WHERE name=?")) {
+            kernelQuery.setString(1, name);
+            try ( ResultSet kResult = kernelQuery.executeQuery()) {
+                return (kResult.next());
+            }
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean insert(Connection conn, ConvolutionKernel record) {
+        String sql = "INSERT INTO Convolution_Kernel "
+                + "(name, width , height, type, edge, is_gray, is_invert, create_time, modify_time, description) "
+                + " VALUES( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ";
+        try ( PreparedStatement update = conn.prepareStatement(sql)) {
+            update.setString(1, record.getName());
+            update.setInt(2, record.getWidth());
+            update.setInt(3, record.getHeight());
+            update.setInt(4, record.getType());
+            update.setInt(5, record.getEdge());
+            update.setBoolean(6, record.isGray());
+            update.setBoolean(7, record.isInvert());
+            update.setString(8, record.getCreateTime());
+            update.setString(9, record.getModifyTime());
+            update.setString(10, record.getDescription());
+            update.executeUpdate();
+            return true;
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean update(Connection conn, ConvolutionKernel record) {
+        String sql = "UPDATE Convolution_Kernel SET "
+                + "  width=?, height=?, type=?, edge=?, is_gray=?, is_invert=?, create_time=?, "
+                + " modify_time=?, description=?"
+                + " WHERE name=?";
+        try ( PreparedStatement update = conn.prepareStatement(sql)) {
+            update.setInt(1, record.getWidth());
+            update.setInt(2, record.getHeight());
+            update.setInt(3, record.getType());
+            update.setInt(4, record.getEdge());
+            update.setBoolean(5, record.isGray());
+            update.setBoolean(6, record.isInvert());
+            update.setString(7, record.getCreateTime());
+            update.setString(8, record.getModifyTime());
+            update.setString(9, record.getDescription());
+            update.setString(10, record.getName());
+            update.executeUpdate();
+            return true;
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return false;
         }
     }
 
@@ -178,101 +217,38 @@ public class TableConvolutionKernel extends DerbyBase {
             return false;
         }
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
-            ResultSet result;
-            try ( PreparedStatement statement = conn.prepareStatement(
-                    " SELECT width FROM Convolution_Kernel WHERE name=?"
-            )) {
-                statement.setString(1, record.getName());
-                result = statement.executeQuery();
-            }
-            if (result.next()) {
-                try ( PreparedStatement update = conn.prepareStatement(
-                        "UPDATE Convolution_Kernel SET "
-                        + "  width=?, height=？, type=？, gray=？, edge=？, create_time=,？"
-                        + " modify_time=？, description=？"
-                        + " WHERE name=?"
-                )) {
-                    update.setInt(1, record.getWidth());
-                    update.setInt(2, record.getHeight());
-                    update.setInt(3, record.getType());
-                    update.setInt(4, record.getGray());
-                    update.setInt(5, record.getEdge());
-                    update.setString(6, record.getCreateTime());
-                    update.setString(7, record.getModifyTime());
-                    update.setString(8, record.getDescription());
-                    update.setString(9, record.getName());
-                    update.executeUpdate();
-                }
-
+            if (exist(conn, record.getName())) {
+                return update(conn, record);
             } else {
-                try ( PreparedStatement update = conn.prepareStatement(
-                        "INSERT INTO Convolution_Kernel "
-                        + "(name, width , height, type, gray, edge, create_time, modify_time, description) "
-                        + " VALUES( ?, ?, ?, ?, ?, ?, ?, ?, ?) "
-                )) {
-                    update.setString(1, record.getName());
-                    update.setInt(2, record.getWidth());
-                    update.setInt(3, record.getHeight());
-                    update.setInt(4, record.getType());
-                    update.setInt(5, record.getGray());
-                    update.setInt(6, record.getEdge());
-                    update.setString(7, record.getCreateTime());
-                    update.setString(8, record.getModifyTime());
-                    update.setString(9, record.getDescription());
-                    update.executeUpdate();
-                }
+                return insert(conn, record);
             }
-
-            return true;
         } catch (Exception e) {
             failed(e);
-            // logger.debug(e.toString());
+            logger.debug(e.toString());
             return false;
         }
     }
 
     public static boolean writeExamples() {
-        ConvolutionKernel.makeExample();
-        return write(ConvolutionKernel.ExampleKernels);
+        return write(ConvolutionKernel.makeExample());
     }
 
     public static boolean write(List<ConvolutionKernel> records) {
+        if (records == null || records.isEmpty()) {
+            return false;
+        }
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
-            conn.setAutoCommit(false);
             for (ConvolutionKernel k : records) {
-                boolean exist;
-                try ( PreparedStatement statement = conn.prepareStatement(
-                        " SELECT width FROM Convolution_Kernel WHERE name=?"
-                )) {
-                    statement.setString(1, k.getName());
-                    try ( ResultSet results = statement.executeQuery()) {
-                        exist = results.next();
-                    }
-                }
-                if (!exist) {
-                    try ( PreparedStatement update = conn.prepareStatement(
-                            "INSERT INTO Convolution_Kernel "
-                            + "(name, width , height, type, gray, edge, create_time, modify_time, description) "
-                            + " VALUES( ?, ?, ?, ?, ?, ?, ?, ?, ?) "
-                    )) {
-                        update.setString(1, k.getName());
-                        update.setInt(2, k.getWidth());
-                        update.setInt(3, k.getHeight());
-                        update.setInt(4, k.getType());
-                        update.setInt(5, k.getGray());
-                        update.setInt(6, k.getEdge());
-                        update.setString(7, k.getCreateTime());
-                        update.setString(8, k.getModifyTime());
-                        update.setString(9, k.getDescription());
-                        update.executeUpdate();
-                    }
+                if (exist(conn, k.getName())) {
+                    update(conn, k);
+                } else {
+                    insert(conn, k);
                 }
             }
-            conn.commit();
             return true;
         } catch (Exception e) {
             failed(e);
-            // logger.debug(e.toString());
+            logger.debug(e.toString());
             return false;
         }
     }

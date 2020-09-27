@@ -57,7 +57,12 @@ License:    Apache License Version 2.0
                             </children>
                         </HBox>
                         <WebView fx:id="mapView" minHeight="200.0" minWidth="200.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS" />
-                        <Label fx:id="bottomLabel" />
+                        <HBox alignment="CENTER_LEFT"> 
+                            <children>
+                                <Label fx:id="bottomLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                <Label fx:id="frameLabel" />
+                            </children>
+                        </HBox>
                     </children>
                 </VBox>
                 <ScrollPane fx:id="rightPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="621.0" prefViewportWidth="883.0">

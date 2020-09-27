@@ -31,8 +31,9 @@ public class MyBoxPropertiesController extends HtmlViewerController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
+            super.initControls();
 
             initTable(null);
 

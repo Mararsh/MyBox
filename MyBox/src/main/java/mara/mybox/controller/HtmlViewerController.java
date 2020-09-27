@@ -7,6 +7,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.web.WebView;
@@ -17,7 +18,9 @@ import mara.mybox.fxml.FxmlStage;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlTools;
 import mara.mybox.tools.HtmlTools.HtmlStyle;
+import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
@@ -52,8 +55,8 @@ public class HtmlViewerController extends BaseController {
         AddFileType = VisitHistory.FileType.Html;
         AddPathType = VisitHistory.FileType.Html;
 
-        sourcePathKey = "HtmlFilePath";
-        targetPathKey = "HtmlFilePath";
+        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Html);
+        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Html);
 
         sourceExtensionFilter = CommonFxValues.HtmlExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
@@ -230,7 +233,7 @@ public class HtmlViewerController extends BaseController {
     }
 
     @FXML
-    public void editAction() {
+    public void editAction(ActionEvent event) {
         File file = FileTools.getTempFile(".html");
         save(file, html, true);
     }

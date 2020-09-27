@@ -1,19 +1,25 @@
 package mara.mybox.fxml;
 
+import java.awt.Robot;
 import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.geometry.Orientation;
 import javafx.geometry.Rectangle2D;
@@ -26,17 +32,21 @@ import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -52,6 +62,8 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
+import mara.mybox.data.DoublePoint;
+import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.tools.FileTools.getFileSuffix;
 import mara.mybox.tools.MediaTools;
@@ -59,6 +71,9 @@ import mara.mybox.tools.SoundTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.MyboxDataPath;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -718,6 +733,38 @@ public class FxmlControl {
         return Screen.getPrimary().getVisualBounds();
     }
 
+    public static void mouseCenter() {
+        Rectangle2D screen = FxmlControl.getScreen();
+        try {
+            Robot robot = new Robot();
+            robot.mouseMove((int) screen.getWidth() / 2, (int) screen.getHeight() / 2);
+        } catch (Exception e) {
+        }
+    }
+
+    public static void mouseCenter(Stage stage) {
+        try {
+            Robot robot = new Robot();
+            robot.mouseMove((int) (stage.getX() + stage.getWidth() / 2), (int) (stage.getY() + stage.getHeight() / 2));
+        } catch (Exception e) {
+        }
+    }
+
+    public static void locateCenter(Stage stage, Node node) {
+        if (stage == null || node == null) {
+            return;
+        }
+        Rectangle2D screen = FxmlControl.getScreen();
+        Bounds bounds = node.localToScreen(node.getBoundsInLocal());
+        double centerX = bounds.getMinX() - stage.getWidth() / 2;
+        centerX = Math.min(screen.getWidth(), Math.max(0, centerX));
+        stage.setX(centerX);
+
+        double centerY = bounds.getMinY() - stage.getHeight() / 2;
+        centerY = Math.min(screen.getHeight(), Math.max(0, centerY));
+        stage.setY(centerY);
+    }
+
     public static void locateCenter(Region region, PopupWindow window) {
         Bounds bounds = region.localToScreen(region.getBoundsInLocal());
         window.show(region, bounds.getMinX() + bounds.getWidth() / 2, bounds.getMinY() + bounds.getHeight() / 2);
@@ -844,7 +891,7 @@ public class FxmlControl {
     // This can set more than 8 colors. javafx only supports 8 colors defined in css
     // This should be called after data have been assigned to pie
     public static void setPieColors(PieChart pie, boolean showLegend) {
-        List<String> palette = FxmlColor.randomColorsHex(pie.getData().size());
+        List<String> palette = FxmlColor.randomRGB(pie.getData().size());
         setPieColors(pie, palette, showLegend);
     }
 
@@ -939,7 +986,7 @@ public class FxmlControl {
     }
 
     public static void setBarChartColors(BarChart chart, boolean showLegend) {
-        List<String> palette = FxmlColor.randomColorsHex(chart.getData().size());
+        List<String> palette = FxmlColor.randomRGB(chart.getData().size());
         setBarChartColors(chart, palette, showLegend);
     }
 
@@ -1029,6 +1076,94 @@ public class FxmlControl {
                 }
             }
         }
+    }
+
+    public static ContextMenu popEraExample(ContextMenu inPopMenu, TextField input, MouseEvent mouseEvent) {
+        try {
+            if (inPopMenu != null && inPopMenu.isShowing()) {
+                inPopMenu.hide();
+            }
+            final ContextMenu popMenu = new ContextMenu();
+            popMenu.setAutoHide(true);
+
+            List<String> values = new ArrayList<>();
+            values.add(DateTools.nowString());
+            values.add(DateTools.datetimeToString(new Date(), CommonValues.DatetimeMs, TimeZone.getDefault()));
+            values.add(DateTools.datetimeToString(new Date(), CommonValues.TimeMs, TimeZone.getDefault()));
+            values.add(DateTools.datetimeToString(new Date(), CommonValues.DatetimeMs + " Z", TimeZone.getDefault()));
+            values.addAll(Arrays.asList(
+                    "2020-07-15T36:55:09", "960-01-23", "581",
+                    "-2020-07-10 10:10:10.532 +0800", "-960-01-23", "-581"
+            ));
+            if (AppVariables.isChinese()) {
+                values.addAll(Arrays.asList(
+                        "公元960", "公元960-01-23", "公元2020-07-10 10:10:10",
+                        "公元前202", "公元前770-12-11", "公元前1046-03-10 10:10:10"
+                ));
+            }
+            values.addAll(Arrays.asList(
+                    "202 BC", "770-12-11 BC", "1046-03-10 10:10:10 BC",
+                    "581 AD", "960-01-23 AD", "2020-07-10 10:10:10 AD"
+            ));
+
+            MenuItem menu;
+            for (String value : values) {
+                menu = new MenuItem(value);
+                menu.setOnAction((ActionEvent event) -> {
+                    input.setText(value);
+                });
+                popMenu.getItems().add(menu);
+            }
+
+            popMenu.getItems().add(new SeparatorMenuItem());
+            menu = new MenuItem(message("PopupClose"));
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    popMenu.hide();
+                }
+            });
+            popMenu.getItems().add(menu);
+
+            FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
+
+            return popMenu;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
+    public static DoublePoint getImageXY(MouseEvent event, ImageView view) {
+        if (event == null || view.getImage() == null) {
+            return null;
+        }
+        double offsetX = event.getX() - view.getLayoutX() - view.getX();
+        double offsetY = event.getY() - view.getLayoutY() - view.getY();
+        if (offsetX < 0 || offsetX >= view.getBoundsInParent().getWidth()
+                || offsetY < 0 || offsetY >= view.getBoundsInParent().getHeight()) {
+            return null;
+        }
+        double x = offsetX * view.getImage().getWidth() / view.getBoundsInParent().getWidth();
+        double y = offsetY * view.getImage().getHeight() / view.getBoundsInParent().getHeight();
+        return new DoublePoint(x, y);
+    }
+
+    public static Color imagePixel(MouseEvent event, ImageView view) {
+        DoublePoint p = getImageXY(event, view);
+        if (p == null) {
+            return null;
+        }
+        return imagePixel(p, view);
+    }
+
+    public static Color imagePixel(DoublePoint p, ImageView view) {
+        if (p == null || view == null) {
+            return null;
+        }
+        PixelReader pixelReader = view.getImage().getPixelReader();
+        return pixelReader.getColor((int) p.getX(), (int) p.getY());
     }
 
 }

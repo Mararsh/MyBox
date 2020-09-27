@@ -35,6 +35,7 @@ import mara.mybox.data.VisitHistory;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlTools;
+import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
@@ -58,7 +59,7 @@ public class MarkdownEditerController extends TextEditerController {
     @FXML
     protected TabPane tabPane;
     @FXML
-    protected Tab markdownTab, htmlTab, codesTab, textTab;
+    protected Tab htmlTab, codesTab, textTab;
     @FXML
     protected WebView webView;
     @FXML
@@ -76,7 +77,7 @@ public class MarkdownEditerController extends TextEditerController {
 
     public MarkdownEditerController() {
         baseTitle = AppVariables.message("MarkdownEditer");
-
+        TipsLabelKey = "MarkdownEditerTips";
         editType = Edit_Type.Text;
 
         SourceFileType = VisitHistory.FileType.Markdown;
@@ -86,7 +87,7 @@ public class MarkdownEditerController extends TextEditerController {
         AddFileType = VisitHistory.FileType.Markdown;
         AddPathType = VisitHistory.FileType.Markdown;
 
-        sourcePathKey = "MarkdownFilePath";
+        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Markdown);
         PageSizeKey = "MarkdownPageSize";
 
         sourceExtensionFilter = CommonFxValues.MarkdownExtensionFilter;
@@ -96,27 +97,20 @@ public class MarkdownEditerController extends TextEditerController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
             initPage(null);
-            initFileTab();
-            initConversionOptions();
-            initCharsetTab();
-            initLocateTab();
-            initReplaceTab();
-            initInputPane();
+            super.initControls();
 
-            initMainArea();
+            initConversionOptions();
+            initInputPane();
             initHtmlTab();
             initTextTab();
 
             tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
                 @Override
-                public void changed(ObservableValue<? extends Tab> observable,
-                        Tab oldValue, Tab newValue) {
-                    if (markdownTab.equals(oldValue)) {
-                        markdown2all();
-                    }
+                public void changed(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) {
+                    setPairArea(null);
                 }
             });
 
@@ -127,9 +121,9 @@ public class MarkdownEditerController extends TextEditerController {
     }
 
     @Override
-    protected void initMainArea() {
+    protected void initMainBox() {
         try {
-            super.initMainArea();
+            super.initMainBox();
             mdBox.disableProperty().bind(mainArea.textProperty().isEmpty());
         } catch (Exception e) {
             logger.error(e.toString());
@@ -256,6 +250,69 @@ public class MarkdownEditerController extends TextEditerController {
         }
     }
 
+    @Override
+    protected void setPairArea(String text) {
+        if (isSettingValues || !splitPane.getItems().contains(rightPane)) {
+            return;
+        }
+        Tab tab = tabPane.getSelectionModel().getSelectedItem();
+        if (tab == textTab) {
+            markdown2text();
+        } else {
+            markdown2html();
+        }
+    }
+
+    @Override
+    protected void setPairAreaSelection() {
+        if (isSettingValues || !splitPane.getItems().contains(rightPane)) {
+            return;
+        }
+//        isSettingValues = true;
+//        pairArea.deselect();
+//        final String text = mainArea.getText();
+//        if (!text.isEmpty()) {
+//            IndexRange hexRange = TextTools.hexIndex(text, sourceInformation.getCharset(),
+//                    sourceInformation.getLineBreakValue(), mainArea.getSelection());
+//            int bomLen = 0;
+//            if (sourceInformation.isWithBom()) {
+//                bomLen = TextTools.bomHex(sourceInformation.getCharset().name()).length() + 1;
+//            }
+//            pairArea.selectRange(hexRange.getStart() + bomLen, hexRange.getEnd() + bomLen);
+//            pairArea.setScrollTop(mainArea.getScrollTop());
+//        }
+//        isSettingValues = false;
+    }
+
+    @Override
+    protected void clearPairArea() {
+        htmlArea.setText("");
+        if (webEngine != null) {
+            webEngine.loadContent("");
+        }
+        textArea.setText("");
+    }
+
+    @Override
+    protected void scrollTopPairArea(double value) {
+//        if (isSettingValues || !splitPane.getItems().contains(rightPane)) {
+//            return;
+//        }
+//        isSettingValues = true;
+//        pairArea.setScrollTop(value);
+//        isSettingValues = false;
+    }
+
+    @Override
+    protected void scrollLeftPairArea(double value) {
+//        if (isSettingValues || !splitPane.getItems().contains(rightPane)) {
+//            return;
+//        }
+//        isSettingValues = true;
+//        pairArea.setScrollLeft(value);
+//        isSettingValues = false;
+    }
+
     protected void makeConverter() {
         try {
             parserOptions = new MutableDataSet();
@@ -284,6 +341,7 @@ public class MarkdownEditerController extends TextEditerController {
     }
 
     protected void markdown2html() {
+        webEngine.getLoadWorker().cancel();
         if (mainArea.getText().isEmpty()) {
             htmlArea.setText("");
             webEngine.loadContent("");
@@ -305,8 +363,13 @@ public class MarkdownEditerController extends TextEditerController {
 
                 @Override
                 protected void whenSucceeded() {
-                    htmlArea.setText(html);
-                    webEngine.loadContent(html);
+                    try {
+                        htmlArea.setText(html);
+                        webEngine.loadContent(html);
+                    } catch (Exception e) {
+                        logger.debug(e.toString());
+                        webEngine.getLoadWorker().cancel();
+                    }
                 }
 
             };
@@ -658,12 +721,12 @@ public class MarkdownEditerController extends TextEditerController {
             if (sourceFile != null) {
                 name = FileTools.getFilePrefix(sourceFile.getName());
             }
-            final File file = chooseSaveFile(AppVariables.getUserConfigPath("HtmlFilePath"),
+            final File file = chooseSaveFile(AppVariables.getUserConfigPath(VisitHistoryTools.getPathKey(VisitHistory.FileType.Html)),
                     name, CommonFxValues.HtmlExtensionFilter, true);
             if (file == null) {
                 return;
             }
-            recordFileWritten(file, "HtmlFilePath",
+            recordFileWritten(file, VisitHistoryTools.getPathKey(VisitHistory.FileType.Html),
                     VisitHistory.FileType.Html, VisitHistory.FileType.Html);
 
             task = new SingletonTask<Void>() {
@@ -694,7 +757,7 @@ public class MarkdownEditerController extends TextEditerController {
 
             @Override
             public List<VisitHistory> recentPaths() {
-                return VisitHistory.getRecentPath(VisitHistory.FileType.Html);
+                return VisitHistoryTools.getRecentPath(VisitHistory.FileType.Html);
             }
 
             @Override
@@ -714,7 +777,7 @@ public class MarkdownEditerController extends TextEditerController {
                     handleSelect();
                     return;
                 }
-                AppVariables.setUserConfigValue("HtmlFilePath", fname);
+                AppVariables.setUserConfigValue(VisitHistoryTools.getPathKey(VisitHistory.FileType.Html), fname);
                 handleSelect();
             }
 
@@ -748,12 +811,12 @@ public class MarkdownEditerController extends TextEditerController {
             if (sourceFile != null) {
                 name = FileTools.getFilePrefix(sourceFile.getName());
             }
-            final File file = chooseSaveFile(AppVariables.getUserConfigPath("TextFilePath"),
+            final File file = chooseSaveFile(AppVariables.getUserConfigPath(VisitHistoryTools.getPathKey(VisitHistory.FileType.Text)),
                     name, CommonFxValues.TextExtensionFilter, true);
             if (file == null) {
                 return;
             }
-            recordFileWritten(file, "TextFilePath",
+            recordFileWritten(file, VisitHistoryTools.getPathKey(VisitHistory.FileType.Text),
                     VisitHistory.FileType.Text, VisitHistory.FileType.Text);
 
             task = new SingletonTask<Void>() {
@@ -784,7 +847,7 @@ public class MarkdownEditerController extends TextEditerController {
 
             @Override
             public List<VisitHistory> recentPaths() {
-                return VisitHistory.getRecentPath(VisitHistory.FileType.Text);
+                return VisitHistoryTools.getRecentPath(VisitHistory.FileType.Text);
             }
 
             @Override
@@ -804,7 +867,7 @@ public class MarkdownEditerController extends TextEditerController {
                     handleSelect();
                     return;
                 }
-                AppVariables.setUserConfigValue("TextFilePath", fname);
+                AppVariables.setUserConfigValue(VisitHistoryTools.getPathKey(VisitHistory.FileType.Text), fname);
                 handleSelect();
             }
 
@@ -815,9 +878,7 @@ public class MarkdownEditerController extends TextEditerController {
     @Override
     public void createAction() {
         super.createAction();
-        htmlArea.setText("");
-        webEngine.loadContent("");
-        textArea.setText("");
+        clearPairArea();
     }
 
     @Override

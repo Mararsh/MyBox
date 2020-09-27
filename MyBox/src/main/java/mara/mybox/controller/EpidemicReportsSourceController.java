@@ -6,6 +6,7 @@ import javafx.scene.control.CheckBoxTreeItem;
 import mara.mybox.data.EpidemicReport;
 import mara.mybox.fxml.ConditionNode;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -13,7 +14,7 @@ import static mara.mybox.value.AppVariables.message;
  * @CreateDate 2020-04-19
  * @License Apache License Version 2.0
  */
-public class EpidemicReportsSourceController extends ConditionTreeController {
+public class EpidemicReportsSourceController extends ControlConditionTree {
 
     protected List<String> datasets;
 
@@ -21,9 +22,9 @@ public class EpidemicReportsSourceController extends ConditionTreeController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
-            super.initializeNext();
+            super.initControls();
             List<String> s = new ArrayList();
             s.add(message("Dataset"));
             treeView.setSelectedTitles(s);

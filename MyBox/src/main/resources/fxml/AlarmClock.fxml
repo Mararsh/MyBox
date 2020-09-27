@@ -88,7 +88,7 @@ License:    Apache License Version 2.0
                                                 <Insets top="10.0" />
                                             </VBox.margin>
                                         </Label>
-                                        <RadioButton fx:id="miaoButton" mnemonicParsing="false" selected="true">
+                                        <RadioButton fx:id="miaoRadio" mnemonicParsing="false" selected="true">
                                             <toggleGroup>
                                                 <ToggleGroup fx:id="soundGroup" />
                                             </toggleGroup>
@@ -97,7 +97,7 @@ License:    Apache License Version 2.0
                                                     <image>
                                                         <Image url="@../buttons/iconCat.png" />
                                                     </image>
-                                                </ImageView> 
+                                                </ImageView>
                                             </graphic>
                                         </RadioButton>
                                         <FlowPane hgap="5.0" layoutX="10.0" layoutY="733.0" vgap="5.0">
@@ -136,23 +136,23 @@ License:    Apache License Version 2.0
                                                 <TextField fx:id="urlInput" maxWidth="1.7976931348623157E308" />
                                             </children>
                                         </FlowPane>
-                              <FlowPane hgap="5.0" prefWidth="300.0" prefWrapLength="300.0" vgap="5.0">
-                                 <children>
-                                    <Button fx:id="playButton" mnemonicParsing="false" onAction="#playAction">
-                                       <graphic>
-                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../buttons/iconPlay.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                    </Button>
-                                    <Label text="%VoiceVolumn" />
-                                    <Slider fx:id="volumeSlider" prefWidth="80.0" value="100.0" />
-                                    <Label text="%Loop" />
-                                    <TextField fx:id="loopInput" prefWidth="78.0" text="1" />
-                                 </children>
-                              </FlowPane>
+                                        <FlowPane hgap="5.0" prefWidth="300.0" prefWrapLength="300.0" vgap="5.0">
+                                            <children>
+                                                <Button fx:id="playButton" mnemonicParsing="false" onAction="#playAction">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconPlay.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Label text="%VoiceVolumn" />
+                                                <Slider fx:id="volumeSlider" prefWidth="80.0" value="100.0" />
+                                                <Label text="%Loop" />
+                                                <TextField fx:id="loopInput" prefWidth="78.0" text="1" />
+                                            </children>
+                                        </FlowPane>
                                         <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Add" />
                                     </children>
                                     <padding>

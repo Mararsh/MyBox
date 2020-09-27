@@ -19,6 +19,7 @@ import mara.mybox.tools.BarcodeTools.BarcodeType;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**

@@ -8,6 +8,7 @@ import mara.mybox.tools.DateTools;
 import static mara.mybox.tools.FileTools.showFileSize;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara

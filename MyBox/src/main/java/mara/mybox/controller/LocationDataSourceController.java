@@ -6,6 +6,7 @@ import javafx.scene.control.CheckBoxTreeItem;
 import mara.mybox.data.Dataset;
 import mara.mybox.fxml.ConditionNode;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -13,7 +14,7 @@ import static mara.mybox.value.AppVariables.message;
  * @CreateDate 2020-7-7
  * @License Apache License Version 2.0
  */
-public class LocationDataSourceController extends ConditionTreeController {
+public class LocationDataSourceController extends ControlConditionTree {
 
     protected List<Dataset> datasets;
 
@@ -21,9 +22,9 @@ public class LocationDataSourceController extends ConditionTreeController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
-            super.initializeNext();
+            super.initControls();
             List<String> s = new ArrayList();
             s.add(message("Dataset"));
             treeView.setSelectedTitles(s);
@@ -56,7 +57,7 @@ public class LocationDataSourceController extends ConditionTreeController {
                 CheckBoxTreeItem<ConditionNode> datasetItem = new CheckBoxTreeItem(
                         ConditionNode.create(name)
                                 .setTitle(name)
-                                .setCondition(" datasetid=" + dataset.getId())
+                                .setCondition(" datasetid=" + dataset.getDsid())
                 );
                 datasetItem.setExpanded(true);
                 allItem.getChildren().add(datasetItem);

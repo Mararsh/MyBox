@@ -1,0 +1,656 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.scene.canvas.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.web.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.effect.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufactureScopeController">
+    <children>
+        <SplitPane fx:id="splitPane" dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+            <items>
+                <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE">
+                    <tabs>
+                        <Tab text="%DefineScope">
+                            <content>
+                                <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="1278.0" prefViewportWidth="550.0">
+                                    <content>
+                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                            <children>
+                                                <Label minWidth="-Infinity" text="%ScopeType" wrapText="true" VBox.vgrow="NEVER">
+                                                    <VBox.margin>
+                                                        <Insets top="10.0" />
+                                                    </VBox.margin>
+                                                </Label>
+                                                <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="953.0" spacing="5.0" VBox.vgrow="NEVER">
+                                                    <children>
+                                                        <RadioButton fx:id="scopeAllRadio" layoutX="166.0" layoutY="10.0" mnemonicParsing="false" selected="true">
+                                                            <toggleGroup>
+                                                                <ToggleGroup fx:id="scopeTypeGroup" />
+                                                            </toggleGroup>
+                                                            <graphic>
+                                                                <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/iconPicSmall.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </RadioButton>
+                                                        <RadioButton fx:id="scopeMattingRadio" mnemonicParsing="false" toggleGroup="$scopeTypeGroup">
+                                                            <graphic>
+                                                                <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/iconColorFill.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </RadioButton>
+                                                        <RadioButton fx:id="scopeColorRadio" mnemonicParsing="false" toggleGroup="$scopeTypeGroup">
+                                                            <graphic>
+                                                                <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/iconColorWheel.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </RadioButton>
+                                                        <RadioButton fx:id="scopeOutlineRadio" mnemonicParsing="false" toggleGroup="$scopeTypeGroup">
+                                                            <graphic>
+                                                                <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/IconButterfly.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </RadioButton>
+                                                    </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="50.0" spacing="5.0" VBox.vgrow="NEVER">
+                                                    <children>
+                                                        <RadioButton fx:id="scopeRectangleRadio" mnemonicParsing="false" toggleGroup="$scopeTypeGroup">
+                                                            <graphic>
+                                                                <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/iconRectangle.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </RadioButton>
+                                                        <RadioButton fx:id="scopeCircleRadio" mnemonicParsing="false" toggleGroup="$scopeTypeGroup">
+                                                            <graphic>
+                                                                <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/iconCircle.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </RadioButton>
+                                                        <RadioButton fx:id="scopeEllipseRadio" mnemonicParsing="false" toggleGroup="$scopeTypeGroup">
+                                                            <graphic>
+                                                                <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/iconEllipse.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </RadioButton>
+                                                        <RadioButton fx:id="scopePolygonRadio" mnemonicParsing="false" toggleGroup="$scopeTypeGroup">
+                                                            <graphic>
+                                                                <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/iconStar.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </RadioButton>
+                                                    </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="948.0" spacing="5.0" VBox.vgrow="NEVER">
+                                                    <children>
+                                                        <RadioButton fx:id="scopeRectangleColorRadio" mnemonicParsing="false" toggleGroup="$scopeTypeGroup">
+                                                            <graphic>
+                                                                <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/iconRectangleFilled.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </RadioButton>
+                                                        <RadioButton fx:id="scopeCircleColorRadio" mnemonicParsing="false" toggleGroup="$scopeTypeGroup">
+                                                            <graphic>
+                                                                <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/iconCircleFilled.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </RadioButton>
+                                                        <RadioButton fx:id="scopeEllipseColorRadio" mnemonicParsing="false" toggleGroup="$scopeTypeGroup">
+                                                            <graphic>
+                                                                <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/iconEllipseFilled.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </RadioButton>
+                                                        <RadioButton fx:id="scopePolygonColorRadio" mnemonicParsing="false" toggleGroup="$scopeTypeGroup">
+                                                            <graphic>
+                                                                <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/iconStarFilled.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </RadioButton>
+                                                    </children>
+                                                </HBox>
+                                                <Label fx:id="scopeTips" minHeight="-Infinity" styleClass="blue-label" stylesheets="@../styles/MyBox.css" wrapText="true">
+                                                    <VBox.margin>
+                                                        <Insets top="10.0" />
+                                                    </VBox.margin>
+                                                </Label>
+                                                <VBox fx:id="scopeEditBox" spacing="5.0" VBox.vgrow="NEVER">
+                                                    <children>
+                                                        <VBox fx:id="scopeSetBox" spacing="5.0" VBox.vgrow="NEVER">
+                                                            <children>
+                                                <VBox fx:id="rectangleBox" layoutX="10.0" layoutY="10.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                                   <children>
+                                                      <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                                                         <children>
+                                                            <Label fx:id="rectangleLabel" text="%Rectangle" />
+                                                            <Button fx:id="okRectangleButton" mnemonicParsing="false" onAction="#okRectangle">
+                                                               <graphic>
+                                                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                     <image>
+                                                                        <Image url="@../buttons/iconOK.png" />
+                                                                     </image>
+                                                                  </ImageView>
+                                                               </graphic>
+                                                            </Button>
+                                                         </children>
+                                                      </HBox>
+                                                      <FlowPane hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
+                                                         <children>
+                                                            <Label text="%LeftTop" />
+                                                            <Label text="x">
+                                                               <FlowPane.margin>
+                                                                  <Insets left="10.0" />
+                                                               </FlowPane.margin>
+                                                            </Label>
+                                                            <TextField fx:id="rectLeftTopXInput" prefWidth="100.0" />
+                                                            <Label layoutX="96.0" layoutY="19.0" text="y" />
+                                                            <TextField fx:id="rectLeftTopYInput" layoutX="115.0" layoutY="10.0" prefWidth="100.0" />
+                                                         </children>
+                                                      </FlowPane>
+                                                      <FlowPane hgap="5.0" layoutX="15.0" layoutY="73.0" vgap="5.0">
+                                                         <children>
+                                                            <Label text="%RightBottom" />
+                                                            <Label text="x">
+                                                               <FlowPane.margin>
+                                                                  <Insets left="10.0" />
+                                                               </FlowPane.margin>
+                                                            </Label>
+                                                            <TextField fx:id="rightBottomXInput" prefWidth="100.0" />
+                                                            <Label layoutX="96.0" layoutY="19.0" text="y" />
+                                                            <TextField fx:id="rightBottomYInput" layoutX="115.0" layoutY="10.0" prefWidth="100.0" />
+                                                         </children>
+                                                      </FlowPane>
+                                                   </children>
+                                                </VBox>
+                                                <VBox fx:id="circleBox" layoutX="10.0" layoutY="10.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                                   <children>
+                                                      <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                                                         <children>
+                                                            <Label text="%Circle" />
+                                                            <Button fx:id="okCircleButton" mnemonicParsing="false" onAction="#okCircle">
+                                                               <graphic>
+                                                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                     <image>
+                                                                        <Image url="@../buttons/iconOK.png" />
+                                                                     </image>
+                                                                  </ImageView>
+                                                               </graphic>
+                                                            </Button>
+                                                         </children>
+                                                      </HBox>
+                                                      <FlowPane hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
+                                                         <children>
+                                                            <Label text="%Center" />
+                                                            <Label text="x">
+                                                               <FlowPane.margin>
+                                                                  <Insets left="10.0" />
+                                                               </FlowPane.margin>
+                                                            </Label>
+                                                            <TextField fx:id="circleCenterXInput" prefWidth="100.0" />
+                                                            <Label layoutX="96.0" layoutY="19.0" text="y" />
+                                                            <TextField fx:id="circleCenterYInput" layoutX="115.0" layoutY="10.0" prefWidth="100.0" />
+                                                         </children>
+                                                      </FlowPane>
+                                                      <FlowPane hgap="5.0" layoutX="15.0" layoutY="73.0" vgap="5.0">
+                                                         <children>
+                                                            <Label text="%Radius" />
+                                                            <TextField fx:id="circleRadiusInput" prefWidth="100.0" />
+                                                         </children>
+                                                      </FlowPane>
+                                                   </children>
+                                                </VBox>
+                                                                <VBox fx:id="scopePointsBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
+                                                                    <children>
+                                                                        <HBox fx:id="pointsSetBox1" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                                                                            <children>
+                                                                                <Label text="%Points" />
+                                                                                <Button fx:id="deletePointsButton" mnemonicParsing="false" onAction="#deletePoints">
+                                                                                    <graphic>
+                                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                            <image>
+                                                                                                <Image url="@../buttons/iconDelete.png" />
+                                                                                            </image>
+                                                                                        </ImageView>
+                                                                                    </graphic>
+                                                                                </Button>
+                                                                                <Button fx:id="clearPointsButton" mnemonicParsing="false" onAction="#clearPoints">
+                                                                                    <graphic>
+                                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                            <image>
+                                                                                                <Image url="@../buttons/iconClear.png" />
+                                                                                            </image>
+                                                                                        </ImageView>
+                                                                                    </graphic>
+                                                                                </Button>
+                                                                                <Label fx:id="pointsSizeLabel" text=" " />
+                                                                            </children>
+                                                                        </HBox>
+                                                                        <ListView fx:id="pointsList" maxHeight="1.7976931348623157E308" minHeight="100.0" VBox.vgrow="ALWAYS" />
+                                                                        <CheckBox fx:id="areaExcludedCheck" mnemonicParsing="false" text="%AreaExclude" />
+                                                                    </children>
+                                                                </VBox>
+                                                                <VBox fx:id="scopeColorsBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
+                                                                    <children>
+                                                                        <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                                                                            <children>
+                                                                                <Label text="%Colors" />
+                                                                                <Button fx:id="saveColorsButton" mnemonicParsing="false" onMouseEntered="#popSaveColorsMenu">
+                                                                                    <graphic>
+                                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                            <image>
+                                                                                                <Image url="@../buttons/iconSave.png" />
+                                                                                            </image>
+                                                                                        </ImageView>
+                                                                                    </graphic>
+                                                                                </Button>
+                                                                                <Label fx:id="colorsSizeLabel" text=" " HBox.hgrow="NEVER">
+                                                                                    <HBox.margin>
+                                                                                        <Insets left="20.0" />
+                                                                                    </HBox.margin>
+                                                                                </Label>
+                                                                            </children>
+                                                                        </HBox>
+                                                                        <HBox fx:id="pointsSetBox" alignment="CENTER_LEFT" spacing="5.0">
+                                                                            <children>
+                                                                                <fx:include fx:id="colorSet" source="ColorSet.fxml" />
+                                                                                <CheckBox fx:id="pickColorCheck" mnemonicParsing="false">
+                                                                                    <graphic>
+                                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                            <image>
+                                                                                                <Image url="@../buttons/iconPickColor.png" />
+                                                                                            </image>
+                                                                                        </ImageView>
+                                                                                    </graphic>
+                                                                                </CheckBox>
+                                                                                <Button fx:id="deleteColorsButton" mnemonicParsing="false" onAction="#deleteColors">
+                                                                                    <graphic>
+                                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                            <image>
+                                                                                                <Image url="@../buttons/iconDelete.png" />
+                                                                                            </image>
+                                                                                        </ImageView>
+                                                                                    </graphic>
+                                                                                </Button>
+                                                                                <Button fx:id="clearColorsButton" mnemonicParsing="false" onAction="#clearColors">
+                                                                                    <graphic>
+                                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                            <image>
+                                                                                                <Image url="@../buttons/iconClear.png" />
+                                                                                            </image>
+                                                                                        </ImageView>
+                                                                                    </graphic>
+                                                                                </Button>
+                                                                            </children>
+                                                                        </HBox>
+                                                                        <ListView fx:id="colorsList" maxHeight="1.7976931348623157E308" minHeight="100.0" VBox.vgrow="ALWAYS" />
+                                                                        <CheckBox fx:id="eightNeighborCheck" mnemonicParsing="false" selected="true" text="%EightNeighbor" />
+                                                                    </children>
+                                                                </VBox>
+                                                                <VBox fx:id="colorMatchBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
+                                                                    <children>
+                                                                        <Label text="%Match" VBox.vgrow="NEVER" />
+                                                                        <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                                                                            <children>
+                                                                                <RadioButton fx:id="colorRGBRadio" selected="true">
+                                                                                    <graphic>
+                                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                            <image>
+                                                                                                <Image url="@../buttons/iconRGB.png" />
+                                                                                            </image>
+                                                                                        </ImageView>
+                                                                                    </graphic>
+                                                                                    <toggleGroup>
+                                                                                        <ToggleGroup fx:id="matchGroup" />
+                                                                                    </toggleGroup>
+                                                                                </RadioButton>
+                                                                                <RadioButton fx:id="colorSaturationRadio" toggleGroup="$matchGroup">
+                                                                                    <graphic>
+                                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                            <image>
+                                                                                                <Image url="@../buttons/iconSaturation.png" />
+                                                                                            </image>
+                                                                                        </ImageView>
+                                                                                    </graphic>
+                                                                                </RadioButton>
+                                                                                <RadioButton fx:id="colorHueRadio" toggleGroup="$matchGroup">
+                                                                                    <graphic>
+                                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                            <image>
+                                                                                                <Image url="@../buttons/iconHue.png" />
+                                                                                            </image>
+                                                                                        </ImageView>
+                                                                                    </graphic>
+                                                                                </RadioButton>
+                                                                                <RadioButton fx:id="colorBrightnessRadio" toggleGroup="$matchGroup">
+                                                                                    <graphic>
+                                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                            <image>
+                                                                                                <Image url="@../buttons/iconBrightness.png" />
+                                                                                            </image>
+                                                                                        </ImageView>
+                                                                                    </graphic>
+                                                                                </RadioButton>
+                                                                            </children>
+                                                                        </HBox>
+                                                                        <HBox alignment="CENTER_LEFT" layoutX="15.0" layoutY="55.0" spacing="5.0" VBox.vgrow="NEVER">
+                                                                            <children>
+                                                                                <RadioButton fx:id="colorRedRadio" toggleGroup="$matchGroup">
+                                                                                    <graphic>
+                                                                                        <Rectangle fx:id="redRect" fill="red" height="15.0" stroke="BLACK" strokeType="INSIDE" width="15.0" />
+                                                                                    </graphic>
+                                                                                </RadioButton>
+                                                                                <RadioButton fx:id="colorGreenRadio" toggleGroup="$matchGroup">
+                                                                                    <graphic>
+                                                                                        <Rectangle fx:id="greenRect" fill="green" height="15.0" stroke="BLACK" strokeType="INSIDE" width="15.0" />
+                                                                                    </graphic>
+                                                                                </RadioButton>
+                                                                                <RadioButton fx:id="colorBlueRadio" toggleGroup="$matchGroup">
+                                                                                    <graphic>
+                                                                                        <Rectangle fx:id="blueRect" fill="blue" height="15.0" stroke="BLACK" strokeType="INSIDE" width="15.0" />
+                                                                                    </graphic>
+                                                                                </RadioButton>
+                                                                            </children>
+                                                                        </HBox>
+                                                      <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                                                         <children>
+                                                                              <Label text="%Distance" VBox.vgrow="NEVER" />
+                                                                                <ImageView fx:id="distanceTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/iconTips.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                         </children>
+                                                      </HBox>
+                                                                        <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                                                                            <children>
+                                                                                <ComboBox fx:id="scopeDistanceSelector" editable="true" prefWidth="200.0" />
+                                                                            </children>
+                                                                        </HBox>
+                                                                        <CheckBox fx:id="colorExcludedCheck" mnemonicParsing="false" text="%ColorExclude" />
+                                                                    </children>
+                                                                </VBox>
+                                                                <VBox fx:id="scopeOutlineBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
+                                                                    <children>
+                                                                        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="389.0" spacing="5.0">
+                                                                            <children>
+                                                                                <Label text="%Picture" />
+                                                                                <Button fx:id="scopeOutlineFileButton" mnemonicParsing="false" onAction="#selectOutlineFile" onMouseEntered="#popOutlineFile">
+                                                                                    <graphic>
+                                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                                            <image>
+                                                                                                <Image url="@../buttons/iconOpen.png" />
+                                                                                            </image>
+                                                                                        </ImageView>
+                                                                                    </graphic>
+                                                                                </Button>
+                                                                                <CheckBox fx:id="scopeOutlineKeepRatioCheck" mnemonicParsing="false">
+                                                                                    <graphic>
+                                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                                            <image>
+                                                                                                <Image url="@../buttons/iconAspectRatio.png" />
+                                                                                            </image>
+                                                                                        </ImageView>
+                                                                                    </graphic>
+                                                                                </CheckBox>
+                                                                            </children>
+                                                                        </HBox>
+                                                      <ListView fx:id="outlinesList" maxHeight="1.7976931348623157E308" minHeight="100.0" VBox.vgrow="ALWAYS" />
+                                                                    </children>
+                                                                </VBox>
+                                                            </children>
+                                                            <VBox.margin>
+                                                                <Insets />
+                                                            </VBox.margin>
+                                                        </VBox>
+                                                        <Label text="%Opacity" VBox.vgrow="NEVER">
+                                                            <VBox.margin>
+                                                                <Insets top="10.0" />
+                                                            </VBox.margin>
+                                                        </Label>
+                                                        <ComboBox fx:id="opacitySelector" prefWidth="300.0" VBox.vgrow="NEVER" />
+                                                        <Label text="%ScopeName">
+                                                            <VBox.margin>
+                                                                <Insets top="10.0" />
+                                                            </VBox.margin>
+                                                        </Label>
+                                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
+                                                            <children>
+                                                                <TextField fx:id="scopeNameInput" prefWidth="240.0" />
+                                                                <Button fx:id="saveScopeButton" mnemonicParsing="false" onAction="#saveScope">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/iconSave.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
+                                                            </children>
+                                                        </HBox>
+                                                    </children>
+                                                </VBox>
+                                            </children>
+                                        </VBox>
+                                    </content>
+                                </ScrollPane>
+                            </content>
+                        </Tab>
+                        <Tab text="%SavedScopes">
+                            <content>
+                                <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="1278.0" prefViewportWidth="474.0">
+                                    <content>
+                                        <VBox fx:id="scopeManageBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                            <children>
+                                                <HBox fx:id="scopesBox" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                                                    <children>
+                                          <Button fx:id="refreshScopesButton" layoutX="132.0" layoutY="10.0" mnemonicParsing="false" onAction="#refreshScopes">
+                                             <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../buttons/iconRefresh.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </Button>
+                                                        <Button fx:id="clearScopesButton" mnemonicParsing="false" onAction="#clearScopes">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/iconClear.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
+                                                        <Button fx:id="deleteScopesButton" mnemonicParsing="false" onAction="#deleteScopes">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/iconDelete.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
+                                                        <Button fx:id="useScopeButton" mnemonicParsing="false" onAction="#useScope">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/iconYes.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
+                                                    </children>
+                                                </HBox>
+                                    <ListView fx:id="scopesList" maxHeight="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
+                                            </children>
+                                        </VBox>
+                                    </content>
+                                </ScrollPane>
+                            </content>
+                        </Tab>
+                    </tabs>
+                </TabPane>
+                <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="310.0" prefViewportWidth="448.0" VBox.vgrow="ALWAYS">
+                    <content>
+                        <AnchorPane fx:id="maskPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#paneClicked" onMouseDragged="#mouseDragged" onMouseMoved="#showXY" onMousePressed="#mousePressed" onMouseReleased="#mouseReleased" VBox.vgrow="ALWAYS">
+                            <children>
+                                <ImageView fx:id="imageView" cache="true" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
+                                <ImageView fx:id="scopeView" cache="true" fitHeight="100.0" fitWidth="100.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" />
+                                <Rectangle fx:id="borderLine" arcHeight="5.0" arcWidth="5.0" disable="true" fill="#ffffff00" height="200.0" layoutX="30.0" layoutY="74.0" onMousePressed="#handlerPressed" onMouseReleased="#rectangleReleased" stroke="#cccccc" strokeType="OUTSIDE" width="200.0">
+                                    <cursor>
+                                        <Cursor fx:constant="NONE" />
+                                    </cursor>
+                                </Rectangle>
+                                <Text fx:id="sizeText" fill="#cccccc" layoutX="10.0" layoutY="10.0" strokeType="OUTSIDE" strokeWidth="0.0" x="200.0" y="200.0" />
+                                <Rectangle fx:id="maskRectangleLine" arcHeight="5.0" arcWidth="5.0" fill="#ffffff00" height="200.0" layoutX="20.0" layoutY="64.0" onMousePressed="#handlerPressed" onMouseReleased="#rectangleReleased" stroke="RED" strokeType="INSIDE" width="200.0">
+                                    <cursor>
+                                        <Cursor fx:constant="MOVE" />
+                                    </cursor>
+                                </Rectangle>
+                                <Circle fx:id="maskCircleLine" fill="#ffffff00" layoutX="210.0" layoutY="141.0" onMousePressed="#handlerPressed" onMouseReleased="#circleReleased" radius="139.0" stroke="RED" strokeType="INSIDE">
+                                    <cursor>
+                                        <Cursor fx:constant="MOVE" />
+                                    </cursor>
+                                </Circle>
+                                <Ellipse fx:id="maskEllipseLine" fill="#ffffff00" layoutX="130.0" layoutY="181.0" onMousePressed="#handlerPressed" onMouseReleased="#ellipseReleased" radiusX="100.0" radiusY="80.0" stroke="RED" strokeType="INSIDE">
+                                    <cursor>
+                                        <Cursor fx:constant="MOVE" />
+                                    </cursor>
+                                </Ellipse>
+                                <Polygon fx:id="maskPolygonLine" fill="#ffffff00" layoutX="70.0" layoutY="124.0" stroke="RED" strokeType="INSIDE">
+                                    <cursor>
+                                        <Cursor fx:constant="DEFAULT" />
+                                    </cursor>
+                                    <points>
+                                        <Double fx:value="-50.0" />
+                                        <Double fx:value="40.0" />
+                                        <Double fx:value="50.0" />
+                                        <Double fx:value="40.0" />
+                                        <Double fx:value="0.0" />
+                                        <Double fx:value="-60.0" />
+                                    </points>
+                                </Polygon>
+                                <Rectangle fx:id="polygonP1" fill="#ffffff00" height="10.0" layoutX="30.0" layoutY="21.0" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                    <cursor>
+                                        <Cursor fx:constant="NONE" />
+                                    </cursor>
+                                </Rectangle>
+                                <Rectangle fx:id="polygonP2" fill="#ffffff00" height="10.0" layoutX="50.0" layoutY="21.0" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                    <cursor>
+                                        <Cursor fx:constant="NONE" />
+                                    </cursor>
+                                </Rectangle>
+                                <Polyline fx:id="maskPolyline" fill="#ffffff00" layoutX="55.0" layoutY="81.0" stroke="RED" strokeType="INSIDE">
+                                    <points>
+                                        <Double fx:value="-50.0" />
+                                        <Double fx:value="-40.0" />
+                                        <Double fx:value="50.0" />
+                                        <Double fx:value="-40.0" />
+                                        <Double fx:value="0.0" />
+                                        <Double fx:value="60.0" />
+                                        <Double fx:value="-50.0" />
+                                        <Double fx:value="-40.0" />
+                                    </points>
+                                </Polyline>
+                                <Rectangle fx:id="topLeftHandler" fill="#ffffff00" height="10.0" layoutX="70.0" layoutY="41.0" onMousePressed="#handlerPressed" onMouseReleased="#topLeftHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                    <cursor>
+                                        <Cursor fx:constant="NW_RESIZE" />
+                                    </cursor>
+                                </Rectangle>
+                                <Rectangle fx:id="bottomRightHandler" fill="#ffffff00" height="10.0" layoutX="50.0" layoutY="41.0" onMousePressed="#handlerPressed" onMouseReleased="#bottomRightHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                    <cursor>
+                                        <Cursor fx:constant="SE_RESIZE" />
+                                    </cursor>
+                                </Rectangle>
+                                <Rectangle fx:id="bottomCenterHandler" fill="#ffffff00" height="10.0" layoutX="130.0" layoutY="41.0" onMousePressed="#handlerPressed" onMouseReleased="#bottomCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                    <cursor>
+                                        <Cursor fx:constant="N_RESIZE" />
+                                    </cursor>
+                                </Rectangle>
+                                <Rectangle fx:id="topCenterHandler" fill="#ffffff00" height="10.0" layoutX="110.0" layoutY="41.0" onMousePressed="#handlerPressed" onMouseReleased="#topCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                    <cursor>
+                                        <Cursor fx:constant="N_RESIZE" />
+                                    </cursor>
+                                </Rectangle>
+                                <Rectangle fx:id="bottomLeftHandler" fill="#ffffff00" height="10.0" layoutX="150.0" layoutY="41.0" onMousePressed="#handlerPressed" onMouseReleased="#bottomLeftHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                    <cursor>
+                                        <Cursor fx:constant="SW_RESIZE" />
+                                    </cursor>
+                                </Rectangle>
+                                <Rectangle fx:id="topRightHandler" fill="#ffffff00" height="10.0" layoutX="90.0" layoutY="41.0" onMousePressed="#handlerPressed" onMouseReleased="#topRightHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                    <cursor>
+                                        <Cursor fx:constant="NE_RESIZE" />
+                                    </cursor>
+                                </Rectangle>
+                                <Rectangle fx:id="leftCenterHandler" fill="#ffffff00" height="10.0" layoutX="110.0" layoutY="41.0" onMousePressed="#handlerPressed" onMouseReleased="#leftCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                    <cursor>
+                                        <Cursor fx:constant="W_RESIZE" />
+                                    </cursor>
+                                </Rectangle>
+                                <Rectangle fx:id="rightCenterHandler" fill="#ffffff00" height="10.0" layoutX="30.0" layoutY="41.0" onMousePressed="#handlerPressed" onMouseReleased="#rightCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                    <cursor>
+                                        <Cursor fx:constant="E_RESIZE" />
+                                    </cursor>
+                                </Rectangle>
+                                <Text layoutX="10.0" layoutY="-7.0" strokeType="OUTSIDE" strokeWidth="0.0" x="20.0" y="120.0" fx:id="xyText" />
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </ScrollPane>
+            </items>
+        </SplitPane>
+    </children>
+</VBox>

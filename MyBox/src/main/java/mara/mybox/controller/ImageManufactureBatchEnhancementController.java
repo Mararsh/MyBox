@@ -93,21 +93,16 @@ public class ImageManufactureBatchEnhancementController extends ImageManufacture
 
     @Override
     public void keyEventsHandler(KeyEvent event) {
-        super.keyEventsHandler(event);
-        if (event.isControlDown()) {
-            String key = event.getText();
-            if (key == null || key.isEmpty()) {
-                return;
-            }
-            switch (key) {
-                case "k":
-                case "K":
+        if (event.isControlDown() && event.getCode() != null) {
+            switch (event.getCode()) {
+                case K:
                     if (stringBox != null) {
                         stringBox.show();
                     }
-                    break;
+                    return;
             }
         }
+        super.keyEventsHandler(event);
     }
 
     private void removeTmpControls() {

@@ -24,6 +24,7 @@ import mara.mybox.db.TableQueryCondition;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -57,8 +58,9 @@ public class DataQueryController extends BaseController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
+            super.initControls();
             if (listView != null) {
                 listView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
                 listView.getSelectionModel().selectedItemProperty().addListener(
@@ -113,8 +115,8 @@ public class DataQueryController extends BaseController {
                     return message("Query");
                 case ClearData:
                     return message("Clear");
-                case DisplayChart:
-                    return message("DisplayChart");
+                case UpdateData:
+                    return message("UpdateData");
                 case ExportData:
                     return message("Export");
                 default:
@@ -334,7 +336,7 @@ public class DataQueryController extends BaseController {
             }
 
             popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("MenuClose"));
+            menu = new MenuItem(message("PopupClose"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction((ActionEvent event) -> {
                 popMenu.hide();
@@ -452,7 +454,7 @@ public class DataQueryController extends BaseController {
             popMenu.getItems().add(menu);
 
             popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("MenuClose"));
+            menu = new MenuItem(message("PopupClose"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction((ActionEvent event) -> {
                 popMenu.hide();
@@ -503,7 +505,7 @@ public class DataQueryController extends BaseController {
             popMenu.getItems().add(menu);
 
             popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("MenuClose"));
+            menu = new MenuItem(message("PopupClose"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction((ActionEvent event) -> {
                 popMenu.hide();

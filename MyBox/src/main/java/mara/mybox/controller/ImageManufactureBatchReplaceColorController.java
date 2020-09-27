@@ -6,25 +6,21 @@ import java.util.List;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.Control;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageColor;
 import mara.mybox.image.ImageScope;
 import mara.mybox.image.PixelsOperation;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
@@ -49,9 +45,7 @@ public class ImageManufactureBatchReplaceColorController extends ImageManufactur
     @FXML
     private CheckBox excludeCheck;
     @FXML
-    protected Rectangle originalRect, newRect;
-    @FXML
-    protected Button paletteOriginalButton, paletteNewButton;
+    protected ColorSetController originalColorSetController, newColorSetController;
 
     public ImageManufactureBatchReplaceColorController() {
         baseTitle = AppVariables.message("ImageManufactureBatchReplaceColor");
@@ -59,8 +53,9 @@ public class ImageManufactureBatchReplaceColorController extends ImageManufactur
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
+            super.initControls();
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
@@ -79,23 +74,8 @@ public class ImageManufactureBatchReplaceColorController extends ImageManufactur
         try {
             super.initOptionsSection();
 
-            try {
-                String c = AppVariables.getUserConfigValue("ImageColorOriginal", Color.WHITE.toString());
-                originalRect.setFill(Color.web(c));
-            } catch (Exception e) {
-                originalRect.setFill(Color.WHITE);
-                AppVariables.setUserConfigValue("ImageColorOriginal", Color.WHITE.toString());
-            }
-            FxmlControl.setTooltip(originalRect, FxmlColor.colorNameDisplay((Color) originalRect.getFill()));
-
-            try {
-                String c = AppVariables.getUserConfigValue("ImageColorNew", Color.TRANSPARENT.toString());
-                newRect.setFill(Color.web(c));
-            } catch (Exception e) {
-                newRect.setFill(Color.TRANSPARENT);
-                AppVariables.setUserConfigValue("ImageColorNew", Color.TRANSPARENT.toString());
-            }
-            FxmlControl.setTooltip(newRect, FxmlColor.colorNameDisplay((Color) newRect.getFill()));
+            originalColorSetController.init(this, baseName + "OriginalColor", Color.WHITE);
+            newColorSetController.init(this, baseName + "NewColor", Color.TRANSPARENT);
 
             distanceInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -135,7 +115,7 @@ public class ImageManufactureBatchReplaceColorController extends ImageManufactur
             int v = Integer.valueOf(distanceInput.getText());
 
             if (v == 0
-                    && ((Color) originalRect.getFill()).equals(((Color) newRect.getFill()))) {
+                    && ((Color) originalColorSetController.rect.getFill()).equals(((Color) newColorSetController.rect.getFill()))) {
                 popError(message("OriginalNewSameColor"));
                 distanceInput.setStyle(badStyle);
                 return;
@@ -156,37 +136,9 @@ public class ImageManufactureBatchReplaceColorController extends ImageManufactur
     }
 
     @Override
-    public boolean setColor(Control control, Color color) {
-        if (control == null || color == null) {
-            return false;
-        }
-        if (paletteOriginalButton.equals(control)) {
-            originalRect.setFill(color);
-            FxmlControl.setTooltip(originalRect, FxmlColor.colorNameDisplay(color));
-            AppVariables.setUserConfigValue("ImageColorOriginal", color.toString());
-
-        } else if (paletteNewButton.equals(control)) {
-            newRect.setFill(color);
-            FxmlControl.setTooltip(newRect, FxmlColor.colorNameDisplay(color));
-            AppVariables.setUserConfigValue("ImageColorNew", color.toString());
-        }
-        return true;
-    }
-
-    @FXML
-    public void originalPalette(ActionEvent event) {
-        showPalette(paletteOriginalButton, message("OriginalColor"));
-    }
-
-    @FXML
-    public void newPalette(ActionEvent event) {
-        showPalette(paletteNewButton, message("NewColor"));
-    }
-
-    @Override
     public boolean makeMoreParameters() {
-        originalColor = ImageColor.converColor((Color) originalRect.getFill());
-        newColor = ImageColor.converColor((Color) newRect.getFill());
+        originalColor = ImageColor.converColor((Color) originalColorSetController.rect.getFill());
+        newColor = ImageColor.converColor((Color) newColorSetController.rect.getFill());
         return super.makeMoreParameters();
     }
 

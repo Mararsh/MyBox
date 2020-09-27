@@ -19,7 +19,6 @@ import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.SeparatorMenuItem;
@@ -36,19 +35,21 @@ import javafx.scene.transform.Transform;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
-import static mara.mybox.controller.BaseController.openImageViewer;
 import mara.mybox.controller.MapOptionsController.MapName;
 import mara.mybox.data.Location;
 import mara.mybox.data.StringTable;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
+import mara.mybox.fxml.FxmlStage;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.image.file.ImageGifFile;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.LocationTools;
+import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
@@ -74,8 +75,6 @@ public class LocationDataMapController extends MapBaseController {
     @FXML
     protected ToggleGroup displayGroup;
     @FXML
-    protected Label mapTitleLabel;
-    @FXML
     protected VBox viewBox, dataOptionsBox;
     @FXML
     protected CheckBox overlayCheck, centerCheck, accumulateCheck, linkCheck;
@@ -86,12 +85,13 @@ public class LocationDataMapController extends MapBaseController {
 
     public LocationDataMapController() {
         baseTitle = message("Map") + " - " + message("LocationData");
+        TipsLabelKey = "LocationDataMapComments";
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
-            super.initializeNext();
+            super.initControls();
 
             displayGroup.selectedToggleProperty().addListener(
                     (ObservableValue<? extends Toggle> ov, Toggle oldv, Toggle newv) -> {
@@ -167,6 +167,7 @@ public class LocationDataMapController extends MapBaseController {
             this.title = this.title.replaceAll("\n", " ");
         }
         titleLabel.setText(this.title);
+        frameLabel.setText("");
         locations = data;
         drawPoints();
     }
@@ -212,6 +213,7 @@ public class LocationDataMapController extends MapBaseController {
                 return;
             }
             webEngine.executeScript("clearMap();");
+            frameLabel.setText("");
             if (locations == null || locations.isEmpty()) {
                 return;
             }
@@ -283,6 +285,7 @@ public class LocationDataMapController extends MapBaseController {
                                         centered = true;
                                     }
                                     index++;
+                                    frameLabel.setText(message("DataNumber") + ":" + index);
                                     if (index >= locations.size()) {
                                         if (timer != null) {
                                             timer.cancel();
@@ -328,7 +331,7 @@ public class LocationDataMapController extends MapBaseController {
             return "";
         }
         List<String> names = new ArrayList<>();
-        names.addAll(Location.externalNames());
+        names.addAll(dataController.tableDefinition.importAllFields());
         StringTable table = new StringTable(names);
         for (Location location : locations) {
             if (task == null || task.isCancelled()) {
@@ -352,9 +355,9 @@ public class LocationDataMapController extends MapBaseController {
             }
         } else if (mapOptionsController.markerDataRadio != null
                 && mapOptionsController.markerDataRadio.isSelected()) {
-            String file = location.getImage();
-            if (file != null && (new File(file)).exists()) {
-                return file;
+            File file = location.getImage();
+            if (file != null && file.exists()) {
+                return file.getAbsolutePath();
             }
         }
         return markerImage();
@@ -384,17 +387,17 @@ public class LocationDataMapController extends MapBaseController {
                 label += "</BR>";
             }
             label += location.getLongitude() + "," + location.getLatitude();
-            if (location.getAltitude() != Double.MAX_VALUE) {
+            if (location.getAltitude() != CommonValues.InvalidDouble) {
                 label += "," + location.getAltitude();
             }
         }
         if (mapOptionsController.markerStartCheck.isSelected()
-                && location.getStartTime() != Long.MIN_VALUE) {
+                && location.getStartTime() != CommonValues.InvalidLong) {
             if (!label.isBlank()) {
                 label += "</BR>";
             }
             if (mapOptionsController.markerEndCheck.isSelected()
-                    && location.getEndTime() != Long.MIN_VALUE) {
+                    && location.getEndTime() != CommonValues.InvalidLong) {
                 if (location.getStartTime() != location.getEndTime()) {
                     label += DateTools.textEra(location.getStartEra()) + " - "
                             + DateTools.textEra(location.getEndEra());
@@ -405,7 +408,7 @@ public class LocationDataMapController extends MapBaseController {
                 label += DateTools.textEra(location.getStartEra());
             }
         } else if (mapOptionsController.markerEndCheck.isSelected()
-                && location.getEndTime() != Long.MIN_VALUE) {
+                && location.getEndTime() != CommonValues.InvalidLong) {
             label += " - " + DateTools.textEra(location.getEndEra());
         }
         if (mapOptionsController.markerDurationCheck.isSelected()) {
@@ -418,28 +421,28 @@ public class LocationDataMapController extends MapBaseController {
             }
         }
         if (mapOptionsController.markerSpeedCheck.isSelected()
-                && location.getSpeed() != Double.MAX_VALUE) {
+                && location.getSpeed() != CommonValues.InvalidDouble) {
             if (!label.isBlank()) {
                 label += "</BR>";
             }
             label += message("Speed") + ":" + location.getSpeed();
         }
         if (mapOptionsController.markerDirectionCheck.isSelected()
-                && location.getDirection() != Integer.MIN_VALUE) {
+                && location.getDirection() != CommonValues.InvalidInteger) {
             if (!label.isBlank()) {
                 label += "</BR>";
             }
             label += message("Direction") + ":" + location.getDirection();
         }
         if (mapOptionsController.markerValueCheck.isSelected()
-                && location.getDataValue() != Double.MAX_VALUE) {
+                && location.getDataValue() != CommonValues.InvalidDouble) {
             if (!label.isBlank()) {
                 label += "</BR>";
             }
             label += message("Value") + ":" + location.getDataValue();
         }
         if (mapOptionsController.markerSizeCheck.isSelected()
-                && location.getDataValue() != Double.MAX_VALUE) {
+                && location.getDataValue() != CommonValues.InvalidDouble) {
             if (!label.isBlank()) {
                 label += "</BR>";
             }
@@ -450,7 +453,7 @@ public class LocationDataMapController extends MapBaseController {
 
     public Color textColor(Location location) {
         if (mapOptionsController.setColorRadio.isSelected()) {
-            return (Color) (mapOptionsController.colorRect.getFill());
+            return (Color) (mapOptionsController.colorSetController.rect.getFill());
         } else if (location != null && location.getDataset() != null) {
             return location.getDataset().getTextColor();
         }
@@ -658,9 +661,9 @@ public class LocationDataMapController extends MapBaseController {
             Location frame = locations.get(frameIndex);
             String mapTitle = frame.getPeriodText();
             if (mapTitle != null) {
-                mapTitleLabel.setText(mapTitle);
+                frameLabel.setText(mapTitle);
             } else {
-                mapTitleLabel.setText(frameIndex + "");
+                frameLabel.setText(frameIndex + "");
             }
             centered = !centerCheck.isSelected();
             if (!overlayCheck.isSelected() || mapTitle == null) {
@@ -709,7 +712,7 @@ public class LocationDataMapController extends MapBaseController {
                     color);
             if (linkCheck.isSelected() && lastPointIndex >= 0) {
                 Location lastPoint = locations.get(lastPointIndex);
-                String pColor = color == null ? "null" : "'" + FxmlColor.rgb2Hex(color) + "'";
+                String pColor = color == null ? "null" : "'" + FxmlColor.color2rgb(color) + "'";
                 webEngine.executeScript("drawLine("
                         + lastPoint.getLongitude() + ", " + lastPoint.getLatitude() + ", "
                         + longitude + ", " + latitude + ", " + pColor + ");");
@@ -733,7 +736,7 @@ public class LocationDataMapController extends MapBaseController {
                 drawn.clear();
             }
         }
-        mapTitleLabel.setText("");
+        frameLabel.setText("");
     }
 
     @FXML
@@ -797,7 +800,7 @@ public class LocationDataMapController extends MapBaseController {
             }
 
             popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("MenuClose"));
+            menu = new MenuItem(message("PopupClose"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction((ActionEvent event) -> {
                 popMenu.hide();
@@ -813,13 +816,17 @@ public class LocationDataMapController extends MapBaseController {
     }
 
     protected void snapCurrentFrame() {
-        File file = chooseSaveFile(title,
-                AppVariables.getUserConfigPath("ImageFilePath"), ".png",
-                CommonFxValues.ImageExtensionFilter, true);
+        String name = titleLabel.getText()
+                + (!frameLabel.getText().isBlank() ? " " + frameLabel.getText() : "")
+                + ".png";
+        File file = chooseSaveFile(AppVariables.getUserConfigPath(VisitHistoryTools.getPathKey(VisitHistory.FileType.Image)),
+                name, CommonFxValues.ImageExtensionFilter, true);
         if (file == null) {
             return;
         }
-        recordFileWritten(file, "ImageFilePath", VisitHistory.FileType.Image, VisitHistory.FileType.Image);
+        recordFileWritten(file, VisitHistoryTools.getPathKey(VisitHistory.FileType.Image),
+                VisitHistory.FileType.Image, VisitHistory.FileType.Image);
+
         double scale = dpi / Screen.getPrimary().getDpi();
         scale = scale > 1 ? scale : 1;
         SnapshotParameters snapPara = new SnapshotParameters();
@@ -856,7 +863,7 @@ public class LocationDataMapController extends MapBaseController {
 
                 @Override
                 protected void whenSucceeded() {
-                    openImageViewer(file);
+                    FxmlStage.openImageViewer(file);
                 }
 
             };
@@ -879,7 +886,7 @@ public class LocationDataMapController extends MapBaseController {
         }
         try {
             DirectoryChooser chooser = new DirectoryChooser();
-            File path = AppVariables.getUserConfigPath("ImageFilePath");
+            File path = AppVariables.getUserConfigPath(VisitHistoryTools.getPathKey(VisitHistory.FileType.Image));
             if (path != null) {
                 chooser.setInitialDirectory(path);
             }
@@ -887,7 +894,9 @@ public class LocationDataMapController extends MapBaseController {
             if (directory == null) {
                 return;
             }
-            recordFileWritten(directory, "ImageFilePath", VisitHistory.FileType.Image, VisitHistory.FileType.Image);
+            recordFileWritten(directory, VisitHistoryTools.getPathKey(VisitHistory.FileType.Image),
+                    VisitHistory.FileType.Image, VisitHistory.FileType.Image);
+
             String name = title.replaceAll("\\\"|\n|:", "");
             String filePath = directory.getAbsolutePath() + File.separator + name + File.separator;
             new File(filePath).mkdirs();
@@ -935,6 +944,10 @@ public class LocationDataMapController extends MapBaseController {
                             if (frameTimer != null) {
                                 frameTimer.cancel();
                                 frameTimer = null;
+                            }
+                            if (loading != null) {
+                                loading.closeStage();
+                                loading = null;
                             }
                             initFrames();
                             drawFrames();
@@ -989,29 +1002,27 @@ public class LocationDataMapController extends MapBaseController {
                                 frameTimer = null;
                             }
                             if (snapshots.size() == 1) {
-                                openImageViewer(snapshots.get(0));
+                                FxmlStage.openImageViewer(snapshots.get(0));
                             } else if (snapshots.size() > 1) {
                                 if (format.equals("gif")) {
                                     File gifFile = new File(filePrefix + ".gif");
-                                    logger.debug(directory);
-                                    if (loading != null) {
-                                        Platform.runLater(() -> {
+                                    Platform.runLater(() -> {
+                                        if (loading != null) {
                                             loading.setInfo(message("Saving") + ": " + gifFile);
-                                        });
-                                    }
+                                        }
+                                    });
                                     ImageGifFile.writeImageFiles(snapshots, gifFile, interval, true);
                                     if (gifFile.exists()) {
-                                        if (loading != null) {
-                                            Platform.runLater(() -> {
+                                        Platform.runLater(() -> {
+                                            if (loading != null) {
                                                 loading.setInfo(message("Opening") + ": " + gifFile);
-                                            });
-                                        }
+                                            }
+                                        });
                                         ImageGifViewerController controller
                                                 = (ImageGifViewerController) openStage(CommonValues.ImageGifViewerFxml);
                                         controller.sourceFileChanged(gifFile);
                                     }
                                 } else {
-                                    logger.debug(directory);
                                     browseURI(directory.toURI());
                                 }
                             }

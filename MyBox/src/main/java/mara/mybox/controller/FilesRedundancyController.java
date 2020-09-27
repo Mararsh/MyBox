@@ -28,6 +28,7 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -57,9 +58,9 @@ public class FilesRedundancyController extends FilesBatchController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
-            super.initializeNext();
+            super.initControls();
 
             openTargetButton.setVisible(false);
             openCheck.setVisible(false);
@@ -277,9 +278,6 @@ public class FilesRedundancyController extends FilesBatchController {
 
     @Override
     public void showCost() {
-        if (operationBarController.getStatusLabel() == null) {
-            return;
-        }
         String s;
         if (paused) {
             s = message("Paused");

@@ -13,6 +13,7 @@ import mara.mybox.db.TableMedia;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 
@@ -32,8 +33,9 @@ public class FFmpegMediasTableController extends MediaTableController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
+            super.initControls();
 
             examples = new ArrayList();
             examples.add("http://devimages.apple.com/iphone/samples/bipbop/gear1/prog_index.m3u8");

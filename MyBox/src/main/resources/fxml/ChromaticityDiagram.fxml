@@ -41,7 +41,7 @@ License:    Apache License Version 2.0
                                             <items>
                                                 <HBox alignment="CENTER_LEFT" spacing="10.0">
                                                     <children>
-                                          <Hyperlink onAction="#aboutColor" text="%AboutColor" />
+                                                        <Hyperlink onAction="#aboutColor" text="%AboutColor" />
                                                     </children>
                                                 </HBox>
                                                 <Label maxWidth="1.7976931348623157E308" text="" wrapText="true" HBox.hgrow="ALWAYS" />
@@ -49,8 +49,8 @@ License:    Apache License Version 2.0
                                                 <ComboBox fx:id="backgroundBox" prefWidth="120.0" />
                                                 <Label text="%DataDots" />
                                                 <ComboBox fx:id="dotTypeBox" prefWidth="120.0" />
-                                    <Label text="%FontSize" />
-                                    <ComboBox fx:id="fontSelector" editable="true" prefWidth="80.0" />
+                                                <Label text="%FontSize" />
+                                                <ComboBox fx:id="fontSelector" editable="true" prefWidth="80.0" />
                                                 <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOutDiagram">
                                                     <graphic>
                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -89,8 +89,8 @@ License:    Apache License Version 2.0
                                                 </Button>
                                             </items>
                                         </ToolBar>
-                              <FlowPane alignment="CENTER_RIGHT" hgap="5.0" prefWrapLength="1000.0" style="-fx-font-size: 12;" vgap="5.0" VBox.vgrow="NEVER">
-                                 <children>
+                                        <FlowPane alignment="CENTER_RIGHT" hgap="5.0" prefWrapLength="1000.0" style="-fx-font-size: 12;" vgap="5.0" VBox.vgrow="NEVER">
+                                            <children>
                                                 <CheckBox fx:id="inputCheck" mnemonicParsing="false" text="%Input" />
                                                 <CheckBox fx:id="calculateCheck" mnemonicParsing="false" selected="true" text="%Calculate" />
                                                 <CheckBox fx:id="gridCheck" mnemonicParsing="false" selected="true" text="%Grid" />
@@ -117,15 +117,15 @@ License:    Apache License Version 2.0
                                                 <CheckBox fx:id="cdProPhotoCheck" mnemonicParsing="false" text="ProPhoto">
                                                 </CheckBox>
                                                 <CheckBox fx:id="cdSMPTECCheck" mnemonicParsing="false" text="SMPTE-C" />
-                                    <Button fx:id="allButton" layoutX="1912.0" layoutY="10.0" mnemonicParsing="false" onAction="#allAction">
-                                       <graphic>
-                                          <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../buttons/iconCheckAll.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                    </Button>
+                                                <Button fx:id="allButton" layoutX="1912.0" layoutY="10.0" mnemonicParsing="false" onAction="#allAction">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconCheckAll.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
                                                 <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
                                                     <graphic>
                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -135,8 +135,8 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </graphic>
                                                 </Button>
-                                 </children>
-                              </FlowPane>
+                                            </children>
+                                        </FlowPane>
                                         <SplitPane dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                                             <items>
                                                 <VBox fx:id="tableBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
@@ -148,9 +148,9 @@ License:    Apache License Version 2.0
                                                                     <toggleGroup>
                                                                         <ToggleGroup fx:id="dataGroup" />
                                                                     </toggleGroup>
-                                                   <padding>
-                                                      <Insets left="30.0" />
-                                                   </padding>
+                                                                    <padding>
+                                                                        <Insets left="30.0" />
+                                                                    </padding>
                                                                 </RadioButton>
                                                                 <RadioButton mnemonicParsing="false" text="%Input" toggleGroup="$dataGroup" />
                                                             </items>
@@ -202,32 +202,23 @@ License:    Apache License Version 2.0
                                                                         <Insets />
                                                                     </VBox.margin>
                                                                 </HBox>
-                                                <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
-                                                   <children>
-                                                                      <Label text="%ColorValues">
-                                                                          <VBox.margin>
-                                                                              <Insets top="20.0" />
-                                                                          </VBox.margin>
-                                                                      </Label>
-                                                      <Rectangle fx:id="colorRect" fill="#ffffff00" height="15.0" stroke="BLACK" strokeMiterLimit="0.0" strokeType="INSIDE" width="15.0" />
-                                                      <Button fx:id="paletteButton" mnemonicParsing="false" onAction="#showPalette">
-                                                         <graphic>
-                                                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                               <image>
-                                                                  <Image url="@../buttons/iconPalette.png" />
-                                                               </image>
-                                                            </ImageView>
-                                                         </graphic>
-                                                      </Button>
-                                                   </children>
-                                                </HBox>
-                                                <TableView fx:id="calculatedValuesTable" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-                                                  <columns>
-                                                    <TableColumn fx:id="colorSpaceColumn" prefWidth="140.0" text="%ColorSpace" />
-                                                    <TableColumn fx:id="conditionsColumn" prefWidth="171.0" text="%Conditions" />
-                                                      <TableColumn fx:id="valuesColumn" prefWidth="271.0" text="%Values" />
-                                                  </columns>
-                                                </TableView>
+                                                                <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                                                                    <children>
+                                                                        <Label text="%ColorValues">
+                                                                            <VBox.margin>
+                                                                                <Insets top="20.0" />
+                                                                            </VBox.margin>
+                                                                        </Label>
+                                                                        <fx:include fx:id="colorSet" source="ColorSet.fxml" />
+                                                                    </children>
+                                                                </HBox>
+                                                                <TableView fx:id="calculatedValuesTable" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                                                    <columns>
+                                                                        <TableColumn fx:id="colorSpaceColumn" prefWidth="140.0" text="%ColorSpace" />
+                                                                        <TableColumn fx:id="conditionsColumn" prefWidth="171.0" text="%Conditions" />
+                                                                        <TableColumn fx:id="valuesColumn" prefWidth="271.0" text="%Values" />
+                                                                    </columns>
+                                                                </TableView>
                                                             </children>
                                                             <VBox.margin>
                                                                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -305,7 +296,7 @@ License:    Apache License Version 2.0
                                                 </ScrollPane>
                                             </items>
                                         </SplitPane>
-                                  <Label fx:id="bottomLabel" text="%ChromaticityDiagramComments" wrapText="true" />
+                                        <Label fx:id="bottomLabel" text="%ChromaticityDiagramComments" wrapText="true" />
                                     </children>
                                 </VBox>
                             </content>

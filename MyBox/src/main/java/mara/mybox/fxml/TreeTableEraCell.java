@@ -5,6 +5,7 @@ import javafx.scene.control.TreeTableColumn;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
 import mara.mybox.tools.DateTools;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -24,7 +25,7 @@ public class TreeTableEraCell<T> extends TreeTableCell<T, Long>
             @Override
             protected void updateItem(final Long item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty || item == null || item == Long.MIN_VALUE) {
+                if (empty || item == null || item == CommonValues.InvalidLong) {
                     setText(null);
                     setGraphic(null);
                     return;

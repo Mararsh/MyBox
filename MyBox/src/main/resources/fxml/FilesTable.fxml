@@ -151,21 +151,12 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </CheckBox>
-                <ToggleButton fx:id="moreButton" mnemonicParsing="false">
-                    <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/iconMore.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </ToggleButton>
             </children>
         </FlowPane>
         <TableView fx:id="tableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
             <columns>
                 <TableColumn fx:id="handledColumn" editable="false" prefWidth="220.0" text="%Handled" />
-            <TableColumn fx:id="tableIndexColumn" editable="false" maxWidth="1.7976931348623157E308" prefWidth="60.0" text="%Item" />
+                <TableColumn fx:id="tableIndexColumn" editable="false" maxWidth="1.7976931348623157E308" prefWidth="60.0" text="%Item" />
                 <TableColumn fx:id="fileColumn" editable="false" maxWidth="1.7976931348623157E308" prefWidth="300.0" text="%File" />
                 <TableColumn fx:id="typeColumn" editable="false" minWidth="0.0" prefWidth="100.0" text="%Type" />
                 <TableColumn fx:id="numberColumn" editable="false" prefWidth="120.0" text="%FilesNumber" />
@@ -174,11 +165,11 @@ License:    Apache License Version 2.0
                 <TableColumn fx:id="createTimeColumn" editable="false" prefWidth="160.0" text="%CreateTime" />
             </columns>
         </TableView>
-      <FlowPane hgap="5.0" maxWidth="1.7976931348623157E308" vgap="5.0" VBox.vgrow="NEVER">
-         <children>
+        <FlowPane hgap="5.0" maxWidth="1.7976931348623157E308" vgap="5.0" VBox.vgrow="NEVER">
+            <children>
                 <Label fx:id="tableLabel" styleClass="blue-label" stylesheets="@../styles/MyBox.css" />
-         </children>
-      </FlowPane>
+            </children>
+        </FlowPane>
         <FlowPane fx:id="selectPane" hgap="5.0" maxWidth="1.7976931348623157E308" prefWrapLength="600.0" vgap="5.0" VBox.vgrow="NEVER">
             <children>
                 <Label text="%FilesSelector" />
@@ -197,7 +188,7 @@ License:    Apache License Version 2.0
             </children>
         </FlowPane>
     </children>
-   <padding>
-      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-   </padding>
+    <padding>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+    </padding>
 </VBox>

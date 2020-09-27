@@ -11,15 +11,16 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
+import javafx.application.Platform;
 import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
+import javafx.scene.control.DialogEvent;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
+import mara.mybox.data.tools.GeographyCodeTools;
 import mara.mybox.tools.ConfigTools;
 import mara.mybox.tools.NetworkTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.DerbyFailAsked;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
@@ -53,83 +54,86 @@ public class DerbyBase {
     protected String Table_Name, Create_Table_Statement;
     protected List<String> Keys;
 
-    public boolean init(Connection conn) {
-        try {
-            if (conn == null) {
-                return false;
-            }
-//            logger.debug(Create_Table_Statement);
-            conn.createStatement().executeUpdate(Create_Table_Statement);
-            return true;
-        } catch (Exception e) {
-            failed(e);
-//            logger.debug(e.toString());
-            return false;
-        }
-    }
-
     public boolean init() {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
-            conn.createStatement().executeUpdate(Create_Table_Statement);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                 Statement Statement = conn.createStatement()) {
+            Statement.executeUpdate(Create_Table_Statement);
             return true;
         } catch (Exception e) {
-            failed(e);
+            failed(e, Create_Table_Statement);
 //            // logger.debug(e.toString());
             return false;
         }
     }
 
+    public boolean init(Connection conn) {
+        if (conn == null) {
+            return false;
+        }
+        try ( Statement Statement = conn.createStatement()) {
+//            logger.debug(Create_Table_Statement);
+            Statement.executeUpdate(Create_Table_Statement);
+            return true;
+        } catch (Exception e) {
+            failed(e, Create_Table_Statement);
+//            logger.debug(e.toString());
+            return false;
+        }
+    }
+
     public boolean drop(Connection conn) {
-        try {
-            if (conn == null) {
-                return false;
-            }
-            String sql = "DROP TABLE " + Table_Name;
-            conn.createStatement().executeUpdate(sql);
+        if (conn == null) {
+            return false;
+        }
+        String sql = "DROP TABLE " + Table_Name;
+        try ( Statement Statement = conn.createStatement()) {
+            Statement.executeUpdate(sql);
 //            logger.debug(Create_Table_Statement);
             return true;
         } catch (Exception e) {
-            failed(e);
+            failed(e, sql);
 //            // logger.debug(e.toString());
             return false;
         }
     }
 
     public boolean drop() {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
-            String sql = "DROP TABLE " + Table_Name;
-            conn.createStatement().executeUpdate(sql);
+        String sql = "DROP TABLE " + Table_Name;
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                 Statement Statement = conn.createStatement()) {
+            Statement.executeUpdate(sql);
             return true;
         } catch (Exception e) {
-            failed(e);
+            failed(e, sql);
 //            // logger.debug(e.toString());
             return false;
         }
     }
 
     public boolean clear(Connection conn) {
-        try {
-            if (conn == null) {
-                return false;
-            }
-            String sql = "DELETE FROM " + Table_Name;
-            conn.createStatement().executeUpdate(sql);
+        if (conn == null) {
+            return false;
+        }
+        String sql = "DELETE FROM " + Table_Name;
+        try ( Statement Statement = conn.createStatement()) {
+            Statement.executeUpdate(sql);
 //            logger.debug(Create_Table_Statement);
             return true;
         } catch (Exception e) {
-            failed(e);
+            failed(e, sql);
 //            // logger.debug(e.toString());
             return false;
         }
     }
 
     public boolean clear() {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
-            String sql = "DELETE FROM " + Table_Name;
-            conn.createStatement().executeUpdate(sql);
+        String sql = "DELETE FROM " + Table_Name;
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                 Statement Statement = conn.createStatement()) {
+            Statement.executeUpdate(sql);
             return true;
         } catch (Exception e) {
-            failed(e);
+            failed(e, sql);
 //            // logger.debug(e.toString());
             return false;
         }
@@ -165,6 +169,7 @@ public class DerbyBase {
             }
         } catch (Exception e) {
             logger.debug(e.toString());
+            failed(e);
             return e.toString();
         }
     }
@@ -190,6 +195,7 @@ public class DerbyBase {
         } catch (Exception e) {
             logger.debug(e.toString());
             status = DerbyStatus.EmbeddedFailed;
+            failed(e);
             return e.toString();
         }
     }
@@ -222,6 +228,7 @@ public class DerbyBase {
             }
         } catch (Exception e) {
             status = DerbyStatus.NerworkFailed;
+            failed(e);
             logger.debug(e.toString());
             return e.toString();
         }
@@ -257,6 +264,7 @@ public class DerbyBase {
         } catch (Exception e) {
             logger.debug(e.toString());
             status = DerbyStatus.NerworkFailed;
+            failed(e);
             return false;
         }
     }
@@ -273,6 +281,7 @@ public class DerbyBase {
             status = DerbyStatus.NotConnected;
             return true;
         } catch (Exception e) {
+            failed(e);
             logger.debug(e.toString());
             return false;
         }
@@ -294,8 +303,9 @@ public class DerbyBase {
         try ( Connection conn = DriverManager.getConnection("jdbc:derby:" + dbHome() + create)) {
             return true;
         } catch (Exception e) {
-//            logger.debug(e.toString());
+            logger.debug(e.toString());
             status = DerbyStatus.EmbeddedFailed;
+            failed(e);
             return false;
         }
     }
@@ -330,8 +340,8 @@ public class DerbyBase {
                 tables.add(resultSet.getString("TABLENAME"));
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            failed(e, sql);
+//            logger.debug(e.toString());
         }
         return tables;
     }
@@ -348,8 +358,8 @@ public class DerbyBase {
                         + ", " + resultSet.getString("columndatatype"));
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            failed(e, sql);
+//            logger.debug(e.toString());
         }
         return columns;
     }
@@ -366,8 +376,8 @@ public class DerbyBase {
                 columns.add(resultSet.getString("columnname").toLowerCase());
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            failed(e, sql);
+//            logger.debug(e.toString());
         }
         return columns;
     }
@@ -389,7 +399,7 @@ public class DerbyBase {
             return s;
         } catch (Exception e) {
             failed(e);
-            logger.debug(e.toString());
+//            logger.debug(e.toString());
             return null;
         }
     }
@@ -403,25 +413,23 @@ public class DerbyBase {
                 indexes.add(resultSet.getString("CONGLOMERATENAME"));
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            failed(e, sql);
+//            logger.debug(e.toString());
         }
         return indexes;
     }
 
     public static List<String> views(Connection conn) {
         List<String> tables = new ArrayList<>();
-        try {
-            String sql = "SELECT TABLENAME FROM SYS.SYSTABLES WHERE TABLETYPE='V'";
-            try ( Statement statement = conn.createStatement();
-                     ResultSet resultSet = statement.executeQuery(sql)) {
-                while (resultSet.next()) {
-                    tables.add(resultSet.getString("TABLENAME"));
-                }
+        String sql = "SELECT TABLENAME FROM SYS.SYSTABLES WHERE TABLETYPE='V'";
+        try ( Statement statement = conn.createStatement();
+                 ResultSet resultSet = statement.executeQuery(sql)) {
+            while (resultSet.next()) {
+                tables.add(resultSet.getString("TABLENAME"));
             }
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
+            failed(e, sql);
+//            logger.debug(e.toString());
         }
         return tables;
     }
@@ -516,6 +524,8 @@ public class DerbyBase {
                     statement.executeUpdate(TableDataset.Create_Index_unique);
                 }
             } catch (Exception e) {
+                failed(e);
+//                logger.debug(e.toString());
             }
 
             List<String> views = views(conn);
@@ -527,9 +537,26 @@ public class DerbyBase {
                     statement.executeUpdate(TableLocationData.CreateView);
                 }
             } catch (Exception e) {
+                failed(e);
+//                logger.debug(e.toString());
+            }
+
+            return true;
+        } catch (Exception e) {
+            failed(e);
+//            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean initTableValues() {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + create)) {
+            if (TableGeographyCode.China(conn) == null) {
+                GeographyCodeTools.importPredefined(conn);
             }
             return true;
         } catch (Exception e) {
+            failed(e);
 //            logger.debug(e.toString());
             return false;
         }
@@ -567,6 +594,7 @@ public class DerbyBase {
             new TableLocationData().dropTable(conn);
             return true;
         } catch (Exception e) {
+            failed(e);
 //            // logger.debug(e.toString());
             return false;
         }
@@ -595,47 +623,54 @@ public class DerbyBase {
             new TableLocationData().clearTable(conn);
             return true;
         } catch (Exception e) {
+            failed(e);
 //            // logger.debug(e.toString());
             return false;
         }
     }
 
-    public static void failed(Exception exception) {
+    public static void failed(Exception exception, String sql) {
         try {
-            if (exception == null) {
+            if (AppVariables.dbErroring || exception == null) {
                 return;
             }
-            if (exception.toString().contains("java.sql.SQLNonTransientConnectionException")) {
-//                logger.debug(exception.toString());
-                status = DerbyStatus.NotConnected;
-//                long now = new Date().getTime();
-//                if (now - lastRetry > 3000) {
-//                    lastRetry = new Date().getTime();
-//                    startDerby();
-//                }
-                if (DerbyFailAsked) {
-                    return;
-                }
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("MyBox");
-                alert.setContentText(MessageFormat.format(message("DerbyNotAvalibale"), AppVariables.MyBoxDerbyPath));
-                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-                ButtonType buttonRetry = new ButtonType(AppVariables.message("Retry"));
-                ButtonType buttonISee = new ButtonType(AppVariables.message("ISee"));
-                alert.getButtonTypes().setAll(buttonRetry, buttonISee);
-                Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-                stage.setAlwaysOnTop(true);
-                stage.toFront();
-                DerbyFailAsked = true;
+            Platform.runLater(() -> {
+                try {
+                    if (AppVariables.dbErroring) {
+                        return;
+                    }
+                    String s = message("SQLFailed")
+                            + (sql != null ? "\n\nSQL:\n" + sql : "")
+                            + "\n\n" + exception.toString();
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
+                    alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                    alert.setHeaderText(null);
+                    alert.setContentText(s);
+                    alert.getDialogPane().applyCss();
+                    Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+                    stage.setAlwaysOnTop(true);
+                    stage.toFront();
+                    alert.setOnShown((DialogEvent e) -> {
+                        AppVariables.dbErroring = true;
+                    });
+                    alert.setOnHidden((DialogEvent e) -> {
+                        AppVariables.dbErroring = false;
+                    });
 
-                Optional<ButtonType> result = alert.showAndWait();
-                if (result.get() == buttonRetry) {
-                    startDerby();
+                    alert.showAndWait();
+                } catch (Exception e) {
+                    logger.error(e.toString());
                 }
-            }
+
+            });
         } catch (Exception e) {
-
+            logger.debug(e.toString());
         }
+    }
+
+    public static void failed(Exception exception) {
+        failed(exception, null);
     }
 
     public static int size(String sql) {
@@ -643,7 +678,7 @@ public class DerbyBase {
             conn.setReadOnly(true);
             return size(conn, sql);
         } catch (Exception e) {
-            failed(e);
+            failed(e, sql);
             return 0;
         }
     }
@@ -655,7 +690,7 @@ public class DerbyBase {
                 size = results.getInt(1);
             }
         } catch (Exception e) {
-            failed(e);
+            failed(e, sql);
 //            logger.debug(e.toString());
 //            logger.debug(sql);
         }
@@ -668,7 +703,7 @@ public class DerbyBase {
             conn.setReadOnly(true);
             return query(conn, sql);
         } catch (Exception e) {
-            failed(e);
+            failed(e, sql);
 //            // logger.debug(e.toString());
             return null;
         }
@@ -678,7 +713,7 @@ public class DerbyBase {
         try ( Statement statement = conn.createStatement()) {
             return statement.executeQuery(sql);
         } catch (Exception e) {
-            failed(e);
+            failed(e, sql);
 //            logger.debug(e.toString());
 //            logger.debug(sql);
             return null;
@@ -686,14 +721,10 @@ public class DerbyBase {
     }
 
     public static int update(String sql) {
-        try {
-            try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
-                return update(conn, sql);
-            }
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            return update(conn, sql);
         } catch (Exception e) {
-            failed(e);
-//            logger.debug(e.toString());
-//            logger.debug(sql);
+            failed(e, sql);
             return 0;
         }
     }
@@ -702,9 +733,7 @@ public class DerbyBase {
         try ( Statement statement = conn.createStatement()) {
             return statement.executeUpdate(sql);
         } catch (Exception e) {
-            failed(e);
-            logger.debug(e.toString());
-            logger.debug(sql);
+            failed(e, sql);
             return 0;
         }
     }

@@ -253,7 +253,7 @@ public class GeographyCodeLevel implements Cloneable {
                 key = "building";
                 break;
             default:
-                key = "poi";
+                key = "gcid";
                 break;
         }
         return key;

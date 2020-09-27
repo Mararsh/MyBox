@@ -12,6 +12,7 @@ import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.multipdf.PageExtractor;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -36,9 +37,9 @@ public class PdfMergeController extends PdfBatchController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
-            super.initializeNext();
+            super.initControls();
             allowPaused = false;
 
             startButton.disableProperty().unbind();

@@ -8,6 +8,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
@@ -64,9 +65,13 @@ public class DataAnalysisController<P> extends TableManageController<P> {
     @FXML
     protected GeographyCodeConditionTreeController geoController;
     @FXML
+    protected Button locationButton;
+    @FXML
     protected ComboBox<String> htmlStyleSelector;
     @FXML
     protected ListView orderByList;
+    @FXML
+    protected ControlCSVEdit csvEditController;
 
     public DataAnalysisController() {
         prefixEditable = false;
@@ -248,7 +253,6 @@ public class DataAnalysisController<P> extends TableManageController<P> {
     }
 
     @FXML
-    @Override
     protected void popImportMenu(MouseEvent mouseEvent) {
 
     }
@@ -263,11 +267,14 @@ public class DataAnalysisController<P> extends TableManageController<P> {
         Common methods
      */
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
-            super.initializeNext();
+            super.initControls();
             setTableValues();
             initOrder();
+            if (csvEditController != null) {
+                csvEditController.init(this, tableDefinition);
+            }
 
             htmlStyleSelector.getItems().addAll(Arrays.asList(
                     message("Default"), message("Console"), message("Blackboard")
@@ -386,6 +393,11 @@ public class DataAnalysisController<P> extends TableManageController<P> {
                 FxmlControl.removeTooltip(queryButton);
                 queryButton.requestFocus();
             }
+
+            if (csvEditController != null) {
+                FxmlControl.removeTooltip(csvEditController.inputButton);
+            }
+
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -450,6 +462,9 @@ public class DataAnalysisController<P> extends TableManageController<P> {
         if (setButton != null) {
             setButton.setDisable(selection == 0);
         }
+        if (locationButton != null) {
+            locationButton.setDisable(selection == 0);
+        }
     }
 
     @Override
@@ -461,70 +476,12 @@ public class DataAnalysisController<P> extends TableManageController<P> {
     @FXML
     @Override
     public void clearAction() {
-        if (!checkClearCondition()) {
-            return;
-        }
-        TableQueryCondition.write(clearCondition, true);
-        clear();
+        clear(message("ClearAsConditionTrees"));
     }
 
     protected void setClearSQL() {
         clearSQL = clearPrefix + (clearCondition.getWhere().isBlank() ? "" : " WHERE " + clearCondition.getWhere())
                 + (clearPrefix.contains(" JOIN ") ? ")" : "");
-    }
-
-    public void clear() {
-        if (clearCondition == null) {
-            popError(message("SetConditionsComments"));
-            return;
-        }
-        setClearSQL();
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle(getBaseTitle());
-        alert.setContentText(AppVariables.message("SureClearConditions")
-                + "\n\n" + clearCondition.getTitle().replaceAll("</br>", "\n")
-                + "\n\n" + clearSQL
-                + "\n\n" + message("DataDeletedComments")
-        );
-        alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
-        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-        ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
-        ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
-        alert.getButtonTypes().setAll(buttonSure, buttonCancel);
-        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-        stage.setAlwaysOnTop(true);
-        stage.toFront();
-
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() != buttonSure) {
-            return;
-        }
-        synchronized (this) {
-            if (task != null) {
-                return;
-            }
-            task = new SingletonTask<Void>() {
-                private int count = 0;
-
-                @Override
-                protected boolean handle() {
-                    count = DerbyBase.update(clearSQL);
-
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    alertInformation(message("Deleted") + ": " + count);
-                    refreshAction();
-                }
-
-            };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
-            thread.setDaemon(true);
-            thread.start();
-        }
     }
 
     public void loadAsConditions(QueryCondition condition) {
@@ -606,7 +563,6 @@ public class DataAnalysisController<P> extends TableManageController<P> {
     }
 
     @FXML
-    @Override
     protected void popQueryMenu(MouseEvent mouseEvent) {
         try {
             if (popMenu != null && popMenu.isShowing()) {
@@ -652,7 +608,7 @@ public class DataAnalysisController<P> extends TableManageController<P> {
             }
 
             popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("MenuClose"));
+            menu = new MenuItem(message("PopupClose"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction((ActionEvent event) -> {
                 popMenu.hide();
@@ -669,7 +625,6 @@ public class DataAnalysisController<P> extends TableManageController<P> {
     }
 
     @FXML
-    @Override
     protected void popClearMenu(MouseEvent mouseEvent) {
         try {
             if (popMenu != null && popMenu.isShowing()) {
@@ -678,9 +633,23 @@ public class DataAnalysisController<P> extends TableManageController<P> {
             popMenu = new ContextMenu();
             popMenu.setAutoHide(true);
 
-            MenuItem menu = new MenuItem(message("ClearAsCondition") + "\nCTRL+r / ALT+r");
+            MenuItem menu;
+
+            menu = new MenuItem(message("ClearAsConditionTrees") + "\nCTRL+r / ALT+r");
             menu.setOnAction((ActionEvent event) -> {
-                clearAction();
+                clear(message("ClearAsConditionTrees"));
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ClearSelectedDataInPage"));
+            menu.setOnAction((ActionEvent event) -> {
+                clear(message("ClearSelectedDataInPage"));
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("ClearCurrentPage"));
+            menu.setOnAction((ActionEvent event) -> {
+                clear(message("ClearCurrentPage"));
             });
             popMenu.getItems().add(menu);
 
@@ -711,14 +680,14 @@ public class DataAnalysisController<P> extends TableManageController<P> {
                     menu = new MenuItem(condition.getTitle().replaceAll("</br>|\n", " "));
                     menu.setOnAction((ActionEvent event) -> {
                         clearCondition = condition;
-                        clear();
+                        clearAsConditions();
                     });
                     popMenu.getItems().add(menu);
                 }
             }
 
             popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("MenuClose"));
+            menu = new MenuItem(message("PopupClose"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction((ActionEvent event) -> {
                 popMenu.hide();
@@ -734,9 +703,155 @@ public class DataAnalysisController<P> extends TableManageController<P> {
 
     }
 
+    public void clear(String type) {
+        String title, sql;
+        if (message("ClearSelectedDataInPage").equals(type)) {
+            List<P> rows = tableView.getSelectionModel().getSelectedItems();
+            if (rows == null || rows.isEmpty()) {
+                popError(message("NoData"));
+                return;
+            }
+            title = clearCondition.getTitle().replaceAll("</br>", "\n")
+                    + "\n" + message("Selected");
+            sql = null;
+
+        } else if (message("ClearCurrentPage").equals(type)) {
+            if (tableData == null || tableData.isEmpty()) {
+                popError(message("NoData"));
+                return;
+            }
+            title = finalTitle.replaceAll("</br>", "\n")
+                    + "\n" + message("Page") + currentPage;
+            sql = pageQuerySQL;
+
+        } else if (message("ClearAsConditionTrees").equals(type)) {
+            if (!checkClearCondition()) {
+                return;
+            }
+            TableQueryCondition.write(clearCondition, true);
+            title = clearCondition.getTitle().replaceAll("</br>", "\n");
+            setClearSQL();
+            sql = clearSQL;
+
+        } else {
+            return;
+        }
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(getBaseTitle());
+        alert.setContentText(AppVariables.message("SureClearConditions")
+                + "\n\n" + type + "\n" + title
+                + "\n\n" + sql
+                + "\n\n" + message("DataDeletedComments")
+        );
+        alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
+        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+        ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
+        ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
+        alert.getButtonTypes().setAll(buttonSure, buttonCancel);
+        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        stage.setAlwaysOnTop(true);
+        stage.toFront();
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() != buttonSure) {
+            return;
+        }
+
+        synchronized (this) {
+            if (task != null) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+
+                private int deletedCount = 0;
+
+                @Override
+                protected boolean handle() {
+                    if (message("ClearSelectedDataInPage").equals(type)) {
+                        deletedCount = deleteSelectedData();
+
+                    } else if (message("ClearCurrentPage").equals(type)) {
+                        deletedCount = deleteData(tableData);
+
+                    } else if (message("ClearAsConditionTrees").equals(type)) {
+                        deletedCount = DerbyBase.update(clearSQL);
+                    }
+                    return true;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    popInformation(message("Deleted") + ":" + deletedCount);
+                    if (deletedCount > 0) {
+                        refreshAction();
+                    }
+                }
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
+
+    }
+
     public void clearAsConditions(QueryCondition condition) {
         clearCondition = condition;
-        clear();
+        clearAsConditions();
+    }
+
+    public void clearAsConditions() {
+        if (clearCondition == null) {
+            popError(message("SetConditionsComments"));
+            return;
+        }
+        setClearSQL();
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(getBaseTitle());
+        alert.setContentText(AppVariables.message("SureClearConditions")
+                + "\n\n" + clearCondition.getTitle().replaceAll("</br>", "\n")
+                + "\n\n" + clearSQL
+                + "\n\n" + message("DataDeletedComments")
+        );
+        alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
+        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+        ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
+        ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
+        alert.getButtonTypes().setAll(buttonSure, buttonCancel);
+        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        stage.setAlwaysOnTop(true);
+        stage.toFront();
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() != buttonSure) {
+            return;
+        }
+        synchronized (this) {
+            if (task != null) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+                private int count = 0;
+
+                @Override
+                protected boolean handle() {
+                    count = DerbyBase.update(clearSQL);
+
+                    return true;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    alertInformation(message("Deleted") + ": " + count);
+                    refreshAction();
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
     }
 
     @FXML
@@ -750,7 +865,6 @@ public class DataAnalysisController<P> extends TableManageController<P> {
     }
 
     @FXML
-    @Override
     protected void popExportMenu(MouseEvent mouseEvent) {
         try {
             if (popMenu != null && popMenu.isShowing()) {
@@ -820,7 +934,7 @@ public class DataAnalysisController<P> extends TableManageController<P> {
             }
 
             popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("MenuClose"));
+            menu = new MenuItem(message("PopupClose"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction((ActionEvent event) -> {
                 popMenu.hide();
@@ -845,6 +959,7 @@ public class DataAnalysisController<P> extends TableManageController<P> {
                     return;
                 case F3:
                     exportData();
+                    return;
             }
         }
         super.keyHandler(event);
@@ -852,23 +967,17 @@ public class DataAnalysisController<P> extends TableManageController<P> {
 
     @Override
     public void controlHandler(KeyEvent event) {
-        if (!event.isControlDown()) {
-            return;
-        }
-        String key = event.getText();
-        if (key != null) {
-            switch (key) {
-                case "q":
-                case "Q":
+        if (event.isControlDown() && event.getCode() != null) {
+            switch (event.getCode()) {
+                case Q:
                     queryData();
                     return;
-                case "e":
-                case "E":
+                case E:
                     exportData();
                     return;
-                case "r":
-                case "R":
+                case R:
                     clearAction();
+                    return;
             }
         }
         super.controlHandler(event);
@@ -876,23 +985,17 @@ public class DataAnalysisController<P> extends TableManageController<P> {
 
     @Override
     public void altHandler(KeyEvent event) {
-        if (!event.isAltDown()) {
-            return;
-        }
-        String key = event.getText();
-        if (key != null) {
-            switch (key) {
-                case "q":
-                case "Q":
+        if (event.isAltDown() && event.getCode() != null) {
+            switch (event.getCode()) {
+                case Q:
                     queryData();
                     return;
-                case "e":
-                case "E":
+                case E:
                     exportData();
                     return;
-                case "r":
-                case "R":
+                case R:
                     clearAction();
+                    return;
             }
         }
         super.altHandler(event);

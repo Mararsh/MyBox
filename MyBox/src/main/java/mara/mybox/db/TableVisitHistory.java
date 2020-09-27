@@ -13,7 +13,6 @@ import mara.mybox.data.VisitHistory.FileType;
 import mara.mybox.data.VisitHistory.OperationType;
 import mara.mybox.data.VisitHistory.ResourceType;
 import mara.mybox.tools.DateTools;
-import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -181,7 +180,8 @@ public class TableVisitHistory extends DerbyBase {
         if (fileTypes == null || fileTypes.length == 0) {
             return records;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                 Statement statement = conn.createStatement()) {
             conn.setReadOnly(true);
             String sql = " SELECT   * FROM visit_history  WHERE ( file_type=" + fileTypes[0];
             for (int i = 1; i < fileTypes.length; ++i) {
@@ -192,13 +192,11 @@ public class TableVisitHistory extends DerbyBase {
                 sql += "  AND resource_type=" + resourceType;
             }
             sql += " ORDER BY last_visit_time  DESC  ";
-            try ( Statement statement = conn.createStatement()) {
-                if (count > 0) {
-                    statement.setMaxRows(count);
-                }
-                try ( ResultSet results = statement.executeQuery(sql)) {
-                    records = findList(results);
-                }
+            if (count > 0) {
+                statement.setMaxRows(count);
+            }
+            try ( ResultSet results = statement.executeQuery(sql)) {
+                records = findList(results);
             }
         } catch (Exception e) {
             failed(e);
@@ -314,7 +312,7 @@ public class TableVisitHistory extends DerbyBase {
             }
         } catch (Exception e) {
             failed(e);
-            logger.debug(e.toString());
+//            logger.debug(e.toString());
         }
         return null;
     }
@@ -438,7 +436,7 @@ public class TableVisitHistory extends DerbyBase {
             }
         } catch (Exception e) {
             failed(e);
-            logger.debug(e.toString());
+//            logger.debug(e.toString());
             return false;
         }
     }

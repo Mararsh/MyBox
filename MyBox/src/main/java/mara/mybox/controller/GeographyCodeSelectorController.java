@@ -18,7 +18,7 @@ import static mara.mybox.db.DerbyBase.dbHome;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.TableGeographyCode;
-import mara.mybox.tools.GeographyCodeTools;
+import mara.mybox.data.tools.GeographyCodeTools;
 import static mara.mybox.value.AppVariables.message;
 
 /**

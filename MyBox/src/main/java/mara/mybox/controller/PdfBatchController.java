@@ -7,7 +7,9 @@ import mara.mybox.data.PdfInformation;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.PdfTools;
+import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
@@ -35,8 +37,8 @@ public abstract class PdfBatchController extends BatchController<PdfInformation>
         AddFileType = VisitHistory.FileType.PDF;
         AddPathType = VisitHistory.FileType.PDF;
 
-        sourcePathKey = "PdfFilePath";
-        targetPathKey = "PdfFilePath";
+        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.PDF);
+        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.PDF);
 
         needUserPassword = true;
         needOwnerPassword = false;
@@ -49,9 +51,9 @@ public abstract class PdfBatchController extends BatchController<PdfInformation>
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
-            super.initializeNext();
+            super.initControls();
             allowPaused = true;
             pdfsTableController = (PdfsTableController) tableController;
 

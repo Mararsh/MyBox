@@ -21,7 +21,9 @@ import mara.mybox.data.VisitHistory;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.PdfTools;
+import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
@@ -58,8 +60,8 @@ public class PdfsTableController extends BatchTableController<PdfInformation> {
         AddFileType = VisitHistory.FileType.PDF;
         AddPathType = VisitHistory.FileType.PDF;
 
-        targetPathKey = "PdfFilePath";
-        sourcePathKey = "PdfFilePath";
+        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.PDF);
+        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.PDF);
         sourceExtensionFilter = CommonFxValues.PdfExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
     }
@@ -114,8 +116,6 @@ public class PdfsTableController extends BatchTableController<PdfInformation> {
                 }
             });
 
-            moreButton.setSelected(AppVariables.getUserConfigBoolean("PDFTableMore", true));
-            moreAction();
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -273,28 +273,6 @@ public class PdfsTableController extends BatchTableController<PdfInformation> {
     @Override
     protected boolean isValidFile(File file) {
         return PdfTools.isPDF(file);
-    }
-
-    @Override
-    public void moreAction() {
-        if (moreButton.isSelected()) {
-            if (!thisPane.getChildren().contains(tableCommentsLabel)) {
-                thisPane.getChildren().add(1, tableCommentsLabel);
-            }
-            if (!thisPane.getChildren().contains(setPDFPane)) {
-                thisPane.getChildren().add(3, setPDFPane);
-            }
-            if (!thisPane.getChildren().contains(selectPane)) {
-                thisPane.getChildren().add(4, selectPane);
-            }
-            if (!thisPane.getChildren().contains(tableLabel)) {
-                thisPane.getChildren().add(5, tableLabel);
-            }
-        } else {
-            thisPane.getChildren().removeAll(tableCommentsLabel, setPDFPane, selectPane, tableLabel);
-        }
-        FxmlControl.refreshStyle(thisPane);
-        AppVariables.setUserConfigValue("PDFTableMore", moreButton.isSelected());
     }
 
     /*

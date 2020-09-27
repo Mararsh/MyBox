@@ -4,21 +4,21 @@
 This is desktop application based on JavaFx to provide simple and easy functions. It's free and open sources.         
 
 ## What's New
-2020-8-27 v6.3.2  Improve "Location Data". Display data in map as "Location Distribution" or "Time Sequence". 3 examples of datasets. Data files on movebank.org can be imported.      
-Improve how to display data in map. Support both TianDiTu and GaoDe map.                    
-"Location Tool": Convert coordinate value between decimal and DMS. Convert coordinate values as other coordinate systems.                  
-FFmpeg application: Record desktop. Support Windows only now.       
-Import/Export color data in CSV format.        
-Full automatic script of building and packing. Development Guide v2.1.                    
-[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.2)        
-
+2020-9-27 v6.3.3        
+-  Image Manufacture: Show/Hide scope pane and image pane; Enlarge image size when pasted clip out of bound; Demo of blend modes; Parameter "invert" for convolution kernel.
+-  Data Tools: Helps to input CSV; Time with milliseconds or zone; Display points one by one in map; Set of snap images for Epidemic Report.
+-  Color: User can input colors list; Separated interfaces for setting color, picking color, and managing palette; Adjust colors order in palette.     
+-  Others: Context menu for table and image; Auto-save periodically in editors; Delay for Screen Recorder; Screen Recorder on Linux; Dev Mode.   
+-  Major issues solved:  "Clear personal settings" is to delete user configuration data instead of all data; Wrong statements for some tabes;  Shortcuts do not work on Linux; Location Data can not be created for new Data Set.        
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.3)           
+This version is for China. Happy Birthday!                
 
 ## Download and Execution
 Packages of each version have been uploaded at [Releases](https://github.com/Mararsh/MyBox/releases?) directory now. You can find them by clicking `releases` tab in main page of this project. 
        
     
 ### Source Codes   
-[MyBox-6.3.2-src.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.2/MyBox-6.3.2-src.zip)   33M        
+[MyBox-6.3.3-src.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.3/MyBox-6.3.3-src.zip)   33M        
 
 About structure, editing, and building of source codes, please refer to [Developement Guide](https://mararsh.github.io/MyBox_documents/en/MyBox-DevGuide-2.1-en.pdf) .                     
     
@@ -28,9 +28,9 @@ Self-contain packages include all files and need not java env nor installation. 
 
 | Platform | Link | Size | Launcher |    
 | --- | --- | ---  | ---  |    
-| win | [MyBox-6.3.2-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.2/MyBox-6.3.2-win-exe.zip)  | 284MB | MyBox.exe |       
-| linux | [MyBox-6.3.2-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.3.2/MyBox-6.3.2-linux.tar.gz)  | 298MB  | bin/MyBox  |     
-| mac | [MyBox-6.3.2-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.3.2/MyBox-6.3.2-mac.dmg)  | 294MB  |  MyBox-6.3.2.app   |   
+| win | [MyBox-6.3.3-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.3/MyBox-6.3.3-win-exe.zip)  | 284MB | MyBox.exe |       
+| linux | [MyBox-6.3.3-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.3.3/MyBox-6.3.3-linux.tar.gz)  | 290MB  | bin/MyBox  |     
+| mac | [MyBox-6.3.3-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.3.3/MyBox-6.3.3-mac.dmg)  | 295MB  |  MyBox-6.3.3.app   |   
 
 User can double click the launcher to start MyBox or run it by command line. The default "Open Method" of image/text/PDF files can be associated to MyBox and a file can be opened directly by MyBox by double clicking the file's name.
 (File with name including non-ascii can not be opened by double clicking currently)
@@ -40,16 +40,16 @@ When JRE or JDK 14 or higher(`Oracle jdk` or `open jdk`) is installed, jar can r
   
 | Platform | Link | Size | Requirements |   
 | --- | --- | ---  | ---  |    
-| win | [MyBox-6.3.2-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.2/MyBox-6.3.2-win-jar.zip)  | 147MB | Java 14.0.1 or higher |    
-| linux | [MyBox-6.3.2-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.2/MyBox-6.3.2-linux-jar.zip)  | 158MB  | Java 14.0.1 or higher |    
-| mac | [MyBox-6.3.2-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.2/MyBox-6.3.2-mac-jar.zip)  |  150MB  | Java 14.0.1 or higher |    
+| win | [MyBox-6.3.3-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.3/MyBox-6.3.3-win-jar.zip)  | 147MB | Java 14.0.1 or higher |    
+| linux | [MyBox-6.3.3-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.3/MyBox-6.3.3-linux-jar.zip)  | 158MB  | Java 14.0.1 or higher |    
+| mac | [MyBox-6.3.3-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.3/MyBox-6.3.3-mac-jar.zip)  |  150MB  | Java 14.0.1 or higher |    
  
     
 Run following command to launch this program with Jar package: 
-<PRE><CODE>     java   -jar   MyBox-6.3.2.jar</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-6.3.3.jar</CODE></PRE>
 	
 A file path can follow the command as argument to be opened directly by MyBox. Example, following command will open the image:    
-<PRE><CODE>     java   -jar   MyBox-6.3.2.jar   /tmp/a1.jpg</CODE></PRE>   
+<PRE><CODE>     java   -jar   MyBox-6.3.3.jar   /tmp/a1.jpg</CODE></PRE>   
 
 ### Other addresses to download   
 Download from cloud storage: https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F   
@@ -101,9 +101,9 @@ Modifing these parameters, except for DerbyMode, in time will cause MyBox restar
 # Documents
 | Name | Version | Time | Link |
 | --- | --- | --- |  --- |  
-| Development Logs | 6.3.2 | 2020-08-27 | [html](#devLog) |
+| Development Logs | 6.3.3 | 2020-09-27 | [html](#devLog) |
+| Shortcuts | 6.3.3 | 2020-09-27 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts_en.html) |
 | Development Guide | 2.1 | 2020-08-27 | [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-DevGuide-2.1-en.pdf) |
-| Shortcuts | 6.3 | 2020-05-25 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts_en.html) |
 | User Guide - Overview | 5.0 | 2019-4-19 | [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-UserGuide-5.0-Overview-en.pdf) |
 | User Guide - Image Tools | 5.0 | 2019-4-18 | [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-UserGuide-5.0-ImageTools-en.pdf) |
 | User Guide - PDF Tools | 5.0 | 2019-4-20 | [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-UserGuide-5.0-PdfTools-en.pdf) |
@@ -165,7 +165,7 @@ MyBox is based on following open sources:
 
  
 # Current Version
-Current version is 6.3.2. Its features are mentioned below in summary:   
+Current version is 6.3.3. Its features are mentioned below in summary:   
  
 * [Cross Platforms](#Cross-platform)
 * [Internationalized](#Internationalized)
@@ -225,7 +225,7 @@ Current version is 6.3.2. Its features are mentioned below in summary:
 * [Helps](#helps)
 * [Configuration](#Config)     
 * [Supporting HiDPI](#Hidpig)    
-
+* [Dev Mode](#DevMode)    
   
 ## Cross Platforms <a id="Cross-platform"></a>       
 
@@ -235,7 +235,7 @@ Versions before v5.3 are based on Java 8.
 Current version still does not support OCR on Linux/Mac. The reason is that the based tesseract libraries are different on different platforms and there are not out of box packages available.   
 This requirement is delayed due to limited development time.       
 
-"FFmpeg: Record Screen" supports Windows only now.         
+"FFmpeg: Record Screen" supports Windows and Linux only now.         
 
 ## Internationalized <a id="Internationalized"></a> 
 1. All codes of MyBox are internationalized. Currently MyBox supports Chinese and English. 
@@ -255,10 +255,9 @@ This requirement is delayed due to limited development time.
 ##  Document Tools <a id="documentTools"></a> 
 
 ### PDF Tools <a id="PDFTools"></a> 
-1. View PDF in html mode. Browse and edit html page by page. Bookmarks and thumbnails.
-2. Convert PDF files as html files in batch. Options: Whether one html for each page or one html for each PDF; The way to handle fonts/images: embed, save separately, or ignore.
-3. View PDF file in image mode. DPI can be set to adjust resolution. Page can be cropped as images.
-4. In image mode, recognize texts in PDF(OCR). 
+1. View PDF file in image mode. DPI can be set to adjust resolution. Page can be cropped as images.
+2. View PDF in html mode. Browse and edit html page by page. Bookmarks and thumbnails.
+3. In image mode, recognize texts in PDF(OCR). 
    When OCR in batch, following can be set:
 	-  Whether convert pages as images, or extract images from pages
 	-  DPI or scale ratio
@@ -269,7 +268,8 @@ This requirement is delayed due to limited development time.
 	-  Whether invert colors
 	-  Languages list and their order
 	-  whether insert page separators
-5. Convert pages of PDF as images. Options like format, density, color space, compression, quality, etc.
+4. Convert pages of PDF as images. Options like format, density, color space, compression, quality, etc.
+5. Convert PDF files as html files in batch. Options: Whether one html for each page or one html for each PDF; The way to handle fonts/images: embed, save separately, or ignore.
 6. Combine multiple images as PDF file. Options like compression, page size, margin size, header, author, etc. 
    Support Chinese and tool can locate system font files. User can input path of ttf font file.
 7. Compress images in PDF file. JPEG quality or threshold of black-white can be set.
@@ -300,6 +300,7 @@ This requirement is delayed due to limited development time.
 	   Part of functions are unavaliable while counting. Interface will be refreshed automatically after counting process is complete.
 	-  Make sure correction of finding, replacing, and filtering of strings that are across pages.
 8. General functions of editing, like copy/paste/cut/delete/selectAll/undo/redo/recover. And their shortcuts.
+9. Auto-save periodically.
 
 ![Snap-textEditor](https://mararsh.github.io/MyBox/snap-textEditor-en.jpg)        
 
@@ -320,6 +321,7 @@ This requirement is delayed due to limited development time.
 	-  Make sure correction of finding, replacing, and filtering of bytes group that are across pages. 
 	   When break lines by bytes number, crossing pages need not concerned.
 10. General functions of editing, like copy/paste/cut/delete/selectAll/undo/redo/recover. And their shortcuts.
+11. Auto-save periodically.
 
 ### Edit Html<a id="htmlEditor"></a>     
 1. Edit local web pages or online pages in rich text. (Not support FrameSet)
@@ -333,6 +335,7 @@ This requirement is delayed due to limited development time.
 3. Convert to text synchronously.
 4. Find and replace. Support regular expression.
 5. Locate. Go to position of specified character or specified line.
+6. Auto-save periodically.
 
 ### Conversion between html and Markdown<a id="htmlMarkdownConversion" />
 1. Convert files' charset in batch.
@@ -351,6 +354,7 @@ This requirement is delayed due to limited development time.
 5. Select whether display Corodinate, X/Y Rulers, Data.
 6. Image attributes and image meta. ICC profile embedded in image can be decoded.
 7. Navigation of images under same directory.
+8. Context menu.
 
 ![Snap-imageViewer](https://mararsh.github.io/MyBox/snap-imageViewer-en.jpg)       
 
@@ -410,12 +414,11 @@ This requirement is delayed due to limited development time.
 11. Round corner. Arc and background color can be set.
 12. Shadow. Options: background color, shadow size, whether apply Premultiplied Alpha.
 13. Margins. Blur margins with option of whether apply Premultiplied Alpha; Drag anchors to adjust margins; add margins by setting width; cut margins by setting width or color.
-14. Image histories:
-	- Each modification will be recorded as image histories, Option: whether record "Load" as history.
+14. Editing histories:
+	- Each modification will be recorded as image histories.
 	- Manage histories:  Delete, Clear, Recover selected history as current editing image, Set maximum number of histories.
 	- Undo(CTRL+z) and redo(CTRL+y) previous modification. Recover to original image(CTRL+r) at any time. Either select one history to recover.
-15. Reference Image: Open other image file to compare with current image.
-16. "Scope":  Rulers to limit pixels to operate, including area rulers, color matching rulers, or rulers mixed by both types.
+15. "Scope":  Rulers to limit pixels to operate, including area rulers, color matching rulers, or rulers mixed by both types.
 	- Define area: Rectangle, Circle, Ellipse, Polygon. Can be excluded.
 	- Define colors list. Can pick colors directly from image by Color Palette.
 	- Select object for color matching, including Red/Green/Blue channel, saturaion, brightness, hue, RGB, with distance defined. Can be excluded.
@@ -424,12 +427,15 @@ This requirement is delayed due to limited development time.
 	- Scope can be applied against Copy, Crop, Color, Effect, Convolution. 
 	- Scope can be defined against image history and reference image too. The part in scope can be copied into clipboard.
 	- Scopes can be saved with names. User can manage them: Add, Delete, Clear, Edit, Use selected item in scopes list.	
-17. Pop: Current image, image history, or reference image can be viewd in a popped window. Option: Whether always on top.
-18. Option: Whether zoom current image, image history, or reference image synchronously.
-19. Edit existed images, or create new image.
-20. Interface in style of "Visible As Need": Left-right areas like curtain, vertical accordion menus, tabs to switch targets, more details of hiding/showing/adjusting in function areas.
-21. Image Manufacture in batch.
-22. Demo: One clicking to show examples of kinds of image manufacture about "Color", "Effect", and "Enhancement".
+16. Pop current image. Option: Whether always on top.
+17. Interface in style of "Visible As Need": 
+	- Show/Hide left pane(F4), show/hide right pane(F5)
+	- Show/Hide scope pane(F7), show/hide image pane(F8)
+	- Vertical accordion menus
+	- Overlaying tabs to switch
+	- Show/Hide controls as functions
+18. Demo: One clicking to diaplay examples of kinds of image manufacture about "Color", "Effect", "Enhancement", and blend modes.
+19. Image Manufacture in batch.
 
 ![Snap-imageManufacture](https://mararsh.github.io/MyBox/snap-imageManufacture-en.jpg)       
 
@@ -500,10 +506,11 @@ This requirement is delayed due to limited development time.
                  rgba              
 	-  Following fields are optional:              
                  name              
+8. User can input colors list. Examples are provided.       
 
 ### Color Palette <a id="ColorPalette"></a>     
 1. Color is shown in a small rectangle and its name(if has), hexidecimal value, rgb values, opacity, cmyk values, and cie values are popped when mouse is moved upon it.
-2. Pick colors on current image, image history, or reference image.
+2. Drag-drop colors to adjust their order in palette.
 
 ![Snap-colors](https://mararsh.github.io/MyBox/snap-colors-en.jpg)       
 
@@ -567,8 +574,9 @@ This requirement is delayed due to limited development time.
 ### Common Data Management<a id="dataManage" />    
 1. Define data.
 2. Data constraints：
- 	- Invalid value of integer/long/short is the minimum value(MIN_VALUE)
- 	- Invalid value of double is the maximum value(Double.MAX_VALUE)
+ 	- Provisions:
+ 	  	- Null value of integer/long/short is the minimum value(MIN_VALUE)
+ 	  	- Null value of double is the maximum value(Double.MAX_VALUE)
 	- Coordinate system:
  	  	- Valid values：
  	  	   	- CGCS2000(China Geodetic Coordinate System), real locations and approximate to WGS-84(GPS).
@@ -590,6 +598,9 @@ This requirement is delayed due to limited development time.
  	  	   	- Time, like: 13:51:33
  	  	   	- Time with Milliseconds, like: 13:51:33.261
  	  	   	- Date and Time with Milliseconds, like: 2014-06-11 13:51:33.261
+ 	  	   	- Date and Time with zone, like: 2020-09-27 12:29:29 +0800
+  	  	   	- Date and Time with Milliseconds and zone, like: 2020-09-27 12:29:29.713 +0800
+  	  	   	- "T" can be written or omitted between date and time. "2014-06-11T13:51:33" equals to "2014-06-11 13:51:33".
  	  	- Era:        
  	  	 	  	 "0 AD" = "1 BC" = "0" = "-0" = "0000" = "-0000"  = "0001-01-01 00:00:00 BC" =  "公元前1" = "公元前0001-01-01 00:00:00"            
  	  	 	  	 "1 AD" =  "1"  = "0001" = "0001-01-01 00:00:00" = "0001-01-01 00:00:00 AD" =  "公元1" = "公元0001-01-01 00:00:00"           
@@ -749,7 +760,8 @@ This requirement is delayed due to limited development time.
 1. Query geography code by:
  	-  Click map.
  	-  Input address.           
-            TianDiTu supports foreign addresses while GaoDe map only supports addresses in China.
+ 	  	-  TianDiTu supports chinese and foreign addresses in Chinese(like "伦敦") or in English(like "Paris") 
+ 	  	-  GaoDe map only supports addresses in China.
  	-  Input longitude and latitude. 
 2. Query result can be saved in Geography Code table.       
 
@@ -775,10 +787,10 @@ This requirement is delayed due to limited development time.
   	- At beginning, the first data is made as map center.  
   	- Location Distribution: All data are displayed in map.
   	- Time Sequence:
- 	  	- Data are displayed in frames "Start Time" in ascending order.
+ 	  	- Data are displayed in frames as "Start Time" in ascending order.
  	  	- Options:    
  	  	  	- When "Accumulated" is selected, drawn points will not be erased and points are shown more and more.
- 	  	  	- When "Time Overlay" is selected, all data whose duration(between "start time" and "end time" has intersection with duration of current frame will be treated as valid points of current frame.           
+ 	  	  	- When "Time Overlay" is selected, all data whose duration(between "start time" and "end time") has intersection with duration of current frame will be treated as valid points of current frame.           
                            Example, current frame has "start time" of "1044 BC" and "end time" of "221 BC", then all data who or part of who appears in this duration will be displayed in current frame.
  	  	  	- When "Move Center" is selected, each frame will adjust its map center.    
  	  	  	- When "Link" is selected, lines between adjacent 2 points will be shown.          
@@ -869,16 +881,16 @@ This requirement is delayed due to limited development time.
  	-  In interface of "Epidemic Reports of Chinese Provinces" or  "Epidemic Reports of Countries", multiple rows can be inputted for same dataSet and time.
  	-  Modify values of "source" for selected data rows.  
 4. Import data:
- 	-  Embedded predefined data in MyBox: COVID-19 historical data from Johns Hopkins University.(Till 2020-08-27)
+ 	-  Embedded predefined data in MyBox: COVID-19 historical data from Johns Hopkins University.(Till 2020-09-24)
  	-  CSV format:       
  	  	-  Download address:            
                          https://github.com/Mararsh/MyBox_data/tree/master/COVID19/en       
  	  	-  Necessary fields:                 
-                           Data Set,Time,Confirmed            
+                           Data Set,Time,Confirmed,Healed,Dead         
                    And location data which are enough to define a geography code:                                   
-                           Level,Continent,Country,Province,City,County,Town,Village,Building,Longitude,Latitude        
+                           Longitude,Latitude,Level,Continent,Country,Province,City,County,Town,Village,Building,Point of Interest         
  	  	-  Optional fields:             
-                          Healed,Dead,Increased Confirmed,Increased Healed,Increased Dead,Data Source             
+                           Increased Confirmed,Increased Healed,Increased Dead              
 	  	-  Coordinate system is CGCS2000.           
  	-  COVID-19 historical data from Johns Hopkins University(Global) :     
   	  	-  Download address:             
@@ -936,8 +948,10 @@ This requirement is delayed due to limited development time.
  	  	- Font size
  	  	- Parameters of map: level, layers, language
  	-  Snap chart.
- 	  	- When dynamical chart is playing, the snapshot is animated gif.    
- 	  	- When dynamical chart is paused, or when the chart is statical, the snapshot is current frame.     
+ 	  	- Snapshot of current frame. All supported image formats can be selected. 
+ 	  	- jpg:Snapshots of all frames    
+ 	  	- png:Snapshots of all frames    
+	  	- Animated gif:Snapshots of all frames(May out of memory)           
 8. Settings:
  	-  Snap dpi, maximum width of snapped animated images, time to loading chart's data.                       
             These parameters are related to memory usage and computer's calculation capacity.                           
@@ -1060,10 +1074,13 @@ Notice: This set of functions is based on ffmpeg, and user need download ffmpeg 
 	-  Select wether record audio:      
  	  	- Detect audio cards automatically, and pick the first one as the audio device.      
  	  	- Set size of threads queue.      
+	-  Set delay:      
+ 	  	- If "unlimited", record at once when user click button "Start".      
+ 	  	- If valid value, recording will start when this time is past.        
 	-  Set duration:      
  	  	- If "unlimited", record untill user click button "Stop".      
  	  	- If valid value, recording will end when duration completes. User can click button "Stop" to finish recording at any time.        
-	-  Only support windows now.      
+	-  Only support Windows and Linux now.      
 3. Convert videos/audios in batch:      
 	-  Source files are listed as files/directories.      
 	-  Source files are listed as streams and medias information.      
@@ -1155,7 +1172,6 @@ Notice: Some downloads look standstill at 0% but they are actually dragging data
 5. Image tools:
 	- Width and color of stroke and anchor. Whether anchors are solid.
 	- Color to replace Alpha when Alpha is not supported. (Suggest as White)
-	- Images histories number. 
 	- Wdith of thumbnail
 	- Maximum width to display sampled images
 	- Whether copy image in system clipboard
@@ -1164,8 +1180,11 @@ Notice: Some downloads look standstill at 0% but they are actually dragging data
 	-  Set data files and their order
 7. Map:
 	-  Data keys of map
-8. Clear personal settings.
-9. Open data directory.
+8. Dev：
+	-  Open/Close "Dev Mode"
+	-  Path of source codes
+9. Clear personal settings.
+10. Open data directory.
 
 ## Window <a id="windows"></a>     
 1. Open/Close monitor bar of Memory.
@@ -1187,7 +1206,24 @@ MyBox supports enable/disable dpi-aware on line, which will cause MyBox reboots 
 Developers need notice: JavaFx screen is not same as physical screen and has different dpi definition which considers X/Y scale ratio too.    
 
 
-# Development Logs <a id="devLog"></a>        
+
+## Dev Mode<a id="DevMode" />  
+1. Open/Close "Dev Mode" in Settings function.
+2. Following functions are visible only in Dev Mode:
+	-  Menu Item: "Help" - "Make Icrons"
+	-  Menu Item of Colors Management: "Input MyBox Colors"
+
+
+# Development Logs <a id="devLog"></a>      
+2020-9-27 v6.3.3        
+-  Image Manufacture: Show/Hide scope pane and image pane; Enlarge image size when pasted clip out of bound; Demo of blend modes; Parameter "invert" for convolution kernel.
+-  Data Tools: Helps to input CSV; Time with milliseconds or zone; Display points one by one in map; Set of snap images for Epidemic Report.
+-  Color: User can input colors list; Separated interfaces for setting color, picking color, and managing palette; Adjust colors order in palette.     
+-  Others: Context menu for table and image; Auto-save periodically in editors; Delay for Screen Recorder; Screen Recorder on Linux; Dev Mode.   
+-  Major issues solved:  "Clear personal settings" is to delete user configuration data instead of all data; Wrong statements for some tabes;  Shortcuts do not work on Linux; Location Data can not be created for new Data Set.        
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.3)           
+This version is for China. Happy Birthday!                 
+      
 2020-8-27 v6.3.2  Improve "Location Data". Display data in map as "Location Distribution" or "Time Sequence". 3 examples of datasets. Data files on movebank.org can be imported.       
 Improve how to display data in map. Support both TianDiTu and GaoDe map.                    
 "Location Tool": Convert coordinate value between decimal and DMS. Convert coordinate values as other coordinate systems.                  

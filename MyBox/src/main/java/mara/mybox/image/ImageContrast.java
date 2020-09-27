@@ -7,6 +7,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import mara.mybox.image.file.ImageFileReaders;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -275,13 +276,13 @@ public class ImageContrast extends PixelsOperation {
 
     public static Image grayHistogramEqualization(Image grayImage) {
         BufferedImage image = SwingFXUtils.fromFXImage(grayImage, null);
-        image = mara.mybox.image.ImageContrast.grayHistogramEqualization(image);
+        image = grayHistogramEqualization(image);
         return SwingFXUtils.toFXImage(image, null);
     }
 
     public static Image brightnessHistogramEqualization(Image colorImage) {
         BufferedImage image = SwingFXUtils.fromFXImage(colorImage, null);
-        image = mara.mybox.image.ImageContrast.brightnessHistogramEqualization(image);
+        image = brightnessHistogramEqualization(image);
         return SwingFXUtils.toFXImage(image, null);
     }
 

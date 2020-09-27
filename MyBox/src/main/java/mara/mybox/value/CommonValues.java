@@ -9,28 +9,15 @@ import java.util.TimeZone;
 /**
  * @Author Mara
  * @CreateDate 2018-6-4 16:04:05
- * @Description
  * @License Apache License Version 2.0
  */
 public class CommonValues {
 
-    public static final String AppVersion = "6.3.2";
-    public static final String AppVersionDate = "2020-08-27";
+    public static final String AppVersion = "6.3.3";
+    public static final String AppVersionDate = "2020-09-27";
 
     public static final String AppDerbyUser = "mara";
     public static final String AppDerbyPassword = "mybox";
-
-    public static final String MyBoxStyle = "/styles/MyBox.css";
-    public static final String DefaultStyle = "/styles/modena/modena.css";
-    public static final String WhiteOnBlackStyle = "/styles/modena/whiteOnBlack.css";
-    public static final String YellowOnBlackStyle = "/styles/modena/yellowOnBlack.css";
-    public static final String WhiteOnGreenStyle = "/styles/modena/whiteOnGreen.css";
-    public static final String GreenOnBlackStyle = "/styles/modena/greenOnBlack.css";
-    public static final String WhiteOnPurpleStyle = "/styles/modena/whiteOnPurple.css";
-    public static final String PinkOnBlackStyle = "/styles/modena/pinkOnBlack.css";
-    public static final String WhiteOnBlueStyle = "/styles/modena/whiteOnBlue.css";
-    public static final String BlackOnYellowStyle = "/styles/modena/blackOnYellow.css";
-    public static final String caspianStyle = "/styles/caspian/caspian.css";
 
     public static final String MyboxFxml = "/fxml/MyBox.fxml";
     public static final String MyBoxPropertiesFxml = "/fxml/MyBoxProperties.fxml";
@@ -61,6 +48,7 @@ public class CommonValues {
     public static final String ImageConverterBatchFxml = "/fxml/ImageConverterBatch.fxml";
     public static final String ImageManufactureFxml = "/fxml/ImageManufacture.fxml";
     public static final String ImageManufactureViewFxml = "/fxml/ImageManufactureView.fxml";
+    public static final String ImageManufactureCopyFxml = "/fxml/ImageManufactureCopy.fxml";
     public static final String ImageManufactureClipboardFxml = "/fxml/ImageManufactureClipboard.fxml";
     public static final String ImageManufacturePaletteFxml = "/fxml/ImageManufacturePalette.fxml";
     public static final String ImageManufactureSizeFxml = "/fxml/ImageManufactureSize.fxml";
@@ -103,10 +91,14 @@ public class CommonValues {
     public static final String ImageAlphaAddBatchFxml = "/fxml/ImageAlphaAddBatch.fxml";
     public static final String ImageOCRFxml = "/fxml/ImageOCR.fxml";
     public static final String ImageOCRBatchFxml = "/fxml/ImageOCRBatch.fxml";
+    public static final String ImagePopupFxml = "/fxml/ImagePopup.fxml";
     public static final String PixelsCalculatorFxml = "/fxml/PixelsCalculator.fxml";
     public static final String ConvolutionKernelManagerFxml = "/fxml/ConvolutionKernelManager.fxml";
-    public static final String ColorPaletteFxml = "/fxml/ColorPalette.fxml";
     public static final String ManageColorsFxml = "/fxml/ColorsManage.fxml";
+    public static final String ColorPaletteManageFxml = "/fxml/ColorPaletteManage.fxml";
+    public static final String ColorSetFxml = "/fxml/ColorSet.fxml";
+    public static final String ColorPalettePopupFxml = "/fxml/ColorPalettePopup.fxml";
+    public static final String ColorInputFxml = "/fxml/ColorInput.fxml";
     public static final String IccProfileEditorFxml = "/fxml/IccProfileEditor.fxml";
     public static final String ChromaticityDiagramFxml = "/fxml/ChromaticityDiagram.fxml";
     public static final String ChromaticAdaptationMatrixFxml = "/fxml/ChromaticAdaptationMatrix.fxml";
@@ -231,25 +223,33 @@ public class CommonValues {
     public static final String MonthFormat = "yyyy-MM";
     public static final String YearFormat = "yyyy";
     public static final String TimeFormat = "HH:mm:ss";
-    public static final String TimeWithMS = "HH:mm:ss.SSS";
-    public static final String DatetimeFormatWithMS = "yyyy-MM-dd HH:mm:ss.SSS";
+    public static final String TimeMs = "HH:mm:ss.SSS";
+    public static final String DatetimeMs = "yyyy-MM-dd HH:mm:ss.SSS";
     public static final String DatetimeFormat3 = "yyyy-MM-dd-HH-mm-ss-SSS";
     public static final String DatetimeFormat4 = "yyyyMMddHHmmssSSS";
     public static final String DatetimeFormat6 = "yyyy.MM.dd HH:mm:ss";
     public static final String EraDatetimeEn = "y-M-d H:m:s G";
+    public static final String EraDatetimeMsEn = "y-M-d H:m:s.S G";
     public static final String EraDateEn = "y-M-d G";
     public static final String EraMonthEn = "y-M G";
     public static final String EraYearEn = "y G";
     public static final String EraDatetimeZh = "Gy-M-d H:m:s";
+    public static final String EraDatetimeMsZh = "Gy-M-d H:m:s.S";
     public static final String EraDateZh = "Gy-M-d";
     public static final String EraMonthZh = "Gy-M";
     public static final String EraYearZh = "Gy";
     public static final String EraDatetime = "y-M-d H:m:s";
+    public static final String EraDatetimeMs = "y-M-d H:m:s.S";
     public static final String EraDate = "y-M-d";
     public static final String EraMonth = "y-M";
     public static final String EraYear = "y";
     public static final String EraTime = "H:m:s";
-    public static final String EraTimeWithSeconds = "H:m:s.S";
+    public static final String EraTimeMs = "H:m:s.S";
+
+    public static final double InvalidDouble = Double.MAX_VALUE;
+    public static final long InvalidLong = Long.MIN_VALUE;
+    public static final int InvalidInteger = Integer.MIN_VALUE;
+    public static final short InvalidShort = Short.MIN_VALUE;
 
     public static String Indent = "    ";
     public static final int IOBufferLength = 8024;
@@ -259,6 +259,18 @@ public class CommonValues {
     public static final String TianDiTuWebKey = "0ddeb917def62b4691500526cc30a9b1";
     public static final String GaoDeMapWebKey = "06b9e078a51325a843dfefd57ffd876c";
     public static final String GaoDeMapServiceKey = "d7444d9a7fae01fa850236d909ad4450";
+
+    public static final String MyBoxStyle = "/styles/MyBox.css";
+    public static final String DefaultStyle = "/styles/modena/modena.css";
+    public static final String WhiteOnBlackStyle = "/styles/modena/whiteOnBlack.css";
+    public static final String YellowOnBlackStyle = "/styles/modena/yellowOnBlack.css";
+    public static final String WhiteOnGreenStyle = "/styles/modena/whiteOnGreen.css";
+    public static final String GreenOnBlackStyle = "/styles/modena/greenOnBlack.css";
+    public static final String WhiteOnPurpleStyle = "/styles/modena/whiteOnPurple.css";
+    public static final String PinkOnBlackStyle = "/styles/modena/pinkOnBlack.css";
+    public static final String WhiteOnBlueStyle = "/styles/modena/whiteOnBlue.css";
+    public static final String BlackOnYellowStyle = "/styles/modena/blackOnYellow.css";
+    public static final String caspianStyle = "/styles/caspian/caspian.css";
 
     public static List<String> SupportedImages = new ArrayList<String>() {
         {

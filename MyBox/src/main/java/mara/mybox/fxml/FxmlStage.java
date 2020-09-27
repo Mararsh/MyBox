@@ -39,12 +39,13 @@ import mara.mybox.controller.MyBoxLoadingController;
 import mara.mybox.controller.PdfViewController;
 import mara.mybox.controller.TextEditerController;
 import mara.mybox.controller.WebBrowserController;
-import mara.mybox.data.VisitHistory;
 import mara.mybox.image.ImageInformation;
 import mara.mybox.tools.CompressTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.SystemTools;
+import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
@@ -104,11 +105,36 @@ public class FxmlStage {
             controller.afterSceneLoaded();
 
             if (controller.getMainMenuController() != null && !newFxml.equals(CommonValues.LoadingFxml)) {
-                VisitHistory.visitMenu(controller.getBaseTitle(), newFxml);
+                VisitHistoryTools.visitMenu(controller.getBaseTitle(), newFxml);
             }
 
             Platform.setImplicitExit(AppVariables.scheduledTasks == null || AppVariables.scheduledTasks.isEmpty());
 
+            return controller;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
+    public static BaseController initScene(final String newFxml) {
+        try {
+            if (newFxml == null) {
+                return null;
+            }
+            FXMLLoader fxmlLoader = new FXMLLoader(FxmlStage.class.getResource(newFxml), AppVariables.currentBundle);
+            Pane pane = fxmlLoader.load();
+            try {
+                pane.getStylesheets().add(FxmlStage.class.getResource(AppVariables.getStyle()).toExternalForm());
+            } catch (Exception e) {
+            }
+            Scene scene = new Scene(pane);
+
+            BaseController controller = (BaseController) fxmlLoader.getController();
+            controller.setMyScene(scene);
+            controller.setLoadFxml(newFxml);
+            controller.initSplitPanes();
+            controller.refreshStyle();
             return controller;
         } catch (Exception e) {
             logger.error(e.toString());
@@ -147,19 +173,16 @@ public class FxmlStage {
         return openStage(myStage, newFxml, AppVariables.currentBundle, isOwned, modality, stageStyle);
     }
 
-    public static BaseController openStage(Stage myStage,
-            String newFxml, boolean isOwned, Modality modality) {
+    public static BaseController openStage(Stage myStage, String newFxml, boolean isOwned, Modality modality) {
         return openStage(myStage, newFxml, isOwned, modality, null);
 
     }
 
-    public static BaseController openStage(Stage myStage,
-            String newFxml, boolean isOwned) {
+    public static BaseController openStage(Stage myStage, String newFxml, boolean isOwned) {
         return openStage(myStage, newFxml, isOwned, Modality.NONE);
     }
 
-    public static BaseController openStage(Stage myStage,
-            String newFxml) {
+    public static BaseController openStage(Stage myStage, String newFxml) {
         return openStage(myStage, newFxml, false, Modality.NONE);
     }
 
@@ -395,7 +418,7 @@ public class FxmlStage {
     public static ImageViewerController openImageViewer(Stage stage, File file) {
         try {
             final ImageViewerController controller = openImageViewer(stage);
-            if (controller != null) {
+            if (controller != null && file != null) {
                 controller.loadImage(file.getAbsolutePath());
             }
             return controller;
@@ -505,29 +528,6 @@ public class FxmlStage {
             logger.error(e.toString());
             return null;
         }
-    }
-
-    public static LoadingController openLoadingStage(Stage stage, Modality block,
-            String info) {
-        return openLoadingStage(stage, block, null, info);
-    }
-
-    public static LoadingController openLoadingStage(Stage stage, Modality block,
-            Task task, String info) {
-        try {
-            final LoadingController controller
-                    = (LoadingController) FxmlStage.openStage(stage, CommonValues.LoadingFxml,
-                            true, block, StageStyle.TRANSPARENT);
-            controller.init(task);
-            if (info != null) {
-                controller.setInfo(info);
-            }
-            return controller;
-        } catch (Exception e) {
-            logger.error(e.toString());
-            return null;
-        }
-
     }
 
     public static BaseController openTarget(Stage stage, String filename) {
@@ -652,21 +652,32 @@ public class FxmlStage {
         return true;
     }
 
-    public static void alertError(Stage myStage, String information) {
+    public static Alert alertError(String information) {
+        return alertError(null, information);
+    }
+
+    public static Alert alertError(Stage myStage, String information) {
         try {
             Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle(myStage.getTitle());
+            alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
+            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+            if (myStage != null) {
+                alert.setTitle(myStage.getTitle());
+            }
             alert.setHeaderText(null);
             alert.setContentText(information);
-            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+//            alert.getDialogPane().applyCss();
             // https://stackoverflow.com/questions/38799220/javafx-how-to-bring-dialog-alert-to-the-front-of-the-screen?r=SearchResults
             Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
             stage.setAlwaysOnTop(true);
             stage.toFront();
 
             alert.showAndWait();
+            return alert;
+
         } catch (Exception e) {
             logger.error(e.toString());
+            return null;
         }
     }
 
@@ -726,6 +737,87 @@ public class FxmlStage {
             logger.error(e.toString());
             return null;
         }
+    }
+
+    public static ImageViewerController openImageViewer(File file) {
+        return FxmlStage.openImageViewer(null, file);
+    }
+
+    public static ImageViewerController openImageViewer(String file) {
+        return FxmlStage.openImageViewer(null, new File(file));
+    }
+
+    public static ImageViewerController openImageViewer(Image image) {
+        try {
+            final ImageViewerController controller = FxmlStage.openImageViewer(null, null);
+            if (controller != null) {
+                controller.loadImage(image);
+            }
+            return controller;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
+    public static ImageViewerController openImageViewer(ImageInformation info) {
+        try {
+            final ImageViewerController controller = FxmlStage.openImageViewer(null, null);
+            if (controller != null) {
+                controller.loadImage(info);
+            }
+            return controller;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
+    public static void openImageManufacture(String filename) {
+        FxmlStage.openImageManufacture(null, new File(filename));
+    }
+
+    public static void showImageInformation(ImageInformation info) {
+        if (info == null) {
+            return;
+        }
+        FxmlStage.openImageInformation(null, info);
+    }
+
+    public static void showImageMetaData(ImageInformation info) {
+        if (info == null) {
+            return;
+        }
+        FxmlStage.openImageMetaData(null, info);
+    }
+
+    public static LoadingController openLoadingStage(Modality block) {
+        return openLoadingStage(null, block, null, null);
+    }
+
+    public static LoadingController openLoadingStage(Modality block, String info) {
+        return openLoadingStage(null, block, null, info);
+    }
+
+    public static LoadingController openLoadingStage(Stage stage, Modality block, String info) {
+        return openLoadingStage(stage, block, null, info);
+    }
+
+    public static LoadingController openLoadingStage(Stage stage, Modality block, Task task, String info) {
+        try {
+            final LoadingController controller
+                    = (LoadingController) FxmlStage.openStage(stage, CommonValues.LoadingFxml,
+                            true, block, StageStyle.TRANSPARENT);
+            controller.init(task);
+            if (info != null) {
+                controller.setInfo(info);
+            }
+            return controller;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+
     }
 
 }

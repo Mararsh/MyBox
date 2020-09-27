@@ -50,6 +50,12 @@ License:    Apache License Version 2.0
                                                         <Insets />
                                                     </VBox.margin>
                                                 </Label>
+                                    <Separator prefWidth="200.0" />
+                                    <Label layoutX="20.0" layoutY="130.0" text="%PDFComments" wrapText="true" VBox.vgrow="NEVER">
+                                       <VBox.margin>
+                                          <Insets />
+                                       </VBox.margin>
+                                    </Label>
                                  </children>
                               </VBox>
                            </content>

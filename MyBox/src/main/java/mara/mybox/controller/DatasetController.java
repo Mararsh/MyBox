@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -12,6 +13,7 @@ import mara.mybox.fxml.TableBooleanCell;
 import mara.mybox.fxml.TableColorCell;
 import mara.mybox.fxml.TableTableMessageCell;
 import mara.mybox.fxml.TableTimeFormatCell;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
@@ -51,7 +53,7 @@ public class DatasetController extends DataAnalysisController<Dataset> {
     protected void initColumns() {
         try {
 
-            dataidColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+            dataidColumn.setCellValueFactory(new PropertyValueFactory<>("dsid"));
             categoryColumn.setCellValueFactory(new PropertyValueFactory<>("dataCategory"));
             categoryColumn.setCellFactory(new TableTableMessageCell());
             datasetColumn.setCellValueFactory(new PropertyValueFactory<>("dataSet"));
@@ -131,11 +133,10 @@ public class DatasetController extends DataAnalysisController<Dataset> {
 
     @FXML
     @Override
-    public void addAction() {
+    public void addAction(ActionEvent event) {
         try {
             DatasetEditController controller = (DatasetEditController) FxmlStage.openStage(CommonValues.DatasetEditFxml);
-            controller.setValues(this, null);
-            controller.getMyStage().toFront();
+            controller.initEditor(this, null);
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -143,21 +144,21 @@ public class DatasetController extends DataAnalysisController<Dataset> {
 
     @FXML
     @Override
-    public void editAction() {
+    public void editAction(ActionEvent event) {
         Dataset selected = tableView.getSelectionModel().getSelectedItem();
         if (selected == null) {
             return;
         }
         try {
             DatasetEditController controller = (DatasetEditController) FxmlStage.openStage(CommonValues.DatasetEditFxml);
-            controller.setValues(this, selected);
-            controller.getMyStage().toFront();
+            controller.initEditor(this, selected);
         } catch (Exception e) {
             logger.error(e.toString());
         }
     }
 
-    public void load(String category) {
+    public void load(BaseController parent, String category) {
+        parentController = parent;
         sourceController.select(category);
         queryData();
     }

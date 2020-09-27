@@ -7,108 +7,114 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" spacing="5.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufactureEnhancementController">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufactureEnhancementController">
     <children>
-        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER" />
-        <Accordion fx:id="accordionPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" VBox.vgrow="ALWAYS">
-            <panes>
-                 <TitledPane fx:id="viewPane" expanded="false" maxWidth="1.7976931348623157E308" text="%View" />
- <TitledPane fx:id="clipboardPane"  expanded="false"  maxWidth="1.7976931348623157E308" text="%Clipboard" />
-                <TitledPane fx:id="cropPane" maxWidth="1.7976931348623157E308"  text="%Crop" />
-                <TitledPane fx:id="scalePane" expanded="false"  maxWidth="1.7976931348623157E308"  text="%Scale2" />
-                <TitledPane fx:id="colorPane" maxWidth="1.7976931348623157E308"  text="%Color" />
-                <TitledPane fx:id="effectPane" layoutX="10.0" layoutY="169.0"  maxWidth="1.7976931348623157E308"  text="%Effects" />
-                <TitledPane fx:id="enhancementPane" expanded="false" maxWidth="1.7976931348623157E308" text="%Enhancement">
-                    <content>
-                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                            <children>
-                                <FlowPane hgap="5.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWidth="80.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" vgap="5.0" VBox.vgrow="NEVER">
-                                    <VBox.margin>
-                                        <Insets bottom="10.0" />
-                                    </VBox.margin>
-                                    <children>
-                                        <RadioButton fx:id="ContrastRadio" selected="true" text="%Contrast">
-                                            <toggleGroup>
-                                                <ToggleGroup fx:id="enhancementGroup" />
-                                            </toggleGroup>
-                                        </RadioButton>
-                                        <RadioButton fx:id="smoothRadio" layoutX="10.0" layoutY="10.0" text="%Smooth" toggleGroup="$enhancementGroup">
-                                        </RadioButton>
-                                        <RadioButton fx:id="SharpenRadio" layoutX="147.0" layoutY="60.0" text="%Sharpen" toggleGroup="$enhancementGroup">
-                                        </RadioButton>
-                                        <RadioButton fx:id="ConvolutionRadio" layoutX="215.0" layoutY="35.0" text="%Convolution" toggleGroup="$enhancementGroup">
-                                        </RadioButton>
-                                    </children>
-                                    <padding>
-                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                    </padding>
-                                </FlowPane>
-                        <VBox fx:id="setBox" spacing="5.0">
-                           <children>
-                                      <FlowPane fx:id="stringSelectorPane" hgap="5.0" maxWidth="1.7976931348623157E308" prefWidth="100.0" prefWrapLength="350.0" vgap="5.0" VBox.vgrow="NEVER">
-                                          <children>
-                                              <Label fx:id="stringLabel" text="%Value" />
-                                              <ComboBox fx:id="stringSelector" editable="true" maxWidth="1.7976931348623157E308" prefWidth="240.0" />
-                                          </children>
-                                      </FlowPane>
-                              <FlowPane fx:id="intSelectorPane" hgap="5.0" maxWidth="1.7976931348623157E308" prefWidth="100.0" prefWrapLength="350.0" vgap="5.0">
-                                 <children>
-                                              <Label fx:id="intListLabel" text="l" />
-                                              <ComboBox fx:id="intSelector" editable="true" prefWidth="150.0" />
-                                 </children>
-                              </FlowPane>
-                              <FlowPane fx:id="intInput1Pane" hgap="5.0" layoutX="10.0" layoutY="367.0" maxWidth="1.7976931348623157E308" prefWidth="100.0" prefWrapLength="350.0" vgap="5.0">
-                                 <children>
-                                    <Label fx:id="intLabel1" text="l" />
-                                              <TextField fx:id="intInput1" prefWidth="120.0" />
-                                 </children>
-                              </FlowPane>
-                              <FlowPane fx:id="intInput2Pane" hgap="5.0" maxWidth="1.7976931348623157E308" prefWidth="100.0" prefWrapLength="350.0" vgap="5.0">
-                                 <children>
-                                              <Label fx:id="intLabel2" text="l" />
-                                              <TextField fx:id="intInput2" prefWidth="120.0" />
-                                 </children>
-                              </FlowPane>
-                                        <CheckBox fx:id="valueCheck" mnemonicParsing="false" text="CheckBox" />
-                                        <Button fx:id="button" mnemonicParsing="false" text="Button" />
-                           </children>
-                        </VBox>
-                        <HBox alignment="CENTER_LEFT" spacing="5.0">
-                           <children>
-                                      <Button fx:id="okButton" onAction="#okAction">
-                                          <graphic>
-                                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                  <image>
-                                                      <Image url="@../buttons/iconOK.png" />
-                                                  </image>
-                                              </ImageView>
-                                          </graphic>
-                                      </Button>
-                              <Button fx:id="demoButton" mnemonicParsing="false" onAction="#demo">
-                                 <graphic>
-                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/iconGo.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </Button>
-                           </children>
-                        </HBox>
-                                <Label fx:id="commentLabel" prefWidth="200.0" styleClass="blue-label," stylesheets="@../styles/MyBox.css" text="%OpScopeComments" wrapText="true" />
-                            </children>
-                        </VBox>
-                    </content>
-                </TitledPane>
-                <TitledPane fx:id="richTextPane" expanded="false" maxWidth="1.7976931348623157E308"  text="%RichText" />
-                <TitledPane fx:id="textPane" expanded="false" maxWidth="1.7976931348623157E308"  text="%Text" />
-                <TitledPane fx:id="penPane" expanded="false" maxWidth="1.7976931348623157E308"  text="%Pen" />
-
-                <TitledPane fx:id="transformPane" expanded="false" maxWidth="1.7976931348623157E308"  text="%Transform" />
-                <TitledPane fx:id="arcPane" expanded="false" maxWidth="1.7976931348623157E308" text="%Arc" />
-                <TitledPane fx:id="shadowPane" expanded="false" maxWidth="1.7976931348623157E308" text="%Shadow" />
-                <TitledPane fx:id="marginsPane" expanded="false" maxWidth="1.7976931348623157E308" text="%Margins" />
-            </panes>
-        </Accordion>
+        <FlowPane hgap="5.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWidth="80.0" prefWrapLength="200.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" vgap="5.0" VBox.vgrow="NEVER">
+            <VBox.margin>
+                <Insets bottom="10.0" />
+            </VBox.margin>
+            <children>
+                <RadioButton fx:id="ContrastRadio" selected="true" text="%Contrast">
+                    <toggleGroup>
+                        <ToggleGroup fx:id="enhancementGroup" />
+                    </toggleGroup>
+                </RadioButton>
+                <RadioButton fx:id="smoothRadio" layoutX="10.0" layoutY="10.0" text="%Smooth" toggleGroup="$enhancementGroup">
+                </RadioButton>
+                <RadioButton fx:id="SharpenRadio" layoutX="147.0" layoutY="60.0" text="%Sharpen" toggleGroup="$enhancementGroup">
+                </RadioButton>
+                <RadioButton fx:id="ConvolutionRadio" layoutX="215.0" layoutY="35.0" text="%Convolution" toggleGroup="$enhancementGroup">
+                </RadioButton>
+            </children>
+            <padding>
+                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+            </padding>
+        </FlowPane>
+        <VBox fx:id="setBox" spacing="5.0">
+            <children>
+                <FlowPane fx:id="stringSelectorPane" hgap="5.0" maxWidth="1.7976931348623157E308" prefWidth="100.0" prefWrapLength="350.0" vgap="5.0" VBox.vgrow="NEVER">
+                    <children>
+                        <Label fx:id="stringLabel" text="%Value" />
+                        <ComboBox fx:id="stringSelector" editable="true" maxWidth="1.7976931348623157E308" prefWidth="240.0" />
+                    </children>
+                </FlowPane>
+                <FlowPane fx:id="intSelectorPane" hgap="5.0" maxWidth="1.7976931348623157E308" prefWidth="100.0" prefWrapLength="350.0" vgap="5.0">
+                    <children>
+                        <Label fx:id="intListLabel" text="l" />
+                        <ComboBox fx:id="intSelector" editable="true" prefWidth="150.0" />
+                    </children>
+                </FlowPane>
+                <FlowPane fx:id="intInput1Pane" hgap="5.0" layoutX="10.0" layoutY="367.0" maxWidth="1.7976931348623157E308" prefWidth="100.0" prefWrapLength="350.0" vgap="5.0">
+                    <children>
+                        <Label fx:id="intLabel1" text="l" />
+                        <TextField fx:id="intInput1" prefWidth="120.0" />
+                    </children>
+                </FlowPane>
+                <FlowPane fx:id="intInput2Pane" hgap="5.0" maxWidth="1.7976931348623157E308" prefWidth="100.0" prefWrapLength="350.0" vgap="5.0">
+                    <children>
+                        <Label fx:id="intLabel2" text="l" />
+                        <TextField fx:id="intInput2" prefWidth="120.0" />
+                    </children>
+                </FlowPane>
+                <CheckBox fx:id="valueCheck" mnemonicParsing="false" text="CheckBox" />
+                <Button fx:id="button" mnemonicParsing="false" text="Button" />
+            <VBox fx:id="blurABox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+               <children>
+                  <Label text="%Algorithm" />
+                  <RadioButton mnemonicParsing="false" selected="true" text="%AverageBlur">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="blurGroup" />
+                     </toggleGroup>
+                  </RadioButton>
+                  <RadioButton mnemonicParsing="false" text="%GaussianBlur" toggleGroup="$blurGroup" />
+                  <RadioButton layoutX="15.0" layoutY="96.0" mnemonicParsing="false" text="%MotionBlur" toggleGroup="$blurGroup" />
+               </children>
+            </VBox>
+            <VBox fx:id="sharpenABox" layoutX="10.0" layoutY="382.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+               <children>
+                  <Label text="%Algorithm" />
+                  <RadioButton mnemonicParsing="false" selected="true" text="%UnsharpMasking">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="sharpenGroup" />
+                     </toggleGroup>
+                  </RadioButton>
+                  <RadioButton mnemonicParsing="false" text="%EightNeighborLaplace" toggleGroup="$sharpenGroup" />
+                  <RadioButton layoutX="15.0" layoutY="96.0" mnemonicParsing="false" text="%FourNeighborLaplace" toggleGroup="$sharpenGroup" />
+               </children>
+            </VBox>
+            <VBox fx:id="contrastABox" layoutX="10.0" layoutY="514.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+               <children>
+                  <Label text="%Algorithm" />
+                  <RadioButton mnemonicParsing="false" selected="true" text="%HSBHistogramEqualization">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="contrastGroup" />
+                     </toggleGroup>
+                  </RadioButton>
+                  <RadioButton mnemonicParsing="false" text="%GrayHistogramEqualization" toggleGroup="$contrastGroup" />
+                  <RadioButton layoutX="15.0" layoutY="96.0" mnemonicParsing="false" text="%GrayHistogramStretching" toggleGroup="$contrastGroup" />
+                  <RadioButton layoutX="15.0" layoutY="137.0" mnemonicParsing="false" text="%GrayHistogramShifting" toggleGroup="$contrastGroup" />
+               </children>
+            </VBox>
+            </children>
+        </VBox>
+          <Button fx:id="okButton" onAction="#okAction">
+              <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                      <image>
+                          <Image url="@../buttons/iconOK.png" />
+                      </image>
+                  </ImageView>
+              </graphic>
+          </Button>
+        <Label fx:id="commentsLabel" styleClass="blue-label," stylesheets="@../styles/MyBox.css" text="%DefineScopeAndManufacture" wrapText="true" VBox.vgrow="NEVER" />
+          <Button fx:id="demoButton" mnemonicParsing="false" onAction="#demo">
+              <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                      <image>
+                          <Image url="@../buttons/iconGo.png" />
+                      </image>
+                  </ImageView>
+              </graphic>
+          </Button>
     </children>
 </VBox>

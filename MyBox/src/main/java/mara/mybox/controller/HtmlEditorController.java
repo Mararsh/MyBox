@@ -81,8 +81,10 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlTools;
 import mara.mybox.tools.NetworkTools;
 import mara.mybox.tools.PdfTools;
+import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.MyboxDataPath;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
@@ -111,7 +113,7 @@ public class HtmlEditorController extends BaseController {
     protected int lastTextLen;
     protected SnapshotParameters snapParameters;
     protected int snapFileWidth, snapFileHeight, snapsTotal,
-            snapImageWidth, snapImageHeight, snapTotalHeight, snapHeight, snapStep, dpi;
+            snapImageWidth, snapImageHeight, snapTotalHeight, snapHeight, snapStep;
     protected double snapScale;
 
     @FXML
@@ -127,7 +129,7 @@ public class HtmlEditorController extends BaseController {
     @FXML
     private Tab editorTab, codesTab, browserTab, markdownTab;
     @FXML
-    private ComboBox<String> urlBox, delayBox, dpiSelector;
+    private ComboBox<String> urlBox, delayBox;
     @FXML
     private ScrollPane scrollPane;
     @FXML
@@ -149,11 +151,11 @@ public class HtmlEditorController extends BaseController {
         AddFileType = VisitHistory.FileType.Html;
         AddPathType = VisitHistory.FileType.Html;
 
-        sourcePathKey = "HtmlFilePath";
+        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Html);
         HtmlImagePathKey = "HtmlImagePath";
         HtmlSnapDelayKey = "HtmlSnapDelay";
         HtmlLastUrlsKey = "HtmllastUrl";
-        HtmlPdfPathKey = "PdfFilePath";
+        HtmlPdfPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.PDF);
 
         sourceExtensionFilter = CommonFxValues.HtmlExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
@@ -161,8 +163,9 @@ public class HtmlEditorController extends BaseController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
+            super.initControls();
             lastCodesLen = lastHtmlLen = 0;
             isSettingValues = false;
             fontSize = 14;
@@ -183,7 +186,6 @@ public class HtmlEditorController extends BaseController {
                     try {
                         String contents = "";
                         Object object;
-
                         if (editorTab.equals(oldValue)) {
                             if (isFrameSet) {
                                 object = webEngine.executeScript("document.documentElement.outerHTML");
@@ -1158,6 +1160,7 @@ public class HtmlEditorController extends BaseController {
                         return md != null;
                     } catch (Exception e) {
                         error = e.toString();
+                        logger.debug(error);
                         return false;
                     }
                 }
@@ -1204,12 +1207,12 @@ public class HtmlEditorController extends BaseController {
             if (sourceFile != null) {
                 name = FileTools.getFilePrefix(sourceFile.getName());
             }
-            final File file = chooseSaveFile(AppVariables.getUserConfigPath("MarkdownFilePath"),
+            final File file = chooseSaveFile(AppVariables.getUserConfigPath(VisitHistoryTools.getPathKey(VisitHistory.FileType.Markdown)),
                     name, CommonFxValues.MarkdownExtensionFilter, true);
             if (file == null) {
                 return;
             }
-            recordFileWritten(file, "MarkdownFilePath",
+            recordFileWritten(file, VisitHistoryTools.getPathKey(VisitHistory.FileType.Markdown),
                     VisitHistory.FileType.Markdown, VisitHistory.FileType.Markdown);
 
             task = new SingletonTask<Void>() {
@@ -1240,7 +1243,7 @@ public class HtmlEditorController extends BaseController {
 
             @Override
             public List<VisitHistory> recentPaths() {
-                return VisitHistory.getRecentPath(VisitHistory.FileType.Markdown);
+                return VisitHistoryTools.getRecentPath(VisitHistory.FileType.Markdown);
             }
 
             @Override
@@ -1260,7 +1263,7 @@ public class HtmlEditorController extends BaseController {
                     handleSelect();
                     return;
                 }
-                AppVariables.setUserConfigValue("MarkdownFilePath", fname);
+                AppVariables.setUserConfigValue(VisitHistoryTools.getPathKey(VisitHistory.FileType.Markdown), fname);
                 handleSelect();
             }
 

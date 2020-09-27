@@ -125,8 +125,10 @@ public class ImagesBrowserController extends ImageViewerController {
     }
 
     @Override
-    public void initializeNext2() {
+    public void initControls() {
         try {
+            super.initControls();
+
             colsNum = -1;
             currentAngle = 0;
             displayMode = DisplayMode.ImagesGrid;
@@ -643,7 +645,7 @@ public class ImagesBrowserController extends ImageViewerController {
             }
             ImageInformation info = selectedImages.get(0);
             if (info != null) {
-                showImageInformation(info);
+                FxmlStage.showImageInformation(info);
             }
         } catch (Exception e) {
             logger.error(e.toString());
@@ -1444,7 +1446,6 @@ public class ImagesBrowserController extends ImageViewerController {
                 colsNum = Math.max(colsNum, filesNumber / colsNum);
             }
             loadImages();
-
         } catch (Exception e) {
             logger.error(e.toString());
         }

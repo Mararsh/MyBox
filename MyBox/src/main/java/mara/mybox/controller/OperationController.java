@@ -35,8 +35,9 @@ public class OperationController extends BaseController {
     protected CheckBox miaoCheck, openCheck;
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
 
+        super.initControls();
         miaoCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {

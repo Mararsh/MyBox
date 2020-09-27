@@ -19,15 +19,15 @@ License:    Apache License Version 2.0
                 <Insets bottom="20.0" top="10.0" />
             </VBox.margin>
         </ProgressIndicator>
-        <Label fx:id="timeLabel" wrapText="true" />
-        <Label fx:id="infoLabel" text="..." wrapText="true" VBox.vgrow="NEVER" />
+        <Label fx:id="timeLabel" minHeight="-Infinity" minWidth="-Infinity" wrapText="true" VBox.vgrow="NEVER" />
+        <Label fx:id="infoLabel" minHeight="-Infinity" minWidth="-Infinity" text="..." wrapText="true" VBox.vgrow="NEVER" />
         <HBox alignment="CENTER" spacing="20.0">
             <children>
                 <Button fx:id="myboxBuuton" mnemonicParsing="false" onAction="#mybox">
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../buttons/iconDefault.png" />
+                        <Image url="@../buttons/iconMyBox.png" />
                      </image>
                   </ImageView>
                </graphic></Button>

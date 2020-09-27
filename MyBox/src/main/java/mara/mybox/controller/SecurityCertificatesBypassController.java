@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import java.util.List;
 import java.util.Optional;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextInputDialog;
@@ -11,6 +12,7 @@ import mara.mybox.data.CertificateBypass;
 import mara.mybox.db.TableBrowserBypassSSL;
 import mara.mybox.fxml.TableTimeCell;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
@@ -56,9 +58,11 @@ public class SecurityCertificatesBypassController extends TableManageController<
     }
 
     @Override
-    protected int deleteSelectedData() {
-        List<CertificateBypass> selected = tableView.getSelectionModel().getSelectedItems();
-        return TableBrowserBypassSSL.delete(selected);
+    protected int deleteData(List<CertificateBypass> data) {
+        if (data == null || data.isEmpty()) {
+            return 0;
+        }
+        return TableBrowserBypassSSL.delete(data);
     }
 
     @Override
@@ -68,7 +72,7 @@ public class SecurityCertificatesBypassController extends TableManageController<
 
     @FXML
     @Override
-    public void addAction() {
+    public void addAction(ActionEvent event) {
         try {
             TextInputDialog dialog = new TextInputDialog("docs.oracle.com");
             dialog.setTitle(message("SSLVerificationByPass"));

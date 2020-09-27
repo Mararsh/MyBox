@@ -2,13 +2,17 @@ package mara.mybox.db;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.scene.paint.Color;
 import mara.mybox.data.ColorData;
+import mara.mybox.fxml.FxmlColor;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara
@@ -26,7 +30,7 @@ public class TableColorData extends DerbyBase {
         };
         Create_Table_Statement
                 = " CREATE TABLE Color_Data ( "
-                + "  rgba  VARCHAR(16) NOT NULL, "
+                + "  rgba  VARCHAR(16) NOT NULL, " // upper-case
                 + "  palette_index DOUBLE, "
                 + "  color_name VARCHAR(1024) , "
                 + "  color_value INT NOT NULL, "
@@ -49,65 +53,63 @@ public class TableColorData extends DerbyBase {
                 + "  lchuv VARCHAR(100)  , "
                 + "  PRIMARY KEY (rgba)"
                 + " )";
-
     }
+
+    public static final String UniqueQeury
+            = "SELECT * FROM Color_Data WHERE rgba=?";
+
+    public static final String RemoveFromPalette
+            = "UPDATE Color_Data SET palette_index=-1 WHERE rgba=?";
+
+    public static final String Delete
+            = "DELETE FROM Color_Data WHERE rgba=?";
 
     public static int size() {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);) {
+        int v = 0;
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                 Statement statement = conn.createStatement()) {
             conn.setReadOnly(true);
-            String sql = " SELECT count(rgba) FROM Color_Data";
-            ResultSet results = conn.createStatement().executeQuery(sql);
-            if (results.next()) {
-                return results.getInt(1);
-            } else {
-                return 0;
+            try ( ResultSet results = statement.executeQuery(" SELECT count(rgba) FROM Color_Data")) {
+                if (results.next()) {
+                    v = results.getInt(1);
+                }
             }
         } catch (Exception e) {
             failed(e);
-            return 0;
         }
+        return v;
     }
 
-    public static List<ColorData> read() {
+    public static List<ColorData> readAll() {
+        String sql = " SELECT * FROM Color_Data";
+        return readList(sql);
+    }
+
+    public static List<ColorData> readPage(int offset, int number) {
+        String sql = " SELECT * FROM Color_Data OFFSET "
+                + offset + " ROWS FETCH NEXT " + number + " ROWS ONLY";
+        return readList(sql);
+    }
+
+    public static List<ColorData> readList(String sql) {
         List<ColorData> palette = new ArrayList<>();
+        if (sql == null) {
+            return palette;
+        }
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             conn.setReadOnly(true);
-            String sql = " SELECT * FROM Color_Data";
-            ResultSet results = conn.createStatement().executeQuery(sql);
-            while (results.next()) {
-                ColorData data = read(results);
-                palette.add(data);
+            try ( Statement statement = conn.createStatement();
+                     ResultSet results = statement.executeQuery(sql)) {
+                while (results.next()) {
+                    ColorData data = read(results);
+                    palette.add(data);
+                }
             }
         } catch (Exception e) {
             failed(e);
-//            // logger.debug(e.toString());
+            logger.debug(e.toString());
         }
         return palette;
-    }
-
-    public static List<ColorData> read(int offset, int number) {
-        List<ColorData> palette = new ArrayList<>();
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
-            conn.setReadOnly(true);
-            String sql = " SELECT * FROM Color_Data OFFSET "
-                    + offset + " ROWS FETCH NEXT " + number + " ROWS ONLY";
-            ResultSet results = conn.createStatement().executeQuery(sql);
-            while (results.next()) {
-                ColorData data = read(results);
-                palette.add(data);
-            }
-        } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
-        }
-        return palette;
-    }
-
-    public static ColorData read(Color color) {
-        if (color == null) {
-            return null;
-        }
-        return read(color.toString());
     }
 
     public static ColorData read(String rgba) {
@@ -116,17 +118,30 @@ public class TableColorData extends DerbyBase {
         }
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             conn.setReadOnly(true);
-            String sql = " SELECT * FROM Color_Data WHERE rgba='" + rgba + "'";
-            Statement statement = conn.createStatement();
+            return read(conn, rgba);
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+        }
+        return null;
+    }
+
+    public static ColorData read(Connection conn, String rgba) {
+        if (conn == null || rgba == null) {
+            return null;
+        }
+        try ( PreparedStatement statement = conn.prepareStatement(UniqueQeury)) {
+            statement.setString(1, rgba.toUpperCase());
             statement.setMaxRows(1);
-            ResultSet results = statement.executeQuery(sql);
-            if (results.next()) {
-                ColorData data = read(results);
-                return data;
+            try ( ResultSet results = statement.executeQuery()) {
+                if (results.next()) {
+                    ColorData data = read(results);
+                    return data;
+                }
             }
         } catch (Exception e) {
             failed(e);
-//            // logger.debug(e.toString());
+            logger.debug(e.toString());
         }
         return null;
     }
@@ -137,7 +152,7 @@ public class TableColorData extends DerbyBase {
         }
         try {
             ColorData data = new ColorData();
-            data.setRgba(results.getString("rgba"));
+            data.setWeb(results.getString("rgba"));
             data.setPaletteIndex(results.getDouble("palette_index"));
             data.setInPalette(data.getPaletteIndex() > -1);
             data.setColorName(results.getString("color_name"));
@@ -169,6 +184,13 @@ public class TableColorData extends DerbyBase {
 
     }
 
+    public static ColorData read(Color color) {
+        if (color == null) {
+            return null;
+        }
+        return read(FxmlColor.color2rgba(color));
+    }
+
     public static ColorData write(String rgba, boolean replace) {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);) {
             return write(conn, rgba, null, replace);
@@ -179,62 +201,40 @@ public class TableColorData extends DerbyBase {
         }
     }
 
-    public static ColorData write(Color color, boolean replace) {
-        try {
-            return write(color.toString(), replace);
-        } catch (Exception e) {
-//            // logger.debug(e.toString());
-            return null;
-        }
-    }
-
-    public static int writeColors(List<Color> colors, boolean replace) {
-        if (colors == null || colors.isEmpty()) {
-            return -1;
-        }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
-            int count = 0;
-            conn.setAutoCommit(false);
-            for (Color color : colors) {
-                String rgba = color.toString();
-                if (write(conn, rgba, null, replace) != null) {
-                    count++;
-                }
-            }
-            conn.commit();
-            return count;
-        } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
-            return -1;
-        }
-    }
-
     public static ColorData write(Connection conn, String rgba, String name, boolean replace) {
-        if (conn == null) {
+        if (conn == null || rgba == null) {
             return null;
         }
-        try {
-            String sql = " SELECT * FROM Color_Data WHERE rgba='" + rgba + "'";
-            boolean exist;
-            try ( ResultSet results = conn.createStatement().executeQuery(sql)) {
-                exist = results.next();
-            }
-            if (exist) {
-                if (replace) {
-                    ColorData data = new ColorData(rgba, name).calculate();
-                    update(conn, data);
+        ColorData exist = read(conn, rgba);
+        if (exist != null) {
+            if (replace) {
+                ColorData data = new ColorData(rgba, name).calculate();
+                if (update(conn, data)) {
                     return data;
                 } else {
                     return null;
                 }
             } else {
-                ColorData data = new ColorData(rgba, name).calculate();
-                insert(conn, data);
-                return data;
+                return exist;
             }
+        } else {
+            ColorData data = new ColorData(rgba, name).calculate();
+            if (insert(conn, data)) {
+                return data;
+            } else {
+                return null;
+            }
+        }
+    }
+
+    public static ColorData write(Connection conn, String rgba, boolean replace) {
+        return write(conn, rgba, null, replace);
+    }
+
+    public static ColorData write(Color color, boolean replace) {
+        try {
+            return write(FxmlColor.color2rgba(color), replace);
         } catch (Exception e) {
-            failed(e);
 //            // logger.debug(e.toString());
             return null;
         }
@@ -250,6 +250,52 @@ public class TableColorData extends DerbyBase {
             failed(e);
 //            // logger.debug(e.toString());
             return null;
+        }
+    }
+
+    public static ColorData write(Connection conn, ColorData data, boolean replace) {
+        if (conn == null || data == null) {
+            return null;
+        }
+        ColorData exist = read(conn, data.getRgba());
+        if (exist != null) {
+            if (replace) {
+                if (update(conn, data)) {
+                    return data;
+                } else {
+                    return null;
+                }
+            } else {
+                return exist;
+            }
+        } else {
+            if (insert(conn, data)) {
+                return data;
+            } else {
+                return null;
+            }
+        }
+    }
+
+    public static int writeColors(List<Color> colors, boolean replace) {
+        if (colors == null || colors.isEmpty()) {
+            return -1;
+        }
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            int count = 0;
+            conn.setAutoCommit(false);
+            for (Color color : colors) {
+                String rgba = FxmlColor.color2rgba(color);
+                if (write(conn, rgba, replace) != null) {
+                    count++;
+                }
+            }
+            conn.commit();
+            return count;
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return -1;
         }
     }
 
@@ -271,36 +317,6 @@ public class TableColorData extends DerbyBase {
             failed(e);
 //            // logger.debug(e.toString());
             return -1;
-        }
-    }
-
-    public static ColorData write(Connection conn, ColorData data,
-            boolean replace) {
-        if (conn == null || data == null) {
-            return null;
-        }
-        try {
-            String sql = " SELECT * FROM Color_Data WHERE rgba='" + data.getRgba() + "'";
-            Statement statement = conn.createStatement();
-            statement.setMaxRows(1);
-            boolean exist;
-            try ( ResultSet results = statement.executeQuery(sql)) {
-                exist = results.next();
-            }
-            if (exist) {
-                if (replace) {
-                    update(conn, data);
-                } else {
-                    return null;
-                }
-            } else {
-                insert(conn, data);
-            }
-            return data;
-        } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
-            return null;
         }
     }
 
@@ -375,28 +391,53 @@ public class TableColorData extends DerbyBase {
         if (color == null || name == null) {
             return false;
         }
-        return setName(color.toString(), name);
+        return setName(FxmlColor.color2rgba(color), name);
     }
 
     public static boolean setName(String rgba, String name) {
-        if (name == null) {
+        if (name == null || rgba == null) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);) {
-            String sql = " SELECT * FROM Color_Data WHERE rgba='" + rgba + "'";
-            Statement statement = conn.createStatement();
-            statement.setMaxRows(1);
-            ResultSet results = statement.executeQuery(sql);
-            if (results.next()) {
-                sql = "UPDATE Color_Data SET "
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                 Statement statement = conn.createStatement()) {
+            ColorData exist = read(conn, rgba);
+            if (exist != null) {
+                String sql = "UPDATE Color_Data SET "
                         + " color_name='" + stringValue(name) + "' "
-                        + " WHERE rgba='" + rgba + "'";
-                conn.createStatement().executeUpdate(sql);
+                        + " WHERE rgba='" + rgba.toUpperCase() + "'";
+                return statement.executeUpdate(sql) > 0;
             } else {
                 ColorData data = new ColorData(rgba).calculate();
                 data.setColorName(name);
-                insert(conn, data);
+                return insert(conn, data);
             }
+        } catch (Exception e) {
+            failed(e);
+//            // logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean delete(String rgba) {
+        if (rgba == null) {
+            return false;
+        }
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);) {
+            return delete(conn, rgba);
+        } catch (Exception e) {
+            failed(e);
+//            // logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean delete(Connection conn, String rgba) {
+        if (conn == null || rgba == null) {
+            return false;
+        }
+        try {
+            String sql = "DELETE FROM Color_Data WHERE rgba='" + rgba.toUpperCase() + "'";
+            conn.createStatement().executeUpdate(sql);
             return true;
         } catch (Exception e) {
             failed(e);
@@ -405,15 +446,71 @@ public class TableColorData extends DerbyBase {
         }
     }
 
+    public static int deleteData(List<ColorData> dataList) {
+        if (dataList == null || dataList.isEmpty()) {
+            return 0;
+        }
+        int count = 0;
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                 PreparedStatement delete = conn.prepareStatement(Delete)) {
+            conn.setAutoCommit(false);
+            for (ColorData data : dataList) {
+                delete.setString(1, data.getRgba());
+                int ret = delete.executeUpdate();
+                if (ret > 0) {
+                    count += ret;
+                }
+            }
+            conn.commit();
+        } catch (Exception e) {
+            failed(e);
+//            // logger.debug(e.toString());
+        }
+        return count;
+    }
+
+    public static int delete(List<String> rbgaList) {
+        int count = 0;
+        if (rbgaList == null || rbgaList.isEmpty()) {
+            return count;
+        }
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                 PreparedStatement delete = conn.prepareStatement(Delete)) {
+            conn.setAutoCommit(false);
+            for (String rgba : rbgaList) {
+                delete.setString(1, rgba.toUpperCase());
+                int ret = delete.executeUpdate();
+                if (ret > 0) {
+                    count += ret;
+                }
+            }
+            conn.commit();
+        } catch (Exception e) {
+            failed(e);
+//            // logger.debug(e.toString());
+        }
+        return count;
+    }
+
+    // Palette
     public static List<ColorData> readPalette() {
         List<ColorData> palette = new ArrayList<>();
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
-            conn.setReadOnly(true);
-            String sql = " SELECT * FROM Color_Data WHERE palette_index > -1 ORDER BY palette_index ASC";
-            ResultSet results = conn.createStatement().executeQuery(sql);
+        String sql = " SELECT * FROM Color_Data WHERE palette_index > -1 ORDER BY palette_index ASC";
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                 Statement statement = conn.createStatement();
+                 ResultSet results = statement.executeQuery(sql)) {
             while (results.next()) {
                 ColorData data = read(results);
                 palette.add(data);
+            }
+            if (palette.isEmpty()) {
+                palette.add(new ColorData(Color.TRANSPARENT.toString(), message("Transparent")).calculate());
+                palette.add(new ColorData(Color.BLACK.toString(), message("Black")).calculate());
+                palette.add(new ColorData(Color.WHITE.toString(), message("White")).calculate());
+                palette.add(new ColorData(Color.RED.toString(), message("Red")).calculate());
+                palette.add(new ColorData(Color.GREEN.toString(), message("Green")).calculate());
+                palette.add(new ColorData(Color.BLUE.toString(), message("Blue")).calculate());
+                addDataInPalette(conn, palette, true);
             }
         } catch (Exception e) {
             failed(e);
@@ -422,37 +519,328 @@ public class TableColorData extends DerbyBase {
         return palette;
     }
 
-    public static ColorData setPalette(Color color, int palette_index) {
+    public static double maxPaletteIndex(Connection conn) {
+        double maxp = 1;
+        if (conn == null) {
+            return maxp;
+        }
+        String sql = "SELECT MAX(palette_index) as maxp FROM Color_Data WHERE palette_index > 0";
+        try ( Statement statement = conn.createStatement();
+                 ResultSet results = statement.executeQuery(sql)) {
+            if (results.next()) {
+                try {
+                    maxp = results.getDouble("maxp") + 1;
+                } catch (Exception e) {
+                }
+            }
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+        }
+        return maxp;
+    }
+
+    public static double minPaletteIndex(Connection conn) {
+        double minp = 1;
+        if (conn == null) {
+            return minp;
+        }
+        String sql = "SELECT MIN(palette_index) as minp FROM Color_Data WHERE palette_index > 0";
+        try ( Statement statement = conn.createStatement();
+                 ResultSet results = statement.executeQuery(sql)) {
+            if (results.next()) {
+                try {
+                    minp = results.getDouble("minp");
+                    minp = minp - minp / 1000d;
+                } catch (Exception e) {
+                }
+            }
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+        }
+        return minp;
+    }
+
+    public static ColorData addInPalette(Connection conn, String rgba, double index, boolean end) {
+        if (rgba == null || rgba.isEmpty()) {
+            return null;
+        }
+        try {
+            ColorData data = read(conn, rgba);
+            if (data != null) {
+                if (data.getPaletteIndex() > 0) {
+                    return data;
+                }
+                if (index < 0) {
+                    index = end ? maxPaletteIndex(conn) : minPaletteIndex(conn);
+                }
+                data.setPaletteIndex(index);
+                if (update(conn, data)) {
+                    return data;
+                } else {
+                    return null;
+                }
+            } else {
+                data = new ColorData(rgba).calculate();
+                if (index < 0) {
+                    index = end ? maxPaletteIndex(conn) : minPaletteIndex(conn);
+                }
+                data.setPaletteIndex(index);
+                if (insert(conn, data)) {
+                    return data;
+                } else {
+                    return null;
+                }
+            }
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return null;
+        }
+    }
+
+    public static ColorData endPalette(Connection conn, String rgba, double index) {
+        return addInPalette(conn, rgba, index, true);
+    }
+
+    public static ColorData endPalette(Connection conn, String rgba) {
+        return endPalette(conn, rgba, -1);
+    }
+
+    public static ColorData endPalette(String rgba) {
+        if (rgba == null || rgba.isEmpty()) {
+            return null;
+        }
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            return endPalette(conn, rgba);
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return null;
+        }
+    }
+
+    public static ColorData endPalette(Color color) {
         if (color == null) {
             return null;
         }
-        return setPalette(color.toString(), palette_index);
+        return endPalette(FxmlColor.color2rgba(color));
     }
 
-    public static boolean addInPalette(List<ColorData> values) {
-        if (values == null || values.isEmpty()) {
-            return false;
+    public static ColorData frontPalette(Connection conn, String rgba, double index) {
+        return addInPalette(conn, rgba, index, false);
+    }
+
+    public static ColorData frontPalette(Connection conn, String rgba) {
+        return frontPalette(conn, rgba, -1);
+    }
+
+    public static ColorData frontPalette(String rgba) {
+        if (rgba == null || rgba.isEmpty()) {
+            return null;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);) {
-            String sql = "SELECT MAX(palette_index) as maxp FROM Color_Data WHERE palette_index > -1";
-            double index;
-            try ( ResultSet results = conn.createStatement().executeQuery(sql)) {
-                index = 1;
-                if (results.next()) {
-                    try {
-                        index = results.getDouble("maxp") + 1;
-                    } catch (Exception e) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            return frontPalette(conn, rgba);
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return null;
+        }
+    }
+
+    public static ColorData frontPalette(Color color) {
+        if (color == null) {
+            return null;
+        }
+        return frontPalette(FxmlColor.color2rgba(color));
+    }
+
+    public static ColorData addInPalette(Connection conn, ColorData data, double index, boolean end, boolean replace) {
+        if (conn == null || data == null) {
+            return null;
+        }
+        try {
+            ColorData exist = read(conn, data.getRgba());
+            if (exist != null) {
+                if (exist.getPaletteIndex() > 0) {
+                    if (replace) {
+                        data.setPaletteIndex(exist.getPaletteIndex());
+                        if (update(conn, data)) {
+                            return data;
+                        } else {
+                            return null;
+                        }
+                    } else {
+                        return exist;
+                    }
+                } else {
+                    if (!replace) {
+                        data = exist;
+                    }
+                    if (index < 0) {
+                        index = end ? maxPaletteIndex(conn) : minPaletteIndex(conn);
+                    }
+                    data.setPaletteIndex(index);
+                    if (update(conn, data)) {
+                        return data;
+                    } else {
+                        return null;
                     }
                 }
+
+            } else {
+                if (index < 0) {
+                    index = end ? maxPaletteIndex(conn) : minPaletteIndex(conn);
+                }
+                data.setPaletteIndex(index);
+                if (insert(conn, data)) {
+                    return data;
+                } else {
+                    return null;
+                }
             }
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return null;
+        }
+    }
+
+    public static ColorData endPalette(Connection conn, ColorData data, double index, boolean replace) {
+        return addInPalette(conn, data, index, true, replace);
+    }
+
+    public static ColorData endPalette(Connection conn, ColorData data, boolean replace) {
+        return endPalette(conn, data, -1, replace);
+    }
+
+    public static ColorData endPalette(ColorData data, boolean replace) {
+        if (data == null) {
+            return null;
+        }
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            return endPalette(conn, data, replace);
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return null;
+        }
+    }
+
+    public static ColorData frontPalette(Connection conn, ColorData data, double index, boolean replace) {
+        return addInPalette(conn, data, index, false, replace);
+    }
+
+    public static ColorData frontPalette(Connection conn, ColorData data, boolean replace) {
+        return frontPalette(conn, data, -1, replace);
+    }
+
+    public static ColorData frontPalette(ColorData data, boolean replace) {
+        if (data == null) {
+            return null;
+        }
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            return frontPalette(conn, data, replace);
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return null;
+        }
+    }
+
+    public static boolean addInPalette(List<String> rgbaList, boolean replace) {
+        if (rgbaList == null || rgbaList.isEmpty()) {
+            return false;
+        }
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             conn.setAutoCommit(false);
-            for (int i = 0; i < values.size(); i++) {
-                setPalette(conn, values.get(i).getRgba(), index + i);
+            double maxp = maxPaletteIndex(conn);
+            for (String rgba : rgbaList) {
+                endPalette(conn, rgba, maxp++);
             }
             conn.commit();
             trimPalette(conn);
-            conn.commit();
             return true;
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean addColorsInPalette(List<Color> colors) {
+        if (colors == null || colors.isEmpty()) {
+            return false;
+        }
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            addColorsInPalette(conn, colors);
+            return true;
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean addColorsInPalette(Connection conn, List<Color> colors) {
+        if (conn == null || colors == null || colors.isEmpty()) {
+            return false;
+        }
+        try {
+            conn.setAutoCommit(false);
+            double maxp = maxPaletteIndex(conn);
+            for (Color color : colors) {
+                endPalette(conn, FxmlColor.color2rgba(color), maxp++);
+            }
+            conn.commit();
+            trimPalette(conn);
+            return true;
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean addDataInPalette(List<ColorData> dataList, boolean replace) {
+        if (dataList == null || dataList.isEmpty()) {
+            return false;
+        }
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            return addDataInPalette(conn, dataList, replace);
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean addDataInPalette(Connection conn, List<ColorData> dataList, boolean replace) {
+        if (conn == null || dataList == null || dataList.isEmpty()) {
+            return false;
+        }
+        try {
+            conn.setAutoCommit(false);
+            double maxp = maxPaletteIndex(conn);
+            for (ColorData data : dataList) {
+                endPalette(conn, data, maxp++, replace);
+            }
+            conn.commit();
+            trimPalette(conn);
+            return true;
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean removeFromPalette(String rgba) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                 PreparedStatement statement = conn.prepareStatement(RemoveFromPalette)) {
+            statement.setString(1, rgba.toUpperCase());
+            return statement.executeUpdate() > 0;
         } catch (Exception e) {
             failed(e);
 //            // logger.debug(e.toString());
@@ -464,172 +852,27 @@ public class TableColorData extends DerbyBase {
         if (color == null) {
             return false;
         }
-        return removeFromPalette(color.toString());
+        return removeFromPalette(FxmlColor.color2rgba(color));
     }
 
-    public static boolean removeFromPalette(String rgba) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);) {
-            String sql = "UPDATE Color_Data SET palette_index=-1 WHERE rgba='" + rgba + "'";
-            conn.createStatement().executeUpdate(sql);
-            return true;
-        } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
+    public static boolean removeFromPalette(List<ColorData> dataList) {
+        if (dataList == null || dataList.isEmpty()) {
             return false;
         }
-    }
-
-    public static boolean removeFromPalette(List<ColorData> values) {
-        if (values == null || values.isEmpty()) {
-            return false;
-        }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);) {
-            String inStr = "( '" + values.get(0).getRgba() + "' ";
-            for (int i = 1; i < values.size(); ++i) {
-                inStr += ", '" + values.get(i).getRgba() + "' ";
-            }
-            inStr += " )";
-            String sql = "UPDATE Color_Data SET palette_index=-1 WHERE rgba IN " + inStr;
-            conn.createStatement().executeUpdate(sql);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                 PreparedStatement statement = conn.prepareStatement(RemoveFromPalette)) {
             conn.setAutoCommit(false);
-            trimPalette(conn);
+            for (ColorData data : dataList) {
+                statement.setString(1, data.getRgba());
+                statement.executeUpdate();
+            }
             conn.commit();
+            trimPalette(conn);
             return true;
         } catch (Exception e) {
             failed(e);
 //            // logger.debug(e.toString());
             return false;
-        }
-    }
-
-    public static ColorData frontPalette(Color color) {
-        if (color == null) {
-            return null;
-        }
-        String rgba = color.toString();
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);) {
-            String sql = "SELECT MIN(palette_index) as minp FROM Color_Data WHERE palette_index > -1";
-            ResultSet results = conn.createStatement().executeQuery(sql);
-            if (results.next()) {
-                try {
-                    double index = results.getDouble("minp");
-                    return setPalette(conn, rgba, index - (index + 1) / 100d);
-                } catch (Exception e) {
-                    return setPalette(conn, rgba, 1);
-                }
-            } else {
-                return setPalette(conn, rgba, 1);
-            }
-        } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
-            return null;
-        }
-    }
-
-    public static ColorData endPalette(Color color) {
-        if (color == null) {
-            return null;
-        }
-        String rgba = color.toString();
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);) {
-            String sql = "SELECT MAX(palette_index) as maxp FROM Color_Data WHERE palette_index > -1";
-            ResultSet results = conn.createStatement().executeQuery(sql);
-            if (results.next()) {
-                try {
-                    double index = results.getDouble("maxp") + 1;
-                    return setPalette(conn, rgba, index);
-                } catch (Exception e) {
-                    return setPalette(conn, rgba, 1);
-                }
-            } else {
-                return setPalette(conn, rgba, 1);
-            }
-        } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
-            return null;
-        }
-    }
-
-    public static ColorData setPalette(String rgba, double palette_index) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);) {
-
-            return setPalette(conn, rgba, palette_index);
-        } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
-            return null;
-        }
-    }
-
-    public static ColorData setPalette(Connection conn, String rgba,
-            double palette_index) {
-        if (conn == null) {
-            return null;
-        }
-        try {
-            String sql = " SELECT * FROM Color_Data WHERE rgba='" + rgba + "'";
-            Statement statement = conn.createStatement();
-            statement.setMaxRows(1);
-            ResultSet results = statement.executeQuery(sql);
-            ColorData data;
-            if (results.next()) {
-                data = read(results);
-                data.setPaletteIndex(palette_index);
-                update(conn, data);
-            } else {
-                data = new ColorData(rgba).calculate();
-                data.setPaletteIndex(palette_index);
-                insert(conn, data);
-            }
-            return data;
-        } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
-            return null;
-        }
-    }
-
-    public static ColorData endPalette(ColorData data) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);) {
-            String sql = "SELECT MAX(palette_index) as maxp FROM Color_Data WHERE palette_index > -1";
-            ResultSet results = conn.createStatement().executeQuery(sql);
-            double index = 1;
-            if (results.next()) {
-                try {
-                    index = results.getDouble("maxp") + 1;
-                } catch (Exception e) {
-                }
-            }
-            data.setPaletteIndex(index);
-            return write(conn, data, true);
-        } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
-            return null;
-        }
-    }
-
-    public static ColorData frontPalette(ColorData data) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);) {
-            String sql = "SELECT MIN(palette_index) as minp FROM Color_Data WHERE palette_index > -1";
-            double index = 1;
-            try ( ResultSet results = conn.createStatement().executeQuery(sql)) {
-                if (results.next()) {
-                    try {
-                        double min = results.getDouble("minp");
-                        index = min - (min + 1) / 100d;
-                    } catch (Exception e) {
-                    }
-                }
-            }
-            data.setPaletteIndex(index);
-            return write(conn, data, true);
-        } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
-            return null;
         }
     }
 
@@ -645,40 +888,52 @@ public class TableColorData extends DerbyBase {
         }
     }
 
-    public static boolean updatePaletteColor(List<Color> colors) {
-        if (colors == null || colors.isEmpty()) {
-            clearPalette();
-            return true;
-        }
-        List<String> values = new ArrayList<>();
-        for (Color color : colors) {
-            values.add(color.toString());
-        }
-        return updatePalette(values);
-    }
-
-    public static boolean updatePaletteColorData(List<ColorData> colors) {
-        if (colors == null || colors.isEmpty()) {
-            clearPalette();
-            return true;
-        }
-        List<String> values = new ArrayList<>();
-        for (ColorData data : colors) {
-            values.add(data.getRgba());
-        }
-        return updatePalette(values);
-    }
-
-    public static boolean updatePalette(List<String> values) {
+    public static boolean setPalette(List<String> rgbaList) {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);) {
-            conn.setAutoCommit(false);
             String sql = "UPDATE Color_Data SET palette_index=-1";
             conn.createStatement().executeUpdate(sql);
             conn.commit();
-            if (values != null) {
-                for (int i = 0; i < values.size(); ++i) {
-                    setPalette(conn, values.get(i), i);
-                }
+            if (rgbaList == null || rgbaList.isEmpty()) {
+                return true;
+            }
+            conn.setAutoCommit(false);
+            double index = 10;
+            for (String rgba : rgbaList) {
+                endPalette(conn, rgba, index++);
+            }
+            conn.commit();
+            return true;
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean setPaletteColors(List<Color> colors) {
+        if (colors == null || colors.isEmpty()) {
+            clearPalette();
+            return true;
+        }
+        List<String> rgbList = new ArrayList<>();
+        for (Color color : colors) {
+            rgbList.add(FxmlColor.color2rgba(color));
+        }
+        return setPalette(rgbList);
+    }
+
+    public static boolean setPaletteColors(List<ColorData> colors, boolean replace) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);) {
+            String sql = "UPDATE Color_Data SET palette_index=-1";
+            conn.createStatement().executeUpdate(sql);
+            conn.commit();
+            if (colors == null || colors.isEmpty()) {
+                return true;
+            }
+            conn.setAutoCommit(false);
+            double index = 10;
+            for (ColorData data : colors) {
+                endPalette(conn, data, index++, replace);
             }
             conn.commit();
             return true;
@@ -703,102 +958,25 @@ public class TableColorData extends DerbyBase {
     }
 
     public static boolean trimPalette(Connection conn) {
-        try {
-            String sql = " SELECT rgba, palette_index FROM Color_Data WHERE palette_index > -1 ORDER BY palette_index ASC";
-            List<String> values;
-            try ( ResultSet results = conn.createStatement().executeQuery(sql)) {
-                values = new ArrayList<>();
+        if (conn == null) {
+            return false;
+        }
+        try ( Statement statement = conn.createStatement()) {
+            conn.setAutoCommit(false);
+            String sql = " SELECT * FROM Color_Data WHERE palette_index > 0 ORDER BY palette_index ASC";
+            double index = 10;
+            try ( ResultSet results = statement.executeQuery(sql)) {
                 while (results.next()) {
-                    values.add(results.getString("rgba"));
+                    ColorData data = read(results);
+                    data.setPaletteIndex(index++);
+                    update(conn, data);
                 }
             }
-            for (int i = 0; i < values.size(); i++) {
-                sql = "UPDATE Color_Data SET palette_index=" + i + " WHERE rgba='" + values.get(i) + "'";
-                conn.createStatement().executeUpdate(sql);
-            }
+            conn.commit();
             return true;
         } catch (Exception e) {
             failed(e);
             logger.debug(e.toString());
-            return false;
-        }
-    }
-
-    public static boolean delete(String rgba) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);) {
-            String sql = "DELETE FROM Color_Data WHERE rgba='" + rgba + "'";
-            conn.createStatement().executeUpdate(sql);
-            return true;
-        } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
-            return false;
-        }
-    }
-
-    public static int deleteData(List<ColorData> values) {
-        if (values == null || values.isEmpty()) {
-            return 0;
-        }
-        int count = 0;
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);) {
-            String inStr = "( '" + values.get(0).getRgba() + "' ";
-            for (int i = 1; i < values.size(); ++i) {
-                inStr += ", '" + values.get(i).getRgba() + "' ";
-            }
-            inStr += " )";
-            String sql = "DELETE FROM Color_Data WHERE rgba IN " + inStr;
-            count += conn.createStatement().executeUpdate(sql);
-        } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
-        }
-        return count;
-    }
-
-    public static boolean delete(List<String> values) {
-        if (values == null || values.isEmpty()) {
-            return false;
-        }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);) {
-            String inStr = "( '" + values.get(0) + "' ";
-            for (int i = 1; i < values.size(); ++i) {
-                inStr += ", '" + values.get(i) + "' ";
-            }
-            inStr += " )";
-            String sql = "DELETE FROM Color_Data WHERE rgba IN " + inStr;
-            conn.createStatement().executeUpdate(sql);
-            return true;
-        } catch (Exception e) {
-            failed(e);
-//            // logger.debug(e.toString());
-            return false;
-        }
-    }
-
-    public static boolean migrate() {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);) {
-            String sql = " SELECT * FROM SRGB WHERE palette_index >= 0";
-            ResultSet olddata = conn.createStatement().executeQuery(sql);
-            List<ColorData> oldData = new ArrayList<>();
-            while (olddata.next()) {
-                ColorData data = new ColorData(olddata.getString("color_value")).calculate();
-                String name = olddata.getString("color_name");
-                if (name != null && !name.isEmpty()) {
-                    data.setColorName(name);
-                }
-                data.setPaletteIndex(olddata.getInt("palette_index"));
-                oldData.add(data);
-            }
-            for (ColorData data : oldData) {
-                write(conn, data, true);
-            }
-            sql = "DROP TABLE SRGB";
-            conn.createStatement().executeUpdate(sql);
-            return true;
-        } catch (Exception e) {
-            failed(e);
-//            logger.debug(e.toString());
             return false;
         }
     }

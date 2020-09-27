@@ -8,7 +8,6 @@ import javax.sound.sampled.Clip;
 import mara.mybox.data.AlarmClock;
 import static mara.mybox.data.AlarmClock.getTypeString;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -29,14 +28,6 @@ public class AlarmClockRunController extends BaseController {
     public AlarmClockRunController() {
         baseTitle = AppVariables.message("AlarmClock");
 
-    }
-
-    @Override
-    public void initializeNext() {
-        try {
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
     }
 
     @FXML

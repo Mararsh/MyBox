@@ -19,14 +19,15 @@ import javafx.scene.web.WebView;
 import mara.mybox.data.CoordinateSystem;
 import mara.mybox.data.GeographyCode;
 import mara.mybox.data.StringTable;
+import static mara.mybox.data.tools.GeographyCodeTools.toGCJ02ByWebService;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DoubleTools;
-import static mara.mybox.tools.GeographyCodeTools.toGCJ02ByWebService;
 import mara.mybox.tools.LocationTools;
 import static mara.mybox.tools.LocationTools.latitudeToDmsString;
 import static mara.mybox.tools.LocationTools.longitudeToDmsString;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
@@ -58,8 +59,9 @@ public class LocationToolsController extends MapBaseController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
+            super.initControls();
             webEngine = csView.getEngine();
             degrees = minutes = 0;
             seconds = longitude = latitude = 0;
@@ -397,20 +399,23 @@ public class LocationToolsController extends MapBaseController {
             List<String> row;
 
             row = new ArrayList<>();
-            row.addAll(Arrays.asList(message("WGS_84"), gcj02[0] + "", gcj02[1] + "",
+            row.addAll(Arrays.asList(message("CGCS2000"), wgs84[0] + "", wgs84[1] + "",
+                    longitudeToDmsString(wgs84[0]), latitudeToDmsString(wgs84[1])
+            ));
+            table.add(row);
+
+            row = new ArrayList<>();
+            row.addAll(Arrays.asList(message("GCJ_02"), gcj02[0] + "", gcj02[1] + "",
                     longitudeToDmsString(gcj02[0]), latitudeToDmsString(gcj02[1])
             ));
             table.add(row);
+
             row = new ArrayList<>();
             row.addAll(Arrays.asList(message("WGS_84"), wgs84[0] + "", wgs84[1] + "",
                     longitudeToDmsString(wgs84[0]), latitudeToDmsString(wgs84[1])
             ));
             table.add(row);
-            row = new ArrayList<>();
-            row.addAll(Arrays.asList(message("CGCS2000"), wgs84[0] + "", wgs84[1] + "",
-                    longitudeToDmsString(wgs84[0]), latitudeToDmsString(wgs84[1])
-            ));
-            table.add(row);
+
             row = new ArrayList<>();
             row.addAll(Arrays.asList(message("BD_09"), db09[0] + "", db09[1] + "",
                     longitudeToDmsString(db09[0]), latitudeToDmsString(db09[1])
@@ -551,7 +556,7 @@ public class LocationToolsController extends MapBaseController {
             popMenu.getItems().add(menu);
 
             popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("MenuClose"));
+            menu = new MenuItem(message("PopupClose"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction((ActionEvent event) -> {
                 popMenu.hide();
@@ -567,12 +572,10 @@ public class LocationToolsController extends MapBaseController {
     }
 
     @FXML
-    public void locationAction() {
+    public void locationAction(ActionEvent event) {
         try {
             LocationInMapController controller = (LocationInMapController) openStage(CommonValues.LocationInMapFxml);
-            controller.consumer = this;
-            controller.setCoordinate(longitude, latitude);
-            controller.getMyStage().toFront();
+            controller.loadCoordinate(this, longitude, latitude);
         } catch (Exception e) {
             logger.error(e.toString());
         }

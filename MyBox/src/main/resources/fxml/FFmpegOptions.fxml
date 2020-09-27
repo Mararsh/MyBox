@@ -68,10 +68,10 @@ License:    Apache License Version 2.0
         </HBox>
         <HBox alignment="CENTER_LEFT" layoutX="32.0" layoutY="32.0" maxWidth="1.7976931348623157E308" spacing="5.0">
             <children>
-                <Label text="%MuxerFormat" />
-                <ComboBox fx:id="muxerSelector" prefWidth="300.0" />
-                <Label text="%TargetFilesExtension" />
-                <TextField fx:id="extensionInput" prefWidth="150.0" />
+                <Label minWidth="-Infinity" text="%MuxerFormat" HBox.hgrow="NEVER" />
+                <ComboBox fx:id="muxerSelector" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                <Label minWidth="-Infinity" text="%TargetFilesExtension" HBox.hgrow="NEVER" />
+                <TextField fx:id="extensionInput" minWidth="-Infinity" prefWidth="150.0" HBox.hgrow="NEVER" />
             </children>
         </HBox>
         <HBox alignment="CENTER_LEFT" layoutX="32.0" layoutY="32.0" maxWidth="1.7976931348623157E308" spacing="5.0" />
@@ -79,32 +79,32 @@ License:    Apache License Version 2.0
             <children>
                 <HBox alignment="CENTER_LEFT" layoutX="32.0" layoutY="90.0" maxWidth="1.7976931348623157E308" spacing="5.0">
                     <children>
-                        <Label text="%VideoEncoder" />
-                        <ComboBox fx:id="videoEncoderSelector" prefWidth="200.0" />
-                        <Label text="%VideoFrameRate" />
-                        <ComboBox fx:id="videoFrameRateSelector" prefWidth="150.0" />
+                        <Label minWidth="-Infinity" text="%VideoEncoder" HBox.hgrow="NEVER" />
+                        <ComboBox fx:id="videoEncoderSelector" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                        <Label minWidth="-Infinity" text="%VideoFrameRate" HBox.hgrow="NEVER" />
+                        <ComboBox fx:id="videoFrameRateSelector" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                     </children>
                 </HBox>
                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
                     <children>
-                        <Label text="%VideoResolution" />
-                        <ComboBox fx:id="resolutionSelector" prefWidth="200.0" />
-                        <Label text="%AspectRatio" />
-                        <ComboBox fx:id="aspectSelector" prefWidth="300.0" />
+                        <Label minWidth="-Infinity" text="%VideoResolution" HBox.hgrow="NEVER" />
+                        <ComboBox fx:id="resolutionSelector" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                        <Label minWidth="-Infinity" text="%AspectRatio" HBox.hgrow="NEVER" />
+                        <ComboBox fx:id="aspectSelector" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                     </children>
                 </HBox>
                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
                     <children>
-                        <Label text="%VideoBitrate" />
-                        <ComboBox fx:id="videoBitrateSelector" editable="true" prefWidth="200.0" />
-                        <Label text="%EncodingPreset" />
-                        <ComboBox prefWidth="160.0" fx:id="x264presetSelector" />
+                        <Label minWidth="-Infinity" text="%VideoBitrate" HBox.hgrow="NEVER" />
+                        <ComboBox fx:id="videoBitrateSelector" editable="true" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                        <Label minWidth="-Infinity" text="%EncodingPreset" HBox.hgrow="NEVER" />
+                        <ComboBox maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" fx:id="x264presetSelector" />
                     </children>
                 </HBox>
                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
                     <children>
-                        <Label text="%CRF" />
-                        <ComboBox fx:id="crfSelector" prefWidth="160.0" />
+                        <Label minWidth="-Infinity" text="%CRF" HBox.hgrow="NEVER" />
+                        <ComboBox fx:id="crfSelector" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                     </children>
                 </HBox>
             </children>
@@ -113,32 +113,32 @@ License:    Apache License Version 2.0
             <children>
                 <HBox alignment="CENTER_LEFT" layoutX="32.0" layoutY="32.0" maxWidth="1.7976931348623157E308" spacing="5.0">
                     <children>
-                        <Label text="%AudioEncoder" />
-                        <ComboBox fx:id="audioEncoderSelector" prefWidth="300.0" />
-                        <Label text="%AudioSampleRate" />
-                        <ComboBox fx:id="audioSampleRateSelector" editable="true" prefWidth="200.0" />
+                        <Label minWidth="-Infinity" text="%AudioEncoder" HBox.hgrow="NEVER" />
+                        <ComboBox fx:id="audioEncoderSelector" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                        <Label minWidth="-Infinity" text="%AudioSampleRate" HBox.hgrow="NEVER" />
+                        <ComboBox fx:id="audioSampleRateSelector" editable="true" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                     </children>
                 </HBox>
                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
                     <children>
-                        <Label text="%AudioBitrate" />
-                        <ComboBox fx:id="audioBitrateSelector" editable="true" prefWidth="200.0" />
-                        <Label text="%ChangeVolume" />
-                  <ComboBox fx:id="volumnSelector" editable="true" layoutX="186.0" layoutY="10.0" prefWidth="200.0" />
-                  <CheckBox fx:id="stereoCheck" mnemonicParsing="false" selected="true" text="%Stereo" />
+                        <Label minWidth="-Infinity" text="%AudioBitrate" HBox.hgrow="NEVER" />
+                        <ComboBox fx:id="audioBitrateSelector" editable="true" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                        <Label minWidth="-Infinity" text="%ChangeVolume" HBox.hgrow="NEVER" />
+                  <ComboBox fx:id="volumnSelector" editable="true" layoutX="186.0" layoutY="10.0" minWidth="-Infinity" prefWidth="240.0" />
+                  <CheckBox fx:id="stereoCheck" minWidth="-Infinity" mnemonicParsing="false" selected="true" text="%Stereo" HBox.hgrow="NEVER" />
                     </children>
                 </HBox>
             </children>
         </VBox>
         <HBox alignment="CENTER_LEFT" layoutX="32.0" layoutY="148.0" maxWidth="1.7976931348623157E308" spacing="5.0">
             <children>
-                <Label text="%SubtitleEncoder" />
-                <ComboBox fx:id="subtitleEncoderSelector" prefWidth="300.0" />
+                <Label minWidth="-Infinity" text="%SubtitleEncoder" HBox.hgrow="NEVER" />
+                <ComboBox fx:id="subtitleEncoderSelector" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
             </children>
         </HBox>
         <HBox alignment="CENTER_LEFT" layoutX="32.0" layoutY="420.0" maxWidth="1.7976931348623157E308" spacing="5.0">
             <children>
-                <Label text="%MoreArguments" />
+                <Label minWidth="-Infinity" text="%MoreArguments" HBox.hgrow="NEVER" />
                 <TextField fx:id="moreInput" maxWidth="1.7976931348623157E308" promptText="%SeparateBySpace" HBox.hgrow="ALWAYS" />
             </children>
         </HBox>

@@ -18,6 +18,7 @@ import mara.mybox.image.ImageInformation;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -49,37 +50,25 @@ public abstract class ImagesListController extends ImageViewerController {
 
                 tableData = tableController.tableData;
                 tableView = tableController.tableView;
-
             }
+            initOptionsSection();
         } catch (Exception e) {
             logger.debug(e.toString());
         }
     }
 
-    @Override
-    public void initializeNext() {
-        try {
-            initOptionsSection();
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
     public void initOptionsSection() {
         try {
-
             if (optionsBox != null) {
                 optionsBox.setDisable(true);
             }
             tableBox.setDisable(true);
 
-            saveButton.disableProperty().bind(Bindings.isEmpty(tableController.tableData)
-            );
-
-            saveAsButton.disableProperty().bind(
-                    saveButton.disableProperty()
-            );
-
+            saveButton.disableProperty().bind(Bindings.isEmpty(tableController.tableData));
+            saveAsButton.disableProperty().bind(saveButton.disableProperty());
+            if (viewButton != null) {
+                viewButton.disableProperty().bind(saveButton.disableProperty());
+            }
         } catch (Exception e) {
             logger.error(e.toString());
         }

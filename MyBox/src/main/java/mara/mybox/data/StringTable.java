@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import mara.mybox.tools.HtmlTools;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -17,7 +18,7 @@ public class StringTable {
     protected String title, style = HtmlTools.DefaultStyle;
     protected List<List<String>> data;
     protected List<String> names;
-    protected List<Integer> colorIndices;    // Color column should be RGBA from color.toString()
+    protected List<Integer> colorIndices;    // Color column should be RGBA
     protected static String indent = "    ";
 
     public StringTable() {
@@ -126,7 +127,7 @@ public class StringTable {
                 for (int i = 0; i < row.size(); ++i) {
                     String value = row.get(i);
                     if (colorIndices != null && colorIndices.contains(i)) {
-                        String rgb = "#" + value.substring(2, 8);                  // Color column should be RGBA from color.toString()
+                        String rgb = "#" + value.substring(2, 8);                  // Color column should be RGBA 
                         s.append("<TD align=\"center\"><DIV style=\"width: 50px;  background-color:").
                                 append(rgb).append("; \">&nbsp;&nbsp;&nbsp;</DIV></TD>");
                         s.append("<TD>").append(value).append(" </TD>");

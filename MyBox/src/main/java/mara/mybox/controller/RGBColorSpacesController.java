@@ -21,6 +21,7 @@ import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.MatrixTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -58,8 +59,11 @@ public class RGBColorSpacesController extends ChromaticityBaseController {
     public void initControls() {
         try {
             super.initControls();
+            initData();
+
             initAdaptation();
             initPrimaries();
+
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -120,19 +124,6 @@ public class RGBColorSpacesController extends ChromaticityBaseController {
         rxcsColumn.setCellValueFactory(new PropertyValueFactory<>("relativeX"));
         rycsColumn.setCellValueFactory(new PropertyValueFactory<>("relativeY"));
         rzcsColumn.setCellValueFactory(new PropertyValueFactory<>("relativeZ"));
-
-    }
-
-    @Override
-    public void initializeNext() {
-        try {
-            super.initializeNext();
-
-            initData();
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
 
     }
 

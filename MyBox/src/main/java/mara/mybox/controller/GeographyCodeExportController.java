@@ -5,8 +5,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.util.List;
 import mara.mybox.data.GeographyCode;
+import mara.mybox.data.tools.GeographyCodeTools;
 import mara.mybox.db.TableGeographyCode;
-import mara.mybox.tools.GeographyCodeTools;
 import mara.mybox.value.AppVariables;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -62,7 +62,7 @@ public class GeographyCodeExportController extends DataExportController {
 
     @Override
     protected List<String> columnLabels() {
-        return GeographyCodeTools.externalNames();
+        return new TableGeographyCode().importAllFields();
     }
 
     @Override

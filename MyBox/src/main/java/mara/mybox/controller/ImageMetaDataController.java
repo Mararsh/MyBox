@@ -1,14 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package mara.mybox.controller;
 
 import java.io.File;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -18,13 +14,13 @@ import mara.mybox.fxml.FxmlStage;
 import mara.mybox.image.ImageFileInformation;
 import mara.mybox.image.ImageInformation;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.CommonFxValues;
 
 /**
  * @Author Mara
  * @CreateDate 2018-6-21
- * @Description
  * @License Apache License Version 2.0
  */
 public class ImageMetaDataController extends BaseController {
@@ -44,8 +40,8 @@ public class ImageMetaDataController extends BaseController {
         AddFileType = VisitHistory.FileType.Text;
         AddPathType = VisitHistory.FileType.Text;
 
-        sourcePathKey = "TextFilePath";
-        targetPathKey = "TextFilePath";
+        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Text);
+        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Text);
 
         sourceExtensionFilter = CommonFxValues.TextExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
@@ -163,7 +159,7 @@ public class ImageMetaDataController extends BaseController {
     }
 
     @FXML
-    public void editAction() {
+    public void editAction(ActionEvent event) {
         File file = FileTools.getTempFile(".txt");
         save(file, true);
     }

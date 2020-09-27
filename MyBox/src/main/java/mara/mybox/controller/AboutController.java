@@ -25,7 +25,8 @@ public class AboutController extends BaseController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
+        super.initControls();
         version.setText(CommonValues.AppVersion);
         date.setText(CommonValues.AppVersionDate);
         userGuideLink.setText(AppVariables.isChinese()

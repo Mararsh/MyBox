@@ -22,7 +22,10 @@ import static mara.mybox.db.DerbyBase.dbHome;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.TableBase;
+import mara.mybox.fxml.FxmlControl;
+import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
@@ -49,6 +52,8 @@ public class DataImportController<D> extends FilesBatchController {
     protected Tab sourcesTab, commentsTab;
     @FXML
     protected Hyperlink link;
+    @FXML
+    protected ControlCSVEdit csvEditController;
 
     public DataImportController() {
         baseTitle = AppVariables.message("ImportEpidemicReport");
@@ -60,17 +65,33 @@ public class DataImportController<D> extends FilesBatchController {
         AddFileType = VisitHistory.FileType.Text;
         AddPathType = VisitHistory.FileType.Text;
 
-        targetPathKey = "TextFilePath";
-        sourcePathKey = "TextFilePath";
+        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Text);
+        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Text);
 
         sourceExtensionFilter = CommonFxValues.TextExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
+        super.initControls();
         if (link != null) {
             setLink();
+        }
+        if (csvEditController != null) {
+            csvEditController.init(this, getTableDefinition());
+        }
+    }
+
+    @Override
+    public void afterSceneLoaded() {
+        try {
+            super.afterSceneLoaded();
+            if (csvEditController != null) {
+                FxmlControl.removeTooltip(csvEditController.inputButton);
+            }
+        } catch (Exception e) {
+            logger.error(e.toString());
         }
     }
 
@@ -296,10 +317,10 @@ public class DataImportController<D> extends FilesBatchController {
     @Override
     public void donePost() {
         super.donePost();
-        if (closeWhenCompleteCheck != null && closeWhenCompleteCheck.isSelected()) {
-            closeStage();
-        }
         if (parent != null && parent.getMyStage().isShowing()) {
+            if (closeWhenCompleteCheck != null && closeWhenCompleteCheck.isSelected()) {
+                closeStage();
+            }
             timer = new Timer();
             timer.schedule(new TimerTask() {
 

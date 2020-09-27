@@ -50,6 +50,7 @@ License:    Apache License Version 2.0
                                                     </children>
                                                 </HBox>
                                                 <Label text="%LocationDataCVSComments" wrapText="true" />
+                                                <fx:include fx:id="csvEdit" source="ControlCSVEdit.fxml" />
                                             </children>
                                         </VBox>
                                     </content>

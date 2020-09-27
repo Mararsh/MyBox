@@ -28,9 +28,11 @@ import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.image.ImageAttributes;
 import mara.mybox.image.ImageValue;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.getUserConfigBoolean;
 import static mara.mybox.value.AppVariables.getUserConfigValue;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import static mara.mybox.value.AppVariables.setUserConfigValue;
@@ -75,9 +77,9 @@ public class ImageConverterOptionsController extends BaseController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
-            super.initializeNext();
+            super.initControls();
 
             formatGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -576,13 +578,13 @@ public class ImageConverterOptionsController extends BaseController {
             @Override
             public List<VisitHistory> recentFiles() {
                 int fileNumber = AppVariables.fileRecentNumber * 2 / 3 + 1;
-                return VisitHistory.getRecentFile(VisitHistory.FileType.Icc, fileNumber);
+                return VisitHistoryTools.getRecentFile(VisitHistory.FileType.Icc, fileNumber);
             }
 
             @Override
             public List<VisitHistory> recentPaths() {
                 int pathNumber = AppVariables.fileRecentNumber / 3 + 1;
-                return VisitHistory.getRecentPath(VisitHistory.FileType.Icc, pathNumber);
+                return VisitHistoryTools.getRecentPath(VisitHistory.FileType.Icc, pathNumber);
             }
 
             @Override

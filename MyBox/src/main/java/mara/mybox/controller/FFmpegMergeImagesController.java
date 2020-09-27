@@ -11,6 +11,7 @@ import java.nio.charset.Charset;
 import java.util.Date;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
@@ -25,7 +26,9 @@ import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
+import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
@@ -47,6 +50,8 @@ public class FFmpegMergeImagesController extends FFmpegBatchController {
     protected FFmpegAudiosTableController audiosTableController;
     @FXML
     protected CheckBox stopCheck;
+    @FXML
+    protected ControlFileSelecter targetFileController;
 
     public FFmpegMergeImagesController() {
         baseTitle = AppVariables.message("FFmpegMergeImagesInformation");
@@ -58,8 +63,8 @@ public class FFmpegMergeImagesController extends FFmpegBatchController {
         AddFileType = VisitHistory.FileType.Image;
         AddPathType = VisitHistory.FileType.Image;
 
-        targetPathKey = "MediaFilePath";
-        sourcePathKey = "ImageFilePath";
+        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Media);
+        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Image);
 
         sourceExtensionFilter = CommonFxValues.ImageExtensionFilter;
         targetExtensionFilter = CommonFxValues.FFmpegMediaExtensionFilter;
@@ -75,33 +80,30 @@ public class FFmpegMergeImagesController extends FFmpegBatchController {
 
             audiosData = audiosTableController.tableData;
 
+            targetFileController.label(message("TargetFile"))
+                    .isDirectory(false).isSource(false).mustExist(false).permitNull(false)
+                    .name(baseName + "TargetFile", false).type(VisitHistory.FileType.Media);
+
+            ffmpegOptionsController.extensionInput.textProperty().addListener(
+                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
+                        if (newValue == null || newValue.isEmpty()) {
+                            return;
+                        }
+                        String ext = newValue.trim();
+                        if (!ext.isEmpty() && !message("OriginalFormat").equals(ext)) {
+                            targetFileController.defaultValue("." + ext);
+                        }
+                    });
+
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(
-                    Bindings.isEmpty(targetFileInput.textProperty())
-                            .or(targetFileInput.styleProperty().isEqualTo(badStyle))
+                    Bindings.isEmpty(targetFileController.fileInput.textProperty())
+                            .or(targetFileController.fileInput.styleProperty().isEqualTo(badStyle))
                             .or(ffmpegOptionsController.extensionInput.styleProperty().isEqualTo(badStyle))
             );
 
         } catch (Exception e) {
             logger.debug(e.toString());
-        }
-    }
-
-    @Override
-    public void selectTargetFileFromPath(File path) {
-        try {
-            String name = null;
-            String ext = ffmpegOptionsController.extensionInput.getText().trim();
-            if (!ext.isEmpty() && !message("OriginalFormat").equals(ext)) {
-                name = "." + ext;
-            }
-            final File file = chooseSaveFile(path, name, targetExtensionFilter, true);
-            if (file == null) {
-                return;
-            }
-            selectTargetFile(file);
-        } catch (Exception e) {
-            logger.error(e.toString());
         }
     }
 

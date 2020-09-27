@@ -15,6 +15,7 @@ import static mara.mybox.color.ColorBase.clipRGB;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.tools.DoubleTools.scale;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**

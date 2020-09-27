@@ -30,6 +30,7 @@ import mara.mybox.fxml.TableBooleanCell;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -97,9 +98,9 @@ public class FFmpegInformationController extends FFmpegOptionsController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
-            super.initializeNext();
+            super.initControls();
 
             initColumns();
 

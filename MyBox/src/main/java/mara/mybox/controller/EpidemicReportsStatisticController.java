@@ -21,6 +21,7 @@ import javafx.scene.layout.FlowPane;
 import mara.mybox.data.EpidemicReport;
 import mara.mybox.data.GeographyCode;
 import mara.mybox.data.GeographyCodeLevel;
+import mara.mybox.data.tools.GeographyCodeTools;
 import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.DerbyBase.dbHome;
 import static mara.mybox.db.DerbyBase.login;
@@ -28,7 +29,7 @@ import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.TableEpidemicReport;
 import mara.mybox.db.TableGeographyCode;
 import mara.mybox.tools.DateTools;
-import mara.mybox.tools.GeographyCodeTools;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
@@ -50,16 +51,16 @@ public class EpidemicReportsStatisticController extends DataTaskController {
     protected FlowPane datasetPane;
     @FXML
     protected CheckBox accumulateCheck, globalIncreasedCheck, provinceIncreasedCheck, cityIncreasedCheck,
-            countyIncreasedCheck, townIncreasedCheck;
+            countyIncreasedCheck, townIncreasedCheck, closeWhenCompleteCheck;
 
     public EpidemicReportsStatisticController() {
         baseTitle = message("EpidemicReportStatistic");
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
-            super.initializeNext();
+            super.initControls();
             datasetGroup = new ToggleGroup();
 
             List<String> datasets = TableEpidemicReport.datasets();
@@ -333,7 +334,7 @@ public class EpidemicReportsStatisticController extends DataTaskController {
                         changed = true;
                         info += message("Dead") + ": " + rdead + "->" + dead + "  ";
                     }
-                    info = report.getId() + " " + level + "  " + code.getName() + " "
+                    info = report.getEpid() + " " + level + "  " + code.getName() + " "
                             + date + "  " + info;
                     if (changed) {
                         report.setSource(4);
@@ -431,6 +432,9 @@ public class EpidemicReportsStatisticController extends DataTaskController {
     @Override
     protected void afterSuccess() {
         if (parent != null && parent.getMyStage().isShowing()) {
+            if (closeWhenCompleteCheck != null && closeWhenCompleteCheck.isSelected()) {
+                closeStage();
+            }
             timer = new Timer();
             timer.schedule(new TimerTask() {
 

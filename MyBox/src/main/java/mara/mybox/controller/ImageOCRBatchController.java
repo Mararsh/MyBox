@@ -31,6 +31,7 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.OCRTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 import net.sourceforge.tess4j.ITessAPI.TessPageIteratorLevel;
@@ -190,8 +191,8 @@ public class ImageOCRBatchController extends ImagesBatchController {
             });
             selectedLanguages = AppVariables.getUserConfigValue("ImageOCRLanguages", null);
             if (selectedLanguages != null && !selectedLanguages.isEmpty()) {
-                currentOCRFilesLabel.setText(
-                        MessageFormat.format(message("CurrentDataFiles"), selectedLanguages));
+                currentOCRFilesLabel.setText(MessageFormat.format(message("CurrentDataFiles"), selectedLanguages));
+                currentOCRFilesLabel.setStyle(null);
                 isSettingValues = true;
                 String[] langs = selectedLanguages.split("\\+");
                 Map<String, String> codes = OCRTools.codeName();
@@ -204,8 +205,8 @@ public class ImageOCRBatchController extends ImagesBatchController {
                 }
                 isSettingValues = false;
             } else {
-                currentOCRFilesLabel.setText(
-                        MessageFormat.format(message("CurrentDataFiles"), ""));
+                currentOCRFilesLabel.setText(MessageFormat.format(message("CurrentDataFiles"), message("NoData")));
+                currentOCRFilesLabel.setStyle(badStyle);
             }
 
             regionLevel = -1;
@@ -297,11 +298,11 @@ public class ImageOCRBatchController extends ImagesBatchController {
         }
         if (selectedLanguages != null) {
             AppVariables.setUserConfigValue("ImageOCRLanguages", selectedLanguages);
-            currentOCRFilesLabel.setText(
-                    MessageFormat.format(message("CurrentDataFiles"), selectedLanguages));
+            currentOCRFilesLabel.setText(MessageFormat.format(message("CurrentDataFiles"), selectedLanguages));
+            currentOCRFilesLabel.setStyle(null);
         } else {
-            currentOCRFilesLabel.setText(
-                    MessageFormat.format(message("CurrentDataFiles"), ""));
+            currentOCRFilesLabel.setText(MessageFormat.format(message("CurrentDataFiles"), message("NoData")));
+            currentOCRFilesLabel.setStyle(badStyle);
         }
     }
 

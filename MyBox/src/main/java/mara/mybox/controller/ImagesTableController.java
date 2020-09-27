@@ -27,7 +27,9 @@ import mara.mybox.image.ImageInformation;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
+import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
@@ -61,8 +63,8 @@ public class ImagesTableController extends BatchTableController<ImageInformation
         AddFileType = VisitHistory.FileType.Image;
         AddPathType = VisitHistory.FileType.Image;
 
-        targetPathKey = "ImageFilePath";
-        sourcePathKey = "ImageFilePath";
+        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Image);
+        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Image);
         sourceExtensionFilter = CommonFxValues.ImageExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
 
@@ -284,10 +286,7 @@ public class ImagesTableController extends BatchTableController<ImageInformation
             if (info == null) {
                 return;
             }
-            final ImageViewerController controller = FxmlStage.openImageViewer(null);
-            if (controller != null) {
-                controller.loadImage(info);
-            }
+            FxmlStage.openImageViewer(info);
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -307,6 +306,7 @@ public class ImagesTableController extends BatchTableController<ImageInformation
     }
 
     @FXML
+    @Override
     public void metaAction() {
         if (tableData.isEmpty()) {
             return;

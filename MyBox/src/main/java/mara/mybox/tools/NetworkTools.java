@@ -41,6 +41,7 @@ import javax.net.ssl.X509TrustManager;
 import mara.mybox.data.CertificateBypass;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonValues;
 
 /**

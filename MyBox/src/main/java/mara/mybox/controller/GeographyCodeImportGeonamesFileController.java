@@ -116,6 +116,7 @@ public class GeographyCodeImportGeonamesFileController extends DataImportControl
                             }
                             if (provinceCode == null) {
                                 provinceCode = new GeographyCode();
+                                provinceCode.setSource(GeographyCode.AddressSource.Geonames);
                                 provinceCode.setContinent(countryCode.getContinent());
                                 provinceCode.setCountry(countryCode.getGcid());
                                 provinceCode.setEnglishName(province);
@@ -157,6 +158,7 @@ public class GeographyCodeImportGeonamesFileController extends DataImportControl
                             }
                             if (cityCode == null) {
                                 cityCode = new GeographyCode();
+                                cityCode.setSource(GeographyCode.AddressSource.Geonames);
                                 cityCode.setContinent(countryCode.getContinent());
                                 cityCode.setCountry(countryCode.getGcid());
                                 if (provinceCode != null) {
@@ -204,6 +206,7 @@ public class GeographyCodeImportGeonamesFileController extends DataImportControl
                             }
                             if (countyCode == null) {
                                 countyCode = new GeographyCode();
+                                countyCode.setSource(GeographyCode.AddressSource.Geonames);
                                 countyCode.setContinent(countryCode.getContinent());
                                 countyCode.setCountry(countryCode.getGcid());
                                 if (provinceCode != null) {
@@ -268,6 +271,7 @@ public class GeographyCodeImportGeonamesFileController extends DataImportControl
                                 }
                             }
                         } else {
+                            code.setSource(GeographyCode.AddressSource.Geonames);
                             if (TableGeographyCode.insert(conn, insert, code)) {
                                 insertCount++;
                                 importCount++;

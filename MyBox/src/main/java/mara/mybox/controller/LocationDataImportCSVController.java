@@ -14,6 +14,7 @@ import mara.mybox.db.TableLocationData;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import org.apache.commons.csv.CSVRecord;
 
@@ -37,6 +38,12 @@ public class LocationDataImportCSVController extends DataImportController<Locati
         super.initValues();
         datasets = new HashMap<>();
         tableLocationData = new TableLocationData();
+    }
+
+    @Override
+    public void initControls() {
+        super.initControls();
+        csvEditController.init(this, tableLocationData);
     }
 
     @Override
@@ -67,10 +74,11 @@ public class LocationDataImportCSVController extends DataImportController<Locati
             String datasetName = record.get(message(lang, "Dataset"));
             Dataset dataset = datasets.get(datasetName);
             if (dataset == null) {
-                dataset = tableLocationData.queryAndCreate(conn, datasetName);
+                dataset = tableLocationData.queryAndCreateDataset(conn, datasetName);
                 datasets.put(datasetName, dataset);
             }
             data.setDataset(dataset);
+            data.setDatasetid(dataset.getDsid());
             if (names.contains(message(lang, "Label"))) {
                 data.setLabel(record.get(message(lang, "Label")));
             }

@@ -35,7 +35,9 @@ import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.TableDurationCell;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
@@ -73,8 +75,8 @@ public class MediaTableController extends BatchTableController<MediaInformation>
     }
 
     @Override
-    public void initializeNext() {
-        super.initializeNext();
+    public void initControls() {
+        super.initControls();
 
         examples = new ArrayList();
         examples.add("http://devimages.apple.com/iphone/samples/bipbop/gear1/prog_index.m3u8");
@@ -414,6 +416,7 @@ public class MediaTableController extends BatchTableController<MediaInformation>
             return;
         }
         Platform.runLater(new Runnable() {
+            @Override
             public void run() {
                 parentController.popError(error);
             }
@@ -514,7 +517,7 @@ public class MediaTableController extends BatchTableController<MediaInformation>
             tableView.refresh();
             tableChanged();
 
-            VisitHistory.visitStreamMedia(address);
+            VisitHistoryTools.visitStreamMedia(address);
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -529,7 +532,7 @@ public class MediaTableController extends BatchTableController<MediaInformation>
         RecentVisitMenu menu = new RecentVisitMenu(this, event) {
             @Override
             public List<VisitHistory> recentFiles() {
-                List<VisitHistory> recent = VisitHistory.getRecentStreamMedia();
+                List<VisitHistory> recent = VisitHistoryTools.getRecentStreamMedia();
                 return recent;
             }
 

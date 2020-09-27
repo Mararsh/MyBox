@@ -95,7 +95,7 @@ License:    Apache License Version 2.0
                                                 </Tab>
                                                 <Tab text="%Time">
                                                     <content>
-                                                        <fx:include fx:id="time" source="TimeTree.fxml" />
+                                                        <fx:include fx:id="time" source="ControlTimeTree.fxml" />
                                                     </content>
                                                 </Tab>
                                                 <Tab fx:id="conditionOrderTab" text="%Order">
@@ -223,6 +223,7 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </Button>
+                                        <fx:include fx:id="csvEdit" source="ControlCSVEdit.fxml" />
                                         <Button fx:id="addButton" mnemonicParsing="false" onAction="#addAction">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -269,6 +270,15 @@ License:    Apache License Version 2.0
                                                                         </ImageView>
                                                                     </graphic>
                                                                 </Button>
+                                                                <Button fx:id="viewButton" disable="true" mnemonicParsing="false" onAction="#viewAction">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/iconView.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
                                                                 <Button fx:id="deleteButton" disable="true" mnemonicParsing="false" onAction="#deleteAction">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -278,21 +288,22 @@ License:    Apache License Version 2.0
                                                                         </ImageView>
                                                                     </graphic>
                                                                 </Button>
-                                                                <CheckBox fx:id="deleteConfirmCheck" mnemonicParsing="false">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/iconConfirm.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </CheckBox>
+                                                                <CheckBox fx:id="deleteConfirmCheck" mnemonicParsing="false" text="%ConfirmWhenDelete" />
                                                                 <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                                                 <Button fx:id="setButton" disable="true" layoutX="254.0" layoutY="10.0" mnemonicParsing="false" onMouseEntered="#popSetMenu">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                             <image>
                                                                                 <Image url="@../buttons/iconEqual.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
+                                                                <Button fx:id="locationButton" disable="true" mnemonicParsing="false" onAction="#locationAction">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/iconLocation.png" />
                                                                             </image>
                                                                         </ImageView>
                                                                     </graphic>

@@ -160,6 +160,7 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </Button>
+                                        <fx:include fx:id="csvEdit" source="ControlCSVEdit.fxml" />
                                         <Button fx:id="addButton" mnemonicParsing="false" onAction="#addAction">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -206,20 +207,20 @@ License:    Apache License Version 2.0
                                                                         </ImageView>
                                                                     </graphic>
                                                                 </Button>
-                                                                <Button fx:id="locationButton" disable="true" mnemonicParsing="false" onAction="#locationAction">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/iconLocation.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </Button>
                                                                 <Button fx:id="viewButton" disable="true" mnemonicParsing="false" onAction="#viewAction">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                             <image>
                                                                                 <Image url="@../buttons/iconView.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
+                                                                <Button fx:id="locationButton" disable="true" mnemonicParsing="false" onAction="#locationAction">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/iconLocation.png" />
                                                                             </image>
                                                                         </ImageView>
                                                                     </graphic>
@@ -233,15 +234,7 @@ License:    Apache License Version 2.0
                                                                         </ImageView>
                                                                     </graphic>
                                                                 </Button>
-                                                                <CheckBox fx:id="deleteConfirmCheck" mnemonicParsing="false">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/iconConfirm.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </CheckBox>
+                                                                <CheckBox fx:id="deleteConfirmCheck" mnemonicParsing="false" text="%ConfirmWhenDelete" />
                                                                 <Label fx:id="langLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                                                 <Button fx:id="setButton" disable="true" mnemonicParsing="false" onMouseEntered="#popSetMenu">
                                                                     <graphic>
@@ -272,7 +265,7 @@ License:    Apache License Version 2.0
                                                                 <TableColumn fx:id="alias3Column" editable="false" prefWidth="100.0" text="%Alias" />
                                                                 <TableColumn fx:id="alias4Column" editable="false" prefWidth="100.0" text="%Alias" />
                                                                 <TableColumn fx:id="alias5Column" editable="false" prefWidth="100.0" text="%Alias" />
-                                                                <TableColumn fx:id="predefinedColumn" editable="false" prefWidth="100.0" text="%Predefined" />
+                                                                <TableColumn fx:id="sourceColumn" editable="false" prefWidth="100.0" text="%DataSource" />
                                                             </columns>
                                                         </TableView>
                                                         <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
@@ -372,31 +365,13 @@ License:    Apache License Version 2.0
                                                                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="NEVER">
                                                                     <children>
                                                                         <Label text="%PredefinedData" />
-                                                                        <Rectangle fx:id="predefinedRect" fill="RED" height="15.0" stroke="BLACK" strokeMiterLimit="0.0" strokeType="INSIDE" width="15.0" />
-                                                                        <Button fx:id="palettePredefinedButton" mnemonicParsing="false" onAction="#palettePredefined">
-                                                                            <graphic>
-                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                    <image>
-                                                                                        <Image url="@../buttons/iconPalette.png" />
-                                                                                    </image>
-                                                                                </ImageView>
-                                                                            </graphic>
-                                                                        </Button>
+                                                                        <fx:include fx:id="predefinedColorSet" source="ColorSet.fxml" />
                                                                     </children>
                                                                 </HBox>
                                                                 <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="20.0" maxWidth="1.7976931348623157E308" spacing="10.0">
                                                                     <children>
                                                                         <Label text="%InputtedData" />
-                                                                        <Rectangle fx:id="inputtedRect" fill="RED" height="15.0" stroke="BLACK" strokeMiterLimit="0.0" strokeType="INSIDE" width="15.0" />
-                                                                        <Button fx:id="paletteInputtedButton" mnemonicParsing="false" onAction="#paletteInputted">
-                                                                            <graphic>
-                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                    <image>
-                                                                                        <Image url="@../buttons/iconPalette.png" />
-                                                                                    </image>
-                                                                                </ImageView>
-                                                                            </graphic>
-                                                                        </Button>
+                                                                        <fx:include fx:id="inputtedColorSet" source="ColorSet.fxml" />
                                                                     </children>
                                                                 </HBox>
                                                             </children>

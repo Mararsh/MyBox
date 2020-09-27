@@ -1,6 +1,3 @@
-/*
- * Apache License Version 2.0
- */
 package mara.mybox.fxml;
 
 import java.io.File;
@@ -15,19 +12,22 @@ import javafx.scene.layout.Region;
 import javafx.stage.FileChooser;
 import mara.mybox.controller.BaseController;
 import mara.mybox.data.VisitHistory;
+import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
 
 /**
- *
- * @author mara
+ * @Author Mara
+ * @CreateDate
+ * @License Apache License Version 2.0
  */
 public abstract class RecentVisitMenu {
 
     protected final BaseController controller;
     protected final MouseEvent event;
     protected List<String> examples;
-    protected int SourceFileType, SourcePathType, AddFileType, AddPathType, TargetPathType;
+    protected int SourceFileType, SourcePathType, AddFileType, AddPathType,
+            TargetFileType, TargetPathType;
     protected List<FileChooser.ExtensionFilter> sourceExtensionFilter;
     protected String defaultPathKey, LastPathKey, sourcePathKey, targetPathKey;
 
@@ -40,11 +40,12 @@ public abstract class RecentVisitMenu {
         this.targetPathKey = controller.getTargetPathKey();
         this.SourceFileType = controller.getSourceFileType();
         this.SourcePathType = controller.getSourcePathType();
+        this.TargetFileType = controller.getTargetFileType();
+        this.TargetPathType = controller.getTargetPathType();
         this.AddFileType = controller.getAddFileType();
         if (this.AddFileType <= 0) {
             this.AddFileType = this.SourceFileType;
         }
-        this.TargetPathType = controller.getTargetPathType();
     }
 
     public void pop() {
@@ -115,7 +116,7 @@ public abstract class RecentVisitMenu {
 
         controller.setPopMenu(popMenu);
         popMenu.getItems().add(new SeparatorMenuItem());
-        menu = new MenuItem(message("MenuClose"));
+        menu = new MenuItem(message("PopupClose"));
         menu.setStyle("-fx-text-fill: #2e598a;");
         menu.setOnAction((ActionEvent event1) -> {
             controller.getPopMenu().hide();
@@ -167,25 +168,35 @@ public abstract class RecentVisitMenu {
 
     public List<VisitHistory> recentSourceFiles() {
         int fileNumber = AppVariables.fileRecentNumber * 2 / 3 + 1;
-        return VisitHistory.getRecentFile(SourceFileType, fileNumber);
+        return VisitHistoryTools.getRecentFile(SourceFileType, fileNumber);
+    }
+
+    public List<VisitHistory> recentTargetFiles() {
+        int fileNumber = AppVariables.fileRecentNumber * 2 / 3 + 1;
+        return VisitHistoryTools.getRecentFile(TargetFileType, fileNumber);
     }
 
     public List<VisitHistory> recentAddFiles() {
         int fileNumber = AppVariables.fileRecentNumber * 2 / 3 + 1;
-        return VisitHistory.getRecentFile(AddFileType, fileNumber);
+        return VisitHistoryTools.getRecentFile(AddFileType, fileNumber);
     }
 
     public List<VisitHistory> recentSourcePathsBesidesFiles() {
         int pathNumber = AppVariables.fileRecentNumber / 3 + 1;
-        return VisitHistory.getRecentPath(SourcePathType, pathNumber);
+        return VisitHistoryTools.getRecentPath(SourcePathType, pathNumber);
+    }
+
+    public List<VisitHistory> recentTargetPathsBesidesFiles() {
+        int pathNumber = AppVariables.fileRecentNumber / 3 + 1;
+        return VisitHistoryTools.getRecentPath(TargetPathType, pathNumber);
     }
 
     public List<VisitHistory> recentSourcePaths() {
-        return VisitHistory.getRecentPath(SourcePathType);
+        return VisitHistoryTools.getRecentPath(SourcePathType);
     }
 
     public List<VisitHistory> recentTargetPaths() {
-        return VisitHistory.getRecentPath(TargetPathType);
+        return VisitHistoryTools.getRecentPath(TargetPathType);
     }
 
     public void handleSourcePath(String fname) {

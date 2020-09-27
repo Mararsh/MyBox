@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -10,25 +9,26 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Region;
+import javafx.stage.Modality;
+import javafx.util.Callback;
 import mara.mybox.data.CoordinateSystem;
 import mara.mybox.data.Dataset;
-import mara.mybox.data.Direction;
-import mara.mybox.data.Direction.Name;
 import mara.mybox.data.GeographyCode;
 import mara.mybox.data.Location;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.db.TableLocationData;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
+import mara.mybox.fxml.ListDatasetCell;
 import mara.mybox.tools.DateTools;
+import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import static mara.mybox.value.AppVariables.tableMessage;
@@ -42,9 +42,9 @@ import mara.mybox.value.CommonValues;
  */
 public class LocationDataEditController extends BaseController {
 
-    protected LocationDataController parent;
+    protected TableLocationData tableLocationData;
     protected double longitude, latitude, altitude, precision, speed, dataValue, dataSize;
-    protected int direction;
+    protected short direction;
     protected long startTime, endTime;
     protected long dataid = -1;
     protected CoordinateSystem coordinateSystem;
@@ -57,7 +57,9 @@ public class LocationDataEditController extends BaseController {
     @FXML
     protected TextArea commentsArea;
     @FXML
-    protected ComboBox<String> directionSelector, datasetSelector, coordinateSystemSelector;
+    protected ComboBox<Dataset> datasetSelector;
+    @FXML
+    protected ComboBox<String> directionSelector, coordinateSystemSelector;
     @FXML
     protected Button locationButton;
 
@@ -71,25 +73,34 @@ public class LocationDataEditController extends BaseController {
         AddFileType = VisitHistory.FileType.Image;
         AddPathType = VisitHistory.FileType.Image;
 
-        targetPathKey = "ImageFilePath";
-        sourcePathKey = "ImageFilePath";
+        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Image);
+        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Image);
 
         sourceExtensionFilter = CommonFxValues.ImageExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
-            super.initializeNext();
-            startTime = endTime = Long.MIN_VALUE;
+            super.initControls();
+            startTime = endTime = CommonValues.InvalidLong;
             longitude = latitude = -200;
             dataset = null;
             datasetSelector.getEditor().setStyle(badStyle);
+            direction = CommonValues.InvalidShort;
+            tableLocationData = new TableLocationData();
 
+            datasetSelector.setButtonCell(new ListDatasetCell());
+            datasetSelector.setCellFactory(new Callback<ListView<Dataset>, ListCell<Dataset>>() {
+                @Override
+                public ListCell<Dataset> call(ListView<Dataset> p) {
+                    return new ListDatasetCell();
+                }
+            });
             datasetSelector.getSelectionModel().selectedItemProperty().addListener(
-                    (ObservableValue<? extends String> ov, String oldv, String newv) -> {
-                        checkDataset();
+                    (ObservableValue<? extends Dataset> ov, Dataset oldv, Dataset newv) -> {
+                        dataset = newv;
                     });
 
             longitudeInput.textProperty().addListener(
@@ -148,23 +159,25 @@ public class LocationDataEditController extends BaseController {
             checkSize();
 
             directionSelector.getItems().addAll(Arrays.asList(
+                    message("NotSetting"),
                     message("East") + " " + 90, message("West") + " " + 270,
                     message("North") + " " + 0, message("South") + " " + 180,
                     message("EastNorth") + " " + 45, message("WestNorth") + " " + 315,
                     message("EastSouth") + " " + 135, message("WestSouth") + " " + 225
             ));
-            for (Name name : Direction.Name.values()) {
-                directionSelector.getItems().add(message(name.name()) + " " + Direction.angle(name));
-            }
             directionSelector.getSelectionModel().selectedItemProperty().addListener(
                     (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
                         try {
+                            if (newValue == null || newValue.isBlank() || message("NotSetting").equals(newValue)) {
+                                direction = CommonValues.InvalidShort;
+                                return;
+                            }
                             String value = newValue;
                             int pos = newValue.indexOf(" ");
                             if (pos >= 0) {
                                 value = value.substring(pos);
                             }
-                            int v = Integer.valueOf(value.trim());
+                            short v = Short.valueOf(value.trim());
                             if (v >= 0 && v <= 360) {
                                 direction = v;
                                 directionSelector.getEditor().setStyle(null);
@@ -175,7 +188,6 @@ public class LocationDataEditController extends BaseController {
                             directionSelector.getEditor().setStyle(badStyle);
                         }
                     });
-            directionSelector.getSelectionModel().select(0);
 
             startTimeInput.textProperty().addListener(
                     (ObservableValue<? extends String> ov, String oldv, String newv) -> {
@@ -189,41 +201,24 @@ public class LocationDataEditController extends BaseController {
                     });
             FxmlControl.setTooltip(endTimeInput, message("EraComments"));
 
-            saveButton.disableProperty().bind(datasetSelector.getEditor().styleProperty().isEqualTo(badStyle)
-                    .or(longitudeInput.styleProperty().isEqualTo(badStyle))
-                    .or(latitudeInput.styleProperty().isEqualTo(badStyle))
-                    .or(altitudeInput.styleProperty().isEqualTo(badStyle))
-                    .or(precisionInput.styleProperty().isEqualTo(badStyle))
-                    .or(speedInput.styleProperty().isEqualTo(badStyle))
-                    .or(valueInput.styleProperty().isEqualTo(badStyle))
-                    .or(sizeInput.styleProperty().isEqualTo(badStyle))
-                    .or(directionSelector.getEditor().styleProperty().isEqualTo(badStyle))
-                    .or(startTimeInput.styleProperty().isEqualTo(badStyle))
-                    .or(endTimeInput.styleProperty().isEqualTo(badStyle))
-                    .or(sourceFileInput.styleProperty().isEqualTo(badStyle))
+            saveButton.disableProperty().bind(
+                    longitudeInput.styleProperty().isEqualTo(badStyle)
+                            .or(latitudeInput.styleProperty().isEqualTo(badStyle))
+                            .or(altitudeInput.styleProperty().isEqualTo(badStyle))
+                            .or(precisionInput.styleProperty().isEqualTo(badStyle))
+                            .or(speedInput.styleProperty().isEqualTo(badStyle))
+                            .or(valueInput.styleProperty().isEqualTo(badStyle))
+                            .or(sizeInput.styleProperty().isEqualTo(badStyle))
+                            .or(directionSelector.getEditor().styleProperty().isEqualTo(badStyle))
+                            .or(startTimeInput.styleProperty().isEqualTo(badStyle))
+                            .or(endTimeInput.styleProperty().isEqualTo(badStyle))
+                            .or(sourceFileInput.styleProperty().isEqualTo(badStyle))
             );
+
+            datasetSelector.requestFocus();
 
         } catch (Exception e) {
             logger.error(e.toString());
-        }
-    }
-
-    protected void checkDataset() {
-        dataset = null;
-        datasetSelector.getEditor().setStyle(badStyle);
-        try {
-            if (parent != null && parent.datasets != null && !parent.datasets.isEmpty()) {
-                String value = datasetSelector.getValue();
-                for (Dataset d : parent.datasets) {
-                    if (value.equals(d.getDataSet())) {
-                        dataset = d;
-                        datasetSelector.getEditor().setStyle(null);
-                        return;
-                    }
-                }
-            }
-        } catch (Exception e) {
-            datasetSelector.getEditor().setStyle(badStyle);
         }
     }
 
@@ -256,12 +251,10 @@ public class LocationDataEditController extends BaseController {
     }
 
     @FXML
-    public void locationAction() {
+    public void locationAction(ActionEvent event) {
         try {
             LocationInMapController controller = (LocationInMapController) openStage(CommonValues.LocationInMapFxml);
-            controller.consumer = this;
-            controller.setCoordinate(longitude, latitude);
-            controller.getMyStage().toFront();
+            controller.loadCoordinate(this, longitude, latitude);
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -276,6 +269,7 @@ public class LocationDataEditController extends BaseController {
             longitudeInput.setText(code.getLongitude() + "");
             latitudeInput.setText(code.getLatitude() + "");
             addressInput.setText(code.getFullName());
+            labelInput.setText(code.getName());
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -286,7 +280,7 @@ public class LocationDataEditController extends BaseController {
         try {
             String value = altitudeInput.getText().trim();
             if (value.isBlank()) {
-                altitude = Double.MAX_VALUE;
+                altitude = CommonValues.InvalidDouble;
                 altitudeInput.setStyle(null);
                 return;
             }
@@ -302,7 +296,7 @@ public class LocationDataEditController extends BaseController {
         try {
             String value = precisionInput.getText().trim();
             if (value.isBlank()) {
-                precision = Double.MAX_VALUE;
+                precision = CommonValues.InvalidDouble;
                 precisionInput.setStyle(null);
                 return;
             }
@@ -318,7 +312,7 @@ public class LocationDataEditController extends BaseController {
         try {
             String value = speedInput.getText().trim();
             if (value.isBlank()) {
-                speed = Double.MAX_VALUE;
+                speed = CommonValues.InvalidDouble;
                 speedInput.setStyle(null);
                 return;
             }
@@ -338,7 +332,7 @@ public class LocationDataEditController extends BaseController {
         try {
             String value = valueInput.getText().trim();
             if (value.isBlank()) {
-                dataValue = Double.MAX_VALUE;
+                dataValue = CommonValues.InvalidDouble;
                 valueInput.setStyle(null);
                 return;
             }
@@ -354,7 +348,7 @@ public class LocationDataEditController extends BaseController {
         try {
             String value = sizeInput.getText().trim();
             if (value.isBlank()) {
-                dataSize = Double.MAX_VALUE;
+                dataSize = CommonValues.InvalidDouble;
                 sizeInput.setStyle(null);
                 return;
             }
@@ -370,7 +364,7 @@ public class LocationDataEditController extends BaseController {
         try {
             String value = startTimeInput.getText().trim();
             if (value.isBlank()) {
-                startTime = Long.MIN_VALUE;
+                startTime = CommonValues.InvalidLong;
                 startTimeInput.setStyle(null);
                 return;
             }
@@ -390,7 +384,7 @@ public class LocationDataEditController extends BaseController {
         try {
             String value = endTimeInput.getText().trim();
             if (value.isBlank()) {
-                endTime = Long.MIN_VALUE;
+                endTime = CommonValues.InvalidLong;
                 endTimeInput.setStyle(null);
                 return;
             }
@@ -412,27 +406,68 @@ public class LocationDataEditController extends BaseController {
         FxmlControl.setTooltip(locationButton, message("CoordinateOnMap"));
     }
 
-    public void initEditor(LocationDataController parent, Location location) {
-        this.parent = parent;
-        if (parent.datasets != null && !parent.datasets.isEmpty()) {
-            for (Dataset d : parent.datasets) {
-                datasetSelector.getItems().add(d.getDataSet());
-            }
-            datasetSelector.getSelectionModel().select(0);
+    public void initEditor(BaseController parentController, Location location) {
+        if (parentController == null || !(parentController instanceof LocationDataController)) {
+            return;
         }
+        this.parentController = parentController;
         loadedLocationData = location;
-        loadLocation();
+        loadDatasets();
+    }
+
+    public void loadDatasets() {
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+        synchronized (this) {
+            if (task != null) {
+                return;
+            }
+            datasetSelector.getItems().clear();
+            task = new SingletonTask<Void>() {
+                protected List<Dataset> datasets;
+
+                @Override
+                protected boolean handle() {
+                    datasets = tableLocationData.datasets();
+                    return true;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    if (datasets == null || datasets.isEmpty()) {
+                        alertError(message("MissDataset"));
+                        closeStage();
+                    } else {
+                        datasetSelector.getItems().addAll(datasets);
+                        datasetSelector.getSelectionModel().select(0);
+                        loadLocation();
+                    }
+                }
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
     }
 
     public void loadLocation() {
         try {
-            if (loadedLocationData == null) {
+            if (loadedLocationData == null || loadedLocationData.getDataset() == null) {
                 clearData();
                 return;
             }
-            dataid = loadedLocationData.getId();
+            dataid = loadedLocationData.getLdid();
             dataidInput.setText(dataid + "");
-            datasetSelector.setValue(loadedLocationData.getDataset().getDataSet());
+            dataset = loadedLocationData.getDataset();
+            for (Dataset d : datasetSelector.getItems()) {
+                if (d.getDataSet().equals(dataset.getDataSet())) {
+                    datasetSelector.getSelectionModel().select(d);
+                    break;
+                }
+            }
             if (loadedLocationData.getAddress() != null) {
                 addressInput.setText(loadedLocationData.getAddress());
             } else {
@@ -448,34 +483,34 @@ public class LocationDataEditController extends BaseController {
             } else {
                 latitudeInput.setText("");
             }
-            if (loadedLocationData.getAltitude() != Double.MAX_VALUE) {
+            if (loadedLocationData.getAltitude() != CommonValues.InvalidDouble) {
                 altitudeInput.setText(loadedLocationData.getAltitude() + "");
             } else {
                 altitudeInput.setText("");
             }
-            if (loadedLocationData.getPrecision() != Double.MAX_VALUE) {
+            if (loadedLocationData.getPrecision() != CommonValues.InvalidDouble) {
                 precisionInput.setText(loadedLocationData.getPrecision() + "");
             } else {
                 precisionInput.setText("");
             }
-            if (loadedLocationData.getSpeed() != Double.MAX_VALUE) {
+            if (loadedLocationData.getSpeed() != CommonValues.InvalidDouble) {
                 speedInput.setText(loadedLocationData.getSpeed() + "");
             } else {
                 speedInput.setText("");
             }
             coordinateSystemSelector.getSelectionModel().select(
                     message(loadedLocationData.getCoordinateSystem().name()));
-            if (loadedLocationData.getStartTime() != Long.MIN_VALUE) {
+            if (loadedLocationData.getStartTime() != CommonValues.InvalidLong) {
                 startTimeInput.setText(DateTools.textEra(loadedLocationData.getStartEra()));
             } else {
                 startTimeInput.setText("");
             }
-            if (loadedLocationData.getEndTime() != Long.MIN_VALUE) {
+            if (loadedLocationData.getEndTime() != CommonValues.InvalidLong) {
                 endTimeInput.setText(DateTools.textEra(loadedLocationData.getEndEra()));
             } else {
                 endTimeInput.setText("");
             }
-            if (loadedLocationData.getDataSize() != Double.MAX_VALUE) {
+            if (loadedLocationData.getDataSize() != CommonValues.InvalidDouble) {
                 sizeInput.setText(loadedLocationData.getDataSize() + "");
             } else {
                 sizeInput.setText("");
@@ -490,9 +525,14 @@ public class LocationDataEditController extends BaseController {
             } else {
                 labelInput.setText("");
             }
-            directionSelector.setValue(loadedLocationData.getDirection() + "");
+            short v = loadedLocationData.getDirection();
+            if (v != CommonValues.InvalidShort) {
+                directionSelector.setValue(v + "");
+            } else {
+                directionSelector.setValue(message("NotSetting"));
+            }
             if (loadedLocationData.getImage() != null) {
-                sourceFileInput.setText(loadedLocationData.getImage());
+                sourceFileInput.setText(loadedLocationData.getImage().getAbsolutePath());
             } else {
                 sourceFileInput.setText("");
             }
@@ -503,11 +543,10 @@ public class LocationDataEditController extends BaseController {
     }
 
     @FXML
-    public void datasetAction() {
+    public void datasetAction(ActionEvent event) {
         DatasetController controller
                 = (DatasetController) openStage(CommonValues.DatasetFxml);
-        controller.parent = this;
-        controller.load(tableMessage("Location_data"));
+        controller.load(this, tableMessage("Location_data"));
     }
 
     public void clearData() {
@@ -533,61 +572,12 @@ public class LocationDataEditController extends BaseController {
 
     @FXML
     public void popStartExample(MouseEvent mouseEvent) {
-        popExample(startTimeInput, mouseEvent);
+        popMenu = FxmlControl.popEraExample(popMenu, startTimeInput, mouseEvent);
     }
 
     @FXML
     public void popEndExample(MouseEvent mouseEvent) {
-        popExample(endTimeInput, mouseEvent);
-    }
-
-    public void popExample(TextField input, MouseEvent mouseEvent) {
-        try {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
-
-            List<String> values = new ArrayList<>();
-            values.addAll(Arrays.asList(
-                    "2020-07-10 10:10:10", "960-01-23", "581",
-                    "-2020-07-10 10:10:10", "-960-01-23", "-581"
-            ));
-            if (AppVariables.isChinese()) {
-                values.addAll(Arrays.asList(
-                        "公元960", "公元960-01-23", "公元2020-07-10 10:10:10",
-                        "公元前202", "公元前770-12-11", "公元前1046-03-10 10:10:10"
-                ));
-            }
-            values.addAll(Arrays.asList(
-                    "202 BC", "770-12-11 BC", "1046-03-10 10:10:10 BC",
-                    "581 AD", "960-01-23 AD", "2020-07-10 10:10:10 AD"
-            ));
-
-            MenuItem menu;
-            for (String value : values) {
-                menu = new MenuItem(value);
-                menu.setOnAction((ActionEvent event) -> {
-                    input.setText(value);
-                });
-                popMenu.getItems().add(menu);
-            }
-
-            popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("MenuClose"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction((ActionEvent event) -> {
-                popMenu.hide();
-                popMenu = null;
-            });
-            popMenu.getItems().add(menu);
-
-            FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
+        popMenu = FxmlControl.popEraExample(popMenu, endTimeInput, mouseEvent);
     }
 
     @FXML
@@ -596,11 +586,12 @@ public class LocationDataEditController extends BaseController {
         try {
             Location location = new Location();
             if (dataidInput.getText() == null || dataidInput.getText().isBlank()) {
-                location.setId(-1);
+                location.setLdid(-1);
             } else {
-                location.setId(Long.valueOf(dataidInput.getText()));
+                location.setLdid(Long.valueOf(dataidInput.getText()));
             }
             location.setDataset(dataset);
+            location.setDatasetid(dataset.getDsid());
             location.setLabel(labelInput.getText().trim());
             location.setAddress(addressInput.getText().trim());
             location.setLongitude(longitude);
@@ -621,22 +612,20 @@ public class LocationDataEditController extends BaseController {
             if (!commentsArea.getText().trim().isBlank()) {
                 location.setComments(commentsArea.getText().trim());
             }
-            if (new TableLocationData().writeData(location) != null) {
-                popSuccessful();
-            } else {
+            if (new TableLocationData().writeData(location) == null) {
                 popFailed();
+                return;
             }
 
-            if (parent != null) {
-                parent.refreshAction();
+            if (parentController != null) {
+                ((LocationDataController) parentController).refreshAction();
+                parentController.getMyStage().toFront();
+            } else {
+                LocationDataController controller = (LocationDataController) openStage(CommonValues.LocationDataFxml);
+                controller.getMyStage().toFront();
             }
 
-            if (saveCloseCheck.isSelected()) {
-                closeStage();
-                if (parent != null) {
-                    parent.getMyStage().toFront();
-                }
-            }
+            closeStage();
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -646,6 +635,7 @@ public class LocationDataEditController extends BaseController {
     @FXML
     @Override
     public void recoverAction() {
+        clearData();
         loadLocation();
     }
 
@@ -654,6 +644,11 @@ public class LocationDataEditController extends BaseController {
     public void copyAction() {
         dataidInput.clear();
         labelInput.setText(labelInput.getText() + " - " + message("Copy"));
+    }
+
+    @FXML
+    public void refreshAction() {
+        loadDatasets();
     }
 
 }

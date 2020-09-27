@@ -14,6 +14,7 @@ import mara.mybox.db.TableLocationData;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import org.apache.commons.csv.CSVRecord;
 
@@ -70,7 +71,7 @@ public class LocationDataImportMovebankController extends DataImportController<L
             String datasetName = record.get("study-name");
             Dataset dataset = datasets.get(datasetName);
             if (dataset == null) {
-                dataset = tableLocationData.queryAndCreate(conn, datasetName);
+                dataset = tableLocationData.queryAndCreateDataset(conn, datasetName);
                 datasets.put(datasetName, dataset);
             }
             data.setDataset(dataset);

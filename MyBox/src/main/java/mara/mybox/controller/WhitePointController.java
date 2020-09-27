@@ -13,7 +13,6 @@ import mara.mybox.color.Illuminant.IlluminantType;
 import mara.mybox.color.Illuminant.Observer;
 import mara.mybox.tools.DoubleTools;
 import static mara.mybox.value.AppVariables.message;
-import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara
@@ -33,8 +32,9 @@ public class WhitePointController extends XYZController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
+            super.initControls();
 
             sourceGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -54,7 +54,7 @@ public class WhitePointController extends XYZController {
                 }
             });
 
-            super.initializeNext();
+            super.initControls();
 
         } catch (Exception e) {
 

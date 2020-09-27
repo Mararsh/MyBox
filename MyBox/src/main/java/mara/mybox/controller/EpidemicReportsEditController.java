@@ -17,6 +17,7 @@ import javafx.stage.Modality;
 import javafx.util.converter.LongStringConverter;
 import mara.mybox.data.EpidemicReport;
 import mara.mybox.data.GeographyCode;
+import mara.mybox.data.tools.GeographyCodeTools;
 import static mara.mybox.db.DerbyBase.dbHome;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
@@ -25,8 +26,8 @@ import mara.mybox.db.TableGeographyCode;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DateTools;
-import mara.mybox.tools.GeographyCodeTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import thridparty.TableAutoCommitCell;
@@ -58,8 +59,9 @@ public class EpidemicReportsEditController extends TableManageController<Epidemi
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
+            super.initControls();
             tableData = FXCollections.observableArrayList();
             time = -1;
             isChineseProvince = true;

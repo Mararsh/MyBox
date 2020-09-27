@@ -16,10 +16,13 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.text.Font;
 import mara.mybox.data.FileEditInformation;
 import mara.mybox.data.FileEditInformation.Edit_Type;
+import mara.mybox.data.VisitHistory;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.TextTools;
+import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
@@ -45,14 +48,15 @@ public class TextEncodingBatchController extends FilesBatchController {
     public TextEncodingBatchController() {
         baseTitle = AppVariables.message("TextEncodingBatch");
 
-        sourcePathKey = "TextFilePath";
+        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Text);
         sourceExtensionFilter = CommonFxValues.TextExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
+            super.initControls();
             tableController.getNameFiltersSelector().getSelectionModel().select(1);
             tableController.getTableFiltersInput().setText("html  htm  txt ");
 

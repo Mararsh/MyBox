@@ -39,15 +39,17 @@ public class TableDoubleMatrix extends DerbyBase {
 
     public static float[][] read(String name, int width, int height) {
         float[][] matrix = new float[height][width];
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                 Statement statement = conn.createStatement()) {
             conn.setReadOnly(true);
             for (int j = 0; j < height; ++j) {
                 for (int i = 0; i < width; ++i) {
                     String sql = " SELECT * FROM Double_Matrix WHERE name='" + stringValue(name)
                             + "' AND row=" + j + " AND col=" + i;
-                    ResultSet result = conn.createStatement().executeQuery(sql);
-                    if (result.next()) {
-                        matrix[j][i] = result.getFloat("value");
+                    try ( ResultSet result = statement.executeQuery(sql)) {
+                        if (result.next()) {
+                            matrix[j][i] = result.getFloat("value");
+                        }
                     }
                 }
             }
@@ -162,13 +164,11 @@ public class TableDoubleMatrix extends DerbyBase {
     }
 
     public static boolean writeExamples() {
-        ConvolutionKernel.makeExample();
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  Statement statement = conn.createStatement()) {
             conn.setAutoCommit(false);
             String sql;
-            for (Object o : ConvolutionKernel.ExampleKernels) {
-                ConvolutionKernel k = (ConvolutionKernel) o;
+            for (ConvolutionKernel k : ConvolutionKernel.makeExample()) {
                 String name = k.getName();
                 sql = " SELECT row FROM Double_Matrix WHERE name='" + stringValue(name) + "'";
                 boolean exist;

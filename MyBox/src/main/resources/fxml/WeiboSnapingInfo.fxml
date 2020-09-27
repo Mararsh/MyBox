@@ -34,7 +34,7 @@ License:    Apache License Version 2.0
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../buttons/iconDefault.png" />
+                        <Image url="@../buttons/iconMyBox.png" />
                      </image>
                   </ImageView>
                </graphic>
@@ -47,8 +47,7 @@ License:    Apache License Version 2.0
                      </image>
                   </ImageView>
                </graphic></Button>
-                <Button fx:id="reloadButton" disable="true" mnemonicParsing="false" onAction="#reloadAction" text="%ReloadCurrentPage" />
-            <Button fx:id="stopButton1" layoutX="691.0" layoutY="10.0" mnemonicParsing="false" onAction="#stopAction">
+            <Button fx:id="stopButton" layoutX="691.0" layoutY="10.0" mnemonicParsing="false" onAction="#stopAction">
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                      <image>

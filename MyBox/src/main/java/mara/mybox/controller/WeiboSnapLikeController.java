@@ -18,8 +18,8 @@ public class WeiboSnapLikeController extends WeiboSnapRunController {
     }
 
     @Override
-    public void initializeNext() {
-        super.initializeNext();
+    public void initControls() {
+        super.initControls();
         snapType = SnapType.Like;
     }
 

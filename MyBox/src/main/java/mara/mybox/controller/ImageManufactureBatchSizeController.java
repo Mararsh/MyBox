@@ -18,6 +18,7 @@ import mara.mybox.fxml.FxmlStage;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -54,8 +55,9 @@ public class ImageManufactureBatchSizeController extends ImageManufactureBatchCo
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
+            super.initControls();
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())

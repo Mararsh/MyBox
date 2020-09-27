@@ -9,6 +9,7 @@ import java.util.List;
 import mara.mybox.data.BrowserHistory;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -49,13 +50,13 @@ public class TableBrowserHistory extends DerbyBase {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             conn.setReadOnly(true);
             String sql = "select address from Browser_History  group by address  order by max(visit_time) desc";
-            ResultSet results;
             try ( PreparedStatement statement = conn.prepareStatement(sql)) {
                 statement.setMaxRows(MaxBrowserURLs);
-                results = statement.executeQuery();
-            }
-            while (results.next()) {
-                recent.add(results.getString("address"));
+                try ( ResultSet results = statement.executeQuery()) {
+                    while (results.next()) {
+                        recent.add(results.getString("address"));
+                    }
+                }
             }
         } catch (Exception e) {
             failed(e);
@@ -73,18 +74,18 @@ public class TableBrowserHistory extends DerbyBase {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             conn.setReadOnly(true);
             String sql = "SELECT * FROM Browser_History ORDER BY visit_time DESC";
-            ResultSet results;
             try ( PreparedStatement statement = conn.prepareStatement(sql)) {
                 statement.setMaxRows(max);
-                results = statement.executeQuery();
-            }
-            while (results.next()) {
-                BrowserHistory h = new BrowserHistory();
-                h.setAddress(results.getString("address"));
-                h.setVisitTime(results.getTimestamp("visit_time").getTime());
-                h.setTitle(results.getString("title"));
-                h.setIcon(results.getString("icon"));
-                his.add(h);
+                try ( ResultSet results = statement.executeQuery()) {
+                    while (results.next()) {
+                        BrowserHistory h = new BrowserHistory();
+                        h.setAddress(results.getString("address"));
+                        h.setVisitTime(results.getTimestamp("visit_time").getTime());
+                        h.setTitle(results.getString("title"));
+                        h.setIcon(results.getString("icon"));
+                        his.add(h);
+                    }
+                }
             }
         } catch (Exception e) {
             failed(e);
@@ -98,50 +99,50 @@ public class TableBrowserHistory extends DerbyBase {
             return false;
         }
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
-
-            PreparedStatement statement = conn.prepareStatement(
-                    "select * from Browser_History WHERE address=? AND visit_time=?"
-            );
-            statement.setString(1, his.getAddress());
-            statement.setString(2, DateTools.datetimeToString(his.getVisitTime()));
-            statement.setMaxRows(1);
-            ResultSet results = statement.executeQuery();
-            if (results.next()) {
-                statement = conn.prepareStatement(
-                        "UPDATE Browser_History SET title=?, icon=? "
-                        + "WHERE address=? AND visit_time=?"
-                );
-                if (his.getTitle() != null) {
-                    statement.setString(1, his.getTitle());
-                } else {
-                    statement.setString(1, "");
-                }
-                if (his.getIcon() != null) {
-                    statement.setString(2, his.getIcon());
-                } else {
-                    statement.setString(2, "");
-                }
-                statement.setString(3, his.getAddress());
-                statement.setString(4, DateTools.datetimeToString(his.getVisitTime()));
-            } else {
-                statement = conn.prepareStatement(
-                        "INSERT INTO Browser_History(address, visit_time , title, icon) VALUES(?,?,?,?)"
-                );
-                statement.setString(1, his.getAddress());
-                statement.setString(2, DateTools.datetimeToString(his.getVisitTime()));
-                if (his.getTitle() != null) {
-                    statement.setString(3, his.getTitle());
-                } else {
-                    statement.setString(3, "");
-                }
-                if (his.getIcon() != null) {
-                    statement.setString(4, his.getIcon());
-                } else {
-                    statement.setString(4, "");
+            boolean exist = false;
+            try ( PreparedStatement query = conn.prepareStatement("select * from Browser_History WHERE address=? AND visit_time=?")) {
+                query.setString(1, his.getAddress());
+                query.setString(2, DateTools.datetimeToString(his.getVisitTime()));
+                query.setMaxRows(1);
+                try ( ResultSet results = query.executeQuery()) {
+                    if (results.next()) {
+                        exist = true;
+                    }
                 }
             }
-            statement.executeUpdate();
-            statement.close();
+            if (exist) {
+                try ( PreparedStatement update = conn.prepareStatement("UPDATE Browser_History SET title=?, icon=?  WHERE address=? AND visit_time=?")) {
+                    if (his.getTitle() != null) {
+                        update.setString(1, his.getTitle());
+                    } else {
+                        update.setString(1, "");
+                    }
+                    if (his.getIcon() != null) {
+                        update.setString(2, his.getIcon());
+                    } else {
+                        update.setString(2, "");
+                    }
+                    update.setString(3, his.getAddress());
+                    update.setString(4, DateTools.datetimeToString(his.getVisitTime()));
+                    update.executeUpdate();
+                }
+            } else {
+                try ( PreparedStatement insert = conn.prepareStatement("INSERT INTO Browser_History(address, visit_time , title, icon) VALUES(?,?,?,?)")) {
+                    insert.setString(1, his.getAddress());
+                    insert.setString(2, DateTools.datetimeToString(his.getVisitTime()));
+                    if (his.getTitle() != null) {
+                        insert.setString(3, his.getTitle());
+                    } else {
+                        insert.setString(3, "");
+                    }
+                    if (his.getIcon() != null) {
+                        insert.setString(4, his.getIcon());
+                    } else {
+                        insert.setString(4, "");
+                    }
+                    insert.executeUpdate();
+                }
+            }
             return true;
         } catch (Exception e) {
             failed(e);

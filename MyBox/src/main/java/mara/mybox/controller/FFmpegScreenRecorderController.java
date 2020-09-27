@@ -2,7 +2,6 @@ package mara.mybox.controller;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
@@ -14,6 +13,7 @@ import java.util.TimerTask;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
@@ -23,8 +23,8 @@ import mara.mybox.tools.StringTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonFxValues;
 
 /**
  * @Author Mara
@@ -40,47 +40,35 @@ public class FFmpegScreenRecorderController extends DataTaskController {
     @FXML
     protected FFmpegScreenRecorderOptionsController optionsController;
     @FXML
+    protected ControlFileSelecter targetFileController;
+    @FXML
     protected CheckBox openCheck;
 
     public FFmpegScreenRecorderController() {
         baseTitle = AppVariables.message("FFmpegScreenRecorder");
         cancelName = "Stop";
-
-        SourceFileType = VisitHistory.FileType.Media;
-        SourcePathType = VisitHistory.FileType.Media;
-        TargetPathType = VisitHistory.FileType.Media;
-        TargetFileType = VisitHistory.FileType.Media;
-        AddFileType = VisitHistory.FileType.Media;
-        AddPathType = VisitHistory.FileType.Media;
-
-        targetPathKey = "MediaFilePath";
-        sourcePathKey = "MediaFilePath";
-
-        sourceExtensionFilter = CommonFxValues.FFmpegMediaExtensionFilter;
-        targetExtensionFilter = sourceExtensionFilter;
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
-            super.initializeNext();
+            super.initControls();
 
             stopping = new SimpleBooleanProperty(false);
 
             os = SystemTools.os();
-//            switch (os) {
-//                case "linux":
-//                    videoDevice = "x11grab";
-//                    break;
-//                case "mac":
-//                    videoDevice = "avfoundation";
-//                    break;
-//                case "win":
-//                    videoDevice = "gdigrab";
-//                    break;
-//                default:
-//                    videoDevice = null;
-//            };
+            switch (os) {
+                case "linux":
+
+                    break;
+                case "win":
+
+                    break;
+                case "mac":
+                default:
+                    startButton.setDisable(true);
+                    return;
+            }
 
 //            openCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
 //                @Override
@@ -89,10 +77,28 @@ public class FFmpegScreenRecorderController extends DataTaskController {
 //                }
 //            });
 //            openCheck.setSelected(AppVariables.getUserConfigBoolean("FFmpegScreenRecorderOpen", true));
+            targetFileController.label(message("TargetFile"))
+                    .isDirectory(false).isSource(false).mustExist(false).permitNull(false)
+                    .name(baseName + "TargetFile", false).type(VisitHistory.FileType.Media);
+
+            optionsController.extensionInput.textProperty().addListener(
+                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
+                        if (newValue == null || newValue.isEmpty()) {
+                            return;
+                        }
+                        String ext = newValue.trim();
+                        if (!ext.isEmpty() && !message("OriginalFormat").equals(ext)) {
+                            targetFileController.defaultValue("." + ext);
+                            if (!targetFileController.fileInput.getText().endsWith("." + ext)) {
+                                targetFileController.fileInput.clear();
+                            }
+                        }
+                    });
+
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(
-                    Bindings.isEmpty(targetFileInput.textProperty())
-                            .or(targetFileInput.styleProperty().isEqualTo(badStyle))
+                    Bindings.isEmpty(targetFileController.fileInput.textProperty())
+                            .or(targetFileController.fileInput.styleProperty().isEqualTo(badStyle))
                             .or(optionsController.executableInput.styleProperty().isEqualTo(badStyle))
                             .or(optionsController.titleInput.styleProperty().isEqualTo(badStyle))
                             .or(optionsController.xInput.styleProperty().isEqualTo(badStyle))
@@ -108,120 +114,121 @@ public class FFmpegScreenRecorderController extends DataTaskController {
     }
 
     @Override
-    public void selectTargetFileFromPath(File path) {
-        try {
-            String name = optionsController.extensionInput.getText().trim();
-            if (name.isBlank()) {
-                name = null;
-            } else {
-                name = "." + name;
-            }
-            final File file = chooseSaveFile(path, name, targetExtensionFilter, true);
-            if (file == null) {
-                return;
-            }
-            selectTargetFile(file);
-        } catch (Exception e) {
-//            logger.error(e.toString());
-        }
-    }
-
-    @Override
     public boolean checkOptions() {
         if (!optionsController.audioCheck.isSelected() && !optionsController.videoCheck.isSelected()) {
             popError(message("NothingHandled"));
             return false;
         }
-        if (targetFile == null) {
+        if (targetFileController.file == null) {
             popError(message("InvalidParameters"));
             return false;
         }
+        targetFile = targetFileController.file;
+        targetFile.getParentFile().mkdirs();
         return true;
+    }
+
+    @FXML
+    @Override
+    public void startAction() {
+        if (!checkOptions()) {
+            return;
+        }
+        if (message(cancelName).equals(startButton.getText())) {
+            cancelAction();
+            return;
+        }
+        synchronized (this) {
+            if (task != null) {
+                return;
+            }
+            initLogs();
+            startButton.setText(message(cancelName));
+            tabPane.getSelectionModel().select(logsTab);
+            if (optionsController.delayController.value > 0) {
+                updateLogs(message("Delay") + ": " + optionsController.delayController.value + " " + message("Seconds"), true);
+                timer = new Timer();
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        startTask();
+                    }
+                }, optionsController.delayController.value * 1000);
+            } else {
+                startTask();
+            }
+        }
     }
 
     @Override
     protected boolean doTask() {
-        if ("win".equals(os)) {
-            return winTask();
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
         }
-        return false;
+        updateLogs(message("Started"), true);
+        List<String> parameters = new ArrayList();
+        // http://trac.ffmpeg.org/wiki/Capture/Desktop
+        parameters.add(optionsController.executable.getAbsolutePath());
+        switch (os) {
+            case "win":
+                if (!winParameters(parameters)) {
+                    return false;
+                }
+                break;
+            case "linux":
+                if (!linuxParameters(parameters)) {
+                    return false;
+                }
+                break;
+            default:
+                return false;
+        }
+        return startRecorder(parameters);
     }
 
-    protected boolean winTask() {
+    protected boolean winParameters(List<String> parameters) {
         try {
-            if (timer != null) {
-                timer.cancel();
-                timer = null;
+            if (!"win".equals(os) || parameters == null) {
+                return false;
             }
-            // http://trac.ffmpeg.org/wiki/Capture/Desktop
             // ffmpeg  -f gdigrab  -thread_queue_size 128 -probesize 200M  -i desktop -f dshow  -thread_queue_size 128 -i audio="立体声混音 (Realtek High Definition Audio)" -vcodec libx264 -acodec aac out.mp4   -y
-            List<String> parameters = new ArrayList();
-            parameters.add(optionsController.executable.getAbsolutePath());
-            if ("win".equals(os)) {
-                if (optionsController.videoCheck.isSelected()) {
-                    parameters.add("-f");
-                    parameters.add("gdigrab");
-                    // https://stackoverflow.com/questions/57903639/why-getting-and-how-to-fix-the-warning-error-on-ffmpeg-not-enough-frames-to-es
-                    parameters.add("-probesize");
-                    parameters.add("100M");
-                    parameters.add("-thread_queue_size");
-                    parameters.add(optionsController.videoThreadQueueSize + "");
-
-                    if (optionsController.rectangleRadio.isSelected()
-                            && optionsController.width > 0 && optionsController.height > 0) {
-                        // -offset_x 10 -offset_y 20 -video_size 640x480 -show_region 1 -i desktop
-                        parameters.add("-offset_x");
-                        parameters.add(optionsController.x + "");
-                        parameters.add("-offset_y");
-                        parameters.add(optionsController.y + "");
-                        parameters.add("-video_size");
-                        parameters.add(optionsController.width + "x" + optionsController.height);
-                        parameters.add("-show_region");
-                        parameters.add("0");
-                        parameters.add("-i");
-                        parameters.add("desktop");
-
-                    } else if (optionsController.windowRadio.isSelected()) {
-                        parameters.add("-i");
-                        parameters.add("title=" + optionsController.titleInput.getText().trim());
-
-                    } else if (optionsController.fullscreenRadio.isSelected()) {
-                        parameters.add("-i");
-                        parameters.add("desktop");
-                    } else {
-                        return false;
-                    }
-
-                }
-                if (optionsController.audioCheck.isSelected() && optionsController.audioDevice != null) {
-                    parameters.add("-f");
-                    parameters.add("dshow");
-                    parameters.add("-thread_queue_size");
-                    parameters.add(optionsController.audioThreadQueueSize + "");
-                    parameters.add("-i");
-                    parameters.add("audio=" + optionsController.audioDevice);
-                }
-            }
-
             if (!optionsController.videoCheck.isSelected() || optionsController.disableVideo) {
                 parameters.add("-vn");
             } else {
-                if (optionsController.videoCodec != null) {
-                    parameters.add("-vcodec");
-                    parameters.add(optionsController.videoCodec);
+                parameters.add("-f");
+                parameters.add("gdigrab");
+                // https://stackoverflow.com/questions/57903639/why-getting-and-how-to-fix-the-warning-error-on-ffmpeg-not-enough-frames-to-es
+                parameters.add("-probesize");
+                parameters.add("100M");
+                parameters.add("-thread_queue_size");
+                parameters.add(optionsController.videoThreadQueueSize + "");
+
+                if (optionsController.rectangleRadio.isSelected()
+                        && optionsController.width > 0 && optionsController.height > 0) {
+                    // -offset_x 10 -offset_y 20 -video_size 640x480 -show_region 1 -i desktop
+                    parameters.add("-offset_x");
+                    parameters.add(optionsController.x + "");
+                    parameters.add("-offset_y");
+                    parameters.add(optionsController.y + "");
+                    parameters.add("-video_size");
+                    parameters.add(optionsController.width + "x" + optionsController.height);
+                    parameters.add("-show_region");
+                    parameters.add("0");
+                    parameters.add("-i");
+                    parameters.add("desktop");
+
+                } else if (optionsController.windowRadio.isSelected()) {
+                    parameters.add("-i");
+                    parameters.add("title=" + optionsController.titleInput.getText().trim());
+
+                } else if (optionsController.fullscreenRadio.isSelected()) {
+                    parameters.add("-i");
+                    parameters.add("desktop");
+                } else {
+                    return false;
                 }
-                if (optionsController.videoFrameRate > 0) {
-                    parameters.add("-r");
-                    parameters.add(optionsController.videoFrameRate + "");
-                }
-                if (optionsController.videoBitrate > 0) {
-                    parameters.add("-b:v");
-                    parameters.add(optionsController.videoBitrate + "k");
-                }
-                if (optionsController.aspect != null) {
-                    parameters.add("-aspect");
-                    parameters.add(optionsController.aspect);
-                }
+
             }
 
             if (!optionsController.audioCheck.isSelected()
@@ -229,6 +236,81 @@ public class FFmpegScreenRecorderController extends DataTaskController {
                     || optionsController.disbaleAudio) {
                 parameters.add("-an");
             } else {
+                parameters.add("-f");
+                parameters.add("dshow");
+                parameters.add("-thread_queue_size");
+                parameters.add(optionsController.audioThreadQueueSize + "");
+                parameters.add("-i");
+                parameters.add("audio=" + optionsController.audioDevice);
+
+            }
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+        return true;
+    }
+
+    protected boolean linuxParameters(List<String> parameters) {
+        try {
+            if (!"linux".equals(os) || parameters == null) {
+                return false;
+            }
+            // ffmpeg -video_size 1024x768 -framerate 25 -f x11grab -i :0.0+100,200 -f alsa -ac 2 -i hw:0 output.mkv
+            if (!optionsController.videoCheck.isSelected() || optionsController.disableVideo) {
+                parameters.add("-vn");
+            } else {
+                String offsets;
+                if (optionsController.rectangleRadio.isSelected()
+                        && optionsController.width > 0 && optionsController.height > 0) {
+                    parameters.add("-video_size");
+                    parameters.add(optionsController.width + "x" + optionsController.height);
+                    offsets = optionsController.x + "," + optionsController.y;
+
+                } else if (optionsController.fullscreenRadio.isSelected()) {
+                    parameters.add("-video_size");
+                    parameters.add(optionsController.screenWidth + "x" + optionsController.screenHeight);
+                    offsets = "0,0";
+                } else {
+                    return false;
+                }
+
+                parameters.add("-f");
+                parameters.add("x11grab");
+                // https://stackoverflow.com/questions/57903639/why-getting-and-how-to-fix-the-warning-error-on-ffmpeg-not-enough-frames-to-es
+                parameters.add("-probesize");
+                parameters.add("100M");
+                parameters.add("-thread_queue_size");
+                parameters.add(optionsController.videoThreadQueueSize + "");
+                parameters.add("-i");
+                parameters.add(":0.0+" + offsets);
+            }
+
+            if (!optionsController.audioCheck.isSelected()
+                    || optionsController.disbaleAudio) {
+                parameters.add("-an");
+            } else {
+                parameters.add("-f");
+                parameters.add("alsa");
+                parameters.add("-thread_queue_size");
+                parameters.add(optionsController.audioThreadQueueSize + "");
+                parameters.add("-i");
+                parameters.add("hw:0");
+            }
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+        return true;
+    }
+
+    protected boolean startRecorder(List<String> parameters) {
+        try {
+            if (parameters == null) {
+                return false;
+            }
+
+            if (optionsController.audioCheck.isSelected() && !optionsController.disbaleAudio) {
                 if (optionsController.audioCodec != null) {
                     parameters.add("-acodec");
                     parameters.add(optionsController.audioCodec);
@@ -247,6 +329,26 @@ public class FFmpegScreenRecorderController extends DataTaskController {
                     parameters.add("-af");
                     parameters.add("volume=" + optionsController.volumn);
                 }
+
+            }
+
+            if (optionsController.videoCheck.isSelected() && !optionsController.disableVideo) {
+                if (optionsController.videoCodec != null) {
+                    parameters.add("-vcodec");
+                    parameters.add(optionsController.videoCodec);
+                }
+                if (optionsController.videoFrameRate > 0) {
+                    parameters.add("-r");
+                    parameters.add(optionsController.videoFrameRate + "");
+                }
+                if (optionsController.videoBitrate > 0) {
+                    parameters.add("-b:v");
+                    parameters.add(optionsController.videoBitrate + "k");
+                }
+                if (optionsController.aspect != null) {
+                    parameters.add("-aspect");
+                    parameters.add(optionsController.aspect);
+                }
             }
 
             String more = optionsController.moreInput.getText().trim();
@@ -262,8 +364,8 @@ public class FFmpegScreenRecorderController extends DataTaskController {
                     .redirectErrorStream(true);
             recorder = pb.start();
             updateLogs("PID:" + recorder.pid(), true);
-            if (optionsController.duration > 0) {
-                updateLogs(message("Duarion") + ": " + optionsController.duration + " " + message("Seconds"), true);
+            if (optionsController.durationController.value > 0) {
+                updateLogs(message("Duration") + ": " + optionsController.durationController.value + " " + message("Seconds"), true);
             }
 
             try ( BufferedReader inReader = new BufferedReader(
@@ -274,7 +376,7 @@ public class FFmpegScreenRecorderController extends DataTaskController {
                     if (verboseCheck.isSelected() || !recording) {
                         updateLogs(line + "\n", true);
                     }
-                    if (recording && (timer == null) && (optionsController.duration > 0)) {
+                    if (recording && (timer == null) && (optionsController.durationController.value > 0)) {
                         timer = new Timer();
                         timer.schedule(new TimerTask() {
                             @Override
@@ -282,7 +384,7 @@ public class FFmpegScreenRecorderController extends DataTaskController {
                                 cancelAction();
                             }
 
-                        }, optionsController.duration * 1000);
+                        }, optionsController.durationController.value * 1000);
                     }
                 }
                 openTarget(null);
@@ -302,16 +404,6 @@ public class FFmpegScreenRecorderController extends DataTaskController {
             logger.error(e.toString());
         }
         return true;
-    }
-
-    protected boolean linuxTask() {
-        // To be implemented
-        return false;
-    }
-
-    protected boolean macTask() {
-        // To be implemented
-        return false;
     }
 
     @Override

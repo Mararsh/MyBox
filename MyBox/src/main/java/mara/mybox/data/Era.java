@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.value.AppVariables.message;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -20,12 +21,12 @@ import static mara.mybox.value.AppVariables.message;
  */
 public class Era {
 
-    protected long value = Long.MIN_VALUE;
+    protected long value = CommonValues.InvalidLong;
     protected Format format = Format.Datetime;
     protected boolean ignoreAD = true;
 
     public static enum Format {
-        Datetime, Date, Year, Month, Time, TimeWithMS, DatetimeMS
+        Datetime, Date, Year, Month, Time, TimeMs, DatetimeMs, DatetimeZone, DatetimeMsZone
     }
 
     public Era(long value) {
@@ -46,7 +47,7 @@ public class Era {
     }
 
     public String text() {
-        if (value == Long.MIN_VALUE) {
+        if (value == CommonValues.InvalidLong) {
             return null;
         }
         return DateTools.textEra(value, format, ignoreAD);
@@ -78,9 +79,13 @@ public class Era {
             case 5:
                 return Format.Time;
             case 6:
-                return Format.TimeWithMS;
+                return Format.TimeMs;
             case 7:
-                return Format.DatetimeMS;
+                return Format.DatetimeMs;
+            case 8:
+                return Format.DatetimeZone;
+            case 9:
+                return Format.DatetimeMsZone;
             default:
                 return Format.Datetime;
         }
@@ -99,10 +104,14 @@ public class Era {
                 return 4;
             case Time:
                 return 5;
-            case TimeWithMS:
+            case TimeMs:
                 return 6;
-            case DatetimeMS:
+            case DatetimeMs:
                 return 7;
+            case DatetimeZone:
+                return 8;
+            case DatetimeMsZone:
+                return 9;
             default:
                 return 0;
         }

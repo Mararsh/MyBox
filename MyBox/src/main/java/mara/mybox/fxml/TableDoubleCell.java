@@ -3,6 +3,7 @@ package mara.mybox.fxml;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.util.Callback;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -26,7 +27,7 @@ public class TableDoubleCell<T> extends TableCell<T, Double>
                     setText(null);
                     return;
                 }
-                if (item != Double.MAX_VALUE) {
+                if (item != CommonValues.InvalidDouble) {
                     setText(item + "");
                 } else {
                     setText(null);

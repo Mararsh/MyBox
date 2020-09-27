@@ -38,8 +38,10 @@ import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.tools.HtmlTools;
 import mara.mybox.tools.NetworkTools;
+import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.MyboxDataPath;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
@@ -83,8 +85,8 @@ public class WebBrowserBoxController extends BaseController {
         AddFileType = VisitHistory.FileType.Html;
         AddPathType = VisitHistory.FileType.Html;
 
-        sourcePathKey = "HtmlFilePath";
-        targetPathKey = "HtmlFilePath";
+        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Html);
+        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Html);
 
         sourceExtensionFilter = CommonFxValues.HtmlExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
@@ -92,14 +94,14 @@ public class WebBrowserBoxController extends BaseController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
+            super.initControls();
             isSettingValues = false;
             zoomScale = 1.0f;
 
             initURLBox();
             initWebEngine();
-
         } catch (Exception e) {
             logger.error(e.toString());
         }

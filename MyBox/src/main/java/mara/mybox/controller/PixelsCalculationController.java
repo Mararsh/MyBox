@@ -22,14 +22,14 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
-import static mara.mybox.value.AppVariables.logger;
-import mara.mybox.image.ImageManufacture.KeepRatioType;
-import mara.mybox.value.AppVariables;
-import mara.mybox.image.ImageAttributes;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
+import mara.mybox.image.ImageAttributes;
+import mara.mybox.image.ImageManufacture.KeepRatioType;
 import mara.mybox.tools.DoubleTools;
-import static mara.mybox.value.AppVariables.message;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -80,8 +80,9 @@ public class PixelsCalculationController extends BaseController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
+            super.initControls();
             fromSource = false;
             targetLabel.setText("");
             adjustLabel.setText("");

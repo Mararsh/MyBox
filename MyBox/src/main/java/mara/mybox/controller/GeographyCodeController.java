@@ -4,34 +4,30 @@ import java.io.File;
 import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Control;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
-import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Modality;
 import mara.mybox.data.CoordinateSystem;
 import mara.mybox.data.GeographyCode;
+import mara.mybox.data.tools.GeographyCodeTools;
 import mara.mybox.db.TableGeographyCode;
 import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
-import mara.mybox.fxml.TableBooleanCell;
 import mara.mybox.fxml.TableCoordinateSystemCell;
 import mara.mybox.fxml.TableLatitudeCell;
 import mara.mybox.fxml.TableLongitudeCell;
-import mara.mybox.tools.GeographyCodeTools;
+import mara.mybox.fxml.TableMessageCell;
 import mara.mybox.tools.HtmlTools;
-import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
@@ -43,7 +39,6 @@ import mara.mybox.value.CommonValues;
  */
 public class GeographyCodeController extends DataAnalysisController<GeographyCode> {
 
-    protected String predefinedColor, inputtedColor;
     protected LoadingController loading;
 
     @FXML
@@ -57,13 +52,11 @@ public class GeographyCodeController extends DataAnalysisController<GeographyCod
     @FXML
     protected TableColumn<GeographyCode, Double> longitudeColumn, latitudeColumn;
     @FXML
-    protected TableColumn<GeographyCode, Boolean> predefinedColumn;
+    protected TableColumn<GeographyCode, String> sourceColumn;
     @FXML
     protected TableColumn<GeographyCode, CoordinateSystem> coordinateSystemColumn;
     @FXML
-    protected Button locationButton, palettePredefinedButton, paletteInputtedButton;
-    @FXML
-    protected Rectangle predefinedRect, inputtedRect;
+    protected ColorSetController predefinedColorSetController, inputtedColorSetController;
 
     public GeographyCodeController() {
         baseTitle = message("GeographyCode");
@@ -102,8 +95,8 @@ public class GeographyCodeController extends DataAnalysisController<GeographyCod
             alias3Column.setCellValueFactory(new PropertyValueFactory<>("alias3"));
             alias4Column.setCellValueFactory(new PropertyValueFactory<>("alias4"));
             alias5Column.setCellValueFactory(new PropertyValueFactory<>("alias5"));
-            predefinedColumn.setCellValueFactory(new PropertyValueFactory<>("predefined"));
-            predefinedColumn.setCellFactory(new TableBooleanCell());
+            sourceColumn.setCellValueFactory(new PropertyValueFactory<>("sourceName"));
+            sourceColumn.setCellFactory(new TableMessageCell());
 
             tableView.setRowFactory((TableView<GeographyCode> param) -> {
                 return new SourceRow();
@@ -128,37 +121,20 @@ public class GeographyCodeController extends DataAnalysisController<GeographyCod
             if (this.isSelected()) {
                 setStyle("-fx-background-color:  #0096C9; -fx-text-background-color: white");
             } else if (item.isPredefined()) {
-                setStyle("-fx-background-color: " + predefinedColor);
+                setStyle("-fx-background-color: " + predefinedColorSetController.rgb());
             } else {
-                setStyle("-fx-background-color: " + inputtedColor);
+                setStyle("-fx-background-color: " + inputtedColorSetController.rgb());
             }
         }
     };
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
-            super.initializeNext();
+            super.initControls();
 
-            predefinedColor = FxmlColor.rgb2Hex(Color.LAVENDERBLUSH);
-            try {
-                predefinedColor = AppVariables.getUserConfigValue("GeographyCodePredefinedDataColor", predefinedColor);
-                predefinedRect.setFill(Color.web(predefinedColor));
-            } catch (Exception e) {
-                predefinedRect.setFill(Color.LAVENDERBLUSH);
-                AppVariables.setUserConfigValue("GeographyCodePredefinedDataColor", predefinedColor);
-            }
-            FxmlControl.setTooltip(predefinedRect, FxmlColor.colorNameDisplay((Color) predefinedRect.getFill()));
-
-            inputtedColor = FxmlColor.rgb2Hex(Color.WHITE);
-            try {
-                inputtedColor = AppVariables.getUserConfigValue("GeographyCodeInputtedDataColor", inputtedColor);
-                inputtedRect.setFill(Color.web(inputtedColor));
-            } catch (Exception e) {
-                inputtedRect.setFill(Color.WHITE);
-                AppVariables.setUserConfigValue("GeographyCodeInputtedDataColor", inputtedColor);
-            }
-            FxmlControl.setTooltip(inputtedRect, FxmlColor.colorNameDisplay((Color) inputtedRect.getFill()));
+            predefinedColorSetController.init(this, baseName + "PredefinedColor", Color.LAVENDERBLUSH);
+            inputtedColorSetController.init(this, baseName + "InputtedColor", Color.WHITE);
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -280,29 +256,17 @@ public class GeographyCodeController extends DataAnalysisController<GeographyCod
             return false;
         }
         String where = clearCondition.getWhere() == null || clearCondition.getWhere().isBlank()
-                ? "predefined<>1" : " ( " + clearCondition.getWhere() + " ) AND predefined<>1";
+                ? "gcsource<>2" : " ( " + clearCondition.getWhere() + " ) AND gcsource<>2";
         clearCondition.setWhere(where);
         return true;
     }
 
-    @Override
-    protected void checkSelected() {
-        if (isSettingValues) {
-            return;
-        }
-        super.checkSelected();
-        int selection = tableView.getSelectionModel().getSelectedIndices().size();
-        if (locationButton != null) {
-            locationButton.setDisable(selection == 0);
-        }
-    }
-
     @FXML
     @Override
-    public void addAction() {
+    public void addAction(ActionEvent event) {
         try {
             GeographyCodeEditController controller = (GeographyCodeEditController) openStage(CommonValues.GeographyCodeEditFxml);
-            controller.parent = this;
+            controller.load(this, null);
             controller.getMyStage().toFront();
         } catch (Exception e) {
             logger.error(e.toString());
@@ -311,15 +275,14 @@ public class GeographyCodeController extends DataAnalysisController<GeographyCod
 
     @FXML
     @Override
-    public void editAction() {
+    public void editAction(ActionEvent event) {
         GeographyCode selected = (GeographyCode) tableView.getSelectionModel().getSelectedItem();
         if (selected == null) {
             return;
         }
         try {
             GeographyCodeEditController controller = (GeographyCodeEditController) openStage(CommonValues.GeographyCodeEditFxml);
-            controller.parent = this;
-            controller.setGeographyCode(selected);
+            controller.load(this, selected);
             controller.getMyStage().toFront();
         } catch (Exception e) {
             logger.error(e.toString());
@@ -337,99 +300,44 @@ public class GeographyCodeController extends DataAnalysisController<GeographyCod
     }
 
     @FXML
-    public void locationAction() {
+    public void locationAction(ActionEvent event) {
         try {
             GeographyCode code = (GeographyCode) tableView.getSelectionModel().getSelectedItem();
             if (code == null) {
                 return;
             }
             LocationInMapController controller = (LocationInMapController) openStage(CommonValues.LocationInMapFxml);
-            controller.consumer = this;
-            controller.setCoordinate(code.getLongitude(), code.getLatitude());
-            controller.getMyStage().toFront();
+            controller.loadCoordinate(null, code.getLongitude(), code.getLatitude());
         } catch (Exception e) {
             logger.error(e.toString());
         }
     }
 
-    @Override
-    protected int deleteSelectedData() {
-        List<GeographyCode> selected = tableView.getSelectionModel().getSelectedItems();
-        if (selected == null || selected.isEmpty()) {
-            return 0;
-        }
-        return TableGeographyCode.delete(selected);
-    }
-
-    @Override
-    public boolean setColor(Control control, Color color) {
-        if (control == null || color == null) {
-            return false;
-        }
-        try {
-            if (palettePredefinedButton.equals(control)) {
-                predefinedRect.setFill(color);
-                FxmlControl.setTooltip(predefinedRect, new Tooltip(FxmlColor.colorNameDisplay(color)));
-
-            } else if (paletteInputtedButton.equals(control)) {
-                inputtedRect.setFill(color);
-                FxmlControl.setTooltip(inputtedRect, new Tooltip(FxmlColor.colorNameDisplay(color)));
-
-            }
-            return true;
-        } catch (Exception e) {
-            logger.debug(e.toString());
-            popError(e.toString());
-            return false;
-        }
-    }
-
+//    @Override
+//    protected int deleteData(List<GeographyCode> data) {
+//        if (data == null || data.isEmpty()) {
+//            return 0;
+//        }
+//        return TableGeographyCode.delete(data);
+//    }
     @FXML
     public void defaultColors() {
-        Color color = Color.LAVENDERBLUSH;
-        predefinedRect.setFill(color);
-        FxmlControl.setTooltip(predefinedRect, new Tooltip(FxmlColor.colorNameDisplay(color)));
-
-        color = Color.WHITE;
-        inputtedRect.setFill(color);
-        FxmlControl.setTooltip(inputtedRect, new Tooltip(FxmlColor.colorNameDisplay(color)));
+        predefinedColorSetController.setColor(Color.LAVENDERBLUSH);
+        inputtedColorSetController.setColor(Color.WHITE);
     }
 
     @FXML
     public void randomColors() {
-        List<String> colors = FxmlColor.randomColorsHex(2);
+        List<String> colors = FxmlColor.randomRGB(2);
 
-        Color color = Color.web(colors.get(0));
-        predefinedRect.setFill(color);
-        FxmlControl.setTooltip(predefinedRect, new Tooltip(FxmlColor.colorNameDisplay(color)));
-
-        color = Color.web(colors.get(1));
-        inputtedRect.setFill(color);
-        FxmlControl.setTooltip(inputtedRect, new Tooltip(FxmlColor.colorNameDisplay(color)));
+        predefinedColorSetController.setColor(Color.web(colors.get(0)));
+        inputtedColorSetController.setColor(Color.web(colors.get(1)));
     }
 
     @FXML
     public void applyColors() {
-        Color color = (Color) (predefinedRect.getFill());
-        predefinedColor = FxmlColor.rgb2Hex(color);
-        AppVariables.setUserConfigValue("EpidemicReportsPredefinedDataColor", predefinedColor);
-
-        color = (Color) (inputtedRect.getFill());
-        inputtedColor = FxmlColor.rgb2Hex(color);
-        AppVariables.setUserConfigValue("EpidemicReportsInputtedDataColor", inputtedColor);
-
         tableView.refresh();
         popSuccessful();
-    }
-
-    @FXML
-    public void palettePredefined() {
-        showPalette(palettePredefinedButton, message("Settings") + " - " + message("PredefinedData"));
-    }
-
-    @FXML
-    public void paletteInputted() {
-        showPalette(paletteInputtedButton, message("Settings") + " - " + message("InputtedData"));
     }
 
     @FXML
@@ -475,7 +383,7 @@ public class GeographyCodeController extends DataAnalysisController<GeographyCod
 //            popMenu.getItems().add(menu);
             popMenu.getItems().add(new SeparatorMenuItem());
 
-            menu = new MenuItem(message("MenuClose"));
+            menu = new MenuItem(message("PopupClose"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction((ActionEvent event) -> {
                 popMenu.hide();
@@ -566,7 +474,7 @@ public class GeographyCodeController extends DataAnalysisController<GeographyCod
             popMenu.getItems().add(menu);
             popMenu.getItems().add(new SeparatorMenuItem());
 
-            menu = new MenuItem(message("MenuClose"));
+            menu = new MenuItem(message("PopupClose"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction((ActionEvent event) -> {
                 popMenu.hide();
@@ -595,7 +503,11 @@ public class GeographyCodeController extends DataAnalysisController<GeographyCod
                 @Override
                 protected boolean handle() {
                     for (GeographyCode code : selected) {
-                        code.setPredefined(predefined);
+                        if (predefined) {
+                            code.setSource(GeographyCode.AddressSource.PredefinedData);
+                        } else {
+                            code.setSource(GeographyCode.AddressSource.InputtedData);
+                        }
                     }
                     TableGeographyCode.write(selected);
                     return true;

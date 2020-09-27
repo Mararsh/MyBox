@@ -2,24 +2,24 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.paint.Paint;
 import mara.mybox.data.Dataset;
 import mara.mybox.data.Era;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.db.TableDataset;
-import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
+import mara.mybox.tools.VisitHistoryTools;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import static mara.mybox.value.AppVariables.tableMessage;
@@ -33,24 +33,22 @@ import mara.mybox.value.CommonFxValues;
 public class DatasetEditController extends BaseController {
 
     protected Dataset loadedDataset;
-    protected Color textColor, bgColor, chartColor;
 
     @FXML
     protected TextField idInput, datasetInput;
     @FXML
-    protected Rectangle colorRect;
-    @FXML
     protected Label textLabel;
-    @FXML
-    protected Button paletteTextButton, paletteBgButton, paletteChartButton;
     @FXML
     protected TextArea commentsArea;
     @FXML
     protected ComboBox<String> categorySelector;
     @FXML
-    protected RadioButton datetimeRadio, dateRadio, yearRadio, monthRadio, timeRadio, msRadio;
+    protected RadioButton datetimeRadio, dateRadio, yearRadio, monthRadio, timeRadio,
+            timeMsRadio, datetimeZoneRadio, datatimeMsRadio, datatimeMsZoneRadio;
     @FXML
     protected CheckBox omitADCheck;
+    @FXML
+    protected ColorSetController textColorSetController, backgroundColorSetController, chartColorSetController;
 
     public DatasetEditController() {
         baseTitle = message("Dataset");
@@ -60,16 +58,16 @@ public class DatasetEditController extends BaseController {
         AddFileType = VisitHistory.FileType.Image;
         AddPathType = VisitHistory.FileType.Image;
 
-        sourcePathKey = "ImageFilePath";
-        SaveAsOptionsKey = "ImageSaveAsKey";
+        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Image);
+        SaveAsOptionsKey = VisitHistoryTools.getSaveAsOptionsKey(VisitHistory.FileType.Image);
 
         sourceExtensionFilter = CommonFxValues.ImageExtensionFilter;
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
-            super.initializeNext();
+            super.initControls();
 
             FxmlControl.setTooltip(idInput, message("AssignedByMyBox"));
 
@@ -87,51 +85,40 @@ public class DatasetEditController extends BaseController {
     }
 
     public void initColors() {
-        textColor = Color.BLACK;
-        bgColor = Color.WHITE;
-        textLabel.setStyle("-fx-text-fill: " + FxmlColor.rgb2Hex(textColor)
-                + "; -fx-background-color: " + FxmlColor.rgb2Hex(bgColor));
+        textColorSetController.init(this, baseName + "TextColor", Color.BLACK);
+        backgroundColorSetController.init(this, baseName + "BackgroundColor", Color.WHITE);
+        chartColorSetController.init(this, baseName + "ChartColor", Color.web("#961c1c"));
 
-        chartColor = Color.web("#961c1c");
-        colorRect.setFill(chartColor);
-        FxmlControl.setTooltip(colorRect, new Tooltip(FxmlColor.colorNameDisplay(chartColor)));
+        textLabel.setStyle("-fx-text-fill: " + textColorSetController.rgb()
+                + "; -fx-background-color: " + backgroundColorSetController.rgb());
+
+        textColorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+            @Override
+            public void changed(ObservableValue<? extends Paint> observable,
+                    Paint oldValue, Paint newValue) {
+                textLabel.setStyle("-fx-text-fill: " + textColorSetController.rgb()
+                        + "; -fx-background-color: " + backgroundColorSetController.rgb());
+            }
+        });
+
+        backgroundColorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+            @Override
+            public void changed(ObservableValue<? extends Paint> observable,
+                    Paint oldValue, Paint newValue) {
+                textLabel.setStyle("-fx-text-fill: " + textColorSetController.rgb()
+                        + "; -fx-background-color: " + backgroundColorSetController.rgb());
+            }
+        });
+
     }
 
-    public void setValues(BaseController parentController, Dataset dataset) {
+    public void initEditor(BaseController parentController, Dataset dataset) {
         try {
             this.parentController = parentController;
             loadData(dataset);
+
         } catch (Exception e) {
             logger.error(e.toString());
-        }
-    }
-
-    @Override
-    public boolean setColor(Control control, Color color) {
-        if (control == null || color == null) {
-            return false;
-        }
-        try {
-            if (paletteTextButton.equals(control)) {
-                textColor = color;
-                textLabel.setStyle("-fx-text-fill: " + FxmlColor.rgb2Hex(textColor)
-                        + "; -fx-background-color: " + FxmlColor.rgb2Hex(bgColor));
-
-            } else if (paletteBgButton.equals(control)) {
-                bgColor = color;
-                textLabel.setStyle("-fx-text-fill: " + FxmlColor.rgb2Hex(textColor)
-                        + "; -fx-background-color: " + FxmlColor.rgb2Hex(bgColor));
-
-            } else if (paletteChartButton.equals(control)) {
-                chartColor = color;
-                colorRect.setFill(color);
-                FxmlControl.setTooltip(colorRect, new Tooltip(FxmlColor.colorNameDisplay(color)));
-            }
-            return true;
-        } catch (Exception e) {
-            logger.debug(e.toString());
-            popError(e.toString());
-            return false;
         }
     }
 
@@ -146,8 +133,8 @@ public class DatasetEditController extends BaseController {
                 clearData();
                 return;
             }
-            if (loadedDataset.getId() > 0) {
-                idInput.setText(loadedDataset.getId() + "");
+            if (loadedDataset.getDsid() > 0) {
+                idInput.setText(loadedDataset.getDsid() + "");
             } else {
                 idInput.clear();
             }
@@ -167,8 +154,17 @@ public class DatasetEditController extends BaseController {
                 case Time:
                     timeRadio.fire();
                     break;
-                case TimeWithMS:
-                    msRadio.fire();
+                case TimeMs:
+                    timeMsRadio.fire();
+                    break;
+                case DatetimeMs:
+                    datatimeMsRadio.fire();
+                    break;
+                case DatetimeZone:
+                    datetimeZoneRadio.fire();
+                    break;
+                case DatetimeMsZone:
+                    datatimeMsZoneRadio.fire();
                     break;
                 default:
                     datetimeRadio.fire();
@@ -177,18 +173,14 @@ public class DatasetEditController extends BaseController {
             omitADCheck.setSelected(loadedDataset.isOmitAD());
 
             if (loadedDataset.getTextColor() != null) {
-                textColor = loadedDataset.getTextColor();
+                textColorSetController.setColor(loadedDataset.getTextColor());
             }
             if (loadedDataset.getBgColor() != null) {
-                bgColor = loadedDataset.getBgColor();
+                backgroundColorSetController.setColor(loadedDataset.getBgColor());
             }
-            textLabel.setStyle("-fx-text-fill: " + FxmlColor.rgb2Hex(textColor)
-                    + "; -fx-background-color: " + FxmlColor.rgb2Hex(bgColor));
 
             if (loadedDataset.getChartColor() != null) {
-                chartColor = loadedDataset.getChartColor();
-                colorRect.setFill(chartColor);
-                FxmlControl.setTooltip(colorRect, new Tooltip(FxmlColor.colorNameDisplay(chartColor)));
+                chartColorSetController.setColor(loadedDataset.getChartColor());
             }
 
             if (loadedDataset.getImage() != null) {
@@ -201,6 +193,8 @@ public class DatasetEditController extends BaseController {
             } else {
                 commentsArea.clear();
             }
+
+            datasetInput.requestFocus();
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -216,6 +210,8 @@ public class DatasetEditController extends BaseController {
             sourceFileInput.clear();
             commentsArea.clear();
             initColors();
+
+            datasetInput.requestFocus();
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -239,9 +235,9 @@ public class DatasetEditController extends BaseController {
             }
             Dataset dataset = new Dataset().setDataSet(name);
             if (idInput.getText() == null || idInput.getText().isBlank()) {
-                dataset.setId(-1);
+                dataset.setDsid(-1);
             } else {
-                dataset.setId(Long.valueOf(idInput.getText()));
+                dataset.setDsid(Long.valueOf(idInput.getText()));
             }
             String category = categorySelector.getSelectionModel().getSelectedItem();
             for (String c : TableDataset.dataCategories()) {
@@ -258,16 +254,22 @@ public class DatasetEditController extends BaseController {
                 dataset.setTimeFormat(Era.Format.Month);
             } else if (timeRadio.isSelected()) {
                 dataset.setTimeFormat(Era.Format.Time);
-            } else if (msRadio.isSelected()) {
-                dataset.setTimeFormat(Era.Format.TimeWithMS);
+            } else if (timeMsRadio.isSelected()) {
+                dataset.setTimeFormat(Era.Format.TimeMs);
+            } else if (datetimeZoneRadio.isSelected()) {
+                dataset.setTimeFormat(Era.Format.DatetimeZone);
+            } else if (datatimeMsRadio.isSelected()) {
+                dataset.setTimeFormat(Era.Format.DatetimeMs);
+            } else if (datatimeMsZoneRadio.isSelected()) {
+                dataset.setTimeFormat(Era.Format.DatetimeMsZone);
             } else {
                 dataset.setTimeFormat(Era.Format.Datetime);
             }
             dataset.setOmitAD(omitADCheck.isSelected());
 
-            dataset.setTextColor(textColor);
-            dataset.setBgColor(bgColor);
-            dataset.setChartColor(chartColor);
+            dataset.setTextColor(Color.web(textColorSetController.rgba()));
+            dataset.setBgColor(Color.web(backgroundColorSetController.rgba()));
+            dataset.setChartColor(Color.web(chartColorSetController.rgba()));
 
             if (sourceFile != null && sourceFile.exists()) {
                 dataset.setImage(sourceFile);
@@ -281,18 +283,18 @@ public class DatasetEditController extends BaseController {
                 popFailed();
                 return;
             }
-            if (parentController != null) {
-                ((DataAnalysisController) parentController).refreshAction();
-                parentController.getMyStage().toFront();
-            }
-            if (dataset.getId() > 0) {
+
+            if (dataset.getDsid() > 0) {
                 popUpdateSuccessful();
-                idInput.setText(dataset.getId() + "");
+                idInput.setText(dataset.getDsid() + "");
             } else {
                 popInsertSuccessful();
             }
-            if (saveCloseCheck.isSelected()) {
-                closeStage();
+            closeStage();
+
+            if (parentController != null) {
+                ((DataAnalysisController) parentController).refreshAction();
+                parentController.getMyStage().toFront();
             }
 
         } catch (Exception e) {

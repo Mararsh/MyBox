@@ -7,6 +7,7 @@ import java.util.Map;
 import static mara.mybox.color.IccHeader.renderingIntent;
 import static mara.mybox.tools.ByteTools.subBytes;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.CommonValues.Indent;
 
 /**

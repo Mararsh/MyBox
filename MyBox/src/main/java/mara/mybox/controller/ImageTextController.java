@@ -11,6 +11,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.web.HTMLEditor;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**

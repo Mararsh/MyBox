@@ -4,6 +4,7 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.util.Callback;
 import mara.mybox.tools.DateTools;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -20,7 +21,7 @@ public class TableTimeCell<T> extends TableCell<T, Long>
             @Override
             public void updateItem(Long item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty || item == null || item == Long.MIN_VALUE) {
+                if (empty || item == null || item == CommonValues.InvalidLong) {
                     setText(null);
                     setGraphic(null);
                     return;

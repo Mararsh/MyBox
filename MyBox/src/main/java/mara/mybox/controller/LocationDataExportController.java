@@ -13,7 +13,9 @@ import javafx.scene.layout.FlowPane;
 import mara.mybox.data.Location;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
+import mara.mybox.value.CommonValues;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -110,31 +112,31 @@ public class LocationDataExportController extends DataExportController {
             if (columnNames.contains(message(lang, "Latitude")) && data.getLatitude() >= -90 && data.getLatitude() <= 90) {
                 s.append(" latitude=\"").append(data.getLatitude()).append("\"");
             }
-            if (columnNames.contains(message(lang, "Altitude")) && data.getAltitude() != Double.MAX_VALUE) {
+            if (columnNames.contains(message(lang, "Altitude")) && data.getAltitude() != CommonValues.InvalidDouble) {
                 s.append(" altitude=\"").append(data.getAltitude()).append("\"");
             }
-            if (columnNames.contains(message(lang, "Precision")) && data.getPrecision() != Double.MAX_VALUE) {
+            if (columnNames.contains(message(lang, "Precision")) && data.getPrecision() != CommonValues.InvalidDouble) {
                 s.append(" precision=\"").append(data.getPrecision()).append("\"");
             }
-            if (columnNames.contains(message(lang, "Speed")) && data.getSpeed() != Double.MAX_VALUE) {
+            if (columnNames.contains(message(lang, "Speed")) && data.getSpeed() != CommonValues.InvalidDouble) {
                 s.append(" speed=\"").append(data.getSpeed()).append("\"");
             }
-            if (columnNames.contains(message(lang, "Direction")) && data.getDirection() != Integer.MIN_VALUE) {
+            if (columnNames.contains(message(lang, "Direction")) && data.getDirection() != CommonValues.InvalidInteger) {
                 s.append(" direction=\"").append(data.getDirection()).append("\"");
             }
             if (columnNames.contains(message(lang, "CoordinateSystem")) && data.getCoordinateSystem() != null) {
                 s.append(" coordinateSystem=\"").append(data.getCoordinateSystem().name()).append("\"");
             }
-            if (columnNames.contains(message(lang, "DataValue")) && data.getDataValue() != Double.MAX_VALUE) {
+            if (columnNames.contains(message(lang, "DataValue")) && data.getDataValue() != CommonValues.InvalidDouble) {
                 s.append(" dataValue=\"").append(data.getDataValue()).append("\"");
             }
-            if (columnNames.contains(message(lang, "DataSize")) && data.getDataSize() != Double.MAX_VALUE) {
+            if (columnNames.contains(message(lang, "DataSize")) && data.getDataSize() != CommonValues.InvalidDouble) {
                 s.append(" dataSize=\"").append(data.getDataSize()).append("\"");
             }
-            if (columnNames.contains(message(lang, "StartTime")) && data.getStartTime() != Long.MIN_VALUE) {
+            if (columnNames.contains(message(lang, "StartTime")) && data.getStartTime() != CommonValues.InvalidLong) {
                 s.append(" startTime=\"").append(data.getStartTimeText()).append("\"");
             }
-            if (columnNames.contains(message(lang, "EndTime")) && data.getEndTime() != Long.MIN_VALUE) {
+            if (columnNames.contains(message(lang, "EndTime")) && data.getEndTime() != CommonValues.InvalidLong) {
                 s.append(" endTime=\"").append(data.getEndTimeText()).append("\"");
             }
             if (columnNames.contains(message(lang, "Image")) && data.getImage() != null) {
@@ -194,28 +196,28 @@ public class LocationDataExportController extends DataExportController {
                 v = true;
                 s.append("\"latitude\":").append(data.getLatitude());
             }
-            if (columnNames.contains(message(lang, "Altitude")) && data.getAltitude() != Double.MAX_VALUE) {
+            if (columnNames.contains(message(lang, "Altitude")) && data.getAltitude() != CommonValues.InvalidDouble) {
                 if (v) {
                     s.append(",");
                 }
                 v = true;
                 s.append("\"altitude\":").append(data.getAltitude());
             }
-            if (columnNames.contains(message(lang, "Precision")) && data.getPrecision() != Double.MAX_VALUE) {
+            if (columnNames.contains(message(lang, "Precision")) && data.getPrecision() != CommonValues.InvalidDouble) {
                 if (v) {
                     s.append(",");
                 }
                 v = true;
                 s.append("\"precision\":").append(data.getPrecision());
             }
-            if (columnNames.contains(message(lang, "Speed")) && data.getSpeed() != Double.MAX_VALUE) {
+            if (columnNames.contains(message(lang, "Speed")) && data.getSpeed() != CommonValues.InvalidDouble) {
                 if (v) {
                     s.append(",");
                 }
                 v = true;
                 s.append("\"speed\":").append(data.getSpeed());
             }
-            if (columnNames.contains(message(lang, "Direction")) && data.getDirection() != Integer.MIN_VALUE) {
+            if (columnNames.contains(message(lang, "Direction")) && data.getDirection() != CommonValues.InvalidInteger) {
                 if (v) {
                     s.append(",");
                 }
@@ -229,28 +231,28 @@ public class LocationDataExportController extends DataExportController {
                 v = true;
                 s.append("\"coordinateSystem\":\"").append(data.getCoordinateSystem().name()).append("\"");
             }
-            if (columnNames.contains(message(lang, "DataValue")) && data.getDataValue() != Double.MAX_VALUE) {
+            if (columnNames.contains(message(lang, "DataValue")) && data.getDataValue() != CommonValues.InvalidDouble) {
                 if (v) {
                     s.append(",");
                 }
                 v = true;
                 s.append("\"dataValue\":").append(data.getDataValue());
             }
-            if (columnNames.contains(message(lang, "DataSize")) && data.getDataSize() != Double.MAX_VALUE) {
+            if (columnNames.contains(message(lang, "DataSize")) && data.getDataSize() != CommonValues.InvalidDouble) {
                 if (v) {
                     s.append(",");
                 }
                 v = true;
                 s.append("\"dataSize\":").append(data.getDataSize());
             }
-            if (columnNames.contains(message(lang, "StartTime")) && data.getStartTime() != Long.MIN_VALUE) {
+            if (columnNames.contains(message(lang, "StartTime")) && data.getStartTime() != CommonValues.InvalidLong) {
                 if (v) {
                     s.append(",");
                 }
                 v = true;
                 s.append("\"startTime\":\"").append(data.getStartTimeText()).append("\"");
             }
-            if (columnNames.contains(message(lang, "EndTime")) && data.getEndTime() != Long.MIN_VALUE) {
+            if (columnNames.contains(message(lang, "EndTime")) && data.getEndTime() != CommonValues.InvalidLong) {
                 if (v) {
                     s.append(",");
                 }

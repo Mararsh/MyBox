@@ -17,6 +17,7 @@ import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -48,9 +49,9 @@ public class EpidemicReportEditController extends GeographyCodeUserController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
-            super.initializeNext();
+            super.initControls();
 
             selectedCode = null;
             epid = -1;
@@ -246,7 +247,7 @@ public class EpidemicReportEditController extends GeographyCodeUserController {
                 return;
             }
             isSettingValues = true;
-            epid = report.getId();
+            epid = report.getEpid();
             selectedCode = report.getLocation();
             time = report.getTime();
             confirmed = report.getConfirmed();
@@ -350,7 +351,7 @@ public class EpidemicReportEditController extends GeographyCodeUserController {
             @Override
             protected boolean handle() {
                 EpidemicReport report = new EpidemicReport();
-                report.setId(epid);
+                report.setEpid(epid);
                 report.setDataSet(dataset);
                 report.setLocation(selectedCode);
                 report.setConfirmed(confirmed);

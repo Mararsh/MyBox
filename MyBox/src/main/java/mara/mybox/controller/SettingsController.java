@@ -19,7 +19,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
@@ -34,7 +33,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.paint.Paint;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -44,7 +43,6 @@ import mara.mybox.db.DerbyBase.DerbyStatus;
 import mara.mybox.db.TableImageHistory;
 import mara.mybox.db.TableVisitHistory;
 import mara.mybox.fxml.ControlStyle;
-import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.ConfigTools;
@@ -53,6 +51,7 @@ import mara.mybox.tools.OCRTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.getUserConfigBoolean;
 import static mara.mybox.value.AppVariables.getUserConfigValue;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
@@ -65,21 +64,21 @@ import mara.mybox.value.CommonValues;
  */
 public class SettingsController extends BaseController {
 
-    protected int maxImageHis, recentFileNumber, newJVM;
+    protected int recentFileNumber, newJVM;
     protected String selectedLanguages;
 
     @FXML
     protected TabPane tabPane;
     @FXML
-    protected Tab interfaceTab, baseTab, pdfTab, imageTab, dataTab, ocrTab;
+    protected Tab interfaceTab, baseTab, pdfTab, imageTab, dataTab, ocrTab, mapTab, devTab;
     @FXML
     protected ToggleGroup langGroup, pdfMemGroup, controlColorGroup, derbyGroup, splitPanesGroup;
     @FXML
     protected CheckBox stopAlarmCheck, newWindowCheck, restoreStagesSizeCheck,
-            copyToSystemClipboardCheck, anchorSolidCheck, controlsTextCheck, recordLoadCheck,
-            clearCurrentRootCheck, hidpiCheck;
+            copyToSystemClipboardCheck, anchorSolidCheck, controlsTextCheck,
+            clearCurrentRootCheck, hidpiCheck, devModeCheck;
     @FXML
-    protected TextField jvmInput, imageMaxHisInput, dataDirInput, fileRecentInput, thumbnailWidthInput,
+    protected TextField jvmInput, dataDirInput, fileRecentInput, thumbnailWidthInput,
             ocrDirInput, tiandituWebKeyInput, gaodeWebKeyInput, gaodeServiceKeyInput;
     @FXML
     protected VBox localBox, dataBox, ocrBox;
@@ -89,20 +88,21 @@ public class SettingsController extends BaseController {
     @FXML
     protected HBox pdfMemBox, imageHisBox, derbyBox;
     @FXML
-    protected Button settingsImageHisOKButton, settingsRecentOKButton, settingsChangeRootButton,
-            settingsAlphaColorButton, settingsStrokeColorButton, settingsAnchorColorButton,
+    protected Button settingsRecentOKButton, settingsChangeRootButton,
             settingsDataPathButton, settingsJVMButton;
     @FXML
     protected RadioButton chineseRadio, englishRadio, redRadio, orangeRadio, pinkRadio, lightBlueRadio, blueRadio,
             pdfMem500MRadio, pdfMem1GRadio, pdfMem2GRadio, pdfMemUnlimitRadio,
             splitPaneClickedRadio, splitPaneEnteredRadio, embeddedRadio, networkRadio;
     @FXML
-    protected Rectangle alphaRect, strokeRect, anchorRect;
+    protected ColorSetController strokeColorSetController, anchorColorSetController, alphaColorSetController;
     @FXML
     protected ListView languageList;
     @FXML
     protected Label alphaLabel, currentJvmLabel, currentDataPathLabel, currentTempPathLabel,
             currentOCRFilesLabel, derbyStatus;
+    @FXML
+    protected ControlFileSelecter sourceCodesPathController;
 
     public SettingsController() {
         baseTitle = AppVariables.message("Settings");
@@ -110,8 +110,9 @@ public class SettingsController extends BaseController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
+            super.initControls();
             initInterfaceTab();
             initBaseTab();
             initDataTab();
@@ -119,6 +120,7 @@ public class SettingsController extends BaseController {
             initImageTab();
             initOCRTab();
             initMapTab();
+            initDevTab();
 
             isSettingValues = true;
             initSettingValues();
@@ -131,15 +133,11 @@ public class SettingsController extends BaseController {
 
     protected void initSettingValues() {
         try {
+            devModeCheck.setSelected(AppVariables.devMode);
             stopAlarmCheck.setSelected(AppVariables.getUserConfigBoolean("StopAlarmsWhenExit"));
             newWindowCheck.setSelected(AppVariables.openStageInNewWindow);
 
-            maxImageHis = AppVariables.getUserConfigInt("MaxImageHistories", 20);
-            imageMaxHisInput.setText(maxImageHis + "");
-
             thumbnailWidthInput.setText(AppVariables.getUserConfigInt("ThumbnailWidth", 100) + "");
-
-            recordLoadCheck.setSelected(AppVariables.getUserConfigBoolean("RecordImageLoad", true));
 
             recentFileNumber = AppVariables.getUserConfigInt("FileRecentNumber", 20);
             fileRecentInput.setText(recentFileNumber + "");
@@ -811,8 +809,10 @@ public class SettingsController extends BaseController {
                             if (v > 0) {
                                 AppVariables.setUserConfigInt("StrokeWidth", v);
                                 FxmlControl.setEditorNormal(strokeWidthBox);
-                                if (parentController != null) {
-                                    parentController.setMaskStroke();
+                                if (parentController instanceof ImageShapesController) {
+                                    ((ImageShapesController) parentController).setMaskStroke();
+                                } else if (parentController instanceof ImageBaseController) {
+                                    ((ImageBaseController) parentController).setMaskStroke();
                                 }
                             } else {
                                 FxmlControl.setEditorBadStyle(strokeWidthBox);
@@ -825,14 +825,21 @@ public class SettingsController extends BaseController {
             });
             strokeWidthBox.getSelectionModel().select(AppVariables.getUserConfigValue("StrokeWidth", "3"));
 
-            try {
-                String c = AppVariables.getUserConfigValue("StrokeColor", ImageMaskController.DefaultStrokeColor);
-                strokeRect.setFill(Color.web(c));
-            } catch (Exception e) {
-                strokeRect.setFill(Color.web(ImageMaskController.DefaultStrokeColor));
-                AppVariables.setUserConfigValue("StrokeColor", ImageMaskController.DefaultStrokeColor);
-            }
-            FxmlControl.setTooltip(strokeRect, FxmlColor.colorNameDisplay((Color) strokeRect.getFill()));
+            strokeColorSetController.init(this, baseName + "StrokeColor", Color.web(ImageShapesController.DefaultStrokeColor));
+            strokeColorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+                @Override
+                public void changed(ObservableValue<? extends Paint> observable,
+                        Paint oldValue, Paint newValue) {
+                    if (parentController != null) {
+                        if (parentController instanceof ImageShapesController) {
+                            ((ImageShapesController) parentController).setMaskStroke();
+                        } else if (parentController instanceof ImageBaseController) {
+                            ((ImageBaseController) parentController).setMaskStroke();
+                        }
+                    }
+                    popSuccessful();
+                }
+            });
 
             anchorWidthBox.getItems().addAll(Arrays.asList(
                     "10", "15", "20", "25", "30", "40", "50"));
@@ -845,8 +852,10 @@ public class SettingsController extends BaseController {
                             if (v > 0) {
                                 AppVariables.setUserConfigInt("AnchorWidth", v);
                                 FxmlControl.setEditorNormal(anchorWidthBox);
-                                if (parentController != null) {
-                                    parentController.setMaskStroke();
+                                if (parentController instanceof ImageShapesController) {
+                                    ((ImageShapesController) parentController).setMaskStroke();
+                                } else if (parentController instanceof ImageBaseController) {
+                                    ((ImageBaseController) parentController).setMaskStroke();
                                 }
                             } else {
                                 FxmlControl.setEditorBadStyle(anchorWidthBox);
@@ -859,51 +868,50 @@ public class SettingsController extends BaseController {
             });
             anchorWidthBox.getSelectionModel().select(AppVariables.getUserConfigValue("AnchorWidth", "10"));
 
-            try {
-                String color = AppVariables.getUserConfigValue("AnchorColor", ImageMaskController.DefaultAnchorColor);
-                anchorRect.setFill(Color.web(color));
-            } catch (Exception e) {
-                anchorRect.setFill(Color.web(ImageMaskController.DefaultAnchorColor));
-                AppVariables.setUserConfigValue("AnchorColor", ImageMaskController.DefaultAnchorColor);
-            }
-            FxmlControl.setTooltip(anchorRect, FxmlColor.colorNameDisplay((Color) anchorRect.getFill()));
+            anchorColorSetController.init(this, baseName + "AnchorColor", Color.web(ImageShapesController.DefaultAnchorColor));
+            anchorColorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+                @Override
+                public void changed(ObservableValue<? extends Paint> observable,
+                        Paint oldValue, Paint newValue) {
+                    if (parentController instanceof ImageShapesController) {
+                        ((ImageShapesController) parentController).setMaskStroke();
+                    } else if (parentController instanceof ImageBaseController) {
+                        ((ImageBaseController) parentController).setMaskStroke();
+                    }
+                    popSuccessful();
+                }
+            });
 
             anchorSolidCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov,
                         Boolean old_toggle, Boolean new_toggle) {
                     AppVariables.setUserConfigValue("AnchorSolid", new_toggle);
-                    if (parentController != null) {
-                        parentController.setMaskStroke();
+                    if (parentController instanceof ImageShapesController) {
+                        ((ImageShapesController) parentController).setMaskStroke();
+                    } else if (parentController instanceof ImageBaseController) {
+                        ((ImageBaseController) parentController).setMaskStroke();
                     }
                 }
             });
             anchorSolidCheck.setSelected(AppVariables.getUserConfigBoolean("AnchorSolid", true));
 
-            try {
-                String color = AppVariables.getUserConfigValue("AlphaAsColor", Color.WHITE.toString());
-                alphaRect.setFill(Color.web(color));
-                if (!Color.web(color).equals(Color.WHITE)) {
-                    alphaLabel.setText(message("AlphaReplaceComments"));
-                    alphaLabel.setStyle(FxmlControl.darkRedText);
-                } else {
-                    alphaLabel.setText("");
-                }
-            } catch (Exception e) {
-                alphaRect.setFill(Color.WHITE);
-                AppVariables.setUserConfigValue("AlphaAsColor", Color.WHITE.toString());
-            }
-            FxmlControl.setTooltip(alphaRect, FxmlColor.colorNameDisplay((Color) alphaRect.getFill()));
-
-            FxmlControl.setTooltip(imageHisBox, new Tooltip(message("ImageHisComments")));
-
-            imageMaxHisInput.textProperty().addListener(new ChangeListener<String>() {
+            alphaColorSetController.init(this, baseName + "AlphaAsColor", Color.WHITE);
+            alphaColorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
-                    checkImageMaxHis();
+                public void changed(ObservableValue<? extends Paint> observable,
+                        Paint oldValue, Paint newValue) {
+                    if (!Color.WHITE.equals((Color) newValue)) {
+                        alphaLabel.setText(message("AlphaReplaceComments"));
+                        alphaLabel.setStyle(FxmlControl.darkRedText);
+                    } else {
+                        alphaLabel.setText("");
+                        popSuccessful();
+                    }
                 }
             });
+
+            FxmlControl.setTooltip(imageHisBox, new Tooltip(message("ImageHisComments")));
 
             thumbnailWidthInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -923,15 +931,6 @@ public class SettingsController extends BaseController {
                     }
                 }
             });
-
-            recordLoadCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    AppVariables.setUserConfigValue("RecordImageLoad", recordLoadCheck.isSelected());
-                    popSuccessful();
-                }
-            });
-            FxmlControl.setTooltip(recordLoadCheck, new Tooltip(message("RecordImageLoad")));
 
             imageWidthBox.getItems().addAll(Arrays.asList(
                     "4096", "2048", "8192", "1024", "10240", "6144", "512", "15360", "20480", "30720"));
@@ -968,23 +967,6 @@ public class SettingsController extends BaseController {
         }
     }
 
-    private void checkImageMaxHis() {
-        try {
-            int v = Integer.valueOf(imageMaxHisInput.getText());
-            if (v >= 0) {
-                maxImageHis = v;
-                imageMaxHisInput.setStyle(null);
-                settingsImageHisOKButton.setDisable(false);
-            } else {
-                imageMaxHisInput.setStyle(badStyle);
-                settingsImageHisOKButton.setDisable(true);
-            }
-        } catch (Exception e) {
-            imageMaxHisInput.setStyle(badStyle);
-            settingsImageHisOKButton.setDisable(true);
-        }
-    }
-
     private void checkRecentFile() {
         try {
             int v = Integer.valueOf(fileRecentInput.getText());
@@ -999,64 +981,6 @@ public class SettingsController extends BaseController {
         } catch (Exception e) {
             fileRecentInput.setStyle(badStyle);
             settingsRecentOKButton.setDisable(true);
-        }
-    }
-
-    @FXML
-    public void strokePalette() {
-        showPalette(settingsAnchorColorButton, message("Settings") + " - " + message("StrokeColor"));
-    }
-
-    @FXML
-    public void anchorPalette() {
-        showPalette(settingsStrokeColorButton, message("Settings") + " - " + message("AnchorColor"));
-    }
-
-    @FXML
-    public void alphaPalette() {
-        showPalette(settingsAlphaColorButton, message("Settings") + " - " + message("AlphaColor"));
-    }
-
-    @Override
-    public boolean setColor(Control control, Color color) {
-        if (control == null || color == null) {
-            return false;
-        }
-        try {
-            if (settingsAnchorColorButton.equals(control)) {
-                strokeRect.setFill(color);
-                FxmlControl.setTooltip(strokeRect, new Tooltip(FxmlColor.colorNameDisplay(color)));
-                AppVariables.setUserConfigValue("StrokeColor", color.toString());
-                if (parentController != null) {
-                    parentController.setMaskStroke();
-                }
-
-            } else if (settingsStrokeColorButton.equals(control)) {
-                anchorRect.setFill(color);
-                FxmlControl.setTooltip(anchorRect, new Tooltip(FxmlColor.colorNameDisplay(color)));
-                AppVariables.setUserConfigValue("AnchorColor", color.toString());
-                if (parentController != null) {
-                    parentController.setMaskStroke();
-                }
-
-            } else if (settingsAlphaColorButton.equals(control)) {
-                alphaRect.setFill(color);
-                FxmlControl.setTooltip(alphaRect, new Tooltip(FxmlColor.colorNameDisplay(color)));
-                AppVariables.setUserConfigValue("AlphaAsColor", color.toString());
-                if (!color.equals(Color.WHITE)) {
-                    alphaLabel.setText(message("AlphaReplaceComments"));
-                    alphaLabel.setStyle(FxmlControl.darkRedText);
-                } else {
-                    alphaLabel.setText("");
-                }
-
-            }
-            popSuccessful();
-            return true;
-        } catch (Exception e) {
-            logger.debug(e.toString());
-            popError(e.toString());
-            return false;
         }
     }
 
@@ -1078,33 +1002,6 @@ public class SettingsController extends BaseController {
             return;
         }
         new TableImageHistory().clear();
-        popSuccessful();
-    }
-
-    @FXML
-    protected void setImageHisAction(ActionEvent event) {
-        try {
-            AppVariables.setUserConfigInt("MaxImageHistories", maxImageHis);
-//            if (parentController != null && parentFxml != null
-//                    && parentFxml.contains("ImageManufacture") && !parentFxml.contains("ImageManufactureBatch")) {
-//                ImageManufactureBaseController p = (ImageManufactureBaseController) parentController;
-//                p.updateHisBox();
-//            }
-            popSuccessful();
-        } catch (Exception e) {
-
-        }
-    }
-
-    @FXML
-    protected void noImageHistories(ActionEvent event) {
-        imageMaxHisInput.setText("0");
-//        AppVariables.setUserConfigInt("MaxImageHistories", 0);
-//        if (parentController != null && parentFxml != null
-//                && parentFxml.contains("ImageManufacture") && !parentFxml.contains("ImageManufactureBatch")) {
-//            ImageManufactureBaseController p = (ImageManufactureBaseController) parentController;
-//            p.updateHisBox();
-//        }
         popSuccessful();
     }
 
@@ -1154,8 +1051,8 @@ public class SettingsController extends BaseController {
             });
             selectedLanguages = AppVariables.getUserConfigValue("ImageOCRLanguages", null);
             if (selectedLanguages != null && !selectedLanguages.isEmpty()) {
-                currentOCRFilesLabel.setText(
-                        MessageFormat.format(message("CurrentDataFiles"), selectedLanguages));
+                currentOCRFilesLabel.setText(MessageFormat.format(message("CurrentDataFiles"), selectedLanguages));
+                currentOCRFilesLabel.setStyle(null);
                 isSettingValues = true;
                 String[] langs = selectedLanguages.split("\\+");
                 Map<String, String> codes = OCRTools.codeName();
@@ -1168,8 +1065,8 @@ public class SettingsController extends BaseController {
                 }
                 isSettingValues = false;
             } else {
-                currentOCRFilesLabel.setText(
-                        MessageFormat.format(message("CurrentDataFiles"), ""));
+                currentOCRFilesLabel.setText(MessageFormat.format(message("CurrentDataFiles"), message("NoData")));
+                currentOCRFilesLabel.setStyle(badStyle);
             }
         } catch (Exception e) {
             logger.debug(e.toString());
@@ -1217,9 +1114,11 @@ public class SettingsController extends BaseController {
             AppVariables.setUserConfigValue("ImageOCRLanguages", selectedLanguages);
             currentOCRFilesLabel.setText(
                     MessageFormat.format(message("CurrentDataFiles"), selectedLanguages));
+            currentOCRFilesLabel.setStyle(null);
         } else {
             currentOCRFilesLabel.setText(
-                    MessageFormat.format(message("CurrentDataFiles"), ""));
+                    MessageFormat.format(message("CurrentDataFiles"), message("NoData")));
+            currentOCRFilesLabel.setStyle(badStyle);
         }
     }
 
@@ -1341,16 +1240,34 @@ public class SettingsController extends BaseController {
         setMapKeysAction();
     }
 
+    /*
+        Dev settings
+     */
+    public void initDevTab() {
+        try {
+            sourceCodesPathController.label(message("sourceCodesPath"))
+                    .isDirectory(true).isSource(false).mustExist(true).permitNull(true)
+                    .defaultValue("D:\\MyBox").name("SourceCodesPath", true);
+
+            devModeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                    AppVariables.setUserConfigValue("DevMode", devModeCheck.isSelected());
+                    AppVariables.devMode = devModeCheck.isSelected();
+                }
+            });
+
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
 
     /*
         others
      */
     @FXML
     public void clearSettings(ActionEvent event) {
-        if (!super.clearSettings()) {
-            return;
-        }
-        refresh();
+        clearUserSettings();
     }
 
     @FXML

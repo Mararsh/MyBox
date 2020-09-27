@@ -22,7 +22,9 @@ import javafx.scene.web.WebEngine;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.tools.NetworkTools;
+import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
@@ -64,8 +66,8 @@ public class WebBrowserController extends BaseController {
         AddFileType = VisitHistory.FileType.Html;
         AddPathType = VisitHistory.FileType.Html;
 
-        sourcePathKey = "HtmlFilePath";
-        targetPathKey = "HtmlFilePath";
+        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Html);
+        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Html);
 
         sourceExtensionFilter = CommonFxValues.HtmlExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
@@ -73,8 +75,9 @@ public class WebBrowserController extends BaseController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
+            super.initControls();
             isSettingValues = false;
             fontSize = 14;
             zoomScale = 1.0f;
@@ -278,7 +281,7 @@ public class WebBrowserController extends BaseController {
             tabPane.getSelectionModel().select(tab);
 
             WebBrowserHistoryController controller = (WebBrowserHistoryController) fxmlLoader.getController();
-            controller.parent = this;
+            controller.parentController = this;
 
         } catch (Exception e) {
             logger.error(e.toString());

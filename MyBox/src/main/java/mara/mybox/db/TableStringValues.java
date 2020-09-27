@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -55,10 +56,10 @@ public class TableStringValues extends DerbyBase {
         if (conn == null || name == null || name.trim().isEmpty()) {
             return records;
         }
-        try {
-            String sql = " SELECT * FROM String_Values WHERE key_name='"
-                    + stringValue(name) + "' ORDER BY create_time DESC";
-            ResultSet results = conn.createStatement().executeQuery(sql);
+        String sql = " SELECT * FROM String_Values WHERE key_name='"
+                + stringValue(name) + "' ORDER BY create_time DESC";
+        try ( Statement statement = conn.createStatement();
+                 ResultSet results = statement.executeQuery(sql)) {
             while (results.next()) {
                 records.add(results.getString("string_value"));
             }
@@ -80,9 +81,10 @@ public class TableStringValues extends DerbyBase {
             statement.setMaxRows(1);
             String sql = " SELECT * FROM String_Values WHERE key_name='"
                     + stringValue(name) + "' ORDER BY create_time DESC";
-            ResultSet results = statement.executeQuery(sql);
-            if (results.next()) {
-                value = results.getString("string_value");
+            try ( ResultSet results = statement.executeQuery(sql)) {
+                if (results.next()) {
+                    value = results.getString("string_value");
+                }
             }
         } catch (Exception e) {
             failed(e);
@@ -97,26 +99,28 @@ public class TableStringValues extends DerbyBase {
                 || max < 0) {
             return records;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                 Statement statement = conn.createStatement()) {
             String sql = " SELECT * FROM String_Values WHERE key_name='"
                     + stringValue(name) + "' ORDER BY create_time DESC";
-            ResultSet results = conn.createStatement().executeQuery(sql);
             int count = 0;
-            while (results.next()) {
-                if (++count > max) {
-                    break;
+            try ( ResultSet results = statement.executeQuery(sql)) {
+                while (results.next()) {
+                    if (++count > max) {
+                        break;
+                    }
+                    records.add(results.getString("string_value"));
                 }
-                records.add(results.getString("string_value"));
             }
             if (count > max) {
                 conn.setAutoCommit(false);
                 sql = "DELETE FROM String_Values WHERE key_name='" + stringValue(name) + "'";
-                conn.createStatement().executeUpdate(sql);
+                statement.executeUpdate(sql);
                 for (int i = 0; i < records.size(); i++) {
                     sql = "INSERT INTO String_Values(key_name, string_value , create_time) VALUES('"
                             + stringValue(name) + "', '" + stringValue(records.get(i)) + "', '"
                             + DateTools.datetimeToString(new Date().getTime() - i * 1000) + "')";
-                    conn.createStatement().executeUpdate(sql);
+                    statement.executeUpdate(sql);
                 }
                 conn.commit();
             }
@@ -142,11 +146,11 @@ public class TableStringValues extends DerbyBase {
     }
 
     public static boolean add(Connection conn, String name, String value) {
-        try {
+        try ( Statement statement = conn.createStatement()) {
             boolean existed = false;
             String sql = " SELECT * FROM String_Values WHERE "
                     + "key_name='" + stringValue(name) + "' AND string_value='" + stringValue(value) + "'";
-            try ( ResultSet results = conn.createStatement().executeQuery(sql)) {
+            try ( ResultSet results = statement.executeQuery(sql)) {
                 if (results.next()) {
                     existed = true;
                 }
@@ -160,7 +164,7 @@ public class TableStringValues extends DerbyBase {
                         + stringValue(name) + "', '" + stringValue(value) + "', '"
                         + DateTools.datetimeToString(new Date()) + "')";
             }
-            conn.createStatement().executeUpdate(sql);
+            statement.executeUpdate(sql);
             return true;
         } catch (Exception e) {
             failed(e);

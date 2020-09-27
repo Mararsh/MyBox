@@ -18,15 +18,17 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
-import javafx.scene.image.PixelReader;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -35,9 +37,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import static mara.mybox.controller.BaseController.openImageViewer;
 import mara.mybox.data.DoubleRectangle;
-import mara.mybox.data.IntPoint;
+import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.fxml.FxmlStage;
@@ -50,7 +51,6 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.FileTools.FileSortMode;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
@@ -61,7 +61,7 @@ import mara.mybox.value.CommonValues;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImageViewerController extends ImageMaskController {
+public class ImageViewerController extends ImageShapesController {
 
     protected ImageScope scope;
     protected int currentAngle = 0, rotateAngle = 90;
@@ -73,7 +73,7 @@ public class ImageViewerController extends ImageMaskController {
     @FXML
     protected VBox contentBox, fileBox;
     @FXML
-    protected HBox operationBox;
+    protected HBox operationBox, opBar;
     @FXML
     public Button moveUpButton, moveDownButton, manufactureButton, statisticButton, splitButton,
             sampleButton, browseButton;
@@ -85,17 +85,16 @@ public class ImageViewerController extends ImageMaskController {
     protected RadioButton saveLoadRadio, saveOpenRadio, saveJustRadio;
     @FXML
     protected ComboBox<String> loadWidthBox;
-    @FXML
-    protected Button pickColorButton;
 
     public ImageViewerController() {
         baseTitle = message("ImageViewer");
-
+        TipsLabelKey = "ImageViewerTips";
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
+            super.initControls();
             initFilePane();
             initViewPane();
             initSaveAsPane();
@@ -103,11 +102,7 @@ public class ImageViewerController extends ImageMaskController {
             initBrowsePane();
             initTipsPane();
             initOperationBox();
-            initImageView();
-            initMaskPane();
-            initRulersCheck();
 
-            initializeNext2();
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -167,20 +162,20 @@ public class ImageViewerController extends ImageMaskController {
                 deleteConfirmCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        AppVariables.setUserConfigValue("ImageConfirmDelete", deleteConfirmCheck.isSelected());
+                        AppVariables.setUserConfigValue(baseName + "ConfirmDelete", deleteConfirmCheck.isSelected());
                     }
                 });
-                deleteConfirmCheck.setSelected(AppVariables.getUserConfigBoolean("ImageConfirmDelete", true));
+                deleteConfirmCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "ConfirmDelete", true));
             }
 
             if (saveConfirmCheck != null) {
                 saveConfirmCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        AppVariables.setUserConfigValue("ImageConfirmSave", saveConfirmCheck.isSelected());
+                        AppVariables.setUserConfigValue(baseName + "ConfirmSave", saveConfirmCheck.isSelected());
                     }
                 });
-                saveConfirmCheck.setSelected(AppVariables.getUserConfigBoolean("ImageConfirmSave", true));
+                saveConfirmCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "ConfirmSave", true));
             }
 
             if (manufactureButton != null) {
@@ -203,8 +198,259 @@ public class ImageViewerController extends ImageMaskController {
                 });
                 viewPane.setExpanded(AppVariables.getUserConfigBoolean(baseName + "ViewPane", false));
             }
+
         } catch (Exception e) {
             logger.error(e.toString());
+        }
+    }
+
+    @Override
+    protected List<MenuItem> makeImageContextMenu() {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+            MenuItem menu;
+            boolean groupExist = false;
+
+            if (selectAllButton != null && selectAllButton.isVisible() && !selectAllButton.isDisabled()) {
+                menu = new MenuItem(message("SelectAll") + "  CTRL+a");
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    selectAllAction();
+                });
+                items.add(menu);
+                groupExist = true;
+            }
+
+            if (selectAreaCheck != null && selectAreaCheck.isVisible() && !selectAreaCheck.isDisabled()) {
+                CheckMenuItem checkMenu = new CheckMenuItem(message("SelectArea"));
+                checkMenu.setOnAction((ActionEvent menuItemEvent) -> {
+                    if (isSettingValues) {
+                        return;
+                    }
+                    checkMenu.setSelected(!selectAreaCheck.isSelected());
+                    selectAreaCheck.setSelected(!selectAreaCheck.isSelected());
+                });
+                isSettingValues = true;
+                checkMenu.setSelected(selectAreaCheck.isSelected());
+                isSettingValues = false;
+                items.add(checkMenu);
+                groupExist = true;
+            }
+
+            if (groupExist) {
+                items.add(new SeparatorMenuItem());
+            }
+
+            groupExist = false;
+            if (copyButton != null && copyButton.isVisible() && !copyButton.isDisabled()) {
+                menu = new MenuItem(message("Copy") + "  CTRL+c");
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    copyAction();
+                });
+                items.add(menu);
+                groupExist = true;
+            }
+
+            if (pasteButton != null && pasteButton.isVisible() && !pasteButton.isDisabled()) {
+                menu = new MenuItem(message("Paste") + "  CTRL+v");
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    pasteAction();
+                });
+                items.add(menu);
+                groupExist = true;
+            }
+
+            if (cropButton != null && cropButton.isVisible() && !cropButton.isDisabled()) {
+                menu = new MenuItem(message("Crop") + "  CTRL+x");
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    cropAction();
+                });
+                items.add(menu);
+                groupExist = true;
+            }
+
+            if (rotateLeftButton != null && rotateLeftButton.isVisible() && !rotateLeftButton.isDisabled()) {
+                menu = new MenuItem(message("RotateLeft"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    rotateLeft();
+                });
+                items.add(menu);
+                groupExist = true;
+            }
+
+            if (rotateRightButton != null && rotateRightButton.isVisible() && !rotateRightButton.isDisabled()) {
+                menu = new MenuItem(message("RotateRight"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    rotateRight();
+                });
+                items.add(menu);
+                groupExist = true;
+            }
+
+            if (undoButton != null && undoButton.isVisible() && !undoButton.isDisabled()) {
+                menu = new MenuItem(message("Undo") + "  CTRL+z");
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    undoAction();
+                });
+                items.add(menu);
+                groupExist = true;
+            }
+
+            if (redoButton != null && redoButton.isVisible() && !redoButton.isDisabled()) {
+                menu = new MenuItem(message("Redo") + "  F3CTRL+y");
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    redoAction();
+                });
+                items.add(menu);
+                groupExist = true;
+            }
+
+            if (recoverButton != null && recoverButton.isVisible() && !recoverButton.isDisabled()) {
+                menu = new MenuItem(message("Recover") + "  F3 / CTRL+r");
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    recoverAction();
+                });
+                items.add(menu);
+                groupExist = true;
+            }
+
+            if (saveButton != null && saveButton.isVisible() && !saveButton.isDisabled()) {
+                menu = new MenuItem(message("Save") + "  F2 / CTRL+s");
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    saveAction();
+                });
+                items.add(menu);
+                groupExist = true;
+            }
+
+            if (saveAsButton != null && saveAsButton.isVisible() && !saveAsButton.isDisabled()) {
+                menu = new MenuItem(message("SaveAs") + "  F11 / CTRL+f ");
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    saveAsAction();
+                });
+                items.add(menu);
+                groupExist = true;
+            }
+            if (groupExist) {
+                items.add(new SeparatorMenuItem());
+            }
+
+            groupExist = false;
+            if (infoButton != null && infoButton.isVisible() && !infoButton.isDisabled()) {
+                menu = new MenuItem(message("Information"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    infoAction();
+                });
+                items.add(menu);
+                groupExist = true;
+            }
+            if (metaButton != null && metaButton.isVisible() && !metaButton.isDisabled()) {
+                menu = new MenuItem(message("MetaData"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    popMetaData();
+                });
+                items.add(menu);
+                groupExist = true;
+            }
+            if (groupExist) {
+                items.add(new SeparatorMenuItem());
+            }
+
+            groupExist = false;
+            if (previousButton != null && previousButton.isVisible() && !previousButton.isDisabled()) {
+                menu = new MenuItem(message("Previous") + "  PAGE UP");
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    previousAction();
+                });
+                items.add(menu);
+                groupExist = true;
+            }
+            if (nextButton != null && nextButton.isVisible() && !nextButton.isDisabled()) {
+                menu = new MenuItem(message("Next") + "  PAGE DOWN");
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    nextAction();
+                });
+                items.add(menu);
+                groupExist = true;
+            }
+
+            if (firstButton != null && firstButton.isVisible() && !firstButton.isDisabled()) {
+                menu = new MenuItem(message("First") + "  ALT+HOME");
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    firstAction();
+                });
+                items.add(menu);
+                groupExist = true;
+            }
+
+            if (lastButton != null && lastButton.isVisible() && !lastButton.isDisabled()) {
+                menu = new MenuItem(message("Last") + "  ALT+END");
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    lastAction();
+                });
+                items.add(menu);
+                groupExist = true;
+            }
+            if (groupExist) {
+                items.add(new SeparatorMenuItem());
+            }
+
+            groupExist = false;
+            if (statisticButton != null && statisticButton.isVisible() && !statisticButton.isDisabled()) {
+                menu = new MenuItem(message("Statistic"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    statisticAction();
+                });
+                items.add(menu);
+                groupExist = true;
+            }
+            if (manufactureButton != null && manufactureButton.isVisible() && !manufactureButton.isDisabled()) {
+                menu = new MenuItem(message("Manufacture"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    manufactureAction();
+                });
+                items.add(menu);
+                groupExist = true;
+            }
+
+            if (splitButton != null && splitButton.isVisible() && !splitButton.isDisabled()) {
+                menu = new MenuItem(message("Split"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    splitAction();
+                });
+                items.add(menu);
+                groupExist = true;
+            }
+
+            if (sampleButton != null && sampleButton.isVisible() && !sampleButton.isDisabled()) {
+                menu = new MenuItem(message("Sample"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    sampleAction();
+                });
+                items.add(menu);
+                groupExist = true;
+            }
+            if (browseButton != null && browseButton.isVisible() && !browseButton.isDisabled()) {
+                menu = new MenuItem(message("Browse"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    browseAction();
+                });
+                items.add(menu);
+                groupExist = true;
+            }
+            if (groupExist) {
+                items.add(new SeparatorMenuItem());
+            }
+
+            List<MenuItem> superItems = super.makeImageContextMenu();
+            if (!superItems.isEmpty()) {
+                superItems.addAll(items);
+            }
+
+            return superItems;
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
         }
     }
 
@@ -220,7 +466,7 @@ public class ImageViewerController extends ImageMaskController {
                 saveAsPane.setExpanded(AppVariables.getUserConfigBoolean(baseName + "SaveAsPane", false));
 
             }
-
+            saveAsType = SaveAsType.Open;
             if (saveAsGroup != null) {
                 String v = AppVariables.getUserConfigValue("ImageSaveAsType", SaveAsType.Open.name());
                 for (SaveAsType s : SaveAsType.values()) {
@@ -339,59 +585,49 @@ public class ImageViewerController extends ImageMaskController {
     }
 
     protected void initOperationBox() {
-        if (imageView != null) {
-            if (operationBox != null) {
-                operationBox.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
-            }
-            if (leftPaneControl != null) {
-                leftPaneControl.visibleProperty().bind(Bindings.isNotNull(imageView.imageProperty()));
-            }
-            if (rightPaneControl != null) {
-                rightPaneControl.visibleProperty().bind(Bindings.isNotNull(imageView.imageProperty()));
-            }
-        }
-
-        if (selectAreaCheck != null) {
-            selectAreaCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    AppVariables.setUserConfigValue("ImageSelect", selectAreaCheck.isSelected());
-                    checkSelect();
+        try {
+            if (imageView != null) {
+                if (operationBox != null) {
+                    operationBox.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
                 }
-            });
-            selectAreaCheck.setSelected(AppVariables.getUserConfigBoolean("ImageSelect", false));
-            checkSelect();
-            FxmlControl.setTooltip(selectAreaCheck, new Tooltip("CTRL+t"));
+                if (leftPaneControl != null) {
+                    leftPaneControl.visibleProperty().bind(Bindings.isNotNull(imageView.imageProperty()));
+                }
+                if (rightPaneControl != null) {
+                    rightPaneControl.visibleProperty().bind(Bindings.isNotNull(imageView.imageProperty()));
+                }
+            }
+
+            if (selectAreaCheck != null) {
+                selectAreaCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        AppVariables.setUserConfigValue(baseName + "SelectArea", selectAreaCheck.isSelected());
+                        checkSelect();
+                    }
+                });
+                selectAreaCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "SelectArea", false));
+                checkSelect();
+                FxmlControl.setTooltip(selectAreaCheck, new Tooltip("CTRL+t"));
+            }
+        } catch (Exception e) {
+            logger.error(e.toString());
         }
 
-    }
-
-    protected void setAsPopped() {
-        controlLeftPane();
-        myStage.sizeToScene();
-        myStage.centerOnScreen();
-        topCheck.setVisible(true);
     }
 
     @Override
     public void keyEventsHandler(KeyEvent event) {
-        super.keyEventsHandler(event);
-        if (event.isControlDown()) {
-            String key = event.getText();
-            if (key == null || key.isEmpty()) {
-                return;
-            }
-            switch (key) {
-                case "t":
-                case "T":
+        if (event.isControlDown() && event.getCode() != null) {
+            switch (event.getCode()) {
+                case T:
                     if (selectAreaCheck != null) {
                         selectAreaCheck.setSelected(!selectAreaCheck.isSelected());
                     }
-                    break;
-                default:
-                    break;
+                    return;
             }
         }
+        super.keyEventsHandler(event);
     }
 
     protected void checkSaveAs() {
@@ -480,7 +716,7 @@ public class ImageViewerController extends ImageMaskController {
 
             imageView.setPreserveRatio(true);
             imageView.setImage(image);
-            imageChanged = isCroppped = false;
+            imageChanged = isCropped = false;
             xZoomStep = (int) image.getWidth() / 10;
             yZoomStep = (int) image.getHeight() / 10;
             careFrames = true;
@@ -656,7 +892,6 @@ public class ImageViewerController extends ImageMaskController {
                     saveButton.setDisable(!imageChanged);
                 }
             }
-
             if (imageChanged) {
                 resetMaskControls();
             }
@@ -724,41 +959,12 @@ public class ImageViewerController extends ImageMaskController {
     }
 
     @FXML
-    public void pickColorAction(ActionEvent event) {
-        if (paletteController == null || !paletteController.getMyStage().isShowing()) {
-            paletteController = (ColorPaletteController) openStage(CommonValues.ColorPaletteFxml);
-            paletteController.init(this, pickColorButton, message("ImageViewer"), true);
-            paletteController.pickColorButton.setSelected(true);
-            popInformation(message("PickingColorsNow"));
-        }
-    }
-
-    @FXML
-    @Override
-    public void paneClicked(MouseEvent event) {
-        if (paletteController == null || !paletteController.getParentController().equals(this)) {
-            isPickingColor.set(false);
-        }
-        if (isPickingColor.get()) {
-            IntPoint p = getImageXYint(event, imageView);
-            if (p == null) {
-                return;
-            }
-            PixelReader pixelReader = imageView.getImage().getPixelReader();
-            Color color = pixelReader.getColor(p.getX(), p.getY());
-            paletteController.setColor(color);
-        } else {
-            super.paneClicked(event);
-        }
-    }
-
-    @FXML
     @Override
     public void infoAction() {
         if (imageInformation == null) {
             return;
         }
-        showImageInformation(imageInformation);
+        FxmlStage.showImageInformation(imageInformation);
     }
 
     @FXML
@@ -793,19 +999,12 @@ public class ImageViewerController extends ImageMaskController {
 
     @FXML
     public void viewImageAction() {
-        try {
-            final ImageViewerController controller = FxmlStage.openImageViewer(null);
-            if (controller != null && sourceFile != null) {
-                controller.loadImage(sourceFile);
-            }
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
+        FxmlStage.openImageViewer(null, sourceFile);
     }
 
     @FXML
     public void popMetaData() {
-        showImageMetaData(imageInformation);
+        FxmlStage.showImageMetaData(imageInformation);
     }
 
     @FXML
@@ -918,7 +1117,7 @@ public class ImageViewerController extends ImageMaskController {
                     @Override
                     protected void whenSucceeded() {
                         imageView.setImage(areaImage);
-                        isCroppped = true;
+                        isCropped = true;
                         setImageChanged(true);
                         resetMaskControls();
                     }
@@ -979,10 +1178,9 @@ public class ImageViewerController extends ImageMaskController {
         if (sizeChanged) {
             resetMaskControls();
         }
-        if (isCroppped) {
-            isCroppped = false;
-        }
+        isCropped = false;
         setImageChanged(false);
+        popInformation(message("Recovered"));
     }
 
     @FXML
@@ -1186,7 +1384,7 @@ public class ImageViewerController extends ImageMaskController {
                             loadImage(file);
 
                         } else if (saveAsType == SaveAsType.Open) {
-                            openImageViewer(file);
+                            FxmlStage.openImageViewer(file);
                         }
                     }
 
@@ -1432,9 +1630,8 @@ public class ImageViewerController extends ImageMaskController {
         }
         ImageAnalyseController controller
                 = (ImageAnalyseController) FxmlStage.openStage(CommonValues.ImageAnalyseFxml);
-        controller.init(sourceFile, imageView.getImage());
         controller.setParentView(imageView);
-        controller.loadData();
+        controller.loadImage(sourceFile, image, imageInformation);
     }
 
 }

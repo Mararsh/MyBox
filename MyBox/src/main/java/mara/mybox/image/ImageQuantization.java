@@ -12,6 +12,7 @@ import java.util.Map;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import mara.mybox.data.StringTable;
+import mara.mybox.fxml.FxmlColor;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
@@ -157,7 +158,7 @@ public class ImageQuantization extends PixelsOperation {
                 int blue = (int) Math.round(color.getBlue() * 255);
                 row.addAll(Arrays.asList((id++) + "", count.count + "",
                         (int) (count.count * 100 / totalCount) + "%",
-                        color.toString(), red + " ", green + " ", blue + " ",
+                        FxmlColor.color2rgba(color), red + " ", green + " ", blue + " ",
                         (int) Math.round(color.getOpacity() * 100) + "%",
                         Math.round(color.getHue()) + " ",
                         Math.round(color.getSaturation() * 100) + "%",

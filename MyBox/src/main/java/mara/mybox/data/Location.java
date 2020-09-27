@@ -12,7 +12,9 @@ import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -21,11 +23,12 @@ import static mara.mybox.value.AppVariables.message;
  */
 public class Location extends TableData implements Cloneable {
 
-    protected long datasetid, startTime, endTime, duration;
-    protected String datasetName, address, comments, image, label,
+    protected long ldid, datasetid, startTime, endTime, duration;
+    protected String datasetName, address, comments, label,
             startTimeText, endTimeText, periodText, durationText;
     protected double longitude, latitude, altitude, precision, speed, dataValue, dataSize;
-    protected int direction;
+    protected short direction;
+    protected File image;
     protected CoordinateSystem coordinateSystem;
     protected Dataset dataset;
     protected Era startEra, endEra;
@@ -35,10 +38,10 @@ public class Location extends TableData implements Cloneable {
     }
 
     private void init() {
-        id = datasetid = -1;
-        longitude = latitude = altitude = precision = speed = dataValue = dataSize = Double.MAX_VALUE;
-        startTime = endTime = duration = Long.MIN_VALUE;
-        direction = Integer.MIN_VALUE;
+        ldid = datasetid = -1;
+        longitude = latitude = altitude = precision = speed = dataValue = dataSize = CommonValues.InvalidDouble;
+        startTime = endTime = duration = CommonValues.InvalidLong;
+        direction = CommonValues.InvalidShort;
         coordinateSystem = CoordinateSystem.defaultCode();
     }
 
@@ -48,8 +51,134 @@ public class Location extends TableData implements Cloneable {
     }
 
     @Override
+    public TableBase getTable() {
+        if (table == null) {
+            table = new TableLocationData();
+        }
+        return table;
+    }
+
+    @Override
     public boolean valid() {
         return validCoordinate();
+    }
+
+    @Override
+    public boolean setValue(String column, Object value) {
+        if (column == null) {
+            return false;
+        }
+        try {
+            switch (column) {
+                case "ldid":
+                    ldid = value == null ? -1 : (long) value;
+                    return true;
+                case "datasetid":
+                    datasetid = value == null ? -1 : (long) value;
+                    return true;
+                case "label":
+                    label = value == null ? null : (String) value;
+                    return true;
+                case "address":
+                    address = value == null ? null : (String) value;
+                    return true;
+                case "longitude":
+                    longitude = value == null ? CommonValues.InvalidDouble : (Double) value;
+                    return true;
+                case "latitude":
+                    latitude = value == null ? CommonValues.InvalidDouble : (Double) value;
+                    return true;
+                case "altitude":
+                    altitude = value == null ? CommonValues.InvalidDouble : (Double) value;
+                    return true;
+                case "precision":
+                    precision = value == null ? CommonValues.InvalidDouble : (Double) value;
+                    return true;
+                case "speed":
+                    speed = value == null ? CommonValues.InvalidDouble : (Double) value;
+                    return true;
+                case "direction":
+                    direction = value == null ? CommonValues.InvalidShort : (short) value;
+                    return true;
+                case "coordinate_system":
+                    coordinateSystem = value == null
+                            ? CoordinateSystem.defaultCode() : new CoordinateSystem((short) value);
+                    return true;
+                case "data_value":
+                    dataValue = value == null ? CommonValues.InvalidDouble : (Double) value;
+                    return true;
+                case "data_size":
+                    dataSize = value == null ? CommonValues.InvalidDouble : (Double) value;
+                    return true;
+                case "start_time":
+                    startTime = value == null ? CommonValues.InvalidLong : (long) value;
+                    return true;
+                case "end_time":
+                    endTime = value == null ? CommonValues.InvalidLong : (long) value;
+                    return true;
+                case "location_image":
+                    image = null;
+                    if (value != null) {
+                        File file = new File((String) value);
+                        if (file.exists()) {
+                            image = file;
+                        }
+                    }
+                    return true;
+                case "location_comments":
+                    comments = value == null ? null : (String) value;
+                    return true;
+            }
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+        return false;
+    }
+
+    @Override
+    public Object getValue(String column) {
+        if (column == null) {
+            return null;
+        }
+        switch (column) {
+            case "ldid":
+                return ldid;
+            case "datasetid":
+                return this.getDatasetid();
+            case "label":
+                return label;
+            case "address":
+                return address;
+            case "longitude":
+                return longitude;
+            case "latitude":
+                return latitude;
+            case "altitude":
+                return altitude;
+            case "precision":
+                return precision;
+            case "speed":
+                return speed;
+            case "direction":
+                return direction;
+            case "coordinate_system":
+                return coordinateSystem == null
+                        ? CoordinateSystem.defaultCode().intValue()
+                        : coordinateSystem.intValue();
+            case "data_value":
+                return dataValue;
+            case "data_size":
+                return dataSize;
+            case "start_time":
+                return this.getStartTime();
+            case "end_time":
+                return this.getEndTime();
+            case "location_image":
+                return image == null ? null : image.getAbsolutePath();
+            case "location_comments":
+                return comments;
+        }
+        return null;
     }
 
     public String info(String lineBreak) {
@@ -69,28 +198,28 @@ public class Location extends TableData implements Cloneable {
         if (latitude >= -90 && latitude <= 90) {
             s.append(message("Latitude")).append(": ").append(latitude).append(lineBreak);
         }
-        if (altitude != Double.MAX_VALUE) {
+        if (altitude != CommonValues.InvalidDouble) {
             s.append(message("Altitude")).append(": ").append(altitude).append(lineBreak);
         }
-        if (precision != Double.MAX_VALUE) {
+        if (precision != CommonValues.InvalidDouble) {
             s.append(message("Precision")).append(": ").append(precision).append(lineBreak);
         }
-        if (speed != Double.MAX_VALUE) {
+        if (speed != CommonValues.InvalidDouble) {
             s.append(message("Speed")).append(": ").append(speed).append(lineBreak);
         }
-        if (direction != Integer.MIN_VALUE) {
+        if (direction != CommonValues.InvalidShort) {
             s.append(message("Direction")).append(": ").append(direction).append(lineBreak);
         }
         if (coordinateSystem != null) {
             s.append(message("CoordinateSystem")).append(": ").append(coordinateSystem.name()).append(lineBreak);
         }
-        if (dataValue != Double.MAX_VALUE) {
+        if (dataValue != CommonValues.InvalidDouble) {
             s.append(message("DataValue")).append(": ").append(dataValue).append(lineBreak);
         }
-        if (dataSize != Double.MAX_VALUE) {
+        if (dataSize != CommonValues.InvalidDouble) {
             s.append(message("DataSize")).append(": ").append(dataSize).append(lineBreak);
         }
-        if (startTime != Long.MIN_VALUE) {
+        if (startTime != CommonValues.InvalidLong) {
             String t;
             if (dataset != null) {
                 t = DateTools.textEra(getStartEra());
@@ -99,7 +228,7 @@ public class Location extends TableData implements Cloneable {
             }
             s.append(message("StartTime")).append(": ").append(t).append(lineBreak);
         }
-        if (endTime != Long.MIN_VALUE) {
+        if (endTime != CommonValues.InvalidLong) {
             String t;
             if (dataset != null) {
                 t = DateTools.textEra(getEndEra());
@@ -110,7 +239,7 @@ public class Location extends TableData implements Cloneable {
         }
         String imageFile = null;
         if (image != null) {
-            imageFile = image;
+            imageFile = image.getAbsolutePath();
         } else if (dataset != null && dataset.getImage() != null) {
             imageFile = dataset.getImage().getAbsolutePath();
         }
@@ -169,22 +298,6 @@ public class Location extends TableData implements Cloneable {
                 .setComments(code.getComments());
     }
 
-    public static List<String> externalNames() {
-        try {
-            List<String> columns = new ArrayList<>();
-            columns.addAll(Arrays.asList(
-                    message("Dataset"), message("Label"), message("Address"),
-                    message("Longitude"), message("Latitude"), message("Altitude"),
-                    message("Precision"), message("Speed"), message("Direction"), message("CoordinateSystem"),
-                    message("DataValue"), message("DataSize"), message("StartTime"), message("EndTime"),
-                    message("Image"), message("Comments")
-            ));
-            return columns;
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
     public static List<String> externalValues(Location data) {
         List<String> row = new ArrayList<>();
         row.addAll(Arrays.asList(
@@ -193,16 +306,16 @@ public class Location extends TableData implements Cloneable {
                 data.getAddress() == null ? "" : data.getAddress(),
                 data.getLongitude() >= -180 && data.getLongitude() <= 180 ? data.getLongitude() + "" : "",
                 data.getLatitude() >= -90 && data.getLatitude() <= 90 ? data.getLatitude() + "" : "",
-                data.getAltitude() != Double.MAX_VALUE ? data.getAltitude() + "" : "",
-                data.getPrecision() != Double.MAX_VALUE ? data.getPrecision() + "" : "",
-                data.getSpeed() != Double.MAX_VALUE ? data.getSpeed() + "" : "",
-                data.getDirection() != Integer.MIN_VALUE ? data.getDirection() + "" : "",
+                data.getAltitude() != CommonValues.InvalidDouble ? data.getAltitude() + "" : "",
+                data.getPrecision() != CommonValues.InvalidDouble ? data.getPrecision() + "" : "",
+                data.getSpeed() != CommonValues.InvalidDouble ? data.getSpeed() + "" : "",
+                data.getDirection() != CommonValues.InvalidInteger ? data.getDirection() + "" : "",
                 data.getCoordinateSystem() == null ? "" : data.getCoordinateSystem().name(),
-                data.getDataValue() != Double.MAX_VALUE ? data.getDataValue() + "" : "",
-                data.getDataSize() != Double.MAX_VALUE ? data.getDataSize() + "" : "",
-                data.getStartTime() != Long.MIN_VALUE ? data.getStartTimeText() : "",
-                data.getEndTime() != Long.MIN_VALUE ? data.getEndTimeText() : "",
-                data.getImage() == null ? "" : data.getImage(),
+                data.getDataValue() != CommonValues.InvalidDouble ? data.getDataValue() + "" : "",
+                data.getDataSize() != CommonValues.InvalidDouble ? data.getDataSize() + "" : "",
+                data.getStartTime() != CommonValues.InvalidLong ? data.getStartTimeText() : "",
+                data.getEndTime() != CommonValues.InvalidLong ? data.getEndTimeText() : "",
+                data.getImage() == null ? "" : data.getImage().getAbsolutePath(),
                 data.getComments() == null ? "" : data.getComments()
         ));
         return row;
@@ -230,34 +343,34 @@ public class Location extends TableData implements Cloneable {
             row.add(data.getLatitude() >= -90 && data.getLatitude() <= 90 ? data.getLatitude() + "" : "");
         }
         if (columns.contains(message(lang, "Altitude"))) {
-            row.add(data.getAltitude() != Double.MAX_VALUE ? data.getAltitude() + "" : "");
+            row.add(data.getAltitude() != CommonValues.InvalidDouble ? data.getAltitude() + "" : "");
         }
         if (columns.contains(message(lang, "Precision"))) {
-            row.add(data.getPrecision() != Double.MAX_VALUE ? data.getPrecision() + "" : "");
-        }
-        if (columns.contains(message(lang, "Speed"))) {
-            row.add(data.getSpeed() != Double.MAX_VALUE ? data.getSpeed() + "" : "");
-        }
-        if (columns.contains(message(lang, "Direction"))) {
-            row.add(data.getDirection() != Integer.MIN_VALUE ? data.getDirection() + "" : "");
+            row.add(data.getPrecision() != CommonValues.InvalidDouble ? data.getPrecision() + "" : "");
         }
         if (columns.contains(message(lang, "CoordinateSystem"))) {
             row.add(data.getCoordinateSystem() == null ? "" : data.getCoordinateSystem().name());
         }
+        if (columns.contains(message(lang, "Speed"))) {
+            row.add(data.getSpeed() != CommonValues.InvalidDouble ? data.getSpeed() + "" : "");
+        }
+        if (columns.contains(message(lang, "Direction"))) {
+            row.add(data.getDirection() != CommonValues.InvalidShort ? data.getDirection() + "" : "");
+        }
         if (columns.contains(message(lang, "DataValue"))) {
-            row.add(data.getDataValue() != Double.MAX_VALUE ? data.getDataValue() + "" : "");
+            row.add(data.getDataValue() != CommonValues.InvalidDouble ? data.getDataValue() + "" : "");
         }
         if (columns.contains(message(lang, "DataSize"))) {
-            row.add(data.getDataSize() != Double.MAX_VALUE ? data.getDataSize() + "" : "");
+            row.add(data.getDataSize() != CommonValues.InvalidDouble ? data.getDataSize() + "" : "");
         }
         if (columns.contains(message(lang, "StartTime"))) {
-            row.add(data.getStartTime() != Long.MIN_VALUE ? data.getStartTimeText() : "");
+            row.add(data.getStartTime() != CommonValues.InvalidLong ? data.getStartTimeText() : "");
         }
         if (columns.contains(message(lang, "EndTime"))) {
-            row.add(data.getEndTime() != Long.MIN_VALUE ? data.getEndTimeText() : "");
+            row.add(data.getEndTime() != CommonValues.InvalidLong ? data.getEndTimeText() : "");
         }
         if (columns.contains(message(lang, "Image"))) {
-            row.add(data.getImage() == null ? "" : data.getImage());
+            row.add(data.getImage() == null ? "" : data.getImage().getAbsolutePath());
         }
         if (columns.contains(message(lang, "Comments"))) {
             row.add(data.getComments() == null ? "" : data.getComments());
@@ -268,14 +381,6 @@ public class Location extends TableData implements Cloneable {
     /*
         customized  get/set
      */
-    @Override
-    public TableBase getTable() {
-        if (table == null) {
-            table = new TableLocationData();
-        }
-        return table;
-    }
-
     public static void importChinaEarlyCultures() {
         File file;
         if ("zh".equals(AppVariables.getLanguage())) {
@@ -293,9 +398,17 @@ public class Location extends TableData implements Cloneable {
      */
     public long getDatasetid() {
         if (dataset != null) {
-            datasetid = dataset.getId();
+            datasetid = dataset.getDsid();
         }
         return datasetid;
+    }
+
+    public Location setDataset(Dataset dataset) {
+        this.dataset = dataset;
+        if (dataset != null) {
+            datasetid = dataset.getDsid();
+        }
+        return this;
     }
 
     public String getDatasetName() {
@@ -306,21 +419,21 @@ public class Location extends TableData implements Cloneable {
     }
 
     public long getStartTime() {
-        if (startTime == Long.MIN_VALUE && endTime != Long.MIN_VALUE) {
-            startTime = endTime;
-        }
+//        if (startTime == CommonValues.InvalidLong && endTime != CommonValues.InvalidLong) {
+//            startTime = endTime;
+//        }
         return startTime;
     }
 
     public long getEndTime() {
-        if (endTime == Long.MIN_VALUE && startTime != Long.MIN_VALUE) {
-            endTime = startTime;
-        }
+//        if (endTime == CommonValues.InvalidLong && startTime != CommonValues.InvalidLong) {
+//            endTime = startTime;
+//        }
         return endTime;
     }
 
     public String getStartTimeText() {
-        if (getStartTime() == Long.MIN_VALUE) {
+        if (getStartTime() == CommonValues.InvalidLong) {
             startTimeText = null;
         } else if (dataset == null) {
             startTimeText = DateTools.textEra(startTime);
@@ -331,7 +444,7 @@ public class Location extends TableData implements Cloneable {
     }
 
     public String getEndTimeText() {
-        if (getEndTime() == Long.MIN_VALUE) {
+        if (getEndTime() == CommonValues.InvalidLong) {
             endTimeText = null;
         } else if (dataset == null) {
             endTimeText = DateTools.textEra(endTime);
@@ -364,7 +477,7 @@ public class Location extends TableData implements Cloneable {
     }
 
     public Era getStartEra() {
-        if (getStartTime() == Long.MIN_VALUE) {
+        if (getStartTime() == CommonValues.InvalidLong) {
             startEra = null;
         } else if (dataset == null) {
             startEra = new Era(startTime);
@@ -375,7 +488,7 @@ public class Location extends TableData implements Cloneable {
     }
 
     public Era getEndEra() {
-        if (getEndTime() == Long.MIN_VALUE) {
+        if (getEndTime() == CommonValues.InvalidLong) {
             endEra = null;
         } else if (dataset == null) {
             endEra = new Era(endTime);
@@ -386,16 +499,16 @@ public class Location extends TableData implements Cloneable {
     }
 
     public long getDuration() {
-        if (startTime != endTime && startTime != Long.MIN_VALUE && endTime != Long.MIN_VALUE) {
+        if (startTime != endTime && startTime != CommonValues.InvalidLong && endTime != CommonValues.InvalidLong) {
             duration = endTime - startTime;
         } else {
-            duration = Long.MIN_VALUE;
+            duration = CommonValues.InvalidLong;
         }
         return duration;
     }
 
     public String getDurationText() {
-        if (startTime == endTime || startTime == Long.MIN_VALUE || endTime == Long.MIN_VALUE) {
+        if (startTime == endTime || startTime == CommonValues.InvalidLong || endTime == CommonValues.InvalidLong) {
             return null;
         }
         if (dataset != null) {
@@ -405,9 +518,27 @@ public class Location extends TableData implements Cloneable {
         }
     }
 
+    public Location setImage(String string) {
+        if (string != null) {
+            File file = new File(string);
+            if (file.exists()) {
+                this.image = file;
+            }
+        }
+        return this;
+    }
+
     /*
         get/set
      */
+    public long getLdid() {
+        return ldid;
+    }
+
+    public void setLdid(long ldid) {
+        this.ldid = ldid;
+    }
+
     public double getLongitude() {
         return longitude;
     }
@@ -457,11 +588,6 @@ public class Location extends TableData implements Cloneable {
         return dataset;
     }
 
-    public Location setDataset(Dataset dataset) {
-        this.dataset = dataset;
-        return this;
-    }
-
     public Location setDatasetid(long datasetid) {
         this.datasetid = datasetid;
         return this;
@@ -490,11 +616,11 @@ public class Location extends TableData implements Cloneable {
         return this;
     }
 
-    public String getImage() {
+    public File getImage() {
         return image;
     }
 
-    public Location setImage(String image) {
+    public Location setImage(File image) {
         this.image = image;
         return this;
     }
@@ -535,11 +661,11 @@ public class Location extends TableData implements Cloneable {
         return this;
     }
 
-    public int getDirection() {
+    public short getDirection() {
         return direction;
     }
 
-    public Location setDirection(int direction) {
+    public Location setDirection(short direction) {
         this.direction = direction;
         return this;
     }

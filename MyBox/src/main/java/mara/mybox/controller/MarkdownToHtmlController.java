@@ -19,7 +19,9 @@ import javafx.scene.control.TextField;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlTools;
+import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
@@ -53,8 +55,8 @@ public class MarkdownToHtmlController extends FilesBatchController {
         AddFileType = VisitHistory.FileType.Markdown;
         AddPathType = VisitHistory.FileType.Markdown;
 
-        sourcePathKey = "MarkdownFilePath";
-        targetPathKey = "HtmlFilePath";
+        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Markdown);
+        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Html);
 
         sourceExtensionFilter = CommonFxValues.MarkdownExtensionFilter;
         targetExtensionFilter = CommonFxValues.HtmlExtensionFilter;

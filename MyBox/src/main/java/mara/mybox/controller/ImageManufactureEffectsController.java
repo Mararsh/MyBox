@@ -25,6 +25,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
@@ -63,7 +64,7 @@ import mara.mybox.value.CommonValues;
 public class ImageManufactureEffectsController extends ImageManufactureOperationController {
 
     private OperationType effectType;
-    protected int intPara1, intPara2, intPara3, bitDepth;
+    protected int intPara1, intPara2, intPara3, bitDepth, quanColors;
     private ConvolutionKernel kernel;
     private QuantizationAlgorithm quantizationAlgorithm;
     private ChangeListener<String> intBoxListener, stringBoxListener, intInputListener,
@@ -74,38 +75,34 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
     @FXML
     protected ToggleGroup effectGroup, bwGroup, quanGroup;
     @FXML
-    protected VBox setBox, bwBox, quanBox;
+    protected VBox setBox, bwBox, quanBox, edgeBox;
     @FXML
     protected RadioButton PosterizingRadio, ThresholdingRadio, GrayRadio,
             SepiaRadio, BlackOrWhiteRadio, EdgeDetectionRadio, EmbossRadio,
-            effectMosaicRadio, effectFrostedRadio, otsuRadio, rgbuniRadio;
+            effectMosaicRadio, effectFrostedRadio, otsuRadio,
+            rgbQuanRadio, hsbQuanRadio, popularQuanRadio, kmeansQuanRadio,
+            eightLaplaceRadio, eightLaplaceExcludedRadio, fourLaplaceRadio, fourLaplaceExcludedRadio;
     @FXML
     protected TextField intInput, intInput2, intInput3;
     @FXML
-    protected FlowPane stringBoxPane, intBoxPane, depthPane, intInputPane,
+    protected FlowPane stringBoxPane, intBoxPane, intInputPane,
             intInputPane2, intInputPane3, othersPane;
     @FXML
-    protected ComboBox<String> intBox, depthBox, stringBox;
+    protected HBox depthBox;
     @FXML
-    protected CheckBox valueCheck, dataCheck;
+    protected ComboBox<String> intBox, stringBox, depthSelector, quanColorsSelector;
+    @FXML
+    protected CheckBox valueCheck, quanDitherCheck, quanDataCheck;
     @FXML
     protected Label intBoxLabel, intLabel, intLabel2, intLabel3, stringLabel, depthLabel;
     @FXML
     protected Button button, demoButton;
     @FXML
-    protected ImageView bitDepthTipsView;
-
-    public ImageManufactureEffectsController() {
-        baseTitle = AppVariables.message("ImageManufactureEffects");
-        operation = ImageOperation.Effects;
-    }
+    protected ImageView bitDepthTipsView, quanTipsView;
 
     @Override
-    public void initControls() {
+    public void initPane() {
         try {
-            super.initControls();
-            myPane = effectPane;
-
             effectGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
@@ -131,125 +128,33 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
 
             calculatorView = new ImageView();
 
-            quanGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                @Override
-                public void changed(ObservableValue<? extends Toggle> ov, Toggle oldv, Toggle newv) {
-                    String selected = ((RadioButton) newv).getText();
-                    for (QuantizationAlgorithm algorithm : QuantizationAlgorithm.values()) {
-                        if (message(algorithm.name()).equals(selected)) {
-                            quantizationAlgorithm = algorithm;
-                            break;
-                        }
-                    }
-                    if (quantizationAlgorithm == QuantizationAlgorithm.HSBUniformQuantization
-                            || quantizationAlgorithm == QuantizationAlgorithm.RGBUniformQuantization) {
-                        if (setBox.getChildren().contains(depthPane)) {
-                            setBox.getChildren().removeAll(depthPane);
-                        }
-                    } else {
-                        if (!setBox.getChildren().contains(depthPane)) {
-                            setBox.getChildren().add(2, depthPane);
-                        }
-                    }
-                    // KMeansClustering is best for selection of major colors but worse for quailty of image quantization
-                    // But actual results are depended on image itself.
-//                    if (quantizationAlgorithm == QuantizationAlgorithm.KMeansClustering) {
-//                        // these parameters seems best for selection of major colors
-//                        intBox.getSelectionModel().select("16");
-//                        depthBox.getSelectionModel().select("4");
-//                    } else if (quantizationAlgorithm == QuantizationAlgorithm.PopularityQuantization) {
-//                        // these parameters seems best for quailty of image quantization
-//                        intBox.getSelectionModel().select("256");
-//                        depthBox.getSelectionModel().select("4");
-//                    }
-                }
-            });
-
-            bitDepth = 4;
-            depthBox.getItems().addAll(Arrays.asList(
-                    "4", "5", "6", "7", "8", "3", "2", "1"));
-            depthBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    try {
-                        bitDepth = Integer.valueOf(newValue);
-                    } catch (Exception e) {
-                    }
-                }
-            });
-            depthBox.getSelectionModel().select(0);
+            initPosterizing();
 
         } catch (Exception e) {
             logger.error(e.toString());
         }
-
     }
 
     @Override
-    public void initPane(ImageManufactureController parent) {
-        try {
-            super.initPane(parent);
-            if (parent == null) {
-                return;
-            }
-
-            checkEffectType();
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-
-    }
-
-    private void clearValues() {
-        setBox.getChildren().clear();
-        othersPane.getChildren().clear();
-        if (stringBoxListener != null) {
-            stringBox.getSelectionModel().selectedItemProperty().removeListener(stringBoxListener);
-        }
-        if (numberBoxListener != null) {
-            stringBox.getSelectionModel().selectedIndexProperty().removeListener(numberBoxListener);
-        }
-        if (intBoxListener != null) {
-            intBox.getSelectionModel().selectedItemProperty().removeListener(intBoxListener);
-        }
-        if (intInputListener != null) {
-            intInput.textProperty().removeListener(intInputListener);
-        }
-        if (intInput2Listener != null) {
-            intInput2.textProperty().removeListener(intInput2Listener);
-        }
-        if (intInput3Listener != null) {
-            intInput3.textProperty().removeListener(intInput3Listener);
-        }
-        valueCheck.setDisable(false);
-        button.setOnAction(null);
-        button.disableProperty().unbind();
-        button.setDisable(false);
-        okButton.disableProperty().unbind();
-        okButton.setDisable(false);
-        stringBox.getItems().clear();
-        stringBox.getEditor().setStyle(null);
-        intBox.getItems().clear();
-        intBox.getEditor().setStyle(null);
-        intInput.setStyle(null);
-        intInput2.setStyle(null);
-        intInput3.setStyle(null);
-        stringBox.setEditable(false);
-        intBox.setEditable(false);
+    protected void paneExpanded() {
+        imageController.showRightPane();
+        checkEffectType();
     }
 
     private void checkEffectType() {
         try {
+            imageController.resetImagePane();
+            imageController.showScopePane();
+            imageController.hideImagePane();
             clearValues();
             if (effectGroup.getSelectedToggle() == null) {
                 okButton.setDisable(true);
                 return;
             }
             RadioButton selected = (RadioButton) effectGroup.getSelectedToggle();
-
             if (EdgeDetectionRadio.equals(selected)) {
                 effectType = OperationType.EdgeDetect;
+                makeEdgeBox();
 
             } else if (EmbossRadio.equals(selected)) {
                 effectType = OperationType.Emboss;
@@ -286,6 +191,151 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
 
             FxmlControl.refreshStyle(setBox);
 
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    protected void initPosterizing() {
+        try {
+            FxmlControl.setTooltip(quanTipsView, new Tooltip(message("QuantizationComments")));
+
+            quanGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                @Override
+                public void changed(ObservableValue<? extends Toggle> ov, Toggle oldv, Toggle newv) {
+                    checkPosterizingAlgorithm();
+                }
+            });
+
+            quanColors = 27;
+            quanColorsSelector.getItems().addAll(Arrays.asList(
+                    "27", "64", "8", "16", "256", "512", "1024", "2048", "4096", "216", "343", "128", "1000", "729", "1728", "8000"));
+            quanColorsSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    try {
+                        int v = Integer.valueOf(newValue);
+                        if (v > 0) {
+                            quanColors = v;
+                            AppVariables.setUserConfigValue(baseName + "QuanColorsNumber", v + "");
+                            FxmlControl.setEditorNormal(intBox);
+                        } else {
+                            FxmlControl.setEditorBadStyle(intBox);
+                        }
+                    } catch (Exception e) {
+                        FxmlControl.setEditorBadStyle(intBox);
+                    }
+                }
+            });
+            quanColorsSelector.getSelectionModel().select(AppVariables.getUserConfigValue(baseName + "QuanColorsNumber", "27"));
+
+            bitDepth = 4;
+            depthSelector.getItems().addAll(Arrays.asList(
+                    "4", "5", "6", "7", "8", "3", "2", "1"));
+            depthSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    try {
+                        bitDepth = Integer.valueOf(newValue);
+                        AppVariables.setUserConfigValue(baseName + "QuanDepth", bitDepth + "");
+                    } catch (Exception e) {
+                    }
+                }
+            });
+            depthSelector.getSelectionModel().select(AppVariables.getUserConfigValue(baseName + "QuanDepth", "4"));
+
+            quanDitherCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    AppVariables.setUserConfigValue(baseName + "QuanDither", newValue);
+                }
+            });
+            quanDitherCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "QuanDither", true));
+
+            quanDataCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    AppVariables.setUserConfigValue(baseName + "QuanData", newValue);
+                }
+            });
+            quanDataCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "QuanData", true));
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    protected void checkPosterizingAlgorithm() {
+        String selected = ((RadioButton) quanGroup.getSelectedToggle()).getText();
+        for (QuantizationAlgorithm algorithm : QuantizationAlgorithm.values()) {
+            if (message(algorithm.name()).equals(selected)) {
+                quantizationAlgorithm = algorithm;
+                break;
+            }
+        }
+        if (quantizationAlgorithm == QuantizationAlgorithm.HSBUniformQuantization
+                || quantizationAlgorithm == QuantizationAlgorithm.RGBUniformQuantization) {
+            depthBox.setVisible(false);
+        } else {
+            depthBox.setVisible(true);
+        }
+        // KMeansClustering is best for selection of major colors but worse for quailty of image quantization
+        // But actual results are depended on image itself.
+//                    if (quantizationAlgorithm == QuantizationAlgorithm.KMeansClustering) {
+//                        // these parameters seems best for selection of major colors
+//                        intBox.getSelectionModel().select("16");
+//                        depthBox.getSelectionModel().select("4");
+//                    } else if (quantizationAlgorithm == QuantizationAlgorithm.PopularityQuantization) {
+//                        // these parameters seems best for quailty of image quantization
+//                        intBox.getSelectionModel().select("256");
+//                        depthBox.getSelectionModel().select("4");
+//                    }
+    }
+
+    private void clearValues() {
+        setBox.getChildren().clear();
+        othersPane.getChildren().clear();
+        if (stringBoxListener != null) {
+            stringBox.getSelectionModel().selectedItemProperty().removeListener(stringBoxListener);
+        }
+        if (numberBoxListener != null) {
+            stringBox.getSelectionModel().selectedIndexProperty().removeListener(numberBoxListener);
+        }
+        if (intBoxListener != null) {
+            intBox.getSelectionModel().selectedItemProperty().removeListener(intBoxListener);
+        }
+        if (intInputListener != null) {
+            intInput.textProperty().removeListener(intInputListener);
+        }
+        if (intInput2Listener != null) {
+            intInput2.textProperty().removeListener(intInput2Listener);
+        }
+        if (intInput3Listener != null) {
+            intInput3.textProperty().removeListener(intInput3Listener);
+        }
+        valueCheck.setDisable(false);
+        button.setOnAction(null);
+        button.disableProperty().unbind();
+        button.setDisable(false);
+        okButton.disableProperty().unbind();
+        okButton.setDisable(false);
+        stringBox.getItems().clear();
+        stringBox.getEditor().setStyle(null);
+        intBox.getItems().clear();
+        intBox.getEditor().setStyle(null);
+        intInput.setStyle(null);
+        intInput.setDisable(false);
+        intInput2.setStyle(null);
+        intInput3.setStyle(null);
+        stringBox.setEditable(false);
+        intBox.setEditable(false);
+    }
+
+    private void makeEdgeBox() {
+        try {
+            valueCheck.setText(message("Gray"));
+            valueCheck.setSelected(true);
+            setBox.getChildren().addAll(edgeBox, valueCheck);
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -367,43 +417,10 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
 
     private void makePosterizingBox() {
         try {
-            quantizationAlgorithm = QuantizationAlgorithm.RGBUniformQuantization;
-            rgbuniRadio.setSelected(true);
+            setBox.getChildren().addAll(quanBox);
+            okButton.disableProperty().bind(quanColorsSelector.getEditor().styleProperty().isEqualTo(badStyle));
 
-            intPara1 = 27;
-            intBoxLabel.setText(message("ColorsNumber"));
-            intBox.getItems().addAll(Arrays.asList(
-                    "27", "64", "8", "16", "256", "512", "4096", "216", "343", "125", "1000", "729", "1728", "8000"));
-            intBoxListener = new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    try {
-                        int v = Integer.valueOf(newValue);
-                        if (v > 0) {
-                            intPara1 = v;
-                            FxmlControl.setEditorNormal(intBox);
-                        } else {
-                            FxmlControl.setEditorBadStyle(intBox);
-                        }
-                    } catch (Exception e) {
-                        FxmlControl.setEditorBadStyle(intBox);
-                    }
-                }
-            };
-            intBox.getSelectionModel().selectedItemProperty().addListener(intBoxListener);
-            intBox.getSelectionModel().select(0);
-
-            valueCheck.setText(message("Dithering"));
-            valueCheck.setSelected(true);
-
-            FxmlControl.setTooltip(tipsView, new Tooltip(message("QuantizationComments")));
-
-            othersPane.getChildren().addAll(valueCheck, dataCheck, tipsView);
-            setBox.getChildren().addAll(quanBox, intBoxPane, othersPane);
-            okButton.disableProperty().bind(
-                    intBox.getEditor().styleProperty().isEqualTo(badStyle)
-                            .or(stringBox.getEditor().styleProperty().isEqualTo(badStyle))
-            );
+            checkPosterizingAlgorithm();
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -552,7 +569,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
             otsuRadio.setSelected(true);
 
             valueCheck.setText(message("Dithering"));
-            if (parent.scope() != null && parent.scope().getScopeType() == ImageScope.ScopeType.Matting) {
+            if (scopeController.scope != null && scopeController.scope.getScopeType() == ImageScope.ScopeType.Matting) {
                 valueCheck.setSelected(false);
                 valueCheck.setDisable(true);
             } else {
@@ -653,7 +670,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
     @FXML
     @Override
     public void okAction() {
-        if (parent == null || effectType == null) {
+        if (imageController == null || effectType == null) {
             return;
         }
         synchronized (this) {
@@ -673,28 +690,39 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
                         ImageConvolution imageConvolution;
                         switch (effectType) {
                             case EdgeDetect:
-                                kernel = ConvolutionKernel.makeEdgeDetectionEightNeighborLaplace();
+                                if (eightLaplaceRadio.isSelected()) {
+                                    kernel = ConvolutionKernel.makeEdgeDetectionEightNeighborLaplace();
+                                } else if (eightLaplaceExcludedRadio.isSelected()) {
+                                    kernel = ConvolutionKernel.makeEdgeDetectionEightNeighborLaplaceInvert();
+                                } else if (fourLaplaceRadio.isSelected()) {
+                                    kernel = ConvolutionKernel.makeEdgeDetectionFourNeighborLaplace();
+                                } else if (fourLaplaceExcludedRadio.isSelected()) {
+                                    kernel = ConvolutionKernel.makeEdgeDetectionFourNeighborLaplaceInvert();
+                                } else {
+                                    return false;
+                                }
+                                kernel.setGray(valueCheck.isSelected());
                                 imageConvolution = ImageConvolution.create().
-                                        setImage(imageView.getImage()).setScope(parent.scope()).
+                                        setImage(imageView.getImage()).setScope(scopeController.scope).
                                         setKernel(kernel);
                                 newImage = imageConvolution.operateFxImage();
                                 break;
                             case Emboss:
                                 kernel = ConvolutionKernel.makeEmbossKernel(intPara1, intPara2, valueCheck.isSelected());
                                 imageConvolution = ImageConvolution.create().
-                                        setImage(imageView.getImage()).setScope(parent.scope()).
+                                        setImage(imageView.getImage()).setScope(scopeController.scope).
                                         setKernel(kernel);
                                 newImage = imageConvolution.operateFxImage();
                                 break;
                             case Quantization:
                                 quantization = ImageQuantization.create(imageView.getImage(),
-                                        parent.scope(), quantizationAlgorithm, intPara1, bitDepth,
-                                        dataCheck.isSelected(), valueCheck.isSelected());
+                                        scopeController.scope, quantizationAlgorithm, quanColors, bitDepth,
+                                        quanDataCheck.isSelected(), quanDitherCheck.isSelected());
                                 newImage = quantization.operateFxImage();
                                 value = intPara1 + "";
                                 break;
                             case Thresholding:
-                                pixelsOperation = PixelsOperation.create(imageView.getImage(), parent.scope(), effectType);
+                                pixelsOperation = PixelsOperation.create(imageView.getImage(), scopeController.scope, effectType);
                                 pixelsOperation.setIntPara1(intPara1);
                                 pixelsOperation.setIntPara2(intPara2);
                                 pixelsOperation.setIntPara3(intPara3);
@@ -705,15 +733,15 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
                                 ImageBinary imageBinary;
                                 switch (intPara1) {
                                     case 2:
-                                        imageBinary = new ImageBinary(imageView.getImage(), parent.scope(), -1);
+                                        imageBinary = new ImageBinary(imageView.getImage(), scopeController.scope, -1);
                                         break;
                                     case 3:
-                                        imageBinary = new ImageBinary(imageView.getImage(), parent.scope(), intPara2);
+                                        imageBinary = new ImageBinary(imageView.getImage(), scopeController.scope, intPara2);
                                         value = intPara2 + "";
                                         break;
                                     default:
                                         int t = ImageBinary.calculateThreshold(imageView.getImage());
-                                        imageBinary = new ImageBinary(imageView.getImage(), parent.scope(), t);
+                                        imageBinary = new ImageBinary(imageView.getImage(), scopeController.scope, t);
                                         value = t + "";
                                         break;
                                 }
@@ -721,25 +749,25 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
                                 newImage = imageBinary.operateFxImage();
                                 break;
                             case Gray:
-                                ImageGray imageGray = new ImageGray(imageView.getImage(), parent.scope());
+                                ImageGray imageGray = new ImageGray(imageView.getImage(), scopeController.scope);
                                 newImage = imageGray.operateFxImage();
                                 break;
                             case Sepia:
-                                pixelsOperation = PixelsOperation.create(imageView.getImage(), parent.scope(), effectType);
+                                pixelsOperation = PixelsOperation.create(imageView.getImage(), scopeController.scope, effectType);
                                 pixelsOperation.setIntPara1(intPara1);
                                 newImage = pixelsOperation.operateFxImage();
                                 value = intPara1 + "";
                                 break;
                             case Mosaic: {
                                 ImageMosaic mosaic
-                                        = ImageMosaic.create(imageView.getImage(), parent.scope(), ImageMosaic.MosaicType.Mosaic, intPara1);
+                                        = ImageMosaic.create(imageView.getImage(), scopeController.scope, ImageMosaic.MosaicType.Mosaic, intPara1);
                                 newImage = mosaic.operateFxImage();
                                 value = intPara1 + "";
                             }
                             break;
                             case FrostedGlass: {
                                 ImageMosaic mosaic
-                                        = ImageMosaic.create(imageView.getImage(), parent.scope(), ImageMosaic.MosaicType.FrostedGlass, intPara1);
+                                        = ImageMosaic.create(imageView.getImage(), scopeController.scope, ImageMosaic.MosaicType.FrostedGlass, intPara1);
                                 newImage = mosaic.operateFxImage();
                                 value = intPara1 + "";
                             }
@@ -758,12 +786,13 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
 
                 @Override
                 protected void whenSucceeded() {
-                    parent.updateImage(ImageOperation.Effects, effectType.name(), value, newImage, cost);
+                    imageController.popSuccessful();
+                    imageController.updateImage(ImageOperation.Effects, effectType.name(), value, newImage, cost);
 
-                    if (quantization != null && dataCheck.isSelected()) {
+                    if (quantization != null && quanDataCheck.isSelected()) {
                         String name = null;
-                        if (parent.sourceFile != null) {
-                            name = parent.sourceFile.getName();
+                        if (imageController.sourceFile != null) {
+                            name = imageController.sourceFile.getName();
                         }
                         StringTable table = quantization.countTable(name);
                         if (table != null) {
@@ -774,7 +803,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
                     }
                 }
             };
-            parent.openHandlingStage(task, Modality.WINDOW_MODAL);
+            imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -786,7 +815,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
         if (imageView.getImage() == null) {
             return;
         }
-        parent.popInformation(message("WaitAndHandling"));
+        imageController.popInformation(message("WaitAndHandling"));
         demoButton.setDisable(true);
         Task demoTask = new Task<Void>() {
             private List<String> files;

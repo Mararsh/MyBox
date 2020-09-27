@@ -13,12 +13,10 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Control;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
@@ -38,7 +36,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.paint.Paint;
 import javafx.stage.Modality;
 import mara.mybox.color.CIEColorSpace;
 import mara.mybox.color.CIEData;
@@ -47,7 +45,6 @@ import mara.mybox.color.ChromaticityDiagram.DataType;
 import mara.mybox.color.ColorValue;
 import mara.mybox.color.SRGB;
 import mara.mybox.data.VisitHistory;
-import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlImageManufacture;
@@ -58,6 +55,7 @@ import mara.mybox.image.file.ImageFileWriters;
 import static mara.mybox.tools.DoubleTools.scale;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.FloatTools;
+import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
@@ -130,9 +128,7 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
     @FXML
     private TabPane csPane, filePane;
     @FXML
-    protected Rectangle colorRect;
-    @FXML
-    protected Button paletteButton;
+    protected ColorSetController colorSetController;
 
     public ChromaticityDiagramController() {
         baseTitle = AppVariables.message("DrawChromaticityDiagram");
@@ -160,6 +156,176 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
             initDataBox();
             initCIETables();
 
+            initCIEData();
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    private void initToolBar() {
+        try {
+            List<String> bgList = Arrays.asList(message("Transparent"),
+                    message("White"), message("Black")
+            );
+            backgroundBox.getItems().addAll(bgList);
+            backgroundBox.setVisibleRowCount(bgList.size());
+            backgroundBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable,
+                        String oldValue, String newValue) {
+                    checkBackground();
+                }
+            });
+
+            List<String> opList = Arrays.asList(message("Line4px"),
+                    message("Dot6px"), message("Dot10px"), message("Dot4px"),
+                    message("Dot12px"), message("Line1px"), message("Line2px"),
+                    message("Line6px"), message("Line10px")
+            );
+            dotTypeBox.getItems().addAll(opList);
+            dotTypeBox.setVisibleRowCount(opList.size());
+            dotTypeBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable,
+                        String oldValue, String newValue) {
+                    checkDotType();
+                }
+            });
+
+            List<String> fontList = Arrays.asList("20", "24", "28", "30", "18", "16", "15", "14", "12", "10");
+            fontSelector.getItems().addAll(fontList);
+            fontSelector.setVisibleRowCount(fontList.size());
+            fontSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable,
+                        String oldValue, String newValue) {
+                    checkFontSize();
+                }
+            });
+
+            calculateCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov,
+                        Boolean old_val, Boolean new_val) {
+                    if (!isSettingValues) {
+                        displayChromaticityDiagram();
+                    }
+                }
+            });
+            inputCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov,
+                        Boolean old_val, Boolean new_val) {
+                    displayChromaticityDiagram();
+                }
+            });
+            waveCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov,
+                        Boolean old_val, Boolean new_val) {
+                    displayChromaticityDiagram();
+                }
+            });
+            gridCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov,
+                        Boolean old_val, Boolean new_val) {
+                    displayChromaticityDiagram();
+                }
+            });
+            whitePointsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov,
+                        Boolean old_val, Boolean new_val) {
+                    displayChromaticityDiagram();
+                }
+            });
+            degree2Check.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov,
+                        Boolean old_val, Boolean new_val) {
+                    displayChromaticityDiagram();
+                }
+            });
+            degree10Check.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov,
+                        Boolean old_val, Boolean new_val) {
+                    displayChromaticityDiagram();
+                }
+            });
+            cdProPhotoCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov,
+                        Boolean old_val, Boolean new_val) {
+                    displayChromaticityDiagram();
+                }
+            });
+            cdColorMatchCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov,
+                        Boolean old_val, Boolean new_val) {
+                    displayChromaticityDiagram();
+                }
+            });
+            cdNTSCCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov,
+                        Boolean old_val, Boolean new_val) {
+                    displayChromaticityDiagram();
+                }
+            });
+            cdPALCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov,
+                        Boolean old_val, Boolean new_val) {
+                    displayChromaticityDiagram();
+                }
+            });
+            cdAppleCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov,
+                        Boolean old_val, Boolean new_val) {
+                    displayChromaticityDiagram();
+                }
+            });
+            cdAdobeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov,
+                        Boolean old_val, Boolean new_val) {
+                    displayChromaticityDiagram();
+                }
+            });
+            cdSRGBCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov,
+                        Boolean old_val, Boolean new_val) {
+                    displayChromaticityDiagram();
+                }
+            });
+            cdECICheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov,
+                        Boolean old_val, Boolean new_val) {
+                    displayChromaticityDiagram();
+                }
+            });
+            cdCIECheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov,
+                        Boolean old_val, Boolean new_val) {
+                    displayChromaticityDiagram();
+                }
+            });
+            cdSMPTECCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov,
+                        Boolean old_val, Boolean new_val) {
+                    displayChromaticityDiagram();
+                }
+            });
+
             isSettingValues = true;
             backgroundBox.getSelectionModel().select(0);
             dotTypeBox.getSelectionModel().select(0);
@@ -168,214 +334,50 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
         } catch (Exception e) {
             logger.error(e.toString());
         }
-
     }
 
-    @Override
-    public void initializeNext() {
+    private void initDiagram() {
         try {
-            super.initializeNext();
+            colorSetController.init(this, baseName + "Color", Color.THISTLE);
+            colorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+                @Override
+                public void changed(ObservableValue<? extends Paint> observable,
+                        Paint oldValue, Paint newValue) {
+                    calculateColor();
+                }
+            });
 
-            initCIEData();
+            cieDiagram.fitWidthProperty().addListener(new ChangeListener<Number>() {
+                @Override
+                public void changed(ObservableValue<? extends Number> ov,
+                        Number old_val, Number new_val) {
+                    if (Math.abs(new_val.intValue() - old_val.intValue()) > 20) {
+                        refinePane();
+                    }
+                }
+            });
+            cieDiagram.fitHeightProperty().addListener(new ChangeListener<Number>() {
+                @Override
+                public void changed(ObservableValue<? extends Number> ov,
+                        Number old_val, Number new_val) {
+                    if (Math.abs(new_val.intValue() - old_val.intValue()) > 20) {
+                        refinePane();
+                    }
+                }
+            });
+            cieDiagramScroll.widthProperty().addListener(new ChangeListener<Number>() {
+                @Override
+                public void changed(ObservableValue<? extends Number> ov,
+                        Number old_val, Number new_val) {
+                    if (Math.abs(new_val.intValue() - old_val.intValue()) > 20) {
+                        refinePane();
+                    }
+                }
+            });
 
         } catch (Exception e) {
             logger.error(e.toString());
         }
-
-    }
-
-    private void initToolBar() {
-        List<String> bgList = Arrays.asList(message("Transparent"),
-                message("White"), message("Black")
-        );
-        backgroundBox.getItems().addAll(bgList);
-        backgroundBox.setVisibleRowCount(bgList.size());
-        backgroundBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable,
-                    String oldValue, String newValue) {
-                checkBackground();
-            }
-        });
-
-        List<String> opList = Arrays.asList(message("Line4px"),
-                message("Dot6px"), message("Dot10px"), message("Dot4px"),
-                message("Dot12px"), message("Line1px"), message("Line2px"),
-                message("Line6px"), message("Line10px")
-        );
-        dotTypeBox.getItems().addAll(opList);
-        dotTypeBox.setVisibleRowCount(opList.size());
-        dotTypeBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable,
-                    String oldValue, String newValue) {
-                checkDotType();
-            }
-        });
-
-        List<String> fontList = Arrays.asList("20", "24", "28", "30", "18", "16", "15", "14", "12", "10");
-        fontSelector.getItems().addAll(fontList);
-        fontSelector.setVisibleRowCount(fontList.size());
-        fontSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable,
-                    String oldValue, String newValue) {
-                checkFontSize();
-            }
-        });
-
-        calculateCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> ov,
-                    Boolean old_val, Boolean new_val) {
-                if (!isSettingValues) {
-                    displayChromaticityDiagram();
-                }
-            }
-        });
-        inputCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> ov,
-                    Boolean old_val, Boolean new_val) {
-                displayChromaticityDiagram();
-            }
-        });
-        waveCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> ov,
-                    Boolean old_val, Boolean new_val) {
-                displayChromaticityDiagram();
-            }
-        });
-        gridCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> ov,
-                    Boolean old_val, Boolean new_val) {
-                displayChromaticityDiagram();
-            }
-        });
-        whitePointsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> ov,
-                    Boolean old_val, Boolean new_val) {
-                displayChromaticityDiagram();
-            }
-        });
-        degree2Check.selectedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> ov,
-                    Boolean old_val, Boolean new_val) {
-                displayChromaticityDiagram();
-            }
-        });
-        degree10Check.selectedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> ov,
-                    Boolean old_val, Boolean new_val) {
-                displayChromaticityDiagram();
-            }
-        });
-        cdProPhotoCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> ov,
-                    Boolean old_val, Boolean new_val) {
-                displayChromaticityDiagram();
-            }
-        });
-        cdColorMatchCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> ov,
-                    Boolean old_val, Boolean new_val) {
-                displayChromaticityDiagram();
-            }
-        });
-        cdNTSCCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> ov,
-                    Boolean old_val, Boolean new_val) {
-                displayChromaticityDiagram();
-            }
-        });
-        cdPALCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> ov,
-                    Boolean old_val, Boolean new_val) {
-                displayChromaticityDiagram();
-            }
-        });
-        cdAppleCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> ov,
-                    Boolean old_val, Boolean new_val) {
-                displayChromaticityDiagram();
-            }
-        });
-        cdAdobeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> ov,
-                    Boolean old_val, Boolean new_val) {
-                displayChromaticityDiagram();
-            }
-        });
-        cdSRGBCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> ov,
-                    Boolean old_val, Boolean new_val) {
-                displayChromaticityDiagram();
-            }
-        });
-        cdECICheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> ov,
-                    Boolean old_val, Boolean new_val) {
-                displayChromaticityDiagram();
-            }
-        });
-        cdCIECheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> ov,
-                    Boolean old_val, Boolean new_val) {
-                displayChromaticityDiagram();
-            }
-        });
-        cdSMPTECCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> ov,
-                    Boolean old_val, Boolean new_val) {
-                displayChromaticityDiagram();
-            }
-        });
-
-    }
-
-    private void initDiagram() {
-        cieDiagram.fitWidthProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> ov,
-                    Number old_val, Number new_val) {
-                if (Math.abs(new_val.intValue() - old_val.intValue()) > 20) {
-                    refinePane();
-                }
-            }
-        });
-        cieDiagram.fitHeightProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> ov,
-                    Number old_val, Number new_val) {
-                if (Math.abs(new_val.intValue() - old_val.intValue()) > 20) {
-                    refinePane();
-                }
-            }
-        });
-        cieDiagramScroll.widthProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> ov,
-                    Number old_val, Number new_val) {
-                if (Math.abs(new_val.intValue() - old_val.intValue()) > 20) {
-                    refinePane();
-                }
-            }
-        });
 
     }
 
@@ -516,25 +518,6 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
         } catch (Exception e) {
             logger.error(e.toString());
         }
-    }
-
-    @FXML
-    @Override
-    public void showPalette(ActionEvent event) {
-        showPalette(paletteButton, message("DrawChromaticityDiagram"));
-    }
-
-    @Override
-    public boolean setColor(Control control, Color color) {
-        if (control == null || color == null) {
-            return false;
-        }
-        if (paletteButton.equals(control)) {
-            colorRect.setFill(color);
-            FxmlControl.setTooltip(colorRect, FxmlColor.colorNameDisplay(color));
-            calculateColor();
-        }
-        return true;
     }
 
     private void checkInputs() {
@@ -751,8 +734,6 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
                     d10n5TableView.setItems(degree10nm5Data);
                     d10n5Area.setText(degree10nm5String);
 
-                    setColor(paletteButton, Color.THISTLE);
-
                     loadTableData();
                 }
 
@@ -858,25 +839,20 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
 
     @Override
     public void keyEventsHandler(KeyEvent event) {
-        super.keyEventsHandler(event);
-        if (event.isControlDown()) {
-            String key = event.getText();
-            if (key == null || key.isEmpty()) {
-                return;
-            }
-            switch (key) {
-                case "2":
+        if (event.isControlDown() && event.getCode() != null) {
+            switch (event.getCode()) {
+                case DIGIT2:
                     paneSizeDiagram();
-                    break;
-                case "3":
+                    return;
+                case DIGIT3:
                     zoomInDiagram();
-                    break;
-                case "4":
+                    return;
+                case DIGIT4:
                     zoomOutDiagram();
-                    break;
+                    return;
             }
-
         }
+        super.keyEventsHandler(event);
     }
 
     @Override
@@ -947,7 +923,7 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
 
             @Override
             public List<VisitHistory> recentPaths() {
-                return VisitHistory.getRecentPath(VisitHistory.FileType.Image);
+                return VisitHistoryTools.getRecentPath(VisitHistory.FileType.Image);
             }
 
             @Override
@@ -981,7 +957,7 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
 
             @Override
             public List<VisitHistory> recentPaths() {
-                return VisitHistory.getRecentPath(VisitHistory.FileType.Text);
+                return VisitHistoryTools.getRecentPath(VisitHistory.FileType.Text);
             }
 
             @Override
@@ -1015,7 +991,7 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
 
             @Override
             public List<VisitHistory> recentPaths() {
-                return VisitHistory.getRecentPath(VisitHistory.FileType.Text);
+                return VisitHistoryTools.getRecentPath(VisitHistory.FileType.Text);
             }
 
             @Override
@@ -1049,7 +1025,7 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
 
             @Override
             public List<VisitHistory> recentPaths() {
-                return VisitHistory.getRecentPath(VisitHistory.FileType.Text);
+                return VisitHistoryTools.getRecentPath(VisitHistory.FileType.Text);
             }
 
             @Override
@@ -1083,7 +1059,7 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
 
             @Override
             public List<VisitHistory> recentPaths() {
-                return VisitHistory.getRecentPath(VisitHistory.FileType.Text);
+                return VisitHistoryTools.getRecentPath(VisitHistory.FileType.Text);
             }
 
             @Override
@@ -1174,7 +1150,7 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
     }
 
     protected void calculateColor() {
-        CIEData d = new CIEData((Color) colorRect.getFill());
+        CIEData d = new CIEData((Color) colorSetController.rect.getFill());
         isSettingValues = true;
         XInput.setText(scale(d.getX(), 8) + "");
         YInput.setText(scale(d.getY(), 8) + "");
@@ -1210,10 +1186,10 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
             if (!isSettingValues) {
                 isSettingValues = true;
                 Color pColor = new Color((float) srgb[0], (float) srgb[1], (float) srgb[2], 1d);
-                colorRect.setFill(pColor);
+                colorSetController.rect.setFill(pColor);
                 isSettingValues = false;
             }
-            Color pColor = (Color) colorRect.getFill();
+            Color pColor = (Color) colorSetController.rect.getFill();
             calculateColor = new java.awt.Color((float) pColor.getRed(), (float) pColor.getGreen(), (float) pColor.getBlue());
 
             List<ColorValue> values = new ArrayList<>();

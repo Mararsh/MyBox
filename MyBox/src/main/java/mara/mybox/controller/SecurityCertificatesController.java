@@ -13,6 +13,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -31,7 +32,9 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.NetworkTools;
 import mara.mybox.tools.SystemTools;
+import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
@@ -68,15 +71,16 @@ public class SecurityCertificatesController extends BaseController {
         TargetPathType = VisitHistory.FileType.Html;
         TargetFileType = VisitHistory.FileType.Html;
 
-        sourcePathKey = "CertificateFilePath";
-        targetPathKey = "HtmlFilePath";
+        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Certificate);
+        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Html);
         sourceExtensionFilter = CommonFxValues.KeyStoreExtensionFilter;
         targetExtensionFilter = CommonFxValues.HtmlExtensionFilter;
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
+            super.initControls();
             tableData = FXCollections.observableArrayList();
 
             aliasColumn.setCellValueFactory(new PropertyValueFactory<>("alias"));
@@ -323,7 +327,7 @@ public class SecurityCertificatesController extends BaseController {
 
     @FXML
     @Override
-    public void addAction() {
+    public void addAction(ActionEvent event) {
         try {
             SecurityCertificatesAddController controller
                     = (SecurityCertificatesAddController) openStage(CommonValues.SecurityCertificateAddFxml);

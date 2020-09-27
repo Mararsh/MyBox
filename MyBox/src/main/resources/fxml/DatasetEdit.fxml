@@ -29,11 +29,7 @@ License:    Apache License Version 2.0
                                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
                                     <children>
                                         <Label alignment="CENTER_RIGHT" minWidth="-Infinity" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%Dataid" HBox.hgrow="NEVER" />
-                                        <TextField fx:id="idInput" editable="false" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                    </children>
-                                </HBox>
-                                <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
-                                    <children>
+                                        <TextField fx:id="idInput" editable="false" prefWidth="240.0" HBox.hgrow="NEVER" />
                                         <Label maxWidth="1.7976931348623157E308" minWidth="-Infinity" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%DataCategory" wrapText="true" />
                                         <ComboBox fx:id="categorySelector" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                     </children>
@@ -56,55 +52,33 @@ License:    Apache License Version 2.0
                                         <RadioButton fx:id="yearRadio" mnemonicParsing="false" text="%Year" toggleGroup="$timeGroup" />
                                         <RadioButton fx:id="monthRadio" mnemonicParsing="false" text="%Month" toggleGroup="$timeGroup" />
                                         <RadioButton fx:id="timeRadio" mnemonicParsing="false" text="%Time" toggleGroup="$timeGroup" />
-                                        <RadioButton fx:id="msRadio" mnemonicParsing="false" text="%TimeWithMS" toggleGroup="$timeGroup" />
+                                        <RadioButton fx:id="timeMsRadio" mnemonicParsing="false" text="%TimeMs" toggleGroup="$timeGroup" />
+                                        <RadioButton fx:id="datetimeZoneRadio" layoutX="685.0" layoutY="10.0" mnemonicParsing="false" text="%DatetimeZone" toggleGroup="$timeGroup" />
+                                        <RadioButton fx:id="datatimeMsRadio" layoutX="10.0" layoutY="51.0" mnemonicParsing="false" text="%DatetimeMs" toggleGroup="$timeGroup" />
+                                        <RadioButton fx:id="datatimeMsZoneRadio" layoutX="225.0" layoutY="51.0" mnemonicParsing="false" text="%DatetimeMsZone" toggleGroup="$timeGroup" />
                                         <!--<RadioButton fx:id="pointOfInterestRadio" mnemonicParsing="false" text="%PointOfInterest" toggleGroup="$levelGroup" />-->
                                     </children>
                                 </FlowPane>
-                        <CheckBox fx:id="omitADCheck" mnemonicParsing="false" selected="true" text="%OmitAD" />
+                                <CheckBox fx:id="omitADCheck" mnemonicParsing="false" selected="true" text="%OmitAD" />
                                 <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="126.0" maxWidth="1.7976931348623157E308" spacing="5.0">
                                     <children>
                                         <Label text="%TextColor" />
-                                        <Button fx:id="paletteTextButton" mnemonicParsing="false" onAction="#showPalette">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/iconPalette.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                              <Label layoutX="10.0" layoutY="19.0" text="%BackgroundColor" />
-                              <Button fx:id="paletteBgButton" layoutX="192.0" layoutY="10.0" mnemonicParsing="false" onAction="#showPalette">
-                                 <graphic>
-                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/iconPalette.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </Button>
-                              <Label fx:id="textLabel" text="Hello">
-                                 <HBox.margin>
-                                    <Insets left="50.0" />
-                                 </HBox.margin>
-                              </Label>
+                                        <fx:include fx:id="textColorSet" source="ColorSet.fxml" />
+                                        <Label layoutX="10.0" layoutY="19.0" text="%BackgroundColor" />
+                                        <fx:include fx:id="backgroundColorSet" source="ColorSet.fxml" />
+                                        <Label fx:id="textLabel" text="Hello">
+                                            <HBox.margin>
+                                                <Insets left="50.0" />
+                                            </HBox.margin>
+                                        </Label>
                                     </children>
                                 </HBox>
-                        <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="235.0" maxWidth="1.7976931348623157E308" spacing="5.0">
-                           <children>
-                              <Label text="%ChartColor" />
-                              <Rectangle fx:id="colorRect" fill="#ffffff00" height="15.0" stroke="BLACK" strokeMiterLimit="0.0" strokeType="INSIDE" width="15.0" />
-                              <Button fx:id="paletteChartButton" mnemonicParsing="false" onAction="#showPalette">
-                                 <graphic>
-                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/iconPalette.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </Button>
-                           </children>
-                        </HBox>
+                                <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="235.0" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                    <children>
+                                        <Label text="%ChartColor" />
+                                        <fx:include fx:id="chartColorSet" source="ColorSet.fxml" />
+                                    </children>
+                                </HBox>
                                 <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="300.0" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
                                     <children>
                                         <Label text="%Image" />
@@ -132,24 +106,6 @@ License:    Apache License Version 2.0
                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
                     <children>
                         <Label fx:id="sizeLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                        <CheckBox fx:id="saveCloseCheck" mnemonicParsing="false">
-                            <graphic>
-                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../buttons/iconFlower.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                        </CheckBox>
-                        <CheckBox fx:id="topCheck" mnemonicParsing="false" selected="true">
-                            <graphic>
-                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../buttons/iconTop.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                        </CheckBox>
                         <Button fx:id="closeButton" mnemonicParsing="false" onAction="#closeAction">
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -159,15 +115,15 @@ License:    Apache License Version 2.0
                                 </ImageView>
                             </graphic>
                         </Button>
-                  <Button fx:id="recoverButton" mnemonicParsing="false" onAction="#recoverAction">
-                     <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../buttons/iconRecover.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
+                        <Button fx:id="recoverButton" mnemonicParsing="false" onAction="#recoverAction">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconRecover.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
                         <Button fx:id="copyButton" mnemonicParsing="false" onAction="#copyAction">
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

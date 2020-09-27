@@ -6,6 +6,7 @@ import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -31,9 +32,11 @@ import mara.mybox.image.ImageContrast;
 import mara.mybox.image.ImageConvolution;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.image.PixelsOperation;
+import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.OCRTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
@@ -62,9 +65,10 @@ public class PdfOcrBatchController extends PdfBatchController {
     protected BufferedImage lastImage;
     protected ITesseract OCRinstance;
     protected PDFRenderer renderer;
-    protected int dpi, threshold, rotate;
+    protected int threshold, rotate;
     protected float scale;
     protected String selectedLanguages;
+    protected long pageStart;
 
     @FXML
     protected ToggleGroup getImageType;
@@ -73,7 +77,7 @@ public class PdfOcrBatchController extends PdfBatchController {
     @FXML
     protected TextField separatorInput;
     @FXML
-    protected ComboBox<String> dpiSelector, enhancementSelector, rotateSelector,
+    protected ComboBox<String> enhancementSelector, rotateSelector,
             binarySelector, scaleSelector;
     @FXML
     protected RadioButton convertRadio, extractRadio;
@@ -263,8 +267,8 @@ public class PdfOcrBatchController extends PdfBatchController {
             });
             selectedLanguages = AppVariables.getUserConfigValue("ImageOCRLanguages", null);
             if (selectedLanguages != null && !selectedLanguages.isEmpty()) {
-                currentOCRFilesLabel.setText(
-                        MessageFormat.format(message("CurrentDataFiles"), selectedLanguages));
+                currentOCRFilesLabel.setText(MessageFormat.format(message("CurrentDataFiles"), selectedLanguages));
+                currentOCRFilesLabel.setStyle(null);
                 isSettingValues = true;
                 String[] langs = selectedLanguages.split("\\+");
                 Map<String, String> codes = OCRTools.codeName();
@@ -277,8 +281,8 @@ public class PdfOcrBatchController extends PdfBatchController {
                 }
                 isSettingValues = false;
             } else {
-                currentOCRFilesLabel.setText(
-                        MessageFormat.format(message("CurrentDataFiles"), ""));
+                currentOCRFilesLabel.setText(MessageFormat.format(message("CurrentDataFiles"), message("NoData")));
+                currentOCRFilesLabel.setStyle(badStyle);
             }
 
             FxmlControl.setTooltip(separatorInput, message("InsertPageSeparatorComments"));
@@ -308,11 +312,11 @@ public class PdfOcrBatchController extends PdfBatchController {
         }
         if (selectedLanguages != null) {
             AppVariables.setUserConfigValue("ImageOCRLanguages", selectedLanguages);
-            currentOCRFilesLabel.setText(
-                    MessageFormat.format(message("CurrentDataFiles"), selectedLanguages));
+            currentOCRFilesLabel.setText(MessageFormat.format(message("CurrentDataFiles"), selectedLanguages));
+            currentOCRFilesLabel.setStyle(null);
         } else {
-            currentOCRFilesLabel.setText(
-                    MessageFormat.format(message("CurrentDataFiles"), ""));
+            currentOCRFilesLabel.setText(MessageFormat.format(message("CurrentDataFiles"), message("NoData")));
+            currentOCRFilesLabel.setStyle(badStyle);
         }
     }
 
@@ -451,6 +455,8 @@ public class PdfOcrBatchController extends PdfBatchController {
     @Override
     public int handleCurrentPage() {
         int num;
+        updateLogs(message("HandlingPage") + ":" + currentParameters.currentPage, true, true);
+        pageStart = new Date().getTime();
         if (convertRadio.isSelected()) {
             num = convertPage();
         } else {
@@ -615,6 +621,10 @@ public class PdfOcrBatchController extends PdfBatchController {
 
             String result = OCRinstance.doOCR(bufferedImage);
             if (result != null) {
+                String s = message("Page") + ":" + currentParameters.currentPage + "   "
+                        + MessageFormat.format(message("OCRresults"),
+                                result.length(), DateTools.datetimeMsDuration(new Date().getTime() - pageStart));
+                updateLogs(s, true, true);
                 ocrTexts += result + System.getProperty("line.separator");
                 return true;
             } else {

@@ -6,7 +6,7 @@ import java.util.List;
 import mara.mybox.data.GeographyCode;
 import mara.mybox.db.TableBase;
 import mara.mybox.db.TableGeographyCode;
-import mara.mybox.tools.GeographyCodeTools;
+import mara.mybox.data.tools.GeographyCodeTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
 import org.apache.commons.csv.CSVRecord;

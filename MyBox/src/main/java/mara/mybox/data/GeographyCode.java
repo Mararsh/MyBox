@@ -1,22 +1,25 @@
 package mara.mybox.data;
 
-import mara.mybox.tools.GeographyCodeTools;
+import mara.mybox.data.tools.GeographyCodeTools;
+import mara.mybox.db.TableBase;
+import mara.mybox.db.TableGeographyCode;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
  * @CreateDate 2020-1-20
  * @License Apache License Version 2.0
  */
-public class GeographyCode implements Cloneable {
+public class GeographyCode extends TableData {
 
     protected long gcid, owner, continent, country, province, city, county, town, village, building,
             area, population;
     protected int level;
     protected GeographyCodeLevel levelCode;
-    protected boolean predefined;
     protected String name, fullName, chineseName, englishName, levelName,
             code1, code2, code3, code4, code5, alias1, alias2, alias3, alias4, alias5, comments,
             continentName, countryName, provinceName, cityName, countyName, townName, villageName, buildingName;
@@ -24,13 +27,15 @@ public class GeographyCode implements Cloneable {
     protected GeographyCode ownerCode, continentCode, countryCode, provinceCode, cityCode,
             countyCode, townCode, villageCode, buildingCode;
     protected CoordinateSystem coordinateSystem;
+    protected AddressSource source;
+    protected String sourceName;
 
     public enum AddressLevel {
         Global, Continent, Country, Province, City, County, Town, Village, Building, InterestOfLocation
     }
 
     public enum AddressSource {
-        Inputted, Predefined, Geonames, Data
+        PredefinedData, InputtedData, Geonames, ImportedData, Unknown
     }
 
     public GeographyCode() {
@@ -38,9 +43,9 @@ public class GeographyCode implements Cloneable {
                 = area = population = -1;
         level = 10;
         levelCode = null;
-        predefined = false;
+        source = AddressSource.InputtedData;
         longitude = latitude = -200;
-        altitude = precision = Double.MAX_VALUE;
+        altitude = precision = CommonValues.InvalidDouble;
         continentCode = null;
         countryCode = null;
         provinceCode = null;
@@ -50,6 +55,209 @@ public class GeographyCode implements Cloneable {
         villageCode = null;
         buildingCode = null;
 
+    }
+
+    @Override
+    public TableBase getTable() {
+        if (table == null) {
+            table = new TableGeographyCode();
+        }
+        return table;
+    }
+
+    @Override
+    public boolean valid() {
+        return (chineseName != null && !chineseName.isBlank())
+                || (englishName != null && !englishName.isBlank());
+    }
+
+    @Override
+    public boolean setValue(String column, Object value) {
+        if (column == null) {
+            return false;
+        }
+        try {
+            switch (column) {
+                case "gcid":
+                    gcid = value == null ? -1 : (long) value;
+                    return true;
+                case "level":
+                    level = value == null ? -1 : (int) value;
+                    levelCode = new GeographyCodeLevel(level);
+                    return true;
+                case "chinese_name":
+                    chineseName = value == null ? null : (String) value;
+                    return true;
+                case "english_name":
+                    englishName = value == null ? null : (String) value;
+                    return true;
+                case "longitude":
+                    longitude = value == null ? CommonValues.InvalidDouble : (Double) value;
+                    return true;
+                case "latitude":
+                    latitude = value == null ? CommonValues.InvalidDouble : (Double) value;
+                    return true;
+                case "altitude":
+                    altitude = value == null ? CommonValues.InvalidDouble : (Double) value;
+                    return true;
+                case "precision":
+                    precision = value == null ? CommonValues.InvalidDouble : (Double) value;
+                    return true;
+                case "coordinate_system":
+                    coordinateSystem = value == null
+                            ? CoordinateSystem.defaultCode() : new CoordinateSystem((short) value);
+                    return true;
+                case "area":
+                    area = value == null ? CommonValues.InvalidLong : (long) value;
+                    return true;
+                case "population":
+                    population = value == null ? CommonValues.InvalidLong : (long) value;
+                    return true;
+                case "code1":
+                    code1 = value == null ? null : (String) value;
+                    return true;
+                case "code2":
+                    code2 = value == null ? null : (String) value;
+                    return true;
+                case "code3":
+                    code3 = value == null ? null : (String) value;
+                    return true;
+                case "code4":
+                    code4 = value == null ? null : (String) value;
+                    return true;
+                case "code5":
+                    code5 = value == null ? null : (String) value;
+                    return true;
+                case "alias1":
+                    code1 = value == null ? null : (String) value;
+                    return true;
+                case "alias2":
+                    alias2 = value == null ? null : (String) value;
+                    return true;
+                case "alias3":
+                    alias3 = value == null ? null : (String) value;
+                    return true;
+                case "alias4":
+                    alias4 = value == null ? null : (String) value;
+                    return true;
+                case "alias5":
+                    alias5 = value == null ? null : (String) value;
+                    return true;
+                case "owner":
+                    owner = value == null ? null : (long) value;
+                    return true;
+                case "continent":
+                    continent = value == null ? null : (long) value;
+                    return true;
+                case "country":
+                    country = value == null ? null : (long) value;
+                    return true;
+                case "province":
+                    province = value == null ? null : (long) value;
+                    return true;
+                case "city":
+                    city = value == null ? null : (long) value;
+                    return true;
+                case "county":
+                    county = value == null ? null : (long) value;
+                    return true;
+                case "town":
+                    town = value == null ? null : (long) value;
+                    return true;
+                case "village":
+                    village = value == null ? null : (long) value;
+                    return true;
+                case "building":
+                    building = value == null ? null : (long) value;
+                    return true;
+                case "comments":
+                    comments = value == null ? null : (String) value;
+                    return true;
+                case "gcsource":
+                    short s = value == null ? -1 : (short) value;
+                    source = source(s);
+                    return true;
+            }
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+        return false;
+    }
+
+    @Override
+    public Object getValue(String column) {
+        if (column == null) {
+            return null;
+        }
+        switch (column) {
+            case "gcid":
+                return gcid;
+            case "level":
+                return getLevel();
+            case "longitude":
+                return longitude;
+            case "latitude":
+                return latitude;
+            case "altitude":
+                return altitude;
+            case "precision":
+                return precision;
+            case "coordinate_system":
+                return coordinateSystem == null
+                        ? CoordinateSystem.defaultCode().intValue()
+                        : coordinateSystem.intValue();
+            case "chinese_name":
+                return chineseName;
+            case "english_name":
+                return englishName;
+            case "code1":
+                return code1;
+            case "code2":
+                return code2;
+            case "code3":
+                return code3;
+            case "code4":
+                return code4;
+            case "code5":
+                return code5;
+            case "alias1":
+                return alias1;
+            case "alias2":
+                return alias2;
+            case "alias3":
+                return alias3;
+            case "alias4":
+                return alias4;
+            case "alias5":
+                return alias5;
+            case "owner":
+                return owner;
+            case "continent":
+                return this.getContinent();
+            case "country":
+                return this.getCountry();
+            case "province":
+                return this.getProvince();
+            case "city":
+                return this.getCity();
+            case "county":
+                return this.getCounty();
+            case "town":
+                return this.getTown();
+            case "village":
+                return this.getVillage();
+            case "building":
+                return this.getBuilding();
+            case "area":
+                return area;
+            case "population":
+                return population;
+            case "comments":
+                return comments;
+            case "gcsource":
+                return source(source);
+        }
+        return null;
     }
 
     public String info(String lineBreak) {
@@ -65,16 +273,16 @@ public class GeographyCode implements Cloneable {
         if (latitude >= -90 && latitude <= 90) {
             s.append(message("Latitude")).append(": ").append(latitude).append(lineBreak);
         }
-        if (altitude != Double.MAX_VALUE) {
+        if (altitude != CommonValues.InvalidDouble) {
             s.append(message("Altitude")).append(": ").append(altitude).append(lineBreak);
         }
-        if (precision != Double.MAX_VALUE) {
+        if (precision != CommonValues.InvalidDouble) {
             s.append(message("Precision")).append(": ").append(precision).append(lineBreak);
         }
         if (coordinateSystem != null) {
             s.append(message("CoordinateSystem")).append(": ").append(coordinateSystem.name()).append(lineBreak);
         }
-        if (levelCode != null) {
+        if (getLevelCode() != null) {
             s.append(message("Level")).append(": ").append(message(levelCode.getName())).append(lineBreak);
         }
         if (getCountryName() != null && !countryName.isBlank()) {
@@ -95,7 +303,6 @@ public class GeographyCode implements Cloneable {
         if (getVillageName() != null && !villageName.isBlank()) {
             s.append(message("Village")).append(": ").append(villageName).append(lineBreak);
         }
-
         if (getBuildingName() != null && !buildingName.isBlank()) {
             s.append(message("Building")).append(": ").append(buildingName).append(lineBreak);
         }
@@ -108,6 +315,12 @@ public class GeographyCode implements Cloneable {
         if (getCode3() != null && !getCode3().isBlank()) {
             s.append(message("Code")).append(": ").append(getCode3()).append(lineBreak);
         }
+        if (getCode4() != null && !getCode4().isBlank()) {
+            s.append(message("Code")).append(": ").append(getCode4()).append(lineBreak);
+        }
+        if (getCode5() != null && !getCode5().isBlank()) {
+            s.append(message("Code")).append(": ").append(getCode5()).append(lineBreak);
+        }
         if (getAlias1() != null && !getAlias1().isBlank()) {
             s.append(message("Alias")).append(": ").append(getAlias1()).append(lineBreak);
         }
@@ -117,14 +330,18 @@ public class GeographyCode implements Cloneable {
         if (getAlias3() != null && !getAlias3().isBlank()) {
             s.append(message("Alias")).append(": ").append(getAlias3()).append(lineBreak);
         }
-
+        if (getAlias4() != null && !getAlias4().isBlank()) {
+            s.append(message("Alias")).append(": ").append(getAlias4()).append(lineBreak);
+        }
+        if (getAlias5() != null && !getAlias5().isBlank()) {
+            s.append(message("Alias")).append(": ").append(getAlias5()).append(lineBreak);
+        }
         if (area > 0) {
             s.append(message("SquareMeters")).append(": ").append(area).append(lineBreak);
         }
         if (population > 0) {
             s.append(message("Population")).append(": ").append(population).append(lineBreak);
         }
-
         if (getComments() != null) {
             String c = getComments().trim();
             if (!c.isBlank()) {
@@ -137,11 +354,6 @@ public class GeographyCode implements Cloneable {
 
     public boolean validCoordinate() {
         return GeographyCodeTools.validCoordinate(this);
-    }
-
-    public boolean valid() {
-        return (chineseName != null && !chineseName.isBlank())
-                || (englishName != null && !englishName.isBlank());
     }
 
     public int mapSize() {
@@ -210,6 +422,18 @@ public class GeographyCode implements Cloneable {
         }
     }
 
+    public void setSource(short value) {
+        this.source = source(value);
+    }
+
+    public short getSourceValue() {
+        return source(source);
+    }
+
+    public boolean isPredefined() {
+        return source == AddressSource.PredefinedData;
+    }
+
     /*
         Static externalValues
      */
@@ -248,6 +472,44 @@ public class GeographyCode implements Cloneable {
         }
         return code.mapSize();
     }
+
+    public static AddressSource source(short value) {
+        switch (value) {
+            case 1:
+                return AddressSource.InputtedData;
+            case 2:
+                return AddressSource.PredefinedData;
+            case 3:
+                return AddressSource.Geonames;
+            case 4:
+                return AddressSource.ImportedData;
+            default:
+                return AddressSource.Unknown;
+        }
+    }
+
+    public static short source(AddressSource source) {
+        return sourceValue(source.name());
+    }
+
+    public static short sourceValue(String source) {
+        return sourceValue(AppVariables.getLanguage(), source);
+    }
+
+    public static short sourceValue(String lang, String source) {
+        if (message(lang, "InputtedData").equals(source) || "InputtedData".equals(source)) {
+            return 1;
+        } else if (message(lang, "PredefinedData").equals(source) || "PredefinedData".equals(source)) {
+            return 2;
+        } else if ("Geonames".equals(source)) {
+            return 3;
+        } else if (message(lang, "ImportedData").equals(source) || "ImportedData".equals(source)) {
+            return 4;
+        } else {
+            return 0;
+        }
+    }
+
 
     /*
         custmized get/set
@@ -401,6 +663,14 @@ public class GeographyCode implements Cloneable {
         return buildingName;
     }
 
+    public String getPOIName() {
+        if (level == 10) {
+            return getName();
+        } else {
+            return null;
+        }
+    }
+
     public long getContinent() {
         if (continentCode != null) {
             continent = continentCode.getGcid();
@@ -542,6 +812,11 @@ public class GeographyCode implements Cloneable {
             coordinateSystem = CoordinateSystem.defaultCode();
         }
         return coordinateSystem;
+    }
+
+    public String getSourceName() {
+        sourceName = message(source.name());
+        return sourceName;
     }
 
 
@@ -780,12 +1055,12 @@ public class GeographyCode implements Cloneable {
         this.continentName = continentName;
     }
 
-    public boolean isPredefined() {
-        return predefined;
+    public AddressSource getSource() {
+        return source;
     }
 
-    public void setPredefined(boolean predefined) {
-        this.predefined = predefined;
+    public void setSource(AddressSource source) {
+        this.source = source;
     }
 
     public void setLevelCode(GeographyCodeLevel levelCode) {
@@ -850,6 +1125,10 @@ public class GeographyCode implements Cloneable {
 
     public void setCoordinateSystem(CoordinateSystem coordinateSystem) {
         this.coordinateSystem = coordinateSystem;
+    }
+
+    public void setSourceName(String sourceName) {
+        this.sourceName = sourceName;
     }
 
 }

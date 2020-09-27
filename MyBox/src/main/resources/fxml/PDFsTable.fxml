@@ -160,15 +160,6 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </CheckBox>
-                <ToggleButton fx:id="moreButton" mnemonicParsing="false">
-                    <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/iconMore.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </ToggleButton>
             </children>
         </FlowPane>
         <Label fx:id="tableCommentsLabel" layoutX="10.0" layoutY="522.0" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%PdfTableComments" wrapText="true" VBox.vgrow="NEVER" />

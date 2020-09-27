@@ -10,7 +10,6 @@ import javafx.scene.Group;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
@@ -19,15 +18,15 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.paint.Paint;
 import javafx.scene.transform.Transform;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import mara.mybox.controller.ImageManufactureController.ImageOperation;
+import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleRectangle;
-import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlImageManufacture;
@@ -52,11 +51,9 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
     protected Group g;
 
     @FXML
-    protected Rectangle bgRect;
+    protected ColorSetController colorSetController;
     @FXML
     protected ComboBox<String> angleBox, opacityBox, marginsWidthBox, arcBox;
-    @FXML
-    protected Button paletteButton;
     @FXML
     protected Slider angleSlider;
     @FXML
@@ -68,33 +65,10 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
     @FXML
     protected Button editButton;
 
-    public ImageManufactureRichTextController() {
-        baseTitle = AppVariables.message("ImageManufactureText");
-        operation = ImageOperation.RichText;
-    }
-
     @Override
-    public void initControls() {
+    public void initPane() {
         try {
-            super.initControls();
-            myPane = richTextPane;
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-
-    }
-
-    @Override
-    public void initPane(ImageManufactureController parent) {
-        try {
-            super.initPane(parent);
-            if (parent == null) {
-                return;
-            }
-
-            imageController.imageLabel.setText(message("ImageRichTextTips"));
-
+//            imageController.imageLabel.setText(message("ImageRichTextTips"));
             marginsWidthBox.getItems().addAll(Arrays.asList("5", "15", "2", "8", "0", "20", "10", "30", "25", "40", "50", "4", "6"));
             marginsWidthBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -122,10 +96,14 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
             });
             marginsWidthBox.getSelectionModel().select(AppVariables.getUserConfigInt("ImageTextMarginsWidth", 15) + "");
 
-            String c = AppVariables.getUserConfigValue("ImageRichTextBackground", Color.WHITE.toString());
-            bgRect.setFill(Color.web(c));
-            FxmlControl.setTooltip(bgRect, FxmlColor.colorNameDisplay((Color) bgRect.getFill()));
-            imageController.maskRectangleLine.setFill(bgRect.getFill());
+            colorSetController.init(this, baseName + "Color", Color.WHITE);
+            colorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+                @Override
+                public void changed(ObservableValue<? extends Paint> observable,
+                        Paint oldValue, Paint newValue) {
+                    imageController.maskRectangleLine.setFill(newValue);
+                }
+            });
 
             arcBox.getItems().addAll(Arrays.asList("20", "10", "5", "15", "2", "8", "0", "30", "25", "40", "50", "4", "6"));
             arcBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -198,10 +176,8 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
             rotateLeftButton.disableProperty().bind(
                     angleBox.getEditor().styleProperty().isEqualTo(badStyle)
             );
-            setBox.disableProperty().bind(parent.editable.not());
-            opBox.disableProperty().bind(parent.editable.not());
 
-            editAction();
+            editAction(null);
             editor.htmlEditor.setHtmlText(message("ImageTextComments"));
 
         } catch (Exception e) {
@@ -210,10 +186,16 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
 
     }
 
+    @Override
+    protected void paneExpanded() {
+        if (editor != null) {
+            editor.closeStage();
+        }
+    }
+
     protected void initWebview() {
         if (webView == null) {
             webView = new WebView();
-            imageController.webView = webView;
             imageController.maskPane.getChildren().add(webView);
             webEngine = webView.getEngine();
             webEngine.getLoadWorker().stateProperty().addListener(new ChangeListener<State>() {
@@ -232,13 +214,13 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
         webView.setVisible(true);
 
         if (!imageController.maskRectangleLine.isVisible()) {
-            imageController.clearValues();
+//            imageController.resetMaskControls();
             imageController.maskRectangleData = new DoubleRectangle(0, 0,
                     imageView.getImage().getWidth() / 2, imageView.getImage().getHeight() / 2);
             imageController.scope.setRectangle(imageController.maskRectangleData.cloneValues());
             imageController.setMaskRectangleLineVisible(true);
             imageController.drawMaskRectangleLineAsData();
-            imageController.maskRectangleLine.setFill(bgRect.getFill());
+            imageController.maskRectangleLine.setFill(colorSetController.rect.getFill());
             imageController.maskRectangleLine.setArcWidth(arc);
             imageController.maskRectangleLine.setArcHeight(arc);
             imageController.maskRectangleLine.setOpacity(opacity);
@@ -250,28 +232,8 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
         }
     }
 
-    @Override
-    public boolean setColor(Control control, Color color) {
-        if (control == null || color == null) {
-            return false;
-        }
-        if (paletteButton.equals(control)) {
-            bgRect.setFill(color);
-            FxmlControl.setTooltip(bgRect, FxmlColor.colorNameDisplay(color));
-            AppVariables.setUserConfigValue("ImageRichTextBackground", color.toString());
-            imageController.maskRectangleLine.setFill(bgRect.getFill());
-        }
-        return true;
-    }
-
     @FXML
-    @Override
-    public void showPalette(ActionEvent event) {
-        showPalette(paletteButton, message("BackgroundColor"), true);
-    }
-
-    @FXML
-    public void editAction() {
+    public void editAction(ActionEvent event) {
         initWebview();
         if (editor == null || !editor.getMyStage().isShowing()) {
             editor = (ImageTextController) openStage(CommonValues.ImageTextFxml);
@@ -293,7 +255,7 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
     }
 
     @Override
-    public void paneClicked(MouseEvent event) {
+    public void imageClicked(MouseEvent event, DoublePoint p) {
         if (imageController.scope == null || imageController.maskRectangleData == null) {
             return;
         }
@@ -309,9 +271,6 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
     }
 
     public void htmlLoaded() {
-        if (!parent.editable.get()) {
-            return;
-        }
         webEngine.executeScript("document.body.style.backgroundColor = 'rgba(0,0,0,0)';");
         webView.toFront();
 
@@ -354,7 +313,7 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
                 final double rotate = webView.getRotate();
                 webView.setRotate(0);
 //                webEngine.executeScript("document.body.style.backgroundColor = '"
-//                        + FxmlColor.rgb2css((Color) bgRect.getFill()) + "'; opacity:" + opacity);
+//                        + FxmlColor.color2css((Color) bgRect.getFill()) + "'; opacity:" + opacity);
 //                webView.setOpacity(1);
 //                webEngine.executeScript("document.body.style.backgroundColor = 'rgba(0,0,0,0)';");
 
@@ -367,9 +326,6 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
                 parameters.setTransform(Transform.scale(scale, scale));
                 parameters.setFill(Color.TRANSPARENT);
                 webView.snapshot(parameters, snap);
-                if (!parent.editable.get()) {
-                    return;
-                }
                 task = new SingletonTask<Void>() {
                     private Image transparent, blended;
 
@@ -381,9 +337,8 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
 
                             blended = FxmlImageManufacture.drawHTML(imageController.imageView.getImage(),
                                     transparent, imageController.maskRectangleData,
-                                    (Color) bgRect.getFill(), opacity, arc,
+                                    (Color) colorSetController.rect.getFill(), opacity, arc,
                                     (int) rotate, marginsWidth);
-
                             if (task == null || isCancelled()) {
                                 return false;
                             }
@@ -403,17 +358,16 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
 //                                    = (ImageViewerController) openStage(CommonValues.ImageFxml);
 //                            controller1.loadImage(transparent);
                             ImageViewerController controller
-                                    = (ImageViewerController) openStage(CommonValues.ImageViewerFxml);
+                                    = (ImageViewerController) openStage(CommonValues.ImagePopupFxml);
                             controller.loadImage(blended);
-                            controller.setAsPopped();
                         } else {
-                            parent.updateImage(ImageOperation.RichText, null, null, blended, cost);
+                            imageController.updateImage(ImageOperation.RichText, null, null, blended, cost);
                             webView = null;
                         }
                     }
 
                 };
-                parent.openHandlingStage(task, Modality.WINDOW_MODAL);
+                imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
                 Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();
@@ -427,28 +381,21 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
     @FXML
     @Override
     public void okAction() {
-        if (!parent.editable.get()) {
-            return;
-        }
         isPreview = false;
         makeImage();
     }
 
     @FXML
     public void previewAction() {
-        if (!parent.editable.get()) {
-            return;
-        }
         isPreview = true;
         makeImage();
     }
 
     @Override
-    public void quitPane() {
+    protected void resetOperationPane() {
         if (editor != null) {
             editor.closeStage();
         }
-        imageController.clearValues();
     }
 
 }

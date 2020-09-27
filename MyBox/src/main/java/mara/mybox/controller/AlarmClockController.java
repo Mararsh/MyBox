@@ -29,6 +29,7 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.MediaTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 
@@ -66,7 +67,7 @@ public class AlarmClockController extends BaseController {
     @FXML
     protected Slider volumeSlider;
     @FXML
-    protected RadioButton miaoButton, sysButton, localButton, internetButton, continuallyButton, loopButton;
+    protected RadioButton miaoRadio, sysButton, localButton, internetButton, continuallyButton, loopButton;
 
     public AlarmClockController() {
         baseTitle = AppVariables.message("AlarmClock");
@@ -80,8 +81,9 @@ public class AlarmClockController extends BaseController {
     }
 
     @Override
-    public void initializeNext() {
+    public void initControls() {
         try {
+            super.initControls();
             AppVariables.alarmClockController = this;
             miao = FxmlControl.getInternalFile("/sound/guaiMiao3.mp3", "sound", "guaiMiao3.mp3");
 
@@ -428,7 +430,7 @@ public class AlarmClockController extends BaseController {
         }
         String sound = alarm.getSound();
         if (message("meow").equals(sound)) {
-            miaoButton.setSelected(true);
+            miaoRadio.setSelected(true);
             sound = miao.getAbsolutePath();
         } else if (sound.endsWith(".mp3")) {
             localButton.setSelected(true);

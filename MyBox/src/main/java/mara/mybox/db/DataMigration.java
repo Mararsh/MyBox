@@ -18,6 +18,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
+import mara.mybox.data.ColorData;
 import mara.mybox.data.ConvolutionKernel;
 import mara.mybox.data.CoordinateSystem;
 import mara.mybox.data.Dataset;
@@ -25,17 +26,22 @@ import mara.mybox.data.EpidemicReport;
 import mara.mybox.data.GeographyCode;
 import mara.mybox.data.GeographyCodeLevel;
 import mara.mybox.data.Location;
+import mara.mybox.data.tools.EpidemicReportTools;
+import mara.mybox.data.tools.GeographyCodeTools;
 import static mara.mybox.db.DerbyBase.BatchSize;
 import static mara.mybox.db.DerbyBase.columnNames;
 import static mara.mybox.db.DerbyBase.dbHome;
 import static mara.mybox.db.DerbyBase.dropTables;
+import static mara.mybox.db.DerbyBase.failed;
 import static mara.mybox.db.DerbyBase.initTables;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
-import mara.mybox.tools.EpidemicReportTools;
-import mara.mybox.tools.GeographyCodeTools;
-import mara.mybox.value.AppVariables;
+import static mara.mybox.db.DerbyBase.tables;
+import static mara.mybox.db.TableColorData.read;
+import static mara.mybox.db.TableColorData.write;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -57,8 +63,17 @@ public class DataMigration {
             if (installed.contains(CommonValues.AppVersion)) {
                 return true;
             }
-            updateIn632(conn);
             List<String> columns = columnNames(conn, "Geography_Code");
+            if (columns.contains("predefined")) {
+                updateIn633(conn);
+            }
+            List<String> tables = tables(conn);
+            if (tables.contains("Location_Data".toUpperCase())) {
+                return true;
+            }
+            if (tables.contains("Location".toUpperCase())) {
+                updateIn632(conn);
+            }
             if (columns.contains("owner")) {
                 return true;
             }
@@ -80,8 +95,112 @@ public class DataMigration {
         return true;
     }
 
+    private static void updateIn633(Connection conn) {
+        try {
+            logger.info("Updating tables in 6.3.3...");
+            updateGeographyCodeIn633(conn);
+            updateColorDataIn633(conn);
+            updateConvolutionKernelIn633(conn);
+            TableStringValues.add("InstalledVersions", "6.3.3");
+            conn.setAutoCommit(true);
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+    private static boolean updateGeographyCodeIn633(Connection conn) {
+        try ( Statement statement = conn.createStatement()) {
+            conn.setAutoCommit(true);
+            String sql = "ALTER TABLE Geography_Code ADD COLUMN gcsource SMALLINT";
+            statement.executeUpdate(sql);
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return false;
+        }
+        try ( Statement statement = conn.createStatement()) {
+            String sql = "UPDATE Geography_Code SET gcsource=1 WHERE predefined=true";
+            statement.executeUpdate(sql);
+        } catch (Exception e) {
+        }
+        try ( Statement statement = conn.createStatement()) {
+            String sql = "UPDATE Geography_Code SET gcsource=1 WHERE predefined=1";
+            statement.executeUpdate(sql);
+        } catch (Exception e) {
+        }
+        try ( Statement statement = conn.createStatement()) {
+            String sql = "UPDATE Geography_Code SET gcsource=2 WHERE predefined=false";
+            statement.executeUpdate(sql);
+        } catch (Exception e) {
+        }
+        try ( Statement statement = conn.createStatement()) {
+            String sql = "UPDATE Geography_Code SET gcsource=2 WHERE predefined=0";
+            statement.executeUpdate(sql);
+        } catch (Exception e) {
+        }
+        try ( Statement statement = conn.createStatement()) {
+            String sql = "ALTER TABLE Geography_Code DROP COLUMN predefined";
+            statement.executeUpdate(sql);
+        } catch (Exception e) {
+        }
+        return true;
+    }
+
+    private static void updateColorDataIn633(Connection conn) {
+        try ( Statement statement = conn.createStatement();
+                 PreparedStatement delete = conn.prepareStatement(TableColorData.Delete);) {
+            conn.setAutoCommit(false);
+            try ( ResultSet results = statement.executeQuery("SELECT * FROM Color_Data")) {
+                while (results.next()) {
+                    ColorData data = read(results);
+                    String rgba = data.getRgba();
+                    String rgbaUpper = rgba.toUpperCase();
+                    if (rgba.equals(rgbaUpper)) {
+                        continue;
+                    }
+                    data.setRgba(rgbaUpper);
+                    TableColorData.insert(conn, data);
+                    delete.setString(1, rgba);
+                    delete.executeUpdate();
+                }
+            }
+            conn.commit();
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+    private static boolean updateConvolutionKernelIn633(Connection conn) {
+        try ( Statement statement = conn.createStatement()) {
+            conn.setAutoCommit(true);
+            String sql = "ALTER TABLE Convolution_Kernel ADD COLUMN is_gray BOOLEAN";
+            statement.executeUpdate(sql);
+            sql = "ALTER TABLE Convolution_Kernel ADD COLUMN is_invert BOOLEAN";
+            statement.executeUpdate(sql);
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return false;
+        }
+        try ( Statement statement = conn.createStatement()) {
+            String sql = "UPDATE Convolution_Kernel SET is_gray=true WHERE gray>0";
+            statement.executeUpdate(sql);
+        } catch (Exception e) {
+        }
+        try ( Statement statement = conn.createStatement()) {
+            String sql = "UPDATE Convolution_Kernel SET is_gray=false WHERE gray<1";
+            statement.executeUpdate(sql);
+        } catch (Exception e) {
+        }
+        try ( Statement statement = conn.createStatement()) {
+            String sql = "ALTER TABLE Convolution_Kernel DROP COLUMN gray";
+            statement.executeUpdate(sql);
+        } catch (Exception e) {
+        }
+        return true;
+    }
+
     private static void updateIn632(Connection conn) {
         try {
+            logger.info("Updating tables in 6.3.2...");
             updateForeignKeysIn632(conn);
             updateGeographyCodeIn632(conn);
             updateLocationIn632(conn);
@@ -94,7 +213,7 @@ public class DataMigration {
 
     private static void updateForeignKeysIn632(Connection conn) {
         try ( Statement query = conn.createStatement();
-                 Statement update = conn.createStatement();) {
+                 Statement update = conn.createStatement()) {
             conn.setAutoCommit(true);
             String sql = "SELECT tablename, constraintName FROM SYS.SYSTABLES t, SYS.SYSCONSTRAINTS c  where t.TABLEID=c.TABLEID AND type='F'";
             try ( ResultSet results = query.executeQuery(sql)) {
@@ -126,7 +245,7 @@ public class DataMigration {
                     GeographyCode code = TableGeographyCode.readResults(results);
 //                    logger.debug(code.getGcid() + " " + code.getName() + " "
 //                            + code.getLongitude() + " " + code.getLatitude() + " " + code.getCoordinateSystem().intValue());
-                    code = GeographyCodeTools.toCGCS2000(code);
+                    code = GeographyCodeTools.toCGCS2000(code, true);
 //                    logger.debug(code.getLongitude() + " " + code.getLatitude() + " " + code.getCoordinateSystem().intValue());
                     TableGeographyCode.update(conn, update, code);
                 }
@@ -151,7 +270,7 @@ public class DataMigration {
                     String datasetName = results.getString("data_set");
                     Dataset dataset = datasets.get(datasetName);
                     if (dataset == null) {
-                        dataset = tableLocationData.queryAndCreate(conn, datasetName);
+                        dataset = tableLocationData.queryAndCreateDataset(conn, datasetName);
                         datasets.put(datasetName, dataset);
                     }
                     data.setDataset(dataset);
@@ -432,7 +551,7 @@ public class DataMigration {
 
                 List<String> saveColors = TableStringValues.read("ColorPalette");
                 if (saveColors != null && !saveColors.isEmpty()) {
-                    TableColorData.updatePalette(saveColors);
+                    TableColorData.setPalette(saveColors);
                 }
                 TableStringValues.clear("ColorPalette");
                 AppVariables.setSystemConfigValue("UpdatedTables5.8", true);
@@ -447,8 +566,7 @@ public class DataMigration {
 
             if (!AppVariables.getSystemConfigBoolean("UpdatedTables6.1", false)) {
                 logger.info("Updating tables in 6.1...");
-                if (TableColorData.migrate()) {
-                }
+                migrate61();
                 AppVariables.setSystemConfigValue("UpdatedTables6.1", true);
             }
 
@@ -652,6 +770,33 @@ public class DataMigration {
             return true;
         } catch (Exception e) {
             logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean migrate61() {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);) {
+            String sql = " SELECT * FROM SRGB WHERE palette_index >= 0";
+            ResultSet olddata = conn.createStatement().executeQuery(sql);
+            List<ColorData> oldData = new ArrayList<>();
+            while (olddata.next()) {
+                ColorData data = new ColorData(olddata.getString("color_value")).calculate();
+                String name = olddata.getString("color_name");
+                if (name != null && !name.isEmpty()) {
+                    data.setColorName(name);
+                }
+                data.setPaletteIndex(olddata.getInt("palette_index"));
+                oldData.add(data);
+            }
+            for (ColorData data : oldData) {
+                write(conn, data, true);
+            }
+            sql = "DROP TABLE SRGB";
+            conn.createStatement().executeUpdate(sql);
+            return true;
+        } catch (Exception e) {
+            failed(e);
+//            logger.debug(e.toString());
             return false;
         }
     }

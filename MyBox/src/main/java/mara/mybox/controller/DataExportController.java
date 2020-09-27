@@ -36,7 +36,9 @@ import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
@@ -86,8 +88,8 @@ public class DataExportController extends DataQueryController {
         AddFileType = VisitHistory.FileType.Text;
         AddPathType = VisitHistory.FileType.Text;
 
-        targetPathKey = "TextFilePath";
-        sourcePathKey = "TextFilePath";
+        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Text);
+        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Text);
 
         sourceExtensionFilter = CommonFxValues.TextExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;

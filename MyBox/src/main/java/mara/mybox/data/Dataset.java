@@ -4,6 +4,9 @@ import java.io.File;
 import javafx.scene.paint.Color;
 import mara.mybox.db.TableBase;
 import mara.mybox.db.TableDataset;
+import mara.mybox.fxml.FxmlColor;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -12,6 +15,7 @@ import mara.mybox.db.TableDataset;
  */
 public class Dataset extends TableData {
 
+    protected long dsid;
     protected String dataCategory, dataSet, comments;
     protected Color textColor, bgColor, chartColor;
     protected File image;
@@ -19,7 +23,7 @@ public class Dataset extends TableData {
     protected boolean omitAD;
 
     private void init() {
-        id = -1;
+        dsid = -1;
         textColor = Color.BLACK;
         bgColor = Color.WHITE;
         chartColor = Color.web("#961c1c");
@@ -37,18 +41,10 @@ public class Dataset extends TableData {
         this.dataSet = dataSet;
     }
 
-    @Override
-    public boolean valid() {
-        return dataCategory != null && dataSet != null;
-    }
-
     public static Dataset create() {
         return new Dataset();
     }
 
-    /*
-        customized  get/set
-     */
     @Override
     public TableBase getTable() {
         if (table == null) {
@@ -57,9 +53,106 @@ public class Dataset extends TableData {
         return table;
     }
 
+    @Override
+    public boolean valid() {
+        return dataCategory != null && dataSet != null;
+    }
+
+    @Override
+    public boolean setValue(String column, Object value) {
+        if (column == null) {
+            return false;
+        }
+        try {
+            switch (column) {
+                case "dsid":
+                    dsid = value == null ? -1 : (long) value;
+                    return true;
+                case "data_category":
+                    dataCategory = value == null ? null : (String) value;
+                    return true;
+                case "data_set":
+                    dataSet = value == null ? null : (String) value;
+                    return true;
+                case "time_format":
+                    timeFormat = value == null ? Era.Format.Datetime : Era.format((short) value);
+                    return true;
+                case "time_format_omitAD":
+                    omitAD = value == null ? false : (boolean) value;
+                    return true;
+                case "text_color":
+                    textColor = value == null ? null : Color.web((String) value);
+                    return true;
+                case "text_background_color":
+                    bgColor = value == null ? null : Color.web((String) value);
+                    return true;
+                case "chart_color":
+                    chartColor = value == null ? null : Color.web((String) value);
+                    return true;
+                case "dataset_image":
+                    image = null;
+                    if (value != null) {
+                        File file = new File((String) value);
+                        if (file.exists()) {
+                            image = file;
+                        }
+                    }
+                    return true;
+                case "dataset_comments":
+                    comments = value == null ? null : (String) value;
+                    return true;
+            }
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+        return false;
+    }
+
+    @Override
+    public Object getValue(String column) {
+        if (column == null) {
+            return null;
+        }
+        try {
+            switch (column) {
+                case "dsid":
+                    return dsid;
+                case "data_category":
+                    return dataCategory;
+                case "data_set":
+                    return dataSet;
+                case "time_format":
+                    return Era.format(timeFormat);
+                case "time_format_omitAD":
+                    return omitAD;
+                case "text_color":
+                    return textColor == null ? null : FxmlColor.color2rgba(textColor);
+                case "text_background_color":
+                    return bgColor == null ? null : FxmlColor.color2rgba(bgColor);
+                case "chart_color":
+                    return chartColor == null ? null : FxmlColor.color2rgba(chartColor);
+                case "dataset_image":
+                    return image == null ? null : image.getAbsolutePath();
+                case "dataset_comments":
+                    return comments;
+            }
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+        return null;
+    }
+
     /*
         get/set
      */
+    public long getDsid() {
+        return dsid;
+    }
+
+    public void setDsid(long dsid) {
+        this.dsid = dsid;
+    }
+
     public String getDataCategory() {
         return dataCategory;
     }

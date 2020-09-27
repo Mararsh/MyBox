@@ -23,6 +23,7 @@ import mara.mybox.tools.ConfigTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
@@ -84,16 +85,26 @@ public class MainApp extends Application {
                             });
                             AppVariables.initAppVaribles();
                         } else {
-                            Platform.runLater(() -> {
-                                loadController.setInfo(initDB);
-                            });
                             // The following statements should be executed in this order
+                            Platform.runLater(() -> {
+                                loadController.setInfo(message(lang, "InitializingTables"));
+                            });
                             DerbyBase.initTables();
+                            Platform.runLater(() -> {
+                                loadController.setInfo(message(lang, "InitializingVariables"));
+                            });
                             AppVariables.initAppVaribles();
+                            Platform.runLater(() -> {
+                                loadController.setInfo(message(lang, "CheckingMigration"));
+                            });
                             if (!DataMigration.checkUpdates()) {
                                 cancel();
                                 return null;
                             }
+                            Platform.runLater(() -> {
+                                loadController.setInfo(message(lang, "InitializingTableValues"));
+                            });
+                            DerbyBase.initTableValues();
                         }
 
                         ImageValue.registrySupportedImageFormats();

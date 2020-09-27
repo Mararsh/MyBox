@@ -16,6 +16,7 @@ import mara.mybox.image.ImageBinary;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonValues;
 import net.sf.image4j.codec.ico.ICOEncoder;
 

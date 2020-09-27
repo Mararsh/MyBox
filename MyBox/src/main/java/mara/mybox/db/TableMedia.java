@@ -10,6 +10,7 @@ import java.util.List;
 import mara.mybox.data.MediaInformation;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -45,32 +46,30 @@ public class TableMedia extends DerbyBase {
         if (address == null || address.trim().isEmpty()) {
             return null;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                 Statement statement = conn.createStatement()) {
             conn.setReadOnly(true);
-            Statement statement = conn.createStatement();
             statement.setMaxRows(1);
             String sql = " SELECT * FROM media WHERE address='" + stringValue(address) + "'";
-            ResultSet results = statement.executeQuery(sql);
-            if (results.next()) {
-                MediaInformation media = new MediaInformation(address);
-                media.setVideoEncoding(results.getString("video_encoding"));
-                media.setAudioEncoding(results.getString("audio_encoding"));
-                media.setFileSize(results.getLong("size"));
-                media.setDuration(results.getLong("duration"));
-                media.setWidth(results.getInt("width"));
-                media.setHeight(results.getInt("height"));
-                media.setInfo(results.getString("info"));
-                media.setHtml(results.getString("html"));
-                return media;
-            } else {
-                return null;
+            try ( ResultSet results = statement.executeQuery(sql)) {
+                if (results.next()) {
+                    MediaInformation media = new MediaInformation(address);
+                    media.setVideoEncoding(results.getString("video_encoding"));
+                    media.setAudioEncoding(results.getString("audio_encoding"));
+                    media.setFileSize(results.getLong("size"));
+                    media.setDuration(results.getLong("duration"));
+                    media.setWidth(results.getInt("width"));
+                    media.setHeight(results.getInt("height"));
+                    media.setInfo(results.getString("info"));
+                    media.setHtml(results.getString("html"));
+                    return media;
+                }
             }
-
         } catch (Exception e) {
             failed(e);
 //            // logger.debug(e.toString());
-            return null;
         }
+        return null;
     }
 
     public static List<MediaInformation> read(List<String> addresses) {
@@ -93,25 +92,26 @@ public class TableMedia extends DerbyBase {
         if (conn == null || addresses == null || addresses.isEmpty()) {
             return medias;
         }
-        try {
+        try ( Statement statement = conn.createStatement()) {
             String inStr = "( '" + addresses.get(0) + "'";
             for (int i = 1; i < addresses.size(); ++i) {
                 inStr += ", '" + addresses.get(i) + "'";
             }
             inStr += " )";
             String sql = " SELECT * FROM media WHERE address IN " + inStr;
-            ResultSet results = conn.createStatement().executeQuery(sql);
-            while (results.next()) {
-                MediaInformation media = new MediaInformation(results.getString("address"));
-                media.setVideoEncoding(results.getString("video_encoding"));
-                media.setAudioEncoding(results.getString("audio_encoding"));
-                media.setFileSize(results.getLong("size"));
-                media.setDuration(results.getLong("duration"));
-                media.setWidth(results.getInt("width"));
-                media.setHeight(results.getInt("height"));
-                media.setInfo(results.getString("info"));
-                media.setHtml(results.getString("html"));
-                medias.add(media);
+            try ( ResultSet results = statement.executeQuery(sql)) {
+                while (results.next()) {
+                    MediaInformation media = new MediaInformation(results.getString("address"));
+                    media.setVideoEncoding(results.getString("video_encoding"));
+                    media.setAudioEncoding(results.getString("audio_encoding"));
+                    media.setFileSize(results.getLong("size"));
+                    media.setDuration(results.getLong("duration"));
+                    media.setWidth(results.getInt("width"));
+                    media.setHeight(results.getInt("height"));
+                    media.setInfo(results.getString("info"));
+                    media.setHtml(results.getString("html"));
+                    medias.add(media);
+                }
             }
         } catch (Exception e) {
             failed(e);
@@ -124,15 +124,16 @@ public class TableMedia extends DerbyBase {
         if (media == null || media.getAddress() == null) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                 Statement statement = conn.createStatement()) {
             String sql = "DELETE FROM media WHERE address='" + stringValue(media.getAddress()) + "'";
-            conn.createStatement().executeUpdate(sql);
+            statement.executeUpdate(sql);
             sql = "INSERT INTO media(address,video_encoding,audio_encoding,duration,size,width,height,info,html,modify_time) VALUES('"
                     + stringValue(media.getAddress()) + "', '" + media.getVideoEncoding() + "', '" + media.getAudioEncoding() + "', "
                     + media.getDuration() + ", " + media.getFileSize() + ", " + media.getWidth() + ", "
                     + media.getHeight() + ", '" + stringValue(media.getInfo()) + "', '" + stringValue(media.getHtml()) + "', '"
                     + DateTools.datetimeToString(new Date()) + "')";
-            conn.createStatement().executeUpdate(sql);
+            statement.executeUpdate(sql);
             return true;
         } catch (Exception e) {
             failed(e);
@@ -158,18 +159,18 @@ public class TableMedia extends DerbyBase {
         if (conn == null || medias == null || medias.isEmpty()) {
             return false;
         }
-        try {
+        try ( Statement statement = conn.createStatement()) {
             String sql;
             conn.setAutoCommit(false);
             for (MediaInformation media : medias) {
                 sql = "DELETE FROM media WHERE address='" + media.getAddress() + "'";
-                conn.createStatement().executeUpdate(sql);
+                statement.executeUpdate(sql);
                 sql = "INSERT INTO media(address,video_encoding,audio_encoding,duration,size,width,height,info,html,modify_time) VALUES('"
                         + stringValue(media.getAddress()) + "', '" + media.getVideoEncoding() + "', '" + media.getAudioEncoding() + "', "
                         + media.getDuration() + ", " + media.getFileSize() + ", " + media.getWidth() + ", "
                         + media.getHeight() + ", '" + stringValue(media.getInfo()) + "', '" + stringValue(media.getHtml()) + "', '"
                         + DateTools.datetimeToString(new Date()) + "')";
-                conn.createStatement().executeUpdate(sql);
+                statement.executeUpdate(sql);
             }
             conn.commit();
             return true;
@@ -197,14 +198,14 @@ public class TableMedia extends DerbyBase {
         if (conn == null || addresses == null || addresses.isEmpty()) {
             return true;
         }
-        try {
+        try ( Statement statement = conn.createStatement()) {
             String inStr = "( '" + stringValue(addresses.get(0)) + "'";
             for (int i = 1; i < addresses.size(); ++i) {
                 inStr += ", '" + stringValue(addresses.get(i)) + "'";
             }
             inStr += " )";
             String sql = "DELETE FROM media WHERE address IN " + inStr;
-            conn.createStatement().executeUpdate(sql);
+            statement.executeUpdate(sql);
             return true;
         } catch (Exception e) {
             failed(e);
@@ -214,9 +215,10 @@ public class TableMedia extends DerbyBase {
     }
 
     public static boolean delete(String address) {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                 Statement statement = conn.createStatement()) {
             String sql = "DELETE FROM media WHERE address='" + stringValue(address) + "'";
-            conn.createStatement().executeUpdate(sql);
+            statement.executeUpdate(sql);
             return true;
         } catch (Exception e) {
             failed(e);
