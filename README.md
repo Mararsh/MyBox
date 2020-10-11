@@ -98,10 +98,13 @@
 
 # 文档    
 
+[打包步骤](https://mararsh.github.io/MyBox/pack_steps.html)      
+
 | 文档名 | 版本 | 修改时间  | 链接 |
 | --- | --- | --- | --- |
 | 开发日志 | 6.3.4 |  2020-10-11 | [html](#devLog) |
 | 快捷键 | 6.3.3 |  2020-9-27 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts.html) |
+| 打包步骤 | 6.3.3 |  2020-9-27 | [html](https://mararsh.github.io/MyBox/pack_steps.html) |
 | 开发指南 | 2.1 |  2020-08-27 | [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-DevGuide-2.1-zh.pdf) |
 | 用户手册-综述 |  5.0 |  2019-4-19 | [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-UserGuide-5.0-Overview-zh.pdf) |
 | 用户手册-图像工具 | 5.0 |  2019-4-18 | [PDF](https://mararsh.github.io/MyBox_documents/zh/MyBox-UserGuide-5.0-ImageTools-zh.pdf) |

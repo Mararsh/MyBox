@@ -103,6 +103,7 @@ Modifing these parameters, except for DerbyMode, in time will cause MyBox restar
 | --- | --- | --- |  --- |  
 | Development Logs | 6.3.4 | 2020-10-11 | [html](#devLog) |
 | Shortcuts | 6.3.3 | 2020-09-27 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts_en.html) |
+| Packing Steps | 6.3.3 |  2020-9-27 | [html](https://mararsh.github.io/MyBox/pack_steps_en.html) |
 | Development Guide | 2.1 | 2020-08-27 | [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-DevGuide-2.1-en.pdf) |
 | User Guide - Overview | 5.0 | 2019-4-19 | [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-UserGuide-5.0-Overview-en.pdf) |
 | User Guide - Image Tools | 5.0 | 2019-4-18 | [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-UserGuide-5.0-ImageTools-en.pdf) |
