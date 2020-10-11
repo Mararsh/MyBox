@@ -162,7 +162,7 @@ MyBox is based on following open sources:
 | TianDiTu| Map | http://lbs.tianditu.gov.cn/api/js4.0/guide.html |      
 | movebank | Location data | https://www.datarepository.movebank.org |      
 | CoordinateConverter | convert coordinates | https://www.jianshu.com/p/c39a2c72dc65?from=singlemessage |      
-
+| JavaMail | email | https://javaee.github.io/javamail/ |    
  
 # Current Version
 Current version is 6.3.4. Its features are mentioned below in summary:   
