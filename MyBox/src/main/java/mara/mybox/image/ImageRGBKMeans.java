@@ -8,7 +8,6 @@ import java.util.Random;
 import mara.mybox.data.ListKMeans;
 import mara.mybox.image.ImageQuantization.KMeansRegionQuantization;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara

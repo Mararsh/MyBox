@@ -16,7 +16,6 @@ import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonFxValues;
 
 /**
@@ -72,7 +71,11 @@ public class ControlFileSelecter extends BaseController {
         if (name != null && init) {
             String saved = AppVariables.getUserConfigValue(name, defaultValue);
             if (saved != null) {
-                fileInput.setText(saved);
+                if (fileInput != null) {
+                    fileInput.setText(saved);
+                } else {
+                    setFile(new File(saved));
+                }
             }
         }
         return this;
@@ -187,9 +190,15 @@ public class ControlFileSelecter extends BaseController {
                 return;
             }
         }
-
-        file = inputfile;
         fileInput.setStyle(null);
+        setFile(inputfile);
+    }
+
+    protected void setFile(File file) {
+        if (file == null) {
+            return;
+        }
+        this.file = file;
         if (name != null) {
             AppVariables.setUserConfigValue(name, file.getAbsolutePath());
         }
@@ -230,7 +239,11 @@ public class ControlFileSelecter extends BaseController {
             if (selectedfile == null || (mustExist && !selectedfile.exists())) {
                 return;
             }
-            fileInput.setText(selectedfile.getAbsolutePath());
+            if (fileInput != null) {
+                fileInput.setText(selectedfile.getAbsolutePath());
+            } else {
+                setFile(selectedfile);
+            }
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -280,7 +293,11 @@ public class ControlFileSelecter extends BaseController {
                     selectFile();
                     return;
                 }
-                fileInput.setText(selectedfile.getAbsolutePath());
+                if (fileInput != null) {
+                    fileInput.setText(selectedfile.getAbsolutePath());
+                } else {
+                    setFile(selectedfile);
+                }
             }
 
             @Override
@@ -291,7 +308,11 @@ public class ControlFileSelecter extends BaseController {
                     return;
                 }
                 if (isDirectory) {
-                    fileInput.setText(selectedfile.getAbsolutePath());
+                    if (fileInput != null) {
+                        fileInput.setText(selectedfile.getAbsolutePath());
+                    } else {
+                        setFile(selectedfile);
+                    }
                 } else {
                     AppVariables.setUserConfigValue(isSource ? sourcePathKey : targetPathKey, fname);
                     selectFile();
@@ -303,9 +324,10 @@ public class ControlFileSelecter extends BaseController {
 
     public void input(String string) {
         if (fileInput == null) {
-            return;
+            setFile(new File(string));
+        } else {
+            fileInput.setText(string);
         }
-        fileInput.setText(string);
     }
 
 }

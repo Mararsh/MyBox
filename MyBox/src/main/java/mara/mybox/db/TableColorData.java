@@ -11,7 +11,6 @@ import javafx.scene.paint.Color;
 import mara.mybox.data.ColorData;
 import mara.mybox.fxml.FxmlColor;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**

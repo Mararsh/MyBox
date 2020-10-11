@@ -16,7 +16,6 @@ import javafx.util.converter.LongStringConverter;
 import mara.mybox.data.FileInformation;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import thridparty.TableAutoCommitCell;
 

@@ -1,6 +1,7 @@
 package mara.mybox.value;
 
 import java.io.File;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -436,6 +437,15 @@ public class AppVariables {
 
     public static boolean setUserConfigValue(String key, String value) {
         if (TableUserConf.writeString(key, value) > 0) {
+            userConfigValues.put(key, value);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static boolean setUserConfigValue(Connection conn, String key, String value) {
+        if (TableUserConf.writeString(conn, key, value) > 0) {
             userConfigValues.put(key, value);
             return true;
         } else {

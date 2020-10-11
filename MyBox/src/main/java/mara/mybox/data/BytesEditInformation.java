@@ -7,10 +7,10 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Map;
+import javafx.scene.control.IndexRange;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonValues;
 
@@ -244,12 +244,6 @@ public class BytesEditInformation extends FileEditInformation {
     }
 
     @Override
-    public String findFirst() {
-        currentFound = -1;
-        return findNext();
-    }
-
-    @Override
     public String findNext() {
         try {
             if (file == null || findString == null || findString.isEmpty()) {
@@ -262,12 +256,11 @@ public class BytesEditInformation extends FileEditInformation {
             long previousFound;
             int previousPage, pageIndex = 1, previousPos;
             long lineStart = 1, lineEnd = 1, preStart = 1, preEnd, linesThisPage;
-            if (currentFound >= 0) {
-                previousFound = currentFound;
+            if (currentFound != null) {
+                previousFound = currentFound.start;
                 previousPage = (int) (previousFound / pageSize + 1);
                 previousPos = (int) (previousFound % pageSize) * 3;
             } else {
-//                previousFound = -1;
                 previousPage = -1;
                 previousPos = -1;
             }
@@ -279,7 +272,9 @@ public class BytesEditInformation extends FileEditInformation {
                     inputStream.skip((previousPage - 1) * pageSize);
                 }
                 byte[] buf = new byte[(int) pageSize];
-                int len, pos, findLen = findString.length();
+                String find = findString.replaceAll("\n", lineBreakValue);
+                int len, findLen = findRegex ? 3 : find.length();
+                IndexRange found;
                 String bufHex = null, crossString = "";
                 while ((len = inputStream.read(buf)) != -1) {
                     if (len < pageSize) {
@@ -299,21 +294,17 @@ public class BytesEditInformation extends FileEditInformation {
                     }
                     if (pageIndex >= previousPage) {
                         if (previousPage == pageIndex) {
-                            if (findRegex) {
-                                pos = StringTools.firstRegex(crossString + bufHex, findString, previousPos + 3);
-                            } else {
-                                pos = (crossString + bufHex).indexOf(findString, previousPos + 3);
-                            }
+                            found = StringTools.first(crossString + bufHex, find, previousPos + 3,
+                                    findRegex, caseInsensitive, true);
                         } else {
-                            if (findRegex) {
-                                pos = StringTools.firstRegex(crossString + bufHex, findString);
-                            } else {
-                                pos = (crossString + bufHex).indexOf(findString);
-                            }
+                            found = StringTools.first(crossString + bufHex, find, 0,
+                                    findRegex, caseInsensitive, true);
                         }
-                        if (pos >= 0) {
-                            currentFound = (pageIndex - 1) * pageSize + (pos - crossString.length()) / 3; // position of byte
-                            if (!crossString.isEmpty() && pos < findLen) {
+                        if (found != null) {
+                            currentFound = new LongIndex();
+                            currentFound.start = (pageIndex - 1) * pageSize + (found.getStart() - crossString.length()) / 3; // position of byte
+                            currentFound.end = currentFound.start + found.getLength();
+                            if (!crossString.isEmpty() && currentFound.start < found.getLength()) {
                                 pageText = preText;
                                 lineStart = preStart;
                                 lineEnd = preEnd;
@@ -369,19 +360,21 @@ public class BytesEditInformation extends FileEditInformation {
             long cuFound;
             int cuPage, cuPos;
             int lineEnd = 1, lineStart = 1, pageIndex = 1, preStart = 1, preEnd, linesThisPage;
-            if (currentFound >= 0) {
-                cuFound = currentFound;
+            if (currentFound != null) {
+                cuFound = currentFound.start;
                 cuPage = (int) (cuFound / pageSize + 1);
                 cuPos = (int) (cuFound % pageSize) * 3;
             } else {
                 return findNext();
             }
             String pageText = null, preText;
-            long maxIndex = -1;
+            long maxFoundStart = -1, maxFoundEnd = -1;
             int maxLineStart = -1, maxLineEnd = -1, maxPage = 1;
             try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
                 byte[] buf = new byte[(int) pageSize];
-                int len, pos, findLen = findString.length();
+                String find = findString.replaceAll("\n", lineBreakValue);
+                int len, findLen = findRegex ? 3 : find.length();
+                IndexRange found;
                 String bufHex = null, crossString = "";
                 while ((len = inputStream.read(buf)) != -1) {
                     if (len < pageSize) {
@@ -401,34 +394,29 @@ public class BytesEditInformation extends FileEditInformation {
                     }
                     if (cuPage == pageIndex) {
                         if (cuPos > 0) {
-                            if (findRegex) {
-                                pos = StringTools.lastRegex((crossString + bufHex).substring(0, cuPos + crossString.length() - 3), findString);
-                            } else {
-                                pos = (crossString + bufHex).substring(0, cuPos + crossString.length() - 3).lastIndexOf(findString);
-                            }
+                            found = StringTools.last((crossString + bufHex).substring(0, cuPos + crossString.length() - 3), find,
+                                    0, findRegex, caseInsensitive, true);
                         } else {
-                            pos = -1;
+                            found = null;
                         }
                     } else {
-                        if (findRegex) {
-                            pos = StringTools.lastRegex(crossString + bufHex, findString);
-                        } else {
-                            pos = (crossString + bufHex).lastIndexOf(findString);
-                        }
+                        found = StringTools.last(crossString + bufHex, find, 0, findRegex, caseInsensitive, true);
                     }
-                    if (pos >= 0) {
-                        if (!crossString.isEmpty() && pos < findLen) {
-                            long actualPos = (pageIndex - 1) * pageSize - (crossString.length() - pos) / 3;
+                    if (found != null) {
+                        if (!crossString.isEmpty() && found.getStart() < found.getLength()) {
+                            long actualPos = (pageIndex - 1) * pageSize - (crossString.length() - found.getStart()) / 3;
                             if (actualPos != cuFound) {
                                 maxPage = pageIndex - 1;
-                                maxIndex = actualPos;
+                                maxFoundStart = actualPos;
+                                maxFoundEnd = maxFoundStart + found.getLength();
                                 pageText = preText;
                                 maxLineStart = preStart;
                                 maxLineEnd = preEnd;
                             }
                         } else {
                             maxPage = pageIndex;
-                            maxIndex = (pageIndex - 1) * pageSize + (pos - crossString.length()) / 3;
+                            maxFoundStart = (pageIndex - 1) * pageSize + (found.getStart() - crossString.length()) / 3;
+                            maxFoundEnd = maxFoundStart + found.getLength();
                             pageText = bufHex;
                             maxLineStart = lineStart;
                             maxLineEnd = lineEnd;
@@ -451,7 +439,7 @@ public class BytesEditInformation extends FileEditInformation {
                     return null;
                 }
             }
-            currentFound = maxIndex;
+            currentFound = new LongIndex(maxFoundStart, maxFoundEnd);
             currentPage = maxPage;
             currentPageObjectStart = pageSize * (maxPage - 1);
             currentPageObjectEnd = currentPageObjectStart + pageText.length() / 3;
@@ -477,11 +465,13 @@ public class BytesEditInformation extends FileEditInformation {
             }
             int lineEnd = 1, lineStart = 1, pageIndex = 1, preStart = 1, preEnd, linesThisPage;
             String pageText = null, preText;
-            long maxIndex = -1;
+            long maxFoundStart = -1, maxFoundEnd = -1;
             int maxLineStart = -1, maxLineEnd = -1, maxPage = 1;
             try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
                 byte[] buf = new byte[(int) pageSize];
-                int len, pos, findLen = findString.length();
+                String find = findString.replaceAll("\n", lineBreakValue);
+                int len, findLen = findRegex ? 3 : find.length();
+                IndexRange found;
                 String bufHex = null, crossString = "", addedStr;
                 while ((len = inputStream.read(buf)) != -1) {
                     if (len < pageSize) {
@@ -500,27 +490,26 @@ public class BytesEditInformation extends FileEditInformation {
                         lineEnd += StringTools.countNumber(bufHex, lineBreakValue);
                     }
                     addedStr = crossString + bufHex;
-                    if (findRegex) {
-                        pos = StringTools.lastRegex(addedStr, findString);
-                    } else {
-                        pos = addedStr.lastIndexOf(findString);
-                    }
-                    if (pos >= 0) {
-                        if (!crossString.isEmpty() && pos < findLen) {
+                    found = StringTools.last(addedStr, find, 0, findRegex, caseInsensitive, true);
+                    if (found != null) {
+                        if (!crossString.isEmpty() && found.getStart() < found.getLength()) {
                             maxPage = pageIndex - 1;
-                            maxIndex = pageSize * (pageIndex - 1) + (pos - crossString.length()) / 3;
+                            maxFoundStart = pageSize * (pageIndex - 1) + (found.getStart() - crossString.length()) / 3;
+                            maxFoundEnd = maxFoundStart + found.getLength();
                             pageText = preText;
                             maxLineStart = preStart;
                             maxLineEnd = preEnd;
                         } else {
                             maxPage = pageIndex;
-                            maxIndex = pageSize * (pageIndex - 1) + (pos - crossString.length()) / 3;
+                            maxFoundStart = pageSize * (pageIndex - 1) + (found.getStart() - crossString.length()) / 3;
+                            maxFoundEnd = maxFoundStart + found.getLength();
                             pageText = bufHex;
                             maxLineStart = lineStart;
                             maxLineEnd = lineEnd;
                         }
                     }
                     int strLen = addedStr.length();
+                    int pos = found != null ? found.getStart() : -1;
                     crossString = addedStr.substring(Math.max(pos + 3, strLen - findLen + 3), strLen);
                     preStart = lineStart;
                     if (lbWidth) {
@@ -534,7 +523,7 @@ public class BytesEditInformation extends FileEditInformation {
                     return null;
                 }
             }
-            currentFound = maxIndex;
+            currentFound = new LongIndex(maxFoundStart, maxFoundEnd);
             currentPage = maxPage;
             currentPageObjectStart = pageSize * (maxPage - 1);
             currentPageObjectEnd = currentPageObjectStart + pageText.length() / 3;
@@ -618,19 +607,16 @@ public class BytesEditInformation extends FileEditInformation {
             try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
                      BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(targetFile))) {
                 byte[] buf = new byte[(int) pageSize];
-                int bufLen, findLen = findString.length();
+                String find = findString.replaceAll("\n", lineBreakValue);
+                String replace = replaceString.replaceAll("\n", lineBreakValue);
+                int bufLen, findLen = findRegex ? 3 : find.length();
                 String thisPage, crossString = "";
                 while ((bufLen = inputStream.read(buf)) != -1) {
                     if (bufLen < pageSize) {
                         buf = ByteTools.subBytes(buf, 0, bufLen);
                     }
                     thisPage = crossString + ByteTools.bytesToHexFormat(buf);
-                    Map<String, Object> ret;
-                    if (findRegex) {
-                        ret = StringTools.lastAndCountRegex(thisPage, findString);
-                    } else {
-                        ret = StringTools.lastAndCount(thisPage, findString);
-                    }
+                    Map<String, Object> ret = StringTools.lastAndCount(thisPage, find, findRegex, caseInsensitive, true);
                     int lastPos = (int) ret.get("lastIndex");
                     int crossFrom, pagelen = thisPage.length();
                     if (lastPos >= 0) {
@@ -646,11 +632,7 @@ public class BytesEditInformation extends FileEditInformation {
                             crossString = thisPage.substring(crossFrom, pagelen);
                             oldString = thisPage.substring(0, crossFrom);
                         }
-                        if (findRegex) {
-                            thisPage = oldString.replaceAll(findString, replaceString);
-                        } else {
-                            thisPage = StringTools.replaceAll(oldString, findString, replaceString);
-                        }
+                        thisPage = StringTools.replaceAll(oldString, find, replace, findRegex, caseInsensitive, true);
                     } else {
                         crossFrom = pagelen - findLen + 3;
                         crossString = thisPage.substring(crossFrom, pagelen);
@@ -680,19 +662,15 @@ public class BytesEditInformation extends FileEditInformation {
         try {
             try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
                 byte[] buf = new byte[(int) pageSize];
-                int bufLen, findLen = findString.length();
+                String find = findString.replaceAll("\n", lineBreakValue);
+                int bufLen, findLen = findRegex ? 3 : find.length();
                 String thisPage, crossString = "";
                 while ((bufLen = inputStream.read(buf)) != -1) {
                     if (bufLen < pageSize) {
                         buf = ByteTools.subBytes(buf, 0, bufLen);
                     }
                     thisPage = crossString + ByteTools.bytesToHexFormat(buf);
-                    Map<String, Object> ret;
-                    if (findRegex) {
-                        ret = StringTools.lastAndCountRegex(thisPage, findString);
-                    } else {
-                        ret = StringTools.lastAndCount(thisPage, findString);
-                    }
+                    Map<String, Object> ret = StringTools.lastAndCount(thisPage, find, findRegex, caseInsensitive, true);
                     int lastPos = (int) ret.get("lastIndex");
                     int crossFrom, pagelen = thisPage.length();
                     if (lastPos >= 0) {

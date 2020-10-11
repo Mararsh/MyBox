@@ -19,7 +19,6 @@ import mara.mybox.image.PixelsOperation.ColorActionType;
 import mara.mybox.image.PixelsOperation.OperationType;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -45,7 +44,7 @@ public class ImageManufactureBatchColorController extends ImageManufactureBatchC
     @FXML
     private Label colorUnit;
     @FXML
-    protected CheckBox preAlphaCheck;
+    protected CheckBox preAlphaCheck, ignoreTransparentCheck;
     @FXML
     protected ImageView preAlphaTipsView;
 
@@ -284,6 +283,7 @@ public class ImageManufactureBatchColorController extends ImageManufactureBatchC
             }
             PixelsOperation pixelsOperation = PixelsOperation.create(source, null,
                     colorOperationType, colorActionType);
+            pixelsOperation.setSkipTransparent(ignoreTransparentCheck.isSelected());
             switch (colorOperationType) {
                 case Hue:
                     pixelsOperation.setFloatPara1(colorValue / 360.0f);

@@ -36,7 +36,6 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 
@@ -791,7 +790,7 @@ public abstract class BatchController<T> extends BaseController {
 
             case NameMatchAnyRegularExpression:
                 for (String name : sourceFilesSelector) {
-                    if (StringTools.match(fname, name)) {
+                    if (StringTools.match(fname, name, false)) {
                         return true;
                     }
                 }
@@ -799,7 +798,7 @@ public abstract class BatchController<T> extends BaseController {
 
             case NameNotMatchAnyRegularExpression:
                 for (String name : sourceFilesSelector) {
-                    if (StringTools.match(fname, name)) {
+                    if (StringTools.match(fname, name, false)) {
                         return false;
                     }
                 }

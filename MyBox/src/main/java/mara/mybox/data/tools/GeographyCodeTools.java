@@ -35,14 +35,13 @@ import static mara.mybox.db.DerbyBase.dbHome;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.TableGeographyCode;
-import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.tools.NetworkTools.trustAllManager;
 import static mara.mybox.tools.NetworkTools.trustAllVerifier;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 import org.apache.commons.csv.CSVFormat;
@@ -576,31 +575,32 @@ public class GeographyCodeTools {
         }
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
                  PreparedStatement geoInsert = conn.prepareStatement(TableGeographyCode.Insert)) {
+            return encode(conn, geoInsert, code, true);
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+        return null;
+    }
+
+    public static GeographyCode encode(Connection conn, PreparedStatement geoInsert,
+            GeographyCode code, boolean decodeAncestors) {
+        if (code == null) {
+            return null;
+        }
+        try {
             Map<String, Object> codeRet = encode(conn, geoInsert, code.getLevel(),
                     code.getLongitude(), code.getLatitude(),
                     code.getContinentName(), code.getCountryName(),
                     code.getProvinceName(), code.getCityName(), code.getCountyName(),
                     code.getTownName(), code.getVillageName(), code.getBuildingName(),
-                    code.getName(), true, false);
+                    code.getName(), true, decodeAncestors);
             conn.commit();
 //            if (codeRet.get("message") != null) {
 //                logger.error((String) codeRet.get("message"));
 //            }
             if (codeRet.get("code") != null) {
                 GeographyCode encoded = (GeographyCode) codeRet.get("code");
-                encoded = TableGeographyCode.readCode(conn, encoded.getGcid(), true);
-                if (code.getGcid() < 0) {
-                    code.setGcid(encoded.getGcid());
-                }
-                code.setOwnerCode(encoded.getOwnerCode());
-                code.setContinentCode(encoded.getContinentCode());
-                code.setCountryCode(encoded.getCountryCode());
-                code.setCityCode(encoded.getCityCode());
-                code.setTownCode(encoded.getTownCode());
-                code.setCountyCode(encoded.getCountyCode());
-                code.setVillageCode(encoded.getVillageCode());
-                code.setBuildingCode(encoded.getBuildingCode());
-                return code;
+                return encoded;
             }
         } catch (Exception e) {
             logger.error(e.toString());

@@ -53,7 +53,6 @@ import mara.mybox.tools.SystemTools;
 import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import static mara.mybox.value.CommonValues.Indent;
@@ -1867,8 +1866,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
         if (file == null) {
             return;
         }
-        recordFileWritten(file, targetPathKey,
-                VisitHistory.FileType.Xml, VisitHistory.FileType.Xml);
+        recordFileWritten(file, VisitHistory.FileType.Xml);
 
         synchronized (this) {
             if (task != null) {

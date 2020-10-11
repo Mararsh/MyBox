@@ -13,7 +13,6 @@ import javafx.scene.layout.FlowPane;
 import mara.mybox.data.Location;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 import org.apache.commons.csv.CSVPrinter;

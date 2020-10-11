@@ -6,7 +6,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Map;
+import static mara.mybox.db.DerbyBase.dbHome;
+import static mara.mybox.db.DerbyBase.failed;
+import static mara.mybox.db.DerbyBase.login;
+import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.tools.ConfigTools;
+import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -185,10 +190,20 @@ public class TableUserConf extends DerbyBase {
     }
 
     public static int writeString(String keyName, String stringValue) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            return writeString(conn, keyName, stringValue);
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return 0;
+        }
+    }
+
+    public static int writeString(Connection conn, String keyName, String stringValue) {
         if (keyName == null) {
             return 0;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+        try {
             if (stringValue == null) {
                 return delete(conn, keyName) ? 1 : 0;
             }

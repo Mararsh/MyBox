@@ -60,7 +60,6 @@ import mara.mybox.tools.NetworkTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 import org.apache.pdfbox.io.MemoryUsageSetting;
@@ -552,7 +551,7 @@ public class WeiboSnapRunController extends BaseController {
                                 loadFailed = true;
                             }
                             if (loadFailed) {
-                                errorQuit();
+                                mainFailed();
                             } else {
                                 loadPages();
                             }
@@ -567,7 +566,59 @@ public class WeiboSnapRunController extends BaseController {
             alertError(e.toString());
             endSnap();
         }
+    }
 
+    public void mainFailed() {
+        if (message("NonExistedWeiboAccount").equals(errorString)) {
+            int mainRetried = parameters.getRetried();
+            if (mainRetried < 2) {
+                parameters.setRetried(mainRetried + 1);
+                WeiboSnapPostsController pageController = (WeiboSnapPostsController) openStage(CommonValues.WeiboSnapPostsFxml);
+                pageController.start(parameters);
+                closeStage();
+            } else {
+
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle(baseTitle);
+                alert.setContentText(errorString);
+                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                ButtonType buttonRetry = new ButtonType(message("Retry"));
+                ButtonType buttonWow = new ButtonType("WOW");
+                ButtonType buttonISee = new ButtonType(AppVariables.message("ISee"));
+                alert.getButtonTypes().setAll(buttonRetry, buttonWow, buttonISee);
+                Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+                stage.setAlwaysOnTop(true);
+                stage.toFront();
+
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == buttonRetry) {
+                    parameters.setRetried(mainRetried + 1);
+                    WeiboSnapPostsController pageController = (WeiboSnapPostsController) openStage(CommonValues.WeiboSnapPostsFxml);
+                    pageController.start(parameters);
+                    closeStage();
+                } else if (result.get() == buttonWow) {
+                    WeiboSnapPostsController pageController = (WeiboSnapPostsController) openStage(CommonValues.WeiboSnapPostsFxml);
+                    parameters.setWebAddress("https://weibo.com/wow");
+                    parameters.setStartMonth(DateTools.parseMonth("2012-01"));
+                    parameters.setEndMonth(DateTools.parseMonth("2012-01"));
+                    pageController.start(parameters);
+                    closeStage();
+                } else {
+                    if (parent == null && !parentOpened) {
+                        openStage(CommonValues.WeiboSnapFxml);
+                        parentOpened = true;
+                    }
+                    endSnap();
+                }
+            }
+        } else {
+            alertError(errorString);
+            if (parent == null && !parentOpened) {
+                openStage(CommonValues.WeiboSnapFxml);
+                parentOpened = true;
+            }
+            endSnap();
+        }
     }
 
     protected boolean openLoadingStage() {
@@ -1394,46 +1445,6 @@ public class WeiboSnapRunController extends BaseController {
             }
         };
         new Thread(mergeTask).start();
-    }
-
-    public void errorQuit() {
-        if (message("NonExistedWeiboAccount").equals(errorString)) {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle(baseTitle);
-            alert.setContentText(errorString);
-            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-            ButtonType buttonRetry = new ButtonType(message("Retry"));
-            ButtonType buttonWow = new ButtonType("WOW");
-            ButtonType buttonISee = new ButtonType(AppVariables.message("ISee"));
-            alert.getButtonTypes().setAll(buttonRetry, buttonWow, buttonISee);
-            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-            stage.setAlwaysOnTop(true);
-            stage.toFront();
-
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == buttonRetry) {
-                WeiboSnapPostsController pageController = (WeiboSnapPostsController) openStage(CommonValues.WeiboSnapPostsFxml);
-                pageController.start(parameters);
-            } else if (result.get() == buttonWow) {
-                WeiboSnapPostsController pageController = (WeiboSnapPostsController) openStage(CommonValues.WeiboSnapPostsFxml);
-                parameters.setWebAddress("https://weibo.com/wow");
-                parameters.setStartMonth(DateTools.parseMonth("2012-01"));
-                parameters.setEndMonth(DateTools.parseMonth("2012-01"));
-                pageController.start(parameters);
-            } else {
-                if (parent == null && !parentOpened) {
-                    openStage(CommonValues.WeiboSnapFxml);
-                    parentOpened = true;
-                }
-            }
-        } else {
-            alertError(errorString);
-            if (parent == null && !parentOpened) {
-                openStage(CommonValues.WeiboSnapFxml);
-                parentOpened = true;
-            }
-        }
-        endSnap();
     }
 
     public void endSnap() {

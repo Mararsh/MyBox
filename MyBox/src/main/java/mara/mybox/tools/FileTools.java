@@ -26,7 +26,6 @@ import mara.mybox.data.FileSynchronizeAttributes;
 import mara.mybox.data.TextEditInformation;
 import static mara.mybox.value.AppVariables.MyBoxTempPath;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonValues;
 
 /**

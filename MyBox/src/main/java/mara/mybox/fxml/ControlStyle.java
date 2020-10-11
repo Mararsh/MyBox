@@ -643,6 +643,9 @@ public class ControlStyle {
         if (id.startsWith("analyse")) {
             return new ControlStyle(id, message("Analyse"), "", "iconAnalyse.png");
         }
+        if (id.startsWith("ocr")) {
+            return new ControlStyle(id, message("OCR"), "", "iconAnalyse.png");
+        }
         if (id.startsWith("yes")) {
             return new ControlStyle(id, message("Yes"), "", "iconYes.png");
         }
@@ -836,7 +839,14 @@ public class ControlStyle {
             return new ControlStyle(id, message("Use"), "", "iconYes.png");
         }
         if (id.startsWith("refresh")) {
-            return new ControlStyle(id, message("refresh"), "", "iconRefresh.png");
+            return new ControlStyle(id, message("Refresh"), "", "iconRefresh.png");
+        }
+
+        if (id.startsWith("giveUp")) {
+            return new ControlStyle(id, message("GiveUp"), "", "iconCatFoot.png");
+        }
+        if (id.startsWith("manufacture")) {
+            return new ControlStyle(id, message("Manufacture"), "", "iconEdit.png");
         }
 
         switch (id) {
@@ -1060,9 +1070,6 @@ public class ControlStyle {
             case "sampleButton":
                 return new ControlStyle("sampleButton", message("Sample"), "", "iconSample.png");
 
-            case "manufactureButton":
-                return new ControlStyle("manufactureButton", message("Manufacture"), "", "iconEdit.png");
-
             case "calculatorButton":
                 return new ControlStyle("calculatorButton", message("PixelsCalculator"), "", "iconCalculator.png");
 
@@ -1274,7 +1281,7 @@ public class ControlStyle {
                 return new ControlStyle(id, message("StreamMedia"), "", "iconLink.png");
 
             case "helpMeButton":
-                return new ControlStyle(id, message("HelpMe"), "h / H", "iconCatFoot.png");
+                return new ControlStyle(id, message("HelpMe"), "", "iconCatFoot.png");
 
             case "copyEnglishButton":
                 return new ControlStyle(id, message("CopyEnglish"), "CTRL+e / ALT+e ", "iconCopy.png");

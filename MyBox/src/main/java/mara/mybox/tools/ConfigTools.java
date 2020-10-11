@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.Properties;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara

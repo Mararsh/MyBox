@@ -6,7 +6,6 @@ import javafx.beans.value.ObservableValue;
 import mara.mybox.data.FileInformation;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara

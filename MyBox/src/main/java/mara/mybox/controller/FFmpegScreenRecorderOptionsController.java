@@ -23,7 +23,6 @@ import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -33,10 +32,9 @@ import static mara.mybox.value.AppVariables.message;
  */
 public class FFmpegScreenRecorderOptionsController extends FFmpegOptionsController {
 
-    private FFmpegScreenRecorderController recorder;
     protected Rectangle snapArea;
-    protected int framesPerSecond, delayPerFrame, audioThreadQueueSize, videoThreadQueueSize,
-            screenWidth, screenHeight, x, y;
+    protected int audioThreadQueueSize, videoThreadQueueSize,
+            screenWidth, screenHeight, x, y, macVideo, macAudio;
     protected String os, audioDevice, vcodec, title;
 
     @FXML
@@ -44,9 +42,9 @@ public class FFmpegScreenRecorderOptionsController extends FFmpegOptionsControll
     @FXML
     protected VBox videoBox;
     @FXML
-    protected HBox fullScreenBox, windowBox;
+    protected HBox fullScreenBox, windowBox, rectBox;
     @FXML
-    protected Label audioComments, screenSizeLabel, infoLabel;
+    protected Label audioComments, videoComments, screenSizeLabel, infoLabel;
     @FXML
     protected TextField audioThreadQueueSizeInput, videoThreadQueueSizeInput,
             titleInput, xInput, yInput, widthInput, heightInput, vcodecInput;
@@ -65,9 +63,6 @@ public class FFmpegScreenRecorderOptionsController extends FFmpegOptionsControll
     // https://www.cnblogs.com/sunny-li/p/9979796.html
     public FFmpegScreenRecorderOptionsController() {
         baseTitle = AppVariables.message("FFmpegScreenRecorder");
-
-        executableName = "FFmpegExecutable";
-        executableDefault = "D:\\Programs\\ffmpeg\\bin\\ffmpeg.exe";
     }
 
     @Override
@@ -77,24 +72,6 @@ public class FFmpegScreenRecorderOptionsController extends FFmpegOptionsControll
 
             FxmlControl.setTooltip(tipsView, new Tooltip(message("FFmpegOptionsTips")
                     + "\n" + message("FFmpegScreenRecorderComments")));
-
-            os = SystemTools.os();
-            switch (os) {
-                case "win":
-                    checkAudioDevice();
-                    break;
-                case "linux":
-                    windowRadio.setDisable(true);
-                    videoBox.getChildren().remove(windowBox);
-                    audioComments.setText("alsa");
-                    break;
-                case "mac":
-                    infoLabel.setText(message("SupportWinOnly"));
-                    infoLabel.setStyle(badStyle);
-                    break;
-                default:
-                    return;
-            }
 
             audioCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -111,6 +88,25 @@ public class FFmpegScreenRecorderOptionsController extends FFmpegOptionsControll
                 }
             });
             videoCheck.setSelected(AppVariables.getUserConfigBoolean("FFmpegScreenRecorderVideo", true));
+
+            os = SystemTools.os();
+            switch (os) {
+                case "win":
+                    checkAudioDeviceWin();
+                    break;
+                case "linux":
+                    windowRadio.setDisable(true);
+                    videoBox.getChildren().remove(windowBox);
+                    audioComments.setText("alsa");
+                    break;
+                case "mac":
+                    fullscreenRadio.fire();
+                    videoBox.getChildren().removeAll(windowBox, rectBox);
+                    checkDevicesMac();
+                    break;
+                default:
+                    return;
+            }
 
             checkThreadQueueSizes();
 
@@ -200,13 +196,14 @@ public class FFmpegScreenRecorderOptionsController extends FFmpegOptionsControll
         }
     }
 
-    protected void checkAudioDevice() {
+    protected void checkAudioDeviceWin() {
         try {
             // ffmpeg -list_devices true -f dshow -i dummy
             ProcessBuilder pb = new ProcessBuilder(
                     executable.getAbsolutePath(),
                     "-list_devices", "true", "-f", "dshow", "-i", "dummy"
             ).redirectErrorStream(true);
+            audioDevice = null;
             final Process process = pb.start();
             try ( BufferedReader inReader = new BufferedReader(
                     new InputStreamReader(process.getInputStream(), Charset.forName("UTF-8")))) {
@@ -231,12 +228,65 @@ public class FFmpegScreenRecorderOptionsController extends FFmpegOptionsControll
                         return;
                     }
                 }
-                audioDevice = null;
+            }
+            process.waitFor();
+            if (audioDevice == null) {
                 audioComments.setText(message("AudioDevice") + ": " + message("NotFound"));
                 audioCheck.setDisable(true);
                 audioCheck.setSelected(false);
             }
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    protected void checkDevicesMac() {
+        try {
+            // ffmpeg -f avfoundation -list_devices true -i ""
+            ProcessBuilder pb = new ProcessBuilder(
+                    executable.getAbsolutePath(),
+                    "-f", "avfoundation", "-list_devices", "true", "-i", "\"\""
+            ).redirectErrorStream(true);
+            macVideo = macAudio = -1;
+            final Process process = pb.start();
+            try ( BufferedReader inReader = new BufferedReader(
+                    new InputStreamReader(process.getInputStream(), Charset.forName("UTF-8")))) {
+                String line;
+                while ((line = inReader.readLine()) != null) {
+                    try {
+                        int pos1 = line.indexOf("] [");
+                        if (pos1 < 0) {
+                            continue;
+                        }
+                        String s = line.substring(pos1 + 3);
+                        pos1 = s.indexOf("]");
+                        int index = Integer.parseInt(s.substring(0, pos1));
+                        String name = s.substring(pos1 + 1);
+                        if (line.contains("Capture screen")) {
+                            macVideo = index;
+                            videoComments.setText(name);
+                            videoCheck.setDisable(false);
+                        } else if (line.contains("Microphone") || line.contains("麦克风")) {
+                            macAudio = index;
+                            audioComments.setText(message("AudioDevice") + ": " + name);
+                            audioCheck.setDisable(false);
+                        }
+                    } catch (Exception e) {
+                        logger.error(e.toString());
+                    }
+                }
+            }
             process.waitFor();
+            if (macVideo < 0) {
+                videoComments.setText(message("NotFound"));
+                videoCheck.setDisable(true);
+                videoCheck.setSelected(false);
+            }
+            if (macAudio < 0) {
+                audioComments.setText(message("AudioDevice") + ": " + message("NotFound"));
+                audioCheck.setDisable(true);
+                audioCheck.setSelected(false);
+            }
         } catch (Exception e) {
             logger.error(e.toString());
         }

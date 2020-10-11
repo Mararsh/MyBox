@@ -10,7 +10,6 @@ import java.util.List;
 import mara.mybox.data.MediaInformation;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara

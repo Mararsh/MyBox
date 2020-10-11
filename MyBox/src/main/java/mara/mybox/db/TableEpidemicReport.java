@@ -20,7 +20,6 @@ import static mara.mybox.db.DerbyBase.stringValue;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -495,6 +494,7 @@ public class TableEpidemicReport extends TableBase<EpidemicReport> {
             epidQuery.setMaxRows(1);
             equalQuery.setMaxRows(1);
             long count = 0;
+            conn.setAutoCommit(false);
             for (EpidemicReport report : reports) {
                 if (!validReport(report)) {
                     continue;

@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara

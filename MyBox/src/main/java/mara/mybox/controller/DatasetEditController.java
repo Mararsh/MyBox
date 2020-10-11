@@ -20,7 +20,6 @@ import mara.mybox.db.TableDataset;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.VisitHistoryTools;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import static mara.mybox.value.AppVariables.tableMessage;
 import mara.mybox.value.CommonFxValues;

@@ -367,11 +367,28 @@ public class TableVisitHistory extends DerbyBase {
         return update(resourceType, fileType, operationType, value, null);
     }
 
+    public static boolean update(Connection conn, int resourceType, int fileType, int operationType, String value) {
+        return update(conn, resourceType, fileType, operationType, value, null);
+    }
+
     public static boolean update(int resourceType, int fileType, int operationType, String value, String more) {
         if (resourceType < 0 || fileType < 0 || operationType < 0 || value == null) {
             return false;
         }
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            return update(conn, resourceType, fileType, operationType, value, null);
+        } catch (Exception e) {
+            failed(e);
+//            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean update(Connection conn, int resourceType, int fileType, int operationType, String value, String more) {
+        if (resourceType < 0 || fileType < 0 || operationType < 0 || value == null) {
+            return false;
+        }
+        try {
             VisitHistory exist = find(conn, resourceType, fileType, operationType, value);
             Date d = new Date();
             if (exist != null) {

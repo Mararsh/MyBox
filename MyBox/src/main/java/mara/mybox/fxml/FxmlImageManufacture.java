@@ -43,7 +43,6 @@ import mara.mybox.image.ImageScope.ScopeType;
 import mara.mybox.image.PixelBlend.ImagesBlendMode;
 import mara.mybox.image.PixelsOperation;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara

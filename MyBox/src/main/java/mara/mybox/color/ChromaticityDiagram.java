@@ -11,7 +11,6 @@ import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.List;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**

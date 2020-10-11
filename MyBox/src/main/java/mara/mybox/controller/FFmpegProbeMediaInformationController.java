@@ -38,9 +38,9 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlTools;
 import mara.mybox.tools.MediaTools;
+import mara.mybox.tools.SystemTools;
 import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
@@ -73,7 +73,7 @@ public class FFmpegProbeMediaInformationController extends FFmpegOptionsControll
         try {
             super.initValues();
             executableName = "FFprobeExecutable";
-            executableDefault = "D:\\Programs\\ffmpeg\\bin\\ffprobe.exe";
+            executableDefault = "win".equals(SystemTools.os()) ? "D:\\Programs\\ffmpeg\\bin\\ffprobe.exe" : "/home/ffprobe";
 
         } catch (Exception e) {
             logger.error(e.toString());

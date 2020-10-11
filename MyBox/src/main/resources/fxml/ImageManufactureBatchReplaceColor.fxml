@@ -66,6 +66,7 @@ License:    Apache License Version 2.0
                                                 <CheckBox fx:id="excludeCheck" mnemonicParsing="false" text="%Excluded" />
                                             </children>
                                         </FlowPane>
+                              <CheckBox fx:id="ignoreTransparentCheck" mnemonicParsing="false" selected="true" text="%IgnoreTransparent" />
                                     </children>
                                     <padding>
                                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

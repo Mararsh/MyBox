@@ -38,7 +38,6 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 
@@ -139,7 +138,6 @@ public class MediaTableController extends BatchTableController<MediaInformation>
     }
 
     protected void readMediaInfo(MediaInformation info) {
-
         synchronized (this) {
             try {
                 Task infoTask = new Task<Void>() {
@@ -185,6 +183,7 @@ public class MediaTableController extends BatchTableController<MediaInformation>
                                         readMediaInfo(info, media);
                                         player.dispose();
                                         Platform.runLater(new Runnable() {
+                                            @Override
                                             public void run() {
                                                 tableView.refresh();
                                                 updateLabel();
@@ -201,6 +200,7 @@ public class MediaTableController extends BatchTableController<MediaInformation>
                         } catch (Exception e) {
                             error = e.toString();
                         }
+                        info.setFinish(true);
                         return null;
                     }
 
@@ -290,12 +290,14 @@ public class MediaTableController extends BatchTableController<MediaInformation>
                 }
             }
             info.setInfo(s.toString());
+            info.setFinish(true);
             makeHtml(info, media);
             TableMedia.write(info);
             return true;
         } catch (Exception e) {
             popError(message("FailOpenMedia"));
             logger.debug(e.toString());
+            info.setFinish(true);
             return false;
         }
 
@@ -408,6 +410,7 @@ public class MediaTableController extends BatchTableController<MediaInformation>
         } else if (errorMsg.contains("ERROR_MEDIA_VIDEO_FORMAT_UNSUPPORTED")) {
             info.setVideoEncoding(message("NotSupport"));
         }
+        info.setFinish(true);
     }
 
     @Override

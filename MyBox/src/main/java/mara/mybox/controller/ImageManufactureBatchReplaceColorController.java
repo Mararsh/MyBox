@@ -21,7 +21,6 @@ import mara.mybox.image.ImageScope;
 import mara.mybox.image.PixelsOperation;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -39,11 +38,9 @@ public class ImageManufactureBatchReplaceColorController extends ImageManufactur
     @FXML
     private TextField distanceInput;
     @FXML
-    private RadioButton colorRadio, hueRadio;
-    @FXML
     private ToggleGroup replaceScopeGroup;
     @FXML
-    private CheckBox excludeCheck;
+    private CheckBox excludeCheck, ignoreTransparentCheck;
     @FXML
     protected ColorSetController originalColorSetController, newColorSetController;
 
@@ -163,6 +160,7 @@ public class ImageManufactureBatchReplaceColorController extends ImageManufactur
                 PixelsOperation.OperationType.ReplaceColor, PixelsOperation.ColorActionType.Set);
         pixelsOperation.setColorPara1(originalColor);
         pixelsOperation.setColorPara2(newColor);
+        pixelsOperation.setSkipTransparent(ignoreTransparentCheck.isSelected());
         BufferedImage target = pixelsOperation.operate();
 
         return target;

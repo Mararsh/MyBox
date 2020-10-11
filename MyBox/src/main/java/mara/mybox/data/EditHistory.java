@@ -4,7 +4,6 @@ import java.io.File;
 import mara.mybox.db.TableBase;
 import mara.mybox.db.TableEditHistory;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonValues;
 
 /**

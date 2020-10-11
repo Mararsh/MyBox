@@ -38,7 +38,6 @@ import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mara.mybox.data.DoubleRectangle;
-import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.fxml.FxmlStage;
@@ -51,6 +50,7 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.FileTools.FileSortMode;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
@@ -1631,6 +1631,16 @@ public class ImageViewerController extends ImageShapesController {
         ImageAnalyseController controller
                 = (ImageAnalyseController) FxmlStage.openStage(CommonValues.ImageAnalyseFxml);
         controller.setParentView(imageView);
+        controller.loadImage(sourceFile, image, imageInformation);
+    }
+
+    @FXML
+    public void ocrAction() {
+        if (image == null) {
+            return;
+        }
+        ImageOCRController controller
+                = (ImageOCRController) FxmlStage.openStage(CommonValues.ImageOCRFxml);
         controller.loadImage(sourceFile, image, imageInformation);
     }
 

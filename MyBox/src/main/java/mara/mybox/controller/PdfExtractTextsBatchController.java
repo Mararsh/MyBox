@@ -9,7 +9,6 @@ import javafx.scene.control.TextField;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import org.apache.pdfbox.text.PDFTextStripper;
 
 /**

@@ -9,7 +9,6 @@ import javafx.scene.layout.HBox;
 import mara.mybox.data.FileInformation;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara

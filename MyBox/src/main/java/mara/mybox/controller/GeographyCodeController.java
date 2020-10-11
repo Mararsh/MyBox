@@ -28,7 +28,6 @@ import mara.mybox.fxml.TableLongitudeCell;
 import mara.mybox.fxml.TableMessageCell;
 import mara.mybox.tools.HtmlTools;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 

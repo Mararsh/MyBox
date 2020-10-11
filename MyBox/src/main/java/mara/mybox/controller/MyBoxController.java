@@ -34,7 +34,6 @@ import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.ConfigTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import static mara.mybox.value.AppVariables.scheduledTasks;
 import mara.mybox.value.CommonValues;
@@ -1144,6 +1143,11 @@ public class MyBoxController extends BaseController {
             loadScene(CommonValues.GameElimniationFxml);
         });
 
+        MenuItem GameMine = new MenuItem(AppVariables.message("GameMine"));
+        GameMine.setOnAction((ActionEvent event1) -> {
+            loadScene(CommonValues.GameMineFxml);
+        });
+
         popMenu = new ContextMenu();
         popMenu.setAutoHide(true);
         popMenu.getItems().addAll(
@@ -1152,7 +1156,7 @@ public class MyBoxController extends BaseController {
                 FFmpegConversionMenu, FFmpegMergeMenu,
                 FFprobe, FFmpegInformation, new SeparatorMenuItem(),
                 recordImages, new SeparatorMenuItem(), alarmClock, new SeparatorMenuItem(),
-                GameElimniation
+                GameElimniation, GameMine
         );
 
         popMenu.getItems().add(new SeparatorMenuItem());

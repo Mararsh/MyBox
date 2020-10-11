@@ -11,7 +11,6 @@ import javafx.scene.control.TreeItem;
 import mara.mybox.fxml.ConditionNode;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**

@@ -10,7 +10,6 @@ import mara.mybox.db.TableBrowserHistory;
 import mara.mybox.fxml.TableImageFileCell;
 import mara.mybox.fxml.TableTimeCell;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara

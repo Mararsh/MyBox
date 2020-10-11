@@ -90,6 +90,7 @@ License:    Apache License Version 2.0
                 <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="75.0" spacing="10.0">
                     <children>
                         <CheckBox fx:id="videoCheck" mnemonicParsing="false" selected="true" text="%Video" />
+                  <Label fx:id="videoComments" minWidth="-Infinity" wrapText="true" />
                         <Label text="%ThreadQueueSize">
                             <HBox.margin>
                                 <Insets left="20.0" />
@@ -118,7 +119,7 @@ License:    Apache License Version 2.0
                         <TextField fx:id="titleInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                     </children>
                 </HBox>
-                <HBox alignment="CENTER_LEFT" layoutX="15.0" layoutY="156.0" maxWidth="1.7976931348623157E308" spacing="5.0">
+                <HBox fx:id="rectBox" alignment="CENTER_LEFT" layoutX="15.0" layoutY="156.0" maxWidth="1.7976931348623157E308" spacing="5.0">
                     <children>
                         <RadioButton fx:id="rectangleRadio" minWidth="-Infinity" mnemonicParsing="false" text="%Rectangle" toggleGroup="$scopeGroup" HBox.hgrow="NEVER" />
                         <Label text="X">
@@ -135,15 +136,20 @@ License:    Apache License Version 2.0
                         <TextField fx:id="heightInput" layoutX="547.0" layoutY="10.0" prefWidth="140.0" />
                     </children>
                 </HBox>
-                <HBox alignment="CENTER_LEFT" layoutX="15.0" layoutY="156.0" maxWidth="1.7976931348623157E308" spacing="5.0" />
                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
                     <children>
                         <Label minWidth="-Infinity" text="%VideoEncoder" HBox.hgrow="NEVER" />
                         <ComboBox fx:id="videoEncoderSelector" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                        <Label minWidth="-Infinity" text="%VideoFrameRate" HBox.hgrow="NEVER" />
-                        <ComboBox fx:id="videoFrameRateSelector" minWidth="-Infinity" prefWidth="200.0" HBox.hgrow="NEVER" />
                     </children>
                 </HBox>
+            <HBox alignment="CENTER_LEFT" layoutX="15.0" layoutY="288.0" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
+               <children>
+                        <Label minWidth="-Infinity" text="%VideoFrameRate" HBox.hgrow="NEVER" />
+                        <ComboBox fx:id="videoFrameRateSelector" minWidth="-Infinity" prefWidth="300.0" HBox.hgrow="NEVER" />
+                  <Label minWidth="-Infinity" text="%VideoBitrate" />
+                  <ComboBox fx:id="videoBitrateSelector" editable="true" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+               </children>
+            </HBox>
                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
                     <children>
                         <Label minWidth="-Infinity" text="%EncodingPreset" HBox.hgrow="NEVER" />
@@ -152,8 +158,6 @@ License:    Apache License Version 2.0
                         <ComboBox fx:id="crfSelector" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                     </children>
                 </HBox>
-                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" />
-                <HBox alignment="CENTER_LEFT" layoutX="15.0" layoutY="393.0" maxWidth="1.7976931348623157E308" spacing="5.0" />
             </children>
         </VBox>
         <VBox fx:id="audioBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">

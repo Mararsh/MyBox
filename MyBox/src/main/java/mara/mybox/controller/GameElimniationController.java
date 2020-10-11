@@ -45,6 +45,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
@@ -74,7 +75,6 @@ import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
@@ -200,21 +200,21 @@ public class GameElimniationController extends BaseController {
 
     @Override
     public void keyHandler(KeyEvent event) {
+        KeyCode code = event.getCode();
+        if (code != null) {
+            switch (code) {
+                case H:
+                    helpMeAction();
+                    return;
+            }
+        }
         super.keyHandler(event);
-        String text = event.getText();
-        if (text == null || text.isEmpty()) {
-            return;
-        }
-        switch (text) {
-            case "h":
-            case "H":
-                helpMeAction();
-        }
     }
 
     @Override
     public void afterSceneLoaded() {
         super.afterSceneLoaded();
+        FxmlControl.setTooltip(helpMeButton, message("HelpMe") + "\nh / H");
         synchronized (this) {
             if (task != null) {
                 return;

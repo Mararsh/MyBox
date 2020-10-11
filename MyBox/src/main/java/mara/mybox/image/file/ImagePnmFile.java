@@ -18,7 +18,6 @@ import javax.imageio.stream.ImageOutputStream;
 import mara.mybox.image.ImageAttributes;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara

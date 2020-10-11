@@ -3,7 +3,6 @@ package mara.mybox.controller;
 import javafx.fxml.FXML;
 import mara.mybox.data.GeographyCode;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara

@@ -17,7 +17,6 @@ import mara.mybox.data.GeographyCode;
 import mara.mybox.data.GeographyCodeLevel;
 import mara.mybox.data.StringTable;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.value.AppVariables.message;
@@ -391,7 +390,7 @@ public class EpidemicReportTools {
                 gcode.getTownName() != null ? gcode.getTownName() : "",
                 gcode.getVillageName() != null ? gcode.getVillageName() : "",
                 gcode.getBuildingName() != null ? gcode.getBuildingName() : "",
-                gcode.getPOIName() != null ? gcode.getPOIName() : ""
+                gcode.getPoiName() != null ? gcode.getPoiName() : ""
         ));
         return row;
     }

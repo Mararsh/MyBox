@@ -6,6 +6,8 @@
 package mara.mybox.tools;
 
 import java.io.File;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.stage.FileChooser;
@@ -13,8 +15,13 @@ import mara.mybox.data.VisitHistory;
 import mara.mybox.data.VisitHistory.FileType;
 import mara.mybox.data.VisitHistory.OperationType;
 import mara.mybox.data.VisitHistory.ResourceType;
+import static mara.mybox.db.DerbyBase.dbHome;
+import static mara.mybox.db.DerbyBase.failed;
+import static mara.mybox.db.DerbyBase.login;
+import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.TableVisitHistory;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonFxValues;
 
 /**
@@ -92,17 +99,27 @@ public class VisitHistoryTools {
     }
 
     public static boolean readFile(int fileType, String value) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            return readFile(conn, fileType, value);
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean readFile(Connection conn, int fileType, String value) {
         if (fileType == FileType.MultipleFrames || fileType == FileType.Image) {
             String v = value.toLowerCase();
             if (v.endsWith(".gif")) {
-                return TableVisitHistory.update(ResourceType.File, FileType.Gif, OperationType.Read, value);
+                return TableVisitHistory.update(conn, ResourceType.File, FileType.Gif, OperationType.Read, value);
             } else if (v.endsWith(".tif") || v.endsWith(".tiff")) {
-                return TableVisitHistory.update(ResourceType.File, FileType.Tif, OperationType.Read, value);
+                return TableVisitHistory.update(conn, ResourceType.File, FileType.Tif, OperationType.Read, value);
             } else {
-                return TableVisitHistory.update(ResourceType.File, FileType.Image, OperationType.Read, value);
+                return TableVisitHistory.update(conn, ResourceType.File, FileType.Image, OperationType.Read, value);
             }
         } else {
-            return TableVisitHistory.update(ResourceType.File, fileType, OperationType.Read, value);
+            return TableVisitHistory.update(conn, ResourceType.File, fileType, OperationType.Read, value);
         }
     }
 
@@ -115,17 +132,27 @@ public class VisitHistoryTools {
     }
 
     public static boolean writeFile(int fileType, String value) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            return writeFile(conn, fileType, value);
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean writeFile(Connection conn, int fileType, String value) {
         if (fileType == FileType.MultipleFrames || fileType == FileType.Image) {
             String v = value.toLowerCase();
             if (v.endsWith(".gif")) {
-                return TableVisitHistory.update(ResourceType.File, FileType.Gif, OperationType.Write, value);
+                return TableVisitHistory.update(conn, ResourceType.File, FileType.Gif, OperationType.Write, value);
             } else if (v.endsWith(".tif") || v.endsWith(".tiff")) {
-                return TableVisitHistory.update(ResourceType.File, FileType.Tif, OperationType.Write, value);
+                return TableVisitHistory.update(conn, ResourceType.File, FileType.Tif, OperationType.Write, value);
             } else {
-                return TableVisitHistory.update(ResourceType.File, FileType.Image, OperationType.Write, value);
+                return TableVisitHistory.update(conn, ResourceType.File, FileType.Image, OperationType.Write, value);
             }
         } else {
-            return TableVisitHistory.update(ResourceType.File, fileType, OperationType.Write, value);
+            return TableVisitHistory.update(conn, ResourceType.File, fileType, OperationType.Write, value);
         }
     }
 
@@ -138,10 +165,20 @@ public class VisitHistoryTools {
     }
 
     public static boolean readPath(int fileType, String value) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            return readPath(conn, fileType, value);
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean readPath(Connection conn, int fileType, String value) {
         if (fileType == FileType.MultipleFrames) {
-            return TableVisitHistory.update(ResourceType.Path, FileType.Image, OperationType.Read, value);
+            return TableVisitHistory.update(conn, ResourceType.Path, FileType.Image, OperationType.Read, value);
         } else {
-            return TableVisitHistory.update(ResourceType.Path, fileType, OperationType.Read, value);
+            return TableVisitHistory.update(conn, ResourceType.Path, fileType, OperationType.Read, value);
         }
     }
 
@@ -192,10 +229,20 @@ public class VisitHistoryTools {
     }
 
     public static boolean writePath(int fileType, String value) {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            return writePath(conn, fileType, value);
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean writePath(Connection conn, int fileType, String value) {
         if (fileType == FileType.MultipleFrames) {
-            return TableVisitHistory.update(ResourceType.Path, FileType.Image, OperationType.Write, value);
+            return TableVisitHistory.update(conn, ResourceType.Path, FileType.Image, OperationType.Write, value);
         } else {
-            return TableVisitHistory.update(ResourceType.Path, fileType, OperationType.Write, value);
+            return TableVisitHistory.update(conn, ResourceType.Path, fileType, OperationType.Write, value);
         }
     }
 

@@ -81,10 +81,16 @@ License:    Apache License Version 2.0
                     <children>
                         <Label minWidth="-Infinity" text="%VideoEncoder" HBox.hgrow="NEVER" />
                         <ComboBox fx:id="videoEncoderSelector" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                        <Label minWidth="-Infinity" text="%VideoFrameRate" HBox.hgrow="NEVER" />
-                        <ComboBox fx:id="videoFrameRateSelector" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                     </children>
                 </HBox>
+            <HBox alignment="CENTER_LEFT" layoutX="15.0" layoutY="73.0" maxWidth="1.7976931348623157E308" spacing="5.0">
+               <children>
+                        <Label minWidth="-Infinity" text="%VideoFrameRate" HBox.hgrow="NEVER" />
+                        <ComboBox fx:id="videoFrameRateSelector" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                        <Label minWidth="-Infinity" text="%VideoBitrate" HBox.hgrow="NEVER" />
+                        <ComboBox fx:id="videoBitrateSelector" editable="true" prefWidth="300.0" />
+               </children>
+            </HBox>
                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
                     <children>
                         <Label minWidth="-Infinity" text="%VideoResolution" HBox.hgrow="NEVER" />
@@ -95,14 +101,8 @@ License:    Apache License Version 2.0
                 </HBox>
                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
                     <children>
-                        <Label minWidth="-Infinity" text="%VideoBitrate" HBox.hgrow="NEVER" />
-                        <ComboBox fx:id="videoBitrateSelector" editable="true" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                         <Label minWidth="-Infinity" text="%EncodingPreset" HBox.hgrow="NEVER" />
                         <ComboBox maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" fx:id="x264presetSelector" />
-                    </children>
-                </HBox>
-                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
-                    <children>
                         <Label minWidth="-Infinity" text="%CRF" HBox.hgrow="NEVER" />
                         <ComboBox fx:id="crfSelector" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                     </children>

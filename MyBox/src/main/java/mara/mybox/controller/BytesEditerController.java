@@ -23,7 +23,6 @@ import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -286,21 +285,21 @@ public class BytesEditerController extends FileEditerController {
         }
         final String v = ByteTools.validateTextHex(string);
         if (v == null) {
-            findInput.setStyle(badStyle);
+            findArea.setStyle(badStyle);
             return false;
         } else {
             if (v.length() >= sourceInformation.getPageSize() * 3) {
                 popError(AppVariables.message("FindStringLimitation"));
-                findInput.setStyle(badStyle);
+                findArea.setStyle(badStyle);
                 return false;
             }
-            findInput.setStyle(null);
+            findArea.setStyle(null);
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
                     isSettingValues = true;
-                    findInput.setText(v);
-                    findInput.end();
+                    findArea.setText(v);
+                    findArea.end();
                     isSettingValues = false;
                 }
             });
@@ -315,21 +314,21 @@ public class BytesEditerController extends FileEditerController {
         }
         final String v = ByteTools.validateTextHex(string);
         if (v == null) {
-            replaceInput.setStyle(badStyle);
+            replaceArea.setStyle(badStyle);
             return false;
         } else {
             if (v.length() >= sourceInformation.getPageSize() * 3) {
                 popError(AppVariables.message("FindStringLimitation"));
-                replaceInput.setStyle(badStyle);
+                replaceArea.setStyle(badStyle);
                 return false;
             }
-            replaceInput.setStyle(null);
+            replaceArea.setStyle(null);
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
                     isSettingValues = true;
-                    replaceInput.setText(v);
-                    replaceInput.end();
+                    replaceArea.setText(v);
+                    replaceArea.end();
                     isSettingValues = false;
                 }
             });
@@ -349,7 +348,7 @@ public class BytesEditerController extends FileEditerController {
                 AppVariables.setUserConfigValue(BytesCharsetKey, newValue);
                 charsetByUser = !isSettingValues;
                 if (!isSettingValues) {
-                    setPairArea(mainArea.getText());
+                    updatePairArea();
                 }
             }
         });
@@ -382,33 +381,40 @@ public class BytesEditerController extends FileEditerController {
         if (!findWhole || sourceInformation.getPagesNumber() <= 1) {
             return;
         }
-        currentFound = -1;
-        if (sourceInformation.getCurrentFound() >= 0) {
-            int pos = (int) (sourceInformation.getCurrentFound() % sourceInformation.getPageSize());
-            int p = (int) (sourceInformation.getCurrentFound() / sourceInformation.getPageSize() + 1);
+        currentFound = null;
+        if (sourceInformation.getCurrentFound() != null) {
+            long start = sourceInformation.getCurrentFound().getStart();
+            long end = sourceInformation.getCurrentFound().getEnd();
+            int pos = (int) (start % sourceInformation.getPageSize());
+            int p = (int) (start / sourceInformation.getPageSize() + 1);
             if (p == currentPage) {
-                currentFound = pos * 3;
+                int pstart = pos * 3;
+                int pend = pstart + (int) (end - start);
+                currentFound = new IndexRange(pstart, pend);
             }
         }
     }
 
+    @FXML
     @Override
-    protected void setPairArea(String hexFormat) {
+    public void refreshPairAction() {
         if (isSettingValues || !splitPane.getItems().contains(rightPane)) {
             return;
         }
         isSettingValues = true;
         LoadingController loadingController = openHandlingStage(Modality.WINDOW_MODAL);
-        if (!hexFormat.isEmpty()) {
-            String[] lines = hexFormat.split("\n");
-            StringBuilder text = new StringBuilder();
+        String text = mainArea.getText();
+        if (!text.isEmpty()) {
+            String[] lines = text.split("\n");
+            StringBuilder bytes = new StringBuilder();
             String lineText;
             for (String line : lines) {
                 lineText = new String(ByteTools.hexFormatToBytes(line), sourceInformation.getCharset());
                 lineText = lineText.replaceAll("\n|\r", " ") + "\n";
-                text.append(lineText);
+                bytes.append(lineText);
             }
-            pairArea.setText(text.toString());
+            pairArea.setText(bytes.toString());
+            setPairAreaSelection();
         } else {
             pairArea.clear();
         }

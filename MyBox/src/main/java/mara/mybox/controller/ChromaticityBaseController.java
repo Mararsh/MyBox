@@ -22,7 +22,6 @@ import mara.mybox.tools.HtmlTools;
 import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 
@@ -206,7 +205,7 @@ public class ChromaticityBaseController extends BaseController {
         if (file == null) {
             return;
         }
-        recordFileWritten(file, targetPathKey, VisitHistory.FileType.Text, VisitHistory.FileType.Text);
+        recordFileWritten(file, VisitHistory.FileType.Text);
 
         synchronized (this) {
             if (task != null) {

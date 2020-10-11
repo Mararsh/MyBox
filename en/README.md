@@ -4,22 +4,20 @@
 This is desktop application based on JavaFx to provide simple and easy functions. It's free and open sources.         
 
 ## What's New
-2020-9-27 v6.3.3        
--  Image Manufacture: Show/Hide scope pane and image pane; Enlarge image size when pasted clip out of bound; Demo of blend modes; Parameter "invert" for convolution kernel.
--  Data Tools: Helps to input CSV; Time with milliseconds or zone; Display points one by one in map; Set of snap images for Epidemic Report.
--  Color: User can input colors list; Separated interfaces for setting color, picking color, and managing palette; Adjust colors order in palette.     
--  Others: Context menu for table and image; Auto-save periodically in editors; Delay for Screen Recorder; Screen Recorder on Linux; Dev Mode.   
--  Major issues solved:  "Clear personal settings" is to delete user configuration data instead of all data; Wrong statements for some tabes;  Shortcuts do not work on Linux; Location Data can not be created for new Data Set.        
-[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.3)                
-
-This version is for China. Happy Birthday!                
-
+2020-10-11 v6.3.4        
+-  Editors: Find/Replace by multiple lines, case-insensitive, from cursor, and with examples of regular expression; Pop doument; Close/Open right pane; Set whether update right pane synchronously.
+-  OCR: Base on tesseract commandd line, support win/linux/mac, and compatible with verison 3/4/5; Set psm and all parameters, and provide parameters list.
+-  Record screen: Support mac; Miaow when start and end; Set frame rate and bitrates by default.     
+-  Game "Mine": Set size of grid and number of mines, and provide examlpes; Help to see all mines; Recover game when trigger mine.   
+-  Major issues solved: Locate regular expression incorrectly for Find/Replace in Editor; Incorrect logic in version migration.       
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.4)                
+   
 ## Download and Execution
 Packages of each version have been uploaded at [Releases](https://github.com/Mararsh/MyBox/releases?) directory now. You can find them by clicking `releases` tab in main page of this project. 
        
     
 ### Source Codes   
-[MyBox-6.3.3-src.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.3/MyBox-6.3.3-src.zip)   33M        
+[MyBox-6.3.4-src.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.4/MyBox-6.3.4-src.zip)   34M        
 
 About structure, editing, and building of source codes, please refer to [Developement Guide](https://mararsh.github.io/MyBox_documents/en/MyBox-DevGuide-2.1-en.pdf) and 
 [Packing Steps](https://mararsh.github.io/MyBox/pack_steps_en.html)                       
@@ -30,9 +28,9 @@ Self-contain packages include all files and need not java env nor installation. 
 
 | Platform | Link | Size | Launcher |    
 | --- | --- | ---  | ---  |    
-| win | [MyBox-6.3.3-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.3/MyBox-6.3.3-win-exe.zip)  | 284MB | MyBox.exe |       
-| linux | [MyBox-6.3.3-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.3.3/MyBox-6.3.3-linux.tar.gz)  | 290MB  | bin/MyBox  |     
-| mac | [MyBox-6.3.3-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.3.3/MyBox-6.3.3-mac.dmg)  | 295MB  |  MyBox-6.3.3.app   |   
+| win | [MyBox-6.3.4-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.4/MyBox-6.3.4-win-exe.zip)  | 285MB | MyBox.exe |       
+| linux | [MyBox-6.3.4-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.3.4/MyBox-6.3.4-linux.tar.gz)  | 290MB  | bin/MyBox  |     
+| mac | [MyBox-6.3.4-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.3.4/MyBox-6.3.4-mac.dmg)  | 296MB  |  MyBox-6.3.4.app   |   
 
 User can double click the launcher to start MyBox or run it by command line. The default "Open Method" of image/text/PDF files can be associated to MyBox and a file can be opened directly by MyBox by double clicking the file's name.
 (File with name including non-ascii can not be opened by double clicking currently)
@@ -42,16 +40,16 @@ When JRE or JDK 14 or higher(`Oracle jdk` or `open jdk`) is installed, jar can r
   
 | Platform | Link | Size | Requirements |   
 | --- | --- | ---  | ---  |    
-| win | [MyBox-6.3.3-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.3/MyBox-6.3.3-win-jar.zip)  | 147MB | Java 14.0.1 or higher |    
-| linux | [MyBox-6.3.3-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.3/MyBox-6.3.3-linux-jar.zip)  | 158MB  | Java 14.0.1 or higher |    
-| mac | [MyBox-6.3.3-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.3/MyBox-6.3.3-mac-jar.zip)  |  150MB  | Java 14.0.1 or higher |    
+| win | [MyBox-6.3.4-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.4/MyBox-6.3.4-win-jar.zip)  | 148MB | Java 14.0.1 or higher |    
+| linux | [MyBox-6.3.4-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.4/MyBox-6.3.4-linux-jar.zip)  | 154MB  | Java 14.0.1 or higher |    
+| mac | [MyBox-6.3.4-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.4/MyBox-6.3.4-mac-jar.zip)  |  151MB  | Java 14.0.1 or higher |    
  
     
 Run following command to launch this program with Jar package: 
-<PRE><CODE>     java   -jar   MyBox-6.3.3.jar</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-6.3.4.jar</CODE></PRE>
 	
 A file path can follow the command as argument to be opened directly by MyBox. Example, following command will open the image:    
-<PRE><CODE>     java   -jar   MyBox-6.3.3.jar   /tmp/a1.jpg</CODE></PRE>   
+<PRE><CODE>     java   -jar   MyBox-6.3.4.jar   /tmp/a1.jpg</CODE></PRE>   
 
 ### Other addresses to download   
 Download from cloud storage: https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F   
@@ -71,7 +69,7 @@ Automatically exported data files due to migration can be found under sub-direct
 ## Configuration <a id="Config"></a>     
 
 ### Default configuration file “MyBox.ini”
-The default configuration file is under "User Home". Example, it is `C:\Users\<User Name>\mybox\MyBox.ini` on Windows.   
+The default configuration file is under "User Home". Example, `C:\Users\mara\mybox\MyBox.ini` or `/home/mara/MyBox.ini` .   
 
 The only way to change configuration file temporarily is to add parameter "config=\"FilePath\"" when run jar.
 
@@ -103,7 +101,7 @@ Modifing these parameters, except for DerbyMode, in time will cause MyBox restar
 # Documents
 | Name | Version | Time | Link |
 | --- | --- | --- |  --- |  
-| Development Logs | 6.3.3 | 2020-09-27 | [html](#devLog) |
+| Development Logs | 6.3.4 | 2020-10-11 | [html](#devLog) |
 | Shortcuts | 6.3.3 | 2020-09-27 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts_en.html) |
 | Development Guide | 2.1 | 2020-08-27 | [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-DevGuide-2.1-en.pdf) |
 | User Guide - Overview | 5.0 | 2019-4-19 | [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-UserGuide-5.0-Overview-en.pdf) |
@@ -167,13 +165,14 @@ MyBox is based on following open sources:
 
  
 # Current Version
-Current version is 6.3.3. Its features are mentioned below in summary:   
+Current version is 6.3.4. Its features are mentioned below in summary:   
  
 * [Cross Platforms](#Cross-platform)
 * [Internationalized](#Internationalized)
 * [Local Host](#localhost)
 * [Document Tools](#documentTools)
     - [PDF Tools](#pdfTools)
+    - [Editor Base](#editTextBase)
     - [Edit Text](#editText)
     - [Edit Bytes](#editBytes)
     - [Edit Html](#htmlEditor)
@@ -216,6 +215,7 @@ Current version is 6.3.3. Its features are mentioned below in summary:
     - [Manage Playlists](#mediaList)
     - [Warp ffmpeg functions](#ffmpeg)
     - [Game-Elimination](#gameElimination)
+    - [Game-Mine](#gameMine)
     - [Others](#mediaOthers)
 * [Network Tools](#netTools)
     - [Web Browser](#webBrowser)
@@ -232,13 +232,8 @@ Current version is 6.3.3. Its features are mentioned below in summary:
 ## Cross Platforms <a id="Cross-platform"></a>       
 
 MyBox is implemented in pure Java and based on open source codes, so it can run any platform which supports Java 14.
-Versions before v5.3 are based on Java 8.
-
-Current version still does not support OCR on Linux/Mac. The reason is that the based tesseract libraries are different on different platforms and there are not out of box packages available.   
-This requirement is delayed due to limited development time.       
-
-"FFmpeg: Record Screen" supports Windows and Linux only now.         
-
+Versions before v5.3 are based on Java 8.       
+    
 ## Internationalized <a id="Internationalized"></a> 
 1. All codes of MyBox are internationalized. Currently MyBox supports Chinese and English. 
 2. User can switch language in time.
@@ -260,16 +255,6 @@ This requirement is delayed due to limited development time.
 1. View PDF file in image mode. DPI can be set to adjust resolution. Page can be cropped as images.
 2. View PDF in html mode. Browse and edit html page by page. Bookmarks and thumbnails.
 3. In image mode, recognize texts in PDF(OCR). 
-   When OCR in batch, following can be set:
-	-  Whether convert pages as images, or extract images from pages
-	-  DPI or scale ratio
-	-  Nine algorithms about image enhancement
-	-  Binary threshold
-	-  Rotation angle
-	-  whether deskew automatically
-	-  Whether invert colors
-	-  Languages list and their order
-	-  whether insert page separators
 4. Convert pages of PDF as images. Options like format, density, color space, compression, quality, etc.
 5. Convert PDF files as html files in batch. Options: Whether one html for each page or one html for each PDF; The way to handle fonts/images: embed, save separately, or ignore.
 6. Combine multiple images as PDF file. Options like compression, page size, margin size, header, author, etc. 
@@ -285,24 +270,35 @@ This requirement is delayed due to limited development time.
 
 ![Snap-pdf](https://mararsh.github.io/MyBox/snap-pdf-en.jpg)       
 
-### Edit Texts <a id="editText"></a>     
-1. File charset can be either detected automatically or set manually. Target file charset can be selected to implement encoding conversion. BOM setting is supported.
-2. Detect line break automatically. Convert line break. Show lines number.      
-   Support LF(Unix/Linux), CR(Apple), and CRLF(Windows).
-3. Find and replace. In current page, or in whole file. Counting. Support regular expression.
-4. Locate. Go to position of specified character or specified line.
-5. Filter lines. By “Include One”, “Not Include All”, “Include All”, or “Not Include Any”.      
-   Support regular expression.      
-   Cumulative filter. Filtered results can be saved. Select whether include lines number.     
-6. Hexadecimal codes according file's charset can be viewed, scrolled, and selected synchronously.
-7. Paginate. Fit for viewing or editing very large file, such as logs in size of several GBs.
+### Editor Base<a id="editTextBase"></a>     
+1. General functions of editing, like copy/paste/cut/delete/selectAll/undo/redo/recover. And their shortcuts.
+2. Find and replace:
+	-  In current page, or in whole file.
+	-  From beginning, or from cursor.
+	-  Whether case-insensitive.
+	-  Support multiple lines.
+	-  Support regular expression. Provide examples.
+	-  Counting.
+3. Locate. Go to position of specified character or specified line.
+4. Filter lines:
+	-  By “Include One”, “Not Include All”, “Include All”, or “Not Include Any”.     
+	-  Support regular expression. 
+	-  Cumulative filter. 
+	-  Filtered results can be saved. Select whether include lines number.    
+5. Paginate. Fit for viewing or editing very large file, such as logs in size of several GBs.
 	-  Set page size.
 	-  Pages navigation bar
 	-  Load and display first page, and scan the file in background to count characters number and lines number. 
 	   Part of functions are unavaliable while counting. Interface will be refreshed automatically after counting process is complete.
 	-  Make sure correction of finding, replacing, and filtering of strings that are across pages.
-8. General functions of editing, like copy/paste/cut/delete/selectAll/undo/redo/recover. And their shortcuts.
-9. Auto-save periodically.
+6. Auto-save periodically.
+
+
+### Edit Texts <a id="editText"></a>     
+1. File charset can be either detected automatically or set manually. Target file charset can be selected to implement encoding conversion. BOM setting is supported.
+2. Detect line break automatically. Convert line break. Show lines number.      
+   Support LF(Unix/Linux), CR(Apple), and CRLF(Windows).
+3. Hexadecimal codes according file's charset can be viewed, scrolled, and selected synchronously.
 
 ![Snap-textEditor](https://mararsh.github.io/MyBox/snap-textEditor-en.jpg)        
 
@@ -310,20 +306,8 @@ This requirement is delayed due to limited development time.
 1. Bytes are expressed as 2 hexadecimal characters. All blanks, line breaks, and invalid values are ignored.
 2. Input boxes of general ASCII characters.
 3. Break lines, which is only for display and has not actual effect. By bytes number or by some defined bytes.
-4. Find and replace. In current page, or in whole file. Counting. Support regular expression.
-5. Locate. Go to position of specified character or specified line.
-6. Filter lines. By “Include One”, “Not Include All”, “Include All”, or “Not Include Any”.  Support regular expression.
-7. Cumulative filter. Filtered results can be saved. Select whether include lines number.
-8. Select charset to decode bytes which can be viewed, scrolled, and selected synchronously.
-9. Paginate. Fit for viewing or editing very large file, such as binary file in size of several GBs.
-	-  Set page size.
-	-  Pages navigation bar
-	-  Load and display first page, and scan the file in background to count bytes number and lines number. 
-	   Part of functions are unavaliable while counting. Interface will be refreshed automatically after counting process is complete.
-	-  Make sure correction of finding, replacing, and filtering of bytes group that are across pages. 
-	   When break lines by bytes number, crossing pages need not concerned.
-10. General functions of editing, like copy/paste/cut/delete/selectAll/undo/redo/recover. And their shortcuts.
-11. Auto-save periodically.
+4. Select charset to decode bytes which can be viewed, scrolled, and selected synchronously.
+5. Paginate. When break lines by bytes number, crossing pages need not concerned.
 
 ### Edit Html<a id="htmlEditor"></a>     
 1. Edit local web pages or online pages in rich text. (Not support FrameSet)
@@ -335,9 +319,7 @@ This requirement is delayed due to limited development time.
 1. Provide buttons to help inputting formats.
 2. Convert to html synchronously. Options supported.
 3. Convert to text synchronously.
-4. Find and replace. Support regular expression.
-5. Locate. Go to position of specified character or specified line.
-6. Auto-save periodically.
+
 
 ### Conversion between html and Markdown<a id="htmlMarkdownConversion" />
 1. Convert files' charset in batch.
@@ -384,43 +366,50 @@ This requirement is delayed due to limited development time.
 
 
 ### Image Manufacture <a id="imageManufacture"></a>    
- 1. Clipboard
+1. Copy
+	-  Copy part inside current scope, part outside of current scope, or whole image.    
+	-  Whether cut margins, whether copy to system clipboard.    
+ 	-  Set background color.
+2. Crop
+	-  Crop part inside current scope, or part outside of current scope.    
+	-  Whether cut margins, whether copy to system clipboard.    
+ 	-  Set background color.
+3. Clipboard
 	-  Clip sources:    
 	   -  "Copy"(CTRL+c) against whole image or selected part of image    
-       -  Cutted part of image     
-       -  System clipboard    
+	   - Cutted part of image     
+	   - System clipboard    
 	   -  Image files in system    
 	   -  Example clips      
 	-  Manage clips list: Add, Delete, Clear, Set maximum number of list.
 	-  Click button "Paste"(CTRL+v) anytime while editing image, to paste the first image in clipboard onto current edited image. Or double click item in the clipboard to paste it.
 	-  Drag and move pasted clip on current edited image, to adjust clip's size and location.
 	-  Options to paste: whether keep aspect ratio, blending mode, opacity, rotation angle.
-2. Crop: Define "Scope" to set the contents to cut. Options: background color, whether put cropped part into clipboard.
-3. Scale: By dargging anchors, by setting scale, or by inputting pixel values with 4 types of keeping aspect ratio.
-4. Color. Increase, decrease, set, filter, or invert value of saturaion, brightness, hue, Red/Green/Blue/Yellow/Cyan/Magenta channel, RGB itself, or opacity. 
+4. Scale: By dargging anchors, by setting scale, or by inputting pixel values with 4 types of keeping aspect ratio.
+5. Color. Increase, decrease, set, filter, or invert value of saturaion, brightness, hue, Red/Green/Blue/Yellow/Cyan/Magenta channel, RGB itself, or opacity. 
    Premultiplied Alpha is supported for setting opacity.
-5. Effect. Posterize(reduce colors), thresholding, gray, black-white, Sepia, emboss, edges detect. Algorithms and parameters can be set.
-6. Enhancement. Contrast, smooth, sharpen, convolution. Algorithms and parameters can be set.
+6. Effect. Posterize(reduce colors), thresholding, gray, black-white, Sepia, emboss, edges detect. Algorithms and parameters can be set.
+7. Enhancement. Contrast, smooth, sharpen, convolution. Algorithms and parameters can be set.
    Algorithms and parameters can be set. Convolution can be defined and referred to make more effects.
-7. Rich Text: Edit texts in web page mode. Drag the texts on image to adjust its location and size. Options: background color, opacity, margions width, arc size, rotation angle.
+8. Rich Text: Edit texts in web page mode. Drag the texts on image to adjust its location and size. Options: background color, opacity, margions width, arc size, rotation angle.
    Due to implementation of snapshots, results look blur. I have not found solution. 
-8. Text. Options like font family, style, size, color, opacity, shadow, angle, whether outline, whether veritical. Locating text by clicking image.
-9. Pen:
+9. Text. Options like font family, style, size, color, opacity, shadow, angle, whether outline, whether veritical. Locating text by clicking image.
+10. Pen:
 	-  Polyline: One line by multiple drawing. Options: stroke width, color, whether dotted, opacity.
 	-  Lines: One line by one drawing. Options: stroke width, color, whether dotted, opacity.
 	-  Eraser: One line by one drawing. Always transparent. Option: stroke width.
 	-  Frosted Class: One dot by one drawing. Options: stroke width, intensity, shape(Rectangle or circle).
 	-  Mosaic: One dot by one drwaing. Options: stroke width, intensity, shape(Rectangle or circle).
 	-  Shape: Rectangle, Circle, Ellipse, Polygon. Options: stroke width, color, whether dotted, opacity, whether fill-in, color of fill-in.
-10. Transform. Shear, mirror, and rotate.
-11. Round corner. Arc and background color can be set.
-12. Shadow. Options: background color, shadow size, whether apply Premultiplied Alpha.
-13. Margins. Blur margins with option of whether apply Premultiplied Alpha; Drag anchors to adjust margins; add margins by setting width; cut margins by setting width or color.
-14. Editing histories:
+11. Transform. Shear, mirror, and rotate.
+12. Round corner. Arc and background color can be set.
+13. Shadow. Options: background color, shadow size, whether apply Premultiplied Alpha.
+14. Margins. Blur margins with option of whether apply Premultiplied Alpha; Drag anchors to adjust margins; add margins by setting width; cut margins by setting width or color.
+15. Editing histories:
 	- Each modification will be recorded as image histories.
 	- Manage histories:  Delete, Clear, Recover selected history as current editing image, Set maximum number of histories.
 	- Undo(CTRL+z) and redo(CTRL+y) previous modification. Recover to original image(CTRL+r) at any time. Either select one history to recover.
-15. "Scope":  Rulers to limit pixels to operate, including area rulers, color matching rulers, or rulers mixed by both types.
+16. "Scope":  Rulers to limit pixels to operate, including area rulers, color matching rulers, or rulers mixed by both types.
 	- Define area: Rectangle, Circle, Ellipse, Polygon. Can be excluded.
 	- Define colors list. Can pick colors directly from image by Color Palette.
 	- Select object for color matching, including Red/Green/Blue channel, saturaion, brightness, hue, RGB, with distance defined. Can be excluded.
@@ -429,15 +418,15 @@ This requirement is delayed due to limited development time.
 	- Scope can be applied against Copy, Crop, Color, Effect, Convolution. 
 	- Scope can be defined against image history and reference image too. The part in scope can be copied into clipboard.
 	- Scopes can be saved with names. User can manage them: Add, Delete, Clear, Edit, Use selected item in scopes list.	
-16. Pop current image. Option: Whether always on top.
-17. Interface in style of "Visible As Need": 
+17. Pop current image. Option: Whether always on top.
+18. Interface in style of "Visible As Need": 
 	- Show/Hide left pane(F4), show/hide right pane(F5)
 	- Show/Hide scope pane(F7), show/hide image pane(F8)
 	- Vertical accordion menus
 	- Overlaying tabs to switch
 	- Show/Hide controls as functions
-18. Demo: One clicking to diaplay examples of kinds of image manufacture about "Color", "Effect", "Enhancement", and blend modes.
-19. Image Manufacture in batch.
+19. Demo: One clicking to diaplay examples of kinds of image manufacture about "Color", "Effect", "Enhancement", and blend modes.
+20. Image Manufacture in batch.
 
 ![Snap-imageManufacture](https://mararsh.github.io/MyBox/snap-imageManufacture-en.jpg)       
 
@@ -469,7 +458,7 @@ This requirement is delayed due to limited development time.
 
 ### Recognize Texts in Image <a id="imageOCR"></a>      
 1. Preprocess image:
-	-  Nine algorithms about image enhancement
+	-  Algorithms of image maunfacture
 	-  Scale ratio
 	-  Binary threshold
 	-  Rotation angle
@@ -488,7 +477,13 @@ This requirement is delayed due to limited development time.
 4. When recognize in batch, options:
 	-  Whether generate html or PDF 
 	-  Whether merge recognized texts
-5. Embedded "fast" data files of English and Chinese which support OCR out of box on windows. User can download more data if need.   
+5. OCR engine:
+	-  For win, both embedded and installed tesseract can be selected.
+	-  For linux and mac, only installed tesseract can be used. 
+6. OCR data files path:
+	-  Can be set as any path which can be read. If tesseract is installed, suggest to set as its subdirectory "tessdata".
+	-  MyBox includes "fast" data files of English and Chinese, and will copy them to this path if it has not them.        
+Notice:  When use embedded engine, it is better that name of file/path is pure English to avoid failure.      
 
 ![Snap-ocr](https://mararsh.github.io/MyBox/snap-ocr-en.jpg)       
 
@@ -1082,7 +1077,6 @@ Notice: This set of functions is based on ffmpeg, and user need download ffmpeg 
 	-  Set duration:      
  	  	- If "unlimited", record untill user click button "Stop".      
  	  	- If valid value, recording will end when duration completes. User can click button "Stop" to finish recording at any time.        
-	-  Only support Windows and Linux now.      
 3. Convert videos/audios in batch:      
 	-  Source files are listed as files/directories.      
 	-  Source files are listed as streams and medias information.      
@@ -1110,6 +1104,13 @@ Notice: This set of functions is based on ffmpeg, and user need download ffmpeg 
 9. Button "Play Automatically": click to play by compute and click again to stop it.      
 
 ![Snap-game](https://mararsh.github.io/MyBox/snap-game-en.jpg)       
+
+### Game-Mine<a id="gameMine" />     
+1. Set grid size and number of mines. Examlpes.     
+2. Help to see mines.
+3. Recover game when trigger mine.       
+
+![Snap-game](https://mararsh.github.io/MyBox/snap-mine-en.jpg)       
 
 
 ### Others<a id="mediaOthers" />
@@ -1177,16 +1178,13 @@ Notice: Some downloads look standstill at 0% but they are actually dragging data
 	- Wdith of thumbnail
 	- Maximum width to display sampled images
 	- Whether copy image in system clipboard
-6. OCR:
-	-  Data files path of OCR
-	-  Set data files and their order
-7. Map:
+6. Map:
 	-  Data keys of map
-8. Dev：
+7. Dev：
 	-  Open/Close "Dev Mode"
 	-  Path of source codes
-9. Clear personal settings.
-10. Open data directory.
+8. Clear personal settings.
+9. Open data directory.
 
 ## Window <a id="windows"></a>     
 1. Open/Close monitor bar of Memory.
@@ -1217,6 +1215,14 @@ Developers need notice: JavaFx screen is not same as physical screen and has dif
 
 
 # Development Logs <a id="devLog"></a>      
+2020-10-11 v6.3.4        
+-  Editors: Find/Replace by multiple lines, case-insensitive, from cursor, and with examples of regular expression; Pop doument; Close/Open right pane; Set whether update right pane synchronously.
+-  OCR: Base on tesseract commandd line, support win/linux/mac, and compatible with verison 3/4/5; Set psm and all parameters, and provide parameters list.
+-  Record screen: Support mac; Miaow when start and end; Set frame rate and bitrates by default.     
+-  Game "Mine": Set size of grid and number of mines, and provide examlpes; Help to see all mines; Recover game when trigger mine.   
+-  Major issues solved: Locate regular expression incorrectly for Find/Replace in Editor; Incorrect logic in version migration.       
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.4)                
+
 2020-9-27 v6.3.3        
 -  Image Manufacture: Show/Hide scope pane and image pane; Enlarge image size when pasted clip out of bound; Demo of blend modes; Parameter "invert" for convolution kernel.
 -  Data Tools: Helps to input CSV; Time with milliseconds or zone; Display points one by one in map; Set of snap images for Epidemic Report.

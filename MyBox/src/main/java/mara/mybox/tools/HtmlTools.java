@@ -13,7 +13,6 @@ import java.util.regex.Pattern;
 import javax.imageio.ImageIO;
 import mara.mybox.fxml.FxmlStage;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import net.sf.image4j.codec.ico.ICODecoder;
 
 /**

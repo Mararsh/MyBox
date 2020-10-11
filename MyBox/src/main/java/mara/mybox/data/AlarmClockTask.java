@@ -11,7 +11,6 @@ import mara.mybox.controller.AlarmClockRunController;
 import mara.mybox.data.AlarmClock.AlarmType;
 import mara.mybox.fxml.FxmlStage;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.scheduledTasks;
 import mara.mybox.tools.DateTools;
 

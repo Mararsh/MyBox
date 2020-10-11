@@ -4,6 +4,7 @@ import java.nio.charset.Charset;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.fxml.FXML;
 import javafx.scene.control.IndexRange;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
@@ -154,26 +155,31 @@ public class TextEditerController extends FileEditerController {
         if (!findWhole || sourceInformation.getPagesNumber() <= 1) {
             return;
         }
-        currentFound = -1;
-        if (sourceInformation.getCurrentFound() >= 0) {
-            int pos = (int) (sourceInformation.getCurrentFound() % sourceInformation.getPageSize());
-            int p = (int) (sourceInformation.getCurrentFound() / sourceInformation.getPageSize() + 1);
+        currentFound = null;
+        if (sourceInformation.getCurrentFound() != null) {
+            long start = sourceInformation.getCurrentFound().getStart();
+            long end = sourceInformation.getCurrentFound().getEnd();
+            int pos = (int) (start % sourceInformation.getPageSize());
+            int p = (int) (start / sourceInformation.getPageSize() + 1);
             if (p == currentPage) {
                 if (pos > 0 && sourceInformation.getLineBreak() == FileEditInformation.Line_Break.CRLF) {
                     pos -= StringTools.countNumber(mainArea.getText().substring(0, pos), "\n");
                 }
-                currentFound = pos;
+                int pstart = pos;
+                int pend = pstart + (int) (end - start);
+                currentFound = new IndexRange(pstart, pend);
             }
         }
     }
 
+    @FXML
     @Override
-    protected void setPairArea(String text) {
-        if (isSettingValues || pairArea == null
-                || !splitPane.getItems().contains(rightPane)) {
+    public void refreshPairAction() {
+        if (isSettingValues || pairArea == null) {
             return;
         }
         isSettingValues = true;
+        String text = mainArea.getText();
         if (!text.isEmpty()) {
             String hex = ByteTools.bytesToHexFormat(text.getBytes(sourceInformation.getCharset()));
             String hexLF = ByteTools.bytesToHexFormat("\n".getBytes(sourceInformation.getCharset())).trim();
@@ -183,6 +189,7 @@ public class TextEditerController extends FileEditerController {
                 hex = TextTools.bomHex(sourceInformation.getCharset().name()) + " " + hex;
             }
             pairArea.setText(hex);
+            setPairAreaSelection();
         } else {
             pairArea.clear();
         }

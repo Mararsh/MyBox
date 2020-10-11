@@ -21,7 +21,6 @@ import mara.mybox.fxml.FxmlControl;
 import mara.mybox.image.file.ImageFileWriters;
 import static mara.mybox.image.file.ImageJpgFile.getJpegCompressionTypes;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import org.apache.pdfbox.rendering.ImageType;
 

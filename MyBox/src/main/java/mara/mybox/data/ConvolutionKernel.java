@@ -754,8 +754,9 @@ public class ConvolutionKernel {
         return gray;
     }
 
-    public void setGray(boolean gray) {
+    public ConvolutionKernel setGray(boolean gray) {
         this.gray = gray;
+        return this;
     }
 
     public boolean isInvert() {

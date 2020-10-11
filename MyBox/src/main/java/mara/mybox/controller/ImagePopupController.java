@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**

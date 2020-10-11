@@ -29,7 +29,6 @@ import mara.mybox.image.ImageManufacture.KeepRatioType;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**

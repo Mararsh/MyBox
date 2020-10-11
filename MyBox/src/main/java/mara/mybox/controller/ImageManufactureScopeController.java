@@ -47,8 +47,6 @@ import mara.mybox.data.IntPoint;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.db.TableColorData;
 import mara.mybox.db.TableImageScope;
-import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
@@ -70,6 +68,7 @@ import mara.mybox.tools.DateTools;
 import static mara.mybox.tools.DoubleTools.scale;
 import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 
@@ -104,7 +103,8 @@ public class ImageManufactureScopeController extends ImageViewerController {
     @FXML
     protected ListView<String> pointsList;
     @FXML
-    protected CheckBox areaExcludedCheck, colorExcludedCheck, scopeOutlineKeepRatioCheck, eightNeighborCheck;
+    protected CheckBox areaExcludedCheck, colorExcludedCheck, scopeOutlineKeepRatioCheck, eightNeighborCheck,
+            ignoreTransparentCheck;
     @FXML
     protected TextField scopeNameInput, rectLeftTopXInput, rectLeftTopYInput, rightBottomXInput, rightBottomYInput,
             circleCenterXInput, circleCenterYInput, circleRadiusInput;
@@ -270,6 +270,16 @@ public class ImageManufactureScopeController extends ImageViewerController {
                         return;
                     }
                     scope.setColorExcluded(newValue);
+                    indicateScope();
+                }
+            });
+
+            ignoreTransparentCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                    if (isSettingValues || scope == null) {
+                        return;
+                    }
                     indicateScope();
                 }
             });
@@ -865,6 +875,9 @@ public class ImageManufactureScopeController extends ImageViewerController {
                     try {
                         PixelsOperation pixelsOperation = PixelsOperation.create(imageView.getImage(),
                                 scope, PixelsOperation.OperationType.ShowScope);
+                        if (!ignoreTransparentCheck.isSelected()) {
+                            pixelsOperation.setSkipTransparent(false);
+                        }
                         scopedImage = pixelsOperation.operateFxImage();
                         if (task == null || isCancelled()) {
                             return false;

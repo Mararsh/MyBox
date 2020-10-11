@@ -26,8 +26,8 @@ import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.tools.HtmlTools;
+import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
@@ -79,11 +79,7 @@ public class FFmpegOptionsController extends BaseController {
 
     public FFmpegOptionsController() {
         baseTitle = AppVariables.message("FFmpegOptions");
-
         TipsLabelKey = "FFmpegOptionsTips";
-
-        executableName = "FFmpegExecutable";
-        executableDefault = "D:\\Programs\\ffmpeg\\bin\\ffmpeg.exe";
     }
 
     @Override
@@ -91,7 +87,7 @@ public class FFmpegOptionsController extends BaseController {
         try {
             super.initValues();
             executableName = "FFmpegExecutable";
-            executableDefault = "D:\\Programs\\ffmpeg\\bin\\ffmpeg.exe";
+            executableDefault = "win".equals(SystemTools.os()) ? "D:\\Programs\\ffmpeg\\bin\\ffmpeg.exe" : "/home/ffmpeg";
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -324,7 +320,7 @@ public class FFmpegOptionsController extends BaseController {
                 resolutionSelector.getSelectionModel().select(dres);
             }
 
-            videoFrameRate = -1;
+            videoFrameRate = 30;
             if (videoFrameRateSelector != null) {
                 videoFrameRateSelector.getItems().add(message("NotSetting"));
                 videoFrameRateSelector.getItems().addAll(Arrays.asList(
@@ -338,7 +334,7 @@ public class FFmpegOptionsController extends BaseController {
                             }
                             if (newValue == null || newValue.isEmpty()
                             || message("NotSetting").equals(newValue)) {
-                                videoFrameRate = -1;
+                                videoFrameRate = 30;
                                 return;
                             }
                             try {
@@ -350,10 +346,10 @@ public class FFmpegOptionsController extends BaseController {
                             }
                         });
                 videoFrameRateSelector.getSelectionModel().select(
-                        AppVariables.getUserConfigValue("ffmpegDefaultFrameRate", message("NotSetting")));
+                        AppVariables.getUserConfigValue("ffmpegDefaultFrameRate", "ntsc  30000/1001"));
             }
 
-            videoBitrate = -1;
+            videoBitrate = 5000;
             if (videoBitrateSelector != null) {
                 videoBitrateSelector.getItems().add(message("NotSetting"));
                 videoBitrateSelector.getItems().addAll(Arrays.asList(
@@ -370,7 +366,7 @@ public class FFmpegOptionsController extends BaseController {
                             }
                             if (newValue == null || newValue.isEmpty()
                             || message("NotSetting").equals(newValue)) {
-                                videoBitrate = -1;
+                                videoBitrate = 5000;
                                 return;
                             }
                             try {
@@ -402,16 +398,15 @@ public class FFmpegOptionsController extends BaseController {
                             }
                         });
                 videoBitrateSelector.getSelectionModel().select(
-                        AppVariables.getUserConfigValue("ffmpegDefaultVideoBitrate", message("NotSetting")));
+                        AppVariables.getUserConfigValue("ffmpegDefaultVideoBitrate", "5mbps"));
             }
 
-            audioBitrate = -1;
+            audioBitrate = 192;
             if (audioBitrateSelector != null) {
                 audioBitrateSelector.getItems().add(message("NotSetting"));
                 audioBitrateSelector.getItems().addAll(Arrays.asList(
-                        message("192kbps"), message("128kbps"), message("96kbps"), message("64kbps"),
-                        message("256kbps"), message("320kbps"), message("32kbps"), message("1411.2kbps"),
-                        message("328kbps")
+                        "192kbps", "128kbps", "96kbps", "64kbps", "256kbps", "320kbps",
+                        "32kbps", "1411.2kbps", "328kbps"
                 ));
                 audioBitrateSelector.getSelectionModel().selectedItemProperty().addListener(
                         (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
@@ -420,7 +415,7 @@ public class FFmpegOptionsController extends BaseController {
                             }
                             if (newValue == null || newValue.isEmpty()
                             || message("NotSetting").equals(newValue)) {
-                                audioBitrate = -1;
+                                audioBitrate = 192;
                                 return;
                             }
                             try {
@@ -443,10 +438,10 @@ public class FFmpegOptionsController extends BaseController {
                             }
                         });
                 audioBitrateSelector.getSelectionModel().select(
-                        AppVariables.getUserConfigValue("ffmpegDefaultAudioBitrate", message("NotSetting")));
+                        AppVariables.getUserConfigValue("ffmpegDefaultAudioBitrate", "192kbps"));
             }
 
-            audioSampleRate = -1;
+            audioSampleRate = 44100;
             if (audioSampleRateSelector != null) {
                 audioSampleRateSelector.getItems().add(message("NotSetting"));
                 audioSampleRateSelector.getItems().addAll(Arrays.asList(
@@ -461,7 +456,7 @@ public class FFmpegOptionsController extends BaseController {
                             }
                             if (newValue == null || newValue.isEmpty()
                             || message("NotSetting").equals(newValue)) {
-                                audioSampleRate = -1;
+                                audioSampleRate = 44100;
                                 return;
                             }
                             try {
@@ -484,7 +479,7 @@ public class FFmpegOptionsController extends BaseController {
                             }
                         });
                 audioSampleRateSelector.getSelectionModel().select(
-                        AppVariables.getUserConfigValue("ffmpegDefaultAudioSampleRate", message("NotSetting")));
+                        AppVariables.getUserConfigValue("ffmpegDefaultAudioSampleRate", message("44100Hz")));
             }
 
             volumn = null;
@@ -923,9 +918,6 @@ public class FFmpegOptionsController extends BaseController {
                     }
                 }
             }
-            if (videoFrameRateSelector != null) {
-                videoFrameRateSelector.getSelectionModel().select(null);
-            }
             if (crfSelector != null) {
                 crfSelector.getSelectionModel().select(null);
             }
@@ -942,16 +934,16 @@ public class FFmpegOptionsController extends BaseController {
                 resolutionSelector.getSelectionModel().select(null);
             }
             if (videoFrameRateSelector != null) {
-                videoFrameRateSelector.getSelectionModel().select(null);
+                videoFrameRateSelector.getSelectionModel().select("ntsc  30000/1001");
             }
             if (videoBitrateSelector != null) {
-                videoBitrateSelector.getSelectionModel().select(null);
+                videoBitrateSelector.getSelectionModel().select("5mbps");
             }
             if (audioBitrateSelector != null) {
-                audioBitrateSelector.getSelectionModel().select(null);
+                audioBitrateSelector.getSelectionModel().select("192kbps");
             }
             if (audioSampleRateSelector != null) {
-                audioSampleRateSelector.getSelectionModel().select(null);
+                audioSampleRateSelector.getSelectionModel().select(message("44100Hz"));
             }
             if (volumnSelector != null) {
                 volumnSelector.getSelectionModel().select(null);

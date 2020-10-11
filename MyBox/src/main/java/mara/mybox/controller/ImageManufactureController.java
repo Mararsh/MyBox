@@ -324,9 +324,7 @@ public class ImageManufactureController extends ImageViewerController {
                         redoButton.setDisable(true);
                         return;
                     }
-                    int index = newVal.intValue();
-                    undoButton.setDisable(index < 0 || index == historiesList.getItems().size() - 1);
-                    redoButton.setDisable(index <= 0);
+                    checkHistoryIndex();
                 }
             });
 
@@ -540,11 +538,11 @@ public class ImageManufactureController extends ImageViewerController {
         }
         ControlStyle.setIcon(imagePaneControl, ControlStyle.getIcon("iconDoubleLeft.png"));
         mainSplitPane.getDividers().get(0).positionProperty().addListener(mainDividerListener);
-        mainSplitPane.applyCss();
         if (scopeController.scopeAllRadio.isSelected()) {
             scopeController.scopeRectangleRadio.fire();
         }
         fitSize();
+        mainSplitPane.applyCss();
         isSettingValues = false;
     }
 
@@ -558,8 +556,8 @@ public class ImageManufactureController extends ImageViewerController {
         mainSplitPane.getDividers().get(0).positionProperty().removeListener(mainDividerListener);
         mainSplitPane.getItems().remove(scopePane);
         ControlStyle.setIcon(imagePaneControl, ControlStyle.getIcon("iconDoubleRight.png"));
-        mainSplitPane.applyCss();
         fitSize();
+        mainSplitPane.applyCss();
         isSettingValues = false;
     }
 
@@ -589,8 +587,8 @@ public class ImageManufactureController extends ImageViewerController {
         }
         ControlStyle.setIcon(scopePaneControl, ControlStyle.getIcon("iconDoubleRight.png"));
         mainSplitPane.getDividers().get(0).positionProperty().addListener(mainDividerListener);
-        mainSplitPane.applyCss();
         fitSize();
+        mainSplitPane.applyCss();
         isSettingValues = false;
     }
 
@@ -627,6 +625,12 @@ public class ImageManufactureController extends ImageViewerController {
 
         historiesBox.applyCss();
         AppVariables.setUserConfigValue(baseName + "RecordHistories", recordHistoriesCheck.isSelected());
+    }
+
+    protected void checkHistoryIndex() {
+        int index = historyIndex.get();
+        undoButton.setDisable(index < 0 || index >= historiesList.getItems().size() - 1);
+        redoButton.setDisable(index <= 0);
     }
 
     protected void loadImageHistories() {
@@ -817,6 +821,7 @@ public class ImageManufactureController extends ImageViewerController {
                         for (int i = 0; i < historiesList.getItems().size(); ++i) {
                             historiesList.getItems().set(i, historiesList.getItems().get(i));
                         }
+                        checkHistoryIndex();
                     }
                 };
                 Thread thread = new Thread(task);
@@ -921,7 +926,7 @@ public class ImageManufactureController extends ImageViewerController {
                             for (int i = 0; i < historiesList.getItems().size(); ++i) {
                                 historiesList.getItems().set(i, historiesList.getItems().get(i));
                             }
-
+                            checkHistoryIndex();
                         }
                     });
                 }

@@ -13,7 +13,6 @@ import mara.mybox.data.QueryCondition.DataOperation;
 import static mara.mybox.db.DerbyBase.failed;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara

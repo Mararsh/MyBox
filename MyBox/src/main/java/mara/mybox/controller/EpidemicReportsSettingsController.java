@@ -24,7 +24,6 @@ import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 

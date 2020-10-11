@@ -1262,7 +1262,7 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
         if (file == null) {
             return;
         }
-        recordFileWritten(file, targetPathKey, VisitHistory.FileType.Image, VisitHistory.FileType.Image);
+        recordFileWritten(file, VisitHistory.FileType.Image);
 
         synchronized (this) {
             if (task != null) {
@@ -1300,7 +1300,7 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
         if (file == null) {
             return;
         }
-        recordFileWritten(file, targetPathKey, VisitHistory.FileType.Text, VisitHistory.FileType.Text);
+        recordFileWritten(file, VisitHistory.FileType.Text);
 
         synchronized (this) {
             if (task != null) {

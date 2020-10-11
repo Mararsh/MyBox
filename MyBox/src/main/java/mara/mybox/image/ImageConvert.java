@@ -24,7 +24,6 @@ import static mara.mybox.image.file.ImageFileReaders.readBrokenImage;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 import net.sf.image4j.codec.ico.ICODecoder;

@@ -13,8 +13,8 @@ import java.util.TimeZone;
  */
 public class CommonValues {
 
-    public static final String AppVersion = "6.3.3";
-    public static final String AppVersionDate = "2020-09-27";
+    public static final String AppVersion = "6.3.4";
+    public static final String AppVersionDate = "2020-10-11";
 
     public static final String AppDerbyUser = "mara";
     public static final String AppDerbyPassword = "mybox";
@@ -167,6 +167,7 @@ public class CommonValues {
     public static final String SecurityCertificatesBypassFxml = "/fxml/SecurityCertificatesBypass.fxml";
     public static final String DownloadFxml = "/fxml/Download.fxml";
     public static final String GameElimniationFxml = "/fxml/GameElimination.fxml";
+    public static final String GameMineFxml = "/fxml/GameMine.fxml";
     public static final String GeographyCodeFxml = "/fxml/GeographyCode.fxml";
     public static final String GeographyCodeEditFxml = "/fxml/GeographyCodeEdit.fxml";
     public static final String GeographyCodeImportInternalCSVFxml = "/fxml/GeographyCodeImportInternalCSV.fxml";
@@ -200,6 +201,7 @@ public class CommonValues {
     public static final String LocationDataImportMovebankFxml = "/fxml/LocationDataImportMovebank.fxml";
     public static final String LocationDataExportFxml = "/fxml/LocationDataExport.fxml";
     public static final String LocationToolsFxml = "/fxml/LocationTools.fxml";
+    public static final String MessageAuthorFxml = "/fxml/MessageAuthor.fxml";
 
     public static final Locale LocaleZhCN = new Locale("zh", "CN");
     public static final Locale LocaleEn = new Locale("en");

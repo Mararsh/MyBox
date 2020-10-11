@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import mara.mybox.data.StringValues;
 import mara.mybox.tools.DateTools;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 
 /**
@@ -62,6 +62,43 @@ public class TableStringValues extends DerbyBase {
                  ResultSet results = statement.executeQuery(sql)) {
             while (results.next()) {
                 records.add(results.getString("string_value"));
+            }
+        } catch (Exception e) {
+            failed(e);
+//            // logger.debug(e.toString());
+        }
+        return records;
+    }
+
+    public static List<StringValues> values(String name) {
+        List<StringValues> records = new ArrayList<>();
+        if (name == null || name.trim().isEmpty()) {
+            return records;
+        }
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            conn.setReadOnly(true);
+            return values(conn, name);
+        } catch (Exception e) {
+            failed(e);
+//            // logger.debug(e.toString());
+        }
+        return records;
+    }
+
+    public static List<StringValues> values(Connection conn, String name) {
+        List<StringValues> records = new ArrayList<>();
+        if (conn == null || name == null || name.trim().isEmpty()) {
+            return records;
+        }
+        String sql = " SELECT * FROM String_Values WHERE key_name='"
+                + stringValue(name) + "' ORDER BY create_time DESC";
+        try ( Statement statement = conn.createStatement();
+                 ResultSet results = statement.executeQuery(sql)) {
+            while (results.next()) {
+                StringValues record = new StringValues(name,
+                        results.getString("string_value"),
+                        results.getTimestamp("create_time"));
+                records.add(record);
             }
         } catch (Exception e) {
             failed(e);

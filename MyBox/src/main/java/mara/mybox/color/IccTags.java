@@ -9,7 +9,6 @@ import static mara.mybox.tools.ByteTools.bytesToInt;
 import static mara.mybox.tools.ByteTools.intToBytes;
 import static mara.mybox.tools.ByteTools.subBytes;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara

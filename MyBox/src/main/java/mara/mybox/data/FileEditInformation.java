@@ -13,7 +13,6 @@ import static mara.mybox.tools.TextTools.bomBytes;
 import static mara.mybox.tools.TextTools.bomSize;
 import static mara.mybox.tools.TextTools.checkCharsetByBom;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 import thridparty.EncodingDetect;
@@ -21,14 +20,12 @@ import thridparty.EncodingDetect;
 /**
  * @Author Mara
  * @CreateDate 2018-12-10 13:06:33
- * @Version 1.0
- * @Description
  * @License Apache License Version 2.0
  */
 public abstract class FileEditInformation extends FileInformation {
 
     protected Edit_Type editType;
-    protected boolean withBom, totalNumberRead, findRegex;
+    protected boolean withBom, totalNumberRead, findRegex, caseInsensitive;
     protected Charset charset;
     protected int pageSize;
     protected long objectsNumber, currentPageLineStart, currentPageLineEnd;
@@ -36,14 +33,15 @@ public abstract class FileEditInformation extends FileInformation {
     protected long currentPageObjectStart, currentPageObjectEnd;
     protected String findString, replaceString;
     protected String[] filterStrings;
-    protected long currentFound, currentLine;
+    protected long currentLine;
+    protected LongIndex currentFound;
     protected Line_Break lineBreak;
     protected StringFilterType filterType;
     protected int lineBreakWidth, currentPosition, currentSelectionLength;
     protected String lineBreakValue;
 
     public enum Edit_Type {
-        Text, Bytes
+        Text, Bytes, Markdown
     }
 
     public enum StringFilterType {
@@ -78,7 +76,8 @@ public abstract class FileEditInformation extends FileInformation {
         currentPage = pagesNumber = 1;
         pageSize = 100000;
         currentPageObjectStart = currentPageObjectEnd = -1;
-        currentFound = currentLine = -1;
+        currentLine = -1;
+        currentFound = null;
         currentPosition = -1;
         switch (System.lineSeparator()) {
             case "\r\n":
@@ -233,6 +232,17 @@ public abstract class FileEditInformation extends FileInformation {
         }
     }
 
+    public String findFirst(long from, boolean findRegex, boolean caseInsensitive) {
+        if (from <= 0) {
+            currentFound = null;
+        } else {
+            currentFound = new LongIndex(from - 1);
+        }
+        this.findRegex = findRegex;
+        this.caseInsensitive = caseInsensitive;
+        return findNext();
+    }
+
     public abstract boolean readTotalNumbers();
 
     public abstract String readPage();
@@ -246,8 +256,6 @@ public abstract class FileEditInformation extends FileInformation {
 
     public abstract boolean writePage(FileEditInformation sourceInfo,
             long pageNumber, String text);
-
-    public abstract String findFirst();
 
     public abstract String findNext();
 
@@ -330,11 +338,11 @@ public abstract class FileEditInformation extends FileInformation {
     }
 
     public boolean matchRegularExpression(String string) {
-        return StringTools.match(string, filterStrings[0]);
+        return StringTools.match(string, filterStrings[0], false);
     }
 
     public boolean NotMatchRegularExpression(String string) {
-        return !StringTools.match(string, filterStrings[0]);
+        return !StringTools.match(string, filterStrings[0], false);
     }
 
     public String filterTypeName() {
@@ -445,12 +453,20 @@ public abstract class FileEditInformation extends FileInformation {
         this.currentPageObjectEnd = currentPageObjectEnd;
     }
 
-    public long getCurrentFound() {
+    public void setCaseInsensitive(boolean caseInsensitive) {
+        this.caseInsensitive = caseInsensitive;
+    }
+
+    public LongIndex getCurrentFound() {
         return currentFound;
     }
 
-    public void setCurrentFound(long currentFound) {
+    public void setCurrentFound(LongIndex currentFound) {
         this.currentFound = currentFound;
+    }
+
+    public void setCurrentSelectionLength(int currentSelectionLength) {
+        this.currentSelectionLength = currentSelectionLength;
     }
 
     public int getCurrentPosition() {

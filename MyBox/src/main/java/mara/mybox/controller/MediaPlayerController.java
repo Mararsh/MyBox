@@ -28,6 +28,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -49,7 +50,6 @@ import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
@@ -77,21 +77,21 @@ public class MediaPlayerController extends BaseController {
     protected List<Integer> randomPlayed;
 
     @FXML
-    private BorderPane borderPane;
+    protected BorderPane borderPane;
     @FXML
-    private MediaView mediaView;
+    protected MediaView mediaView;
     @FXML
-    private VBox leftBox, playerBox, playerControlBox;
+    protected VBox leftBox, playerBox, playerControlBox;
     @FXML
-    private Slider timeSlider, volumeSlider;
+    protected Slider timeSlider, volumeSlider;
     @FXML
-    private ToggleButton soundButton, fullScreenButton;
+    protected ToggleButton soundButton, fullScreenButton;
     @FXML
-    private CheckBox randomCheck, autoplayCheck, msCheck;
+    protected CheckBox randomCheck, autoplayCheck, msCheck;
     @FXML
-    private Label elapsedTimeLabel, leftTimeLabel;
+    protected Label elapsedTimeLabel, leftTimeLabel;
     @FXML
-    private ComboBox<String> repeatSelector, speedSelector;
+    protected ComboBox<String> repeatSelector, speedSelector;
     @FXML
     protected MediaTableController tableController;
     @FXML
@@ -297,30 +297,24 @@ public class MediaPlayerController extends BaseController {
 
     @Override
     public void keyHandler(KeyEvent event) {
+        KeyCode code = event.getCode();
+        if (code != null) {
+            switch (code) {
+                case S:
+                    playButton.fire();
+                    return;
+                case Q:
+                    stopButton.fire();
+                    return;
+                case M:
+                    soundButton.fire();
+                    return;
+                case F:
+                    fullScreenButton.fire();
+                    return;
+            }
+        }
         super.keyHandler(event);
-
-        String text = event.getText();
-        if (text == null || text.isEmpty()) {
-            return;
-        }
-        switch (text) {
-            case "s":
-            case "S":
-                playButton.fire();
-                return;
-            case "q":
-            case "Q":
-                stopButton.fire();
-                return;
-            case "m":
-            case "M":
-                soundButton.fire();
-                return;
-            case "f":
-            case "F":
-                fullScreenButton.fire();
-
-        }
     }
 
     protected void initPlayer() {
@@ -357,6 +351,7 @@ public class MediaPlayerController extends BaseController {
             tableController.markFileHandling(-1);
 
         } catch (Exception e) {
+            logger.debug(e.toString());
         }
     }
 
@@ -483,6 +478,9 @@ public class MediaPlayerController extends BaseController {
     @Override
     public void dataChanged() {
         try {
+            if (isSettingValues) {
+                return;
+            }
             if (player == null && currentMedia == null) {
                 if (autoplayCheck.isSelected() && !tableData.isEmpty()) {
                     currentIndex = 0;
@@ -502,13 +500,13 @@ public class MediaPlayerController extends BaseController {
         }
     }
 
-    public void load(URI uri) {
+    public void load(File file) {
         try {
-            this.uri = uri;
-            tableData.clear();
-            tableData.add(new MediaInformation(uri));
             initPlayer();
+            tableData.clear();
+            tableController.addFile(file);
         } catch (Exception e) {
+            logger.debug(e.toString());
         }
     }
 
@@ -625,6 +623,13 @@ public class MediaPlayerController extends BaseController {
                 }
                 currentMedia = tableData.get(currentIndex);
                 if (currentMedia.getURI() == null) {
+                    initPlayer();
+                    return;
+                }
+
+                if ((currentMedia.getVideoEncoding() == null || currentMedia.getVideoEncoding().isBlank())
+                        && (currentMedia.getAudioEncoding() == null || currentMedia.getAudioEncoding().isBlank())) {
+                    popInformation(message("MediaNotReady"), 6000);
                     initPlayer();
                     return;
                 }
@@ -773,6 +778,7 @@ public class MediaPlayerController extends BaseController {
 
     public void checkControls() {
         Platform.runLater(new Runnable() {
+            @Override
             public void run() {
                 checkFullScreen();
                 checkSoundButton();
@@ -782,6 +788,7 @@ public class MediaPlayerController extends BaseController {
 
     public void mediaReady() {
         Platform.runLater(new Runnable() {
+            @Override
             public void run() {
 
                 player.play();
@@ -800,6 +807,7 @@ public class MediaPlayerController extends BaseController {
 
     public void mediaEnd() {
         Platform.runLater(new Runnable() {
+            @Override
             public void run() {
                 atEndOfMedia = true;
                 if (randomCheck.isSelected()) {
@@ -849,14 +857,17 @@ public class MediaPlayerController extends BaseController {
 
     public void showPlayer() {
         Platform.runLater(new Runnable() {
+            @Override
             public void run() {
                 try {
                     mediaView.setMediaPlayer(player);
                     mediaView.setOnError(new EventHandler<MediaErrorEvent>() {
+                        @Override
                         public void handle(MediaErrorEvent t) {
                             if (t.getMediaError() != null) {
                                 popMediaError(t.getMediaError().toString());
                             }
+                            player.stop();
                         }
                     });
                 } catch (Exception e) {
@@ -868,8 +879,8 @@ public class MediaPlayerController extends BaseController {
     }
 
     protected void updateStatus() {
-
         Platform.runLater(new Runnable() {
+            @Override
             public void run() {
                 if (player == null) {
                     elapsedTimeLabel.setText("");

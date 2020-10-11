@@ -41,7 +41,6 @@ import mara.mybox.image.ImageMosaic.MosaicType;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.tools.SystemTools;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 
@@ -1544,7 +1543,7 @@ public class ImageManufacture {
             BufferedImage target = new BufferedImage(width, height, imageType);
             Graphics2D g = target.createGraphics();
             g.drawImage(source, 0, 0, width, height, null);
-            AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC, opacity);
+            AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity);
             g.setComposite(ac);
             if (strokeWidth > 0) {
                 if (strokeColor.getRGB() == 0) {

@@ -14,7 +14,6 @@ import mara.mybox.fxml.TableColorCell;
 import mara.mybox.fxml.TableTableMessageCell;
 import mara.mybox.fxml.TableTimeFormatCell;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 

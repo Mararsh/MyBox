@@ -15,7 +15,7 @@ import static mara.mybox.value.AppVariables.message;
 public class MediaInformation extends FileInformation {
 
     protected String address, resolution, info, videoEncoding, audioEncoding;
-    protected boolean isCurrent;
+    protected boolean isCurrent, finish;
     protected int width, height;
     protected String html;
 
@@ -168,6 +168,14 @@ public class MediaInformation extends FileInformation {
 
     public void setHtml(String html) {
         this.html = html;
+    }
+
+    public boolean isFinish() {
+        return finish;
+    }
+
+    public void setFinish(boolean finish) {
+        this.finish = finish;
     }
 
 }

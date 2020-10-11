@@ -26,7 +26,6 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -169,12 +168,16 @@ public class FFmpegConvertMediaFilesController extends FFmpegBatchController {
         }
         if (ffmpegOptionsController.videoBitrate > 0) {
             ffmpeg.addArguments("-b:v", ffmpegOptionsController.videoBitrate + "k");
+        } else {
+            ffmpeg.addArguments("-b:v", "5000k");
         }
         if (ffmpegOptionsController.aspect != null) {
             ffmpeg.addArguments("-aspect", ffmpegOptionsController.aspect);
         }
         if (ffmpegOptionsController.videoFrameRate > 0) {
             ffmpeg.addArguments("-r", ffmpegOptionsController.videoFrameRate + "");
+        } else {
+            ffmpeg.addArguments("-r", "30");
         }
         if (ffmpegOptionsController.width > 0 && ffmpegOptionsController.height > 0) {
             ffmpeg.addArguments("-s", ffmpegOptionsController.width + "x" + ffmpegOptionsController.height);
@@ -187,9 +190,13 @@ public class FFmpegConvertMediaFilesController extends FFmpegBatchController {
         }
         if (ffmpegOptionsController.audioBitrate > 0) {
             ffmpeg.addArguments("-b:a", ffmpegOptionsController.audioBitrate + "k");
+        } else {
+            ffmpeg.addArguments("-b:a", "192k");
         }
         if (ffmpegOptionsController.audioSampleRate > 0) {
             ffmpeg.addArguments("-ar", ffmpegOptionsController.audioSampleRate + "");
+        } else {
+            ffmpeg.addArguments("-ar", "44100");
         }
         if (ffmpegOptionsController.volumn != null) {
             ffmpeg.addArguments("-af", "volume=" + ffmpegOptionsController.volumn);

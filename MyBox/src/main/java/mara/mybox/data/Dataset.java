@@ -6,7 +6,6 @@ import mara.mybox.db.TableBase;
 import mara.mybox.db.TableDataset;
 import mara.mybox.fxml.FxmlColor;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara

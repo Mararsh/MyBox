@@ -4,6 +4,8 @@ import java.awt.Toolkit;
 import java.io.File;
 import java.net.URI;
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,6 +62,10 @@ import mara.mybox.data.BaseTask;
 import mara.mybox.data.GeographyCode;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.data.VisitHistory.FileType;
+import static mara.mybox.db.DerbyBase.dbHome;
+import static mara.mybox.db.DerbyBase.failed;
+import static mara.mybox.db.DerbyBase.login;
+import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.TableUserConf;
 import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
@@ -145,7 +151,7 @@ public class BaseController implements Initializable {
     @FXML
     protected Hyperlink regexLink;
     @FXML
-    protected CheckBox topCheck, saveCloseCheck;
+    protected CheckBox topCheck, saveCloseCheck, closeRightPaneCheck;
     @FXML
     protected ToggleGroup targetExistGroup, fileTypeGroup;
     @FXML
@@ -355,7 +361,7 @@ public class BaseController implements Initializable {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue,
                             Boolean newValue) {
-                        if (!topCheck.isVisible()) {
+                        if (!topCheck.isVisible() || topCheck.isDisabled()) {
                             return;
                         }
                         if (getMyStage() != null) {
@@ -617,11 +623,9 @@ public class BaseController implements Initializable {
                 public void run() {
                     Platform.runLater(() -> {
                         getMyStage().toFront();
-                        if (topCheck != null) {
+                        if (topCheck != null && topCheck.isVisible() && !topCheck.isDisabled()) {
                             topCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "Top", true));
-                            if (topCheck.isVisible()) {
-                                getMyStage().setAlwaysOnTop(topCheck.isSelected());
-                            }
+                            getMyStage().setAlwaysOnTop(topCheck.isSelected());
                         }
                         timer = null;
                     });
@@ -637,13 +641,54 @@ public class BaseController implements Initializable {
             if (splitPane == null || splitPane.getDividers().isEmpty()) {
                 return;
             }
-            if (!AppVariables.getUserConfigBoolean(baseName + "ShowRightControl", true)) {
-                hideRightPane();
+            if (closeRightPaneCheck != null) {
+                closeRightPaneCheck.selectedProperty().addListener(
+                        (ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
+                            if (isSettingValues) {
+                                return;
+                            }
+                            AppVariables.setUserConfigValue(baseName + "CloseRightPane", closeRightPaneCheck.isSelected());
+                            checkRightPaneClose();
+                        });
+                isSettingValues = true;
+                closeRightPaneCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "CloseRightPane", false));
+                isSettingValues = false;
+                checkRightPaneClose();
             }
-            setSplitDividerPositions();
+
+            checkRightPaneHide();
+
         } catch (Exception e) {
             logger.error(e.toString());
         }
+    }
+
+    public void checkRightPaneClose() {
+        if (isSettingValues || splitPane == null || rightPane == null
+                || closeRightPaneCheck == null || rightPaneControl == null) {
+            return;
+        }
+        if (closeRightPaneCheck.isSelected()) {
+            hideRightPane();
+            rightPaneControl.setVisible(false);
+        } else {
+            rightPaneControl.setVisible(true);
+            showRightPane();
+        }
+    }
+
+    public void checkRightPaneHide() {
+        if (isSettingValues || splitPane == null || rightPane == null
+                || rightPaneControl == null || !rightPaneControl.isVisible()
+                || !splitPane.getItems().contains(rightPane)
+                || splitPane.getItems().size() == 1) {
+            return;
+        }
+        if (!AppVariables.getUserConfigBoolean(baseName + "ShowRightControl", true)) {
+            hideRightPane();
+        }
+        setSplitDividerPositions();
+        splitPane.applyCss();
     }
 
     public void setSplitDividerPositions() {
@@ -697,7 +742,6 @@ public class BaseController implements Initializable {
                 };
                 splitPane.getDividers().get(index).positionProperty().addListener(rightDividerListener);
             }
-            splitPane.applyCss();
             isSettingValues = false;
         } catch (Exception e) {
             logger.error(e.toString());
@@ -729,6 +773,7 @@ public class BaseController implements Initializable {
         isSettingValues = false;
         ControlStyle.setIcon(leftPaneControl, ControlStyle.getIcon("iconDoubleRight.png"));
         setSplitDividerPositions();
+        splitPane.applyCss();
         AppVariables.setUserConfigValue(baseName + "ShowLeftControl", false);
     }
 
@@ -743,6 +788,7 @@ public class BaseController implements Initializable {
         isSettingValues = false;
         ControlStyle.setIcon(leftPaneControl, ControlStyle.getIcon("iconDoubleLeft.png"));
         setSplitDividerPositions();
+        splitPane.applyCss();
         AppVariables.setUserConfigValue(baseName + "ShowLeftControl", true);
     }
 
@@ -760,7 +806,7 @@ public class BaseController implements Initializable {
     }
 
     public void hideRightPane() {
-        if (splitPane == null || rightPane == null
+        if (isSettingValues || splitPane == null || rightPane == null
                 || rightPaneControl == null || !rightPaneControl.isVisible()
                 || !splitPane.getItems().contains(rightPane)
                 || splitPane.getItems().size() == 1) {
@@ -771,11 +817,12 @@ public class BaseController implements Initializable {
         isSettingValues = false;
         ControlStyle.setIcon(rightPaneControl, ControlStyle.getIcon("iconDoubleLeft.png"));
         setSplitDividerPositions();
+        splitPane.applyCss();
         AppVariables.setUserConfigValue(baseName + "ShowRightControl", false);
     }
 
     public void showRightPane() {
-        if (splitPane == null || rightPane == null
+        if (isSettingValues || splitPane == null || rightPane == null
                 || rightPaneControl == null || !rightPaneControl.isVisible()
                 || splitPane.getItems().contains(rightPane)) {
             return;
@@ -783,8 +830,9 @@ public class BaseController implements Initializable {
         isSettingValues = true;
         splitPane.getItems().add(rightPane);
         isSettingValues = false;
-        ControlStyle.setIcon(leftPaneControl, ControlStyle.getIcon("iconDoubleRight.png"));
+        ControlStyle.setIcon(rightPaneControl, ControlStyle.getIcon("iconDoubleRight.png"));
         setSplitDividerPositions();
+        splitPane.applyCss();
         AppVariables.setUserConfigValue(baseName + "ShowRightControl", true);
     }
 
@@ -1412,41 +1460,34 @@ public class BaseController implements Initializable {
     }
 
     public void recordFileOpened(final File file) {
-        if (file == null) {
-            return;
-        }
-        if (file.isDirectory()) {
-            String path = file.getPath();
-            AppVariables.setUserConfigValue(sourcePathKey, path);
-            AppVariables.setUserConfigValue(LastPathKey, path);
-            VisitHistoryTools.readPath(SourcePathType, path);
-        } else {
-            String path = file.getParent();
-            String fname = file.getAbsolutePath();
-            AppVariables.setUserConfigValue(sourcePathKey, path);
-            AppVariables.setUserConfigValue(LastPathKey, path);
-            VisitHistoryTools.readPath(SourcePathType, path);
-            VisitHistoryTools.readFile(SourceFileType, fname);
-        }
-
+        recordFileOpened(file, sourcePathKey, SourcePathType, SourceFileType);
     }
 
-    public void recordFileOpened(final File file, int pathType, int fileType) {
+    public void recordFileOpened(final File file, int fileType) {
+        recordFileOpened(file, VisitHistoryTools.getPathKey(fileType), fileType, fileType);
+    }
+
+    private void recordFileOpened(final File file, String sourcePathKey, int pathType, int fileType) {
         if (file == null) {
             return;
         }
-        if (file.isDirectory()) {
-            String path = file.getPath();
-            AppVariables.setUserConfigValue(LastPathKey, path);
-            VisitHistoryTools.readPath(pathType, path);
-        } else if (file.isFile()) {
-            String path = file.getParent();
-            String fname = file.getAbsolutePath();
-            AppVariables.setUserConfigValue(LastPathKey, path);
-            VisitHistoryTools.readPath(pathType, path);
-            VisitHistoryTools.readFile(fileType, fname);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            if (file.isDirectory()) {
+                String path = file.getPath();
+                AppVariables.setUserConfigValue(conn, LastPathKey, path);
+                VisitHistoryTools.readPath(conn, pathType, path);
+            } else {
+                String path = file.getParent();
+                String fname = file.getAbsolutePath();
+                AppVariables.setUserConfigValue(conn, sourcePathKey, path);
+                AppVariables.setUserConfigValue(conn, LastPathKey, path);
+                VisitHistoryTools.readPath(conn, pathType, path);
+                VisitHistoryTools.readFile(conn, fileType, fname);
+            }
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
         }
-
     }
 
     public void recordFileWritten(String file) {
@@ -1461,24 +1502,30 @@ public class BaseController implements Initializable {
         recordFileWritten(file, VisitHistoryTools.getPathKey(fileType), fileType, fileType);
     }
 
-    public void recordFileWritten(final File file,
-            String targetPathKey, int TargetPathType, int TargetFileType) {
+    private void recordFileWritten(final File file, String targetPathKey, int TargetPathType, int TargetFileType) {
         if (file == null) {
             return;
         }
-
-        if (file.isDirectory()) {
-            String path = file.getPath();
-            AppVariables.setUserConfigValue(targetPathKey, path);
-            AppVariables.setUserConfigValue(LastPathKey, path);
-            VisitHistoryTools.writePath(TargetPathType, path);
-        } else if (file.isFile()) {
-            String path = file.getParent();
-            String fname = file.getAbsolutePath();
-            AppVariables.setUserConfigValue(targetPathKey, path);
-            AppVariables.setUserConfigValue(LastPathKey, path);
-            VisitHistoryTools.writePath(TargetPathType, path);
-            VisitHistoryTools.writeFile(TargetFileType, fname);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            if (file.isDirectory()) {
+                String path = file.getPath();
+                AppVariables.setUserConfigValue(conn, targetPathKey, path);
+                AppVariables.setUserConfigValue(conn, LastPathKey, path);
+                VisitHistoryTools.writePath(conn, TargetPathType, path);
+                VisitHistoryTools.readPath(conn, TargetPathType, path);
+            } else {
+                String path = file.getParent();
+                String fname = file.getAbsolutePath();
+                AppVariables.setUserConfigValue(conn, targetPathKey, path);
+                AppVariables.setUserConfigValue(conn, LastPathKey, path);
+                VisitHistoryTools.writePath(conn, TargetPathType, path);
+                VisitHistoryTools.writeFile(conn, TargetFileType, fname);
+                VisitHistoryTools.readPath(conn, TargetPathType, path);
+                VisitHistoryTools.readFile(conn, TargetFileType, fname);
+            }
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
         }
     }
 
@@ -1490,21 +1537,24 @@ public class BaseController implements Initializable {
         if (file == null) {
             return;
         }
-
-        if (file.isDirectory()) {
-            String path = file.getPath();
-            AppVariables.setUserConfigValue(sourcePathKey, path);
-            AppVariables.setUserConfigValue(LastPathKey, path);
-            VisitHistoryTools.readPath(SourcePathType, path);
-        } else {
-            String path = file.getParent();
-            String fname = file.getAbsolutePath();
-            AppVariables.setUserConfigValue(sourcePathKey, path);
-            AppVariables.setUserConfigValue(LastPathKey, path);
-            VisitHistoryTools.readPath(SourcePathType, path);
-            VisitHistoryTools.readFile(AddFileType, fname);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            if (file.isDirectory()) {
+                String path = file.getPath();
+                AppVariables.setUserConfigValue(conn, sourcePathKey, path);
+                AppVariables.setUserConfigValue(conn, LastPathKey, path);
+                VisitHistoryTools.readPath(conn, SourcePathType, path);
+            } else {
+                String path = file.getParent();
+                String fname = file.getAbsolutePath();
+                AppVariables.setUserConfigValue(conn, sourcePathKey, path);
+                AppVariables.setUserConfigValue(conn, LastPathKey, path);
+                VisitHistoryTools.readPath(conn, SourcePathType, path);
+                VisitHistoryTools.readFile(conn, AddFileType, fname);
+            }
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
         }
-
     }
 
     @FXML
@@ -1986,10 +2036,10 @@ public class BaseController implements Initializable {
     }
 
     public File makeTargetFile(File sourceFile, File targetPath) {
-        if (sourceFile.isFile()) {
-            return makeTargetFile(sourceFile.getName(), targetPath);
-        } else {
+        if (sourceFile.isDirectory()) {
             return makeTargetFile(sourceFile.getName(), "", targetPath);
+        } else {
+            return makeTargetFile(sourceFile.getName(), targetPath);
         }
     }
 
@@ -2297,10 +2347,10 @@ public class BaseController implements Initializable {
                     return;
                 }
                 for (File f : files) {
-                    if (f.isFile() && !f.equals(AppVariables.MyboxConfigFile)) {
-                        f.delete();
-                    } else if (f.isDirectory() && !AppVariables.MyBoxReservePaths.contains(f)) {
+                    if (f.isDirectory() && !AppVariables.MyBoxReservePaths.contains(f)) {
                         FileTools.deleteDir(f);
+                    } else if (!f.equals(AppVariables.MyboxConfigFile)) {
+                        f.delete();
                     }
                 }
             }

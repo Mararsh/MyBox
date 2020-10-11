@@ -19,7 +19,6 @@ import javax.sound.sampled.Port;
 import javax.sound.sampled.SourceDataLine;
 import javazoom.jl.player.Player;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonValues;
 
 /**

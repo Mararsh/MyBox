@@ -20,7 +20,6 @@ import javafx.stage.Stage;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.tools.ConfigTools;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**

@@ -10,7 +10,6 @@ import java.util.zip.InflaterOutputStream;
 import javafx.scene.control.IndexRange;
 import mara.mybox.data.FileEditInformation.Line_Break;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonValues;
 
 /**

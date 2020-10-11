@@ -11,7 +11,6 @@ import mara.mybox.data.ConvolutionKernel;
 import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara

@@ -5,7 +5,6 @@ import mara.mybox.db.TableBase;
 import mara.mybox.db.TableGeographyCode;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -22,7 +21,8 @@ public class GeographyCode extends TableData {
     protected GeographyCodeLevel levelCode;
     protected String name, fullName, chineseName, englishName, levelName,
             code1, code2, code3, code4, code5, alias1, alias2, alias3, alias4, alias5, comments,
-            continentName, countryName, provinceName, cityName, countyName, townName, villageName, buildingName;
+            continentName, countryName, provinceName, cityName, countyName, townName, villageName,
+            buildingName, poiName;
     protected double longitude, latitude, altitude, precision;
     protected GeographyCode ownerCode, continentCode, countryCode, provinceCode, cityCode,
             countyCode, townCode, villageCode, buildingCode;
@@ -516,6 +516,30 @@ public class GeographyCode extends TableData {
      */
     public String getName() {
         name = name(this);
+        if (name == null) {
+            switch (level) {
+                case 1:
+                    return message("Earth");
+                case 2:
+                    return continentName;
+                case 3:
+                    return countryName;
+                case 4:
+                    return provinceName;
+                case 5:
+                    return cityName;
+                case 6:
+                    return countyName;
+                case 7:
+                    return townName;
+                case 8:
+                    return villageName;
+                case 9:
+                    return buildingName;
+                case 10:
+                    return poiName;
+            }
+        }
         return name;
     }
 
@@ -592,83 +616,100 @@ public class GeographyCode extends TableData {
     }
 
     public String getContinentName() {
-        if (level == 2) {
-            continentName = getName();
-        } else if (level > 2 && getContinentCode() != null) {
-            continentName = name(getContinentCode());
+        if (continentName == null) {
+            if (level == 2) {
+                continentName = getName();
+            } else if (level > 2 && getContinentCode() != null) {
+                continentName = name(getContinentCode());
+            }
         }
         return continentName;
     }
 
     public String getCountryName() {
-        if (level == 3) {
-            countryName = getName();
-        } else if (level > 3 && getCountryCode() != null) {
-            countryName = name(getCountryCode());
+        if (countryName == null) {
+            if (level == 3) {
+                countryName = getName();
+            } else if (level > 3 && getCountryCode() != null) {
+                countryName = name(getCountryCode());
+            }
         }
         return countryName;
     }
 
     public String getProvinceName() {
-        if (level == 4) {
-            provinceName = getName();
-        } else if (level > 4 && getProvinceCode() != null) {
-            provinceName = name(getProvinceCode());
+        if (provinceName == null) {
+            if (level == 4) {
+                provinceName = getName();
+            } else if (level > 4 && getProvinceCode() != null) {
+                provinceName = name(getProvinceCode());
+            }
         }
         return provinceName;
     }
 
     public String getCityName() {
-        if (level == 5) {
-            cityName = getName();
-        } else if (level > 5 && getCityCode() != null) {
-            cityName = name(getCityCode());
+        if (cityName == null) {
+            if (level == 5) {
+                cityName = getName();
+            } else if (level > 5 && getCityCode() != null) {
+                cityName = name(getCityCode());
+            }
         }
         return cityName;
     }
 
     public String getCountyName() {
-        if (level == 6) {
-            countyName = getName();
-        } else if (level > 6 && getCountyCode() != null) {
-            countyName = name(getCountyCode());
+        if (countyName == null) {
+            if (level == 6) {
+                countyName = getName();
+            } else if (level > 6 && getCountyCode() != null) {
+                countyName = name(getCountyCode());
+            }
         }
         return countyName;
     }
 
     public String getTownName() {
-        if (level == 7) {
-            townName = getName();
-        } else if (level > 7 && getTownCode() != null) {
-            townName = name(getTownCode());
+        if (townName == null) {
+            if (level == 7) {
+                townName = getName();
+            } else if (level > 7 && getTownCode() != null) {
+                townName = name(getTownCode());
+            }
         }
         return townName;
     }
 
     public String getVillageName() {
-        if (level == 8) {
-            villageName = getName();
-        } else if (level > 8 && getVillageCode() != null) {
-            villageName = name(getVillageCode());
+        if (villageName == null) {
+            if (level == 8) {
+                villageName = getName();
+            } else if (level > 8 && getVillageCode() != null) {
+                villageName = name(getVillageCode());
+            }
         }
         return villageName;
     }
 
     public String getBuildingName() {
-        if (level == 9) {
-            buildingName = getName();
-        } else if (level > 9 && getBuildingCode() != null) {
-            buildingName = name(getBuildingCode());
+        if (buildingName == null) {
+            if (level == 9) {
+                buildingName = getName();
+            } else if (level > 9 && getBuildingCode() != null) {
+                buildingName = name(getBuildingCode());
+            }
         }
         return buildingName;
     }
 
-    public String getPOIName() {
-        if (level == 10) {
-            return getName();
-        } else {
-            return null;
+    public String getPoiName() {
+        if (poiName == null) {
+            if (level == 10) {
+                poiName = getName();
+            }
         }
+        return poiName;
     }
 
     public long getContinent() {
@@ -1041,6 +1082,10 @@ public class GeographyCode extends TableData {
 
     public void setBuildingCode(GeographyCode buildingCode) {
         this.buildingCode = buildingCode;
+    }
+
+    public void setPoiName(String poiName) {
+        this.poiName = poiName;
     }
 
     public void setName(String name) {

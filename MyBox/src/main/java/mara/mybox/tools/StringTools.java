@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javafx.scene.control.IndexRange;
+import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -108,132 +110,111 @@ public class StringTools {
         return String.format("%-" + nameLength + "s:" + value, name);
     }
 
-    public static String replaceAll(String string, String oldString,
-            String newString) {
-        if (string == null || string.isEmpty()
-                || oldString == null || oldString.isEmpty()
-                || newString == null) {
-            return string;
+    public static boolean match(String string, String find, boolean caseInsensitive) {
+        if (string == null || find == null) {
+            return false;
         }
         try {
-            String replaced = string.replace(
-                    oldString.subSequence(0, oldString.length()),
-                    newString.subSequence(0, newString.length())
-            );
-            return replaced;
-        } catch (Exception e) {
-            //            logger.debug(e.toString());
-            return string;
-        }
-    }
-
-    public static Map<String, Object> lastAndCount(String string,
-            String subString) {
-        Map<String, Object> results = new HashMap<>();
-        results.put("count", 0);
-        results.put("lastIndex", -1);
-        results.put("lastMatch", "");
-        if (string == null || string.isEmpty() || subString == null || subString.isEmpty() || string.length() < subString.length()) {
-            return results;
-        }
-        int fromIndex = 0;
-        int count = 0;
-        int lastIndex = -1;
-        while (true) {
-            int index = string.indexOf(subString, fromIndex);
-            if (index < 0) {
-                break;
-            }
-            lastIndex = index;
-            fromIndex = index + 1;
-            count++;
-        }
-        results.put("count", count);
-        results.put("lastIndex", lastIndex);
-        results.put("lastMatch", subString);
-        return results;
-    }
-
-    public static boolean match(String string, String regex) {
-        try {
-            Pattern pattern = Pattern.compile(regex);
+            int mode = (caseInsensitive ? Pattern.CASE_INSENSITIVE : 0x00) | Pattern.MULTILINE;
+            Pattern pattern = Pattern.compile(find, mode);
             Matcher matcher = pattern.matcher(string);
             return matcher.matches();
         } catch (Exception e) {
-            //            logger.debug(e.toString());
+            logger.debug(e.toString());
             return false;
         }
     }
 
-    public static int lastRegex(String string, String regex) {
-        try {
-            Pattern pattern = Pattern.compile(regex);
-            Matcher matcher = pattern.matcher(string);
-            int index = -1;
-            while (matcher.find()) {
-                index = matcher.start();
-            }
-            return index;
-        } catch (Exception e) {
-            //            logger.debug(e.toString());
-            return -1;
+    public static IndexRange first(String string, String find, int from,
+            boolean isRegex, boolean caseInsensitive, boolean multiline) {
+        if (string == null || find == null) {
+            return null;
         }
-    }
-
-    public static int firstRegex(String string, String regex) {
-        return firstRegex(string, regex, 0);
-    }
-
-    public static int firstRegex(String string, String regex, int from) {
         try {
-            Pattern pattern = Pattern.compile(regex);
+            int mode = (isRegex ? 0x00 : Pattern.LITERAL)
+                    | (caseInsensitive ? Pattern.CASE_INSENSITIVE : 0x00)
+                    | (multiline ? Pattern.MULTILINE : 0x00);
+            Pattern pattern = Pattern.compile(find, mode);
             Matcher matcher = pattern.matcher(string);
-            if (matcher.find(from)) {
-                return matcher.start();
+            if (matcher.find(from < 0 ? 0 : from)) {
+                IndexRange range = new IndexRange(matcher.start(), matcher.end());
+                return range;
             } else {
-                return -1;
+                return null;
             }
         } catch (Exception e) {
-            //            logger.debug(e.toString());
-            return -1;
+            logger.debug(e.toString());
+            return null;
         }
     }
 
-    public static Map<String, Object> lastAndCountRegex(String string,
-            String regex) {
+    public static IndexRange last(String string, String find, int from,
+            boolean isRegex, boolean caseInsensitive, boolean multiline) {
+        if (string == null || find == null) {
+            return null;
+        }
+        try {
+            int mode = (isRegex ? 0x00 : Pattern.LITERAL)
+                    | (caseInsensitive ? Pattern.CASE_INSENSITIVE : 0x00)
+                    | (multiline ? Pattern.MULTILINE : 0x00);
+            Pattern pattern = Pattern.compile(find, mode);
+            Matcher matcher = pattern.matcher(string);
+            if (!matcher.find(from < 0 ? 0 : from)) {
+                return null;
+            }
+            IndexRange range = new IndexRange(matcher.start(), matcher.end());
+            while (matcher.find()) {
+                range = new IndexRange(matcher.start(), matcher.end());
+            }
+            return range;
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return null;
+        }
+    }
+
+    public static Map<String, Object> lastAndCount(String string, String regex,
+            boolean isRegex, boolean caseInsensitive, boolean multiline) {
         Map<String, Object> results = new HashMap<>();
         results.put("count", 0);
-        results.put("lastIndex", -1);
+        results.put("lastRange", null);
         results.put("lastMatch", "");
         try {
             if (string == null || string.isEmpty() || regex == null || regex.isEmpty()) {
                 return results;
             }
+            int mode = (isRegex ? 0x00 : Pattern.LITERAL)
+                    | (caseInsensitive ? Pattern.CASE_INSENSITIVE : 0x00)
+                    | (multiline ? Pattern.MULTILINE : 0x00);
             int count = 0;
-            int lastIndex = -1;
             String lastMatch = "";
-            Pattern pattern = Pattern.compile(regex);
+            Pattern pattern = Pattern.compile(regex, mode);
             Matcher matcher = pattern.matcher(string);
+            IndexRange range = null;
             while (matcher.find()) {
                 count++;
                 lastMatch = matcher.group();
-                lastIndex = matcher.start();
+                range = new IndexRange(matcher.start(), matcher.end());
             }
             results.put("count", count);
-            results.put("lastIndex", lastIndex);
+            results.put("lastRange", range);
             results.put("lastMatch", lastMatch);
         } catch (Exception e) {
-            //            logger.debug(e.toString());
+            logger.debug(e.toString());
         }
         return results;
     }
 
-    public static int countNumberRegex(String string, String regex) {
-        if (string == null || string.isEmpty() || regex == null || regex.isEmpty()) {
+    public static int countNumber(String string, String find,
+            boolean isRegex, boolean caseInsensitive, boolean multiline) {
+        if (string == null || string.isEmpty() || find == null || find.isEmpty()) {
             return 0;
         }
         try {
-            Pattern pattern = Pattern.compile(regex);
+            int mode = (isRegex ? 0x00 : Pattern.LITERAL)
+                    | (caseInsensitive ? Pattern.CASE_INSENSITIVE : 0x00)
+                    | (multiline ? Pattern.MULTILINE : 0x00);
+            Pattern pattern = Pattern.compile(find, mode);
             Matcher matcher = pattern.matcher(string);
             int count = 0;
             while (matcher.find()) {
@@ -246,21 +227,60 @@ public class StringTools {
         }
     }
 
-    public static int countNumber(String string, String subString) {
-        if (string == null || string.isEmpty() || subString == null || subString.isEmpty() || string.length() < subString.length()) {
-            return 0;
+    public static int countNumber(String string, String find) {
+        return countNumber(string, find, false, false, true);
+    }
+
+    public static String replace(String string, String find, String newString, int from,
+            boolean isRegex, boolean caseInsensitive, boolean multiline) {
+        if (string == null || find == null || newString == null) {
+            return string;
         }
-        int fromIndex = 0;
-        int count = 0;
-        while (true) {
-            int index = string.indexOf(subString, fromIndex);
-            if (index < 0) {
-                break;
+        try {
+            int mode = (isRegex ? 0x00 : Pattern.LITERAL)
+                    | (caseInsensitive ? Pattern.CASE_INSENSITIVE : 0x00)
+                    | (multiline ? Pattern.MULTILINE : 0x00);
+            Pattern pattern = Pattern.compile(find, mode);
+            Matcher matcher = pattern.matcher(string);
+            if (matcher.find(from < 0 ? 0 : from)) {
+                StringBuffer s = new StringBuffer();
+                matcher.appendReplacement(s, newString);
+                matcher.appendTail(s);
+                return s.toString();
+            } else {
+                return string;
             }
-            fromIndex = index + 1;
-            count++;
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return string;
         }
-        return count;
+    }
+
+    public static String replaceAll(String string, String find, String newString,
+            boolean isRegex, boolean caseInsensitive, boolean multiline) {
+        if (string == null || find == null || newString == null) {
+            return string;
+        }
+        try {
+            int mode = (isRegex ? 0x00 : Pattern.LITERAL)
+                    | (caseInsensitive ? Pattern.CASE_INSENSITIVE : 0x00)
+                    | (multiline ? Pattern.MULTILINE : 0x00);
+            Pattern pattern = Pattern.compile(find, mode);
+            Matcher matcher = pattern.matcher(string);
+            StringBuffer s = new StringBuffer();
+            while (matcher.find()) {
+                matcher.appendReplacement(s, newString);
+            }
+            matcher.appendTail(s);
+            return s.toString();
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return string;
+        }
+    }
+
+    public static String replaceAll(String string, String oldString, String newString) {
+        return replaceAll(string, oldString, newString, false, false, true);
     }
 
     // https://blog.csdn.net/zx1749623383/article/details/79540748

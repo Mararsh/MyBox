@@ -16,7 +16,6 @@ import javafx.scene.layout.Region;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**

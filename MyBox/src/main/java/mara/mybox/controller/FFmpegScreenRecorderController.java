@@ -7,24 +7,28 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import mara.mybox.data.VisitHistory;
+import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
+import mara.mybox.fxml.FxmlStage;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -53,30 +57,17 @@ public class FFmpegScreenRecorderController extends DataTaskController {
     public void initControls() {
         try {
             super.initControls();
-
             stopping = new SimpleBooleanProperty(false);
-
             os = SystemTools.os();
-            switch (os) {
-                case "linux":
 
-                    break;
-                case "win":
+            openCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                    AppVariables.setUserConfigValue(baseName + "Open", newValue);
+                }
+            });
+            openCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "Open", true));
 
-                    break;
-                case "mac":
-                default:
-                    startButton.setDisable(true);
-                    return;
-            }
-
-//            openCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-//                @Override
-//                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-//                    AppVariables.setUserConfigValue("FFmpegScreenRecorderOpen", newValue);
-//                }
-//            });
-//            openCheck.setSelected(AppVariables.getUserConfigBoolean("FFmpegScreenRecorderOpen", true));
             targetFileController.label(message("TargetFile"))
                     .isDirectory(false).isSource(false).mustExist(false).permitNull(false)
                     .name(baseName + "TargetFile", false).type(VisitHistory.FileType.Media);
@@ -162,6 +153,7 @@ public class FFmpegScreenRecorderController extends DataTaskController {
 
     @Override
     protected boolean doTask() {
+        FxmlControl.BenWu();
         if (timer != null) {
             timer.cancel();
             timer = null;
@@ -178,6 +170,11 @@ public class FFmpegScreenRecorderController extends DataTaskController {
                 break;
             case "linux":
                 if (!linuxParameters(parameters)) {
+                    return false;
+                }
+                break;
+            case "mac":
+                if (!macParameters(parameters)) {
                     return false;
                 }
                 break;
@@ -304,12 +301,38 @@ public class FFmpegScreenRecorderController extends DataTaskController {
         return true;
     }
 
+    protected boolean macParameters(List<String> parameters) {
+        try {
+            if (!"mac".equals(os) || parameters == null) {
+                return false;
+            }
+            // ffmpeg -f avfoundation -i "<screen device index>:<audio device index>" -r 30 -s 3360x2100 -pix_fmt uyvy422 output.yuv
+            parameters.add("-f");
+            parameters.add("avfoundation");
+            if (optionsController.videoCheck.isSelected()) {
+                parameters.add("-i");
+                if (optionsController.audioCheck.isSelected()) {
+                    parameters.add(optionsController.macVideo + ":" + optionsController.macAudio);
+                } else {
+                    parameters.add(optionsController.macVideo + "");
+                }
+            } else {
+                if (optionsController.audioCheck.isSelected()) {
+                    parameters.add(":" + optionsController.macAudio);
+                }
+            }
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+        return true;
+    }
+
     protected boolean startRecorder(List<String> parameters) {
         try {
             if (parameters == null) {
                 return false;
             }
-
             if (optionsController.audioCheck.isSelected() && !optionsController.disbaleAudio) {
                 if (optionsController.audioCodec != null) {
                     parameters.add("-acodec");
@@ -318,10 +341,16 @@ public class FFmpegScreenRecorderController extends DataTaskController {
                 if (optionsController.audioBitrate > 0) {
                     parameters.add("-b:a");
                     parameters.add(optionsController.audioBitrate + "k");
+                } else {
+                    parameters.add("-b:a");
+                    parameters.add("192k");
                 }
                 if (optionsController.audioSampleRate > 0) {
                     parameters.add("-ar");
                     parameters.add(optionsController.audioSampleRate + "");
+                } else {
+                    parameters.add("-ar");
+                    parameters.add("44100");
                 }
                 parameters.add("-ac");
                 parameters.add(optionsController.stereoCheck.isSelected() ? "2" : "1");
@@ -340,10 +369,16 @@ public class FFmpegScreenRecorderController extends DataTaskController {
                 if (optionsController.videoFrameRate > 0) {
                     parameters.add("-r");
                     parameters.add(optionsController.videoFrameRate + "");
+                } else {
+                    parameters.add("-r");
+                    parameters.add("30");
                 }
                 if (optionsController.videoBitrate > 0) {
                     parameters.add("-b:v");
                     parameters.add(optionsController.videoBitrate + "k");
+                } else {
+                    parameters.add("-b:v");
+                    parameters.add("5000k");
                 }
                 if (optionsController.aspect != null) {
                     parameters.add("-aspect");
@@ -367,39 +402,56 @@ public class FFmpegScreenRecorderController extends DataTaskController {
             if (optionsController.durationController.value > 0) {
                 updateLogs(message("Duration") + ": " + optionsController.durationController.value + " " + message("Seconds"), true);
             }
-
+            if (timer != null) {
+                timer.cancel();
+                timer = null;
+            }
+            boolean started = false, recording;
             try ( BufferedReader inReader = new BufferedReader(
                     new InputStreamReader(recorder.getInputStream(), Charset.forName("UTF-8")))) {
                 String line;
+                long startTime = new Date().getTime();
                 while ((line = inReader.readLine()) != null) {
-                    boolean recording = line.contains(" bitrate=");
+                    recording = line.contains(" bitrate=");
+                    if (recording) {
+                        started = true;
+                        if ((timer == null) && (optionsController.durationController.value > 0)) {
+                            timer = new Timer();
+                            timer.schedule(new TimerTask() {
+                                @Override
+                                public void run() {
+                                    cancelAction();
+                                }
+                            }, optionsController.durationController.value * 1000);
+                        }
+                    }
                     if (verboseCheck.isSelected() || !recording) {
                         updateLogs(line + "\n", true);
                     }
-                    if (recording && (timer == null) && (optionsController.durationController.value > 0)) {
-                        timer = new Timer();
-                        timer.schedule(new TimerTask() {
-                            @Override
-                            public void run() {
-                                cancelAction();
-                            }
-
-                        }, optionsController.durationController.value * 1000);
+                    if (!started && (new Date().getTime() - startTime > 15000)) {  // terminal process if too long blocking
+                        recorder.destroyForcibly();
+                        break;
                     }
                 }
-                openTarget(null);
-                Timer taskTimer = new Timer();
-                taskTimer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        stopping.set(false);
-                        recorder.destroy();
-                        recorder = null;
-                    }
-
-                }, 5000);
             }
             recorder.waitFor();
+            if (recorder != null) {
+                recorder.destroy();
+                recorder = null;
+            }
+            stopping.set(false);
+            FxmlControl.miao7();
+            if (started) {
+                openTarget(null);
+            } else {
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateLogs(message("FFmpegScreenRecorderAbnormal"), true);
+                        alertError(message("FFmpegScreenRecorderAbnormal"));
+                    }
+                });
+            }
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -429,28 +481,23 @@ public class FFmpegScreenRecorderController extends DataTaskController {
     @FXML
     @Override
     public void openTarget(ActionEvent event) {
-        try {
-            if (targetFile != null && targetFile.exists()) {
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                if (targetFile != null && targetFile.exists()) {
+                    recordFileOpened(targetFile);
+                    if (openCheck.isSelected()) {
+                        MediaPlayerController controller
+                                = (MediaPlayerController) FxmlStage.openStage(CommonValues.MediaPlayerFxml);
+                        controller.load(targetFile);
+                    } else {
                         browseURI(targetFile.getParentFile().toURI());
-                        recordFileOpened(targetFile);
-
-//                        if (optionsController.openCheck.isSelected()) {
-//                            MediaPlayerController controller
-//                                    = (MediaPlayerController) FxmlStage.openStage(CommonValues.MediaPlayerFxml);
-//                            controller.load(targetFile.toURI());
-//                        }
                     }
-                });
-            } else {
-                popInformation(AppVariables.message("NoFileGenerated"));
+                } else {
+                    popInformation(AppVariables.message("NoFileGenerated"));
+                }
             }
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
+        });
     }
 
     @Override

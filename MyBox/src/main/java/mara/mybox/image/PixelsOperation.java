@@ -10,7 +10,6 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import mara.mybox.data.IntPoint;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonFxValues;
 
 /**
@@ -259,8 +258,8 @@ public class PixelsOperation {
             isDithering = false;
         }
         scope = ImageScope.fineImageScope(scope);
-        skipTransparent = operationType != OperationType.ReplaceColor
-                || colorPara1.getRGB() != 0;
+//        skipTransparent = operationType != OperationType.ReplaceColor
+//                || colorPara1.getRGB() != 0;
 
         if (scope != null && scope.getScopeType() == ImageScope.ScopeType.Matting) {
             isDithering = false;

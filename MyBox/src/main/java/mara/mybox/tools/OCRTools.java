@@ -9,7 +9,6 @@ import mara.mybox.fxml.FxmlControl;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.MyboxDataPath;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -21,6 +20,7 @@ public class OCRTools {
 
     // https://github.com/nguyenq/tess4j/blob/master/src/test/java/net/sourceforge/tess4j/Tesseract1Test.java#L177
     public static final double MINIMUM_DESKEW_THRESHOLD = 0.05d;
+    public static final String TessDataPath = "TessDataPath";
 
 //    public static Map<String, String> CodeName;
 //    public static Map<String, String> NameCode;
@@ -83,7 +83,7 @@ public class OCRTools {
     // Make sure supported language files are under defined data path
     public static boolean initDataFiles() {
         try {
-            String pathname = AppVariables.getUserConfigValue("TessDataPath", null);
+            String pathname = AppVariables.getUserConfigValue(TessDataPath, null);
             if (pathname == null) {
                 pathname = MyboxDataPath + File.separator + "tessdata";
             }
@@ -132,7 +132,7 @@ public class OCRTools {
                 File tmp = FxmlControl.getInternalFile("/tessdata/pdf.ttf");
                 FileTools.copyFile(tmp, pdfttf);
             }
-            AppVariables.setUserConfigValue("TessDataPath", path.getAbsolutePath());
+            AppVariables.setUserConfigValue(TessDataPath, path.getAbsolutePath());
             return true;
         } catch (Exception e) {
             logger.debug(e.toString());
@@ -140,11 +140,13 @@ public class OCRTools {
         }
     }
 
-    public static List<String> namesList() {
+    public static List<String> namesList(boolean copyFiles) {
         List<String> data = new ArrayList<>();
         try {
-            initDataFiles();
-            String dataPath = AppVariables.getUserConfigValue("TessDataPath", null);
+            if (copyFiles) {
+                initDataFiles();
+            }
+            String dataPath = AppVariables.getUserConfigValue(TessDataPath, null);
             if (dataPath == null) {
                 return data;
             }

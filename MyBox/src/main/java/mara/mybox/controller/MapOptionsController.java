@@ -32,7 +32,6 @@ import mara.mybox.tools.NetworkTools;
 import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 
@@ -190,7 +189,7 @@ public class MapOptionsController extends BaseController {
                             }
                             if (markerImageFile == null || !markerImageFile.getAbsolutePath().equals(file.getAbsolutePath())) {
                                 markerImageFile = file;
-                                recordFileOpened(file, VisitHistory.FileType.Image, VisitHistory.FileType.Image);
+                                recordFileOpened(file, VisitHistory.FileType.Image);
                                 AppVariables.setUserConfigValue(baseName + "MarkerImageFile", markerImageFile.getAbsolutePath());
                                 if (!isSettingValues) {
                                     drawPoints();

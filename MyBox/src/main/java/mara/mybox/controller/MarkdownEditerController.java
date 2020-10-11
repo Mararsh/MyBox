@@ -110,7 +110,7 @@ public class MarkdownEditerController extends TextEditerController {
             tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
                 @Override
                 public void changed(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) {
-                    setPairArea(null);
+                    refreshPairAction();
                 }
             });
 
@@ -251,7 +251,17 @@ public class MarkdownEditerController extends TextEditerController {
     }
 
     @Override
-    protected void setPairArea(String text) {
+    protected void updatePairArea() {
+        if (isSettingValues || !splitPane.getItems().contains(rightPane)
+                || !updateSyncCheck.isSelected()) {
+            return;
+        }
+        refreshPairAction();
+    }
+
+    @FXML
+    @Override
+    public void refreshPairAction() {
         if (isSettingValues || !splitPane.getItems().contains(rightPane)) {
             return;
         }
@@ -265,23 +275,6 @@ public class MarkdownEditerController extends TextEditerController {
 
     @Override
     protected void setPairAreaSelection() {
-        if (isSettingValues || !splitPane.getItems().contains(rightPane)) {
-            return;
-        }
-//        isSettingValues = true;
-//        pairArea.deselect();
-//        final String text = mainArea.getText();
-//        if (!text.isEmpty()) {
-//            IndexRange hexRange = TextTools.hexIndex(text, sourceInformation.getCharset(),
-//                    sourceInformation.getLineBreakValue(), mainArea.getSelection());
-//            int bomLen = 0;
-//            if (sourceInformation.isWithBom()) {
-//                bomLen = TextTools.bomHex(sourceInformation.getCharset().name()).length() + 1;
-//            }
-//            pairArea.selectRange(hexRange.getStart() + bomLen, hexRange.getEnd() + bomLen);
-//            pairArea.setScrollTop(mainArea.getScrollTop());
-//        }
-//        isSettingValues = false;
     }
 
     @Override
@@ -351,6 +344,14 @@ public class MarkdownEditerController extends TextEditerController {
             if (task != null) {
                 return;
             }
+            double scrollLeft = htmlArea.getScrollLeft();
+            double scrollTop = htmlArea.getScrollTop();
+            int anchor = htmlArea.getAnchor();
+            int caretPosition = htmlArea.getCaretPosition();
+
+            double width = (Integer) webEngine.executeScript("document.documentElement.scrollWidth || document.body.scrollWidth;");
+            double height = (Integer) webEngine.executeScript("document.documentElement.scrollHeight || document.body.scrollHeight;");
+
             task = new SingletonTask<Void>() {
 
                 private String html;
@@ -365,7 +366,12 @@ public class MarkdownEditerController extends TextEditerController {
                 protected void whenSucceeded() {
                     try {
                         htmlArea.setText(html);
+                        htmlArea.setScrollLeft(scrollLeft);
+                        htmlArea.setScrollTop(scrollTop);
+                        htmlArea.selectRange(anchor, caretPosition);
+
                         webEngine.loadContent(html);
+                        webEngine.executeScript("window.scrollTo(" + width + "," + height + ");");
                     } catch (Exception e) {
                         logger.debug(e.toString());
                         webEngine.getLoadWorker().cancel();
@@ -389,6 +395,10 @@ public class MarkdownEditerController extends TextEditerController {
             if (task != null) {
                 return;
             }
+            double scrollLeft = textArea.getScrollLeft();
+            double scrollTop = textArea.getScrollTop();
+            int anchor = textArea.getAnchor();
+            int caretPosition = textArea.getCaretPosition();
             task = new SingletonTask<Void>() {
 
                 private String text;
@@ -402,8 +412,10 @@ public class MarkdownEditerController extends TextEditerController {
                 @Override
                 protected void whenSucceeded() {
                     textArea.setText(text);
+                    textArea.setScrollLeft(scrollLeft);
+                    textArea.setScrollTop(scrollTop);
+                    textArea.selectRange(anchor, caretPosition);
                 }
-
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
@@ -703,11 +715,6 @@ public class MarkdownEditerController extends TextEditerController {
     }
 
     @FXML
-    protected void refreshHtml() {
-        markdown2html();
-    }
-
-    @FXML
     protected void saveHtml() {
         if (htmlArea.getText().isEmpty()) {
             return;
@@ -726,8 +733,7 @@ public class MarkdownEditerController extends TextEditerController {
             if (file == null) {
                 return;
             }
-            recordFileWritten(file, VisitHistoryTools.getPathKey(VisitHistory.FileType.Html),
-                    VisitHistory.FileType.Html, VisitHistory.FileType.Html);
+            recordFileWritten(file, VisitHistory.FileType.Html);
 
             task = new SingletonTask<Void>() {
 
@@ -793,11 +799,6 @@ public class MarkdownEditerController extends TextEditerController {
     }
 
     @FXML
-    protected void refreshText() {
-        markdown2text();
-    }
-
-    @FXML
     protected void saveText() {
         if (textArea.getText().isEmpty()) {
             return;
@@ -816,8 +817,7 @@ public class MarkdownEditerController extends TextEditerController {
             if (file == null) {
                 return;
             }
-            recordFileWritten(file, VisitHistoryTools.getPathKey(VisitHistory.FileType.Text),
-                    VisitHistory.FileType.Text, VisitHistory.FileType.Text);
+            recordFileWritten(file, VisitHistory.FileType.Text);
 
             task = new SingletonTask<Void>() {
 

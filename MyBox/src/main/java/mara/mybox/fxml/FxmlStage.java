@@ -46,7 +46,6 @@ import mara.mybox.tools.SystemTools;
 import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
@@ -603,15 +602,11 @@ public class FxmlStage {
             // Below workaround for Linux because "Desktop.getDesktop().browse()" doesn't work on some Linux implementations
             try {
                 if (Runtime.getRuntime().exec(new String[]{"which", "xdg-open"}).getInputStream().read() != -1) {
-                    Runtime.getRuntime().exec(new String[]{"xdg-open",
-                        uri.toString()});
+                    Runtime.getRuntime().exec(new String[]{"xdg-open", uri.toString()});
                     return true;
                 } else {
                 }
             } catch (Exception e) {
-            }
-            if (myStage != null) {
-                alertError(myStage, message("DesktopNotSupportBrowse"));
             }
 
         } else if (SystemTools.isMac()) {
@@ -619,10 +614,8 @@ public class FxmlStage {
             try {
                 Runtime rt = Runtime.getRuntime();
                 rt.exec("open " + uri.toString());
+                return true;
             } catch (Exception e) {
-            }
-            if (myStage != null) {
-                alertError(myStage, message("DesktopNotSupportBrowse"));
             }
 
         } else if (Desktop.isDesktopSupported()) {
@@ -632,22 +625,17 @@ public class FxmlStage {
                     desktop.browse(uri);
                     return true;
                 } catch (Exception e) {
-                    logger.error(e.toString());
+//                    logger.error(e.toString());
                 }
-            } else {
-                if (myStage != null) {
-                    alertError(myStage, message("DesktopNotSupportBrowse"));
-                }
-            }
-
-        } else {
-            if (myStage != null) {
-                alertError(myStage, message("DesktopNotSupportBrowse"));
             }
         }
 
         if (!uri.getScheme().equals("file") || new File(uri.getPath()).isFile()) {
             openTarget(null, uri.toString());
+        } else {
+            if (myStage != null) {
+                alertError(myStage, message("DesktopNotSupportBrowse"));
+            }
         }
         return true;
     }

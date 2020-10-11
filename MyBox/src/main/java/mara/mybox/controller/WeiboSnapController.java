@@ -31,7 +31,6 @@ import mara.mybox.tools.PdfTools.PdfImageFormat;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.getUserConfigValue;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
@@ -1118,6 +1117,7 @@ public class WeiboSnapController extends BaseController {
             parameters.setDpi(dpi);
             parameters.setLikeStartPage(likeStartPage);
             parameters.setMaxMergedSize(((RadioButton) pdfSizeGroup.getSelectedToggle()).getText());
+            parameters.setRetried(0);
             return parameters;
         } catch (Exception e) {
             parameters = null;

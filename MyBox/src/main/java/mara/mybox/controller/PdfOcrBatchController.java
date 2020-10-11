@@ -2,7 +2,10 @@ package mara.mybox.controller;
 
 import com.recognition.software.jdeskew.ImageDeskew;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,10 +18,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
@@ -32,14 +32,13 @@ import mara.mybox.image.ImageContrast;
 import mara.mybox.image.ImageConvolution;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.image.PixelsOperation;
+import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.OCRTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonValues;
 import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.util.ImageHelper;
@@ -65,10 +64,11 @@ public class PdfOcrBatchController extends PdfBatchController {
     protected BufferedImage lastImage;
     protected ITesseract OCRinstance;
     protected PDFRenderer renderer;
-    protected int threshold, rotate;
+    protected int threshold, rotate, tesseractVersion;
     protected float scale;
-    protected String selectedLanguages;
     protected long pageStart;
+    protected File configFile;
+    protected Process process;
 
     @FXML
     protected ToggleGroup getImageType;
@@ -86,9 +86,7 @@ public class PdfOcrBatchController extends PdfBatchController {
     @FXML
     protected FlowPane imageOptionsPane;
     @FXML
-    protected ListView languageList;
-    @FXML
-    protected Label currentOCRFilesLabel;
+    protected ImageOCROptionsController ocrOptionsController;
 
     public PdfOcrBatchController() {
         baseTitle = AppVariables.message("PdfOCRBatch");
@@ -99,7 +97,8 @@ public class PdfOcrBatchController extends PdfBatchController {
     public void initOptionsSection() {
         try {
             initPreprocessBox();
-            initOCROptionsBox();
+            ocrOptionsController.setValues(this, false, false);
+            FxmlControl.setTooltip(separatorInput, message("InsertPageSeparatorComments"));
         } catch (Exception e) {
             logger.debug(e.toString());
         }
@@ -253,162 +252,6 @@ public class PdfOcrBatchController extends PdfBatchController {
         }
     }
 
-    protected void initOCROptionsBox() {
-        try {
-            languageList.getItems().clear();
-            languageList.getItems().addAll(OCRTools.namesList());
-            languageList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-            languageList.setPrefHeight(200);
-            languageList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> ov, String oldVal, String newVal) {
-                    checkLanguages();
-                }
-            });
-            selectedLanguages = AppVariables.getUserConfigValue("ImageOCRLanguages", null);
-            if (selectedLanguages != null && !selectedLanguages.isEmpty()) {
-                currentOCRFilesLabel.setText(MessageFormat.format(message("CurrentDataFiles"), selectedLanguages));
-                currentOCRFilesLabel.setStyle(null);
-                isSettingValues = true;
-                String[] langs = selectedLanguages.split("\\+");
-                Map<String, String> codes = OCRTools.codeName();
-                for (String code : langs) {
-                    String name = codes.get(code);
-                    if (name == null) {
-                        name = code;
-                    }
-                    languageList.getSelectionModel().select(name);
-                }
-                isSettingValues = false;
-            } else {
-                currentOCRFilesLabel.setText(MessageFormat.format(message("CurrentDataFiles"), message("NoData")));
-                currentOCRFilesLabel.setStyle(badStyle);
-            }
-
-            FxmlControl.setTooltip(separatorInput, message("InsertPageSeparatorComments"));
-
-        } catch (Exception e) {
-            logger.debug(e.toString());
-        }
-    }
-
-    public void checkLanguages() {
-        if (isSettingValues) {
-            return;
-        }
-        List<String> langsList = languageList.getSelectionModel().getSelectedItems();
-        selectedLanguages = null;
-        Map<String, String> names = OCRTools.nameCode();
-        for (String name : langsList) {
-            String code = names.get(name);
-            if (code == null) {
-                code = name;
-            }
-            if (selectedLanguages == null) {
-                selectedLanguages = code;
-            } else {
-                selectedLanguages += "+" + code;
-            }
-        }
-        if (selectedLanguages != null) {
-            AppVariables.setUserConfigValue("ImageOCRLanguages", selectedLanguages);
-            currentOCRFilesLabel.setText(MessageFormat.format(message("CurrentDataFiles"), selectedLanguages));
-            currentOCRFilesLabel.setStyle(null);
-        } else {
-            currentOCRFilesLabel.setText(MessageFormat.format(message("CurrentDataFiles"), message("NoData")));
-            currentOCRFilesLabel.setStyle(badStyle);
-        }
-    }
-
-    @FXML
-    public void settingsAction() {
-        SettingsController controller = (SettingsController) openStage(CommonValues.SettingsFxml);
-        controller.setParentController(this);
-        controller.setParentFxml(myFxml);
-        controller.tabPane.getSelectionModel().select(controller.ocrTab);
-    }
-
-    @FXML
-    public void upAction() {
-        List<Integer> selected = new ArrayList<>();
-        selected.addAll(languageList.getSelectionModel().getSelectedIndices());
-        if (selected.isEmpty()) {
-            return;
-        }
-        isSettingValues = true;
-        List<Integer> newselected = new ArrayList<>();
-        for (Integer index : selected) {
-            if (index == 0 || newselected.contains(index - 1)) {
-                newselected.add(index);
-                continue;
-            }
-            String lang = (String) languageList.getItems().get(index);
-            languageList.getItems().set(index, languageList.getItems().get(index - 1));
-            languageList.getItems().set(index - 1, lang);
-            newselected.add(index - 1);
-        }
-        languageList.getSelectionModel().clearSelection();
-        for (int index : newselected) {
-            languageList.getSelectionModel().select(index);
-        }
-        languageList.refresh();
-        isSettingValues = false;
-        checkLanguages();
-    }
-
-    @FXML
-    public void downAction() {
-        List<Integer> selected = new ArrayList<>();
-        selected.addAll(languageList.getSelectionModel().getSelectedIndices());
-        if (selected.isEmpty()) {
-            return;
-        }
-        isSettingValues = true;
-        List<Integer> newselected = new ArrayList<>();
-        for (int i = selected.size() - 1; i >= 0; --i) {
-            int index = selected.get(i);
-            if (index == languageList.getItems().size() - 1
-                    || newselected.contains(index + 1)) {
-                newselected.add(index);
-                continue;
-            }
-            String lang = (String) languageList.getItems().get(index);
-            languageList.getItems().set(index, languageList.getItems().get(index + 1));
-            languageList.getItems().set(index + 1, lang);
-            newselected.add(index + 1);
-        }
-        languageList.getSelectionModel().clearSelection();
-        for (int index : newselected) {
-            languageList.getSelectionModel().select(index);
-        }
-        languageList.refresh();
-        isSettingValues = false;
-        checkLanguages();
-    }
-
-    @FXML
-    public void topAction() {
-        List<Integer> selectedIndices = new ArrayList<>();
-        selectedIndices.addAll(languageList.getSelectionModel().getSelectedIndices());
-        if (selectedIndices.isEmpty()) {
-            return;
-        }
-        List<String> selected = new ArrayList<>();
-        selected.addAll(languageList.getSelectionModel().getSelectedItems());
-        isSettingValues = true;
-        int size = selectedIndices.size();
-        for (int i = size - 1; i >= 0; --i) {
-            int index = selectedIndices.get(i);
-            languageList.getItems().remove(index);
-        }
-        languageList.getSelectionModel().clearSelection();
-        languageList.getItems().addAll(0, selected);
-        languageList.getSelectionModel().selectRange(0, size);
-        languageList.refresh();
-        isSettingValues = false;
-        checkLanguages();
-    }
-
     @Override
     public boolean makeActualParameters() {
         if (!super.makeActualParameters()) {
@@ -419,20 +262,53 @@ public class PdfOcrBatchController extends PdfBatchController {
             separator = null;
         }
         try {
-            OCRinstance = new Tesseract();
-            // https://stackoverflow.com/questions/58286373/tess4j-pdf-to-tiff-to-tesseract-warning-invalid-resolution-0-dpi-using-70/58296472#58296472
-            if (convertRadio.isSelected()) {
-                OCRinstance.setTessVariable("user_defined_dpi", dpi + "");
-            } else {
+            if (ocrOptionsController.embedRadio.isSelected()) {
+                OCRinstance = new Tesseract();
+                // https://stackoverflow.com/questions/58286373/tess4j-pdf-to-tiff-to-tesseract-warning-invalid-resolution-0-dpi-using-70/58296472#58296472
                 OCRinstance.setTessVariable("user_defined_dpi", "96");
+                OCRinstance.setTessVariable("debug_file", "/dev/null");
+                OCRinstance.setPageSegMode(ocrOptionsController.psm);
+                Map<String, String> p = ocrOptionsController.checkParameters();
+                if (p != null && !p.isEmpty()) {
+                    for (String key : p.keySet()) {
+                        OCRinstance.setTessVariable(key, p.get(key));
+                    }
+                }
+                String path = AppVariables.getUserConfigValue(OCRTools.TessDataPath, null);
+                if (path != null) {
+                    OCRinstance.setDatapath(path);
+                }
+                if (ocrOptionsController.selectedLanguages != null) {
+                    OCRinstance.setLanguage(ocrOptionsController.selectedLanguages);
+                }
+            } else {
+                tesseractVersion = ocrOptionsController.tesseractVersion();
+                File tesseract = ocrOptionsController.tesseractPathController.file;
+                if (!tesseract.exists()) {
+                    popError(message("InvalidParameters"));
+                    ocrOptionsController.tesseractPathController.fileInput.setStyle(badStyle);
+                    return false;
+                }
+                File dataPath = ocrOptionsController.dataPathController.file;
+                if (!dataPath.exists()) {
+                    popError(message("InvalidParameters"));
+                    ocrOptionsController.dataPathController.fileInput.setStyle(badStyle);
+                    return false;
+                }
+                configFile = FileTools.getTempFile();
+                String s = "tessedit_create_txt 1\n";
+                Map<String, String> p = ocrOptionsController.checkParameters();
+                if (p != null) {
+                    for (String key : p.keySet()) {
+                        s += key + "\t" + p.get(key) + "\n";
+                    }
+                }
+                FileTools.writeFile(configFile, s, Charset.forName("utf-8"));
+                if (!configFile.exists()) {
+                    popError(message("NotFound") + ":" + configFile);
+                    return false;
+                }
             }
-            OCRinstance.setTessVariable("debug_file", "/dev/null");
-
-            String path = AppVariables.getUserConfigValue("TessDataPath", null);
-            if (path != null) {
-                OCRinstance.setDatapath(path);
-            }
-            OCRinstance.setLanguage(selectedLanguages);
             return true;
         } catch (Exception e) {
             logger.error(e.toString());
@@ -471,31 +347,39 @@ public class PdfOcrBatchController extends PdfBatchController {
     }
 
     protected int convertPage() {
+        String text = null;
         try {
             // ImageType.BINARY work bad while ImageType.RGB works best
             BufferedImage bufferedImage
                     = renderer.renderImageWithDPI(currentParameters.currentPage - 1, dpi, ImageType.RGB);    // 0-based
-
-            if (handleImage(bufferedImage)) {
-                lastImage = bufferedImage;
-                return 1;
-            } else {
-                return 0;
-            }
+            text = ocr(bufferedImage);
         } catch (Exception e) {
             logger.error(e.toString());
+        }
+        if (text != null) {
+            String s = message("Page") + ":" + currentParameters.currentPage + "   "
+                    + MessageFormat.format(message("OCRresults"),
+                            text.length(), DateTools.datetimeMsDuration(new Date().getTime() - pageStart));
+            updateLogs(s, true, true);
+            ocrTexts += text + System.getProperty("line.separator");
+            return 1;
+        } else {
+            String s = message("Failed") + ":" + currentParameters.currentPage;
+            updateLogs(s, true, true);
             return 0;
         }
     }
 
     protected int extractPage() {
-        int index = 0;
+        int count = 0;
+        String text = "";
         try {
             PDPage page = doc.getPage(currentParameters.currentPage - 1);  // 0-based
             PDResources pdResources = page.getResources();
             Iterable<COSName> iterable = pdResources.getXObjectNames();
             if (iterable != null) {
                 Iterator<COSName> pageIterator = iterable.iterator();
+                int index = 0;
                 while (pageIterator.hasNext()) {
                     if (task.isCancelled()) {
                         break;
@@ -504,25 +388,33 @@ public class PdfOcrBatchController extends PdfBatchController {
                     if (!pdResources.isImageXObject(cosName)) {
                         continue;
                     }
+                    index++;
                     PDImageXObject pdxObject = (PDImageXObject) pdResources.getXObject(cosName);
                     BufferedImage bufferedImage = pdxObject.getImage();
-                    if (handleImage(bufferedImage)) {
-                        lastImage = bufferedImage;
-                        if (isPreview) {
-                            break;
-                        }
-                        index++;
+                    String results = ocr(bufferedImage);
+                    if (results != null) {
+                        text += results + System.getProperty("line.separator");
+                        count++;
+                    }
+                    if (isPreview) {
+                        break;
                     }
                 }
             }
-
         } catch (Exception e) {
             logger.error(e.toString());
         }
-        return index;
+        if (!text.isBlank()) {
+            String s = message("Page") + ":" + currentParameters.currentPage + "   "
+                    + MessageFormat.format(message("OCRresults"),
+                            text.length(), DateTools.datetimeMsDuration(new Date().getTime() - pageStart));
+            updateLogs(s, true, true);
+            ocrTexts += text + System.getProperty("line.separator");
+        }
+        return count;
     }
 
-    protected boolean handleImage(BufferedImage bufferedImage) {
+    protected BufferedImage preprocess(BufferedImage bufferedImage) {
         try {
             lastImage = bufferedImage;
 
@@ -615,26 +507,73 @@ public class PdfOcrBatchController extends PdfBatchController {
                 double imageSkewAngle = id.getSkewAngle();
                 if ((imageSkewAngle > OCRTools.MINIMUM_DESKEW_THRESHOLD
                         || imageSkewAngle < -(OCRTools.MINIMUM_DESKEW_THRESHOLD))) {
-                    bufferedImage = ImageHelper.rotateImage(bufferedImage, -imageSkewAngle);
+                    lastImage = ImageHelper.rotateImage(bufferedImage, -imageSkewAngle);
                 }
             }
 
-            String result = OCRinstance.doOCR(bufferedImage);
-            if (result != null) {
-                String s = message("Page") + ":" + currentParameters.currentPage + "   "
-                        + MessageFormat.format(message("OCRresults"),
-                                result.length(), DateTools.datetimeMsDuration(new Date().getTime() - pageStart));
-                updateLogs(s, true, true);
-                ocrTexts += result + System.getProperty("line.separator");
-                return true;
-            } else {
-                return false;
-            }
+            return lastImage;
 
         } catch (Exception e) {
             logger.error(e.toString());
-            return false;
+            return null;
         }
+    }
+
+    protected String ocr(BufferedImage image) {
+        if (image == null) {
+            return null;
+        }
+        try {
+            lastImage = preprocess(image);
+            if (ocrOptionsController.embedRadio.isSelected()) {
+                return OCRinstance.doOCR(lastImage);
+            }
+            if (configFile == null || !configFile.exists()) {
+                return null;
+            }
+            if (process != null) {
+                process.destroy();
+                process = null;
+            }
+            String imageFile = FileTools.getTempFile(".png").getAbsolutePath();
+            BufferedImage bufferedImage = ImageManufacture.removeAlpha(lastImage);
+            ImageFileWriters.writeImageFile(bufferedImage, "png", imageFile);
+
+            String fileBase = FileTools.getTempFile().getAbsolutePath();
+            List<String> parameters = new ArrayList<>();
+            parameters.addAll(Arrays.asList(
+                    ocrOptionsController.tesseractPathController.file.getAbsolutePath(),
+                    imageFile, fileBase,
+                    "--tessdata-dir", ocrOptionsController.dataPathController.file.getAbsolutePath(),
+                    tesseractVersion > 3 ? "--psm" : "-psm", ocrOptionsController.psm + ""
+            ));
+            if (ocrOptionsController.selectedLanguages != null) {
+                parameters.addAll(Arrays.asList("-l", ocrOptionsController.selectedLanguages));
+            }
+            parameters.add(configFile.getAbsolutePath());
+            ProcessBuilder pb = new ProcessBuilder(parameters).redirectErrorStream(true);
+            process = pb.start();
+            String outputs = "", line;
+            try ( BufferedReader inReader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                while ((line = inReader.readLine()) != null) {
+                    outputs += line + "\n";
+                }
+            } catch (Exception e) {
+                outputs += e.toString() + "\n";
+            }
+            process.waitFor();
+            File textFile = new File(fileBase + ".txt");
+            if (textFile.exists()) {
+                String texts = FileTools.readTexts(textFile);
+                textFile.delete();
+                return texts;
+            } else {
+                updateLogs(message("Failed" + ":" + outputs), true, true);
+            }
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+        return null;
     }
 
     @Override

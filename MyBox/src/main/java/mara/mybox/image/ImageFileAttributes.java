@@ -3,7 +3,6 @@ package mara.mybox.image;
 import java.awt.color.ColorSpace;
 import java.io.File;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara

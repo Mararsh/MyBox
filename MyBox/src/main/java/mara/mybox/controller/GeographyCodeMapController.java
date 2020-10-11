@@ -12,7 +12,6 @@ import mara.mybox.data.StringTable;
 import mara.mybox.data.tools.GeographyCodeTools;
 import mara.mybox.db.TableGeographyCode;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 

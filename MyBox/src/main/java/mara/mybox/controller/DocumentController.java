@@ -11,7 +11,6 @@ import mara.mybox.fxml.FxmlStage;
 import static mara.mybox.fxml.FxmlStage.openScene;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 

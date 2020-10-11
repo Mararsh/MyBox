@@ -4,10 +4,7 @@ import com.sun.management.OperatingSystemMXBean;
 import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -22,7 +19,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
@@ -47,11 +43,10 @@ import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.ConfigTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.OCRTools;
+import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.getUserConfigBoolean;
 import static mara.mybox.value.AppVariables.getUserConfigValue;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
@@ -65,12 +60,11 @@ import mara.mybox.value.CommonValues;
 public class SettingsController extends BaseController {
 
     protected int recentFileNumber, newJVM;
-    protected String selectedLanguages;
 
     @FXML
     protected TabPane tabPane;
     @FXML
-    protected Tab interfaceTab, baseTab, pdfTab, imageTab, dataTab, ocrTab, mapTab, devTab;
+    protected Tab interfaceTab, baseTab, pdfTab, imageTab, dataTab, mapTab, devTab;
     @FXML
     protected ToggleGroup langGroup, pdfMemGroup, controlColorGroup, derbyGroup, splitPanesGroup;
     @FXML
@@ -79,9 +73,9 @@ public class SettingsController extends BaseController {
             clearCurrentRootCheck, hidpiCheck, devModeCheck;
     @FXML
     protected TextField jvmInput, dataDirInput, fileRecentInput, thumbnailWidthInput,
-            ocrDirInput, tiandituWebKeyInput, gaodeWebKeyInput, gaodeServiceKeyInput;
+            tiandituWebKeyInput, gaodeWebKeyInput, gaodeServiceKeyInput;
     @FXML
-    protected VBox localBox, dataBox, ocrBox;
+    protected VBox localBox, dataBox;
     @FXML
     protected ComboBox<String> styleBox, imageWidthBox, fontSizeBox, iconSizeBox,
             strokeWidthBox, anchorWidthBox;
@@ -100,7 +94,7 @@ public class SettingsController extends BaseController {
     protected ListView languageList;
     @FXML
     protected Label alphaLabel, currentJvmLabel, currentDataPathLabel, currentTempPathLabel,
-            currentOCRFilesLabel, derbyStatus;
+            derbyStatus;
     @FXML
     protected ControlFileSelecter sourceCodesPathController;
 
@@ -118,7 +112,6 @@ public class SettingsController extends BaseController {
             initDataTab();
             initPdfTab();
             initImageTab();
-            initOCRTab();
             initMapTab();
             initDevTab();
 
@@ -1006,204 +999,6 @@ public class SettingsController extends BaseController {
     }
 
     /*
-        OCR
-     */
-    protected void initOCRTab() {
-        try {
-            OCRTools.initDataFiles();
-            ocrDirInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    try {
-                        File file = new File(newValue);
-                        if (!file.exists() || !file.isDirectory()) {
-                            ocrDirInput.setStyle(badStyle);
-                            return;
-                        }
-                        ocrDirInput.setStyle(null);
-                        AppVariables.setUserConfigValue("TessDataPath", file.getAbsolutePath());
-
-                        setLanguagesList();
-                    } catch (Exception e) {
-                        logger.debug(e.toString());
-                    }
-                }
-            });
-            ocrDirInput.setText(AppVariables.getUserConfigValue("TessDataPath", ""));
-
-        } catch (Exception e) {
-            logger.debug(e.toString());
-        }
-    }
-
-    protected void setLanguagesList() {
-        try {
-            OCRTools.initDataFiles();
-            languageList.getItems().clear();
-            languageList.getItems().addAll(OCRTools.namesList());
-            languageList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-            languageList.setPrefHeight(200);
-            languageList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> ov, String oldVal, String newVal) {
-                    checkLanguages();
-                }
-            });
-            selectedLanguages = AppVariables.getUserConfigValue("ImageOCRLanguages", null);
-            if (selectedLanguages != null && !selectedLanguages.isEmpty()) {
-                currentOCRFilesLabel.setText(MessageFormat.format(message("CurrentDataFiles"), selectedLanguages));
-                currentOCRFilesLabel.setStyle(null);
-                isSettingValues = true;
-                String[] langs = selectedLanguages.split("\\+");
-                Map<String, String> codes = OCRTools.codeName();
-                for (String code : langs) {
-                    String name = codes.get(code);
-                    if (name == null) {
-                        name = code;
-                    }
-                    languageList.getSelectionModel().select(name);
-                }
-                isSettingValues = false;
-            } else {
-                currentOCRFilesLabel.setText(MessageFormat.format(message("CurrentDataFiles"), message("NoData")));
-                currentOCRFilesLabel.setStyle(badStyle);
-            }
-        } catch (Exception e) {
-            logger.debug(e.toString());
-        }
-    }
-
-    @FXML
-    protected void setOCRPath(ActionEvent event) {
-        try {
-            DirectoryChooser chooser = new DirectoryChooser();
-            String dataPath = AppVariables.getUserConfigValue("TessDataPath", null);
-            if (dataPath != null) {
-                chooser.setInitialDirectory(new File(dataPath));
-            }
-            File directory = chooser.showDialog(getMyStage());
-            if (directory == null) {
-                return;
-            }
-            recordFileWritten(directory);
-            ocrDirInput.setText(directory.getPath());
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    public void checkLanguages() {
-        if (isSettingValues) {
-            return;
-        }
-        List<String> langsList = languageList.getSelectionModel().getSelectedItems();
-        selectedLanguages = null;
-        Map<String, String> names = OCRTools.nameCode();
-        for (String name : langsList) {
-            String code = names.get(name);
-            if (code == null) {
-                code = name;
-            }
-            if (selectedLanguages == null) {
-                selectedLanguages = code;
-            } else {
-                selectedLanguages += "+" + code;
-            }
-        }
-        if (selectedLanguages != null) {
-            AppVariables.setUserConfigValue("ImageOCRLanguages", selectedLanguages);
-            currentOCRFilesLabel.setText(
-                    MessageFormat.format(message("CurrentDataFiles"), selectedLanguages));
-            currentOCRFilesLabel.setStyle(null);
-        } else {
-            currentOCRFilesLabel.setText(
-                    MessageFormat.format(message("CurrentDataFiles"), message("NoData")));
-            currentOCRFilesLabel.setStyle(badStyle);
-        }
-    }
-
-    @FXML
-    public void upAction() {
-        List<Integer> selected = new ArrayList<>();
-        selected.addAll(languageList.getSelectionModel().getSelectedIndices());
-        if (selected.isEmpty()) {
-            return;
-        }
-        isSettingValues = true;
-        List<Integer> newselected = new ArrayList<>();
-        for (Integer index : selected) {
-            if (index == 0 || newselected.contains(index - 1)) {
-                newselected.add(index);
-                continue;
-            }
-            String lang = (String) languageList.getItems().get(index);
-            languageList.getItems().set(index, languageList.getItems().get(index - 1));
-            languageList.getItems().set(index - 1, lang);
-            newselected.add(index - 1);
-        }
-        languageList.getSelectionModel().clearSelection();
-        for (int index : newselected) {
-            languageList.getSelectionModel().select(index);
-        }
-        languageList.refresh();
-        isSettingValues = false;
-        checkLanguages();
-    }
-
-    @FXML
-    public void topAction() {
-        List<Integer> selectedIndices = new ArrayList<>();
-        selectedIndices.addAll(languageList.getSelectionModel().getSelectedIndices());
-        if (selectedIndices.isEmpty()) {
-            return;
-        }
-        List<String> selected = new ArrayList<>();
-        selected.addAll(languageList.getSelectionModel().getSelectedItems());
-        isSettingValues = true;
-        int size = selectedIndices.size();
-        for (int i = size - 1; i >= 0; --i) {
-            int index = selectedIndices.get(i);
-            languageList.getItems().remove(index);
-        }
-        languageList.getSelectionModel().clearSelection();
-        languageList.getItems().addAll(0, selected);
-        languageList.getSelectionModel().selectRange(0, size);
-        languageList.refresh();
-        isSettingValues = false;
-        checkLanguages();
-    }
-
-    @FXML
-    public void downAction() {
-        List<Integer> selected = new ArrayList<>();
-        selected.addAll(languageList.getSelectionModel().getSelectedIndices());
-        if (selected.isEmpty()) {
-            return;
-        }
-        isSettingValues = true;
-        List<Integer> newselected = new ArrayList<>();
-        for (int i = selected.size() - 1; i >= 0; --i) {
-            int index = selected.get(i);
-            if (index == languageList.getItems().size() - 1
-                    || newselected.contains(index + 1)) {
-                newselected.add(index);
-                continue;
-            }
-            String lang = (String) languageList.getItems().get(index);
-            languageList.getItems().set(index, languageList.getItems().get(index + 1));
-            languageList.getItems().set(index + 1, lang);
-            newselected.add(index + 1);
-        }
-        languageList.getSelectionModel().clearSelection();
-        for (int index : newselected) {
-            languageList.getSelectionModel().select(index);
-        }
-        languageList.refresh();
-        isSettingValues = false;
-        checkLanguages();
-    }
-
-    /*
         Map settings
      */
     public void initMapTab() {
@@ -1247,7 +1042,8 @@ public class SettingsController extends BaseController {
         try {
             sourceCodesPathController.label(message("sourceCodesPath"))
                     .isDirectory(true).isSource(false).mustExist(true).permitNull(true)
-                    .defaultValue("D:\\MyBox").name("SourceCodesPath", true);
+                    .defaultValue("win".equals(SystemTools.os()) ? "D:\\MyBox" : "/home/mara/mybox")
+                    .name("SourceCodesPath", true);
 
             devModeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override

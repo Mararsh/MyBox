@@ -5,7 +5,6 @@ import javafx.scene.control.CheckBoxTreeItem;
 import mara.mybox.db.TableDataset;
 import mara.mybox.fxml.ConditionNode;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import static mara.mybox.value.AppVariables.tableMessage;
 

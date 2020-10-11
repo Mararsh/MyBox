@@ -14,7 +14,6 @@ import java.io.File;
 import java.util.HashMap;
 import mara.mybox.image.file.ImageFileReaders;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import org.krysalis.barcode4j.ChecksumMode;
 import org.krysalis.barcode4j.HumanReadablePlacement;
 import org.krysalis.barcode4j.impl.AbstractBarcodeBean;

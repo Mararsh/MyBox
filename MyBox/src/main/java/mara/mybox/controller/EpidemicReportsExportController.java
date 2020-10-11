@@ -21,7 +21,6 @@ import mara.mybox.db.TableEpidemicReport;
 import mara.mybox.db.TableGeographyCode;
 import mara.mybox.data.tools.EpidemicReportTools;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.poi.xssf.usermodel.XSSFSheet;

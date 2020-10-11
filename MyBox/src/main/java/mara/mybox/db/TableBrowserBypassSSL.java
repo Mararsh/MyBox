@@ -11,7 +11,6 @@ import java.util.List;
 import mara.mybox.data.CertificateBypass;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara

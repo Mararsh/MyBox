@@ -113,7 +113,7 @@ License:    Apache License Version 2.0
                                         </HBox>
                                         <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="159.0" spacing="10.0">
                                             <children>
-                                                <Label text="%ShowHideSplitPanes" />
+                                                <Label text="%ShowHidePanes" />
                                                 <RadioButton fx:id="splitPaneEnteredRadio" mnemonicParsing="false" onAction="#setSplitPaneEntered" selected="true" text="%MouseEnterred">
                                                     <toggleGroup>
                                                         <ToggleGroup fx:id="splitPanesGroup" />
@@ -354,70 +354,6 @@ License:    Apache License Version 2.0
                                             </children>
                                         </HBox>
                                         <CheckBox fx:id="copyToSystemClipboardCheck" mnemonicParsing="false" selected="true" text="%CopyToSystemClipboard" VBox.vgrow="NEVER" />
-                                    </children>
-                                    <padding>
-                                        <Insets bottom="10.0" left="10.0" right="10.0" top="20.0" />
-                                    </padding>
-                                </VBox>
-                            </content>
-                        </Tab>
-                        <Tab fx:id="ocrTab" text="%OCR">
-                            <content>
-                                <VBox fx:id="ocrBox" spacing="5.0">
-                                    <children>
-                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                            <children>
-                                                <Label text="%OCRDataPath" />
-                                                <TextField fx:id="ocrDirInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                <Button fx:id="ocrPathButton" mnemonicParsing="false" onAction="#setOCRPath">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconOpen.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                            </children>
-                                        </HBox>
-                                        <Label layoutX="10.0" layoutY="68.0" text="%TesseractDataComments" />
-                                        <Hyperlink onAction="#link" text=" https://github.com/tesseract-ocr/tesseract/wiki/Data-Files" />
-                                        <Label text="%TesseractComments" />
-                                        <Hyperlink layoutX="10.0" layoutY="143.0" onAction="#link" text="https://github.com/tesseract-ocr/tesseract/wiki" />
-                                        <Label fx:id="currentOCRFilesLabel" />
-                                        <HBox alignment="CENTER_LEFT" spacing="5.0">
-                                            <children>
-                                                <Button fx:id="moveDownButton" mnemonicParsing="false" onAction="#downAction">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconDown.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                                <Button fx:id="moveUpButton" mnemonicParsing="false" onAction="#upAction">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconUp.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                                <Button fx:id="moveTopButton" mnemonicParsing="false" onAction="#topAction">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconDoubleUp.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                                <Label text="%OCRSelection" />
-                                            </children>
-                                        </HBox>
-                                        <ListView fx:id="languageList" prefHeight="200.0" prefWidth="200.0" />
                                     </children>
                                     <padding>
                                         <Insets bottom="10.0" left="10.0" right="10.0" top="20.0" />

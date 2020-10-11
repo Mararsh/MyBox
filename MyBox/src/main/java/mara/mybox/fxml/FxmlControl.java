@@ -41,6 +41,7 @@ import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputControl;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
@@ -70,7 +71,6 @@ import mara.mybox.tools.MediaTools;
 import mara.mybox.tools.SoundTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.MyboxDataPath;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
@@ -128,12 +128,24 @@ public class FxmlControl {
         return value;
     }
 
+    public static void miao2() {
+        playClip("/sound/guaiMiao2.mp3", "guaiMiao2.mp3");
+    }
+
     public static void miao3() {
         playClip("/sound/guaiMiao3.mp3", "guaiMiao3.mp3");
     }
 
     public static void miao5() {
         playClip("/sound/guaiMiao5.mp3", "guaiMiao5.mp3");
+    }
+
+    public static void miao6() {
+        playClip("/sound/guaiMiao6.mp3", "guaiMiao6.mp3");
+    }
+
+    public static void miao7() {
+        playClip("/sound/guaiMiao7.mp3", "guaiMiao7.mp3");
     }
 
     public static void BenWu() {
@@ -1111,6 +1123,75 @@ public class FxmlControl {
                 menu = new MenuItem(value);
                 menu.setOnAction((ActionEvent event) -> {
                     input.setText(value);
+                });
+                popMenu.getItems().add(menu);
+            }
+
+            popMenu.getItems().add(new SeparatorMenuItem());
+            menu = new MenuItem(message("PopupClose"));
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    popMenu.hide();
+                }
+            });
+            popMenu.getItems().add(menu);
+
+            FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
+
+            return popMenu;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
+    public static ContextMenu popRegexExample(ContextMenu inPopMenu, TextInputControl input, MouseEvent mouseEvent) {
+        try {
+            if (inPopMenu != null && inPopMenu.isShowing()) {
+                inPopMenu.hide();
+            }
+            final ContextMenu popMenu = new ContextMenu();
+            popMenu.setAutoHide(true);
+
+            List<String> values = new ArrayList<>();
+            values.addAll(Arrays.asList(
+                    "^      " + message("StartLocation"),
+                    "$      " + message("EndLocation"),
+                    "*      " + message("ZeroOrNTimes"),
+                    "+      " + message("OneOrNTimes"),
+                    "?      " + message("ZeroOrOneTimes"),
+                    "{n}      " + message("NTimes"),
+                    "{n,}      " + message("N+Times"),
+                    "{n,m}      " + message("NMTimes"),
+                    "[abc]      " + message("MatchTheseCharacters"),
+                    "[A-Z]      " + message("A-Z"),
+                    "|      " + message("Or"),
+                    "\\s      " + message("NonprintableCharacter"),
+                    "\\S      " + message("PrintableCharacter"),
+                    "\\n      " + message("LineBreak"),
+                    "\\r      " + message("CarriageReturn"),
+                    "\\t      " + message("Tab"),
+                    "[0-9]{n}      " + message("NNumber"),
+                    "[A-Z]{n}      " + message("NUppercase"),
+                    "[a-z]{n}      " + message("NLowercase"),
+                    "[\\u4e00-\\u9fa5]      " + message("Chinese"),
+                    "[^\\x00-\\xff]      " + message("DoubleByteCharacter"),
+                    "[A-Za-z0-9]+      " + message("EnglishAndNumber"),
+                    "\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*      " + message("Email"),
+                    "(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\\d{8}      " + message("PhoneNumber"),
+                    "[a-zA-z]+://[^\\s]* 或 ^http://([\\w-]+\\.)+[\\w-]+(/[\\w-./?%&=]*)?      " + message("URL"),
+                    "\\n\\s*\\r      " + message("BlankLine"),
+                    "\\d+\\.\\d+\\.\\d+\\.\\d+      " + message("IP")
+            ));
+
+            MenuItem menu;
+            for (String value : values) {
+                menu = new MenuItem(value);
+                menu.setOnAction((ActionEvent event) -> {
+                    String[] vv = value.split("   ");
+                    input.appendText(vv[0]);
                 });
                 popMenu.getItems().add(menu);
             }

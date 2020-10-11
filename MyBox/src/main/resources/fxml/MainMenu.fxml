@@ -223,6 +223,7 @@ License:    Apache License Version 2.0
                                 <MenuItem mnemonicParsing="false" onAction="#openAlarmClock" text="%AlarmClock" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openGameElimniation" text="%GameElimniation" />
+                                <MenuItem mnemonicParsing="false" onAction="#openGameMine" text="%GameMine" />
                             </items>
                         </Menu>
                         <Menu mnemonicParsing="false" text="%Network">
@@ -239,10 +240,15 @@ License:    Apache License Version 2.0
                         </Menu>
                         <Menu fx:id="settingsMenu" mnemonicParsing="false" text="%Settings">
                             <items>
+                                <MenuItem mnemonicParsing="false" onAction="#settingsAction" text="%SettingsDot" />
+                                <MenuItem mnemonicParsing="false" onAction="#openUserPath" text="%OpenUserPath" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
+
                                 <CheckMenuItem fx:id="restoreStagesSizeCheck" mnemonicParsing="false" onAction="#restoreStagesSizeAction" text="%RestoreStagesSize" />
                                 <CheckMenuItem fx:id="newWindowCheck" mnemonicParsing="false" onAction="#newWindowAction" text="%OpenStageInNewWindow" />
                                 <CheckMenuItem fx:id="popRecentCheck" mnemonicParsing="false" onAction="#popRecentAction" text="%PopRecentFiles" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
+
                                 <RadioMenuItem fx:id="chineseMenuItem" mnemonicParsing="false" onAction="#setChinese" text="中文">
                                     <toggleGroup>
                                         <ToggleGroup fx:id="langGroup" />
@@ -331,10 +337,7 @@ License:    Apache License Version 2.0
                                 </Menu>
 
                                 <SeparatorMenuItem mnemonicParsing="false" />
-                                <MenuItem mnemonicParsing="false" onAction="#openUserPath" text="%OpenUserPath" />
                                 <MenuItem mnemonicParsing="false" onAction="#clearSettings" text="%ClearPersonalSettings" />
-                                <SeparatorMenuItem mnemonicParsing="false" />
-                                <MenuItem mnemonicParsing="false" onAction="#settingsAction" text="%SettingsDot" />
                             </items>
                         </Menu>
                         <Menu fx:id="recentMenu" mnemonicParsing="false" text="%RecentAccessed">
@@ -350,6 +353,7 @@ License:    Apache License Version 2.0
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#documents" text="%Documents" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem mnemonicParsing="false" onAction="#messageAuthor" text="%MessageAuthor" />
                                 <MenuItem mnemonicParsing="false" onAction="#showAbout" text="%About" />
                             </items>
                         </Menu>

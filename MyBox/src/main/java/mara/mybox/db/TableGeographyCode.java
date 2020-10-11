@@ -20,7 +20,6 @@ import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
 import static mara.mybox.db.DerbyBase.stringValue;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**
@@ -603,7 +602,7 @@ public class TableGeographyCode extends TableBase<GeographyCode> {
                 String condition = "level=" + level;
                 switch (level) {
                     case 3:
-                        condition += " AND continent=" + code.getContinent();
+//                        condition += " AND continent=" + code.getContinent();
                         break;
                     case 4:
                         condition += " AND continent=" + code.getContinent()
@@ -1072,12 +1071,23 @@ public class TableGeographyCode extends TableBase<GeographyCode> {
         if (codes == null || codes.isEmpty()) {
             return false;
         }
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 PreparedStatement update = conn.prepareStatement(Update);
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            return write(conn, codes);
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean write(Connection conn, List<GeographyCode> codes) {
+        if (codes == null || codes.isEmpty()) {
+            return false;
+        }
+        try ( PreparedStatement update = conn.prepareStatement(Update);
                  PreparedStatement insert = conn.prepareStatement(Insert);) {
             conn.setAutoCommit(false);
-            for (GeographyCode code
-                    : codes) {
+            for (GeographyCode code : codes) {
                 GeographyCode exist = readCode(conn, code, false);
                 if (exist != null) {
                     code.setGcid(exist.getGcid());
@@ -1112,86 +1122,91 @@ public class TableGeographyCode extends TableBase<GeographyCode> {
         if (code == null) {
             return;
         }
-        setOwner(code);
-        switch (code.getLevel()) {
-            case 1:
-                code.setContinent(-1);
-                code.setCountry(-1);
-                code.setProvince(-1);
-                code.setCity(-1);
-                code.setCounty(-1);
-                code.setTown(-1);
-                code.setVillage(-1);
-                code.setBuilding(-1);
-                break;
-            case 2:
-                if (code.getGcid() > 0) {
-                    code.setContinent(code.getGcid());
-                }
-                code.setCountry(-1);
-                code.setProvince(-1);
-                code.setCity(-1);
-                code.setCounty(-1);
-                code.setTown(-1);
-                code.setVillage(-1);
-                code.setBuilding(-1);
-                break;
-            case 3:
-                if (code.getGcid() > 0) {
-                    code.setCountry(code.getGcid());
-                }
-                code.setProvince(-1);
-                code.setCity(-1);
-                code.setCounty(-1);
-                code.setTown(-1);
-                code.setVillage(-1);
-                code.setBuilding(-1);
-                break;
-            case 4:
-                if (code.getGcid() > 0) {
-                    code.setProvince(code.getGcid());
-                }
-                code.setCity(-1);
-                code.setCounty(-1);
-                code.setTown(-1);
-                code.setVillage(-1);
-                code.setBuilding(-1);
-                break;
-            case 5:
-                if (code.getGcid() > 0) {
-                    code.setCity(code.getGcid());
-                }
-                code.setCounty(-1);
-                code.setTown(-1);
-                code.setVillage(-1);
-                code.setBuilding(-1);
-                break;
-            case 6:
-                if (code.getGcid() > 0) {
-                    code.setCounty(code.getGcid());
-                }
-                code.setTown(-1);
-                code.setVillage(-1);
-                code.setBuilding(-1);
-                break;
-            case 7:
-                if (code.getGcid() > 0) {
-                    code.setTown(code.getGcid());
-                }
-                code.setVillage(-1);
-                code.setBuilding(-1);
-                break;
-            case 8:
-                if (code.getGcid() > 0) {
-                    code.setVillage(code.getGcid());
-                }
-                code.setBuilding(-1);
-                break;
-            case 9:
-                if (code.getGcid() > 0) {
-                    code.setBuilding(code.getGcid());
-                }
-                break;
+        try {
+            setOwner(code);
+            switch (code.getLevel()) {
+                case 1:
+                    code.setContinent(-1);
+                    code.setCountry(-1);
+                    code.setProvince(-1);
+                    code.setCity(-1);
+                    code.setCounty(-1);
+                    code.setTown(-1);
+                    code.setVillage(-1);
+                    code.setBuilding(-1);
+                    break;
+                case 2:
+                    if (code.getGcid() > 0) {
+                        code.setContinent(code.getGcid());
+                    }
+                    code.setCountry(-1);
+                    code.setProvince(-1);
+                    code.setCity(-1);
+                    code.setCounty(-1);
+                    code.setTown(-1);
+                    code.setVillage(-1);
+                    code.setBuilding(-1);
+                    break;
+                case 3:
+                    if (code.getGcid() > 0) {
+                        code.setCountry(code.getGcid());
+                    }
+                    code.setProvince(-1);
+                    code.setCity(-1);
+                    code.setCounty(-1);
+                    code.setTown(-1);
+                    code.setVillage(-1);
+                    code.setBuilding(-1);
+                    break;
+                case 4:
+                    if (code.getGcid() > 0) {
+                        code.setProvince(code.getGcid());
+                    }
+                    code.setCity(-1);
+                    code.setCounty(-1);
+                    code.setTown(-1);
+                    code.setVillage(-1);
+                    code.setBuilding(-1);
+                    break;
+                case 5:
+                    if (code.getGcid() > 0) {
+                        code.setCity(code.getGcid());
+                    }
+                    code.setCounty(-1);
+                    code.setTown(-1);
+                    code.setVillage(-1);
+                    code.setBuilding(-1);
+                    break;
+                case 6:
+                    if (code.getGcid() > 0) {
+                        code.setCounty(code.getGcid());
+                    }
+                    code.setTown(-1);
+                    code.setVillage(-1);
+                    code.setBuilding(-1);
+                    break;
+                case 7:
+                    if (code.getGcid() > 0) {
+                        code.setTown(code.getGcid());
+                    }
+                    code.setVillage(-1);
+                    code.setBuilding(-1);
+                    break;
+                case 8:
+                    if (code.getGcid() > 0) {
+                        code.setVillage(code.getGcid());
+                    }
+                    code.setBuilding(-1);
+                    break;
+                case 9:
+                    if (code.getGcid() > 0) {
+                        code.setBuilding(code.getGcid());
+                    }
+                    break;
+            }
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
         }
     }
 
@@ -1199,77 +1214,83 @@ public class TableGeographyCode extends TableBase<GeographyCode> {
         if (code == null) {
             return;
         }
-        switch (code.getLevel()) {
-            case 1:
-            case 2:
-                code.setOwner(1);
-                break;
-            case 3:
-                code.setOwner(code.getContinent() > 0 ? code.getContinent() : 1);
-                break;
-            case 4:
-                code.setOwner(
-                        code.getCountry() > 0 ? code.getCountry()
-                        : code.getContinent() > 0 ? code.getContinent() : 1
-                );
-                break;
-            case 5:
-                code.setOwner(
-                        code.getProvince() > 0 ? code.getProvince()
-                        : code.getCountry() > 0 ? code.getCountry()
-                        : (code.getContinent() > 0 ? code.getContinent() : 1)
-                );
-                break;
-            case 6:
-                code.setOwner(
-                        code.getCity() > 0 ? code.getCity()
-                        : code.getProvince() > 0 ? code.getProvince()
-                        : code.getCountry() > 0 ? code.getCountry()
-                        : (code.getContinent() > 0 ? code.getContinent() : 1)
-                );
-                break;
-            case 7:
-                code.setOwner(
-                        code.getCounty() > 0 ? code.getCounty()
-                        : code.getCity() > 0 ? code.getCity()
-                        : code.getProvince() > 0 ? code.getProvince()
-                        : code.getCountry() > 0 ? code.getCountry()
-                        : (code.getContinent() > 0 ? code.getContinent() : 1)
-                );
-                break;
-            case 8:
-                code.setOwner(
-                        code.getTown() > 0 ? code.getTown()
-                        : code.getCounty() > 0 ? code.getCounty()
-                        : code.getCity() > 0 ? code.getCity()
-                        : code.getProvince() > 0 ? code.getProvince()
-                        : code.getCountry() > 0 ? code.getCountry()
-                        : (code.getContinent() > 0 ? code.getContinent() : 1)
-                );
-                break;
-            case 9:
-                code.setOwner(
-                        code.getVillage() > 0 ? code.getVillage()
-                        : code.getTown() > 0 ? code.getTown()
-                        : code.getCounty() > 0 ? code.getCounty()
-                        : code.getCity() > 0 ? code.getCity()
-                        : code.getProvince() > 0 ? code.getProvince()
-                        : code.getCountry() > 0 ? code.getCountry()
-                        : (code.getContinent() > 0 ? code.getContinent() : 1)
-                );
-                break;
-            case 10:
-            default:
-                code.setOwner(
-                        code.getBuilding() > 0 ? code.getBuilding()
-                        : code.getVillage() > 0 ? code.getVillage()
-                        : code.getTown() > 0 ? code.getTown()
-                        : code.getCounty() > 0 ? code.getCounty()
-                        : code.getCity() > 0 ? code.getCity()
-                        : code.getProvince() > 0 ? code.getProvince()
-                        : code.getCountry() > 0 ? code.getCountry()
-                        : (code.getContinent() > 0 ? code.getContinent() : 1)
-                );
+        try {
+            switch (code.getLevel()) {
+                case 1:
+                case 2:
+                    code.setOwner(1);
+                    break;
+                case 3:
+                    code.setOwner(code.getContinent() > 0 ? code.getContinent() : 1);
+                    break;
+                case 4:
+                    code.setOwner(
+                            code.getCountry() > 0 ? code.getCountry()
+                            : code.getContinent() > 0 ? code.getContinent() : 1
+                    );
+                    break;
+                case 5:
+                    code.setOwner(
+                            code.getProvince() > 0 ? code.getProvince()
+                            : code.getCountry() > 0 ? code.getCountry()
+                            : (code.getContinent() > 0 ? code.getContinent() : 1)
+                    );
+                    break;
+                case 6:
+                    code.setOwner(
+                            code.getCity() > 0 ? code.getCity()
+                            : code.getProvince() > 0 ? code.getProvince()
+                            : code.getCountry() > 0 ? code.getCountry()
+                            : (code.getContinent() > 0 ? code.getContinent() : 1)
+                    );
+                    break;
+                case 7:
+                    code.setOwner(
+                            code.getCounty() > 0 ? code.getCounty()
+                            : code.getCity() > 0 ? code.getCity()
+                            : code.getProvince() > 0 ? code.getProvince()
+                            : code.getCountry() > 0 ? code.getCountry()
+                            : (code.getContinent() > 0 ? code.getContinent() : 1)
+                    );
+                    break;
+                case 8:
+                    code.setOwner(
+                            code.getTown() > 0 ? code.getTown()
+                            : code.getCounty() > 0 ? code.getCounty()
+                            : code.getCity() > 0 ? code.getCity()
+                            : code.getProvince() > 0 ? code.getProvince()
+                            : code.getCountry() > 0 ? code.getCountry()
+                            : (code.getContinent() > 0 ? code.getContinent() : 1)
+                    );
+                    break;
+                case 9:
+                    code.setOwner(
+                            code.getVillage() > 0 ? code.getVillage()
+                            : code.getTown() > 0 ? code.getTown()
+                            : code.getCounty() > 0 ? code.getCounty()
+                            : code.getCity() > 0 ? code.getCity()
+                            : code.getProvince() > 0 ? code.getProvince()
+                            : code.getCountry() > 0 ? code.getCountry()
+                            : (code.getContinent() > 0 ? code.getContinent() : 1)
+                    );
+                    break;
+                case 10:
+                default:
+                    code.setOwner(
+                            code.getBuilding() > 0 ? code.getBuilding()
+                            : code.getVillage() > 0 ? code.getVillage()
+                            : code.getTown() > 0 ? code.getTown()
+                            : code.getCounty() > 0 ? code.getCounty()
+                            : code.getCity() > 0 ? code.getCity()
+                            : code.getProvince() > 0 ? code.getProvince()
+                            : code.getCountry() > 0 ? code.getCountry()
+                            : (code.getContinent() > 0 ? code.getContinent() : 1)
+                    );
+            }
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            logger.debug(code.getLevelName() + " " + code.getName());
         }
     }
 
@@ -1295,8 +1316,9 @@ public class TableGeographyCode extends TableBase<GeographyCode> {
                 return statement.executeUpdate() > 0;
             }
         } catch (Exception e) {
-            failed(e);
+//            failed(e);
             logger.debug(e.toString());
+            logger.debug(code.getLevelName() + " " + code.getName() + " " + code.getGcid() + " " + code.getOwner());
         }
         return false;
     }

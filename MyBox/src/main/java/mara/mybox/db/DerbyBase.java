@@ -21,7 +21,6 @@ import mara.mybox.tools.ConfigTools;
 import mara.mybox.tools.NetworkTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 import org.apache.derby.drda.NetworkServerControl;
@@ -437,8 +436,23 @@ public class DerbyBase {
     public static boolean initTables() {
         logger.debug("Protocol: " + protocol + dbHome());
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + create)) {
+            initTables(conn);
+            initIndexs(conn);
+            initViews(conn);
+            return true;
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean initTables(Connection conn) {
+        try {
             List<String> tables = tables(conn);
+            logger.debug("Tables: " + tables.size());
 //            logger.debug(tables);
+
             if (!tables.contains("String_Values".toUpperCase())) {
                 new TableStringValues().init(conn);
             }
@@ -500,50 +514,105 @@ public class DerbyBase {
                 new TableStringValue().init(conn);
             }
 
-            List<String> indexes = indexes(conn);
-            try ( Statement statement = conn.createStatement()) {
-                if (!indexes.contains("Geography_Code_level_index".toUpperCase())) {
-                    statement.executeUpdate(TableGeographyCode.Create_Index_levelIndex);
-                }
-                if (!indexes.contains("Geography_Code_code_index".toUpperCase())) {
-                    statement.executeUpdate(TableGeographyCode.Create_Index_codeIndex);
-                }
-                if (!indexes.contains("Geography_Code_gcid_index".toUpperCase())) {
-                    statement.executeUpdate(TableGeographyCode.Create_Index_gcidIndex);
-                }
-                if (!indexes.contains("Epidemic_Report_DatasetTimeDesc_index".toUpperCase())) {
-                    statement.executeUpdate(TableEpidemicReport.Create_Index_DatasetTimeDesc);
-                }
-                if (!indexes.contains("Epidemic_Report_DatasetTimeAsc_index".toUpperCase())) {
-                    statement.executeUpdate(TableEpidemicReport.Create_Index_DatasetTimeAsc);
-                }
-                if (!indexes.contains("Epidemic_Report_timeAsc_index".toUpperCase())) {
-                    statement.executeUpdate(TableEpidemicReport.Create_Index_TimeAsc);
-                }
-                if (!indexes.contains("Dataset_unique_index".toUpperCase())) {
-                    statement.executeUpdate(TableDataset.Create_Index_unique);
-                }
-            } catch (Exception e) {
-                failed(e);
-//                logger.debug(e.toString());
-            }
-
-            List<String> views = views(conn);
-            try ( Statement statement = conn.createStatement()) {
-                if (!views.contains("Epidemic_Report_Statistic_View".toUpperCase())) {
-                    statement.executeUpdate(TableEpidemicReport.CreateStatisticView);
-                }
-                if (!views.contains("Location_Data_View".toUpperCase())) {
-                    statement.executeUpdate(TableLocationData.CreateView);
-                }
-            } catch (Exception e) {
-                failed(e);
-//                logger.debug(e.toString());
-            }
-
             return true;
         } catch (Exception e) {
             failed(e);
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean initIndexs(Connection conn) {
+        try {
+            List<String> indexes = indexes(conn);
+            logger.debug("Indexes: " + indexes.size());
+            if (!indexes.contains("Geography_Code_level_index".toUpperCase())) {
+                try ( Statement statement = conn.createStatement()) {
+                    statement.executeUpdate(TableGeographyCode.Create_Index_levelIndex);
+                } catch (Exception e) {
+//                    failed(e);
+//                    logger.debug(e.toString());
+                }
+            }
+            if (!indexes.contains("Geography_Code_code_index".toUpperCase())) {
+                try ( Statement statement = conn.createStatement()) {
+                    statement.executeUpdate(TableGeographyCode.Create_Index_codeIndex);
+                } catch (Exception e) {
+//                    failed(e);
+//                    logger.debug(e.toString());
+                }
+            }
+            if (!indexes.contains("Geography_Code_gcid_index".toUpperCase())) {
+                try ( Statement statement = conn.createStatement()) {
+                    statement.executeUpdate(TableGeographyCode.Create_Index_gcidIndex);
+                } catch (Exception e) {
+//                    failed(e);
+//                    logger.debug(e.toString());
+                }
+            }
+            if (!indexes.contains("Epidemic_Report_DatasetTimeDesc_index".toUpperCase())) {
+                try ( Statement statement = conn.createStatement()) {
+                    statement.executeUpdate(TableEpidemicReport.Create_Index_DatasetTimeDesc);
+                } catch (Exception e) {
+//                    failed(e);
+//                    logger.debug(e.toString());
+                }
+            }
+            if (!indexes.contains("Epidemic_Report_DatasetTimeAsc_index".toUpperCase())) {
+                try ( Statement statement = conn.createStatement()) {
+                    statement.executeUpdate(TableEpidemicReport.Create_Index_DatasetTimeAsc);
+                } catch (Exception e) {
+//                    failed(e);
+//                    logger.debug(e.toString());
+                }
+            }
+            if (!indexes.contains("Epidemic_Report_timeAsc_index".toUpperCase())) {
+                try ( Statement statement = conn.createStatement()) {
+                    statement.executeUpdate(TableEpidemicReport.Create_Index_TimeAsc);
+                } catch (Exception e) {
+//                    failed(e);
+//                    logger.debug(e.toString());
+                }
+            }
+            if (!indexes.contains("Dataset_unique_index".toUpperCase())) {
+                try ( Statement statement = conn.createStatement()) {
+                    statement.executeUpdate(TableDataset.Create_Index_unique);
+                } catch (Exception e) {
+//                    failed(e);
+//                    logger.debug(e.toString());
+                }
+            }
+            return true;
+        } catch (Exception e) {
+//            failed(e);
+//            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean initViews(Connection conn) {
+        try {
+            List<String> views = views(conn);
+            logger.debug("Views: " + views.size());
+            if (!views.contains("Epidemic_Report_Statistic_View".toUpperCase())) {
+                try ( Statement statement = conn.createStatement()) {
+                    statement.executeUpdate(TableEpidemicReport.CreateStatisticView);
+                } catch (Exception e) {
+//                    failed(e);
+//                    logger.debug(e.toString());
+                }
+            }
+            if (!views.contains("Location_Data_View".toUpperCase())) {
+                try ( Statement statement = conn.createStatement()) {
+                    statement.executeUpdate(TableLocationData.CreateView);
+                } catch (Exception e) {
+//                    failed(e);
+//                    logger.debug(e.toString());
+                }
+            }
+            return true;
+        } catch (Exception e) {
+//            failed(e);
 //            logger.debug(e.toString());
             return false;
         }
@@ -556,7 +625,7 @@ public class DerbyBase {
             }
             return true;
         } catch (Exception e) {
-            failed(e);
+//            failed(e);
 //            logger.debug(e.toString());
             return false;
         }

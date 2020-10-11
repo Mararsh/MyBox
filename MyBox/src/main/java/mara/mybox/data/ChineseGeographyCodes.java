@@ -28,7 +28,6 @@ import mara.mybox.db.TableGeographyCode;
 import mara.mybox.tools.FileTools;
 import mara.mybox.data.tools.GeographyCodeTools;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonValues;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;

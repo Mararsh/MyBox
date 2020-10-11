@@ -29,7 +29,6 @@ import mara.mybox.tools.StringTools;
 import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 
@@ -324,9 +323,13 @@ public class FFmpegMergeImagesController extends FFmpegBatchController {
 
             if (ffmpegOptionsController.audioBitrate > 0) {
                 ffmpeg.addArguments("-b:a", ffmpegOptionsController.audioBitrate + "k");
+            } else {
+                ffmpeg.addArguments("-b:a", "192k");
             }
             if (ffmpegOptionsController.audioSampleRate > 0) {
                 ffmpeg.addArguments("-ar", ffmpegOptionsController.audioSampleRate + "");
+            } else {
+                ffmpeg.addArguments("-ar", "44100");
             }
             ffmpeg.addOutput(UrlOutput.toPath(videoFile.toPath()))
                     .setProgressListener(listener)
@@ -341,9 +344,13 @@ public class FFmpegMergeImagesController extends FFmpegBatchController {
             }
             if (ffmpegOptionsController.videoFrameRate > 0) {
                 ffmpeg.addArguments("-r", ffmpegOptionsController.videoFrameRate + "");
+            } else {
+                ffmpeg.addArguments("-r", "30");
             }
             if (ffmpegOptionsController.videoBitrate > 0) {
                 ffmpeg.addArguments("-b:v", ffmpegOptionsController.videoBitrate + "k");
+            } else {
+                ffmpeg.addArguments("-b:v", "5000k");
             }
 
             if (ffmpegOptionsController.disbaleAudio) {

@@ -68,8 +68,7 @@ public class ImageManufactureCopyController extends ImageManufactureOperationCon
 
     @Override
     protected void paneExpanded() {
-//        imageController.showRightPane();
-//        imageController.showScopePane();
+        imageController.showScopePane();
     }
 
     @FXML

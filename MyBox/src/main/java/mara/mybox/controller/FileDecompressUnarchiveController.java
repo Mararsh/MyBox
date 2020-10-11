@@ -13,7 +13,6 @@ import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.CompressTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;

@@ -50,7 +50,6 @@ import mara.mybox.tools.LocationTools;
 import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
@@ -824,8 +823,7 @@ public class LocationDataMapController extends MapBaseController {
         if (file == null) {
             return;
         }
-        recordFileWritten(file, VisitHistoryTools.getPathKey(VisitHistory.FileType.Image),
-                VisitHistory.FileType.Image, VisitHistory.FileType.Image);
+        recordFileWritten(file, VisitHistory.FileType.Image);
 
         double scale = dpi / Screen.getPrimary().getDpi();
         scale = scale > 1 ? scale : 1;
@@ -894,8 +892,7 @@ public class LocationDataMapController extends MapBaseController {
             if (directory == null) {
                 return;
             }
-            recordFileWritten(directory, VisitHistoryTools.getPathKey(VisitHistory.FileType.Image),
-                    VisitHistory.FileType.Image, VisitHistory.FileType.Image);
+            recordFileWritten(directory, VisitHistory.FileType.Image);
 
             String name = title.replaceAll("\\\"|\n|:", "");
             String filePath = directory.getAbsolutePath() + File.separator + name + File.separator;

@@ -3,10 +3,14 @@ package mara.mybox.controller;
 import com.recognition.software.jdeskew.ImageDeskew;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import javafx.application.Platform;
@@ -14,23 +18,27 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.SelectionMode;
+import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TitledPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import mara.mybox.data.ConvolutionKernel;
+import mara.mybox.data.DoublePoint;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
@@ -49,11 +57,10 @@ import mara.mybox.tools.OCRTools;
 import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
-import net.sourceforge.tess4j.ITessAPI.TessPageIteratorLevel;
+import net.sourceforge.tess4j.ITessAPI;
 import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.Word;
@@ -75,28 +82,21 @@ TIFF has the advantage of the ability to contain multiple images (pages) in a fi
  */
 public class ImageOCRController extends ImageViewerController {
 
-    protected String selectedLanguages;
     protected float scale;
-    protected int threshold, rotate, regionLevel, wordLevel;
-    protected ContrastAlgorithm contrastAlgorithm;
+    protected int threshold, rotate;
+    protected LoadingController loading;
+    protected Process process;
 
     @FXML
-    protected HBox imageOpBox;
-    @FXML
-    protected VBox imagesBox, resultBox;
-    @FXML
-    protected TitledPane preprocessPane, ocrOptionsPane;
+    protected VBox imageOptionsBox, imagesBox;
     @FXML
     protected ScrollPane originalScrollPane;
     @FXML
     protected TextArea textArea;
     @FXML
-    protected Label resultLabel, originalViewLabel, currentOCRFilesLabel, imageLabel;
+    protected Label resultLabel, originalViewLabel;
     @FXML
-    protected ListView<String> languageList;
-    @FXML
-    protected ComboBox<String> enhancementSelector, rotateSelector,
-            binarySelector, scaleSelector, regionSelector, wordSelector;
+    protected ComboBox<String> rotateSelector, binarySelector, scaleSelector;
     @FXML
     protected CheckBox startCheck, LoadCheck;
     @FXML
@@ -104,7 +104,15 @@ public class ImageOCRController extends ImageViewerController {
     @FXML
     protected HtmlViewerController regionsTableController, wordsTableController, htmlController;
     @FXML
+    protected ImageOCROptionsController ocrOptionsController;
+    @FXML
     protected Button demoButton;
+    @FXML
+    protected TabPane ocrTabPane;
+    @FXML
+    protected Tab txtTab, regionsTab, wordsTab;
+    @FXML
+    protected Tab ocrOptionsTab;
 
     public ImageOCRController() {
         baseTitle = AppVariables.message("ImageOCR");
@@ -127,50 +135,15 @@ public class ImageOCRController extends ImageViewerController {
 
             initImageBox();
             initPreprocessBox();
-            initOCROptionsBox();
 
-            imageOpBox.disableProperty().bind(originalView.imageProperty().isNull());
+            ocrOptionsController.setValues(this, false, true);
+
+            imageOptionsBox.disableProperty().bind(originalView.imageProperty().isNull());
             imagesBox.disableProperty().bind(originalView.imageProperty().isNull());
-            resultBox.disableProperty().bind(originalView.imageProperty().isNull());
-            preprocessPane.disableProperty().bind(originalView.imageProperty().isNull());
-            ocrOptionsPane.disableProperty().bind(originalView.imageProperty().isNull());
-
-            preprocessPane.expandedProperty().addListener(
-                    (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                        AppVariables.setUserConfigValue(baseName + "PreprocessPane", preprocessPane.isExpanded());
-                    });
-            preprocessPane.setExpanded(AppVariables.getUserConfigBoolean(baseName + "PreprocessPane", false));
-            ocrOptionsPane.expandedProperty().addListener(
-                    (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                        AppVariables.setUserConfigValue(baseName + "OcrOptionsPane", ocrOptionsPane.isExpanded());
-                    });
-            ocrOptionsPane.setExpanded(AppVariables.getUserConfigBoolean(baseName + "OcrOptionsPane", false));
+            rightPane.disableProperty().bind(originalView.imageProperty().isNull());
 
         } catch (Exception e) {
             logger.debug(e.toString());
-        }
-    }
-
-    @Override
-    public void afterSceneLoaded() {
-        try {
-            super.afterSceneLoaded();
-            try {
-                String lv = AppVariables.getUserConfigValue("ImageOCRLeftPanePosition", "0.15");
-                splitPane.setDividerPositions(Double.parseDouble(lv), 0.65);
-            } catch (Exception e) {
-                splitPane.setDividerPositions(0.15, 0.65);
-            }
-            leftDividerListener = new ChangeListener<Number>() {
-                @Override
-                public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                    AppVariables.setUserConfigValue("ImageOCRLeftPanePosition", newValue.doubleValue() + "");
-                }
-            };
-            splitPane.getDividers().get(0).positionProperty().addListener(leftDividerListener);
-
-        } catch (Exception e) {
-            logger.error(e.toString());
         }
     }
 
@@ -200,7 +173,7 @@ public class ImageOCRController extends ImageViewerController {
             originalScrollPane.heightProperty().addListener(new ChangeListener<Number>() {
                 @Override
                 public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
-                    viewSizeChanged(Math.abs(new_val.intValue() - old_val.intValue()));
+                    refineOriginalPane();
                 }
             });
 
@@ -328,15 +301,6 @@ public class ImageOCRController extends ImageViewerController {
                 }
             });
 
-            contrastAlgorithm = null;
-            enhancementSelector.getItems().addAll(Arrays.asList(
-                    message("HSBHistogramEqualization"), message("GrayHistogramEqualization"),
-                    message("GrayHistogramStretching"), message("GrayHistogramShifting"),
-                    message("UnsharpMasking"),
-                    message("FourNeighborLaplace"), message("EightNeighborLaplace"),
-                    message("GaussianBlur"), message("AverageBlur")
-            ));
-
             rotate = 0;
             rotateSelector.getItems().addAll(Arrays.asList(
                     "0", "90", "45", "15", "30", "60", "75", "180", "105", "135", "120", "150", "165", "270", "300", "315"
@@ -362,16 +326,26 @@ public class ImageOCRController extends ImageViewerController {
 
     protected void setPreprocessImage(Image image) {
         imageView.setImage(image);
-        FxmlControl.paneSize(originalScrollPane, imageView);
+        FxmlControl.paneSize(scrollPane, imageView);
+        updateLabel();
+        if (startCheck.isSelected()) {
+            startAction();
+        }
+    }
+
+    protected void updateLabel() {
         String s = (int) image.getWidth() + " x " + (int) image.getHeight();
         if (maskRectangleLine != null && maskRectangleLine.isVisible() && maskRectangleData != null) {
             s += "  " + message("SelectedSize") + ": "
                     + (int) maskRectangleData.getWidth() + "x" + (int) maskRectangleData.getHeight();
         }
         imageLabel.setText(s);
-        if (startCheck.isSelected()) {
-            startAction();
-        }
+    }
+
+    @Override
+    public void imageClicked(MouseEvent event, DoublePoint p) {
+        super.imageClicked(event, p);
+        updateLabel();
     }
 
     @FXML
@@ -466,10 +440,54 @@ public class ImageOCRController extends ImageViewerController {
     }
 
     @FXML
-    protected void enhance() {
-        String enhance = enhancementSelector.getValue();
-        if (enhance == null
-                || isSettingValues || imageView.getImage() == null) {
+    protected void popAlgorithmsMenu(MouseEvent mouseEvent) {
+        try {
+            List<String> algorithms = new ArrayList<>();
+            algorithms.addAll(Arrays.asList(
+                    message("Deskew"), message("Invert"),
+                    message("EdgeDetection") + "-" + message("EightNeighborLaplaceInvert"),
+                    message("EdgeDetection") + "-" + message("EightNeighborLaplace"),
+                    message("HSBHistogramEqualization"), message("GrayHistogramEqualization"),
+                    message("GrayHistogramStretching"), message("GrayHistogramShifting"),
+                    message("UnsharpMasking"),
+                    message("Enhancement") + "-" + message("EightNeighborLaplace"),
+                    message("Enhancement") + "-" + message("FourNeighborLaplace"),
+                    message("GaussianBlur"), message("AverageBlur")
+            ));
+
+            if (popMenu != null && popMenu.isShowing()) {
+                popMenu.hide();
+            }
+            popMenu = new ContextMenu();
+            popMenu.setAutoHide(true);
+
+            MenuItem menu;
+            for (String algorithm : algorithms) {
+                menu = new MenuItem(algorithm);
+                menu.setOnAction((ActionEvent event) -> {
+                    algorithm(algorithm);
+                });
+                popMenu.getItems().add(menu);
+            }
+
+            popMenu.getItems().add(new SeparatorMenuItem());
+            menu = new MenuItem(message("PopupClose"));
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setOnAction((ActionEvent event) -> {
+                popMenu.hide();
+                popMenu = null;
+            });
+            popMenu.getItems().add(menu);
+
+            FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    protected void algorithm(String algorithm) {
+        if (algorithm == null || isSettingValues || imageView.getImage() == null) {
             return;
         }
         synchronized (this) {
@@ -482,55 +500,82 @@ public class ImageOCRController extends ImageViewerController {
                 @Override
                 protected boolean handle() {
                     try {
-                        if (message("GrayHistogramEqualization").equals(enhance)) {
+                        if (message("Deskew").equals(algorithm)) {
+                            BufferedImage bufferedImage = SwingFXUtils.fromFXImage(imageView.getImage(), null);
+                            ImageDeskew id = new ImageDeskew(bufferedImage);
+                            double imageSkewAngle = id.getSkewAngle();
+                            if ((imageSkewAngle > OCRTools.MINIMUM_DESKEW_THRESHOLD
+                                    || imageSkewAngle < -(OCRTools.MINIMUM_DESKEW_THRESHOLD))) {
+                                bufferedImage = ImageHelper.rotateImage(bufferedImage, -imageSkewAngle);
+                            }
+                            ocrImage = SwingFXUtils.toFXImage(bufferedImage, null);
+
+                        } else if (message("Invert").equals(algorithm)) {
+                            PixelsOperation pixelsOperation = PixelsOperation.create(imageView.getImage(),
+                                    null, PixelsOperation.OperationType.RGB, PixelsOperation.ColorActionType.Invert);
+                            ocrImage = pixelsOperation.operateFxImage();
+
+                        } else if (message("GrayHistogramEqualization").equals(algorithm)) {
                             ImageContrast imageContrast = new ImageContrast(imageView.getImage(),
                                     ContrastAlgorithm.Gray_Histogram_Equalization);
                             ocrImage = imageContrast.operateFxImage();
 
-                        } else if (message("GrayHistogramStretching").equals(enhance)) {
+                        } else if (message("GrayHistogramStretching").equals(algorithm)) {
                             ImageContrast imageContrast = new ImageContrast(imageView.getImage(),
                                     ImageContrast.ContrastAlgorithm.Gray_Histogram_Stretching);
                             imageContrast.setIntPara1(50);
                             imageContrast.setIntPara2(50);
                             ocrImage = imageContrast.operateFxImage();
 
-                        } else if (message("GrayHistogramShifting").equals(enhance)) {
+                        } else if (message("GrayHistogramShifting").equals(algorithm)) {
                             ImageContrast imageContrast = new ImageContrast(imageView.getImage(),
                                     ImageContrast.ContrastAlgorithm.Gray_Histogram_Shifting);
                             imageContrast.setIntPara1(10);
                             ocrImage = imageContrast.operateFxImage();
 
-                        } else if (message("HSBHistogramEqualization").equals(enhance)) {
+                        } else if (message("HSBHistogramEqualization").equals(algorithm)) {
                             ImageContrast imageContrast = new ImageContrast(imageView.getImage(),
                                     ImageContrast.ContrastAlgorithm.HSB_Histogram_Equalization);
                             ocrImage = imageContrast.operateFxImage();
 
-                        } else if (message("UnsharpMasking").equals(enhance)) {
+                        } else if (message("UnsharpMasking").equals(algorithm)) {
                             ConvolutionKernel kernel = ConvolutionKernel.makeUnsharpMasking(3);
                             ImageConvolution imageConvolution = ImageConvolution.create().
                                     setImage(imageView.getImage()).setKernel(kernel);
                             ocrImage = imageConvolution.operateFxImage();
 
-                        } else if (message("FourNeighborLaplace").equals(enhance)) {
-                            ConvolutionKernel kernel = ConvolutionKernel.MakeSharpenFourNeighborLaplace();
-                            ImageConvolution imageConvolution = ImageConvolution.create().
-                                    setImage(imageView.getImage()).setKernel(kernel);
-                            ocrImage = imageConvolution.operateFxImage();
-
-                        } else if (message("EightNeighborLaplace").equals(enhance)) {
+                        } else if ((message("Enhancement") + "-" + message("EightNeighborLaplace")).equals(algorithm)) {
                             ConvolutionKernel kernel = ConvolutionKernel.MakeSharpenEightNeighborLaplace();
                             ImageConvolution imageConvolution = ImageConvolution.create().
                                     setImage(imageView.getImage()).setKernel(kernel);
                             ocrImage = imageConvolution.operateFxImage();
 
-                        } else if (message("GaussianBlur").equals(enhance)) {
+                        } else if ((message("Enhancement") + "-" + message("FourNeighborLaplace")).equals(algorithm)) {
+                            ConvolutionKernel kernel = ConvolutionKernel.MakeSharpenFourNeighborLaplace();
+                            ImageConvolution imageConvolution = ImageConvolution.create().
+                                    setImage(imageView.getImage()).setKernel(kernel);
+                            ocrImage = imageConvolution.operateFxImage();
+
+                        } else if (message("GaussianBlur").equals(algorithm)) {
                             ConvolutionKernel kernel = ConvolutionKernel.makeGaussBlur(2);
                             ImageConvolution imageConvolution = ImageConvolution.create().
                                     setImage(imageView.getImage()).setKernel(kernel);
                             ocrImage = imageConvolution.operateFxImage();
 
-                        } else if (message("AverageBlur").equals(enhance)) {
+                        } else if (message("AverageBlur").equals(algorithm)) {
                             ConvolutionKernel kernel = ConvolutionKernel.makeAverageBlur(1);
+                            ImageConvolution imageConvolution = ImageConvolution.create().
+                                    setImage(imageView.getImage()).setKernel(kernel);
+                            ocrImage = imageConvolution.operateFxImage();
+
+                        } else if ((message("EdgeDetection") + "-" + message("EightNeighborLaplaceInvert")).equals(algorithm)) {
+                            ConvolutionKernel kernel = ConvolutionKernel.makeEdgeDetectionEightNeighborLaplaceInvert().setGray(true);
+                            ImageConvolution imageConvolution = ImageConvolution.create().
+                                    setImage(imageView.getImage()).setKernel(kernel);
+                            ocrImage = imageConvolution.operateFxImage();
+
+                        } else if ((message("EdgeDetection") + "-" + message("EightNeighborLaplace")).equals(algorithm)) {
+                            ConvolutionKernel kernel = ConvolutionKernel.makeEdgeDetectionEightNeighborLaplace().setGray(true);
                             ImageConvolution imageConvolution = ImageConvolution.create().
                                     setImage(imageView.getImage()).setKernel(kernel);
                             ocrImage = imageConvolution.operateFxImage();
@@ -559,11 +604,11 @@ public class ImageOCRController extends ImageViewerController {
     }
 
     @FXML
-    protected void demoEnhance() {
+    protected void demo() {
         if (imageView.getImage() == null) {
             return;
         }
-        popInformation(message("WaitAndHandling"));
+        popInformation(message("WaitAndHandling"), 6000);
         demoButton.setDisable(true);
         Task demoTask = new Task<Void>() {
             private List<String> files;
@@ -576,10 +621,30 @@ public class ImageOCRController extends ImageViewerController {
                     BufferedImage image = SwingFXUtils.fromFXImage(imageView.getImage(), null);
                     image = ImageManufacture.scaleImageLess(image, 1000000);
 
+                    ConvolutionKernel kernel = ConvolutionKernel.makeEdgeDetectionEightNeighborLaplaceInvert().setGray(true);
+                    ImageConvolution imageConvolution = ImageConvolution.create().
+                            setImage(image).setKernel(kernel);
+                    BufferedImage bufferedImage = imageConvolution.operateImage();
+                    String tmpFile = AppVariables.MyBoxTempPath + File.separator
+                            + message("EdgeDetection") + "-" + message("EightNeighborLaplaceInvert") + ".png";
+                    if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
+                        files.add(tmpFile);
+                    }
+
+                    kernel = ConvolutionKernel.makeEdgeDetectionEightNeighborLaplace().setGray(true);
+                    imageConvolution = ImageConvolution.create().
+                            setImage(image).setKernel(kernel);
+                    bufferedImage = imageConvolution.operateImage();
+                    tmpFile = AppVariables.MyBoxTempPath + File.separator
+                            + message("EdgeDetection") + "-" + message("EightNeighborLaplace") + ".png";
+                    if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
+                        files.add(tmpFile);
+                    }
+
                     ImageContrast imageContrast = new ImageContrast(image,
                             ContrastAlgorithm.HSB_Histogram_Equalization);
-                    BufferedImage bufferedImage = imageContrast.operateImage();
-                    String tmpFile = AppVariables.MyBoxTempPath + File.separator
+                    bufferedImage = imageContrast.operateImage();
+                    tmpFile = AppVariables.MyBoxTempPath + File.separator
                             + message("HSBHistogramEqualization") + ".png";
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
@@ -615,8 +680,8 @@ public class ImageOCRController extends ImageViewerController {
                         files.add(tmpFile);
                     }
 
-                    ConvolutionKernel kernel = ConvolutionKernel.makeUnsharpMasking(3);
-                    ImageConvolution imageConvolution = ImageConvolution.create().
+                    kernel = ConvolutionKernel.makeUnsharpMasking(3);
+                    imageConvolution = ImageConvolution.create().
                             setImage(image).setKernel(kernel);
                     bufferedImage = imageConvolution.operateImage();
                     tmpFile = AppVariables.MyBoxTempPath + File.separator
@@ -630,7 +695,7 @@ public class ImageOCRController extends ImageViewerController {
                             setImage(image).setKernel(kernel);
                     bufferedImage = imageConvolution.operateImage();
                     tmpFile = AppVariables.MyBoxTempPath + File.separator
-                            + message("FourNeighborLaplace") + ".png";
+                            + message("Enhancement") + "-" + message("FourNeighborLaplace") + ".png";
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }
@@ -640,7 +705,7 @@ public class ImageOCRController extends ImageViewerController {
                             setImage(image).setKernel(kernel);
                     bufferedImage = imageConvolution.operateImage();
                     tmpFile = AppVariables.MyBoxTempPath + File.separator
-                            + message("EightNeighborLaplace") + ".png";
+                            + message("Enhancement") + "-" + message("EightNeighborLaplace") + ".png";
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }
@@ -661,6 +726,15 @@ public class ImageOCRController extends ImageViewerController {
                     bufferedImage = imageConvolution.operateImage();
                     tmpFile = AppVariables.MyBoxTempPath + File.separator
                             + message("AverageBlur") + ".png";
+                    if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
+                        files.add(tmpFile);
+                    }
+
+                    PixelsOperation pixelsOperation = PixelsOperation.create(imageView.getImage(),
+                            null, PixelsOperation.OperationType.RGB, PixelsOperation.ColorActionType.Invert);
+                    bufferedImage = pixelsOperation.operateImage();
+                    tmpFile = AppVariables.MyBoxTempPath + File.separator
+                            + message("Invert") + ".png";
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }
@@ -718,88 +792,6 @@ public class ImageOCRController extends ImageViewerController {
                         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(imageView.getImage(), null);
                         bufferedImage = ImageManufacture.rotateImage(bufferedImage, rotate);
                         ocrImage = SwingFXUtils.toFXImage(bufferedImage, null);
-                        return ocrImage != null;
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    setPreprocessImage(ocrImage);
-
-                }
-
-            };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
-            thread.setDaemon(true);
-            thread.start();
-        }
-    }
-
-    @FXML
-    public void deskew() {
-        if (isSettingValues || imageView.getImage() == null) {
-            return;
-        }
-        synchronized (this) {
-            if (task != null) {
-                return;
-            }
-            task = new SingletonTask<Void>() {
-                private Image ocrImage;
-
-                @Override
-                protected boolean handle() {
-                    try {
-                        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(imageView.getImage(), null);
-                        ImageDeskew id = new ImageDeskew(bufferedImage);
-                        double imageSkewAngle = id.getSkewAngle();
-                        if ((imageSkewAngle > OCRTools.MINIMUM_DESKEW_THRESHOLD
-                                || imageSkewAngle < -(OCRTools.MINIMUM_DESKEW_THRESHOLD))) {
-                            bufferedImage = ImageHelper.rotateImage(bufferedImage, -imageSkewAngle);
-                        }
-                        ocrImage = SwingFXUtils.toFXImage(bufferedImage, null);
-                        return ocrImage != null;
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    setPreprocessImage(ocrImage);
-                }
-
-            };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
-            thread.setDaemon(true);
-            thread.start();
-        }
-    }
-
-    @FXML
-    protected void invert() {
-        if (isSettingValues || imageView.getImage() == null) {
-            return;
-        }
-        synchronized (this) {
-            if (task != null) {
-                return;
-            }
-            task = new SingletonTask<Void>() {
-                private Image ocrImage;
-
-                @Override
-                protected boolean handle() {
-                    try {
-                        PixelsOperation pixelsOperation = PixelsOperation.create(imageView.getImage(),
-                                null, PixelsOperation.OperationType.RGB, PixelsOperation.ColorActionType.Invert);
-                        ocrImage = pixelsOperation.operateFxImage();
                         return ocrImage != null;
                     } catch (Exception e) {
                         error = e.toString();
@@ -907,225 +899,150 @@ public class ImageOCRController extends ImageViewerController {
     }
 
     /*
-        OCR options
-     */
-    protected void initOCROptionsBox() {
-        try {
-            languageList.getItems().clear();
-            languageList.getItems().addAll(OCRTools.namesList());
-            languageList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-            languageList.setPrefHeight(200);
-            languageList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> ov, String oldVal, String newVal) {
-                    checkLanguages();
-                }
-            });
-            selectedLanguages = AppVariables.getUserConfigValue("ImageOCRLanguages", null);
-            if (selectedLanguages != null && !selectedLanguages.isEmpty()) {
-                currentOCRFilesLabel.setText(MessageFormat.format(message("CurrentDataFiles"), selectedLanguages));
-                currentOCRFilesLabel.setStyle(null);
-                isSettingValues = true;
-                String[] langs = selectedLanguages.split("\\+");
-                Map<String, String> codes = OCRTools.codeName();
-                for (String code : langs) {
-                    String name = codes.get(code);
-                    if (name == null) {
-                        name = code;
-                    }
-                    languageList.getSelectionModel().select(name);
-                }
-                isSettingValues = false;
-            } else {
-                currentOCRFilesLabel.setText(MessageFormat.format(message("CurrentDataFiles"), message("NoData")));
-                currentOCRFilesLabel.setStyle(badStyle);
-            }
-
-            regionLevel = -1;
-            regionSelector.getItems().addAll(Arrays.asList(message("None"),
-                    message("Block"), message("Paragraph"), message("Textline"),
-                    message("Word"), message("Symbol")
-            ));
-            regionSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    if (message("Block").equals(newValue)) {
-                        regionLevel = TessPageIteratorLevel.RIL_BLOCK;
-
-                    } else if (message("Paragraph").equals(newValue)) {
-                        regionLevel = TessPageIteratorLevel.RIL_PARA;
-
-                    } else if (message("Textline").equals(newValue)) {
-                        regionLevel = TessPageIteratorLevel.RIL_TEXTLINE;
-
-                    } else if (message("Word").equals(newValue)) {
-                        regionLevel = TessPageIteratorLevel.RIL_WORD;
-
-                    } else if (message("Symbol").equals(newValue)) {
-                        regionLevel = TessPageIteratorLevel.RIL_SYMBOL;
-
-                    } else {
-                        regionLevel = -1;
-                    }
-                    AppVariables.setUserConfigValue("ImageOCRRegionLevel", newValue);
-                }
-            });
-            regionSelector.getSelectionModel().select(
-                    AppVariables.getUserConfigValue("ImageOCRRegionLevel", message("Symbol")));
-
-            wordLevel = -1;
-            wordSelector.getItems().addAll(Arrays.asList(message("None"),
-                    message("Block"), message("Paragraph"), message("Textline"),
-                    message("Word"), message("Symbol")
-            ));
-            wordSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    if (message("Block").equals(newValue)) {
-                        wordLevel = TessPageIteratorLevel.RIL_BLOCK;
-
-                    } else if (message("Paragraph").equals(newValue)) {
-                        wordLevel = TessPageIteratorLevel.RIL_PARA;
-
-                    } else if (message("Textline").equals(newValue)) {
-                        wordLevel = TessPageIteratorLevel.RIL_TEXTLINE;
-
-                    } else if (message("Word").equals(newValue)) {
-                        wordLevel = TessPageIteratorLevel.RIL_WORD;
-
-                    } else if (message("Symbol").equals(newValue)) {
-                        wordLevel = TessPageIteratorLevel.RIL_SYMBOL;
-
-                    } else {
-                        wordLevel = -1;
-                    }
-                    AppVariables.setUserConfigValue("ImageOCRWordLevel", newValue);
-                }
-            });
-            wordSelector.getSelectionModel().select(
-                    AppVariables.getUserConfigValue("ImageOCRWordLevel", message("Symbol")));
-
-        } catch (Exception e) {
-            logger.debug(e.toString());
-        }
-    }
-
-    public void checkLanguages() {
-        if (isSettingValues) {
-            return;
-        }
-        List<String> langsList = languageList.getSelectionModel().getSelectedItems();
-        selectedLanguages = null;
-        Map<String, String> names = OCRTools.nameCode();
-        for (String name : langsList) {
-            String code = names.get(name);
-            if (code == null) {
-                code = name;
-            }
-            if (selectedLanguages == null) {
-                selectedLanguages = code;
-            } else {
-                selectedLanguages += "+" + code;
-            }
-        }
-        if (selectedLanguages != null) {
-            AppVariables.setUserConfigValue("ImageOCRLanguages", selectedLanguages);
-            currentOCRFilesLabel.setText(
-                    MessageFormat.format(message("CurrentDataFiles"), selectedLanguages));
-            currentOCRFilesLabel.setStyle(null);
-        } else {
-            currentOCRFilesLabel.setText(MessageFormat.format(message("CurrentDataFiles"), message("NoData")));
-            currentOCRFilesLabel.setStyle(badStyle);
-        }
-    }
-
-    @FXML
-    public void upAction() {
-        List<Integer> selected = new ArrayList<>();
-        selected.addAll(languageList.getSelectionModel().getSelectedIndices());
-        if (selected.isEmpty()) {
-            return;
-        }
-        isSettingValues = true;
-        List<Integer> newselected = new ArrayList<>();
-        for (Integer index : selected) {
-            if (index == 0 || newselected.contains(index - 1)) {
-                newselected.add(index);
-                continue;
-            }
-            String lang = (String) languageList.getItems().get(index);
-            languageList.getItems().set(index, languageList.getItems().get(index - 1));
-            languageList.getItems().set(index - 1, lang);
-            newselected.add(index - 1);
-        }
-        languageList.getSelectionModel().clearSelection();
-        for (int index : newselected) {
-            languageList.getSelectionModel().select(index);
-        }
-        languageList.refresh();
-        isSettingValues = false;
-        checkLanguages();
-    }
-
-    @FXML
-    public void downAction() {
-        List<Integer> selected = new ArrayList<>();
-        selected.addAll(languageList.getSelectionModel().getSelectedIndices());
-        if (selected.isEmpty()) {
-            return;
-        }
-        isSettingValues = true;
-        List<Integer> newselected = new ArrayList<>();
-        for (int i = selected.size() - 1; i >= 0; --i) {
-            int index = selected.get(i);
-            if (index == languageList.getItems().size() - 1
-                    || newselected.contains(index + 1)) {
-                newselected.add(index);
-                continue;
-            }
-            String lang = (String) languageList.getItems().get(index);
-            languageList.getItems().set(index, languageList.getItems().get(index + 1));
-            languageList.getItems().set(index + 1, lang);
-            newselected.add(index + 1);
-        }
-        languageList.getSelectionModel().clearSelection();
-        for (int index : newselected) {
-            languageList.getSelectionModel().select(index);
-        }
-        languageList.refresh();
-        isSettingValues = false;
-        checkLanguages();
-    }
-
-    @FXML
-    public void topAction() {
-        List<Integer> selectedIndices = new ArrayList<>();
-        selectedIndices.addAll(languageList.getSelectionModel().getSelectedIndices());
-        if (selectedIndices.isEmpty()) {
-            return;
-        }
-        List<String> selected = new ArrayList<>();
-        selected.addAll(languageList.getSelectionModel().getSelectedItems());
-        isSettingValues = true;
-        int size = selectedIndices.size();
-        for (int i = size - 1; i >= 0; --i) {
-            int index = selectedIndices.get(i);
-            languageList.getItems().remove(index);
-        }
-        languageList.getSelectionModel().clearSelection();
-        languageList.getItems().addAll(0, selected);
-        languageList.getSelectionModel().selectRange(0, size);
-        languageList.refresh();
-        isSettingValues = false;
-        checkLanguages();
-    }
-
-    /*
         OCR
      */
     @FXML
     @Override
     public void startAction() {
+        ocrOptionsController.setLanguages();
+        File dataPath = ocrOptionsController.dataPathController.file;
+        if (!dataPath.exists()) {
+            popError(message("InvalidParameters"));
+            ocrOptionsController.dataPathController.fileInput.setStyle(badStyle);
+            return;
+        }
+        if (ocrOptionsController.embedRadio.isSelected()) {
+            embedded();
+        } else {
+            command();
+        }
+    }
+
+    protected void command() {
+        if (imageView.getImage() == null || timer != null || process != null) {
+            return;
+        }
+        File tesseract = ocrOptionsController.tesseractPathController.file;
+        if (!tesseract.exists()) {
+            popError(message("InvalidParameters"));
+            ocrOptionsController.tesseractPathController.fileInput.setStyle(badStyle);
+            return;
+        }
+        loading = openHandlingStage(Modality.WINDOW_MODAL);
+        new Thread() {
+            private String outputs = "";
+
+            @Override
+            public void run() {
+                try {
+                    Image selected = cropImage();
+                    if (selected == null) {
+                        selected = imageView.getImage();
+                    }
+                    String imageFile = FileTools.getTempFile(".png").getAbsolutePath();
+                    BufferedImage bufferedImage = SwingFXUtils.fromFXImage(selected, null);
+                    bufferedImage = ImageManufacture.removeAlpha(bufferedImage);
+                    ImageFileWriters.writeImageFile(bufferedImage, "png", imageFile);
+
+                    int version = ocrOptionsController.tesseractVersion();
+                    String fileBase = FileTools.getTempFile().getAbsolutePath();
+                    List<String> parameters = new ArrayList<>();
+                    parameters.addAll(Arrays.asList(
+                            tesseract.getAbsolutePath(),
+                            imageFile, fileBase,
+                            "--tessdata-dir", ocrOptionsController.dataPathController.file.getAbsolutePath(),
+                            version > 3 ? "--psm" : "-psm", ocrOptionsController.psm + ""
+                    ));
+                    if (ocrOptionsController.selectedLanguages != null) {
+                        parameters.addAll(Arrays.asList("-l", ocrOptionsController.selectedLanguages));
+                    }
+                    File configFile = FileTools.getTempFile();
+                    String s = "tessedit_create_txt 1\n"
+                            + "tessedit_create_hocr 1\n";
+                    Map<String, String> p = ocrOptionsController.checkParameters();
+                    if (p != null) {
+                        for (String key : p.keySet()) {
+                            s += key + "\t" + p.get(key) + "\n";
+                        }
+                    }
+                    FileTools.writeFile(configFile, s, Charset.forName("utf-8"));
+                    parameters.add(configFile.getAbsolutePath());
+
+                    ProcessBuilder pb = new ProcessBuilder(parameters).redirectErrorStream(true);
+                    long startTime = new Date().getTime();
+                    process = pb.start();
+                    try ( BufferedReader inReader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                        String line;
+                        while ((line = inReader.readLine()) != null) {
+                            outputs += line + "\n";
+                        }
+                    } catch (Exception e) {
+                        outputs += e.toString() + "\n";
+                    }
+                    process.waitFor();
+
+                    String texts;
+                    File txtFile = new File(fileBase + ".txt");
+                    if (txtFile.exists()) {
+                        texts = FileTools.readTexts(txtFile);
+                        txtFile.delete();
+                    } else {
+                        texts = null;
+                    }
+                    String html;
+                    File htmlFile = new File(fileBase + ".hocr");
+                    if (htmlFile.exists()) {
+                        html = FileTools.readTexts(htmlFile);
+                        htmlFile.delete();
+                    } else {
+                        html = null;
+                    }
+                    if (process != null) {
+                        process.destroy();
+                        process = null;
+                    }
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (loading != null) {
+                                loading.closeStage();
+                                loading = null;
+                            }
+                            if (texts != null) {
+                                textArea.setText(texts);
+                                resultLabel.setText(MessageFormat.format(message("OCRresults"),
+                                        texts.length(), DateTools.datetimeMsDuration(new Date().getTime() - startTime)));
+                                ocrTabPane.getSelectionModel().select(txtTab);
+                            } else {
+                                if (outputs != null && !outputs.isBlank()) {
+                                    alertError(outputs);
+                                } else {
+                                    popFailed();
+                                }
+                            }
+                            if (html != null) {
+                                htmlController.loadHtml(html);
+                            }
+                        }
+                    });
+
+                } catch (Exception e) {
+                    logger.debug(e.toString());
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (loading != null) {
+                                loading.closeStage();
+                                loading = null;
+                            }
+                        }
+                    });
+                }
+            }
+        }.start();
+    }
+
+    protected void embedded() {
         if (imageView.getImage() == null) {
             return;
         }
@@ -1146,12 +1063,16 @@ public class ImageOCRController extends ImageViewerController {
                         // https://stackoverflow.com/questions/58286373/tess4j-pdf-to-tiff-to-tesseract-warning-invalid-resolution-0-dpi-using-70/58296472#58296472
                         instance.setTessVariable("user_defined_dpi", "96");
                         instance.setTessVariable("debug_file", "/dev/null");
-                        String path = AppVariables.getUserConfigValue("TessDataPath", null);
-                        if (path != null) {
-                            instance.setDatapath(path);
+                        instance.setPageSegMode(ocrOptionsController.psm);
+                        Map<String, String> p = ocrOptionsController.checkParameters();
+                        if (p != null && !p.isEmpty()) {
+                            for (String key : p.keySet()) {
+                                instance.setTessVariable(key, p.get(key));
+                            }
                         }
-                        if (selectedLanguages != null) {
-                            instance.setLanguage(selectedLanguages);
+                        instance.setDatapath(ocrOptionsController.dataPathController.file.getAbsolutePath());
+                        if (ocrOptionsController.selectedLanguages != null) {
+                            instance.setLanguage(ocrOptionsController.selectedLanguages);
                         }
                         Image selected = cropImage();
                         if (selected == null) {
@@ -1172,7 +1093,7 @@ public class ImageOCRController extends ImageViewerController {
                         String tmp = File.createTempFile("MyboxOCR", "").getAbsolutePath();
                         tmpFile.delete();
                         instance.createDocumentsWithResults​(bufferedImage, null,
-                                tmp, formats, TessPageIteratorLevel.RIL_SYMBOL);
+                                tmp, formats, ITessAPI.TessPageIteratorLevel.RIL_SYMBOL);
                         File txtFile = new File(tmp + ".txt");
                         texts = FileTools.readTexts(txtFile);
                         txtFile.delete();
@@ -1181,17 +1102,18 @@ public class ImageOCRController extends ImageViewerController {
                         html = FileTools.readTexts(htmlFile);
                         htmlFile.delete();
 
-                        if (wordLevel >= 0) {
-                            words = instance.getWords(bufferedImage, wordLevel);
+                        if (ocrOptionsController.wordLevel >= 0) {
+                            words = instance.getWords(bufferedImage, ocrOptionsController.wordLevel);
                         }
 
-                        if (regionLevel >= 0) {
-                            rectangles = instance.getSegmentedRegions(bufferedImage, regionLevel);
+                        if (ocrOptionsController.regionLevel >= 0) {
+                            rectangles = instance.getSegmentedRegions(bufferedImage, ocrOptionsController.regionLevel);
                         }
 
                         return texts != null;
                     } catch (Exception e) {
                         error = e.toString();
+                        logger.debug(e.toString());
                         return false;
                     }
                 }
@@ -1204,6 +1126,7 @@ public class ImageOCRController extends ImageViewerController {
                     textArea.setText(texts);
                     resultLabel.setText(MessageFormat.format(message("OCRresults"),
                             texts.length(), DateTools.datetimeMsDuration(cost)));
+                    ocrTabPane.getSelectionModel().select(txtTab);
 
                     htmlController.loadHtml(html);
 
@@ -1262,14 +1185,6 @@ public class ImageOCRController extends ImageViewerController {
     }
 
     @FXML
-    public void settingsAction() {
-        SettingsController controller = (SettingsController) openStage(CommonValues.SettingsFxml);
-        controller.setParentController(this);
-        controller.setParentFxml(myFxml);
-        controller.tabPane.getSelectionModel().select(controller.ocrTab);
-    }
-
-    @FXML
     @Override
     public void saveAsAction() {
         if (textArea.getText().isEmpty()) {
@@ -1304,6 +1219,19 @@ public class ImageOCRController extends ImageViewerController {
             thread.setDaemon(true);
             thread.start();
         }
+    }
+
+    @Override
+    public boolean checkBeforeNextAction() {
+        if (process != null) {
+            process.destroy();
+            process = null;
+        }
+        if (loading != null) {
+            loading.closeStage();
+            loading = null;
+        }
+        return true;
     }
 
 }

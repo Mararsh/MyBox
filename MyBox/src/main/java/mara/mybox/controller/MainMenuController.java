@@ -27,13 +27,12 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import mara.mybox.dev.devTools;
-import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.tools.ConfigTools;
 import mara.mybox.tools.FloatTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -1198,6 +1197,11 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
+    private void openGameMine(ActionEvent event) {
+        loadScene(CommonValues.GameMineFxml);
+    }
+
+    @FXML
     private void openDataset(ActionEvent event) {
         loadScene(CommonValues.DatasetFxml);
     }
@@ -1230,6 +1234,11 @@ public class MainMenuController extends BaseController {
     @FXML
     private void openEpidemicReports(ActionEvent event) {
         loadScene(CommonValues.EpidemicReportsFxml);
+    }
+
+    @FXML
+    private void messageAuthor(ActionEvent event) {
+        openStage(CommonValues.MessageAuthorFxml);
     }
 
     @FXML

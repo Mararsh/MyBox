@@ -381,6 +381,9 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                                 scope, OperationType.ReplaceColor, ColorActionType.Set);
                         pixelsOperation.setColorPara1(originalColor);
                         pixelsOperation.setColorPara2(newColor);
+                        if (originalColor.getRGB() == 0 || !scopeController.ignoreTransparentCheck.isSelected()) {
+                            pixelsOperation.setSkipTransparent(false);
+                        }
 
                     } else {
                         if (colorOperationType == OperationType.Opacity && preAlphaCheck.isSelected()) {
@@ -388,6 +391,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                         }
                         pixelsOperation = PixelsOperation.create(imageView.getImage(),
                                 scopeController.scope, colorOperationType, colorActionType);
+                        pixelsOperation.setSkipTransparent(scopeController.ignoreTransparentCheck.isSelected());
                         switch (colorOperationType) {
                             case Color:
                                 pixelsOperation.setColorPara1(ImageColor.converColor((Color) valueColorSetController.rect.getFill()));

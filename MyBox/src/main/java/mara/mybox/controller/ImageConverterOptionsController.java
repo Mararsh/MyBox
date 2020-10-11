@@ -33,7 +33,6 @@ import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.getUserConfigBoolean;
 import static mara.mybox.value.AppVariables.getUserConfigValue;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import static mara.mybox.value.AppVariables.setUserConfigValue;
 import mara.mybox.value.CommonFxValues;
@@ -634,7 +633,7 @@ public class ImageConverterOptionsController extends BaseController {
 
     public void iccFileSelected(File file) {
         profileInput.setText(file.getAbsolutePath());
-        recordFileOpened(file, VisitHistory.FileType.Icc, VisitHistory.FileType.Icc);
+        recordFileOpened(file, VisitHistory.FileType.Icc);
     }
 
 }
