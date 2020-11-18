@@ -1,4 +1,4 @@
- [ReadMe in English](https://github.com/Mararsh/MyBox/tree/master/en)  ![ReadMe](https://mararsh.github.io/MyBox/iconGo.png)   
+# [ReadMe in English](https://github.com/Mararsh/MyBox/tree/master/en)  ![ReadMe](https://mararsh.github.io/MyBox/iconGo.png)   
 
 # MyBox：简易工具集
 这是利用JavaFx开发的图形化桌面应用，目标是提供简单易用的功能。免费开源。     
@@ -10,7 +10,7 @@
 -  移除：启动时不再允许改变derby模式；删除“管理下载”功能。
 -  解决的主要问题：文档的查找/替换对于分页处理不准确；图片列表不应加载原文件；批处理可能产生无限嵌套目录；图片处理界面有错误的处理。           
 [此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.5)        
-感谢[beijingjazzpanda](https://github.com/Mararsh/MyBox/issues?page=2&q=is%3Aissue+is%3Aopen)的帮助。    
+感谢[beijingjazzpanda](https://github.com/Mararsh/MyBox/issues/781)的帮助。    
 
  ## 下载与运行
 每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases)目录下（点击上面的`releases`页签）。    
@@ -1123,11 +1123,11 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 ### 下载第一级链接<a id="downloadFirstLevelLinks" />
 1. 列出给定网址中的第一级链接。   
 2. 下载用户选择的链接:
-        -  选择有用的链接。无意义的链接可能生成无用文件并且干扰最后的目录索引。
-        -  使用功能“设置子目录名”以使子目录名字合理。
-        -  使用功能“以链接名/标题/地址为文件名”以使文件名有意义。
-        -  使用功能“在文件名前添加序号”以使文件名能正确排序。         
-            MyBox可以正确排序形如"xxx9", "xxx36", "xxx157"的文件名。
+	-  选择有用的链接。无意义的链接可能生成无用文件并且干扰最后的目录索引。
+	-  使用功能“设置子目录名”以使子目录名字合理。
+	-  使用功能“以链接名/标题/地址为文件名”以使文件名有意义。
+	-  使用功能“在文件名前添加序号”以使文件名能正确排序。         
+       MyBox可以正确排序形如"xxx9", "xxx36", "xxx157"的文件名。
 3. 选项：重写网页中的链接、生成目录索引、修改网页编码、合并为文本/网页/Markdown/PDF。
 4. 可以设置网页样式和PDF的字体。   
 
@@ -1146,12 +1146,12 @@ https://www.oracle.com/technetwork/java/javafx/downloads/supportedconfigurations
 
 ### 解码/编码URL<a id="encodeDecodeURL" />
 此工具帮助将字符串与application/x-www-form-urlencoded MIME之间转换。      
-在编码时应用以下规则：      
- 	-   "a"到"z"之间的字母、 "A"到 "Z"之间的字母、以及 "0"到 "9"之间的数字保留原样。
- 	-  特殊字符".", "-", "*", 和 "_"保留原样。
- 	-  空字符" "转换为加号"+"
- 	-  其它所有字符被认为是不安全的，首先采用指定的字符集转换为1个或多个字节。       
-           然后每个字节被表达为形如 "%xy"的3个字符的字符串，其中xy是字节的十六进制两位数字表示。       
+在编码时应用以下规则：         
+	-  "a"到"z"之间的字母、 "A"到 "Z"之间的字母、以及 "0"到 "9"之间的数字保留原样。
+	-  特殊字符".", "-", "*", 和 "_"保留原样。
+	-  空字符" "转换为加号"+"
+	-  其它所有字符被认为是不安全的，首先采用指定的字符集转换为1个或多个字节。          
+       然后每个字节被表达为形如 "%xy"的3个字符的字符串，其中xy是字节的十六进制两位数字表示。            
 解码反过来。       
 
 
@@ -1231,7 +1231,7 @@ Java 9以后已支持HiDPI，控件和字体都会适应当前清晰度配置。
 -  移除：启动时不再允许改变derby模式；删除“管理下载”功能。   
 -  解决的主要问题：文档的查找/替换对于分页处理不准确；图片列表不应加载原文件；批处理可能产生无限嵌套目录；图片处理界面有错误的处理。                 
 [此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.5)        
-感谢[beijingjazzpanda](https://github.com/Mararsh/MyBox/issues?page=2&q=is%3Aissue+is%3Aopen)的帮助。      
+感谢[beijingjazzpanda](https://github.com/Mararsh/MyBox/issues/781)的帮助。      
 
 2020-10-11 版本6.3.4       
 -  编辑器：查找/替换支持多行、忽略大小写、从光标处、和正则表达式的示例；弹出文档；关闭/打开右面板；设置是否同步更新右面板。

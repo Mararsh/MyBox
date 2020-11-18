@@ -12,7 +12,7 @@ Adjust interface of Html Editor.
 -  Major issues solved: Document find/replace handle pages incorrectly; Source files should not be loaded for images list; 
 Infinite empty directories can happen in batch functions; Wrong in interface of Image Manufacture.         
 [Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.5)          
-Thanks helps from [beijingjazzpanda](https://github.com/Mararsh/MyBox/issues?page=2&q=is%3Aissue+is%3Aopen).        
+Thanks helps from [beijingjazzpanda](https://github.com/Mararsh/MyBox/issues/781).        
 
 ## Download and Execution
 Packages of each version have been uploaded at [Releases](https://github.com/Mararsh/MyBox/releases?) directory now. You can find them by clicking `releases` tab in main page of this project. 
@@ -66,7 +66,7 @@ A bug has been reported to jpackage dev team:
 Each version has itself's configuration file. New version can copy parameters from existed versions.      
 
 ## Configuration <a id="Config"></a>     
-Configuration file `MyBox_v<version>.ini` is under "User Home". Example, `C:\Users\mara\mybox\` or `/home/mara/mybox/` .        
+Configuration file `MyBox_v<Version>.ini` is under "User Home". Example, `C:\Users\mara\mybox\` or `/home/mara/mybox/` .        
 Add parameter "config=\"FilePath\"" when run jar to change configuration file temporarily.         
 Function "Settings" can be used to change configuration values.       
 
@@ -1140,11 +1140,11 @@ Notice: This set of functions is based on ffmpeg, and user need download ffmpeg 
 ### Download First Level Links<a id="downloadFirstLevelLinks" />
 1. List first level links for given web address.         
 2. Download selected links:  
-        -  Select useful links. Nonsense links can create unwanted files and disturb final path index.
-        -  Use function "Set subdirectory name" to make subdirectory's name reasonbale.
-        -  Use functions "Set link name/title/address as file name" to make filenames meaningful.
-        -  Use function "Add order number before filename" to help filenames ordered.
-            MyBox can order names like "xxx9", "xxx36", "xxx157" correctly.      
+	-  Select useful links. Nonsense links can create unwanted files and disturb final path index.
+	-  Use function "Set subdirectory name" to make subdirectory's name reasonbale.
+	-  Use functions "Set link name/title/address as file name" to make filenames meaningful.
+	-  Use function "Add order number before filename" to help filenames ordered.
+       MyBox can order names like "xxx9", "xxx36", "xxx157" correctly.      
 3. Options: Rewrite links in pages, Generate path index, Change pages' encoding, Merge as texts/html/Markdown/PDF.     
 4. Page style and PDF font files can be set.    
 
@@ -1165,11 +1165,11 @@ Notice: This set of functions is based on ffmpeg, and user need download ffmpeg 
 ### Encode/Decode URL<a id="encodeDecodeURL" />        
 This tool helps to convert a string from/to the application/x-www-form-urlencoded MIME format.      
 The following rules are applied for encoding:                    
-        -  The alphanumeric characters "a" through "z", "A" through "Z" and "0" through "9" remain the same.
-        -  The special characters ".", "-", "*", and "_" remain the same.
-        -  The space character "   " is converted into a plus sign "+".
-        -  All other characters are unsafe and are first converted into one or more bytes using some encoding scheme.           
-           Then each byte is represented by the 3-character string "%xy", where xy is the two-digit hexadecimal representation of the byte.        
+	-  The alphanumeric characters "a" through "z", "A" through "Z" and "0" through "9" remain the same.
+	-  The special characters ".", "-", "*", and "_" remain the same.
+	-  The space character "   " is converted into a plus sign "+".
+	-  All other characters are unsafe and are first converted into one or more bytes using some encoding scheme.           
+       Then each byte is represented by the 3-character string "%xy", where xy is the two-digit hexadecimal representation of the byte.        
 Decoding does reverse conversion.         
  
 ### Web Browser<a id="webBrowser" />
@@ -1254,7 +1254,7 @@ Adjust interface of Html Editor.
 -  Major issues solved: Document find/replace handle pages incorrectly; Source files should not be loaded for images list; 
 Infinite empty directories can happen in batch functions; Wrong in interface of Image Manufacture.         
 [Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.5)          
-Thanks helps from [beijingjazzpanda](https://github.com/Mararsh/MyBox/issues?page=2&q=is%3Aissue+is%3Aopen).        
+Thanks helps from [beijingjazzpanda](https://github.com/Mararsh/MyBox/issues/781).        
 
 2020-10-11 v6.3.5        
 -  Editors: Find/Replace by multiple lines, case-insensitive, from cursor, and with examples of regular expression; Pop doument; Close/Open right pane; Set whether update right pane synchronously.
