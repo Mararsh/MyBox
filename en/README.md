@@ -1165,11 +1165,11 @@ Notice: This set of functions is based on ffmpeg, and user need download ffmpeg 
 ### Encode/Decode URL<a id="encodeDecodeURL" />        
 This tool helps to convert a string from/to the application/x-www-form-urlencoded MIME format.      
 The following rules are applied for encoding:                    
-	-  The alphanumeric characters "a" through "z", "A" through "Z" and "0" through "9" remain the same.
-	-  The special characters ".", "-", "*", and "_" remain the same.
-	-  The space character "   " is converted into a plus sign "+".
-	-  All other characters are unsafe and are first converted into one or more bytes using some encoding scheme.           
-       Then each byte is represented by the 3-character string "%xy", where xy is the two-digit hexadecimal representation of the byte.        
+-  The alphanumeric characters "a" through "z", "A" through "Z" and "0" through "9" remain the same.
+-  The special characters ".", "-", "*", and "_" remain the same.
+-  The space character "   " is converted into a plus sign "+".
+-  All other characters are unsafe and are first converted into one or more bytes using some encoding scheme.           
+   Then each byte is represented by the 3-character string "%xy", where xy is the two-digit hexadecimal representation of the byte.        
 Decoding does reverse conversion.         
  
 ### Web Browser<a id="webBrowser" />
