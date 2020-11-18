@@ -1170,6 +1170,7 @@ The following rules are applied for encoding:
 -  The space character "   " is converted into a plus sign "+".
 -  All other characters are unsafe and are first converted into one or more bytes using some encoding scheme.           
    Then each byte is represented by the 3-character string "%xy", where xy is the two-digit hexadecimal representation of the byte.        
+
 Decoding does reverse conversion.         
  
 ### Web Browser<a id="webBrowser" />
