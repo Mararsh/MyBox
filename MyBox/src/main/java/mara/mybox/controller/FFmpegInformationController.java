@@ -47,7 +47,7 @@ public class FFmpegInformationController extends FFmpegOptionsController {
     @FXML
     protected TabPane tabPane;
     @FXML
-    protected Tab formatsTab;
+    protected Tab queryTab;
     @FXML
     protected TableView<FFmpegFormat> formatsView;
     @FXML
@@ -226,7 +226,7 @@ public class FFmpegInformationController extends FFmpegOptionsController {
             return;
         }
         synchronized (this) {
-            if (formatsTask != null) {
+            if (formatsTask != null && !formatsTask.isQuit()) {
                 return;
             }
             formatsTask = new SingletonTask<Void>() {
@@ -301,6 +301,7 @@ public class FFmpegInformationController extends FFmpegOptionsController {
 
                 @Override
                 protected void taskQuit() {
+                    super.taskQuit();
                     formatsTask = null;
                 }
             };
@@ -320,7 +321,7 @@ public class FFmpegInformationController extends FFmpegOptionsController {
             return;
         }
         synchronized (this) {
-            if (codecsTask != null) {
+            if (codecsTask != null && !codecsTask.isQuit()) {
                 return;
             }
             codecsTask = new SingletonTask<Void>() {
@@ -392,6 +393,7 @@ public class FFmpegInformationController extends FFmpegOptionsController {
 
                 @Override
                 protected void taskQuit() {
+                    super.taskQuit();
                     codecsTask = null;
                 }
             };
@@ -411,7 +413,7 @@ public class FFmpegInformationController extends FFmpegOptionsController {
             return;
         }
         synchronized (this) {
-            if (filtersTask != null) {
+            if (filtersTask != null && !filtersTask.isQuit()) {
                 return;
             }
             filtersTask = new SingletonTask<Void>() {
@@ -476,7 +478,9 @@ public class FFmpegInformationController extends FFmpegOptionsController {
                             + "   " + AppVariables.message("ffmpegFilterComments"));
                 }
 
+                @Override
                 protected void taskQuit() {
+                    super.taskQuit();
                     filtersTask = null;
                 }
             };
@@ -500,7 +504,7 @@ public class FFmpegInformationController extends FFmpegOptionsController {
             return;
         }
         synchronized (this) {
-            if (queryTask != null) {
+            if (queryTask != null && !queryTask.isQuit()) {
                 return;
             }
             queryTask = new SingletonTask<Void>() {
@@ -552,6 +556,7 @@ public class FFmpegInformationController extends FFmpegOptionsController {
 
                 @Override
                 protected void taskQuit() {
+                    super.taskQuit();
                     queryTask = null;
                 }
             };

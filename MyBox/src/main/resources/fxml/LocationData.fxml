@@ -203,8 +203,15 @@ License:    Apache License Version 2.0
                                                     <children>
                                                         <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                                                             <children>
-                                                                <Label text="%Style" />
-                                                                <ComboBox fx:id="htmlStyleSelector" prefWidth="150.0" />
+                                                                <Button fx:id="styleLinksButton" mnemonicParsing="false" onMouseEntered="#popLinksStyle">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/iconStyle.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
                                                             </children>
                                                         </HBox>
                                                         <WebView fx:id="infoView" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS" />
@@ -239,15 +246,6 @@ License:    Apache License Version 2.0
                                                                         </ImageView>
                                                                     </graphic>
                                                                 </Button>
-                                                                <Button fx:id="locationButton" disable="true" mnemonicParsing="false" onAction="#locationAction">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/iconLocation.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </Button>
                                                                 <Button fx:id="deleteButton" disable="true" mnemonicParsing="false" onAction="#deleteAction">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -259,6 +257,20 @@ License:    Apache License Version 2.0
                                                                 </Button>
                                                                 <CheckBox fx:id="deleteConfirmCheck" mnemonicParsing="false" text="%ConfirmWhenDelete" />
                                                                 <Label fx:id="langLabel1" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                <ImageView fx:id="rightTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../buttons/iconTipsRight.png" />
+                                                   </image>
+                                                </ImageView>
+                                                                <Button fx:id="locationButton" disable="true" mnemonicParsing="false" onAction="#locationAction">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/iconLocation.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
                                                             </children>
                                                         </HBox>
                                                         <TableView fx:id="tableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">

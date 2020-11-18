@@ -51,6 +51,7 @@ License:    Apache License Version 2.0
                                                     </image>
                                                 </ImageView>
                                                 <Label fx:id="scoreLabel" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" HBox.hgrow="ALWAYS" />
+                                    <Label fx:id="autoLabel" layoutX="96.0" layoutY="19.0" styleClass="blue-label" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER" />
                                                 <Button fx:id="settingsButton" mnemonicParsing="false" onAction="#settingsAction">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -69,7 +70,15 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </graphic>
                                                 </ToggleButton>
-                                                <Button fx:id="startButton" mnemonicParsing="false" onAction="#startAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Start" />
+                                    <Button fx:id="createButton" mnemonicParsing="false" onAction="#createAction">
+                                       <graphic>
+                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/iconAdd.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </Button>
                                             </children>
                                         </HBox>
                                         <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="504.0" prefViewportWidth="538.0" VBox.vgrow="ALWAYS">
@@ -77,7 +86,6 @@ License:    Apache License Version 2.0
                                                 <VBox fx:id="chessboardPane" alignment="CENTER" spacing="5.0" />
                                             </content>
                                         </ScrollPane>
-                                        <HBox VBox.vgrow="NEVER" />
                                     </children>
                                     <padding>
                                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

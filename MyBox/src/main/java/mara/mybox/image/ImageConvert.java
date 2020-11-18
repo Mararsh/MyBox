@@ -183,8 +183,7 @@ public class ImageConvert {
         }
     }
 
-    public static boolean convertColorSpace(File srcFile,
-            ImageAttributes attributes, File targetFile) {
+    public static boolean convertColorSpace(File srcFile, ImageAttributes attributes, File targetFile) {
         try {
             if (srcFile == null || targetFile == null || attributes == null) {
                 return false;
@@ -219,7 +218,7 @@ public class ImageConvert {
                     try {
                         bufferedImage = reader.read(i);
                     } catch (Exception e) {
-                        bufferedImage = readBrokenImage(e, srcFile, i, 1, 1);
+                        bufferedImage = readBrokenImage(e, srcFile, i, null, 1, 1);
                     }
                     if (bufferedImage == null) {
                         continue;
@@ -259,8 +258,7 @@ public class ImageConvert {
         }
     }
 
-    public static boolean convertToIcon(File srcFile, ImageAttributes attributes,
-            File targetFile) {
+    public static boolean convertToIcon(File srcFile, ImageAttributes attributes, File targetFile) {
         try {
             if (srcFile == null || targetFile == null) {
                 return false;
@@ -275,17 +273,10 @@ public class ImageConvert {
                     try {
                         bufferedImage = reader.read(i);
                     } catch (Exception e) {
-                        bufferedImage = readBrokenImage(e, srcFile, i, 1, 1);
+                        bufferedImage = readBrokenImage(e, srcFile, i, null, 1, 1);
                     }
                     if (bufferedImage != null) {
-                        int width = 0;
-                        if (attributes != null) {
-                            width = attributes.getWidth();
-                        }
-                        if (width <= 0) {
-                            width = Math.min(512, bufferedImage.getWidth());
-                        }
-                        bufferedImage = ImageManufacture.scaleImageWidthKeep(bufferedImage, width);
+                        bufferedImage = convertToIcon(bufferedImage, attributes);
                         images.add(bufferedImage);
                     }
                 }
@@ -302,11 +293,24 @@ public class ImageConvert {
         }
     }
 
-    public static boolean convertToIcon(BufferedImage bufferedImage,
-            ImageAttributes attributes, File targetFile) {
+    public static boolean convertToIcon(BufferedImage bufferedImage, ImageAttributes attributes, File targetFile) {
         try {
             if (bufferedImage == null || targetFile == null) {
                 return false;
+            }
+            BufferedImage icoImage = convertToIcon(bufferedImage, attributes);
+            ICOEncoder.write(icoImage, targetFile);
+            return true;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return false;
+        }
+    }
+
+    public static BufferedImage convertToIcon(BufferedImage bufferedImage, ImageAttributes attributes) {
+        try {
+            if (bufferedImage == null) {
+                return null;
             }
             int width = 0;
             if (attributes != null) {
@@ -316,16 +320,14 @@ public class ImageConvert {
                 width = Math.min(512, bufferedImage.getWidth());
             }
             BufferedImage icoImage = ImageManufacture.scaleImageWidthKeep(bufferedImage, width);
-            ICOEncoder.write(icoImage, targetFile);
-            return true;
+            return icoImage;
         } catch (Exception e) {
             logger.error(e.toString());
-            return false;
+            return null;
         }
     }
 
-    public static boolean convertFromIcon(File srcFile,
-            ImageAttributes attributes, File targetFile) {
+    public static boolean convertFromIcon(File srcFile, ImageAttributes attributes, File targetFile) {
         try {
             if (srcFile == null || targetFile == null) {
                 return false;

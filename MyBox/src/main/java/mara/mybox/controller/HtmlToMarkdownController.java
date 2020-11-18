@@ -3,9 +3,10 @@ package mara.mybox.controller;
 import com.vladsch.flexmark.html2md.converter.FlexmarkHtmlConverter;
 import com.vladsch.flexmark.util.data.MutableDataSet;
 import java.io.File;
+import java.nio.charset.Charset;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.VisitHistoryTools;
+import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonFxValues;
@@ -17,7 +18,7 @@ import mara.mybox.value.CommonFxValues;
  */
 public class HtmlToMarkdownController extends FilesBatchController {
 
-    protected MutableDataSet parserOptions;
+    protected FlexmarkHtmlConverter mdConverter;
 
     public HtmlToMarkdownController() {
         baseTitle = AppVariables.message("HtmlToMarkdown");
@@ -39,7 +40,8 @@ public class HtmlToMarkdownController extends FilesBatchController {
     @Override
     public boolean makeMoreParameters() {
         try {
-            parserOptions = new MutableDataSet();
+            mdConverter = FlexmarkHtmlConverter.builder(new MutableDataSet()).build();
+
         } catch (Exception e) {
             logger.error(e.toString());
             return false;
@@ -68,9 +70,8 @@ public class HtmlToMarkdownController extends FilesBatchController {
             }
 
             String html = FileTools.readTexts(srcFile);
-            String md = FlexmarkHtmlConverter.builder(parserOptions).build().
-                    convert(html);
-            FileTools.writeFile(target, md);
+            String md = mdConverter.convert(html);
+            FileTools.writeFile(target, md, Charset.forName("utf-8"));
             targetFileGenerated(target);
             return AppVariables.message("Successful");
         } catch (Exception e) {

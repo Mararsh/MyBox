@@ -22,8 +22,8 @@ License:    Apache License Version 2.0
 
 <VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImagesTableController">
     <children>
-        <ToolBar maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
-            <items>
+      <HBox alignment="CENTER_LEFT" spacing="5.0">
+         <children>
                 <Button fx:id="selectAllFilesButton" mnemonicParsing="false" onAction="#selectAllFilesAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -78,8 +78,14 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </CheckBox>
-            </items>
-        </ToolBar>
+            <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+            <ImageView fx:id="rightTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../buttons/iconTipsRight.png" />
+               </image>
+            </ImageView>
+         </children>
+      </HBox>
         <TableView fx:id="tableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
             <columns>
             <TableColumn fx:id="tableIndexColumn" editable="false" maxWidth="1.7976931348623157E308" prefWidth="60.0" text="%Item" />

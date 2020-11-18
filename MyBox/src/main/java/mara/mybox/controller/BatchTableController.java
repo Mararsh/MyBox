@@ -11,7 +11,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -32,7 +31,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.FlowPane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
@@ -70,7 +68,7 @@ public abstract class BatchTableController<P> extends BaseController {
     @FXML
     protected Button addFilesButton, insertFilesButton, addDirectoryButton, insertDirectoryButton,
             deleteFilesButton, clearFilesButton, upFilesButton, downFilesButton, viewFileButton,
-            unselectAllFilesButton, selectAllFilesButton, listButton;
+            unselectAllFilesButton, selectAllFilesButton, listButton, exampleRegexButton;
     @FXML
     protected TableView<P> tableView;
     @FXML
@@ -85,10 +83,9 @@ public abstract class BatchTableController<P> extends BaseController {
     protected TextField tableFiltersInput;
     @FXML
     protected Label tableLabel;
-    @FXML
-    protected FlowPane selectPane, buttonsPane;
 
     public BatchTableController() {
+        TipsLabelKey = "TableTips";
         sourceExtensionFilter = CommonFxValues.AllExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
     }
@@ -419,7 +416,7 @@ public abstract class BatchTableController<P> extends BaseController {
             return;
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -473,6 +470,7 @@ public abstract class BatchTableController<P> extends BaseController {
 
             };
             super.openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -504,9 +502,12 @@ public abstract class BatchTableController<P> extends BaseController {
                             break;
                         }
                     }
-                    if (regexLink != null) {
-                        regexLink.setVisible(fileSelectorType == FileSelectorType.NameMatchAnyRegularExpression
-                                || fileSelectorType == FileSelectorType.NameNotMatchAnyRegularExpression
+                    if (exampleRegexButton != null) {
+                        exampleRegexButton.setVisible(
+                                fileSelectorType == FileSelectorType.NameMatchRegularExpression
+                                || fileSelectorType == FileSelectorType.NameNotMatchRegularExpression
+                                || fileSelectorType == FileSelectorType.NameIncludeRegularExpression
+                                || fileSelectorType == FileSelectorType.NameNotIncludeRegularExpression
                         );
                     }
 
@@ -740,16 +741,16 @@ public abstract class BatchTableController<P> extends BaseController {
                 updateLabel();
                 return;
             }
-            backgroundTask = new Task<Void>() {
+            backgroundTask = new SingletonTask<Void>() {
 
                 private boolean canceled;
 
                 @Override
-                protected Void call() {
+                protected boolean handle() {
                     for (int i = 0; i < tableData.size(); ++i) {
                         if (backgroundTask == null || isCancelled()) {
                             canceled = true;
-                            return null;
+                            return false;
                         }
                         FileInformation info = fileInformation(i);
                         if (info == null || info.getFile() == null) {
@@ -768,7 +769,7 @@ public abstract class BatchTableController<P> extends BaseController {
                                 info.countDirectorySize(backgroundTask, sub);
                                 if (backgroundTask == null || isCancelled()) {
                                     canceled = true;
-                                    return null;
+                                    return false;
                                 }
                                 totalFilesNumber += info.getFilesNumber();
                                 totalFilesSize += info.getFileSize();
@@ -778,42 +779,30 @@ public abstract class BatchTableController<P> extends BaseController {
                             totalFilesSize += info.getFileSize();
                         }
                     }
-                    return null;
+                    return true;
                 }
 
                 @Override
-                protected void succeeded() {
-                    super.succeeded();
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            tableView.refresh();
-                            if (tableLabel != null) {
-                                if (canceled) {
-                                    tableLabel.setText("");
-                                } else {
-                                    updateLabel();
-                                }
-                            }
+                protected void whenSucceeded() {
+                    tableView.refresh();
+                    if (tableLabel != null) {
+                        if (canceled) {
+                            tableLabel.setText("");
+                        } else {
+                            updateLabel();
                         }
-                    });
+                    }
                 }
 
                 @Override
-                protected void failed() {
-                    super.failed();
-                    tableLabel.setText("");
-                    backgroundTask = null;
-                }
-
-                @Override
-                protected void cancelled() {
-                    super.cancelled();
-                    tableLabel.setText("");
-                    backgroundTask = null;
+                protected void whenFailed() {
+                    if (tableLabel != null) {
+                        tableLabel.setText("");
+                    }
                 }
 
             };
+            backgroundTask.setSelf(backgroundTask);
             Thread thread = new Thread(backgroundTask);
             thread.setDaemon(true);
             thread.start();
@@ -839,11 +828,7 @@ public abstract class BatchTableController<P> extends BaseController {
             if (files == null || files.isEmpty()) {
                 return;
             }
-            isSettingValues = true;
             addFiles(index, files);
-            isSettingValues = false;
-            tableChanged();
-
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -865,9 +850,55 @@ public abstract class BatchTableController<P> extends BaseController {
     }
 
     public void addFiles(int index, List<File> files) {
+        if (files == null || files.isEmpty()) {
+            return;
+        }
+        recordFileAdded(files.get(0));
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+
+                private List<P> infos;
+
+                @Override
+                protected boolean handle() {
+                    infos = createFiles(files);
+                    return true;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    if (infos.isEmpty()) {
+                        return;
+                    }
+                    isSettingValues = true;
+                    if (index < 0 || index >= tableData.size()) {
+                        tableData.addAll(infos);
+                    } else {
+                        tableData.addAll(index, infos);
+                    }
+                    isSettingValues = false;
+                    tableView.refresh();
+                }
+
+            };
+            if (parentController != null) {
+                parentController.openHandlingStage(task, Modality.WINDOW_MODAL);
+            }
+            task.setSelf(task);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
+
+    }
+
+    public List<P> createFiles(List<File> files) {
         try {
             if (files == null || files.isEmpty()) {
-                return;
+                return null;
             }
             List<P> infos = new ArrayList<>();
             for (File file : files) {
@@ -877,22 +908,10 @@ public abstract class BatchTableController<P> extends BaseController {
                 }
                 recordFileAdded(file);
             }
-            if (infos.isEmpty()) {
-                return;
-            }
-            isSettingValues = true;
-            if (index < 0 || index >= tableData.size()) {
-                tableData.addAll(infos);
-            } else {
-                tableData.addAll(index, infos);
-            }
-
-            tableView.refresh();
-            isSettingValues = false;
-
-            tableChanged();
+            return infos;
         } catch (Exception e) {
             logger.error(e.toString());
+            return null;
         }
     }
 
@@ -1153,6 +1172,11 @@ public abstract class BatchTableController<P> extends BaseController {
         } catch (Exception e) {
             logger.debug(e.toString());
         }
+    }
+
+    @FXML
+    public void popRegexExample(MouseEvent mouseEvent) {
+        popMenu = FxmlControl.popRegexExample(this, popMenu, tableFiltersInput, mouseEvent);
     }
 
 

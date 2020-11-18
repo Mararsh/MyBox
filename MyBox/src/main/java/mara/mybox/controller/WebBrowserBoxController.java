@@ -38,7 +38,7 @@ import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.tools.HtmlTools;
 import mara.mybox.tools.NetworkTools;
-import mara.mybox.tools.VisitHistoryTools;
+import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.MyboxDataPath;
 import static mara.mybox.value.AppVariables.logger;

@@ -185,7 +185,7 @@ public class ImageGifViewerController extends ImageViewerController {
             sourceFile = file;
             final String fileName = file.getPath();
             synchronized (this) {
-                if (task != null) {
+                if (task != null && !task.isQuit()) {
                     return;
                 }
                 task = new SingletonTask<Void>() {
@@ -242,6 +242,7 @@ public class ImageGifViewerController extends ImageViewerController {
                     }
                 };
                 openHandlingStage(task, Modality.WINDOW_MODAL);
+                task.setSelf(task);
                 Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();
@@ -252,11 +253,13 @@ public class ImageGifViewerController extends ImageViewerController {
     }
 
     @Override
-    public void afterImageLoaded() {
+    public boolean afterImageLoaded() {
         try {
-            super.afterImageLoaded();
+            if (!super.afterImageLoaded()) {
+                return false;
+            }
             if (images == null || images.length == 0) {
-                return;
+                return false;
             }
             showGifImage(0);
             List<String> frames = new ArrayList<>();
@@ -266,8 +269,10 @@ public class ImageGifViewerController extends ImageViewerController {
             frameBox.getItems().clear();
             frameBox.getItems().addAll(frames);
             getMyStage().setTitle(getBaseTitle() + "  " + sourceFile.getAbsolutePath());
+            return true;
         } catch (Exception e) {
             logger.error(e.toString());
+            return false;
         }
     }
 
@@ -341,7 +346,7 @@ public class ImageGifViewerController extends ImageViewerController {
             recordFileWritten(file);
 
             synchronized (this) {
-                if (task != null) {
+                if (task != null && !task.isQuit()) {
                     return;
                 }
                 task = new SingletonTask<Void>() {
@@ -360,6 +365,7 @@ public class ImageGifViewerController extends ImageViewerController {
                     }
                 };
                 openHandlingStage(task, Modality.WINDOW_MODAL);
+                task.setSelf(task);
                 Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();
@@ -472,7 +478,7 @@ public class ImageGifViewerController extends ImageViewerController {
             recordFileWritten(file);
 
             synchronized (this) {
-                if (task != null) {
+                if (task != null && !task.isQuit()) {
                     return;
                 }
                 task = new SingletonTask<Void>() {
@@ -492,6 +498,7 @@ public class ImageGifViewerController extends ImageViewerController {
 
                 };
                 openHandlingStage(task, Modality.WINDOW_MODAL);
+                task.setSelf(task);
                 Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();

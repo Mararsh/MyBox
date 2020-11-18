@@ -251,22 +251,22 @@
                 </VBox>
             </children>
         </VBox>
-          <Label fx:id="commentsLabel" minHeight="-Infinity" prefWidth="300.0" styleClass="blue-label," stylesheets="@../styles/MyBox.css" wrapText="true">
-              <VBox.margin>
-                  <Insets top="10.0" />
-              </VBox.margin>
-          </Label>
-          <Button fx:id="demoButton" mnemonicParsing="false" onAction="#demo" VBox.vgrow="NEVER">
-              <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                      <image>
-                          <Image url="@../buttons/iconGo.png" />
-                      </image>
-                  </ImageView>
-              </graphic>
-              <VBox.margin>
-                  <Insets top="10.0" />
-              </VBox.margin>
-          </Button>
+        <Label fx:id="commentsLabel" minHeight="-Infinity" prefWidth="300.0" styleClass="blue-label," stylesheets="@../styles/MyBox.css" wrapText="true">
+            <VBox.margin>
+                <Insets top="10.0" />
+            </VBox.margin>
+        </Label>
+        <Button fx:id="demoButton" mnemonicParsing="false" onAction="#demo" VBox.vgrow="NEVER">
+            <graphic>
+                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../buttons/iconDemo.png" />
+                    </image>
+                </ImageView>
+            </graphic>
+            <VBox.margin>
+                <Insets top="10.0" />
+            </VBox.margin>
+        </Button>
     </children>
 </VBox>

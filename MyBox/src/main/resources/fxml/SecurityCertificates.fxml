@@ -57,7 +57,16 @@ License:    Apache License Version 2.0
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button fx:id="readButton" mnemonicParsing="false" onAction="#readAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Read" HBox.hgrow="NEVER" />
+                        <Button fx:id="startButton" defaultButton="true" mnemonicParsing="false" onAction="#startAction"
+                                 styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconStart.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
                     </children>
                 </HBox>
                 <SplitPane dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">

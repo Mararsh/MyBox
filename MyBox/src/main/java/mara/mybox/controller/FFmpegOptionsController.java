@@ -12,6 +12,7 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -30,6 +31,7 @@ import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -60,7 +62,7 @@ public class FFmpegOptionsController extends BaseController {
     @FXML
     protected Label executableLabel;
     @FXML
-    protected TextField executableInput;
+    protected TextField executableInput, extensionInput, moreInput;
     @FXML
     protected VBox functionBox;
     @FXML
@@ -73,9 +75,9 @@ public class FFmpegOptionsController extends BaseController {
             subtitleEncoderSelector, aspectSelector, resolutionSelector, videoFrameRateSelector,
             videoBitrateSelector, audioBitrateSelector, audioSampleRateSelector, volumnSelector;
     @FXML
-    protected TextField extensionInput, moreInput;
-    @FXML
     protected CheckBox stereoCheck;
+    @FXML
+    protected Button helpMeButton;
 
     public FFmpegOptionsController() {
         baseTitle = AppVariables.message("FFmpegOptions");
@@ -101,7 +103,6 @@ public class FFmpegOptionsController extends BaseController {
             if (executableInput == null) {
                 return;
             }
-
             FxmlControl.setTooltip(executableInput, message("FFmpegExeComments"));
 
             muxer = videoCodec = x264preset = audioCodec = subtitleCodec = aspect = null;
@@ -109,8 +110,7 @@ public class FFmpegOptionsController extends BaseController {
 
             executableInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue observable,
-                        String oldValue, String newValue) {
+                public void changed(ObservableValue observable, String oldValue, String newValue) {
                     checkExecutableInput();
                 }
             });
@@ -537,6 +537,9 @@ public class FFmpegOptionsController extends BaseController {
 
     public void checkExecutableInput() {
         executable = null;
+        if (helpMeButton != null) {
+            helpMeButton.setDisable(true);
+        }
         String v = executableInput.getText();
         if (v == null || v.isEmpty()) {
             executableInput.setStyle(badStyle);
@@ -553,6 +556,9 @@ public class FFmpegOptionsController extends BaseController {
 
         readMuxers();
         readEncoders();
+        if (helpMeButton != null) {
+            helpMeButton.setDisable(false);
+        }
     }
 
     @FXML
@@ -573,7 +579,7 @@ public class FFmpegOptionsController extends BaseController {
             return;
         }
         synchronized (this) {
-            if (muxerTask != null) {
+            if (muxerTask != null && !muxerTask.isQuit()) {
                 return;
             }
             try {
@@ -634,6 +640,7 @@ public class FFmpegOptionsController extends BaseController {
 
                     @Override
                     protected void taskQuit() {
+                        super.taskQuit();
                         muxerTask = null;
                     }
                 };
@@ -669,7 +676,7 @@ public class FFmpegOptionsController extends BaseController {
         }
 
         synchronized (this) {
-            if (encoderTask != null) {
+            if (encoderTask != null && !encoderTask.isQuit()) {
                 return;
             }
             try {
@@ -759,6 +766,7 @@ public class FFmpegOptionsController extends BaseController {
 
                     @Override
                     protected void taskQuit() {
+                        super.taskQuit();
                         encoderTask = null;
                     }
                 };
@@ -975,6 +983,19 @@ public class FFmpegOptionsController extends BaseController {
             File htmFile = HtmlTools.writeHtml(table.html());
             FxmlStage.browseURI(getMyStage(), htmFile.toURI());
 
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    @FXML
+    public void helpMe() {
+        try {
+            FFmpegInformationController controller
+                    = (FFmpegInformationController) openStage(CommonValues.FFmpegInformationFxml);
+            controller.queryInput.setText("-h");
+            controller.tabPane.getSelectionModel().select(controller.queryTab);
+            controller.queryAction();
         } catch (Exception e) {
             logger.error(e.toString());
         }

@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -8,18 +7,14 @@ import java.util.List;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import javafx.stage.Modality;
-import javafx.util.Callback;
 import mara.mybox.data.VisitHistory;
+import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.fxml.TableImageCell;
 import mara.mybox.image.ImageFileInformation;
@@ -27,7 +22,6 @@ import mara.mybox.image.ImageInformation;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
-import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
@@ -48,7 +42,7 @@ public class ImagesTableController extends BatchTableController<ImageInformation
     @FXML
     protected TableColumn<ImageInformation, String> colorSpaceColumn, pixelsColumn;
     @FXML
-    protected TableColumn<ImageInformation, Image> imageColumn;
+    protected TableColumn<ImageInformation, ImageInformation> imageColumn;
     @FXML
     protected TableColumn<ImageInformation, Integer> indexColumn;
     @FXML
@@ -70,29 +64,44 @@ public class ImagesTableController extends BatchTableController<ImageInformation
     }
 
     @Override
-    public void initTable() {
-        super.initTable();
-        hasSampled = new SimpleBooleanProperty(false);
-
-        if (tableThumbCheck != null && imageColumn != null) {
-            tableThumbCheck.setSelected(AppVariables.getUserConfigBoolean("ImageTableThumbnail", true));
-            tableThumbCheck.selectedProperty().addListener(new ChangeListener() {
-                @Override
-                public void changed(ObservableValue ov, Object t, Object t1) {
-                    if (tableThumbCheck.isSelected()) {
-                        if (!tableView.getColumns().contains(imageColumn)) {
-                            tableView.getColumns().add(0, imageColumn);
-                        }
-                    } else {
-                        if (tableView.getColumns().contains(imageColumn)) {
-                            tableView.getColumns().remove(imageColumn);
-                        }
-                    }
-                    AppVariables.setUserConfigValue("ImageTableThumbnail", tableThumbCheck.isSelected());
-                }
-            });
+    public void initValues() {
+        try {
+            super.initValues();
+            hasSampled = new SimpleBooleanProperty(false);
+        } catch (Exception e) {
         }
+    }
 
+    @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            if (tableThumbCheck != null && imageColumn != null) {
+                tableThumbCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "Thumbnail", true));
+                checkThumb();
+                tableThumbCheck.selectedProperty().addListener(new ChangeListener() {
+                    @Override
+                    public void changed(ObservableValue ov, Object t, Object t1) {
+                        checkThumb();
+                        AppVariables.setUserConfigValue(baseName + "Thumbnail", tableThumbCheck.isSelected());
+                    }
+                });
+            }
+        } catch (Exception e) {
+        }
+    }
+
+    public void checkThumb() {
+        if (tableThumbCheck.isSelected()) {
+            if (!tableView.getColumns().contains(imageColumn)) {
+                tableView.getColumns().add(0, imageColumn);
+            }
+        } else {
+            if (tableView.getColumns().contains(imageColumn)) {
+                tableView.getColumns().remove(imageColumn);
+            }
+        }
     }
 
     @Override
@@ -101,37 +110,12 @@ public class ImagesTableController extends BatchTableController<ImageInformation
             super.initColumns();
 
             if (imageColumn != null) {
-                imageColumn.setCellValueFactory(new PropertyValueFactory<>("image"));
+                imageColumn.setCellValueFactory(new PropertyValueFactory<>("self"));
                 imageColumn.setCellFactory(new TableImageCell());
             }
 
             if (pixelsColumn != null) {
                 pixelsColumn.setCellValueFactory(new PropertyValueFactory<>("pixelsString"));
-                pixelsColumn.setCellFactory(new Callback<TableColumn<ImageInformation, String>, TableCell<ImageInformation, String>>() {
-                    @Override
-                    public TableCell<ImageInformation, String> call(TableColumn<ImageInformation, String> param) {
-                        TableCell<ImageInformation, String> cell = new TableCell<ImageInformation, String>() {
-                            final Text text = new Text();
-
-                            @Override
-                            public void updateItem(final String item, boolean empty) {
-                                super.updateItem(item, empty);
-                                if (empty || item == null) {
-                                    setText(null);
-                                    setGraphic(null);
-                                    return;
-                                }
-                                text.setText(item);
-                                ImageInformation info = tableData.get(getIndex());
-                                if (info.isIsSampled()) {
-                                    text.setFill(Color.RED);
-                                }
-                                setGraphic(text);
-                            }
-                        };
-                        return cell;
-                    }
-                });
             }
 
             if (colorSpaceColumn != null) {
@@ -194,9 +178,9 @@ public class ImagesTableController extends BatchTableController<ImageInformation
         if (files == null || files.isEmpty()) {
             return;
         }
-        recordFileAdded(files.get(0));
+        recordFileAdded(files);
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -219,38 +203,17 @@ public class ImagesTableController extends BatchTableController<ImageInformation
                         if ("raw".equals(format)) {
                             continue;
                         }
-                        if (!tableView.getColumns().contains(imageColumn)) {
-                            for (int i = 0; i < finfo.getNumberOfImages(); ++i) {
-                                ImageInformation minfo = finfo.getImagesInformation().get(i);
-                                if (minfo.isIsSampled()) {
-                                    hasSampled = true;
-                                }
-                                infos.add(minfo);
-
+                        for (int i = 0; i < finfo.getNumberOfImages(); ++i) {
+                            if (task == null || isCancelled()) {
+                                return false;
                             }
-
-                        } else {
-                            List<BufferedImage> bufferImages
-                                    = ImageFileReaders.readFrames(format, fileName, finfo.getImagesInformation());
-                            if (bufferImages == null || bufferImages.isEmpty()) {
-                                error = "FailedReadFile";
-                                break;
+                            ImageInformation minfo = finfo.getImagesInformation().get(i);
+                            if (minfo.isIsSampled()) {
+                                hasSampled = true;
                             }
-                            for (int i = 0; i < bufferImages.size(); ++i) {
-                                if (task == null || isCancelled()) {
-                                    return false;
-                                }
-                                ImageInformation minfo = finfo.getImagesInformation().get(i);
-                                if (minfo.isIsSampled()) {
-                                    hasSampled = true;
-                                }
-                                image = SwingFXUtils.toFXImage(bufferImages.get(i), null);
-                                minfo.setImage(image);
-                                infos.add(minfo);
-                            }
+                            infos.add(minfo);
                         }
                     }
-
                     return error == null;
                 }
 
@@ -266,11 +229,13 @@ public class ImagesTableController extends BatchTableController<ImageInformation
                     if (hasSampled) {
                         alertWarning(AppVariables.message("ImageSampled"));
                     }
-
                 }
 
             };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
+            if (parentController != null) {
+                parentController.openHandlingStage(task, Modality.WINDOW_MODAL);
+            }
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();

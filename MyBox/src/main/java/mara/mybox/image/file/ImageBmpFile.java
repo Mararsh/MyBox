@@ -100,7 +100,7 @@ public class ImageBmpFile {
             IIOMetadata metaData = getWriterMeta(attributes, image, writer, param);
 
             File tmpFile = FileTools.getTempFile();
-            try (ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
+            try ( ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                 writer.setOutput(out);
                 writer.write(metaData, new IIOImage(image, null, metaData), param);
                 out.flush();
@@ -127,7 +127,7 @@ public class ImageBmpFile {
     public static BMPMetadata getBmpIIOMetadata(File file) {
         try {
             BMPImageReader reader = new BMPImageReader(new BMPImageReaderSpi());
-            try (ImageInputStream iis = ImageIO.createImageInputStream(file)) {
+            try ( ImageInputStream iis = ImageIO.createImageInputStream(file)) {
                 reader.setInput(iis, false);
                 BMPMetadata metadata = (BMPMetadata) reader.getImageMetadata(0);
                 reader.dispose();

@@ -27,6 +27,7 @@ import javafx.scene.layout.VBox;
 import mara.mybox.data.FileInformation;
 import mara.mybox.data.FileInformation.FileSelectorType;
 import mara.mybox.data.ProcessParameters;
+import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlStage;
@@ -89,8 +90,7 @@ public abstract class BatchController<T> extends BaseController {
     public BatchController() {
         targetSubdirKey = "targetSubdirKey";
         previewKey = "previewKey";
-
-        browseTargets = viewTargetPath = false;
+        browseTargets = viewTargetPath = allowPaused = false;
 
         sourcePathKey = "sourcePath";
         sourceExtensionFilter = CommonFxValues.AllExtensionFilter;
@@ -208,16 +208,6 @@ public abstract class BatchController<T> extends BaseController {
             super.initValues();
             optionsValid = new SimpleBooleanProperty(true);
 
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    @Override
-    public void initControls() {
-        try {
-            super.initControls();
-
             if (tableController != null) {
                 tableController.parentController = this;
                 tableController.parentFxml = myFxml;
@@ -251,6 +241,16 @@ public abstract class BatchController<T> extends BaseController {
                 openCheck = operationBarController.openCheck;
                 statusLabel = operationBarController.statusLabel;
             }
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    @Override
+    public void initControls() {
+        try {
+            super.initControls();
 
             if (targetSubdirCheck != null) {
                 targetSubdirCheck.setSelected(AppVariables.getUserConfigBoolean(targetSubdirKey));
@@ -310,6 +310,22 @@ public abstract class BatchController<T> extends BaseController {
                         );
                     }
 
+                } else if (targetFileInput != null) {
+                    if (tableView != null) {
+                        startButton.disableProperty().bind(
+                                Bindings.isEmpty(tableView.getItems())
+                                        .or(Bindings.isEmpty(targetFileInput.textProperty()))
+                                        .or(targetFileInput.styleProperty().isEqualTo(badStyle))
+                                        .or(optionsValid.not())
+                        );
+                    } else {
+                        startButton.disableProperty().bind(
+                                Bindings.isEmpty(targetFileInput.textProperty())
+                                        .or(targetFileInput.styleProperty().isEqualTo(badStyle))
+                                        .or(optionsValid.not())
+                        );
+                    }
+
                 } else {
                     if (tableView != null) {
                         startButton.disableProperty().bind(
@@ -320,9 +336,7 @@ public abstract class BatchController<T> extends BaseController {
                 }
 
                 if (previewButton != null) {
-                    previewButton.disableProperty().bind(startButton.disableProperty()
-                            .or(startButton.textProperty().isNotEqualTo(AppVariables.message("Start")))
-                    );
+                    previewButton.disableProperty().bind(startButton.disableProperty());
                 }
             }
 
@@ -383,6 +397,9 @@ public abstract class BatchController<T> extends BaseController {
     @FXML
     @Override
     public void startAction() {
+        if (task != null && !task.isQuit()) {
+            return;
+        }
         if (tableController != null) {
             tableController.stopCountSize();
         }
@@ -391,7 +408,7 @@ public abstract class BatchController<T> extends BaseController {
         }
         isPreview = false;
         if (!makeActualParameters()) {
-//            popError(message("Invalid"));
+            popError(message("ParametersInvalid"));
             actualParameters = null;
             return;
         }
@@ -402,6 +419,9 @@ public abstract class BatchController<T> extends BaseController {
 
     @FXML
     public void previewAction() {
+        if (task != null && !task.isQuit()) {
+            return;
+        }
         if (!makePreviewParameters()) {
             return;
         }
@@ -510,32 +530,15 @@ public abstract class BatchController<T> extends BaseController {
             actualParameters = null;
             return false;
         }
-        previewParameters = copyParameters(actualParameters);
+        try {
+            previewParameters = (ProcessParameters) actualParameters.clone();
+        } catch (Exception e) {
+            return false;
+        }
         previewParameters.status = "start";
         currentParameters = previewParameters;
         isPreview = true;
         return true;
-    }
-
-    public ProcessParameters copyParameters(ProcessParameters theConversion) {
-        ProcessParameters newParameters = new ProcessParameters();
-        newParameters.acumDigit = theConversion.acumDigit;
-        newParameters.acumFrom = theConversion.acumFrom;
-        newParameters.acumStart = theConversion.acumStart;
-        newParameters.currentPage = theConversion.currentPage;
-        newParameters.currentIndex = theConversion.currentIndex;
-        newParameters.startIndex = theConversion.startIndex;
-        newParameters.currentSourceFile = theConversion.currentSourceFile;
-        newParameters.targetRootPath = theConversion.targetRootPath;
-        newParameters.targetPath = theConversion.targetPath;
-        newParameters.targetSubDir = theConversion.targetSubDir;
-        newParameters.fromPage = theConversion.fromPage;
-        newParameters.password = theConversion.password;
-        newParameters.startPage = theConversion.startPage;
-        newParameters.status = theConversion.status;
-        newParameters.toPage = theConversion.toPage;
-        newParameters.isBatch = theConversion.isBatch;
-        return newParameters;
     }
 
     protected void initLogs() {
@@ -564,7 +567,7 @@ public abstract class BatchController<T> extends BaseController {
                 return;
             }
             synchronized (this) {
-                if (task != null) {
+                if (task != null && !task.isQuit()) {
                     return;
                 }
                 processStartTime = new Date();
@@ -573,61 +576,53 @@ public abstract class BatchController<T> extends BaseController {
                 task = new SingletonTask<Void>() {
 
                     @Override
-                    public Void call() {
+                    protected boolean handle() {
                         if (!beforeHandleFiles()) {
-                            ok = false;
-                            return null;
+                            return false;
                         }
                         updateTaskProgress(currentParameters.currentIndex, sourceFiles.size());
                         int len = sourceFiles.size();
-                        for (; currentParameters.currentIndex < len;
-                                currentParameters.currentIndex++) {
+                        for (; currentParameters.currentIndex < len; currentParameters.currentIndex++) {
                             if (isCancelled()) {
                                 break;
                             }
                             currentParameters.currentSourceFile = sourceFiles.get(currentParameters.currentIndex);
-
                             handleCurrentFile();
-
                             updateTaskProgress(currentParameters.currentIndex + 1, len);
-
                             if (isCancelled() || isPreview) {
                                 break;
                             }
                         }
                         afterHandleFiles();
                         updateTaskProgress(currentParameters.currentIndex, len);
-                        ok = true;
-
-                        return null;
+                        return true;
                     }
 
                     @Override
-                    public void succeeded() {
-                        super.succeeded();
+                    protected void whenSucceeded() {
                         updateInterface("Done");
                         afterSuccessful();
                     }
 
                     @Override
-                    public void cancelled() {
-                        super.cancelled();
+                    protected void whenCanceled() {
                         updateInterface("Canceled");
                     }
 
                     @Override
-                    public void failed() {
-                        super.failed();
+                    protected void whenFailed() {
                         updateInterface("Failed");
                     }
 
                     @Override
                     protected void taskQuit() {
+                        super.taskQuit();
                         quitProcess();
                         task = null;
                     }
 
                 };
+                task.setSelf(task);
                 Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();
@@ -691,9 +686,11 @@ public abstract class BatchController<T> extends BaseController {
             } else if (currentParameters.currentSourceFile.isDirectory()) {
                 result = handleDirectory(currentParameters.currentSourceFile);
             } else {
-                return;
+                result = AppVariables.message("Invalid");
             }
-
+            if (!AppVariables.message("Successful").equals(result)) {
+                updateLogs(result, true, true);
+            }
             tableController.markFileHandled(currentParameters.currentIndex, result);
         } catch (Exception e) {
             logger.debug(e.toString());
@@ -788,7 +785,7 @@ public abstract class BatchController<T> extends BaseController {
                 }
                 return false;
 
-            case NameMatchAnyRegularExpression:
+            case NameMatchRegularExpression:
                 for (String name : sourceFilesSelector) {
                     if (StringTools.match(fname, name, false)) {
                         return true;
@@ -796,9 +793,25 @@ public abstract class BatchController<T> extends BaseController {
                 }
                 return false;
 
-            case NameNotMatchAnyRegularExpression:
+            case NameNotMatchRegularExpression:
                 for (String name : sourceFilesSelector) {
                     if (StringTools.match(fname, name, false)) {
+                        return false;
+                    }
+                }
+                return true;
+
+            case NameIncludeRegularExpression:
+                for (String name : sourceFilesSelector) {
+                    if (StringTools.include(fname, name, false)) {
+                        return true;
+                    }
+                }
+                return false;
+
+            case NameNotIncludeRegularExpression:
+                for (String name : sourceFilesSelector) {
+                    if (StringTools.include(fname, name, false)) {
                         return false;
                     }
                 }
@@ -825,9 +838,8 @@ public abstract class BatchController<T> extends BaseController {
             dirFilesNumber = dirFilesHandled = 0;
             if (currentParameters.targetPath != null) {
                 File targetDir;
-
                 if (createDirectories
-                        && !currentParameters.targetPath.equals(dir.getAbsolutePath())) {
+                        && !currentParameters.targetPath.startsWith(dir.getAbsolutePath())) {
                     targetDir = new File(currentParameters.targetPath + File.separator + dir.getName());
                 } else {
                     targetDir = new File(currentParameters.targetPath);
@@ -873,6 +885,9 @@ public abstract class BatchController<T> extends BaseController {
                     }
                 } else if (srcFile.isDirectory() && sourceCheckSubdir) {
                     if (targetPath != null) {
+                        if (targetPath.getAbsolutePath().startsWith(srcFile.getAbsolutePath())) {
+                            continue;
+                        }
                         File subPath = makeTargetFile(srcFile, targetPath);
                         if (!subPath.exists()) {
                             subPath.mkdirs();
@@ -1008,9 +1023,9 @@ public abstract class BatchController<T> extends BaseController {
         logsTextArea.setText("");
     }
 
-    public void targetFileGenerated(File target) {
-        if (target == null || !target.exists()) {
-            return;
+    public boolean targetFileGenerated(File target) {
+        if (target == null || !target.exists() || target.length() == 0) {
+            return false;
         }
         finalTargetName = target.getAbsolutePath();
         targetFiles.add(target);
@@ -1019,6 +1034,8 @@ public abstract class BatchController<T> extends BaseController {
         msg += "  " + message("Cost") + ":" + DateTools.datetimeMsDuration(new Date(), fileStartTime);
         updateStatusLabel(msg);
         updateLogs(msg, true, true);
+        recordFileWritten(target);
+        return true;
     }
 
     public void targetFileGenerated(List<File> tFiles) {
@@ -1044,18 +1061,20 @@ public abstract class BatchController<T> extends BaseController {
             switch (newStatus) {
 
                 case "Started":
-                    startButton.setText(AppVariables.message("Cancel"));
+                    ControlStyle.setIcon(startButton, ControlStyle.getIcon("iconStop.png"));
+                    startButton.applyCss();
                     startButton.setOnAction((ActionEvent event) -> {
                         cancelProcess(event);
                     });
-//                    if (allowPaused) {
-//                        pauseButton.setVisible(true);
-//                        pauseButton.setDisable(false);
-//                        pauseButton.setText(AppVariables.message("Pause"));
-//                        pauseButton.setOnAction((ActionEvent event) -> {
-//                            pauseProcess(event);
-//                        });
-//                    }
+                    if (allowPaused) {
+                        pauseButton.setVisible(true);
+                        pauseButton.setDisable(false);
+                        ControlStyle.setIcon(pauseButton, ControlStyle.getIcon("iconPause.png"));
+                        startButton.applyCss();
+                        pauseButton.setOnAction((ActionEvent event) -> {
+                            pauseProcess(event);
+                        });
+                    }
                     disableControls(true);
                     break;
 
@@ -1066,19 +1085,22 @@ public abstract class BatchController<T> extends BaseController {
                 case "Done":
                 default:
                     if (paused) {
-                        startButton.setText(AppVariables.message("Cancel"));
+                        ControlStyle.setIcon(startButton, ControlStyle.getIcon("iconStop.png"));
+                        startButton.applyCss();
                         startButton.setOnAction((ActionEvent event) -> {
                             cancelProcess(event);
                         });
                         pauseButton.setVisible(true);
                         pauseButton.setDisable(false);
-                        pauseButton.setText(AppVariables.message("Continue"));
+                        ControlStyle.setIcon(pauseButton, ControlStyle.getIcon("iconStart.png"));
+                        pauseButton.applyCss();
                         pauseButton.setOnAction((ActionEvent event) -> {
                             startAction();
                         });
                         disableControls(true);
                     } else {
-                        startButton.setText(AppVariables.message("Start"));
+                        ControlStyle.setIcon(startButton, ControlStyle.getIcon("iconStart.png"));
+                        startButton.applyCss();
                         startButton.setOnAction((ActionEvent event) -> {
                             startAction();
                         });
@@ -1104,7 +1126,6 @@ public abstract class BatchController<T> extends BaseController {
 
     public void showCost() {
         long cost = new Date().getTime() - processStartTime.getTime();
-
         String s;
         if (paused) {
             s = message("Paused");
@@ -1123,6 +1144,7 @@ public abstract class BatchController<T> extends BaseController {
         }
         int count = 0;
         if (targetFiles != null && !targetFiles.isEmpty()) {
+            count = targetFiles.size();
             popInformation(MessageFormat.format(AppVariables.message("FilesGenerated"), count));
         }
         if (count > 0) {

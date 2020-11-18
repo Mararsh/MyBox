@@ -8,12 +8,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Region;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import mara.mybox.data.VisitHistory;
+import mara.mybox.data.tools.VisitHistoryTools;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.RecentVisitMenu;
-import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonFxValues;
@@ -58,6 +59,7 @@ public class ControlFileSelecter extends BaseController {
                         checkFileInput();
                     });
         }
+        label.setMinWidth(Region.USE_PREF_SIZE);
     }
 
     public ControlFileSelecter label(String labelString) {
@@ -121,11 +123,10 @@ public class ControlFileSelecter extends BaseController {
         TargetFileType = fileType;
         sourcePathKey = VisitHistoryTools.getPathKey(fileType);
         targetPathKey = sourcePathKey;
-        SaveAsOptionsKey = VisitHistoryTools.getSaveAsOptionsKey(fileType);
         if (fileType == VisitHistory.FileType.Image) {
             sourceExtensionFilter = CommonFxValues.ImageExtensionFilter;
         } else if (fileType == VisitHistory.FileType.PDF) {
-            sourceExtensionFilter = CommonFxValues.ImageExtensionFilter;
+            sourceExtensionFilter = CommonFxValues.PdfExtensionFilter;
         } else if (fileType == VisitHistory.FileType.Text) {
             sourceExtensionFilter = CommonFxValues.TextExtensionFilter;
         } else if (fileType == VisitHistory.FileType.Bytes) {
@@ -265,8 +266,8 @@ public class ControlFileSelecter extends BaseController {
                 if (isDirectory) {
                     return null;
                 } else {
-                    int fileNumber = AppVariables.fileRecentNumber * 2 / 3 + 1;
-                    return VisitHistoryTools.getRecentFile(SourceFileType, fileNumber);
+                    int fileNumber = AppVariables.fileRecentNumber * 3 / 4;
+                    return VisitHistoryTools.getRecentReadWrite(SourceFileType, fileNumber);
                 }
             }
 
@@ -276,7 +277,7 @@ public class ControlFileSelecter extends BaseController {
                 if (isDirectory) {
                     pathNumber = AppVariables.fileRecentNumber;
                 } else {
-                    pathNumber = AppVariables.fileRecentNumber / 3 + 1;
+                    pathNumber = AppVariables.fileRecentNumber / 4 + 1;
                 }
                 return VisitHistoryTools.getRecentPath(SourcePathType, pathNumber);
             }

@@ -89,6 +89,27 @@ public class ImageOCROptionsController extends BaseController {
     }
 
     @Override
+    public void initValues() {
+        try {
+            super.initValues();
+
+            String os = SystemTools.os();
+            tesseractPathController.type(VisitHistory.FileType.Bytes)
+                    .isDirectory(false).mustExist(true).permitNull(true)
+                    .defaultValue("win".equals(os) ? "D:\\Programs\\Tesseract-OCR\\tesseract.exe" : "/bin/tesseract")
+                    .name("TesseractPath", true);
+
+            dataPathController.label(message("OCRDataPath"))
+                    .isDirectory(true).mustExist(true).permitNull(false)
+                    .defaultValue("win".equals(os) ? "D:\\Programs\\Tesseract-OCR\\tessdata" : "/usr/local/share/tessdata/")
+                    .name(OCRTools.TessDataPath, true);
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    @Override
     public void initControls() {
         try {
             super.initControls();
@@ -108,15 +129,6 @@ public class ImageOCROptionsController extends BaseController {
                     AppVariables.setUserConfigValue("ImageOCREmbed", embedRadio.isSelected());
                 }
             });
-            tesseractPathController.type(VisitHistory.FileType.Bytes)
-                    .isDirectory(false).mustExist(true).permitNull(true)
-                    .defaultValue("win".equals(os) ? "D:\\Programs\\Tesseract-OCR\\tesseract.exe" : "/bin/tesseract")
-                    .name("TesseractPath", true);
-
-            dataPathController.label(message("OCRDataPath"))
-                    .isDirectory(true).mustExist(true).permitNull(false)
-                    .defaultValue("win".equals(os) ? "D:\\Programs\\Tesseract-OCR\\tessdata" : "/usr/local/share/tessdata/")
-                    .name(OCRTools.TessDataPath, true);
 
             psm = 6;
             psmSelector.getItems().addAll(Arrays.asList(

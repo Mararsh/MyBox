@@ -29,52 +29,60 @@ License:    Apache License Version 2.0
             <children>
                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
                     <children>
-                          <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile">
-                              <graphic>
-                                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                      <image>
-                                          <Image url="@../buttons/iconOpen.png" />
-                                      </image>
-                                  </ImageView>
-                              </graphic>
-                          </Button>
-                          <Button fx:id="createButton" mnemonicParsing="false" onAction="#createAction">
-                              <graphic>
-                                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                      <image>
-                                          <Image url="@../buttons/iconFileAdd.png" />
-                                      </image>
-                                  </ImageView>
-                              </graphic>
-                          </Button>
-                  <Label maxWidth="1.7976931348623157E308" text=" " HBox.hgrow="ALWAYS" />
-                          <CheckBox fx:id="viewCheck" mnemonicParsing="false" selected="true" text="%ViewAfterSave" />
-                  <Button fx:id="viewButton" mnemonicParsing="false" onAction="#viewAction" onMouseEntered="#popSaveAs">
-                     <graphic>
-                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../buttons/iconView.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
-                          <Button fx:id="saveAsButton" mnemonicParsing="false" onAction="#saveAsAction" onMouseEntered="#popSaveAs">
-                              <graphic>
-                                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                      <image>
-                                          <Image url="@../buttons/iconSaveAs.png" />
-                                      </image>
-                                  </ImageView>
-                              </graphic>
-                          </Button>
-                          <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Save" />
+                        <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile">
+                            <graphic>
+                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconOpen.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                        <Button fx:id="createButton" mnemonicParsing="false" onAction="#createAction">
+                            <graphic>
+                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconFileAdd.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                        <Label maxWidth="1.7976931348623157E308" text=" " HBox.hgrow="ALWAYS" />
+                        <CheckBox fx:id="viewCheck" mnemonicParsing="false" selected="true" text="%ViewAfterSave" />
+                        <Button fx:id="viewButton" mnemonicParsing="false" onAction="#viewAction" onMouseEntered="#popSaveAs">
+                            <graphic>
+                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconView.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                        <Button fx:id="saveAsButton" mnemonicParsing="false" onAction="#saveAsAction" onMouseEntered="#popSaveAs">
+                            <graphic>
+                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconSaveAs.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                        <Button fx:id="saveButton" defaultButton="true" mnemonicParsing="false" onAction="#saveAction"  HBox.hgrow="NEVER">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconSave.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
                     </children>
                 </HBox>
-                  <VBox fx:id="tableBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-                      <children>
-                          <fx:include fx:id="table" source="ImagesTable.fxml" />
-                      </children>
-                  </VBox>
+                <VBox fx:id="tableBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                    <children>
+                        <fx:include fx:id="table" source="ImagesTable.fxml" />
+                    </children>
+                </VBox>
             </children>
             <BorderPane.margin>
                 <Insets />

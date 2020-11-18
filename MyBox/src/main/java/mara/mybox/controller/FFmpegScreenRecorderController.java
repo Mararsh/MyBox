@@ -20,6 +20,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import mara.mybox.data.VisitHistory;
+import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlStage;
@@ -50,7 +51,20 @@ public class FFmpegScreenRecorderController extends DataTaskController {
 
     public FFmpegScreenRecorderController() {
         baseTitle = AppVariables.message("FFmpegScreenRecorder");
-        cancelName = "Stop";
+    }
+
+    @Override
+    public void initValues() {
+        try {
+            super.initValues();
+            targetFileController.label(message("TargetFile"))
+                    .isDirectory(false).isSource(false).mustExist(false).permitNull(false)
+                    .name(baseName + "TargetFile", false).type(VisitHistory.FileType.Media);
+            targetFileInput = targetFileController.fileInput;
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
     }
 
     @Override
@@ -67,10 +81,6 @@ public class FFmpegScreenRecorderController extends DataTaskController {
                 }
             });
             openCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "Open", true));
-
-            targetFileController.label(message("TargetFile"))
-                    .isDirectory(false).isSource(false).mustExist(false).permitNull(false)
-                    .name(baseName + "TargetFile", false).type(VisitHistory.FileType.Media);
 
             optionsController.extensionInput.textProperty().addListener(
                     (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
@@ -125,16 +135,21 @@ public class FFmpegScreenRecorderController extends DataTaskController {
         if (!checkOptions()) {
             return;
         }
-        if (message(cancelName).equals(startButton.getText())) {
+        if (startButton.getUserData() != null) {
+            ControlStyle.setIcon(startButton, ControlStyle.getIcon("iconStart.png"));
+            startButton.applyCss();
+            startButton.setUserData(null);
             cancelAction();
             return;
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             initLogs();
-            startButton.setText(message(cancelName));
+            ControlStyle.setIcon(startButton, ControlStyle.getIcon("iconStop.png"));
+            startButton.applyCss();
+            startButton.setUserData("started");
             tabPane.getSelectionModel().select(logsTab);
             if (optionsController.delayController.value > 0) {
                 updateLogs(message("Delay") + ": " + optionsController.delayController.value + " " + message("Seconds"), true);
@@ -153,7 +168,9 @@ public class FFmpegScreenRecorderController extends DataTaskController {
 
     @Override
     protected boolean doTask() {
-        FxmlControl.BenWu();
+        if (optionsController.miaoCheck.isSelected()) {
+            FxmlControl.BenWu();
+        }
         if (timer != null) {
             timer.cancel();
             timer = null;
@@ -440,7 +457,9 @@ public class FFmpegScreenRecorderController extends DataTaskController {
                 recorder = null;
             }
             stopping.set(false);
-            FxmlControl.miao7();
+            if (optionsController.miaoCheck.isSelected()) {
+                FxmlControl.miao7();
+            }
             if (started) {
                 openTarget(null);
             } else {

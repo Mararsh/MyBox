@@ -513,6 +513,9 @@ public class DerbyBase {
             if (!tables.contains("String_Value".toUpperCase())) {
                 new TableStringValue().init(conn);
             }
+//            if (!tables.contains("Download_History".toUpperCase())) {
+//                new TableDownloadHistory().createTable(conn);
+//            }
 
             return true;
         } catch (Exception e) {
@@ -582,6 +585,22 @@ public class DerbyBase {
 //                    logger.debug(e.toString());
                 }
             }
+//            if (!indexes.contains("Download_History_url_index".toUpperCase())) {
+//                try ( Statement statement = conn.createStatement()) {
+//                    statement.executeUpdate(TableDownloadHistory.Create_Index_url);
+//                } catch (Exception e) {
+//                    failed(e);
+//                    logger.debug(e.toString());
+//                }
+//            }
+//            if (!indexes.contains("Download_History_filename_index".toUpperCase())) {
+//                try ( Statement statement = conn.createStatement()) {
+//                    statement.executeUpdate(TableDownloadHistory.Create_Index_filename);
+//                } catch (Exception e) {
+//                    failed(e);
+//                    logger.debug(e.toString());
+//                }
+//            }
             return true;
         } catch (Exception e) {
 //            failed(e);
@@ -684,12 +703,12 @@ public class DerbyBase {
             new TableBrowserHistory().clear(conn);
             new TableBrowserBypassSSL().clear(conn);
             new TableColorData().clear(conn);
-            new TableEpidemicReport().clearTable(conn);
-            new TableGeographyCode().clearTable(conn);
+            new TableEpidemicReport().clearData(conn);
+            new TableGeographyCode().clearData(conn);
             new TableQueryCondition().clear(conn);
             new TableStringValue().clear(conn);
-            new TableDataset().clearTable(conn);
-            new TableLocationData().clearTable(conn);
+            new TableDataset().clearData(conn);
+            new TableLocationData().clearData(conn);
             return true;
         } catch (Exception e) {
             failed(e);

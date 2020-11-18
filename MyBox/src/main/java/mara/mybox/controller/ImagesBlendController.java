@@ -308,7 +308,7 @@ public class ImagesBlendController extends ImageViewerController {
 
             final String fileName = file.getPath();
             synchronized (this) {
-                if (task != null) {
+                if (task != null && !task.isQuit() ) {
                     return;
                 }
                 task = new SingletonTask<Void>() {
@@ -348,7 +348,7 @@ public class ImagesBlendController extends ImageViewerController {
                     }
                 };
                 openHandlingStage(task, Modality.WINDOW_MODAL);
-                Thread thread = new Thread(task);
+                task.setSelf(task);Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();
             }
@@ -445,7 +445,7 @@ public class ImagesBlendController extends ImageViewerController {
 
             final String fileName = file.getPath();
             synchronized (this) {
-                if (task != null) {
+                if (task != null && !task.isQuit() ) {
                     return;
                 }
                 task = new SingletonTask<Void>() {
@@ -486,7 +486,7 @@ public class ImagesBlendController extends ImageViewerController {
                     }
                 };
                 openHandlingStage(task, Modality.WINDOW_MODAL);
-                Thread thread = new Thread(task);
+                task.setSelf(task);Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();
             }
@@ -585,7 +585,7 @@ public class ImagesBlendController extends ImageViewerController {
             targetFile = file;
 
             synchronized (this) {
-                if (task != null) {
+                if (task != null && !task.isQuit() ) {
                     return;
                 }
                 task = new SingletonTask<Void>() {
@@ -595,7 +595,7 @@ public class ImagesBlendController extends ImageViewerController {
                         try {
                             String filename = targetFile.getAbsolutePath();
                             String format = FileTools.getFileSuffix(filename);
-                            final BufferedImage bufferedImage = FxmlImageManufacture.getBufferedImage(image);
+                            final BufferedImage bufferedImage = FxmlImageManufacture.bufferedImage(image);
                             if (task == null || isCancelled()) {
                                 return false;
                             }
@@ -614,7 +614,7 @@ public class ImagesBlendController extends ImageViewerController {
 
                 };
                 openHandlingStage(task, Modality.WINDOW_MODAL);
-                Thread thread = new Thread(task);
+                task.setSelf(task);Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();
             }

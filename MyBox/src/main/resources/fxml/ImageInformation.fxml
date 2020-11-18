@@ -20,8 +20,15 @@ License:    Apache License Version 2.0
             <children>
                 <HBox alignment="CENTER_LEFT" spacing="5.0">
                     <children>
-                        <Label text="%Style" />
-                        <ComboBox fx:id="htmlStyleSelector" prefWidth="150.0" />
+                        <Button fx:id="styleLinksButton" mnemonicParsing="false" onMouseEntered="#popLinksStyle">
+                            <graphic>
+                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconStyle.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
                     </children>
                 </HBox>
                 <HBox fx:id="iccBox" alignment="CENTER_LEFT" spacing="5.0" HBox.hgrow="ALWAYS">

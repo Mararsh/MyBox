@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.scene.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.web.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.effect.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<BorderPane fx:id="thisPane" prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.HtmlConvertUrlController">
+    <top>
+        <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
+    </top>
+    <center>
+        <VBox fx:id="contentBox" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" BorderPane.alignment="CENTER">
+            <BorderPane.margin>
+                <Insets />
+            </BorderPane.margin>
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            </padding>
+            <children>
+                <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="268.0" spacing="5.0">
+                    <children>
+                        <Label text="URL" wrapText="true" />
+                        <RadioButton fx:id="decodeRadio" mnemonicParsing="false" selected="true" text="%Decode">
+                            <toggleGroup>
+                                <ToggleGroup fx:id="opGroup" />
+                            </toggleGroup>
+                        </RadioButton>
+                        <RadioButton fx:id="encodeRadio" mnemonicParsing="false" text="%Encode" toggleGroup="$opGroup" />
+                        <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                        <ImageView fx:id="rightTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconTipsRight.png" />
+                            </image>
+                        </ImageView>
+                    </children>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                    <children>
+                        <Label text="%Input" wrapText="true" HBox.hgrow="NEVER" />
+                        <TextField fx:id="valueInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="pasteButton" mnemonicParsing="false" onAction="#pasteAction">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconPaste.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                    </children>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="66.0" spacing="5.0">
+                    <children>
+                        <Label layoutX="10.0" layoutY="19.0" text="%Charset" wrapText="true" />
+                        <ComboBox fx:id="charsetsSelector" prefWidth="300.0" />
+                    </children>
+                </HBox>
+                <Separator prefWidth="200.0" />
+                <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="20.0" spacing="5.0">
+                    <children>
+                        <Label maxWidth="1.7976931348623157E308" wrapText="true" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="equalButton" defaultButton="true" mnemonicParsing="false" onAction="#equalAction">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconEqual.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                    </children>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="192.0" spacing="5.0">
+                    <children>
+                        <Label text="%Result" wrapText="true" />
+                        <TextField fx:id="resultInput" editable="false" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="copyButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#copyAction">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconCopy.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </center>
+    <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+    </padding>
+</BorderPane>

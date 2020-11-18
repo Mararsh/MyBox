@@ -37,15 +37,15 @@ public class AlarmClockTableController extends BaseController {
     protected ObservableList<AlarmClock> tableData = FXCollections.observableArrayList();
 
     @FXML
-    private HBox alarmClocksPane;
+    protected HBox alarmClocksPane;
     @FXML
-    private Button clearButton, editButton, activeButton, inactiveButton;
+    protected Button editButton, activeButton, inactiveButton;
     @FXML
-    private TableView<AlarmClock> alarmClocksView;
+    protected TableView<AlarmClock> alarmClocksView;
     @FXML
-    private TableColumn<AlarmClock, String> statusColumn, descriptionColumn, repeatColumn;
+    protected TableColumn<AlarmClock, String> statusColumn, descriptionColumn, repeatColumn;
     @FXML
-    private TableColumn<AlarmClock, String> nextTimeColumn, soundColumn, lastTimeColumn, startTimeColumn;
+    protected TableColumn<AlarmClock, String> nextTimeColumn, soundColumn, lastTimeColumn, startTimeColumn;
 
     @Override
     public void initControls() {
@@ -161,7 +161,7 @@ public class AlarmClockTableController extends BaseController {
     }
 
     @FXML
-    private void editAction(ActionEvent event) {
+    public void editAction(ActionEvent event) {
         ObservableList<AlarmClock> selected = alarmClocksView.getSelectionModel().getSelectedItems();
         if (selected == null || selected.isEmpty()) {
             return;
@@ -170,7 +170,7 @@ public class AlarmClockTableController extends BaseController {
     }
 
     @FXML
-    private void activeAction(ActionEvent event) {
+    public void activeAction(ActionEvent event) {
         ObservableList<AlarmClock> selected = alarmClocksView.getSelectionModel().getSelectedItems();
         if (selected == null || selected.isEmpty()) {
             return;
@@ -180,7 +180,7 @@ public class AlarmClockTableController extends BaseController {
             alarm.setStatus(AppVariables.message("Active"));
             AlarmClock.calculateNextTime(alarm);
             alarm.setNext(DateTools.datetimeToString(alarm.getNextTime()));
-            AlarmClock.scehduleAlarmClock(alarm);
+            AlarmClock.scheduleAlarmClock(alarm);
 
         }
         AlarmClock.writeAlarmClocks(selected);
@@ -191,7 +191,7 @@ public class AlarmClockTableController extends BaseController {
     }
 
     @FXML
-    private void inactiveAction(ActionEvent event) {
+    public void inactiveAction(ActionEvent event) {
         ObservableList<AlarmClock> selected = alarmClocksView.getSelectionModel().getSelectedItems();
         if (selected == null || selected.isEmpty()) {
             return;
@@ -201,7 +201,7 @@ public class AlarmClockTableController extends BaseController {
             alarm.setStatus(AppVariables.message("Inactive"));
             alarm.setNextTime(-1);
             alarm.setNext("");
-            AlarmClock.scehduleAlarmClock(alarm);
+            AlarmClock.scheduleAlarmClock(alarm);
         }
         AlarmClock.writeAlarmClocks(selected);
         alarmClocksView.refresh();
@@ -233,7 +233,7 @@ public class AlarmClockTableController extends BaseController {
     public void saveAlarm(AlarmClock alarm, boolean isNew) {
         AlarmClock.setExtraValues(alarm);
         AlarmClock.writeAlarmClock(alarm);
-        AlarmClock.scehduleAlarmClock(alarm);
+        AlarmClock.scheduleAlarmClock(alarm);
         if (isNew) {
             tableData.add(alarm);
         } else {

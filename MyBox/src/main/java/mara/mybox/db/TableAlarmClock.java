@@ -10,6 +10,7 @@ import java.util.List;
 import mara.mybox.data.AlarmClock;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -121,7 +122,7 @@ public class TableAlarmClock extends DerbyBase {
 
         } catch (Exception e) {
             failed(e);
-//            // logger.debug(e.toString());
+            logger.debug(e.toString());
         }
         return alarms;
     }
@@ -133,7 +134,7 @@ public class TableAlarmClock extends DerbyBase {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             conn.setAutoCommit(false);
             final String querySql = " SELECT alarm_type FROM Alarm_Clock WHERE key_value=?";
-            final String updateSql = "UPDATE Alarm_Clock SET "
+            final String updateSql = "UPDATE Alarm_Clock "
                     + " SET description=? , alarm_type=?, start_time=? , is_active=? , sound=?,"
                     + "  every_value=? , last_time=?, next_time=?, is_sound_loop=?, "
                     + " is_sound_continully=?, sound_loop_times=?, volume=?"
@@ -190,7 +191,7 @@ public class TableAlarmClock extends DerbyBase {
             return true;
         } catch (Exception e) {
             failed(e);
-//            // logger.debug(e.toString());
+            logger.debug(e.toString());
             return false;
         }
     }

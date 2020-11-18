@@ -61,7 +61,16 @@ License:    Apache License Version 2.0
                 </HBox>
                 <HBox fx:id="imageParaBox" alignment="CENTER_LEFT" nodeOrientation="RIGHT_TO_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                     <children>
-                        <Button fx:id="startButton" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#startAction" onMouseEntered="#popSaveAs" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Compare" />
+                        <Button fx:id="startButton" defaultButton="true" mnemonicParsing="false" onAction="#startAction"  onMouseEntered="#popSaveAs"
+                                styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconStart.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
                         <RadioButton mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="SHA256">
                             <toggleGroup>
                                 <ToggleGroup fx:id="algorithmGroup" />

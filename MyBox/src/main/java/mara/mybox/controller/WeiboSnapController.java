@@ -79,6 +79,7 @@ public class WeiboSnapController extends BaseController {
 
     public WeiboSnapController() {
         baseTitle = AppVariables.message("WeiboSnap");
+        TipsLabelKey = "WeiboAddressComments";
 
         targetPathKey = "WeiboTargetPathKey";
 

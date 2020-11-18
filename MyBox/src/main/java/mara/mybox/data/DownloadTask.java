@@ -15,7 +15,7 @@ import java.util.Map;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import mara.mybox.tools.DateTools;
-import mara.mybox.tools.NetworkTools;
+import mara.mybox.tools.FileTools;
 import static mara.mybox.tools.NetworkTools.trustAllManager;
 import static mara.mybox.tools.NetworkTools.trustAllVerifier;
 import static mara.mybox.value.AppVariables.logger;
@@ -118,9 +118,11 @@ public class DownloadTask<Void> extends BaseTask<Void> {
 
     protected boolean download() {
         try {
-            targetFile = new File(targetPath.getAbsolutePath() + File.separator + NetworkTools.urlFileName(url));
+            String filename = url.getFile().substring(url.getFile().lastIndexOf('/'));
+            targetFile = new File(targetPath.getAbsolutePath() + File.separator
+                    + FileTools.filenameFilter(filename.trim()));
             connection = getConnection();
-            connection.setRequestMethod("HEAD");
+            connection.setRequestMethod("GET");
             responseCode = connection.getResponseCode();
             totalSize = connection.getContentLength();
             error = connection.getResponseMessage();

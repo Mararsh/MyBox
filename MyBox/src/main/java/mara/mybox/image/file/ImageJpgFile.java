@@ -1,5 +1,6 @@
 package mara.mybox.image.file;
 
+import java.awt.Rectangle;
 import java.awt.color.ColorSpace;
 import java.awt.color.ICC_Profile;
 import java.awt.image.BufferedImage;
@@ -44,14 +45,14 @@ public class ImageJpgFile {
     }
 
     public static BufferedImage readBrokenJpgFile(File file, ImageInformation imageInfo,
-            int index, int xscale, int yscale) {
+            int index, Rectangle bounds, int xscale, int yscale) {
         BufferedImage bufferedImage = null;
         try {
-       
+
             if (imageInfo.getColorChannels() != 4) {
                 return null;
             }
-            try (ImageInputStream iis = ImageIO.createImageInputStream(file)) {
+            try ( ImageInputStream iis = ImageIO.createImageInputStream(file)) {
                 Iterator<ImageReader> readers = ImageIO.getImageReaders(iis);
                 ImageReader reader = null;
                 while (readers.hasNext()) {
@@ -63,7 +64,11 @@ public class ImageJpgFile {
                 if (reader != null) {
                     reader.setInput(iis);
                     ImageReadParam param = reader.getDefaultReadParam();
+                    if (bounds != null) {
+                        param.setSourceRegion(bounds);
+                    }
                     param.setSourceSubsampling(xscale, yscale, 0, 0);
+
                     WritableRaster srcRaster = (WritableRaster) reader.readRaster(index, param);
                     boolean isAdobe = (boolean) imageInfo.getNativeAttribute("Adobe");
                     if ("YCCK".equals(imageInfo.getColorSpace())) {
@@ -225,7 +230,7 @@ public class ImageJpgFile {
             ImageWriteParam param = getPara(attributes, writer);
             IIOMetadata metaData = getWriterMeta(attributes, image, writer, param);
             File tmpFile = FileTools.getTempFile();
-            try (ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
+            try ( ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                 writer.setOutput(out);
                 writer.write(metaData, new IIOImage(image, null, metaData), param);
                 out.flush();

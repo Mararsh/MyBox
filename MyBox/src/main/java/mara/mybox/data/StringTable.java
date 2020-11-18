@@ -91,7 +91,7 @@ public class StringTable {
         if (table == null || table.getData() == null) {
             return "";
         }
-        return HtmlTools.html(table.getTitle(), table.style, tableDiv(table));
+        return HtmlTools.htmlStyleValue(table.getTitle(), table.style, tableDiv(table));
     }
 
     public static String tableDiv(StringTable table) {

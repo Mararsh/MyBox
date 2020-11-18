@@ -5,10 +5,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.binding.Bindings;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import mara.mybox.data.VisitHistory;
@@ -61,9 +59,11 @@ public class ImageFramesViewerController extends ImagesListController {
             tableBox.setDisable(true);
             editButton.setDisable(true);
 
-            extractButton.disableProperty().bind(Bindings.isEmpty(tableData)
-                    .or(Bindings.isEmpty(tableView.getSelectionModel().getSelectedItems()))
-            );
+            if (extractButton != null) {
+                extractButton.disableProperty().bind(Bindings.isEmpty(tableData)
+                        .or(Bindings.isEmpty(tableView.getSelectionModel().getSelectedItems()))
+                );
+            }
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -79,7 +79,7 @@ public class ImageFramesViewerController extends ImagesListController {
         recordFileOpened(file);
 
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -100,18 +100,11 @@ public class ImageFramesViewerController extends ImagesListController {
                     if ("raw".equals(format)) {
                         return false;
                     }
-                    List<BufferedImage> bufferImages = ImageFileReaders.readFrames(format, fileName, finfo.getImagesInformation());
-                    if (bufferImages == null || bufferImages.isEmpty()) {
-                        error = "FailedReadFile";
-                        return false;
-                    }
-                    for (int i = 0; i < bufferImages.size(); ++i) {
+                    for (int i = 0; i < finfo.getNumberOfImages(); ++i) {
                         if (task == null || isCancelled()) {
                             return false;
                         }
                         ImageInformation minfo = finfo.getImagesInformation().get(i);
-                        Image image = SwingFXUtils.toFXImage(bufferImages.get(i), null);
-                        minfo.setImage(image);
                         infos.add(minfo);
                     }
                     return true;
@@ -127,6 +120,7 @@ public class ImageFramesViewerController extends ImagesListController {
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -185,7 +179,7 @@ public class ImageFramesViewerController extends ImagesListController {
             recordFileWritten(tFile);
 
             synchronized (this) {
-                if (task != null) {
+                if (task != null && !task.isQuit()) {
                     return;
                 }
                 task = new SingletonTask<Void>() {
@@ -204,7 +198,7 @@ public class ImageFramesViewerController extends ImagesListController {
                                 return false;
                             }
                             filename = filePrefix + "-" + StringTools.fillLeftZero(i, digit) + "." + format;
-                            BufferedImage bufferedImage = ImageFileReaders.getBufferedImage(selectedImages.get(i));
+                            BufferedImage bufferedImage = ImageInformation.getBufferedImage(selectedImages.get(i));
                             if (bufferedImage == null) {
                                 continue;
                             }
@@ -220,6 +214,7 @@ public class ImageFramesViewerController extends ImagesListController {
                     }
                 };
                 openHandlingStage(task, Modality.WINDOW_MODAL);
+                task.setSelf(task);
                 Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();

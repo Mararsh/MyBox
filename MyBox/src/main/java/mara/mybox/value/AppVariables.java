@@ -50,7 +50,7 @@ public class AppVariables {
     public static Map<Long, ScheduledFuture<?>> scheduledTasks;
     public static AlarmClockController alarmClockController;
     public static MemoryUsageSetting pdfMemUsage;
-    public static int sceneFontSize, fileRecentNumber, iconSize;
+    public static int sceneFontSize, fileRecentNumber, iconSize, thumbnailWidth;
     public static boolean openStageInNewWindow, restoreStagesSize, controlDisplayText,
             disableHiDPI, DerbyFailAsked;
     public static ControlStyle.ColorStyle ControlColor;
@@ -71,8 +71,9 @@ public class AppVariables {
             openStageInNewWindow = AppVariables.getUserConfigBoolean("OpenStageInNewWindow", false);
             restoreStagesSize = AppVariables.getUserConfigBoolean("RestoreStagesSize", true);
             sceneFontSize = AppVariables.getUserConfigInt("SceneFontSize", 15);
-            fileRecentNumber = AppVariables.getUserConfigInt("FileRecentNumber", 15);
+            fileRecentNumber = AppVariables.getUserConfigInt("FileRecentNumber", 16);
             iconSize = AppVariables.getUserConfigInt("IconSize", 20);
+            thumbnailWidth = AppVariables.getUserConfigInt("ThumbnailWidth", 100);
             ControlColor = ControlStyle.getConfigColorStyle();
             controlDisplayText = AppVariables.getUserConfigBoolean("ControlDisplayText", false);
             disableHiDPI = DerbyFailAsked = false;
@@ -339,7 +340,7 @@ public class AppVariables {
             }
             return v;
         } catch (Exception e) {
-//            logger.error(e.toString());
+            logger.error(e.toString());
             return defaultValue;
         }
     }

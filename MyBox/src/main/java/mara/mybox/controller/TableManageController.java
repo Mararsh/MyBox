@@ -63,9 +63,8 @@ public class TableManageController<P> extends BaseController {
 
     public TableManageController() {
         tableName = "";
+        TipsLabelKey = "TableTips";
 
-        targetPathKey = "dataTargetPath";
-        sourcePathKey = "dataSourcePath";
     }
 
     @Override
@@ -269,7 +268,7 @@ public class TableManageController<P> extends BaseController {
         }
         tableData.clear();
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit() ) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -325,7 +324,7 @@ public class TableManageController<P> extends BaseController {
             } else {
                 openHandlingStage(task, Modality.WINDOW_MODAL, message("LoadingTableData"));
             }
-            Thread thread = new Thread(task);
+            task.setSelf(task);Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -433,7 +432,7 @@ public class TableManageController<P> extends BaseController {
     @FXML
     public void examplesAction() {
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit() ) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -450,7 +449,7 @@ public class TableManageController<P> extends BaseController {
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
+            task.setSelf(task);Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -485,7 +484,7 @@ public class TableManageController<P> extends BaseController {
             }
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit() ) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -507,7 +506,7 @@ public class TableManageController<P> extends BaseController {
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
+            task.setSelf(task);Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -619,7 +618,7 @@ public class TableManageController<P> extends BaseController {
         }
         recordFileOpened(file);
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit() ) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -637,7 +636,7 @@ public class TableManageController<P> extends BaseController {
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
+            task.setSelf(task);Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -656,7 +655,7 @@ public class TableManageController<P> extends BaseController {
         }
         recordFileWritten(file);
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit() ) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -674,7 +673,7 @@ public class TableManageController<P> extends BaseController {
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
+            task.setSelf(task);Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }

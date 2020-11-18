@@ -2,11 +2,9 @@ package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
@@ -15,15 +13,16 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
@@ -46,7 +45,6 @@ import mara.mybox.image.ImageFileInformation;
 import mara.mybox.image.ImageScope;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.image.file.ImageFileWriters;
-import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.FileTools.FileSortMode;
 import mara.mybox.value.AppVariables;
@@ -69,20 +67,15 @@ public class ImageViewerController extends ImageShapesController {
     protected FileSortMode sortMode;
 
     @FXML
-    protected TitledPane filePane, viewPane, saveAsPane, editPane, browsePane, tipsPane;
+    protected TitledPane filePane, viewPane, saveAsPane, editPane, browsePane;
     @FXML
     protected VBox contentBox, fileBox;
     @FXML
-    protected HBox operationBox, opBar;
-    @FXML
-    public Button moveUpButton, moveDownButton, manufactureButton, statisticButton, splitButton,
-            sampleButton, browseButton;
+    protected HBox operationBox, fileHBox, widthHBox;
     @FXML
     protected CheckBox selectAreaCheck, deleteConfirmCheck, saveConfirmCheck;
     @FXML
-    protected ToggleGroup saveAsGroup, sortGroup;
-    @FXML
-    protected RadioButton saveLoadRadio, saveOpenRadio, saveJustRadio;
+    protected ToggleGroup sortGroup;
     @FXML
     protected ComboBox<String> loadWidthBox;
 
@@ -100,7 +93,6 @@ public class ImageViewerController extends ImageShapesController {
             initSaveAsPane();
             initEditPane();
             initBrowsePane();
-            initTipsPane();
             initOperationBox();
 
         } catch (Exception e) {
@@ -116,17 +108,19 @@ public class ImageViewerController extends ImageShapesController {
             if (saveButton != null && imageView != null) {
                 saveButton.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
             }
+            if (fileHBox != null && sampledView != null) {
+                fileHBox.getChildren().remove(sampledView);
+            }
 
             loadWidth = defaultLoadWidth;
             if (loadWidthBox != null) {
-                List<String> values = Arrays.asList(AppVariables.message("OriginalSize"),
+                List<String> values = Arrays.asList(message("OriginalSize"),
                         "512", "1024", "256", "128", "2048", "100", "80", "4096");
                 loadWidthBox.getItems().addAll(values);
                 loadWidthBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                     @Override
                     public void changed(ObservableValue ov, String oldValue, String newValue) {
-//                    logger.debug(oldValue + " " + newValue + " " + (String) loadWidthBox.getSelectionModel().getSelectedItem());
-                        if (AppVariables.message("OriginalSize").equals(newValue)) {
+                        if (message("OriginalSize").equals(newValue)) {
                             loadWidth = -1;
                         } else {
                             try {
@@ -137,13 +131,8 @@ public class ImageViewerController extends ImageShapesController {
                                 return;
                             }
                         }
-                        if (isSettingValues) {
-                            return;
-                        }
                         AppVariables.setUserConfigInt(baseName + "LoadWidth", loadWidth);
-                        if (!isSettingValues) {
-                            setLoadWidth();
-                        }
+                        setLoadWidth();
                     }
                 });
 
@@ -178,10 +167,6 @@ public class ImageViewerController extends ImageShapesController {
                 saveConfirmCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "ConfirmSave", true));
             }
 
-            if (manufactureButton != null) {
-                manufactureButton.setDisable(true);
-            }
-
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -209,15 +194,105 @@ public class ImageViewerController extends ImageShapesController {
         try {
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
-            boolean groupExist = false;
+
+            List<MenuItem> subItems = new ArrayList<>();
+            if (popButton != null && popButton.isVisible() && !popButton.isDisabled()) {
+                menu = new MenuItem(message("Pop") + "  CTRL+p");
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    popAction();
+                });
+                subItems.add(menu);
+            }
+
+            if (pickColorCheck != null && pickColorCheck.isVisible() && !pickColorCheck.isDisabled()) {
+                CheckMenuItem checkMenu = new CheckMenuItem(message("PickColor"));
+                checkMenu.setOnAction((ActionEvent menuItemEvent) -> {
+                    if (isSettingValues) {
+                        return;
+                    }
+                    checkMenu.setSelected(!pickColorCheck.isSelected());
+                    pickColorCheck.setSelected(!pickColorCheck.isSelected());
+                });
+                isSettingValues = true;
+                checkMenu.setSelected(pickColorCheck.isSelected());
+                isSettingValues = false;
+                subItems.add(checkMenu);
+            }
+
+            if (!needNotCoordinates) {
+                CheckMenuItem checkMenu = new CheckMenuItem(message("Coordinate"));
+                checkMenu.setOnAction((ActionEvent menuItemEvent) -> {
+                    if (isSettingValues) {
+                        return;
+                    }
+                    checkMenu.setSelected(!AppVariables.getUserConfigBoolean(baseName + "PopCooridnate", false));
+                    if (coordinateCheck != null) {
+                        coordinateCheck.setSelected(!coordinateCheck.isSelected());
+                    } else {
+                        AppVariables.setUserConfigValue(baseName + "PopCooridnate", checkMenu.isSelected());
+                        checkCoordinate();
+                    }
+                });
+                isSettingValues = true;
+                checkMenu.setSelected(coordinateCheck != null ? coordinateCheck.isSelected()
+                        : AppVariables.getUserConfigBoolean(baseName + "PopCooridnate", false));
+                isSettingValues = false;
+                subItems.add(checkMenu);
+            }
+
+            if (!needNotRulers) {
+                CheckMenuItem checkMenuX = new CheckMenuItem(message("RulerX"));
+                checkMenuX.setOnAction((ActionEvent menuItemEvent) -> {
+                    if (isSettingValues) {
+                        return;
+                    }
+                    checkMenuX.setSelected(!AppVariables.getUserConfigBoolean(baseName + "RulerX", false));
+                    if (rulerXCheck != null) {
+                        rulerXCheck.setSelected(!rulerXCheck.isSelected());
+                    } else {
+                        AppVariables.setUserConfigValue(baseName + "RulerX", checkMenuX.isSelected());
+                        checkRulerX();
+                    }
+                });
+                isSettingValues = true;
+                checkMenuX.setSelected(rulerXCheck != null ? rulerXCheck.isSelected()
+                        : AppVariables.getUserConfigBoolean(baseName + "RulerX", false));
+                isSettingValues = false;
+                subItems.add(checkMenuX);
+
+                CheckMenuItem checkMenuY = new CheckMenuItem(message("RulerY"));
+                checkMenuY.setOnAction((ActionEvent menuItemEvent) -> {
+                    if (isSettingValues) {
+                        return;
+                    }
+                    checkMenuY.setSelected(!AppVariables.getUserConfigBoolean(baseName + "RulerY", false));
+                    if (rulerYCheck != null) {
+                        rulerYCheck.setSelected(!rulerYCheck.isSelected());
+                    } else {
+                        AppVariables.setUserConfigValue(baseName + "RulerY", checkMenuY.isSelected());
+                        checkRulerY();
+                    }
+                });
+                isSettingValues = true;
+                checkMenuY.setSelected(rulerYCheck != null ? rulerYCheck.isSelected()
+                        : AppVariables.getUserConfigBoolean(baseName + "RulerY", false));
+                isSettingValues = false;
+                subItems.add(checkMenuY);
+            }
+
+            if (!subItems.isEmpty()) {
+                items.addAll(subItems);
+                items.add(new SeparatorMenuItem());
+            }
+
+            subItems = new ArrayList<>();
 
             if (selectAllButton != null && selectAllButton.isVisible() && !selectAllButton.isDisabled()) {
                 menu = new MenuItem(message("SelectAll") + "  CTRL+a");
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     selectAllAction();
                 });
-                items.add(menu);
-                groupExist = true;
+                subItems.add(menu);
             }
 
             if (selectAreaCheck != null && selectAreaCheck.isVisible() && !selectAreaCheck.isDisabled()) {
@@ -232,22 +307,15 @@ public class ImageViewerController extends ImageShapesController {
                 isSettingValues = true;
                 checkMenu.setSelected(selectAreaCheck.isSelected());
                 isSettingValues = false;
-                items.add(checkMenu);
-                groupExist = true;
+                subItems.add(checkMenu);
             }
 
-            if (groupExist) {
-                items.add(new SeparatorMenuItem());
-            }
-
-            groupExist = false;
             if (copyButton != null && copyButton.isVisible() && !copyButton.isDisabled()) {
                 menu = new MenuItem(message("Copy") + "  CTRL+c");
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     copyAction();
                 });
-                items.add(menu);
-                groupExist = true;
+                subItems.add(menu);
             }
 
             if (pasteButton != null && pasteButton.isVisible() && !pasteButton.isDisabled()) {
@@ -255,8 +323,7 @@ public class ImageViewerController extends ImageShapesController {
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     pasteAction();
                 });
-                items.add(menu);
-                groupExist = true;
+                subItems.add(menu);
             }
 
             if (cropButton != null && cropButton.isVisible() && !cropButton.isDisabled()) {
@@ -264,8 +331,7 @@ public class ImageViewerController extends ImageShapesController {
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     cropAction();
                 });
-                items.add(menu);
-                groupExist = true;
+                subItems.add(menu);
             }
 
             if (rotateLeftButton != null && rotateLeftButton.isVisible() && !rotateLeftButton.isDisabled()) {
@@ -273,8 +339,7 @@ public class ImageViewerController extends ImageShapesController {
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     rotateLeft();
                 });
-                items.add(menu);
-                groupExist = true;
+                subItems.add(menu);
             }
 
             if (rotateRightButton != null && rotateRightButton.isVisible() && !rotateRightButton.isDisabled()) {
@@ -282,8 +347,7 @@ public class ImageViewerController extends ImageShapesController {
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     rotateRight();
                 });
-                items.add(menu);
-                groupExist = true;
+                subItems.add(menu);
             }
 
             if (undoButton != null && undoButton.isVisible() && !undoButton.isDisabled()) {
@@ -291,8 +355,7 @@ public class ImageViewerController extends ImageShapesController {
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     undoAction();
                 });
-                items.add(menu);
-                groupExist = true;
+                subItems.add(menu);
             }
 
             if (redoButton != null && redoButton.isVisible() && !redoButton.isDisabled()) {
@@ -300,8 +363,7 @@ public class ImageViewerController extends ImageShapesController {
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     redoAction();
                 });
-                items.add(menu);
-                groupExist = true;
+                subItems.add(menu);
             }
 
             if (recoverButton != null && recoverButton.isVisible() && !recoverButton.isDisabled()) {
@@ -309,8 +371,7 @@ public class ImageViewerController extends ImageShapesController {
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     recoverAction();
                 });
-                items.add(menu);
-                groupExist = true;
+                subItems.add(menu);
             }
 
             if (saveButton != null && saveButton.isVisible() && !saveButton.isDisabled()) {
@@ -318,8 +379,7 @@ public class ImageViewerController extends ImageShapesController {
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     saveAction();
                 });
-                items.add(menu);
-                groupExist = true;
+                subItems.add(menu);
             }
 
             if (saveAsButton != null && saveAsButton.isVisible() && !saveAsButton.isDisabled()) {
@@ -327,50 +387,66 @@ public class ImageViewerController extends ImageShapesController {
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     saveAsAction();
                 });
-                items.add(menu);
-                groupExist = true;
+                subItems.add(menu);
             }
-            if (groupExist) {
+
+            if (renameButton != null && renameButton.isVisible() && !renameButton.isDisabled()) {
+                menu = new MenuItem(message("Rename"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    renameAction();
+                });
+                subItems.add(menu);
+            }
+
+            if (deleteButton != null && deleteButton.isVisible() && !deleteButton.isDisabled()) {
+                menu = new MenuItem(message("Delete"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    deleteAction();
+                });
+                subItems.add(menu);
+            }
+
+            if (!subItems.isEmpty()) {
+                if (subItems.size() > 2) {
+                    Menu subMenu = new Menu(message("Edit"));
+                    subMenu.getItems().addAll(subItems);
+                    items.add(subMenu);
+                } else {
+                    items.addAll(subItems);
+                }
                 items.add(new SeparatorMenuItem());
             }
 
-            groupExist = false;
-            if (infoButton != null && infoButton.isVisible() && !infoButton.isDisabled()) {
+            if (imageInformation != null) {
                 menu = new MenuItem(message("Information"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     infoAction();
                 });
                 items.add(menu);
-                groupExist = true;
-            }
-            if (metaButton != null && metaButton.isVisible() && !metaButton.isDisabled()) {
+
                 menu = new MenuItem(message("MetaData"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     popMetaData();
                 });
                 items.add(menu);
-                groupExist = true;
-            }
-            if (groupExist) {
+
                 items.add(new SeparatorMenuItem());
             }
 
-            groupExist = false;
+            subItems = new ArrayList<>();
             if (previousButton != null && previousButton.isVisible() && !previousButton.isDisabled()) {
                 menu = new MenuItem(message("Previous") + "  PAGE UP");
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     previousAction();
                 });
-                items.add(menu);
-                groupExist = true;
+                subItems.add(menu);
             }
             if (nextButton != null && nextButton.isVisible() && !nextButton.isDisabled()) {
                 menu = new MenuItem(message("Next") + "  PAGE DOWN");
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     nextAction();
                 });
-                items.add(menu);
-                groupExist = true;
+                subItems.add(menu);
             }
 
             if (firstButton != null && firstButton.isVisible() && !firstButton.isDisabled()) {
@@ -378,8 +454,7 @@ public class ImageViewerController extends ImageShapesController {
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     firstAction();
                 });
-                items.add(menu);
-                groupExist = true;
+                subItems.add(menu);
             }
 
             if (lastButton != null && lastButton.isVisible() && !lastButton.isDisabled()) {
@@ -387,58 +462,18 @@ public class ImageViewerController extends ImageShapesController {
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     lastAction();
                 });
-                items.add(menu);
-                groupExist = true;
-            }
-            if (groupExist) {
-                items.add(new SeparatorMenuItem());
+                subItems.add(menu);
             }
 
-            groupExist = false;
-            if (statisticButton != null && statisticButton.isVisible() && !statisticButton.isDisabled()) {
-                menu = new MenuItem(message("Statistic"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    statisticAction();
-                });
-                items.add(menu);
-                groupExist = true;
-            }
-            if (manufactureButton != null && manufactureButton.isVisible() && !manufactureButton.isDisabled()) {
-                menu = new MenuItem(message("Manufacture"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    manufactureAction();
-                });
-                items.add(menu);
-                groupExist = true;
-            }
+            if (!subItems.isEmpty()) {
+                if (subItems.size() > 2) {
+                    Menu subMenu = new Menu(message("Navigate"));
+                    subMenu.getItems().addAll(subItems);
+                    items.add(subMenu);
+                } else {
+                    items.addAll(subItems);
+                }
 
-            if (splitButton != null && splitButton.isVisible() && !splitButton.isDisabled()) {
-                menu = new MenuItem(message("Split"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    splitAction();
-                });
-                items.add(menu);
-                groupExist = true;
-            }
-
-            if (sampleButton != null && sampleButton.isVisible() && !sampleButton.isDisabled()) {
-                menu = new MenuItem(message("Sample"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    sampleAction();
-                });
-                items.add(menu);
-                groupExist = true;
-            }
-            if (browseButton != null && browseButton.isVisible() && !browseButton.isDisabled()) {
-                menu = new MenuItem(message("Browse"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    browseAction();
-                });
-                items.add(menu);
-                groupExist = true;
-            }
-            if (groupExist) {
-                items.add(new SeparatorMenuItem());
             }
 
             List<MenuItem> superItems = super.makeImageContextMenu();
@@ -464,49 +499,6 @@ public class ImageViewerController extends ImageShapesController {
                     AppVariables.setUserConfigValue(baseName + "SaveAsPane", saveAsPane.isExpanded());
                 });
                 saveAsPane.setExpanded(AppVariables.getUserConfigBoolean(baseName + "SaveAsPane", false));
-
-            }
-            saveAsType = SaveAsType.Open;
-            if (saveAsGroup != null) {
-                String v = AppVariables.getUserConfigValue("ImageSaveAsType", SaveAsType.Open.name());
-                for (SaveAsType s : SaveAsType.values()) {
-                    if (v.equals(s.name())) {
-                        saveAsType = s;
-                        break;
-                    }
-                }
-                if (saveAsType == null
-                        || (saveLoadRadio == null && saveAsType == SaveAsType.Load)) {
-                    saveAsType = SaveAsType.Open;
-                }
-                switch (saveAsType) {
-                    case Load:
-                        saveLoadRadio.setSelected(true);
-                        break;
-                    case Open:
-                        saveOpenRadio.setSelected(true);
-                        break;
-                    case None:
-                        saveJustRadio.setSelected(true);
-                        break;
-                    default:
-                        break;
-                }
-                saveAsGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                    @Override
-                    public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                        if (saveOpenRadio.isSelected()) {
-                            saveAsType = SaveAsType.Open;
-                        } else if (saveJustRadio.isSelected()) {
-                            saveAsType = SaveAsType.None;
-                        } else if (saveLoadRadio != null && saveLoadRadio.isSelected()) {
-                            saveAsType = SaveAsType.Load;
-                        } else {
-                            saveAsType = SaveAsType.Open;
-                        }
-                        AppVariables.setUserConfigValue("ImageSaveAsType", saveAsType.name());
-                    }
-                });
             }
 
         } catch (Exception e) {
@@ -561,9 +553,7 @@ public class ImageViewerController extends ImageShapesController {
     protected void initEditPane() {
         try {
             if (editPane != null) {
-                if (imageView != null) {
-                    editPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
-                }
+                editPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
                 editPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
                     AppVariables.setUserConfigValue(baseName + "EditPane", editPane.isExpanded());
                 });
@@ -572,15 +562,6 @@ public class ImageViewerController extends ImageShapesController {
 
         } catch (Exception e) {
             logger.error(e.toString());
-        }
-    }
-
-    protected void initTipsPane() {
-        if (tipsPane != null) {
-            tipsPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                AppVariables.setUserConfigValue(baseName + "TipsPane", tipsPane.isExpanded());
-            });
-            tipsPane.setExpanded(AppVariables.getUserConfigBoolean(baseName + "TipsPane", false));
         }
     }
 
@@ -649,6 +630,9 @@ public class ImageViewerController extends ImageShapesController {
     }
 
     protected void setLoadWidth() {
+        if (isSettingValues) {
+            return;
+        }
         careFrames = false;
         if (sourceFile != null) {
             loadImage(sourceFile, loadWidth);
@@ -665,24 +649,12 @@ public class ImageViewerController extends ImageShapesController {
     }
 
     @Override
-    public void sourceFileChanged(final File file) {
-        if (file == null) {
-            return;
-        }
-        careFrames = true;
-        loadImage(file, loadWidth);
-    }
-
-    @Override
     public void afterInfoLoaded() {
         if (infoButton != null) {
             infoButton.setDisable(imageInformation == null);
         }
         if (metaButton != null) {
             metaButton.setDisable(imageInformation == null);
-        }
-        if (statisticButton != null) {
-            statisticButton.setDisable(image == null);
         }
         if (deleteButton != null) {
             deleteButton.setDisable(sourceFile == null);
@@ -699,24 +671,31 @@ public class ImageViewerController extends ImageShapesController {
         if (nextButton != null) {
             nextButton.setDisable(sourceFile == null);
         }
-        if (manufactureButton != null) {
-            manufactureButton.setDisable(imageInformation == null && image == null);
-        }
 
     }
 
     @Override
-    public void afterImageLoaded() {
+    public boolean afterImageLoaded() {
         try {
-            super.afterImageLoaded();
+            if (!super.afterImageLoaded()) {
+                return false;
+            }
             afterInfoLoaded();
             if (image == null || imageView == null) {
-                return;
+                return false;
+            }
+            if (sampledView != null) {
+                if (imageInformation != null && imageInformation.isIsSampled()) {
+                    FxmlControl.setTooltip(sampledView, imageInformation.sampleInformation(image));
+                    sampledView.setVisible(true);
+                } else {
+                    sampledView.setVisible(false);
+                }
             }
 
             imageView.setPreserveRatio(true);
             imageView.setImage(image);
-            imageChanged = isCropped = false;
+            imageChanged = false;
             xZoomStep = (int) image.getWidth() / 10;
             yZoomStep = (int) image.getHeight() / 10;
             careFrames = true;
@@ -725,7 +704,6 @@ public class ImageViewerController extends ImageShapesController {
                 makeImageNevigator();
             }
             fitSize();
-
             setMaskStroke();
 
             if (selectAreaCheck != null) {
@@ -734,225 +712,67 @@ public class ImageViewerController extends ImageShapesController {
 
             if (imageInformation == null) {
                 setImageChanged(true);
-            } else if (!imageInformation.isIsSampled()) {
+            } else {
                 setImageChanged(imageInformation.isIsScaled());
             }
-
-            if (imageInformation != null && imageInformation.isIsSampled()) {
-                if (sampledTips != null) {
-                    sampledTips.setVisible(true);
-                    FxmlControl.setTooltip(sampledTips, new Tooltip(getSmapledInfo()));
-                }
-                loadWidth = (int) image.getWidth();
-                loadSampledImage();
-            } else {
-                if (sampledTips != null) {
-                    sampledTips.setVisible(false);
-                }
-            }
-
-            if (loadWidthBox != null) {
-                isSettingValues = true;
-                if (loadWidth == -1) {
-                    loadWidthBox.getSelectionModel().select(AppVariables.message("OriginalSize"));
-                } else {
-                    loadWidthBox.getSelectionModel().select(loadWidth + "");
-                }
-                isSettingValues = false;
-            }
-
             refinePane();
-
+            return true;
         } catch (Exception e) {
             logger.error(e.toString());
             imageView.setImage(null);
             alertInformation(AppVariables.message("NotSupported"));
+            return false;
         }
     }
 
-    protected String getSmapledInfo() {
-        Map<String, Long> sizes = imageInformation.getSizes();
-        if (sizes == null) {
-            return "";
-        }
-        int sampledSize = (int) (image.getWidth() * image.getHeight() * imageInformation.getColorChannels() / (1014 * 1024));
-        String msg = MessageFormat.format(message("ImageTooLarge"),
-                imageInformation.getWidth(), imageInformation.getHeight(), imageInformation.getColorChannels(),
-                sizes.get("pixelsSize"), sizes.get("requiredMem"), sizes.get("availableMem"),
-                (int) image.getWidth(), (int) image.getHeight(), sampledSize);
-        return msg;
+    public void makeImageNevigator() {
+        makeImageNevigator(sourceFile);
     }
 
-    protected void loadSampledImage() {
-        if (sampledTips != null) {
-            sampledTips.setOnMouseMoved(null);
-            sampledTips.setOnMouseMoved(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    popSampleInformation(getSmapledInfo());
-                }
-            });
-        }
-
-        popSampleInformation(getSmapledInfo());
-
-    }
-
-    protected void popSampleInformation(String msg) {
-        if (imageInformation == null || !imageInformation.isIsSampled()
-                || msg == null || msg.isEmpty()) {
-            return;
-        }
-
-        VBox box = new VBox();
-        Label label = new Label(msg);
-        box.getChildren().add(label);
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(getMyStage().getTitle());
-        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-        alert.getDialogPane().setContent(box);
-        alert.setContentText(msg);
-        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-        stage.setAlwaysOnTop(true);
-        stage.toFront();
-
-        ButtonType buttonExtend = new ButtonType(AppVariables.message("ExtendMemory"));
-        ButtonType buttonSplit = new ButtonType(AppVariables.message("ImageSplit"));
-        ButtonType buttonSample = new ButtonType(AppVariables.message("ImageSubsample"));
-        ButtonType buttonView = new ButtonType(AppVariables.message("ImageViewer"));
-        ButtonType buttonSave = new ButtonType(AppVariables.message("SaveSampledImage"));
-        ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
-        switch (myFxml) {
-            case CommonValues.ImageViewerFxml:
-                alert.getButtonTypes().setAll(buttonExtend, buttonSample, buttonSplit, buttonSave, buttonCancel);
-                break;
-            case CommonValues.ImageSplitFxml:
-                alert.getButtonTypes().setAll(buttonExtend, buttonSample, buttonView, buttonSave, buttonCancel);
-                break;
-            case CommonValues.ImageSampleFxml:
-                alert.getButtonTypes().setAll(buttonExtend, buttonSplit, buttonView, buttonSave, buttonCancel);
-                break;
-            default:
-                alert.getButtonTypes().setAll(buttonExtend, buttonSample, buttonSplit, buttonView, buttonSave, buttonCancel);
-        }
-
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == buttonExtend) {
-            SettingsController controller = (SettingsController) openStage(CommonValues.SettingsFxml);
-            controller.setParentController(this);
-            controller.setParentFxml(myFxml);
-            controller.tabPane.getSelectionModel().select(controller.baseTab);
-
-        } else if (result.get() == buttonSplit) {
-            splitAction();
-
-        } else if (result.get() == buttonSample) {
-            sampleAction();
-
-        } else if (result.get() == buttonView) {
-            if (!CommonValues.ImageViewerFxml.equals(myFxml)) {
-                ImageViewerController controller
-                        = (ImageViewerController) loadScene(CommonValues.ImageViewerFxml);
-                controller.loadImage(sourceFile, image, imageInformation);
-            }
-
-        } else if (result.get() == buttonSave) {
-            saveAsAction();
-        }
-
-    }
-
-    @Override
-    public void loadMultipleFramesImage(File file) {
-        String format = FileTools.getFileSuffix(file.getAbsolutePath()).toLowerCase();
-        if (format.contains("gif")) {
-            final ImageGifViewerController controller
-                    = (ImageGifViewerController) openStage(CommonValues.ImageGifViewerFxml);
-            controller.loadImage(file.getAbsolutePath());
-
-        } else {
-            final ImageFramesViewerController controller
-                    = (ImageFramesViewerController) openStage(CommonValues.ImageFramesViewerFxml);
-            controller.selectSourceFile(file);
-        }
-
-    }
-
-    @Override
-    public void setImageChanged(boolean imageChanged) {
+    public void makeImageNevigator(File currentfile) {
         try {
-            this.imageChanged = imageChanged;
-            updateLabelTitle();
-
-            if (saveButton != null && !saveButton.disableProperty().isBound()) {
-                if (imageInformation != null
-                        && imageInformation.getImageFileInformation().getNumberOfImages() > 1) {
-                    saveButton.setDisable(true);
-                } else {
-                    saveButton.setDisable(!imageChanged);
-                }
-            }
-            if (imageChanged) {
-                resetMaskControls();
-            }
-
-        } catch (Exception e) {
-            logger.debug(e.toString());
-        }
-    }
-
-    @Override
-    public void updateLabelTitle() {
-        try {
-            if (getMyStage() == null) {
+            if (currentfile == null) {
+                previousFile = null;
+                previousButton.setDisable(true);
+                nextFile = null;
+                nextButton.setDisable(true);
                 return;
             }
-            String title;
-            if (sourceFile != null) {
-                title = getBaseTitle() + " " + sourceFile.getAbsolutePath();
-                if (imageInformation != null) {
-                    if (imageInformation.getImageFileInformation().getNumberOfImages() > 1) {
-                        title += " - " + message("Image") + " " + imageInformation.getIndex();
-                    }
-                    if (imageInformation.isIsSampled()) {
-                        title += " - " + message("Sampled");
+            File path = currentfile.getParentFile();
+            List<File> pathFiles = new ArrayList<>();
+            File[] files = path.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    if (file.isFile() && FileTools.isSupportedImage(file)) {
+                        pathFiles.add(file);
                     }
                 }
-            } else {
-                title = getBaseTitle();
-            }
-            if (imageChanged) {
-                title += "  " + "*";
-            }
-            getMyStage().setTitle(title);
+                FileTools.sortFiles(pathFiles, sortMode);
 
-            if (bottomLabel != null) {
-                if (imageView != null && imageView.getImage() != null) {
-                    String bottom = "";
-                    if (imageInformation != null) {
-                        bottom += AppVariables.message("Format") + ":" + imageInformation.getImageFormat() + "  ";
-                        bottom += AppVariables.message("Pixels") + ":" + imageInformation.getWidth() + "x" + imageInformation.getHeight() + "  ";
+                for (int i = 0; i < pathFiles.size(); ++i) {
+                    if (pathFiles.get(i).getAbsoluteFile().equals(currentfile.getAbsoluteFile())) {
+                        if (i < pathFiles.size() - 1) {
+                            nextFile = pathFiles.get(i + 1);
+                            nextButton.setDisable(false);
+                        } else {
+                            nextFile = null;
+                            nextButton.setDisable(true);
+                        }
+                        if (i > 0) {
+                            previousFile = pathFiles.get(i - 1);
+                            previousButton.setDisable(false);
+                        } else {
+                            previousFile = null;
+                            previousButton.setDisable(true);
+                        }
+                        return;
                     }
-                    bottom += AppVariables.message("LoadedSize") + ":"
-                            + (int) imageView.getImage().getWidth() + "x" + (int) imageView.getImage().getHeight() + "  "
-                            + AppVariables.message("DisplayedSize") + ":"
-                            + (int) imageView.getFitWidth() + "x" + (int) imageView.getFitHeight();
-
-                    if (maskRectangleLine != null && maskRectangleLine.isVisible() && maskRectangleData != null) {
-                        bottom += "  " + message("SelectedSize") + ": "
-                                + (int) maskRectangleData.getWidth() + "x" + (int) maskRectangleData.getHeight();
-                    }
-                    if (sourceFile != null) {
-                        bottom += "  " + AppVariables.message("FileSize") + ":" + FileTools.showFileSize(sourceFile.length()) + "  "
-                                + AppVariables.message("ModifyTime") + ":" + DateTools.datetimeToString(sourceFile.lastModified()) + "  ";
-                    }
-                    bottomLabel.setText(bottom);
-
-                } else {
-                    bottomLabel.setText("");
                 }
             }
-
+            previousFile = null;
+            previousButton.setDisable(true);
+            nextFile = null;
+            nextButton.setDisable(true);
         } catch (Exception e) {
             logger.debug(e.toString());
         }
@@ -982,18 +802,6 @@ public class ImageViewerController extends ImageShapesController {
         if (previousFile != null) {
             careFrames = false;
             loadImage(previousFile.getAbsoluteFile(), loadWidth);
-        }
-    }
-
-    @FXML
-    public void browseAction() {
-        try {
-            final ImagesBrowserController controller = FxmlStage.openImagesBrowser(null);
-            if (controller != null && sourceFile != null) {
-                controller.loadImages(sourceFile.getParentFile(), 9);
-            }
-        } catch (Exception e) {
-            logger.error(e.toString());
         }
     }
 
@@ -1038,7 +846,7 @@ public class ImageViewerController extends ImageShapesController {
         }
         currentAngle = rotateAngle;
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -1061,6 +869,7 @@ public class ImageViewerController extends ImageShapesController {
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -1098,7 +907,7 @@ public class ImageViewerController extends ImageShapesController {
         }
         try {
             synchronized (this) {
-                if (task != null) {
+                if (task != null && !task.isQuit()) {
                     return;
                 }
                 task = new SingletonTask<Void>() {
@@ -1117,13 +926,13 @@ public class ImageViewerController extends ImageShapesController {
                     @Override
                     protected void whenSucceeded() {
                         imageView.setImage(areaImage);
-                        isCropped = true;
                         setImageChanged(true);
                         resetMaskControls();
                     }
 
                 };
                 openHandlingStage(task, Modality.WINDOW_MODAL);
+                task.setSelf(task);
                 Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();
@@ -1136,11 +945,6 @@ public class ImageViewerController extends ImageShapesController {
 
     protected Image cropImage() {
         Image inImage = imageView.getImage();
-//        if (handleLoadedSize || imageInformation == null) {
-//            inImage = imageView.getImage();
-//        } else {
-//            inImage = imageInformation.getImage();
-//        }
 
         if (maskRectangleLine != null && maskRectangleLine.isVisible()) {
             if (maskRectangleData.getSmallX() == 0
@@ -1178,7 +982,6 @@ public class ImageViewerController extends ImageShapesController {
         if (sizeChanged) {
             resetMaskControls();
         }
-        isCropped = false;
         setImageChanged(false);
         popInformation(message("Recovered"));
     }
@@ -1190,7 +993,7 @@ public class ImageViewerController extends ImageShapesController {
             return;
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -1213,6 +1016,7 @@ public class ImageViewerController extends ImageShapesController {
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -1231,10 +1035,16 @@ public class ImageViewerController extends ImageShapesController {
         }
 
         try {
-            if (saveConfirmCheck != null && saveConfirmCheck.isSelected()) {
+            String ask = null;
+            if (imageInformation != null && imageInformation.isIsScaled()) {
+                ask = message("SureSaveScaled");
+            } else if (saveConfirmCheck != null && saveConfirmCheck.isSelected()) {
+                ask = message("SureOverrideFile");
+            }
+            if (ask != null) {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.setTitle(getMyStage().getTitle());
-                alert.setContentText(AppVariables.message("SureOverrideFile"));
+                alert.setContentText(ask);
                 alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
                 ButtonType buttonSave = new ButtonType(AppVariables.message("Save"));
                 ButtonType buttonSaveAs = new ButtonType(AppVariables.message("SaveAs"));
@@ -1253,27 +1063,8 @@ public class ImageViewerController extends ImageShapesController {
                 }
             }
 
-            if (imageInformation != null && imageInformation.isIsSampled()) {
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle(getMyStage().getTitle());
-                alert.setContentText(message("SureSaveSampled"));
-                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-                Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-                stage.setAlwaysOnTop(true);
-                stage.toFront();
-
-                ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
-                ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
-                alert.getButtonTypes().setAll(buttonSure, buttonCancel);
-
-                Optional<ButtonType> result = alert.showAndWait();
-                if (result.get() != buttonSure) {
-                    return;
-                }
-            }
-
             synchronized (this) {
-                if (task != null) {
+                if (task != null && !task.isQuit()) {
                     return;
                 }
                 task = new SingletonTask<Void>() {
@@ -1289,14 +1080,11 @@ public class ImageViewerController extends ImageShapesController {
                             selected = imageView.getImage();
                         }
 
-                        final BufferedImage bufferedImage = FxmlImageManufacture.getBufferedImage(selected);
+                        final BufferedImage bufferedImage = FxmlImageManufacture.bufferedImage(selected);
                         if (bufferedImage == null || task == null || isCancelled()) {
                             return false;
                         }
                         filename = sourceFile.getAbsolutePath();
-                        if (imageInformation.isIsSampled()) {
-                            filename = FileTools.appendName(filename, "-sampled");
-                        }
                         ok = ImageFileWriters.writeImageFile(bufferedImage, format, filename);
                         if (!ok || task == null || isCancelled()) {
                             return false;
@@ -1319,6 +1107,7 @@ public class ImageViewerController extends ImageShapesController {
 
                 };
                 openHandlingStage(task, Modality.WINDOW_MODAL);
+                task.setSelf(task);
                 Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();
@@ -1355,7 +1144,7 @@ public class ImageViewerController extends ImageShapesController {
             recordFileWritten(file);
 
             synchronized (this) {
-                if (task != null) {
+                if (task != null && !task.isQuit()) {
                     return;
                 }
                 task = new SingletonTask<Void>() {
@@ -1368,7 +1157,7 @@ public class ImageViewerController extends ImageShapesController {
                         }
 
                         String format = FileTools.getFileSuffix(file.getName());
-                        final BufferedImage bufferedImage = FxmlImageManufacture.getBufferedImage(selected);
+                        final BufferedImage bufferedImage = FxmlImageManufacture.bufferedImage(selected);
                         if (task == null || isCancelled()) {
                             return false;
                         }
@@ -1379,8 +1168,7 @@ public class ImageViewerController extends ImageShapesController {
                     @Override
                     protected void whenSucceeded() {
                         popInformation(AppVariables.message("Saved"));
-                        if (sourceFile == null
-                                || saveAsType == SaveAsType.Load) {
+                        if (sourceFile == null || saveAsType == SaveAsType.Load) {
                             loadImage(file);
 
                         } else if (saveAsType == SaveAsType.Open) {
@@ -1390,6 +1178,7 @@ public class ImageViewerController extends ImageShapesController {
 
                 };
                 openHandlingStage(task, Modality.WINDOW_MODAL);
+                task.setSelf(task);
                 Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();
@@ -1455,7 +1244,9 @@ public class ImageViewerController extends ImageShapesController {
     @FXML
     public void renameAction() {
         try {
-            saveAction();
+            if (imageChanged) {
+                saveAction();
+            }
             File file = renameFile(sourceFile);
             if (file == null) {
                 return;
@@ -1469,25 +1260,7 @@ public class ImageViewerController extends ImageShapesController {
                 }
                 imageInformation.setFileName(file.getAbsolutePath());
             }
-            if (imageInformation != null && imageInformation.isIsSampled()) {
-                if (imageInformation.getIndex() > 0) {
-                    getMyStage().setTitle(getBaseTitle() + " " + sourceFile.getAbsolutePath()
-                            + " - " + message("Image") + " " + imageInformation.getIndex()
-                            + " " + message("Sampled"));
-                } else {
-                    getMyStage().setTitle(getBaseTitle() + " " + sourceFile.getAbsolutePath()
-                            + " " + message("Sampled"));
-                }
-
-            } else {
-                if (imageInformation != null && imageInformation.getIndex() > 0) {
-                    getMyStage().setTitle(getBaseTitle() + " " + sourceFile.getAbsolutePath()
-                            + " - " + message("Image") + " " + imageInformation.getIndex());
-                } else {
-                    getMyStage().setTitle(getBaseTitle() + " " + sourceFile.getAbsolutePath());
-                }
-                updateLabelTitle();
-            }
+            updateLabelTitle();
             makeImageNevigator();
 
         } catch (Exception e) {
@@ -1496,26 +1269,62 @@ public class ImageViewerController extends ImageShapesController {
 
     }
 
-    public File renameFile(File sfile) {
-        if (sfile == null) {
+    public File renameFile(File srcFile) {
+        if (srcFile == null) {
             return null;
         }
         try {
-            final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
-                    null, CommonFxValues.ImageExtensionFilter, true);
-            if (file == null) {
+            String newName;
+            while (true) {
+                TextInputDialog dialog = new TextInputDialog(srcFile.getName());
+                dialog.setTitle(message("Rename"));
+                dialog.setHeaderText(message("OriginalFileName") + ": " + srcFile.getAbsolutePath());
+                dialog.setContentText(message("NewFileName") + ": " + srcFile.getParent() + File.separator);
+                dialog.getEditor().setPrefWidth(300);
+                Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
+                stage.setAlwaysOnTop(true);
+                stage.toFront();
+                Optional<String> result = dialog.showAndWait();
+                if (!result.isPresent()) {
+                    return null;
+                }
+                newName = result.get();
+                if (newName == null || newName.isBlank()) {
+                    return null;
+                }
+                if (FileTools.getFileSuffix(newName).equals(FileTools.getFileSuffix(srcFile.getName()))) {
+                    break;
+                }
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle(message("Rename"));
+                alert.setContentText(message("SureChangeSuffix"));
+                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
+                ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
+                alert.getButtonTypes().setAll(buttonSure, buttonCancel);
+                Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
+                alertStage.setAlwaysOnTop(true);
+                alertStage.toFront();
+
+                Optional<ButtonType> alertResult = alert.showAndWait();
+                if (alertResult.get() == buttonSure) {
+                    break;
+                }
+            }
+            File newFile = new File(srcFile.getParent() + File.separator + newName);
+            if (newFile.getAbsolutePath().equals(srcFile.getAbsolutePath())) {
                 return null;
             }
-            recordFileWritten(file);
+            recordFileOpened(newFile);
 
-            if (file.exists()) {
-                if (!file.delete()) {
+            if (newFile.exists()) {
+                if (!newFile.delete()) {
                     popFailed();
                 }
             }
-            if (sfile.renameTo(file)) {
+            if (srcFile.renameTo(newFile)) {
                 popSuccessful();
-                return file;
+                return newFile;
             } else {
                 popFailed();
                 return null;
@@ -1530,118 +1339,191 @@ public class ImageViewerController extends ImageShapesController {
 
     @FXML
     protected void manufactureAction() {
-        if (image == null) {
-            return;
-        }
-        try {
-            if (imageInformation != null && imageInformation.isIsMultipleFrames()) {
-                String format = FileTools.getFileSuffix(sourceFile.getAbsolutePath()).toLowerCase();
-                if (format.contains("gif")) {
-                    final ImageGifViewerController controller
-                            = (ImageGifViewerController) openStage(CommonValues.ImageGifViewerFxml);
-                    controller.loadImage(sourceFile.getAbsolutePath());
+        ImageManufactureController controller = (ImageManufactureController) FxmlStage.openStage(CommonValues.ImageManufactureFxml);
+        operation(controller);
+    }
 
-                } else {
-                    final ImageFramesViewerController controller
-                            = (ImageFramesViewerController) openStage(CommonValues.ImageFramesViewerFxml);
-                    controller.selectSourceFile(sourceFile);
-                }
-            } else {
-                final ImageManufactureController controller
-                        = (ImageManufactureController) FxmlStage.openStage(CommonValues.ImageManufactureFxml);
-                controller.loadImage(sourceFile, image, imageInformation);
-            }
-        } catch (Exception e) {
-            logger.error(e.toString());
+    @FXML
+    public void browseAction() {
+        ImagesBrowserController controller = FxmlStage.openImagesBrowser(null);
+        if (sourceFile != null) {
+            controller.loadImages(sourceFile.getParentFile(), 9);
         }
     }
 
     @FXML
-    public void sampleAction() {
-        ImageSampleController controller
-                = (ImageSampleController) FxmlStage.openStage(CommonValues.ImageSampleFxml);
-        controller.loadImage(sourceFile, image, imageInformation);
-    }
-
-    @FXML
-    public void splitAction() {
-        ImageSplitController controller
-                = (ImageSplitController) FxmlStage.openStage(CommonValues.ImageSplitFxml);
-        controller.loadImage(sourceFile, image, imageInformation);
-    }
-
-    public void makeImageNevigator() {
-        makeImageNevigator(sourceFile);
-    }
-
-    public void makeImageNevigator(File currentfile) {
-        try {
-            if (currentfile == null) {
-                previousFile = null;
-                previousButton.setDisable(true);
-                nextFile = null;
-                nextButton.setDisable(true);
-                return;
-            }
-            File path = currentfile.getParentFile();
-            List<File> pathFiles = new ArrayList<>();
-            File[] files = path.listFiles();
-            if (files != null) {
-                for (File file : files) {
-                    if (file.isFile() && FileTools.isSupportedImage(file)) {
-                        pathFiles.add(file);
-                    }
-                }
-                FileTools.sortFiles(pathFiles, sortMode);
-
-                for (int i = 0; i < pathFiles.size(); ++i) {
-                    if (pathFiles.get(i).getAbsoluteFile().equals(currentfile.getAbsoluteFile())) {
-                        if (i < pathFiles.size() - 1) {
-                            nextFile = pathFiles.get(i + 1);
-                            nextButton.setDisable(false);
-                        } else {
-                            nextFile = null;
-                            nextButton.setDisable(true);
-                        }
-                        if (i > 0) {
-                            previousFile = pathFiles.get(i - 1);
-                            previousButton.setDisable(false);
-                        } else {
-                            previousFile = null;
-                            previousButton.setDisable(true);
-                        }
-                        return;
-                    }
-                }
-            }
-            previousFile = null;
-            previousButton.setDisable(true);
-            nextFile = null;
-            nextButton.setDisable(true);
-        } catch (Exception e) {
-            logger.debug(e.toString());
-        }
+    @Override
+    public void popAction() {
+        ImageViewerController controller = (ImageViewerController) FxmlStage.openStage(CommonValues.ImagePopupFxml);
+        operation(controller);
     }
 
     @FXML
     public void statisticAction() {
-        if (image == null) {
-            return;
-        }
-        ImageAnalyseController controller
-                = (ImageAnalyseController) FxmlStage.openStage(CommonValues.ImageAnalyseFxml);
-        controller.setParentView(imageView);
-        controller.loadImage(sourceFile, image, imageInformation);
+        ImageAnalyseController controller = (ImageAnalyseController) FxmlStage.openStage(CommonValues.ImageAnalyseFxml);
+        operation(controller);
     }
 
     @FXML
     public void ocrAction() {
-        if (image == null) {
+        ImageOCRController controller = (ImageOCRController) FxmlStage.openStage(CommonValues.ImageOCRFxml);
+        operation(controller);
+    }
+
+    @FXML
+    public void splitAction() {
+        ImageSplitController controller = (ImageSplitController) FxmlStage.openStage(CommonValues.ImageSplitFxml);
+        operation(controller);
+    }
+
+    public void sampleAction() {
+        ImageSampleController controller = (ImageSampleController) FxmlStage.openStage(CommonValues.ImageSampleFxml);
+        operation(controller);
+    }
+
+    public void operation(ImageBaseController controller) {
+        if (imageView == null || imageView.getImage() == null || controller == null) {
             return;
         }
-        ImageOCRController controller
-                = (ImageOCRController) FxmlStage.openStage(CommonValues.ImageOCRFxml);
-        controller.loadImage(sourceFile, image, imageInformation);
+        if (maskRectangleLine == null || !maskRectangleLine.isVisible()) {
+            if (imageChanged || (imageInformation != null && imageInformation.isIsScaled())) {
+                controller.loadImage(image);
+            } else {
+                controller.loadImage(sourceFile, imageInformation, image);
+            }
+            return;
+        }
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+
+                private Image areaImage;
+
+                @Override
+                protected boolean handle() {
+                    areaImage = cropImage();
+                    if (areaImage == null) {
+                        areaImage = imageView.getImage();
+                    }
+                    return areaImage != null;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    controller.loadImage(areaImage);
+                }
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
+    }
+
+    @FXML
+    public void settings() {
+        SettingsController controller = (SettingsController) openStage(CommonValues.SettingsFxml);
+        controller.setParentController(this);
+        controller.parentFxml = myFxml;
+        controller.tabPane.getSelectionModel().select(controller.imageTab);
+    }
+
+    @FXML
+    public void popFunctionsMenu(MouseEvent mouseEvent) {
+        try {
+            if (image == null) {
+                return;
+            }
+            if (popMenu != null && popMenu.isShowing()) {
+                popMenu.hide();
+            }
+            popMenu = new ContextMenu();
+            popMenu.setAutoHide(true);
+
+            MenuItem menu;
+
+            menu = new MenuItem(message("Manufacture"));
+            menu.setOnAction((ActionEvent event) -> {
+                manufactureAction();
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Statistic"));
+            menu.setOnAction((ActionEvent event) -> {
+                statisticAction();
+
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("OCR"));
+            menu.setOnAction((ActionEvent event) -> {
+                ocrAction();
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Split"));
+            menu.setOnAction((ActionEvent event) -> {
+                splitAction();
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("Sample"));
+            menu.setOnAction((ActionEvent event) -> {
+                sampleAction();
+
+            });
+            popMenu.getItems().add(menu);
+
+            if (imageInformation != null) {
+                popMenu.getItems().add(new SeparatorMenuItem());
+
+                menu = new MenuItem(message("Information"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    infoAction();
+                });
+                popMenu.getItems().add(menu);
+
+                menu = new MenuItem(message("MetaData"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    popMetaData();
+                });
+                popMenu.getItems().add(menu);
+                popMenu.getItems().add(new SeparatorMenuItem());
+            }
+
+            if (sourceFile != null) {
+                menu = new MenuItem(message("Browse"));
+                menu.setOnAction((ActionEvent event) -> {
+                    browseAction();
+                });
+                popMenu.getItems().add(menu);
+            }
+
+            menu = new MenuItem(message("Settings"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                settings();
+
+            });
+            popMenu.getItems().add(menu);
+
+            popMenu.getItems().add(new SeparatorMenuItem());
+            menu = new MenuItem(message("PopupClose"));
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    popMenu.hide();
+                }
+            });
+            popMenu.getItems().add(menu);
+
+            FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
     }
 
 }

@@ -19,9 +19,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import mara.mybox.data.VisitHistory;
+import mara.mybox.fxml.ControlStyle;
+import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.fxml.FxmlStage;
@@ -32,7 +35,7 @@ import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.IntTools;
 import mara.mybox.tools.SystemTools;
-import mara.mybox.tools.VisitHistoryTools;
+import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
@@ -246,10 +249,13 @@ public class RecordImagesInSystemClipboardController extends BaseController {
     public void startAction() {
         try {
             isHandling = false;
-            if (AppVariables.message("StartRecording").equals(startButton.getText())) {
+            if (startButton.getUserData() == null) {
                 targetPane.setDisable(true);
                 typeBox.setDisable(true);
-                startButton.setText(AppVariables.message("StopRecording"));
+                ControlStyle.setIcon(startButton, ControlStyle.getIcon("iconStop.png"));
+                FxmlControl.setTooltip(startButton, new Tooltip(message("StopRecording")));
+                startButton.setUserData("started");
+                startButton.applyCss();
                 getMyStage().setIconified(true);
                 recordedNumber = 0;
                 recordLabel.setText(MessageFormat.format(AppVariables.message("RecordingImages"), 0));
@@ -303,7 +309,10 @@ public class RecordImagesInSystemClipboardController extends BaseController {
             } else {
                 targetPane.setDisable(false);
                 typeBox.setDisable(false);
-                startButton.setText(AppVariables.message("StartRecording"));
+                ControlStyle.setIcon(startButton, ControlStyle.getIcon("iconStart.png"));
+                FxmlControl.setTooltip(startButton, new Tooltip(message("StartRecording")));
+                startButton.setUserData(null);
+                startButton.applyCss();
                 recordLabel.setText("");
                 if (timer != null) {
                     timer.cancel();
@@ -318,7 +327,7 @@ public class RecordImagesInSystemClipboardController extends BaseController {
     }
 
     private void saveImage(Image image) {
-        BufferedImage bufferedImage = FxmlImageManufacture.getBufferedImage(image);
+        BufferedImage bufferedImage = FxmlImageManufacture.bufferedImage(image);
         ImageAttributes attributes = new ImageAttributes();
         switch (imageType) {
             case TIFF:

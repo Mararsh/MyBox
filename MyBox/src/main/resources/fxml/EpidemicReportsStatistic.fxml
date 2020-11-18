@@ -36,11 +36,12 @@ License:    Apache License Version 2.0
                                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
                                             <children>
                                                 <FlowPane fx:id="datasetPane" hgap="5.0" maxWidth="1.7976931348623157E308" vgap="5.0" VBox.vgrow="NEVER" />
-                                    <CheckBox fx:id="closeWhenCompleteCheck" mnemonicParsing="false" selected="false" text="%CloseWhenComplete" />
+                                                <CheckBox fx:id="closeWhenCompleteCheck" mnemonicParsing="false" selected="false" text="%CloseWhenComplete" />
                                                 <CheckBox fx:id="accumulateCheck" mnemonicParsing="false" selected="true" text="%AccumulateData">
-                                       <VBox.margin>
-                                          <Insets top="20.0" />
-                                       </VBox.margin></CheckBox>
+                                                    <VBox.margin>
+                                                        <Insets top="20.0" />
+                                                    </VBox.margin>
+                                                </CheckBox>
                                                 <Label maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%AccumulateJHUDataComments" wrapText="true" />
                                                 <HBox />
                                                 <Label text="%SubtractData">
@@ -103,7 +104,16 @@ License:    Apache License Version 2.0
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button fx:id="startButton" mnemonicParsing="false" onAction="#startAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Start" />
+                        <Button fx:id="startButton" defaultButton="true" mnemonicParsing="false" onAction="#startAction"
+                                styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconStart.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
                     </children>
                 </HBox>
             </children>

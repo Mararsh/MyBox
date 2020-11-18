@@ -46,7 +46,7 @@ public class PdfConvertImagesBatchController extends PdfBatchController {
         try {
             super.initControls();
 
-            optionsController.initDpiBox(true);
+            optionsController.setValues(true);
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(
@@ -151,7 +151,6 @@ public class PdfConvertImagesBatchController extends PdfBatchController {
                 if (targetImage == null) {
                     return 0;
                 }
-
                 if (!ImageFileWriters.writeImageFile(targetImage, attributes, tFile.getAbsolutePath())) {
                     return 0;
                 }

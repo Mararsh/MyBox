@@ -6,8 +6,8 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.data.VisitHistory;
+import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.fxml.RecentVisitMenu;
-import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.CommonFxValues;
 
@@ -39,7 +39,6 @@ public class ControlSaveAs extends BaseController {
         TargetFileType = fileType;
         sourcePathKey = VisitHistoryTools.getPathKey(fileType);
         targetPathKey = sourcePathKey;
-        SaveAsOptionsKey = VisitHistoryTools.getSaveAsOptionsKey(fileType);
         if (fileType == VisitHistory.FileType.Image) {
             sourceExtensionFilter = CommonFxValues.ImageExtensionFilter;
         } else if (fileType == VisitHistory.FileType.PDF) {
@@ -105,8 +104,8 @@ public class ControlSaveAs extends BaseController {
 
             @Override
             public List<VisitHistory> recentFiles() {
-                int fileNumber = AppVariables.fileRecentNumber * 2 / 3 + 1;
-                return VisitHistoryTools.getRecentFile(SourceFileType, fileNumber);
+                int fileNumber = AppVariables.fileRecentNumber * 3 / 4;
+                return VisitHistoryTools.getRecentReadWrite(SourceFileType, fileNumber);
             }
 
             @Override

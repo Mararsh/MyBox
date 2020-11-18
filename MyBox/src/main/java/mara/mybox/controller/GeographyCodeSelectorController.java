@@ -46,7 +46,7 @@ public class GeographyCodeSelectorController extends BaseController {
     protected void loadTree() {
         treeView.setRoot(null);
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit() ) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -141,7 +141,7 @@ public class GeographyCodeSelectorController extends BaseController {
             } else {
                 loading = openHandlingStage(task, Modality.WINDOW_MODAL);
             }
-            Thread thread = new Thread(task);
+            task.setSelf(task);Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -194,7 +194,7 @@ public class GeographyCodeSelectorController extends BaseController {
         }
         parent.getChildren().clear();
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit() ) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -258,7 +258,7 @@ public class GeographyCodeSelectorController extends BaseController {
             } else {
                 loading = openHandlingStage(task, Modality.WINDOW_MODAL);
             }
-            Thread thread = new Thread(task);
+            task.setSelf(task);Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }

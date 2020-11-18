@@ -14,12 +14,13 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import mara.mybox.data.EpidemicReport;
 import mara.mybox.data.GeographyCode;
+import mara.mybox.data.tools.EpidemicReportTools;
 import static mara.mybox.db.DerbyBase.dbHome;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
 import mara.mybox.db.TableEpidemicReport;
 import mara.mybox.db.TableGeographyCode;
-import mara.mybox.data.tools.EpidemicReportTools;
+import mara.mybox.fxml.ControlStyle;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import org.apache.commons.csv.CSVPrinter;
@@ -114,12 +115,14 @@ public class EpidemicReportsExportController extends DataExportController {
         }
         if (!validTopOrder()) {
             alertError(message("TimeAsOrderWhenSetTop"));
-            okButton.setText(buttonName());
+            ControlStyle.setIcon(startButton, ControlStyle.getIcon("iconStart.png"));
+            startButton.applyCss();
+            startButton.setUserData(null);
             return;
         }
 
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit() ) {
                 return;
             }
             dataSize = 0;
@@ -210,7 +213,9 @@ public class EpidemicReportsExportController extends DataExportController {
                 protected void whenSucceeded() {
                     browseURI(targetPath.toURI());
                     updateLogs(message("MissionCompleted"));
-                    okButton.setText(buttonName());
+                    ControlStyle.setIcon(startButton, ControlStyle.getIcon("iconStart.png"));
+                    startButton.applyCss();
+                    startButton.setUserData(null);
                 }
 
                 @Override
@@ -218,7 +223,7 @@ public class EpidemicReportsExportController extends DataExportController {
                     updateLogs(message("Canceled"));
                 }
             };
-            Thread thread = new Thread(task);
+            task.setSelf(task);Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }

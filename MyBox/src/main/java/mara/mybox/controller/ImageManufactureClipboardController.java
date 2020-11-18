@@ -268,7 +268,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
     public void loadClipboard() {
         imageController.showRightPane();
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             loaded = false;
@@ -294,6 +294,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                 }
             };
             imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -303,7 +304,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
     @FXML
     public void loadSystemClipboard() {
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             final Image clip = SystemTools.fetchImageInClipboard(false);
@@ -331,6 +332,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                 }
             };
             imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -351,7 +353,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                 return;
             }
             synchronized (this) {
-                if (task != null) {
+                if (task != null && !task.isQuit()) {
                     return;
                 }
                 task = new SingletonTask<Void>() {
@@ -371,6 +373,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                     }
                 };
                 imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
+                task.setSelf(task);
                 Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();
@@ -434,7 +437,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
     @FXML
     public void examplesAction() {
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -469,6 +472,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                 }
             };
             imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -483,7 +487,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
             return;
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -517,6 +521,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                 }
             };
             imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -532,7 +537,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
             imageController.showImagePane();
             imageController.hideScopePane();
             synchronized (this) {
-                if (task != null) {
+                if (task != null && !task.isQuit()) {
                     return;
                 }
                 task = new SingletonTask<Void>() {
@@ -611,6 +616,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                     }
                 };
                 imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
+                task.setSelf(task);
                 Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();

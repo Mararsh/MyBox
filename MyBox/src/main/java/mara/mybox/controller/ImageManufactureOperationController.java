@@ -43,6 +43,7 @@ public class ImageManufactureOperationController extends ImageBaseController {
     /*
         events passed from image pane
      */
+    @Override
     public void imageClicked(MouseEvent event, DoublePoint p) {
 
     }

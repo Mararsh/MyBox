@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import mara.mybox.data.FileInformation;
 import mara.mybox.fxml.FxmlControl;
@@ -21,7 +22,7 @@ public class FilesRenameTableController extends FilesTableController {
     @FXML
     protected TableColumn<FileInformation, String> newColumn;
     @FXML
-    protected Button recoveryAllButton, recoverySelectedButton, yesButton;
+    protected Button recoveryAllButton, recoverySelectedButton, okRecoverButton;
     @FXML
     protected HBox confirmBox;
 
@@ -35,7 +36,7 @@ public class FilesRenameTableController extends FilesTableController {
             super.initTable();
 
             newColumn.setCellValueFactory(new PropertyValueFactory<>("data"));
-            yesButton.disableProperty().bind(tableView.itemsProperty().isNull());
+            okRecoverButton.disableProperty().bind(tableView.itemsProperty().isNull());
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -56,6 +57,11 @@ public class FilesRenameTableController extends FilesTableController {
             addDirectoryButton.setDisable(false);
             super.checkButtons();
         }
+    }
+
+    @FXML
+    public void popRegexExample(MouseEvent mouseEvent) {
+        popMenu = FxmlControl.popRegexExample(this, popMenu, tableFiltersInput, mouseEvent);
     }
 
     public void setButtonsAfterRenamed() {

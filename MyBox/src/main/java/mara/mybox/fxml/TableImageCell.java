@@ -2,9 +2,9 @@ package mara.mybox.fxml;
 
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.util.Callback;
+import mara.mybox.image.ImageInformation;
 
 /**
  * @Author Mara
@@ -13,25 +13,25 @@ import javafx.util.Callback;
  * @Description
  * @License Apache License Version 2.0
  */
-public class TableImageCell<T> extends TableCell<T, Image>
-        implements Callback<TableColumn<T, Image>, TableCell<T, Image>> {
+public class TableImageCell<T> extends TableCell<T, ImageInformation>
+        implements Callback<TableColumn<T, ImageInformation>, TableCell<T, ImageInformation>> {
 
     @Override
-    public TableCell<T, Image> call(TableColumn<T, Image> param) {
+    public TableCell<T, ImageInformation> call(TableColumn<T, ImageInformation> param) {
         final ImageView imageview = new ImageView();
         imageview.setPreserveRatio(true);
         imageview.setFitWidth(100);
         imageview.setFitHeight(100);
-        TableCell<T, Image> cell = new TableCell<T, Image>() {
+        TableCell<T, ImageInformation> cell = new TableCell<T, ImageInformation>() {
             @Override
-            public void updateItem(Image item, boolean empty) {
+            public void updateItem(ImageInformation item, boolean empty) {
                 super.updateItem(item, empty);
                 if (empty || item == null) {
                     setText(null);
                     setGraphic(null);
                     return;
                 }
-                imageview.setImage(item);
+                imageview.setImage(item.loadThumbnail());
                 setGraphic(imageview);
             }
         };

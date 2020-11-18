@@ -23,6 +23,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.FileSynchronizeAttributes;
+import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DateTools;
@@ -214,7 +215,7 @@ public class DirectorySynchronizeController extends FilesBatchController {
             }
             updateInterface("Started");
             synchronized (this) {
-                if (task != null) {
+                if (task != null && !task.isQuit() ) {
                     return;
                 }
                 task = new SingletonTask<Void>() {
@@ -265,7 +266,7 @@ public class DirectorySynchronizeController extends FilesBatchController {
                         updateInterface("Failed");
                     }
                 };
-                Thread thread = new Thread(task);
+                task.setSelf(task);Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();
             }
@@ -293,7 +294,8 @@ public class DirectorySynchronizeController extends FilesBatchController {
                         operationBarController.statusLabel.setText(message("Handling...") + " "
                                 + message("StartTime")
                                 + ": " + DateTools.datetimeToString(processStartTime));
-                        startButton.setText(AppVariables.message("Cancel"));
+                        ControlStyle.setIcon(startButton, ControlStyle.getIcon("iconStop.png"));
+                        startButton.applyCss();
                         startButton.setOnAction(new EventHandler<ActionEvent>() {
                             @Override
                             public void handle(ActionEvent event) {
@@ -302,7 +304,8 @@ public class DirectorySynchronizeController extends FilesBatchController {
                         });
                         operationBarController.pauseButton.setVisible(true);
                         operationBarController.pauseButton.setDisable(false);
-                        operationBarController.pauseButton.setText(AppVariables.message("Pause"));
+                        ControlStyle.setIcon(pauseButton, ControlStyle.getIcon("iconPause.png"));
+                        pauseButton.applyCss();
                         operationBarController.pauseButton.setOnAction(new EventHandler<ActionEvent>() {
                             @Override
                             public void handle(ActionEvent event) {
@@ -316,7 +319,8 @@ public class DirectorySynchronizeController extends FilesBatchController {
                     case "Done":
                     default:
                         if (paused) {
-                            startButton.setText(AppVariables.message("Cancel"));
+                            ControlStyle.setIcon(startButton, ControlStyle.getIcon("iconStop.png"));
+                            startButton.applyCss();
                             startButton.setOnAction(new EventHandler<ActionEvent>() {
                                 @Override
                                 public void handle(ActionEvent event) {
@@ -325,7 +329,8 @@ public class DirectorySynchronizeController extends FilesBatchController {
                             });
                             operationBarController.pauseButton.setVisible(true);
                             operationBarController.pauseButton.setDisable(false);
-                            operationBarController.pauseButton.setText(AppVariables.message("Continue"));
+                            ControlStyle.setIcon(pauseButton, ControlStyle.getIcon("iconStart.png"));
+                            pauseButton.applyCss();
                             operationBarController.pauseButton.setOnAction(new EventHandler<ActionEvent>() {
                                 @Override
                                 public void handle(ActionEvent event) {
@@ -334,7 +339,8 @@ public class DirectorySynchronizeController extends FilesBatchController {
                             });
                             disableControls(true);
                         } else {
-                            startButton.setText(AppVariables.message("Start"));
+                            ControlStyle.setIcon(startButton, ControlStyle.getIcon("iconStart.png"));
+                            startButton.applyCss();
                             startButton.setOnAction(new EventHandler<ActionEvent>() {
                                 @Override
                                 public void handle(ActionEvent event) {

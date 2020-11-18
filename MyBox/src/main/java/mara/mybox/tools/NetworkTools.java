@@ -5,12 +5,10 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.URL;
 import java.net.URLConnection;
 import java.security.KeyStore;
 import java.security.MessageDigest;
@@ -20,10 +18,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import javafx.scene.web.WebEngine;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.KeyManager;
@@ -46,29 +41,9 @@ import mara.mybox.value.CommonValues;
 /**
  * @Author Mara
  * @CreateDate 2018-6-9 7:46:58
- * @Description
  * @License Apache License Version 2.0
  */
 public class NetworkTools {
-
-    public static Map<String, String> readCookie(WebEngine webEngine) {
-        try {
-            String s = (String) webEngine.executeScript("document.cookie;");
-            String[] vs = s.split(";");
-            Map<String, String> m = new HashMap<>();
-            for (String v : vs) {
-                String[] vv = v.split("=");
-                if (vv.length < 2) {
-                    continue;
-                }
-                m.put(vv[0].trim(), vv[1].trim());
-            }
-            return m;
-        } catch (Exception e) {
-            logger.debug(e.toString());
-            return null;
-        }
-    }
 
     public static int findFreePort(int port) {
         int p;
@@ -687,86 +662,6 @@ public class NetworkTools {
             }
             return jdkSuppliedAddress;
         } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public static boolean download(String address, File targetFile) {
-        try {
-            if (targetFile == null || address == null) {
-                return false;
-            }
-            File tmpFile = FileTools.getTempFile();
-            URL url = new URL(address);
-            HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
-            SSLContext sc = SSLContext.getInstance(CommonValues.HttpsProtocal);
-            sc.init(null, trustAllManager(), new SecureRandom());
-            conn.setSSLSocketFactory(sc.getSocketFactory());
-            conn.setHostnameVerifier(trustAllVerifier());
-            InputStream inStream = conn.getInputStream();
-            FileOutputStream fs = new FileOutputStream(tmpFile);
-            byte[] buf = new byte[1204];
-            int len;
-            while ((len = inStream.read(buf)) != -1) {
-                fs.write(buf, 0, len);
-            }
-            if (targetFile.exists()) {
-                targetFile.delete();
-            }
-            tmpFile.renameTo(targetFile);
-            return targetFile.exists();
-        } catch (Exception e) {
-            logger.error(e.toString());
-            return false;
-        }
-    }
-
-    public static String urlFileName(URL url) {
-        try {
-            if (url == null || url.getFile() == null) {
-                return null;
-            }
-            String filename = url.getFile().substring(url.getFile().lastIndexOf('/'));
-            String validname = "";
-            for (int i = 0; i < filename.length(); ++i) {
-                char c = filename.charAt(i);
-                if (c >= 'a' && c <= 'z'
-                        || c >= 'A' && c <= 'Z'
-                        || c >= '0' && c <= '9'
-                        || c == '_' || c == '-' || c == '.') {
-                    validname += c;
-                } else {
-                    validname += "-";
-                }
-            }
-            return validname;
-        } catch (Exception e) {
-            logger.error(e.toString());
-            return null;
-        }
-    }
-
-    public static File httpsPage(String address) {
-        try {
-            URL url = new URL(address);
-            File pageFile = FileTools.getTempFile(".htm");
-            HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-            SSLContext sc = SSLContext.getInstance(CommonValues.HttpsProtocal);
-            sc.init(null, trustAllManager(), new SecureRandom());
-            connection.setSSLSocketFactory(sc.getSocketFactory());
-            connection.setHostnameVerifier(trustAllVerifier());
-            connection.connect();
-            try ( BufferedInputStream inStream = new BufferedInputStream(connection.getInputStream());
-                     BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(pageFile))) {
-                byte[] buf = new byte[CommonValues.IOBufferLength];
-                int len;
-                while ((len = inStream.read(buf)) != -1) {
-                    outputStream.write(buf, 0, len);
-                }
-            }
-            return pageFile;
-        } catch (Exception e) {
-            logger.error(e.toString());
             return null;
         }
     }

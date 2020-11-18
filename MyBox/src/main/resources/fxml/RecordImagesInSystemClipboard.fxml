@@ -86,7 +86,7 @@ License:    Apache License Version 2.0
                                         <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
                                             <children>
                                                 <Label text="%ImageType" />
-                                                <RadioButton mnemonicParsing="false" selected="true" text="%PNG">
+                                                <RadioButton mnemonicParsing="false" selected="true" text="%RecordPNGLabel">
                                                     <toggleGroup>
                                                         <ToggleGroup fx:id="imageTypeGroup" />
                                                     </toggleGroup>
@@ -139,7 +139,16 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Button fx:id="startButton" mnemonicParsing="false" onAction="#startAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%StartRecording" />
+                                <Button fx:id="startButton" mnemonicParsing="false" onAction="#startAction" defaultButton="true"
+                                        styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconStart.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
                             </children>
                         </HBox>
                     </children>

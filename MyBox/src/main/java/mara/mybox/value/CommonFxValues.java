@@ -17,25 +17,19 @@ public class CommonFxValues {
     public static List<FileChooser.ExtensionFilter> AllExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
         {
             add(new FileChooser.ExtensionFilter("*", "*.*"));
-//            add(new FileChooser.ExtensionFilter("pdf", "*.pdf", "*.PDF"));
-//            add(new FileChooser.ExtensionFilter("images", "*.png", "*.jpg", "*.jpeg", "*.bmp", //                    "*.jpeg2000", "*.jpx", "*.jp2", "*.jpm",
-//                    "*.tif", "*.tiff", "*.gif", "*.pcx", "*.pnm", "*.wbmp"));
-//            add(new FileChooser.ExtensionFilter("png", "*.png"));
-//            add(new FileChooser.ExtensionFilter("jpg", "*.jpg", "*.jpeg"));
-//            add(new FileChooser.ExtensionFilter("bmp", "*.bmp"));
-//            add(new FileChooser.ExtensionFilter("tif", "*.tif", "*.tiff"));
-//            add(new FileChooser.ExtensionFilter("gif", "*.gif"));
-//            add(new FileChooser.ExtensionFilter("pcx", "*.pcx"));
-//            add(new FileChooser.ExtensionFilter("pnm", "*.pnm"));
-//            add(new FileChooser.ExtensionFilter("wbmp", "*.wbmp"));
-//            add(new FileChooser.ExtensionFilter("txt", "*.txt", "*.log", "*.ini", "*.cfg", "*.conf", "*.sh"));
-//            add(new FileChooser.ExtensionFilter("codes", "*.java", "*.c", "*.h", "*.py", "*.php", "*.fxml", "*.cpp", "*.cc", "*.js", "*.css", "*.bat"));
-//            add(new FileChooser.ExtensionFilter("html", "*.html", "*.htm"));
-//            add(new FileChooser.ExtensionFilter("xml", "*.xml"));
-//            add(new FileChooser.ExtensionFilter("json", "*.json"));
-//            add(new FileChooser.ExtensionFilter("sound", "*.wav", "*.mp3"));
-//            add(new FileChooser.ExtensionFilter("wav", "*.wav"));
-//            add(new FileChooser.ExtensionFilter("mp3", "*.mp3"));
+        }
+    };
+
+    public static List<FileChooser.ExtensionFilter> TextExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
+        {
+            add(new FileChooser.ExtensionFilter("txt", "*.txt", "*.csv", "*.log", "*.ini", "*.cfg", "*.conf", "*.sh", "*.del"));
+            add(new FileChooser.ExtensionFilter("codes", "*.java", "*.c", "*.h", "*.py", "*.php", "*.fxml", "*.cpp", "*.cc", "*.js", "*.css", "*.bat"));
+            add(new FileChooser.ExtensionFilter("html", "*.html", "*.htm"));
+            add(new FileChooser.ExtensionFilter("xml", "*.xml"));
+            add(new FileChooser.ExtensionFilter("json", "*.json"));
+            add(new FileChooser.ExtensionFilter("markdown", "*.md"));
+            add(new FileChooser.ExtensionFilter("csv", "*.csv"));
+            add(new FileChooser.ExtensionFilter("*", "*.*"));
         }
     };
 
@@ -53,17 +47,6 @@ public class CommonFxValues {
             add(new FileChooser.ExtensionFilter("pnm", "*.pnm"));
             add(new FileChooser.ExtensionFilter("wbmp", "*.wbmp"));
             add(new FileChooser.ExtensionFilter("ico", "*.ico", "*.icon"));
-        }
-    };
-    public static List<FileChooser.ExtensionFilter> TextExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
-        {
-            add(new FileChooser.ExtensionFilter("txt", "*.txt", "*.csv", "*.log", "*.ini", "*.cfg", "*.conf", "*.sh", "*.del"));
-            add(new FileChooser.ExtensionFilter("codes", "*.java", "*.c", "*.h", "*.py", "*.php", "*.fxml", "*.cpp", "*.cc", "*.js", "*.css", "*.bat"));
-            add(new FileChooser.ExtensionFilter("html", "*.html", "*.htm"));
-            add(new FileChooser.ExtensionFilter("xml", "*.xml"));
-            add(new FileChooser.ExtensionFilter("json", "*.json"));
-            add(new FileChooser.ExtensionFilter("markdown", "*.md"));
-            add(new FileChooser.ExtensionFilter("csv", "*.csv"));
         }
     };
 

@@ -61,8 +61,7 @@ public class ColorSetController extends BaseController {
 
             rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
-                public void changed(ObservableValue<? extends Paint> observable,
-                        Paint oldValue, Paint newValue) {
+                public void changed(ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) {
                     if (isSettingValues) {
                         return;
                     }
@@ -104,7 +103,8 @@ public class ColorSetController extends BaseController {
     @FXML
     public void popColorPalette(MouseEvent event) {
         synchronized (this) {
-            if (task != null || (popup != null && popup.isShowing())) {
+            if ((task != null && !task.isQuit())
+                    || (popup != null && popup.isShowing())) {
                 return;
             }
 
@@ -124,6 +124,7 @@ public class ColorSetController extends BaseController {
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();

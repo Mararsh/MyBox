@@ -7,22 +7,26 @@ import java.util.List;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
+import mara.mybox.data.DoubleRectangle;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
+import mara.mybox.image.ImageManufacture;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.image.file.ImageFileWriters;
+import static mara.mybox.tools.DoubleTools.scale;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -32,22 +36,35 @@ import static mara.mybox.value.AppVariables.message;
  */
 public class ImageSampleController extends ImageViewerController {
 
-    private double scale;
-    private int sampleWidth, sampleHeight;
+    private int widthScale, heightScale;
+    private double x1, y1, x2, y2;
 
     @FXML
-    private HBox opBox, sampleBox;
+    private HBox opBox;
     @FXML
-    private VBox showBox;
+    private Label infoLabel;
     @FXML
-    private ComboBox<String> widthBox, heightBox;
+    private CheckBox openSaveCheck;
     @FXML
-    private Label sampleLabel;
+    protected TextField rectLeftTopXInput, rectLeftTopYInput, rightBottomXInput, rightBottomYInput;
+    @FXML
+    private ComboBox<String> widthScaleSelector, heightScaleSelector;
 
     public ImageSampleController() {
         baseTitle = AppVariables.message("ImageSample");
-        handleLoadedSize = false;
+        TipsLabelKey = "ImageSampleTips";
+    }
 
+    @Override
+    public void initValues() {
+        try {
+            super.initValues();
+
+            operateOriginalSize = true;
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
     }
 
     @Override
@@ -56,142 +73,230 @@ public class ImageSampleController extends ImageViewerController {
             super.initControls();
 
             opBox.disableProperty().bind(imageView.imageProperty().isNull());
-            sampleBox.disableProperty().bind(imageView.imageProperty().isNull());
-            showBox.disableProperty().bind(imageView.imageProperty().isNull());
+            splitPane.disableProperty().bind(imageView.imageProperty().isNull());
 
             List<String> values = Arrays.asList("1", "2", "3", "4", "5", "6", "8", "9", "10", "15", "20",
                     "25", "30", "50", "80", "100", "200", "500", "800", "1000");
-            widthBox.getItems().addAll(values);
-            widthBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            widthScaleSelector.getItems().addAll(values);
+            widthScaleSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    checkSample();
+                    checkScales();
                 }
             });
-            widthBox.getSelectionModel().select("1");
+            widthScaleSelector.getSelectionModel().select("1");
 
-            heightBox.getItems().addAll(values);
-            heightBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            heightScaleSelector.getItems().addAll(values);
+            heightScaleSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    checkSample();
+                    checkScales();
                 }
             });
-            heightBox.getSelectionModel().select("1");
+            heightScaleSelector.getSelectionModel().select("1");
+
+            rectLeftTopXInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    checkRegion();
+                }
+            });
+            rectLeftTopYInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    checkRegion();
+                }
+            });
+            rightBottomXInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    checkRegion();
+                }
+            });
+            rightBottomYInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    checkRegion();
+                }
+            });
 
             initMaskControls(false);
 
-            saveButton.disableProperty().bind(
-                    widthBox.getEditor().styleProperty().isEqualTo(badStyle)
-                            .or(heightBox.getEditor().styleProperty().isEqualTo(badStyle))
-                            .or(Bindings.isEmpty(widthBox.getEditor().textProperty()))
-                            .or(Bindings.isEmpty(heightBox.getEditor().textProperty()))
+            okButton.disableProperty().bind(
+                    widthScaleSelector.getEditor().styleProperty().isEqualTo(badStyle)
+                            .or(heightScaleSelector.getEditor().styleProperty().isEqualTo(badStyle))
+                            .or(Bindings.isEmpty(heightScaleSelector.getEditor().textProperty()))
+                            .or(Bindings.isEmpty(widthScaleSelector.getEditor().textProperty()))
+                            .or(Bindings.isEmpty(rectLeftTopXInput.textProperty()))
+                            .or(rectLeftTopXInput.styleProperty().isEqualTo(badStyle))
+                            .or(Bindings.isEmpty(rectLeftTopYInput.textProperty()))
+                            .or(rectLeftTopYInput.styleProperty().isEqualTo(badStyle))
+                            .or(Bindings.isEmpty(rightBottomXInput.textProperty()))
+                            .or(rightBottomXInput.styleProperty().isEqualTo(badStyle))
+                            .or(Bindings.isEmpty(rightBottomYInput.textProperty()))
+                            .or(rightBottomYInput.styleProperty().isEqualTo(badStyle))
             );
+            saveAsButton.disableProperty().bind(okButton.disabledProperty());
 
         } catch (Exception e) {
             logger.error(e.toString());
         }
     }
 
-    private void checkSample() {
-        if (image == null) {
+    public void checkScales() {
+        if (isSettingValues || image == null) {
             return;
         }
         try {
-            int v = Integer.valueOf(widthBox.getSelectionModel().getSelectedItem());
+            int v = Integer.valueOf(widthScaleSelector.getSelectionModel().getSelectedItem());
             if (v > 0) {
-                sampleWidth = v;
-                FxmlControl.setEditorNormal(widthBox);
+                widthScale = v;
+                FxmlControl.setEditorNormal(widthScaleSelector);
             } else {
-                FxmlControl.setEditorBadStyle(widthBox);
+                FxmlControl.setEditorBadStyle(widthScaleSelector);
             }
         } catch (Exception e) {
-            FxmlControl.setEditorBadStyle(widthBox);
-
+            FxmlControl.setEditorBadStyle(widthScaleSelector);
         }
-
         try {
-            int v = Integer.valueOf(heightBox.getSelectionModel().getSelectedItem());
+            int v = Integer.valueOf(heightScaleSelector.getSelectionModel().getSelectedItem());
             if (v > 0) {
-                sampleHeight = v;
-                FxmlControl.setEditorNormal(heightBox);
+                heightScale = v;
+                FxmlControl.setEditorNormal(heightScaleSelector);
             } else {
-                FxmlControl.setEditorBadStyle(heightBox);
+                FxmlControl.setEditorBadStyle(heightScaleSelector);
             }
         } catch (Exception e) {
-            FxmlControl.setEditorBadStyle(heightBox);
+            FxmlControl.setEditorBadStyle(heightScaleSelector);
         }
-
         updateLabel();
+    }
 
+    public DoubleRectangle checkRegion() {
+        if (isSettingValues) {
+            return null;
+        }
+        try {
+
+            try {
+                x1 = Double.parseDouble(rectLeftTopXInput.getText());
+                rectLeftTopXInput.setStyle(null);
+            } catch (Exception e) {
+                rectLeftTopXInput.setStyle(badStyle);
+                return null;
+            }
+            try {
+                y1 = Double.parseDouble(rectLeftTopYInput.getText());
+                rectLeftTopYInput.setStyle(null);
+            } catch (Exception e) {
+                rectLeftTopYInput.setStyle(badStyle);
+                return null;
+            }
+            try {
+                x2 = Double.parseDouble(rightBottomXInput.getText());
+                rightBottomXInput.setStyle(null);
+            } catch (Exception e) {
+                rightBottomXInput.setStyle(badStyle);
+                return null;
+            }
+            try {
+                y2 = Double.parseDouble(rightBottomYInput.getText());
+                rightBottomYInput.setStyle(null);
+            } catch (Exception e) {
+                rightBottomYInput.setStyle(badStyle);
+                return null;
+            }
+            DoubleRectangle rect = new DoubleRectangle(
+                    x1 * widthRatio(), y1 * heightRatio(),
+                    x2 * widthRatio(), y2 * heightRatio());
+            if (!rect.isValid()) {
+                popError(message("InvalidData"));
+                return null;
+            }
+            return rect;
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
     }
 
     private void updateLabel() {
-        if (sampleWidth < 1 || sampleHeight < 1) {
-            sampleLabel.setText(message("InvalidParameters"));
-        } else {
-            sampleLabel.setText(message("ImageSize") + ": "
-                    + imageInformation.getWidth() + "x" + imageInformation.getHeight()
-                    + "  " + message("SamplingSize") + ": "
-                    + (int) Math.round(maskRectangleData.getWidth() / sampleWidth)
-                    + "x" + (int) Math.round(maskRectangleData.getHeight() / sampleHeight));
+        if (imageView.getImage() == null) {
+            return;
         }
+        if (widthScale < 1 || heightScale < 1) {
+            infoLabel.setText(message("InvalidParameters"));
+            return;
+        }
+        infoLabel.setText(message("ImageSize") + ": "
+                + getOperationWidth() + "x" + getOperationHeight()
+                + "\n" + message("SamplingSize") + ": "
+                + (int) (maskRectangleData.getWidth() / (widthRatio() * widthScale))
+                + "x" + (int) (maskRectangleData.getHeight() / (heightRatio() * heightScale)));
+
     }
 
     @Override
-    public boolean drawMaskRectangleLine() {
-        if (super.drawMaskRectangleLine()) {
-            updateLabel();
-            return true;
-        } else {
+    public boolean drawMaskRectangleLineAsData() {
+        if (maskRectangleLine == null || !maskPane.getChildren().contains(maskRectangleLine)
+                || maskRectangleData == null
+                || imageView == null || imageView.getImage() == null) {
             return false;
         }
+        if (!super.drawMaskRectangleLineAsData()) {
+            return false;
+        }
+        rectLeftTopXInput.setText(scale(maskRectangleData.getSmallX() / widthRatio(), 2) + "");
+        rectLeftTopYInput.setText(scale(maskRectangleData.getSmallY() / heightRatio(), 2) + "");
+        rightBottomXInput.setText(scale(maskRectangleData.getBigX() / widthRatio(), 2) + "");
+        rightBottomYInput.setText(scale(maskRectangleData.getBigY() / heightRatio(), 2) + "");
+        updateLabel();
+        return true;
     }
 
     @Override
-    public void afterImageLoaded() {
+    public boolean afterImageLoaded() {
         try {
-            super.afterImageLoaded();
-            if (image == null || imageInformation == null) {
-                return;
+            if (!super.afterImageLoaded()) {
+                return false;
             }
-
-            if (imageInformation.isIsSampled()) {
-                scale = imageInformation.getWidth() / image.getWidth();
-            } else {
-                scale = 1;
+            if (imageView.getImage() == null) {
+                return false;
             }
-
             fitSize();
             initMaskRectangleLine(true);
-            checkSample();
-
+            checkScales();
+            return true;
         } catch (Exception e) {
             logger.debug(e.toString());
-        }
-
-    }
-
-    @Override
-    protected void loadSampledImage() {
-
-        if (sampledTips != null) {
-            final String msg = getSmapledInfo() + "\n\n" + AppVariables.message("ImagePartComments");
-            sampledTips.setOnMouseMoved(null);
-            sampledTips.setOnMouseMoved(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    popSampleInformation(msg);
-                }
-            });
+            return false;
         }
 
     }
 
     @FXML
     @Override
-    public void saveAction() {
-        if (image == null || sampleWidth < 1 || sampleHeight < 1) {
+    public void okAction() {
+        try {
+            DoubleRectangle rect = checkRegion();
+            if (rect == null) {
+                return;
+            }
+            maskRectangleData = rect;
+            isSettingValues = true;
+            drawMaskRectangleLineAsData();
+            isSettingValues = false;
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    @FXML
+    @Override
+    public void saveAsAction() {
+        if (image == null || widthScale < 1 || heightScale < 1) {
             return;
         }
         final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
@@ -202,7 +307,7 @@ public class ImageSampleController extends ImageViewerController {
         recordFileWritten(file);
 
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -214,9 +319,16 @@ public class ImageSampleController extends ImageViewerController {
                     filename = file.getAbsolutePath();
                     String format = FileTools.getFileSuffix(filename);
                     BufferedImage bufferedImage;
-                    bufferedImage = ImageFileReaders.readFileBySample(imageInformation.getImageFormat(),
-                            sourceFile.getAbsolutePath(),
-                            maskRectangleData, sampleWidth, sampleHeight);
+                    if (sourceFile != null && imageInformation != null) {
+                        bufferedImage = ImageFileReaders.readFrame(imageInformation.getImageFormat(),
+                                sourceFile.getAbsolutePath(), imageInformation.getIndex(),
+                                (int) x1, (int) y1, (int) x2, (int) y2, widthScale, heightScale);
+                    } else if (image != null) {
+                        bufferedImage = ImageManufacture.sample(SwingFXUtils.fromFXImage(image, null),
+                                (int) x1, (int) y1, (int) x2, (int) y2, widthScale, heightScale);
+                    } else {
+                        return false;
+                    }
                     if (task == null || isCancelled()) {
                         return false;
                     }
@@ -226,15 +338,16 @@ public class ImageSampleController extends ImageViewerController {
                 @Override
                 protected void whenSucceeded() {
                     popSuccessful();
-//                    if (openSaveCheck.isSelected()) {
-//                        final ImageViewerController controller
-//                                = (ImageViewerController) openStage(CommonValues.ImageViewerFxml);
-//                        controller.loadImage(filename);
-//                    }
+                    if (openSaveCheck.isSelected()) {
+                        final ImageViewerController controller
+                                = (ImageViewerController) openStage(CommonValues.ImageViewerFxml);
+                        controller.loadImage(filename);
+                    }
                 }
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();

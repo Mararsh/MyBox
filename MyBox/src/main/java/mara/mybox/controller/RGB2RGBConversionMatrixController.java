@@ -238,7 +238,7 @@ public class RGB2RGBConversionMatrixController extends ChromaticityBaseControlle
     @FXML
     public void calculateAllAction(ActionEvent event) {
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit() ) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -262,7 +262,7 @@ public class RGB2RGBConversionMatrixController extends ChromaticityBaseControlle
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
+            task.setSelf(task);Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }

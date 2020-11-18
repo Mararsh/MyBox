@@ -41,6 +41,7 @@ import javafx.stage.Modality;
 import mara.mybox.data.IntStatistic;
 import mara.mybox.data.StringTable;
 import mara.mybox.data.VisitHistory;
+import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.image.ImageColor;
@@ -54,7 +55,6 @@ import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlTools;
 import mara.mybox.tools.StringTools;
-import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
@@ -177,7 +177,7 @@ public class ImageAnalyseController extends ImageViewerController {
         }
 
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -213,6 +213,7 @@ public class ImageAnalyseController extends ImageViewerController {
 
             };
             loadingController = openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -234,16 +235,19 @@ public class ImageAnalyseController extends ImageViewerController {
         Image View
      */
     @Override
-    public void afterImageLoaded() {
+    public boolean afterImageLoaded() {
         try {
-            super.afterImageLoaded();
+            if (!super.afterImageLoaded()) {
+                return false;
+            }
 
             loadData();
-
+            return true;
         } catch (Exception e) {
             logger.error(e.toString());
             imageView.setImage(null);
             alertInformation(message("NotSupported"));
+            return false;
         }
     }
 
@@ -1040,7 +1044,7 @@ public class ImageAnalyseController extends ImageViewerController {
             dataPane.getSelectionModel().select(currentTab);
 
             synchronized (this) {
-                if (task != null) {
+                if (task != null && !task.isQuit()) {
                     return;
                 }
                 task = new SingletonTask<Void>() {
@@ -1192,6 +1196,7 @@ public class ImageAnalyseController extends ImageViewerController {
                     }
                 };
                 openHandlingStage(task, Modality.WINDOW_MODAL);
+                task.setSelf(task);
                 Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();

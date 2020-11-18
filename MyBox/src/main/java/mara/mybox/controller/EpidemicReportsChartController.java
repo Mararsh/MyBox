@@ -55,6 +55,7 @@ import mara.mybox.data.EpidemicReport;
 import mara.mybox.data.GeographyCode;
 import mara.mybox.data.QueryCondition;
 import mara.mybox.data.VisitHistory;
+import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlControl.ChartCoordinate;
@@ -70,7 +71,6 @@ import mara.mybox.image.file.ImageGifFile;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
-import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
@@ -1354,7 +1354,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
         final Image mapSnap = chartSnapBox.snapshot(snapPara, snapshot);
 
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -1386,6 +1386,7 @@ public class EpidemicReportsChartController extends GeographyCodeMapController {
             } else {
                 openHandlingStage(task, Modality.WINDOW_MODAL);
             }
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();

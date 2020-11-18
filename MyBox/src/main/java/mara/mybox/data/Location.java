@@ -145,9 +145,9 @@ public class Location extends TableData implements Cloneable {
             case "datasetid":
                 return this.getDatasetid();
             case "label":
-                return label;
+                return label == null ? null : (label.length() > 2048 ? label.substring(0, 2048) : label);
             case "address":
-                return address;
+                return address == null ? null : (address.length() > 4096 ? address.substring(0, 4096) : address);
             case "longitude":
                 return longitude;
             case "latitude":
@@ -175,7 +175,7 @@ public class Location extends TableData implements Cloneable {
             case "location_image":
                 return image == null ? null : image.getAbsolutePath();
             case "location_comments":
-                return comments;
+                return comments == null ? null : (comments.length() > 32672 ? comments.substring(0, 32672) : comments);
         }
         return null;
     }

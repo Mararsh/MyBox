@@ -37,18 +37,18 @@ License:    Apache License Version 2.0
                                             <children>
                                                 <Label text="%WeiboAddress" />
                                                 <ComboBox fx:id="addressBox" editable="true" maxWidth="1.7976931348623157E308" visibleRowCount="15" HBox.hgrow="ALWAYS" />
-                                          <Button fx:id="wowButton" mnemonicParsing="false" onAction="#exampleAction">
-                                              <graphic>
-                                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                      <image>
-                                                          <Image url="@../buttons/iconWOW.png" />
-                                                      </image>
-                                                  </ImageView>
-                                              </graphic>
-                                          </Button>
-                                                <ImageView fx:id="weiboTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                <Button fx:id="wowButton" mnemonicParsing="false" onAction="#exampleAction">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconWOW.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <ImageView fx:id="rightTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
-                                                        <Image url="@../buttons/iconTips.png" />
+                                                        <Image url="@../buttons/iconTipsRight.png" />
                                                     </image>
                                                 </ImageView>
                                             </children>
@@ -395,7 +395,15 @@ License:    Apache License Version 2.0
                 </TitledPane>
                 <HBox alignment="CENTER_LEFT" nodeOrientation="RIGHT_TO_LEFT" spacing="10.0">
                     <children>
-                        <Button fx:id="startButton" mnemonicParsing="false" onAction="#startAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Start" />
+                        <Button fx:id="startButton" disable="true" mnemonicParsing="false" onAction="#startAction" styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconStart.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
                         <Button fx:id="suggestButton" mnemonicParsing="false" onAction="#suggestedSettings">
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

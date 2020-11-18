@@ -140,6 +140,15 @@ License:    Apache License Version 2.0
             <children>
                 <Label minWidth="-Infinity" text="%MoreArguments" HBox.hgrow="NEVER" />
                 <TextField fx:id="moreInput" maxWidth="1.7976931348623157E308" promptText="%SeparateBySpace" HBox.hgrow="ALWAYS" />
+            <Button fx:id="helpMeButton" mnemonicParsing="false" onAction="#helpMe">
+               <graphic>
+                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/iconCatFoot.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
             </children>
         </HBox>
         <TextArea fx:id="tipsArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" promptText="%FFmpegArgumentsTips" styleClass="displayArea" stylesheets="@../styles/MyBox.css" wrapText="true">

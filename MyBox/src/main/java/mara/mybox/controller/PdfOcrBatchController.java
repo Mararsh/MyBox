@@ -427,7 +427,7 @@ public class PdfOcrBatchController extends PdfBatchController {
                 lastImage = ImageManufacture.rotateImage(lastImage, rotate);
             }
             if (scale > 0 && scale != 1) {
-                lastImage = ImageManufacture.scaleImage(lastImage, scale);
+                lastImage = ImageManufacture.scaleImageByScale(lastImage, scale);
             }
 
             String enhance = enhancementSelector.getValue();

@@ -35,15 +35,14 @@ import mara.mybox.controller.ImagesBrowserController;
 import mara.mybox.controller.LoadingController;
 import mara.mybox.controller.MarkdownEditerController;
 import mara.mybox.controller.MediaPlayerController;
-import mara.mybox.controller.MyBoxLoadingController;
 import mara.mybox.controller.PdfViewController;
 import mara.mybox.controller.TextEditerController;
 import mara.mybox.controller.WebBrowserController;
+import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.image.ImageInformation;
 import mara.mybox.tools.CompressTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.SystemTools;
-import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
@@ -79,6 +78,7 @@ public class FxmlStage {
 
             final BaseController controller = (BaseController) fxmlLoader.getController();
             controller.setMyStage(stage);
+            stage.setUserData(controller);
             controller.setMyScene(scene);
             controller.setLoadFxml(newFxml);
 
@@ -116,7 +116,7 @@ public class FxmlStage {
         }
     }
 
-    public static BaseController initScene(final String newFxml) {
+    public static BaseController setScene(final String newFxml) {
         try {
             if (newFxml == null) {
                 return null;
@@ -284,6 +284,25 @@ public class FxmlStage {
 
     }
 
+    public static List<Stage> findStages(String title) {
+        try {
+            if (title == null) {
+                return null;
+            }
+            List<Stage> stages = new ArrayList<>();
+            for (Window window : Window.getWindows()) {
+                Stage stage = (Stage) window;
+                if (title.equals(stage.getTitle())) {
+                    stages.add(stage);
+                }
+            }
+            return stages;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
     public static BaseController openMyBox(Stage stage) {
         return openScene(stage, CommonValues.MyboxFxml);
     }
@@ -304,7 +323,6 @@ public class FxmlStage {
         try {
             final HtmlEditorController controller
                     = (HtmlEditorController) openScene(stage, CommonValues.HtmlEditorFxml);
-            controller.switchBroswerTab();
             controller.loadLink(link);
             return controller;
         } catch (Exception e) {
@@ -317,8 +335,6 @@ public class FxmlStage {
         try {
             final HtmlEditorController controller
                     = (HtmlEditorController) openScene(stage, CommonValues.HtmlEditorFxml);
-            controller.switchBroswerTab();
-            controller.setNotChangedAfterLoad(true);
             controller.sourceFileChanged(file);
             return controller;
         } catch (Exception e) {
@@ -364,12 +380,11 @@ public class FxmlStage {
         }
     }
 
-    public static ImageManufactureController openImageManufacture(Stage stage,
-            File file, Image image, ImageInformation imageInfo) {
+    public static ImageManufactureController openImageManufacture(Stage stage, File file, ImageInformation imageInfo) {
         try {
             final ImageManufactureController controller
                     = (ImageManufactureController) openScene(stage, CommonValues.ImageManufactureFxml);
-            controller.loadImage(file, image, imageInfo);
+            controller.loadImage(file, imageInfo);
             return controller;
         } catch (Exception e) {
             logger.error(e.toString());
@@ -377,8 +392,7 @@ public class FxmlStage {
         }
     }
 
-    public static ImageManufactureController openImageManufacture(Stage stage,
-            ImageInformation imageInfo) {
+    public static ImageManufactureController openImageManufacture(Stage stage, ImageInformation imageInfo) {
         try {
             final ImageManufactureController controller
                     = (ImageManufactureController) openScene(stage, CommonValues.ImageManufactureFxml);
@@ -689,7 +703,9 @@ public class FxmlStage {
     public static void alertInformation(Stage myStage, String information) {
         try {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle(myStage.getTitle());
+            if (myStage != null) {
+                alert.setTitle(myStage.getTitle());
+            }
             alert.setHeaderText(null);
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
             alert.getDialogPane().setContent(new Label(information));
@@ -701,29 +717,6 @@ public class FxmlStage {
             alert.showAndWait();
         } catch (Exception e) {
             logger.error(e.toString());
-        }
-    }
-
-    public static MyBoxLoadingController showInformation(String information) {
-        try {
-            Stage stage = new Stage();
-            stage.initModality(Modality.NONE);
-            stage.initStyle(StageStyle.DECORATED);
-            stage.getIcons().add(CommonFxValues.AppIcon);
-            FXMLLoader fxmlLoader = new FXMLLoader(
-                    FxmlStage.class.getResource(CommonValues.MyBoxLoadingFxml));
-            Pane pane = fxmlLoader.load();
-            Scene scene = new Scene(pane);
-            stage.setScene(scene);
-            stage.show();
-
-            MyBoxLoadingController c = (MyBoxLoadingController) fxmlLoader.getController();
-            c.setInfo(information);
-            c.setStage(stage);
-            return c;
-        } catch (Exception e) {
-            logger.error(e.toString());
-            return null;
         }
     }
 
@@ -750,10 +743,8 @@ public class FxmlStage {
 
     public static ImageViewerController openImageViewer(ImageInformation info) {
         try {
-            final ImageViewerController controller = FxmlStage.openImageViewer(null, null);
-            if (controller != null) {
-                controller.loadImage(info);
-            }
+            ImageViewerController controller = FxmlStage.openImageViewer(null, null);
+            controller.loadImage(info);
             return controller;
         } catch (Exception e) {
             logger.error(e.toString());

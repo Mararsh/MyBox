@@ -38,8 +38,8 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import mara.mybox.data.ConvolutionKernel;
-import mara.mybox.data.DoublePoint;
 import mara.mybox.data.VisitHistory;
+import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlStage;
@@ -54,7 +54,6 @@ import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.OCRTools;
-import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
@@ -191,18 +190,27 @@ public class ImageOCRController extends ImageViewerController {
     }
 
     @Override
-    public void afterImageLoaded() {
-        super.afterImageLoaded();
+    public boolean afterImageLoaded() {
+        try {
+            if (!super.afterImageLoaded()) {
+                return false;
+            }
 
-        originalView.setImage(image);
-        originalViewLabel.setText((int) image.getWidth() + " x " + (int) image.getHeight());
-        paneSizeOriginal();
+            originalView.setImage(image);
+            originalViewLabel.setText((int) image.getWidth() + " x " + (int) image.getHeight());
+            paneSizeOriginal();
 
-        regionsTableController.baseTitle = FileTools.getFilePrefix(sourceFile.getName()) + "_regions";
-        wordsTableController.baseTitle = FileTools.getFilePrefix(sourceFile.getName()) + "_words";
-        htmlController.baseTitle = FileTools.getFilePrefix(sourceFile.getName()) + "_texts";
+            String name = sourceFile != null ? FileTools.getFilePrefix(sourceFile.getName()) : "";
+            regionsTableController.baseTitle = name + "_regions";
+            wordsTableController.baseTitle = name + "_words";
+            htmlController.baseTitle = name + "_texts";
 
-        recoverAction();
+            recoverAction();
+            return true;
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return false;
+        }
     }
 
     @FXML
@@ -210,7 +218,6 @@ public class ImageOCRController extends ImageViewerController {
         if (originalScrollPane == null || originalView == null || originalView.getImage() == null) {
             return;
         }
-        isPaneSize = false;
         FxmlControl.zoomOut(originalScrollPane, originalView, xZoomStep, yZoomStep);
     }
 
@@ -219,7 +226,6 @@ public class ImageOCRController extends ImageViewerController {
         if (originalScrollPane == null || originalView == null || originalView.getImage() == null) {
             return;
         }
-        isPaneSize = false;
         FxmlControl.zoomIn(originalScrollPane, originalView, xZoomStep, yZoomStep);
     }
 
@@ -319,6 +325,22 @@ public class ImageOCRController extends ImageViewerController {
                 }
             });
 
+            startCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "Start", true));
+            startCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
+                    AppVariables.setUserConfigValue(baseName + "Start", startCheck.isSelected());
+                }
+            });
+
+            LoadCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "Start", true));
+            LoadCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
+                    AppVariables.setUserConfigValue(baseName + "Load", LoadCheck.isSelected());
+                }
+            });
+
         } catch (Exception e) {
             logger.debug(e.toString());
         }
@@ -327,25 +349,23 @@ public class ImageOCRController extends ImageViewerController {
     protected void setPreprocessImage(Image image) {
         imageView.setImage(image);
         FxmlControl.paneSize(scrollPane, imageView);
-        updateLabel();
+        updateLabelTitle();
         if (startCheck.isSelected()) {
             startAction();
         }
     }
 
-    protected void updateLabel() {
+    @Override
+    public void updateLabelTitle() {
+        if (imageView == null || imageView.getImage() == null) {
+            return;
+        }
         String s = (int) image.getWidth() + " x " + (int) image.getHeight();
         if (maskRectangleLine != null && maskRectangleLine.isVisible() && maskRectangleData != null) {
             s += "  " + message("SelectedSize") + ": "
                     + (int) maskRectangleData.getWidth() + "x" + (int) maskRectangleData.getHeight();
         }
         imageLabel.setText(s);
-    }
-
-    @Override
-    public void imageClicked(MouseEvent event, DoublePoint p) {
-        super.imageClicked(event, p);
-        updateLabel();
     }
 
     @FXML
@@ -366,7 +386,7 @@ public class ImageOCRController extends ImageViewerController {
             return;
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -376,7 +396,7 @@ public class ImageOCRController extends ImageViewerController {
                 protected boolean handle() {
                     try {
                         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(imageView.getImage(), null);
-                        bufferedImage = ImageManufacture.scaleImage(bufferedImage, scale);
+                        bufferedImage = ImageManufacture.scaleImageByScale(bufferedImage, scale);
                         ocrImage = SwingFXUtils.toFXImage(bufferedImage, null);
                         return ocrImage != null;
                     } catch (Exception e) {
@@ -393,6 +413,7 @@ public class ImageOCRController extends ImageViewerController {
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -405,7 +426,7 @@ public class ImageOCRController extends ImageViewerController {
             return;
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -433,6 +454,7 @@ public class ImageOCRController extends ImageViewerController {
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -491,7 +513,7 @@ public class ImageOCRController extends ImageViewerController {
             return;
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -597,6 +619,7 @@ public class ImageOCRController extends ImageViewerController {
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -780,7 +803,7 @@ public class ImageOCRController extends ImageViewerController {
             return;
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -807,6 +830,7 @@ public class ImageOCRController extends ImageViewerController {
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -859,20 +883,17 @@ public class ImageOCRController extends ImageViewerController {
             return;
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
 
-            String name = null;
-            if (sourceFile != null) {
-                name = FileTools.getFilePrefix(sourceFile.getName()) + "_preprocessed";
-            }
+            String name = (sourceFile != null ? FileTools.getFilePrefix(sourceFile.getName()) : "") + "_preprocessed";
             final File file = chooseSaveFile(AppVariables.getUserConfigPath(VisitHistoryTools.getPathKey(VisitHistory.FileType.Image)),
                     name, CommonFxValues.ImageExtensionFilter, true);
             if (file == null) {
                 return;
             }
-            recordFileWritten(file);
+            recordFileWritten(file, VisitHistory.FileType.Image);
 
             task = new SingletonTask<Void>() {
 
@@ -892,6 +913,7 @@ public class ImageOCRController extends ImageViewerController {
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -919,7 +941,8 @@ public class ImageOCRController extends ImageViewerController {
     }
 
     protected void command() {
-        if (imageView.getImage() == null || timer != null || process != null) {
+        if (imageView.getImage() == null || timer != null || process != null
+                || ocrOptionsController.dataPathController.file == null) {
             return;
         }
         File tesseract = ocrOptionsController.tesseractPathController.file;
@@ -1043,11 +1066,11 @@ public class ImageOCRController extends ImageViewerController {
     }
 
     protected void embedded() {
-        if (imageView.getImage() == null) {
+        if (imageView.getImage() == null || ocrOptionsController.dataPathController.file == null) {
             return;
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -1177,6 +1200,7 @@ public class ImageOCRController extends ImageViewerController {
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -1191,7 +1215,7 @@ public class ImageOCRController extends ImageViewerController {
             return;
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
 
@@ -1215,6 +1239,7 @@ public class ImageOCRController extends ImageViewerController {
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();

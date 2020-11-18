@@ -230,24 +230,25 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
                     "10", message("EpidemicReportsTopUnlimit"),
                     "20", "30", "50", "8", "15", "25", "60", "5", "100", "200", "360"
             ));
-            chartMaxSelector.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                try {
-                    if (message("EpidemicReportsTopUnlimit").equals(newValue)) {
-                        topNumber = -1;
-                        FxmlControl.setEditorNormal(chartMaxSelector);
-                        AppVariables.setUserConfigValue("EpidemicReportMaxChart", newValue);
-                        adjustOrderList();
-                        return;
-                    }
-                    int v = Integer.valueOf(chartMaxSelector.getValue());
-                    topNumber = v;
-                    AppVariables.setUserConfigValue("EpidemicReportMaxChart", topNumber + "");
-                    FxmlControl.setEditorNormal(chartMaxSelector);
-                    adjustOrderList();
-                } catch (Exception e) {
-                    logger.error(e.toString());
-                }
-            });
+            chartMaxSelector.getSelectionModel().selectedItemProperty().addListener(
+                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
+                        try {
+                            if (message("EpidemicReportsTopUnlimit").equals(newValue)) {
+                                topNumber = -1;
+                                FxmlControl.setEditorNormal(chartMaxSelector);
+                                AppVariables.setUserConfigValue("EpidemicReportMaxChart", newValue);
+                                adjustOrderList();
+                                return;
+                            }
+                            int v = Integer.valueOf(chartMaxSelector.getValue());
+                            topNumber = v;
+                            AppVariables.setUserConfigValue("EpidemicReportMaxChart", topNumber + "");
+                            FxmlControl.setEditorNormal(chartMaxSelector);
+                            adjustOrderList();
+                        } catch (Exception e) {
+                            logger.error(e.toString());
+                        }
+                    });
 
             isSettingValues = true;
             chartMaxSelector.getSelectionModel().select(AppVariables.getUserConfigValue("EpidemicReportMaxChart", "10"));
@@ -311,7 +312,7 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
             timer = null;
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit() ) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -364,7 +365,7 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
+            task.setSelf(task);Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -754,7 +755,7 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
         final List<EpidemicReport> reports = new ArrayList();
         reports.addAll(selected);
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit() ) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -776,7 +777,7 @@ public class EpidemicReportsController extends DataAnalysisController<EpidemicRe
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
+            task.setSelf(task);Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }

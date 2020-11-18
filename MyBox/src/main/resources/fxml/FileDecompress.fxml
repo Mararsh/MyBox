@@ -27,43 +27,52 @@ License:    Apache License Version 2.0
     <center>
         <VBox fx:id="contentBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" BorderPane.alignment="CENTER">
             <children>
-            <Label fx:id="sourceLabel" text="Label" />
-                      <VBox spacing="5.0">
-                          <children>
-                              <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="5.0">
-                                  <children>
-                                      <Label text="%Path" />
-                                      <TextField fx:id="targetPathInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                      <Button fx:id="selectPathTargetButton" mnemonicParsing="false" onAction="#selectTargetPath" onMouseEntered="#popTargetPath">
-                                          <graphic>
-                                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                  <image>
-                                                      <Image url="@../buttons/iconFolder.png" />
-                                                  </image>
-                                              </ImageView>
-                                          </graphic>
-                                      </Button>
-                                  </children>
-                              </HBox>
-                              <FlowPane hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
-                                  <children>
-                                      <Label text="%ExistedFiles" />
-                                      <RadioButton fx:id="targetReplaceRadio" mnemonicParsing="false" text="%Replace">
-                                          <toggleGroup>
-                                              <ToggleGroup fx:id="targetExistGroup" />
-                                          </toggleGroup>
-                                      </RadioButton>
-                                      <RadioButton fx:id="targetSkipRadio" mnemonicParsing="false" text="%Skip" toggleGroup="$targetExistGroup" />
-                                      <RadioButton fx:id="targetRenameRadio" mnemonicParsing="false" selected="true" text="%TargetNameAppend" toggleGroup="$targetExistGroup" />
-                                      <TextField fx:id="targetAppendInput" prefWidth="120.0" text="-m" />
-                                  </children>
-                              </FlowPane>
-                          </children>
-                      </VBox>
+                <Label fx:id="sourceLabel" text="Label" />
+                <VBox spacing="5.0">
+                    <children>
+                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="5.0">
+                            <children>
+                                <Label text="%Path" />
+                                <TextField fx:id="targetPathInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                <Button fx:id="selectPathTargetButton" mnemonicParsing="false" onAction="#selectTargetPath" onMouseEntered="#popTargetPath">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconFolder.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                            </children>
+                        </HBox>
+                        <FlowPane hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
+                            <children>
+                                <Label text="%ExistedFiles" />
+                                <RadioButton fx:id="targetReplaceRadio" mnemonicParsing="false" text="%Replace">
+                                    <toggleGroup>
+                                        <ToggleGroup fx:id="targetExistGroup" />
+                                    </toggleGroup>
+                                </RadioButton>
+                                <RadioButton fx:id="targetSkipRadio" mnemonicParsing="false" text="%Skip" toggleGroup="$targetExistGroup" />
+                                <RadioButton fx:id="targetRenameRadio" mnemonicParsing="false" selected="true" text="%TargetNameAppend" toggleGroup="$targetExistGroup" />
+                                <TextField fx:id="targetAppendInput" prefWidth="120.0" text="-m" />
+                            </children>
+                        </FlowPane>
+                    </children>
+                </VBox>
                 <HBox fx:id="barBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="10.0">
                     <children>
                         <Label fx:id="bottomLabel" maxWidth="1.7976931348623157E308" wrapText="true" HBox.hgrow="ALWAYS" />
-                        <Button fx:id="startButton" disable="true" mnemonicParsing="false" onAction="#startAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Decompress" HBox.hgrow="NEVER" />
+                        <Button fx:id="startButton" defaultButton="true" mnemonicParsing="false" onAction="#startAction"
+                                styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconStart.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
                     </children>
                 </HBox>
             </children>

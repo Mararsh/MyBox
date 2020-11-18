@@ -55,7 +55,7 @@ public class FFmpegMediasTableController extends MediaTableController {
                 return;
             }
             synchronized (this) {
-                if (task != null) {
+                if (task != null && !task.isQuit() ) {
                     return;
                 }
                 task = new SingletonTask<Void>() {
@@ -129,7 +129,7 @@ public class FFmpegMediasTableController extends MediaTableController {
                 };
                 parentController.openHandlingStage(task, Modality.WINDOW_MODAL,
                         message("ReadingMedia...") + "\n" + info.getAddress());
-                Thread thread = new Thread(task);
+                task.setSelf(task);Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();
             }

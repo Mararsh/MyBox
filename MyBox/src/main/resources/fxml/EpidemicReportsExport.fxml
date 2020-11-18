@@ -179,7 +179,7 @@ License:    Apache License Version 2.0
                                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
                                             <padding>
                                                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                            </padding> 
+                                            </padding>
                                             <children>
                                                 <Label text="%DataFields" />
                                                 <VBox layoutX="20.0" layoutY="20.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
@@ -331,7 +331,16 @@ License:    Apache License Version 2.0
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Export" HBox.hgrow="NEVER" />
+                        <Button fx:id="okButton" defaultButton="true" mnemonicParsing="false" onAction="#okAction"
+                                styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconOK.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
                     </children>
                 </HBox>
             </children>

@@ -15,12 +15,15 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.regex.Pattern;
 import mara.mybox.data.FileInformation;
 import mara.mybox.data.FileSynchronizeAttributes;
 import mara.mybox.data.TextEditInformation;
@@ -40,7 +43,15 @@ public class FileTools {
         SizeDesc, SizeAsc, NameDesc, NameAsc, FormatDesc, FormatAsc
     }
 
-    public static long getFileCreateTime(final String filename) {
+    public static String filenameFilter(String name) {
+        if (name == null || name.isBlank()) {
+            return name;
+        }
+        Pattern pattern = Pattern.compile("[\\\\/:*?\"<>|]|&nbsp;|&lt;|&gt;|&amp;|&quot;");
+        return pattern.matcher(name).replaceAll("_");
+    }
+
+    public static long createTime(final String filename) {
         try {
             FileTime t = Files.readAttributes(Paths.get(filename), BasicFileAttributes.class).creationTime();
             return t.toMillis();
@@ -49,11 +60,18 @@ public class FileTools {
         }
     }
 
+    public static long createTime(File file) {
+        if (file == null || !file.exists()) {
+            return -1;
+        }
+        return createTime(file.getAbsolutePath());
+    }
+
     public static String getFilePath(final String filename) {
         if (filename == null) {
             return null;
         }
-        int pos = filename.lastIndexOf('/');
+        int pos = filename.lastIndexOf(File.separator);
         if (pos < 0) {
             return "";
         }
@@ -66,6 +84,30 @@ public class FileTools {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public static String getName(final String filename) {
+        if (filename == null) {
+            return null;
+        }
+        String fname = filename;
+        int pos = fname.lastIndexOf(File.separator);
+        if (pos >= 0) {
+            fname = fname.substring(pos + 1);
+        }
+        return fname;
+    }
+
+    public static String getNamePrefix(final String filename) {
+        if (filename == null) {
+            return null;
+        }
+        String fname = getName(filename);
+        int pos = fname.lastIndexOf('.');
+        if (pos >= 0) {
+            fname = fname.substring(0, pos);
+        }
+        return fname;
     }
 
     // filename may include path or not, it is decided by caller
@@ -89,14 +131,19 @@ public class FileTools {
         }
     }
 
+    // not include "."
     public static String getFileSuffix(final String filename) {
-        if (filename == null) {
-            return null;
+        if (filename == null || filename.endsWith(File.separator)) {
+            return "";
         }
-        String suffix;
-        int pos = filename.lastIndexOf('.');
-        if (pos >= 0 && filename.length() > pos) {
-            suffix = filename.substring(pos + 1);
+        String suffix, s = filename;
+        int pos = filename.lastIndexOf(File.separator);
+        if (pos >= 0) {
+            s = s.substring(pos + 1);
+        }
+        pos = s.lastIndexOf('.');
+        if (pos >= 0 && s.length() > pos) {
+            suffix = s.substring(pos + 1);
         } else {
             suffix = "";
         }
@@ -176,6 +223,21 @@ public class FileTools {
         }
     }
 
+    public static int compareFilename(File f1, File f2) {
+        if (f1 == null) {
+            return f2 == null ? 0 : -1;
+        }
+        if (f2 == null) {
+            return 1;
+        }
+        if (f1.isFile() && f2.isFile() && f1.getParent().equals(f2.getParent())) {
+            return StringTools.compareWithNumber(f1.getName(), f2.getName());
+        } else {
+            Comparator<Object> compare = Collator.getInstance(Locale.getDefault());
+            return compare.compare(f1.getAbsolutePath(), f2.getAbsolutePath());
+        }
+    }
+
     public static void sortFiles(List<File> files, FileSortMode sortMode) {
         if (files == null || files.isEmpty() || sortMode == null) {
             return;
@@ -218,7 +280,7 @@ public class FileTools {
                     Collections.sort(files, new Comparator<File>() {
                         @Override
                         public int compare(File f1, File f2) {
-                            return f2.getAbsolutePath().compareTo(f1.getAbsolutePath());
+                            return compareFilename(f2, f1);
                         }
                     });
                     break;
@@ -227,7 +289,7 @@ public class FileTools {
                     Collections.sort(files, new Comparator<File>() {
                         @Override
                         public int compare(File f1, File f2) {
-                            return f1.getAbsolutePath().compareTo(f2.getAbsolutePath());
+                            return compareFilename(f1, f2);
                         }
                     });
                     break;
@@ -236,8 +298,8 @@ public class FileTools {
                     Collections.sort(files, new Comparator<File>() {
                         @Override
                         public int compare(File f1, File f2) {
-                            long t1 = FileTools.getFileCreateTime(f1.getAbsolutePath());
-                            long t2 = FileTools.getFileCreateTime(f2.getAbsolutePath());
+                            long t1 = FileTools.createTime(f1.getAbsolutePath());
+                            long t2 = FileTools.createTime(f2.getAbsolutePath());
                             long diff = t2 - t1;
                             if (diff == 0) {
                                 return 0;
@@ -254,8 +316,8 @@ public class FileTools {
                     Collections.sort(files, new Comparator<File>() {
                         @Override
                         public int compare(File f1, File f2) {
-                            long t1 = FileTools.getFileCreateTime(f1.getAbsolutePath());
-                            long t2 = FileTools.getFileCreateTime(f2.getAbsolutePath());
+                            long t1 = FileTools.createTime(f1.getAbsolutePath());
+                            long t2 = FileTools.createTime(f2.getAbsolutePath());
                             long diff = t1 - t2;
                             if (diff == 0) {
                                 return 0;
@@ -325,6 +387,27 @@ public class FileTools {
         }
     }
 
+    public static List<File> sortFiles(File path, FileSortMode sortMode) {
+        if (path == null || !path.isDirectory()) {
+            return null;
+        }
+        File[] pathFiles = path.listFiles();
+        if (pathFiles == null || pathFiles.length == 0) {
+            return null;
+        }
+        List<File> files = new ArrayList<>();
+        for (File file : pathFiles) {
+            if (file.isFile()) {
+                files.add(file);
+            }
+        }
+        if (files.isEmpty()) {
+            return null;
+        }
+        sortFiles(files, sortMode);
+        return files;
+    }
+
     public static void sortFileInformations(List<FileInformation> files,
             FileSortMode sortMode) {
         if (files == null || files.isEmpty() || sortMode == null) {
@@ -353,7 +436,7 @@ public class FileTools {
                 Collections.sort(files, new Comparator<FileInformation>() {
                     @Override
                     public int compare(FileInformation f1, FileInformation f2) {
-                        return f2.getFile().getAbsolutePath().compareTo(f1.getFile().getAbsolutePath());
+                        return compareFilename(f2.getFile(), f1.getFile());
                     }
                 });
                 break;
@@ -362,7 +445,7 @@ public class FileTools {
                 Collections.sort(files, new Comparator<FileInformation>() {
                     @Override
                     public int compare(FileInformation f1, FileInformation f2) {
-                        return f1.getFile().getAbsolutePath().compareTo(f2.getFile().getAbsolutePath());
+                        return compareFilename(f1.getFile(), f2.getFile());
                     }
                 });
                 break;
@@ -371,8 +454,8 @@ public class FileTools {
                 Collections.sort(files, new Comparator<FileInformation>() {
                     @Override
                     public int compare(FileInformation f1, FileInformation f2) {
-                        long t1 = FileTools.getFileCreateTime(f1.getFile().getAbsolutePath());
-                        long t2 = FileTools.getFileCreateTime(f2.getFile().getAbsolutePath());
+                        long t1 = FileTools.createTime(f1.getFile().getAbsolutePath());
+                        long t2 = FileTools.createTime(f2.getFile().getAbsolutePath());
                         return (int) (t2 - t1);
                     }
                 });
@@ -382,8 +465,8 @@ public class FileTools {
                 Collections.sort(files, new Comparator<FileInformation>() {
                     @Override
                     public int compare(FileInformation f1, FileInformation f2) {
-                        long t1 = FileTools.getFileCreateTime(f1.getFile().getAbsolutePath());
-                        long t2 = FileTools.getFileCreateTime(f2.getFile().getAbsolutePath());
+                        long t1 = FileTools.createTime(f1.getFile().getAbsolutePath());
+                        long t2 = FileTools.createTime(f2.getFile().getAbsolutePath());
                         return (int) (t1 - t2);
                     }
                 });
@@ -608,10 +691,9 @@ public class FileTools {
 
     public static void deleteNestedDir(File sourceDir) {
         try {
-            File tmpDir = getTempDirectory();
-//            logger.error(sourceDir + "   " + tmpDir);
-            deleteNestedDir(sourceDir, tmpDir);
-            tmpDir.delete();
+            File targetTmpDir = getTempDirectory();
+            deleteNestedDir(sourceDir, targetTmpDir);
+            targetTmpDir.delete();
             sourceDir.delete();
         } catch (Exception e) {
             logger.error(e.toString());
@@ -631,8 +713,8 @@ public class FileTools {
                         if (subfiles != null) {
                             for (File subfile : subfiles) {
                                 if (subfile.isDirectory()) {
-                                    Files.move(Paths.get(subfile.getAbsolutePath()),
-                                            Paths.get(tmpDir.getAbsolutePath() + File.separator + subfile.getName()));
+                                    String target = tmpDir.getAbsolutePath() + File.separator + subfile.getName();
+                                    Files.move(Paths.get(subfile.getAbsolutePath()), Paths.get(target));
                                 } else {
                                     subfile.delete();
                                 }
@@ -978,11 +1060,19 @@ public class FileTools {
         }
     }
 
+    public static boolean isUTF8(File file) {
+        Charset charset = charset(file);
+        return charset.equals(Charset.forName("utf-8"));
+    }
+
     public static String readTexts(File file) {
+        return readTexts(file, charset(file));
+    }
+
+    public static String readTexts(File file, Charset charset) {
         try {
             StringBuilder s = new StringBuilder();
-            try ( BufferedReader reader = new BufferedReader(
-                    new FileReader(file, charset(file)))) {
+            try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     s.append(line).append(System.lineSeparator());

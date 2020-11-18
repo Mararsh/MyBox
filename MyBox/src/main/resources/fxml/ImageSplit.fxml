@@ -28,7 +28,7 @@ License:    Apache License Version 2.0
     <center>
         <VBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
             <children>
-                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
+                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
                     <children>
                         <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile">
                             <graphic>
@@ -39,10 +39,21 @@ License:    Apache License Version 2.0
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Label fx:id="sampledTips" maxWidth="1.7976931348623157E308" styleClass="darkRed-label" stylesheets="@../styles/MyBox.css" text="%Sampled" visible="false" HBox.hgrow="ALWAYS" />
+                  <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/iconTips.png" />
+                     </image>
+                  </ImageView>
+                        <ImageView fx:id="sampledView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconSampled.png" />
+                            </image>
+                        </ImageView>
+                        <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                         <HBox fx:id="opBox" alignment="CENTER_LEFT" spacing="5.0" HBox.hgrow="NEVER">
                             <children>
                                 <Label alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" fx:id="xyLabel" />
+                        <CheckBox fx:id="contextMenuCheck" mnemonicParsing="false" selected="true" text="%ContextMenu" />
                                 <CheckBox fx:id="coordinateCheck" mnemonicParsing="false">
                                     <graphic>
                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -74,7 +85,7 @@ License:    Apache License Version 2.0
                                     <graphic>
                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                                <Image url="@../buttons/iconInfo2.png" />
+                                                <Image url="@../buttons/iconIdea.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>
@@ -152,7 +163,15 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Button fx:id="saveImagesButton" mnemonicParsing="false" onAction="#saveAsImagesAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Save" />
+                                <Button fx:id="saveImagesButton" defaultButton="true" mnemonicParsing="false" onAction="#saveAsImagesAction" styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconSave.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
                             </children>
                         </HBox>
                     </children>
@@ -185,7 +204,7 @@ License:    Apache License Version 2.0
                             <content>
                                 <VBox fx:id="optionsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                     <children>
-                                        <TitledPane  maxWidth="1.7976931348623157E308"  text="%SplitOptions">
+                                        <TitledPane maxWidth="1.7976931348623157E308" text="%SplitOptions">
                                             <content>
                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="5.0">
                                                     <children>
@@ -282,12 +301,12 @@ License:    Apache License Version 2.0
                                                                 </Button>
                                                             </children>
                                                         </VBox>
-                                                        <Label fx:id="promptLabel" prefWidth="340.0" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text=" " wrapText="true" VBox.vgrow="NEVER" />
+                                                        <Label fx:id="promptLabel" minHeight="-Infinity" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text=" " wrapText="true" VBox.vgrow="NEVER" />
                                                     </children>
                                                 </VBox>
                                             </content>
                                         </TitledPane>
-                                        <TitledPane expanded="false" maxWidth="1.7976931348623157E308"  text="%PdfOptions">
+                                        <TitledPane expanded="false" maxWidth="1.7976931348623157E308" text="%PdfOptions">
                                             <content>
                                                 <VBox fx:id="pdfBox" nodeOrientation="LEFT_TO_RIGHT" spacing="5.0">
                                                     <children>

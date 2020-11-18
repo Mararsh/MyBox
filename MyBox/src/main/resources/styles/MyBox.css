@@ -6,6 +6,11 @@
     -fx-font-size: 1.0em;
 }
 
+.button:default {
+    -fx-base: #f4f4f4;
+    -fx-border-color: #961c1c;
+}
+
 /*
 https://old.icons8.com/
 Icons color           -> lightBlue             #4788c7  #dff0fe
@@ -56,7 +61,6 @@ Red increase 151 -> pink                #de88c7         #ffdcfe
     -fx-text-fill: #961c1c;
 }
 
-
 .bold-darkRed-label, .bold-darkRed-label:focused {
     -fx-background-color: transparent ;
     -fx-background-insets: 0px ;
@@ -83,8 +87,6 @@ Red increase 151 -> pink                #de88c7         #ffdcfe
     -fx-border-radius: 3;
 }
 
-
-
 .grayArea, .grayArea:focused {
     -fx-background-color: transparent ;
     -fx-background-insets: 0px ;
@@ -102,6 +104,9 @@ Red increase 151 -> pink                #de88c7         #ffdcfe
     -fx-background-color: #E8E8E8;
     -fx-background-radius: 12;
     -fx-padding: 5 5 5 5;
+}
+
+.big {
 }
 
 
@@ -124,7 +129,6 @@ Red increase 151 -> pink                #de88c7         #ffdcfe
     -fx-font-size: 0.6em;
     -fx-text-fill: #2e598a;
 }
-
 
 .open-button {
     -fx-background-image: url("../img/iconOpen.png");
@@ -168,7 +172,6 @@ Red increase 151 -> pink                #de88c7         #ffdcfe
 #pickColorCheck:indeterminate  > .box > .mark {
     -fx-background-color: red;
 }
-
 
 .cie-chart-symbol{
     -fx-stroke: black;

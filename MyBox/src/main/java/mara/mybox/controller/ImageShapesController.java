@@ -3,7 +3,6 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.fxml.FXML;
-import javafx.scene.Cursor;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -22,9 +21,11 @@ import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoublePolygon;
 import mara.mybox.data.DoublePolyline;
 import mara.mybox.data.DoubleRectangle;
-import mara.mybox.fxml.FxmlControl;
+import mara.mybox.tools.DateTools;
+import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara
@@ -39,8 +40,8 @@ public class ImageShapesController extends ImageBaseController {
     protected DoubleEllipse maskEllipseData;
     protected DoublePolygon maskPolygonData;
     protected DoublePolyline maskPolylineData;
-    protected DoublePolyline maskLineData;
-    protected List<Line> maskLineLines;
+    protected DoublePolyline maskPolylineLineData;
+    protected List<Line> maskPolylineLines;
     protected DoubleLines maskPenData;
     protected List<List<Line>> maskPenLines;
 
@@ -58,9 +59,76 @@ public class ImageShapesController extends ImageBaseController {
     protected Polyline maskPolyline;
 
     public ImageShapesController() {
-        needNotRulers = false;
-        needNotCoordinates = false;
+    }
 
+    @Override
+    public void setImageChanged(boolean imageChanged) {
+        try {
+            super.setImageChanged(imageChanged);
+            if (imageChanged) {
+                resetMaskControls();
+            }
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+    @Override
+    public void updateLabelTitle() {
+        try {
+            if (getMyStage() == null) {
+                return;
+            }
+            String title;
+            if (sourceFile != null) {
+                title = getBaseTitle() + " " + sourceFile.getAbsolutePath();
+                if (imageInformation != null) {
+                    if (imageInformation.getImageFileInformation().getNumberOfImages() > 1) {
+                        title += " - " + message("Image") + " " + imageInformation.getIndex();
+                    }
+                    if (imageInformation.isIsScaled()) {
+                        title += " - " + message("Scaled");
+                    }
+                }
+            } else {
+                title = getBaseTitle();
+            }
+            if (imageChanged) {
+                title += "  " + "*";
+            }
+            getMyStage().setTitle(title);
+
+            if (bottomLabel != null) {
+                if (imageView != null && imageView.getImage() != null) {
+                    String bottom = "";
+                    if (imageInformation != null) {
+                        bottom += AppVariables.message("Format") + ":" + imageInformation.getImageFormat() + "  ";
+                        bottom += AppVariables.message("Pixels") + ":" + imageInformation.getWidth() + "x" + imageInformation.getHeight() + "  ";
+                    }
+                    bottom += AppVariables.message("LoadedSize") + ":"
+                            + (int) imageView.getImage().getWidth() + "x" + (int) imageView.getImage().getHeight() + "  "
+                            + AppVariables.message("DisplayedSize") + ":"
+                            + (int) imageView.getFitWidth() + "x" + (int) imageView.getFitHeight();
+
+                    if (maskRectangleLine != null && maskRectangleLine.isVisible() && maskRectangleData != null) {
+                        bottom += "  " + message("SelectedSize") + ": "
+                                + (int) (maskRectangleData.getWidth() / widthRatio()) + "x"
+                                + (int) (maskRectangleData.getHeight() / heightRatio());
+                    }
+                    if (sourceFile != null) {
+                        bottom += "  " + AppVariables.message("FileSize") + ":" + FileTools.showFileSize(sourceFile.length()) + "  "
+                                + AppVariables.message("ModifyTime") + ":" + DateTools.datetimeToString(sourceFile.lastModified()) + "  ";
+                    }
+                    bottomLabel.setText(bottom);
+
+                } else {
+                    bottomLabel.setText("");
+                }
+            }
+
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
     }
 
     // Any mask operations when pane size is changed
@@ -100,8 +168,7 @@ public class ImageShapesController extends ImageBaseController {
         }
     }
 
-    public void setShapeStroke(Shape shape,
-            Color strokeColor, double width, boolean dotted) {
+    public void setShapeStroke(Shape shape, Color strokeColor, double width, boolean dotted) {
 
         if (shape == null) {
             return;
@@ -209,16 +276,19 @@ public class ImageShapesController extends ImageBaseController {
 
     @Override
     public void initMaskControls(boolean show) {
-        super.initMaskControls(show);
+        try {
+            super.initMaskControls(show);
 
-        initMaskRectangleLine(show);
-        initMaskCircleLine(show);
-        initMaskEllipseLine(show);
-        initMaskPolygonLine(show);
-        initMaskPolyline(show);
-        initMaskline(show);
-        initMaskPenlines(show);
-
+            initMaskRectangleLine(show);
+            initMaskCircleLine(show);
+            initMaskEllipseLine(show);
+            initMaskPolygonLine(show);
+            initMaskPolyline(show);
+            initMaskPolylineLine(show);
+            initMaskPenlines(show);
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
     }
 
     public void resetMaskControls() {
@@ -238,7 +308,7 @@ public class ImageShapesController extends ImageBaseController {
             if (maskPolyline != null && maskPolyline.isVisible()) {
                 initMaskPolyline(true);
             }
-            initMaskline(true);
+            initMaskPolylineLine(true);
             initMaskPenlines(true);
             drawMaskRulerX();
             drawMaskRulerY();
@@ -581,8 +651,7 @@ public class ImageShapesController extends ImageBaseController {
     public boolean drawMaskPolygonLineAsData() {
         try {
             if (maskPolygonLine == null || !maskPolygonLine.isVisible()
-                    || maskPolygonData == null
-                    || imageView == null || imageView.getImage() == null) {
+                    || maskPolygonData == null || imageView == null || imageView.getImage() == null) {
                 return false;
             }
 
@@ -733,22 +802,24 @@ public class ImageShapesController extends ImageBaseController {
 
     }
 
-    public void initMaskline(boolean show) {
+    public void initMaskPolylineLine(boolean show) {
         try {
             if (imageView == null || maskPane == null) {
                 return;
             }
+            if (maskPolylineLines != null) {
+                maskPane.getChildren().removeAll(maskPolylineLines);
+                maskPolylineLines.clear();
+            }
+            if (maskPolylineLineData != null) {
+                maskPolylineLineData.clear();
+            }
+            if (polygonP1 != null) {
+                polygonP1.setOpacity(0);
+            }
             if (show && imageView.getImage() != null) {
-                maskLineLines = new ArrayList<>();
-                maskLineData = new DoublePolyline();
-            } else {
-                if (maskLineLines != null) {
-                    maskPane.getChildren().removeAll(maskLineLines);
-                    maskLineLines.clear();
-                }
-                if (maskLineData != null) {
-                    maskLineData.clear();
-                }
+                maskPolylineLines = new ArrayList<>();
+                maskPolylineLineData = new DoublePolyline();
             }
         } catch (Exception e) {
             logger.debug(e.toString());
@@ -756,27 +827,26 @@ public class ImageShapesController extends ImageBaseController {
     }
 
     // Polyline of Java shows weird results. So I just use lines directly.
-    public boolean drawMaskLine(double strokeWidth, Color strokeColor, boolean dotted, float opacity) {
-        maskPane.getChildren().removeAll(maskLineLines);
-        maskLineLines.clear();
+    public boolean drawMaskPolylineLine(double strokeWidth, Color strokeColor, boolean dotted, float opacity) {
+        maskPane.getChildren().removeAll(maskPolylineLines);
+        maskPolylineLines.clear();
         polygonP1.setOpacity(0);
-        int size = maskLineData.getSize();
+        int size = maskPolylineLineData.getSize();
         if (size == 0) {
             return true;
         }
-
         double xRatio = imageView.getBoundsInParent().getWidth() / getImageWidth();
         double yRatio = imageView.getBoundsInParent().getHeight() / getImageHeight();
         double drawStrokeWidth = strokeWidth * xRatio;
         if (size == 1) {
             polygonP1.setOpacity(1);
-            DoublePoint p1 = maskLineData.get(0);
+            DoublePoint p1 = maskPolylineLineData.get(0);
             int anchorHW = AppVariables.getUserConfigInt("AnchorWidth", 10) / 2;
             polygonP1.setLayoutX(imageView.getLayoutX() + p1.getX() * xRatio - anchorHW);
             polygonP1.setLayoutY(imageView.getLayoutY() + p1.getY() * yRatio - anchorHW);
         } else if (size > 1) {
             double lastx = -1, lasty = -1, thisx, thisy;
-            for (DoublePoint p : maskLineData.getPoints()) {
+            for (DoublePoint p : maskPolylineLineData.getPoints()) {
                 thisx = p.getX() * xRatio;
                 thisy = p.getY() * yRatio;
                 if (lastx >= 0) {
@@ -793,7 +863,7 @@ public class ImageShapesController extends ImageBaseController {
                         line.getStrokeDashArray().addAll(drawStrokeWidth * 1d, drawStrokeWidth * 3d);
                     }
                     line.setOpacity(opacity);
-                    maskLineLines.add(line);
+                    maskPolylineLines.add(line);
                     maskPane.getChildren().add(line);
                     line.setLayoutX(imageView.getLayoutX());
                     line.setLayoutY(imageView.getLayoutY());
@@ -817,6 +887,9 @@ public class ImageShapesController extends ImageBaseController {
         }
         if (maskPenData != null) {
             maskPenData.clear();
+        }
+        if (polygonP1 != null) {
+            polygonP1.setOpacity(0);
         }
         if (show) {
             maskPenLines = new ArrayList<>();
@@ -1330,37 +1403,20 @@ public class ImageShapesController extends ImageBaseController {
 
     }
 
-    @FXML
     @Override
-    public void paneClicked(MouseEvent event) {
-//        logger.debug("paneClicked");
-        if (imageView.getImage() == null) {
-            imageView.setCursor(Cursor.OPEN_HAND);
-            return;
-        }
-        DoublePoint p = FxmlControl.getImageXY(event, imageView);
-        if (p == null) {
-            return;
-        }
-        imageClicked(event, p);
+    public void imageDoubleClicked(MouseEvent event, DoublePoint p) {
+        doubleClickedRectangle(event, p);
+        doubleClickedCircle(event, p);
+        doubleClickedEllipse(event, p);
     }
 
-    public void imageClicked(MouseEvent event, DoublePoint p) {
-        if (p == null || imageView.getImage() == null) {
-            imageView.setCursor(Cursor.OPEN_HAND);
-            return;
-        }
-        if (isPickingColor) {
-            pickColor(p, imageView);
-
-        } else if (event.getClickCount() > 1) {  // Notice: Double click always trigger single click at first
-            doubleClickedRectangle(event, p);
-            doubleClickedCircle(event, p);
-            doubleClickedEllipse(event, p);
-
-        } else if (event.getClickCount() == 1) {
+    @Override
+    public void imageSingleClicked(MouseEvent event, DoublePoint p) {
+        if (maskPolygonLine != null && maskPolygonLine.isVisible()) {
             singleClickedPolygonLine(event, p);
+
         }
+        super.imageSingleClicked(event, p);
     }
 
     protected void singleClickedPolygonLine(MouseEvent event, DoublePoint p) {

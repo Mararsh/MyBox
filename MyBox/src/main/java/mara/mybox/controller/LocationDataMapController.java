@@ -47,7 +47,7 @@ import mara.mybox.image.file.ImageGifFile;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.LocationTools;
-import mara.mybox.tools.VisitHistoryTools;
+import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
@@ -217,7 +217,7 @@ public class LocationDataMapController extends MapBaseController {
                 return;
             }
             synchronized (this) {
-                if (task != null) {
+                if (task != null && !task.isQuit() ) {
                     return;
                 }
                 task = new SingletonTask<Void>() {
@@ -306,7 +306,7 @@ public class LocationDataMapController extends MapBaseController {
                 } else {
                     openHandlingStage(task, Modality.WINDOW_MODAL, "Loading map data");
                 }
-                Thread thread = new Thread(task);
+                task.setSelf(task);Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();
             }
@@ -474,7 +474,7 @@ public class LocationDataMapController extends MapBaseController {
                 return;
             }
             synchronized (this) {
-                if (task != null) {
+                if (task != null && !task.isQuit() ) {
                     return;
                 }
                 task = new SingletonTask<Void>() {
@@ -543,7 +543,7 @@ public class LocationDataMapController extends MapBaseController {
                 } else {
                     openHandlingStage(task, Modality.WINDOW_MODAL, "Loading map data");
                 }
-                Thread thread = new Thread(task);
+                task.setSelf(task);Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();
             }
@@ -838,7 +838,7 @@ public class LocationDataMapController extends MapBaseController {
         final Image mapSnap = viewBox.snapshot(snapPara, snapshot);
 
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit() ) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -870,7 +870,7 @@ public class LocationDataMapController extends MapBaseController {
             } else {
                 openHandlingStage(task, Modality.WINDOW_MODAL);
             }
-            Thread thread = new Thread(task);
+            task.setSelf(task);Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }

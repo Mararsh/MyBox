@@ -47,7 +47,15 @@ License:    Apache License Version 2.0
                 </HBox>
                 <HBox alignment="CENTER_RIGHT" nodeOrientation="LEFT_TO_RIGHT" spacing="5.0">
                     <children>
-                        <Hyperlink fx:id="regexLink" onAction="#regexHelp" text="%RegularExpression" />
+                        <Button fx:id="exampleRegexButton" mnemonicParsing="false" onMouseEntered="#popRegexExample">
+                            <graphic>
+                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconExamples.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
                         <ComboBox fx:id="filterTypeSelector" prefWidth="240.0" />
                         <TextField fx:id="filterInput" prefWidth="400.0" />
                         <CheckBox fx:id="filterLineNumberCheck" mnemonicParsing="false" selected="true" text="%LineNumber" />

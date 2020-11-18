@@ -11,14 +11,16 @@ import javafx.concurrent.Task;
  */
 public class BaseTask<P> extends Task<P> {
 
+    protected BaseTask self;
     protected Date startTime, endTime;
     protected long cost;
-    protected boolean ok;
+    protected boolean ok, quit;
     protected String error;
 
     public BaseTask() {
         startTime = new Date();
-        ok = false;
+        ok = quit = false;
+        self = this;
     }
 
     public static BaseTask create() {
@@ -101,6 +103,8 @@ public class BaseTask<P> extends Task<P> {
 
     protected void taskQuit() {
         endTime = new Date();
+        self = null;
+        quit = true;
     }
 
     /*
@@ -144,6 +148,22 @@ public class BaseTask<P> extends Task<P> {
 
     public void setError(String error) {
         this.error = error;
+    }
+
+    public BaseTask getSelf() {
+        return self;
+    }
+
+    public void setSelf(BaseTask self) {
+        this.self = self;
+    }
+
+    public boolean isQuit() {
+        return quit;
+    }
+
+    public void setQuit(boolean quit) {
+        this.quit = quit;
     }
 
 }

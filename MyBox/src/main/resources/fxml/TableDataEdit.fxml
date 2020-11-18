@@ -45,7 +45,16 @@ License:    Apache License Version 2.0
                 <HBox alignment="CENTER_RIGHT" spacing="5.0" VBox.vgrow="NEVER">
                     <children>
                         <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                        <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%OK" />
+                        <Button fx:id="okButton" defaultButton="true" mnemonicParsing="false" onAction="#okAction"
+                                styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconOK.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
                     </children>
                 </HBox>
             </children>

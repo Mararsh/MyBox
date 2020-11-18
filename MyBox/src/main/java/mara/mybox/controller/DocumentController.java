@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.net.URI;
 import java.text.MessageFormat;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -8,11 +9,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import mara.mybox.fxml.FxmlStage;
-import static mara.mybox.fxml.FxmlStage.openScene;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -75,12 +74,7 @@ public class DocumentController extends BaseController {
 
     protected void setButton(Button button, File file, String address) {
         try {
-
-            File tmp = new File(file.getAbsolutePath() + ".downloading");
-            if (tmp.exists()) {
-                button.setText(message("Downloading"));
-                button.setDisable(true);
-            } else if (file.exists()) {
+            if (file.exists()) {
                 button.setText(message("Open"));
                 button.setDisable(false);
                 button.setOnAction(new EventHandler<ActionEvent>() {
@@ -95,9 +89,10 @@ public class DocumentController extends BaseController {
                 button.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
-                        DownloadController controller
-                                = (DownloadController) openScene(null, CommonValues.DownloadFxml);
-                        controller.download(address);
+                        try {
+                            browseURI(new URI(address));
+                        } catch (Exception e) {
+                        }
                     }
                 });
             }

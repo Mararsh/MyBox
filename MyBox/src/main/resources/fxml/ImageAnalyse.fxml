@@ -43,7 +43,7 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                                        <Label fx:id="sampledTips" maxWidth="1.7976931348623157E308" styleClass="darkRed-label" stylesheets="@../styles/MyBox.css" visible="false" HBox.hgrow="ALWAYS" />
+                                        <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                         <HBox fx:id="dataOpBox" alignment="CENTER_LEFT" spacing="5.0">
                                             <children>
                                                 <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshData">
@@ -401,24 +401,6 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </graphic>
                                                 </CheckBox>
-                                                <Button fx:id="manufactureButton" mnemonicParsing="false" onAction="#manufactureAction">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconEdit.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                                <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconInfo.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
                                                 <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -451,6 +433,15 @@ License:    Apache License Version 2.0
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
                                                                 <Image url="@../buttons/iconPicBig.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="functionsButton" mnemonicParsing="false" onMouseEntered="#popFunctionsMenu">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconFunction.png" />
                                                             </image>
                                                         </ImageView>
                                                     </graphic>

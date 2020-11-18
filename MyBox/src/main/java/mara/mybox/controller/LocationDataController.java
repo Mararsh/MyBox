@@ -201,7 +201,7 @@ public class LocationDataController extends DataAnalysisController<Location> {
             tableData.clear();
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -230,6 +230,7 @@ public class LocationDataController extends DataAnalysisController<Location> {
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -344,7 +345,7 @@ public class LocationDataController extends DataAnalysisController<Location> {
             return;
         }
         synchronized (this) {
-            if (backgroundTask != null) {
+            if (backgroundTask != null && !backgroundTask.isQuit()) {
                 return;
             }
             backgroundTask = new SingletonTask<Void>() {
@@ -365,10 +366,12 @@ public class LocationDataController extends DataAnalysisController<Location> {
 
                 @Override
                 protected void taskQuit() {
+                    super.taskQuit();
                     backgroundTask = null;
                 }
             };
             openHandlingStage(backgroundTask, Modality.WINDOW_MODAL);
+            backgroundTask.setSelf(backgroundTask);
             Thread thread = new Thread(backgroundTask);
             thread.setDaemon(true);
             thread.start();
@@ -505,7 +508,7 @@ public class LocationDataController extends DataAnalysisController<Location> {
 
     protected void ChineseHistoricalCapitals() {
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             LocationDataController currentController = this;
@@ -575,6 +578,7 @@ public class LocationDataController extends DataAnalysisController<Location> {
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -584,7 +588,7 @@ public class LocationDataController extends DataAnalysisController<Location> {
 
     protected void EuropeanGadwalls() {
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             LocationDataController currentController = this;
@@ -650,6 +654,7 @@ public class LocationDataController extends DataAnalysisController<Location> {
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -659,7 +664,7 @@ public class LocationDataController extends DataAnalysisController<Location> {
 
     protected void SpermWhales() {
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             LocationDataController currentController = this;
@@ -725,6 +730,7 @@ public class LocationDataController extends DataAnalysisController<Location> {
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();

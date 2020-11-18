@@ -20,11 +20,10 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS"
-      xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.PdfsTableController">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.PdfsTableController">
     <children>
-        <FlowPane hgap="5.0" maxWidth="1.7976931348623157E308" prefWrapLength="800.0" vgap="5.0" VBox.vgrow="NEVER">
-            <children>
+      <HBox alignment="CENTER_LEFT" spacing="5.0">
+         <children>
                 <Button fx:id="addFilesButton" mnemonicParsing="false" onAction="#addFilesAction" onMouseEntered="#popFileAdd">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -160,8 +159,14 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </CheckBox>
-            </children>
-        </FlowPane>
+            <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+            <ImageView fx:id="rightTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../buttons/iconTipsRight.png" />
+               </image>
+            </ImageView>
+         </children>
+      </HBox>
         <Label fx:id="tableCommentsLabel" layoutX="10.0" layoutY="522.0" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%PdfTableComments" wrapText="true" VBox.vgrow="NEVER" />
         <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
             <columns>
@@ -202,15 +207,23 @@ License:    Apache License Version 2.0
                 </Button>
             </children>
         </FlowPane>
-        <Label fx:id="tableLabel" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" VBox.vgrow="NEVER" />
-        <FlowPane fx:id="selectPane" hgap="5.0" layoutX="10.0" layoutY="504.0" vgap="5.0">
-            <children>
+        <Label fx:id="tableLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" VBox.vgrow="NEVER" />
+      <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
+         <children>
                 <Label text="%FilesSelector" />
-                <ComboBox fx:id="nameFiltersSelector" prefHeight="30.0" prefWidth="257.0" />
-                <TextField fx:id="tableFiltersInput" prefWidth="400.0" promptText="%SeparateBySpace" />
-                <Hyperlink fx:id="regexLink" onAction="#regexHelp" text="%RegularExpression" />
-            </children>
-        </FlowPane>
+                <ComboBox fx:id="nameFiltersSelector" prefWidth="400.0" />
+                <TextField fx:id="tableFiltersInput" maxWidth="1.7976931348623157E308" promptText="%SeparateBySpace" HBox.hgrow="ALWAYS" />
+                <Button fx:id="exampleRegexButton" mnemonicParsing="false" onMouseEntered="#popRegexExample">
+                    <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconExamples.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+         </children>
+      </HBox>
     </children>
     <padding>
         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

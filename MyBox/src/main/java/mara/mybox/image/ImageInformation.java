@@ -2,6 +2,7 @@ package mara.mybox.image;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.text.MessageFormat;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,9 @@ import javafx.scene.image.Image;
 import javax.imageio.ImageTypeSpecifier;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.tools.FileTools;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara
@@ -21,18 +25,17 @@ import mara.mybox.tools.FileTools;
 public class ImageInformation extends ImageFileInformation {
 
     protected ImageFileInformation imageFileInformation;
-    protected int index = -1, width, height, imageType;
+    protected ImageInformation self;
+    protected int index = 0, width, height, imageType, sampleScale;
     protected String colorSpace, pixelsString, loadSizeString, fileSizeString, profileName, profileCompressionMethod;
-    protected boolean isMultipleFrames, isSampled, isScaled;
+    protected boolean isMultipleFrames, isSampled, isScaled, needSample;
     protected List<ImageTypeSpecifier> imageTypes;
     protected ImageTypeSpecifier rawImageType;
     protected LinkedHashMap<String, Object> standardAttributes, nativeAttributes;
     protected Map<String, Map<String, List<Map<String, Object>>>> metaData;
     protected String metaDataXml;
-    protected Image image;
-    protected BufferedImage bufferedImage;
-    protected List<BufferedImage> thumbnails;
-    protected Map<String, Long> sizes;
+    protected Image image, thumbnail;
+    protected long availableMem, bytesSize, requiredMem, totalRequiredMem;
     protected byte[] iccProfile;
 
     public ImageInformation() {
@@ -51,18 +54,13 @@ public class ImageInformation extends ImageFileInformation {
     public ImageInformation(Image image) {
         this.image = image;
         init();
-        if (image == null) {
-            return;
-        }
-        width = (int) image.getWidth();
-        height = (int) image.getHeight();
     }
 
     private void init() {
         standardAttributes = new LinkedHashMap();
         nativeAttributes = new LinkedHashMap();
         index = 0;
-
+        self = this;
     }
 
     public ImageInformation as() {
@@ -74,6 +72,59 @@ public class ImageInformation extends ImageFileInformation {
         }
     }
 
+    public Image loadImage() {
+        if (image == null || image.getWidth() != width) {
+            image = loadImage(this);
+        }
+        return image;
+    }
+
+    public Image loadImage(int width) {
+        if (thumbnail == null || (int) (thumbnail.getWidth()) != width) {
+            thumbnail = loadImage(this, width);
+        }
+        return thumbnail;
+    }
+
+    public Image loadThumbnail() {
+        return loadImage(AppVariables.thumbnailWidth);
+    }
+
+    public boolean needSampled() {
+        countMaxWidth(this);
+        return this.needSample;
+    }
+
+    public void setBufferedImage(BufferedImage bufferedImage) {
+        if (bufferedImage != null) {
+            image = SwingFXUtils.toFXImage(bufferedImage, null);
+        }
+    }
+
+    public BufferedImage getBufferedImage() {
+        return getBufferedImage(this);
+    }
+
+    public String sampleInformation(Image image) {
+        int sampledWidth, sampledHeight, sampledSize;
+        if (image != null) {
+            sampledWidth = (int) image.getWidth();
+            sampledHeight = (int) image.getHeight();
+        } else {
+            sampledWidth = ImageInformation.countMaxWidth(this);
+            sampledHeight = sampledWidth * height / width;
+        }
+        sampledSize = (int) (sampledWidth * sampledHeight * getColorChannels() / (1014 * 1024));
+        String msg = MessageFormat.format(message("ImageTooLarge"),
+                width, height, getColorChannels(),
+                bytesSize / (1014 * 1024), requiredMem / (1014 * 1024), availableMem / (1014 * 1024),
+                sampledWidth, sampledHeight, sampledSize);
+        return msg;
+    }
+
+    /*
+        static methods
+     */
     public static ImageInformation create(String format, File file) {
         switch (format.toLowerCase()) {
             case "png":
@@ -95,74 +146,146 @@ public class ImageInformation extends ImageFileInformation {
         return ImageFileReaders.readImageFileMetaData(fileName);
     }
 
-    public static ImageInformation loadImage(File file) {
+    public static Image loadImage(File file) {
         if (file == null) {
             return null;
         }
         ImageFileInformation imageFileInformation = ImageInformation.loadImageFileInformation(file);
-        return ImageInformation.loadImage(file, imageFileInformation);
+        return ImageInformation.loadImage(imageFileInformation);
     }
 
-    public static ImageInformation loadImage(File file,
-            ImageFileInformation imageFileInformation) {
-        if (file == null || imageFileInformation == null || imageFileInformation.imageInformation == null) {
+    public static Image loadImage(ImageFileInformation imageFileInformation) {
+        if (imageFileInformation == null || imageFileInformation.imageInformation == null) {
             return null;
         }
-        return ImageInformation.loadImage(file, imageFileInformation.imageInformation.width, 0, imageFileInformation);
+        return loadImage(imageFileInformation.imageInformation);
     }
 
-    public static ImageInformation loadImage(File file, int loadWidth,
-            int frameIndex) {
+    public static Image loadImage(ImageInformation imageInfo) {
+        return loadImage(imageInfo, imageInfo.width);
+    }
+
+    public static Image loadImage(File file, int loadWidth) {
         ImageFileInformation imageFileInformation = ImageInformation.loadImageFileInformation(file);
         if (imageFileInformation == null) {
             return null;
         }
-        return ImageInformation.loadImage(file, loadWidth, frameIndex, imageFileInformation);
+        return loadImage(imageFileInformation.getImageInformation(), loadWidth);
     }
 
-    public static ImageInformation loadImage(File file, int loadWidth,
-            int frameIndex,
-            ImageFileInformation imageFileInformation) {
-        if (imageFileInformation == null || imageFileInformation.getImageInformation() == null) {
+    public static Image loadImage(ImageInformation imageInfo, int loadWidth) {
+        if (imageInfo == null) {
             return null;
         }
-        boolean needSampled = ImageFileReaders.needSampled(imageFileInformation.getImageInformation(), 1);
-        return ImageInformation.loadImage(file, loadWidth, frameIndex, imageFileInformation, needSampled);
-    }
-
-    public static ImageInformation loadImage(File file, int loadWidth,
-            int frameIndex,
-            ImageFileInformation imageFileInformation, boolean needSampled) {
-        if (imageFileInformation == null || imageFileInformation.getImageInformation() == null) {
-            return null;
-        }
-        String fileName = file.getAbsolutePath();
-        String format = FileTools.getFileSuffix(fileName).toLowerCase();
-        ImageInformation imageInfo = imageFileInformation.getImageInformation();
-        BufferedImage bufferImage;
-        if (needSampled) {
-            bufferImage = ImageFileReaders.readFileByWidth(format, fileName,
-                    imageInfo.getSizes().get("sampledWidth").intValue());
-        } else {
-            bufferImage = ImageFileReaders.readImage(file);
-        }
-        boolean needScale = false;
-        if (!"ico".equals(format) && !"icon".equals(format)) {
-            needScale = (loadWidth > 0 && loadWidth != bufferImage.getWidth());
-            if (needScale && !needSampled) {
-                bufferImage = ImageManufacture.scaleImageWidthKeep(bufferImage, loadWidth);
+        Image image = null;
+        try {
+            int checkWidth = loadWidth <= 0 ? imageInfo.getWidth() : loadWidth;
+            if (imageInfo.getImage() != null && (int) (imageInfo.getImage().getWidth()) == checkWidth) {
+                image = imageInfo.getImage();
+            } else if (imageInfo.getThumbnail() != null && (int) (imageInfo.getThumbnail().getWidth()) == checkWidth) {
+                image = imageInfo.getThumbnail();
             }
+            imageInfo.setIsSampled(false);
+            imageInfo.setIsScaled(false);
+            imageInfo.setThumbnail(null);
+            imageInfo.setImage(null);
+            int maxWidth = ImageInformation.countMaxWidth(imageInfo);
+            if (image == null) {
+                String fileName = imageInfo.getFileName();
+                String format = imageInfo.getImageFormat();
+                BufferedImage bufferedImage;
+                int finalWidth = checkWidth;
+                if (checkWidth > maxWidth) {
+                    imageInfo.setIsSampled(true);
+                    bufferedImage = ImageFileReaders.readFrameByScale(format, fileName, imageInfo.getIndex(), imageInfo.getSampleScale());
+                } else {
+                    bufferedImage = ImageFileReaders.readFrameByWidth(format, fileName, imageInfo.getIndex(), finalWidth);
+                }
+                if (bufferedImage != null) {
+                    image = SwingFXUtils.toFXImage(bufferedImage, null);
+                    imageInfo.setImageType(bufferedImage.getType());
+                }
+            }
+            if (image != null) {
+                imageInfo.setThumbnail(image);
+                if (imageInfo.getWidth() != (int) image.getWidth()) {
+                    imageInfo.setIsScaled(true);
+                } else {
+                    imageInfo.setImage(image);
+                }
+            }
+        } catch (Exception e) {
+            logger.debug(e.toString());
         }
-        Image theImage = SwingFXUtils.toFXImage(bufferImage, null);
-        imageInfo.setImage(theImage);
-        imageInfo.setImageType(bufferImage.getType());
-        imageInfo.setIsSampled(needSampled);
-        imageInfo.setIsScaled(needScale);
-        imageInfo.setWidth(bufferImage.getWidth());
-        imageInfo.setHeight(bufferImage.getHeight());
-//        imageInfo.setIsMultipleFrames(imageFileInformation.getNumberOfImages() > 1);
-        return imageInfo;
+        return image;
     }
+
+    public static BufferedImage getBufferedImage(ImageInformation info) {
+        Image image = loadImage(info);
+        if (image != null) {
+            return SwingFXUtils.fromFXImage(image, null);
+        } else {
+            return null;
+        }
+    }
+
+    public static int countMaxWidth(ImageInformation imageInfo) {
+        if (imageInfo == null) {
+            return -1;
+        }
+        try {
+            Runtime r = Runtime.getRuntime();
+            long availableMem = r.maxMemory() - (r.totalMemory() - r.freeMemory());
+            imageInfo.setAvailableMem(availableMem);
+
+            long channels = imageInfo.getColorChannels() > 0 ? imageInfo.getColorChannels() : 4;
+            long bytesSize = channels * imageInfo.getHeight() * imageInfo.getWidth();
+            long requiredMem = bytesSize * 6L;
+            imageInfo.setBytesSize(bytesSize);
+            imageInfo.setRequiredMem(requiredMem);
+
+            if (availableMem < requiredMem) {
+                int scale = (int) Math.ceil(1d * requiredMem / availableMem);
+                imageInfo.setSampleScale(scale);
+                imageInfo.setNeedSample(true);
+                return imageInfo.getWidth() / scale;
+            } else {
+                double ratio = Math.sqrt(1d * availableMem / requiredMem);
+                imageInfo.setSampleScale(1);
+                imageInfo.setNeedSample(false);
+                return (int) (imageInfo.getWidth() * ratio);
+            }
+        } catch (Exception e) {
+            return -1;
+        }
+    }
+
+    /*
+        customized get/set
+     */
+    public String getPixelsString() {
+        pixelsString = width + "x" + height;
+        return pixelsString;
+    }
+
+    public String getLoadSizeString() {
+        if (thumbnail != null) {
+            loadSizeString = (int) thumbnail.getWidth() + "x" + (int) thumbnail.getHeight();
+        } else {
+            loadSizeString = "";
+        }
+        return loadSizeString;
+    }
+
+    public String getFileSizeString() {
+        if (imageFileInformation != null) {
+            fileSizeString = FileTools.showFileSize(imageFileInformation.getFileSize());
+        } else {
+            fileSizeString = "";
+        }
+        return fileSizeString;
+    }
+
 
     /*
         get/set
@@ -171,8 +294,7 @@ public class ImageInformation extends ImageFileInformation {
         return imageFileInformation;
     }
 
-    public void setImageFileInformation(
-            ImageFileInformation imageFileInformation) {
+    public void setImageFileInformation(ImageFileInformation imageFileInformation) {
         this.imageFileInformation = imageFileInformation;
     }
 
@@ -216,20 +338,16 @@ public class ImageInformation extends ImageFileInformation {
         this.metaDataXml = metaDataXml;
     }
 
-    public Image getImage() {
-        return image;
-    }
-
     public void setImage(Image image) {
         this.image = image;
     }
 
-    public BufferedImage getBufferedImage() {
-        return bufferedImage;
+    public Image getImage() {
+        return image;
     }
 
-    public void setBufferedImage(BufferedImage bufferedImage) {
-        this.bufferedImage = bufferedImage;
+    public Image getThumbnail() {
+        return thumbnail;
     }
 
     public Map<String, Map<String, List<Map<String, Object>>>> getMetaData() {
@@ -241,44 +359,12 @@ public class ImageInformation extends ImageFileInformation {
         this.metaData = metaData;
     }
 
-    public String getPixelsString() {
-        if (imageFileInformation != null && imageFileInformation.getImageInformation() != null) {
-            pixelsString = imageFileInformation.getImageInformation().getWidth() + "x"
-                    + imageFileInformation.getImageInformation().getHeight();
-        } else if (image != null) {
-            pixelsString = (int) image.getWidth() + "x"
-                    + (int) image.getHeight();
-        } else {
-            pixelsString = "";
-        }
-        return pixelsString;
-    }
-
     public void setPixelsString(String pixelsString) {
         this.pixelsString = pixelsString;
     }
 
-    public String getLoadSizeString() {
-        if (image != null) {
-            loadSizeString = (int) image.getWidth() + "x"
-                    + (int) image.getHeight();
-        } else {
-            loadSizeString = "";
-        }
-        return loadSizeString;
-    }
-
     public void setLoadSizeString(String loadSizeString) {
         this.loadSizeString = loadSizeString;
-    }
-
-    public String getFileSizeString() {
-        if (imageFileInformation != null) {
-            fileSizeString = FileTools.showFileSize(imageFileInformation.getFileSize());
-        } else {
-            fileSizeString = "";
-        }
-        return fileSizeString;
     }
 
     public void setFileSizeString(String fileSizeString) {
@@ -309,14 +395,6 @@ public class ImageInformation extends ImageFileInformation {
         this.isScaled = isScaled;
     }
 
-    public Map<String, Long> getSizes() {
-        return sizes;
-    }
-
-    public void setSizes(Map<String, Long> sizes) {
-        this.sizes = sizes;
-    }
-
     public ImageTypeSpecifier getRawImageType() {
         return rawImageType;
     }
@@ -332,6 +410,67 @@ public class ImageInformation extends ImageFileInformation {
     public void setImageTypeSpecifiers(List<ImageTypeSpecifier> imageTypes) {
         this.imageTypes = imageTypes;
     }
+
+    public boolean isNeedSample() {
+        return needSample;
+    }
+
+    public void setNeedSample(boolean needSample) {
+        this.needSample = needSample;
+    }
+
+    public void setThumbnail(Image thumbnail) {
+        this.thumbnail = thumbnail;
+    }
+
+    public ImageInformation getSelf() {
+        return self;
+    }
+
+    public void setSelf(ImageInformation self) {
+        this.self = self;
+    }
+
+    public long getAvailableMem() {
+        return availableMem;
+    }
+
+    public void setAvailableMem(long availableMem) {
+        this.availableMem = availableMem;
+    }
+
+    public long getBytesSize() {
+        return bytesSize;
+    }
+
+    public void setBytesSize(long bytesSize) {
+        this.bytesSize = bytesSize;
+    }
+
+    public long getRequiredMem() {
+        return requiredMem;
+    }
+
+    public void setRequiredMem(long requiredMem) {
+        this.requiredMem = requiredMem;
+    }
+
+    public long getTotalRequiredMem() {
+        return totalRequiredMem;
+    }
+
+    public void setTotalRequiredMem(long totalRequiredMem) {
+        this.totalRequiredMem = totalRequiredMem;
+    }
+
+    public int getSampleScale() {
+        return sampleScale;
+    }
+
+    public void setSampleScale(int sampleScale) {
+        this.sampleScale = sampleScale;
+    }
+
 
     /*
         attributes
@@ -587,14 +726,6 @@ public class ImageInformation extends ImageFileInformation {
 
     public void setTileOffsetY(int TileOffsetY) {
         standardAttributes.put("TileOffsetY", TileOffsetY);
-    }
-
-    public List<BufferedImage> getThumbnails() {
-        return thumbnails;
-    }
-
-    public void setThumbnails(List<BufferedImage> Thumbnails) {
-        standardAttributes.put("Thumbnails", Thumbnails);
     }
 
     public boolean isIsTiled() {

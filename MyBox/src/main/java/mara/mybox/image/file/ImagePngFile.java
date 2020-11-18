@@ -133,7 +133,7 @@ public class ImagePngFile {
             ImageWriteParam param = getPara(attributes, writer);
             IIOMetadata metaData = getWriterMeta(attributes, image, writer, param);
             File tmpFile = FileTools.getTempFile();
-            try (ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
+            try ( ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                 writer.setOutput(out);
                 writer.write(metaData, new IIOImage(image, null, metaData), param);
                 out.flush();

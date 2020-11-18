@@ -4,20 +4,22 @@
 This is desktop application based on JavaFx to provide simple and easy functions. It's free and open sources.         
 
 ## What's New
-2020-10-11 v6.3.4        
--  Editors: Find/Replace by multiple lines, case-insensitive, from cursor, and with examples of regular expression; Pop doument; Close/Open right pane; Set whether update right pane synchronously.
--  OCR: Base on tesseract commandd line, support win/linux/mac, and compatible with verison 3/4/5; Set psm and all parameters, and provide parameters list.
--  Record screen: Support mac; Miaow when start and end; Set frame rate and bitrates by default.     
--  Game "Mine": Set size of grid and number of mines, and provide examlpes; Help to see all mines; Recover game when trigger mine.   
--  Major issues solved: Locate regular expression incorrectly for Find/Replace in Editor; Incorrect logic in version migration.       
-[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.4)                
-   
+2020-11-18 v6.3.5        
+-  Improve: Handle regular expression in pages for document find/replace; Opitimize algorithms of image reading; Deal big image more smoothly; 
+Adjust interface of Html Editor. 
+-  Add: Each version has itself's configuration file; Menu buttons; Document convertors; Encode/decode URL; Download first level links. 
+-  Remove: Can not change derby mode when start the tool; Delete function "Manage downloads".    
+-  Major issues solved: Document find/replace handle pages incorrectly; Source files should not be loaded for images list; 
+Infinite empty directories can happen in batch functions; Wrong in interface of Image Manufacture.         
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.5)          
+Thanks helps from [beijingjazzpanda](https://github.com/Mararsh/MyBox/issues?page=2&q=is%3Aissue+is%3Aopen).        
+
 ## Download and Execution
 Packages of each version have been uploaded at [Releases](https://github.com/Mararsh/MyBox/releases?) directory now. You can find them by clicking `releases` tab in main page of this project. 
        
     
 ### Source Codes   
-[MyBox-6.3.4-src.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.4/MyBox-6.3.4-src.zip)   34M        
+[MyBox-6.3.5-src.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.5/MyBox-6.3.5-src.zip)   35M        
 
 About structure, editing, and building of source codes, please refer to [Developement Guide](https://mararsh.github.io/MyBox_documents/en/MyBox-DevGuide-2.1-en.pdf) and 
 [Packing Steps](https://mararsh.github.io/MyBox/pack_steps_en.html)                       
@@ -28,9 +30,9 @@ Self-contain packages include all files and need not java env nor installation. 
 
 | Platform | Link | Size | Launcher |    
 | --- | --- | ---  | ---  |    
-| win | [MyBox-6.3.4-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.4/MyBox-6.3.4-win-exe.zip)  | 285MB | MyBox.exe |       
-| linux | [MyBox-6.3.4-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.3.4/MyBox-6.3.4-linux.tar.gz)  | 290MB  | bin/MyBox  |     
-| mac | [MyBox-6.3.4-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.3.4/MyBox-6.3.4-mac.dmg)  | 296MB  |  MyBox-6.3.4.app   |   
+| win | [MyBox-6.3.5-win.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.5/MyBox-6.3.5-win-exe.zip)  | 286MB | MyBox.exe |       
+| linux | [MyBox-6.3.5-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v6.3.5/MyBox-6.3.5-linux.tar.gz)  | 292MB  | bin/MyBox  |     
+| mac | [MyBox-6.3.5-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v6.3.5/MyBox-6.3.5-mac.dmg)  | 297MB  |  MyBox-6.3.5.app   |   
 
 User can double click the launcher to start MyBox or run it by command line. The default "Open Method" of image/text/PDF files can be associated to MyBox and a file can be opened directly by MyBox by double clicking the file's name.
 (File with name including non-ascii can not be opened by double clicking currently)
@@ -40,16 +42,16 @@ When JRE or JDK 14 or higher(`Oracle jdk` or `open jdk`) is installed, jar can r
   
 | Platform | Link | Size | Requirements |   
 | --- | --- | ---  | ---  |    
-| win | [MyBox-6.3.4-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.4/MyBox-6.3.4-win-jar.zip)  | 148MB | Java 14.0.1 or higher |    
-| linux | [MyBox-6.3.4-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.4/MyBox-6.3.4-linux-jar.zip)  | 154MB  | Java 14.0.1 or higher |    
-| mac | [MyBox-6.3.4-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.4/MyBox-6.3.4-mac-jar.zip)  |  151MB  | Java 14.0.1 or higher |    
+| win | [MyBox-6.3.5-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.5/MyBox-6.3.5-win-jar.zip)  | 148MB | Java 14.0.1 or higher |    
+| linux | [MyBox-6.3.5-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.5/MyBox-6.3.5-linux-jar.zip)  | 155MB  | Java 14.0.1 or higher |    
+| mac | [MyBox-6.3.5-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v6.3.5/MyBox-6.3.5-mac-jar.zip)  |  151MB  | Java 14.0.1 or higher |    
  
     
 Run following command to launch this program with Jar package: 
-<PRE><CODE>     java   -jar   MyBox-6.3.4.jar</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-6.3.5.jar</CODE></PRE>
 	
 A file path can follow the command as argument to be opened directly by MyBox. Example, following command will open the image:    
-<PRE><CODE>     java   -jar   MyBox-6.3.4.jar   /tmp/a1.jpg</CODE></PRE>   
+<PRE><CODE>     java   -jar   MyBox-6.3.5.jar   /tmp/a1.jpg</CODE></PRE>   
 
 ### Other addresses to download   
 Download from cloud storage: https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F   
@@ -61,30 +63,12 @@ A bug has been reported to jpackage dev team:
 [JDK-8232936](http://bugs.java.com/bugdatabase/view_bug.do?bug_id=JDK-8232936)   
 
 ## Migration
-If new version can not be started or runs abnormally, rename/move current data path to have new data path created automatically.       
-
-Automatically exported data files due to migration can be found under sub-directory "migration" of data path.
-
+Each version has itself's configuration file. New version can copy parameters from existed versions.      
 
 ## Configuration <a id="Config"></a>     
-
-### Default configuration file “MyBox.ini”
-The default configuration file is under "User Home". Example, `C:\Users\mara\mybox\MyBox.ini` or `/home/mara/MyBox.ini` .   
-
-The only way to change configuration file temporarily is to add parameter "config=\"FilePath\"" when run jar.
-
-### Contents of Configuration File
-Configuration file includes following parameters:
-1. Data Path, like:   
-<PRE><CODE>     MyBoxDataRoot=/home/mara/data/ </CODE></PRE>
-2. Maximum memory usage of JVM, like:    
-<PRE><CODE>     JVMmemory=-Xms3026m </CODE></PRE>
-3. Whether close "HiDPI", like:   
-<PRE><CODE>     DisableHidpi=false </CODE></PRE>
-4. Derby driver mode, like:  
-<PRE><CODE>     DerbyMode=embedded </CODE></PRE>  
-
-Modifing these parameters, except for DerbyMode, in time will cause MyBox restarts itself automatically.    
+Configuration file `MyBox_v<version>.ini` is under "User Home". Example, `C:\Users\mara\mybox\` or `/home/mara/mybox/` .        
+Add parameter "config=\"FilePath\"" when run jar to change configuration file temporarily.         
+Function "Settings" can be used to change configuration values.       
 
 # Resource Addresses        
 | Contents | Link | 
@@ -101,8 +85,8 @@ Modifing these parameters, except for DerbyMode, in time will cause MyBox restar
 # Documents
 | Name | Version | Time | Link |
 | --- | --- | --- |  --- |  
-| Development Logs | 6.3.4 | 2020-10-11 | [html](#devLog) |
-| Shortcuts | 6.3.3 | 2020-09-27 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts_en.html) |
+| Development Logs | 6.3.5 | 2020-11-18 | [html](#devLog) |
+| Shortcuts | 6.3.5 | 2020-11-18 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts_en.html) |
 | Packing Steps | 6.3.3 |  2020-9-27 | [html](https://mararsh.github.io/MyBox/pack_steps_en.html) |
 | Development Guide | 2.1 | 2020-08-27 | [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-DevGuide-2.1-en.pdf) |
 | User Guide - Overview | 5.0 | 2019-4-19 | [PDF](https://mararsh.github.io/MyBox_documents/en/MyBox-UserGuide-5.0-Overview-en.pdf) |
@@ -166,7 +150,7 @@ MyBox is based on following open sources:
 | JavaMail | email | https://javaee.github.io/javamail/ |    
  
 # Current Version
-Current version is 6.3.4. Its features are mentioned below in summary:   
+Current version is 6.3.5. Its features are mentioned below in summary:   
  
 * [Cross Platforms](#Cross-platform)
 * [Internationalized](#Internationalized)
@@ -178,7 +162,7 @@ Current version is 6.3.4. Its features are mentioned below in summary:
     - [Edit Bytes](#editBytes)
     - [Edit Html](#htmlEditor)
     - [Edit Markdown](#markdownEditor)
-    - [Others](#documentOthers)
+    - [Convert Documents](#convertDocuments)
 * [Image Tools](#imageTools)
     - [View Image](#viewImage)
     - [Browse Images](#browserImage)
@@ -219,10 +203,12 @@ Current version is 6.3.4. Its features are mentioned below in summary:
     - [Game-Mine](#gameMine)
     - [Others](#mediaOthers)
 * [Network Tools](#netTools)
+    - [Download First Level Links](#downloadFirstLevelLinks)
+    - [Snap WeiBo](#weiboSnap)
+    - [Encode/Decode URL](#encodeDecodeURL)
     - [Web Browser](#webBrowser)
     - [Security Certificates](#securityCerificates)
     - [Manage Downloads](#manageDownloads)
-    - [Snap WeiBo](#weiboSnap)
 * [Settings](#settings)
 * [Window](#windows)
 * [Helps](#helps)
@@ -252,38 +238,41 @@ Versions before v5.3 are based on Java 8.
 
 ##  Document Tools <a id="documentTools"></a> 
 
-### PDF Tools <a id="PDFTools"></a> 
-1. View PDF file in image mode. DPI can be set to adjust resolution. Page can be cropped as images.
-2. View PDF in html mode. Browse and edit html page by page. Bookmarks and thumbnails.
-3. In image mode, recognize texts in PDF(OCR). 
-4. Convert pages of PDF as images. Options like format, density, color space, compression, quality, etc.
-5. Convert PDF files as html files in batch. Options: Whether one html for each page or one html for each PDF; The way to handle fonts/images: embed, save separately, or ignore.
-6. Combine multiple images as PDF file. Options like compression, page size, margin size, header, author, etc. 
+### PDF Tools <a id="PDFTools"></a>    
+1. View PDF file in image mode. Each page is converted as an image:     
+	-  Bookmarks and thumbnails.
+	-  DPI can be set to adjust resolution.
+	-  Page can be cropped as images.
+	-  Recognize texts in PDF(OCR). 
+2. View PDF in html mode. Browse and edit html page by page.
+3. Convert PDF files in batch：
+	-  Convert pages of PDF as image files. Options like format, density, color space, compression, quality, etc.
+	-  Convert images in selected pages of PDF files, and save as new PDF files.  
+	-  Compress images in PDF files, and save as new PDF files. JPEG quality or threshold of black-white can be set.
+	-  Convert PDF files as html files in batch. Options: Whether one html for each page or one html for each PDF; The way to handle fonts/images: embed, save separately, or ignore.
+4. Extract data in batch:
+	-  Extract images in PDF file. 
+	-  Extract texts in PDF file. Splitting line can be customized.
+	-  Recognize texts(OCR) in images of PDF files. 
+5. Split a PDF file into multiple PDF files, by pages number, by files number, or by start-end list.
+6. Merge multiple PDF files.
+7. Combine multiple images as PDF file. Options like compression, page size, margin size, header, author, etc. 
    Support Chinese and tool can locate system font files. User can input path of ttf font file.
-7. Compress images in PDF file. JPEG quality or threshold of black-white can be set.
-8. Merge multiple PDF files.
-9. Split a PDF file into multiple PDF files, by pages number, by files number, or by start-end list.
-10. Extract images in PDF file. Page range can be set.
-11. Extract texts in PDF file. Splitting line can be customized.
-12. Modify PDF file's attributes like title, author, modify time, user password, owner password, user permissions, etc.
-13. Handle PDF files in batch way.
-14. Maximum main memory of PDF handling can be set.    
+8. Modify PDF file's attributes like title, author, modify time, user password, owner password, user permissions, etc.
 
 ![Snap-pdf](https://mararsh.github.io/MyBox/snap-pdf-en.jpg)       
 
 ### Editor Base<a id="editTextBase"></a>     
 1. General functions of editing, like copy/paste/cut/delete/selectAll/undo/redo/recover. And their shortcuts.
 2. Find and replace:
-	-  In current page, or in whole file.
-	-  From beginning, or from cursor.
-	-  Whether case-insensitive.
-	-  Support multiple lines.
+	-  Options: Case-insensitive, Wrap around.
+	-  Both Find String and Replace String can be multiple lines. Their line breaks are handled as file's definition.    
 	-  Support regular expression. Provide examples.
 	-  Counting.
+	-  Due to limitation of algorithm, to find regular expression in pages，assume maximum length of matched string is less than 1/16 of current available physical memory.
 3. Locate. Go to position of specified character or specified line.
 4. Filter lines:
-	-  By “Include One”, “Not Include All”, “Include All”, or “Not Include Any”.     
-	-  Support regular expression. 
+	-  Conditions: Include/Not include One, Include/Not Include All, Include/Not Include Regular Expression, Match/Not Match Regular Expression.     
 	-  Cumulative filter. 
 	-  Filtered results can be saved. Select whether include lines number.    
 5. Paginate. Fit for viewing or editing very large file, such as logs in size of several GBs.
@@ -292,16 +281,15 @@ Versions before v5.3 are based on Java 8.
 	-  Load and display first page, and scan the file in background to count characters number and lines number. 
 	   Part of functions are unavaliable while counting. Interface will be refreshed automatically after counting process is complete.
 	-  Make sure correction of finding, replacing, and filtering of strings that are across pages.
-6. Auto-save periodically.
+6. Auto-save periodically.        
 
+![Snap-textEditor](https://mararsh.github.io/MyBox/snap-textEditor-en.jpg)        
 
 ### Edit Texts <a id="editText"></a>     
 1. File charset can be either detected automatically or set manually. Target file charset can be selected to implement encoding conversion. BOM setting is supported.
 2. Detect line break automatically. Convert line break. Show lines number.      
    Support LF(Unix/Linux), CR(Apple), and CRLF(Windows).
 3. Hexadecimal codes according file's charset can be viewed, scrolled, and selected synchronously.
-
-![Snap-textEditor](https://mararsh.github.io/MyBox/snap-textEditor-en.jpg)        
 
 ### Edit Bytes <a id="editBytes"></a>     
 1. Bytes are expressed as 2 hexadecimal characters. All blanks, line breaks, and invalid values are ignored.
@@ -310,23 +298,49 @@ Versions before v5.3 are based on Java 8.
 4. Select charset to decode bytes which can be viewed, scrolled, and selected synchronously.
 5. Paginate. When break lines by bytes number, crossing pages need not concerned.
 
-### Edit Html<a id="htmlEditor"></a>     
-1. Edit local web pages or online pages in rich text. (Not support FrameSet)
-2. Edit Html codes directly. (Support FrameSet)
-3. Web browser to view contents of Editors or load the online page. Support history browsing, font zooming 、and snapshoting of the whole page as an image or a PDF file.
-4. Convert to Markdown synchronously。
+### Edit Html<a id="htmlEditor"></a>      
+1. Load/Edit local web pages or online pages, and update synchronously：
+	-  Web broswer.
+	-  Edit rich texts. (Not support FrameSet)
+	-  Edit Html codes. (Support FrameSet)
+	-  Edit Markdown.
+2. Display:
+	-  Converted texts.
+	-  Extracted headers in page.
+	-  Extracts links in page.         
+
+![Snap-htmlEditor](https://mararsh.github.io/MyBox/snap-htmlEditor-en.jpg)        
+
 
 ### Edit Markdown<a id="markdownEditor" />
 1. Provide buttons to help inputting formats.
-2. Convert to html synchronously. Options supported.
-3. Convert to text synchronously.
+2. Display, and update synchronously：
+	-  Converted htmls.
+	-  Converted html codes.
+	-  Converted texts.
+	-  Extracted headers in page.
+	-  Extracts links in page. 
 
+### Convert Documents<a id="convertDocuments" />
+1. Convert text files in batch:
+	-  Convert files' charset in batch.
+	-  Convert files' line break in batch.
+	-  Convert text as htmls.
+	-  Replace strings in text files.
+2. Convert html files in batch:
+	-  Convert htmls as Markdown.
+	-  Convert htmls as texts.
+	-  Convert htmls as PDFs.
+	-  Change htmls' encoding.
+3. Other html tools:
+	-  Snap html page. Dpi can be set. Save as one image or images in PDF.
+	-  Merge multiple pages as one html/Markdown/texts/PDF.
+	-  Generate frameset file for multiple files.
+4. Convert Markdown in batch:
+	-  Convert Markdown as html.
+	-  Convert Markdown as texts.
+	-  Convert Markdown as PDFs.
 
-### Conversion between html and Markdown<a id="htmlMarkdownConversion" />
-1. Convert files' charset in batch.
-2. Convert files' line break in batch.
-3. Conversion from html to Markdown in batch.    
-4. Conversion from Markdown to html in batch.    
 
 ## Image Tools <a id="imageTools"></a>     
 
@@ -909,7 +923,7 @@ Notice:  When use embedded engine, it is better that name of file/path is pure E
                              FIPS,Admin2,Province_State,Country_Region,Last_Update,Lat,Long_,Confirmed,Deaths,Recovered,Active,Combined_Key                                      
 	  	-  Coordinate system is WGS_84.             
 	  	-  Items whose values are all zero will be skipped.     
- 	-  COVID-19 daily data from Baidu(Global)          
+ 	-  COVID-19 daily data from Baidu(Global)           
            Download address: https://voice.baidu.com/act/newpneumonia/newpneumonia/?from=osari_pc_3       
  	-  COVID-19 historical data from Tecent(China)                
            Download address: https://api.inews.qq.com/newsqa/v1/query/pubished/daily/list?       
@@ -1121,8 +1135,43 @@ Notice: This set of functions is based on ffmpeg, and user need download ffmpeg 
 ![Snap-snap](https://mararsh.github.io/MyBox/snap-snap-en.jpg)       
 
 
-## Network Tools <a id="netTools"></a>     
+## Network Tools <a id="netTools"></a>       
 
+### Download First Level Links<a id="downloadFirstLevelLinks" />
+1. List first level links for given web address.         
+2. Download selected links:  
+        -  Select useful links. Nonsense links can create unwanted files and disturb final path index.
+        -  Use function "Set subdirectory name" to make subdirectory's name reasonbale.
+        -  Use functions "Set link name/title/address as file name" to make filenames meaningful.
+        -  Use function "Add order number before filename" to help filenames ordered.
+            MyBox can order names like "xxx9", "xxx36", "xxx157" correctly.      
+3. Options: Rewrite links in pages, Generate path index, Change pages' encoding, Merge as texts/html/Markdown/PDF.     
+4. Page style and PDF font files can be set.    
+
+### Weibo Snaping Tool <a id="weiboSnap"></a>     
+1. Save Weibo pages of any months of any Weibo accounts automatically. Pages which the account liked can be snapped and saved too.   
+2. Set the months range.
+3. Make sure whole page contents loaded. Can expand the comments and pictures in the pages.
+4. Save the pages as local html files which can not be loaded normally due to dynamic loading of WeiBo contents. They can be used to extract texts in the pages.
+5. Save the pages' snapshots as PDF files, with options like dpi, format, page size, margins, author, etc.
+6. Save all original size pictures in the pages.
+7. Display progress information in time.
+8. Stop the progress at any time. The interrupted month will be record and input as start month for next execution.
+9. Set the retry times of failure.      
+
+![Snap-weibo](https://mararsh.github.io/MyBox/snap-weibo-en.jpg)        
+
+
+### Encode/Decode URL<a id="encodeDecodeURL" />        
+This tool helps to convert a string from/to the application/x-www-form-urlencoded MIME format.      
+The following rules are applied for encoding:                    
+        -  The alphanumeric characters "a" through "z", "A" through "Z" and "0" through "9" remain the same.
+        -  The special characters ".", "-", "*", and "_" remain the same.
+        -  The space character "   " is converted into a plus sign "+".
+        -  All other characters are unsafe and are first converted into one or more bytes using some encoding scheme.           
+           Then each byte is represented by the 3-character string "%xy", where xy is the two-digit hexadecimal representation of the byte.        
+Decoding does reverse conversion.         
+ 
 ### Web Browser<a id="webBrowser" />
 1. Display pages in multiple tabs
 2. Manage visiting histories
@@ -1136,25 +1185,6 @@ Notice: This set of functions is based on ffmpeg, and user need download ffmpeg 
 4. Delete certifcates in keystore/truststore.
 5. Backup keystore/truststore automatically when update.   
 
-### Manage Downloads<a id="manageDownloads" />
-1. Manage downloads tasks in table and update progress when receive data.   
-2. Add, delete, start, cancel download tasks.  
-3. Resume broken downloads.   
-4. Read header of network address.     
-Notice: Some downloads look standstill at 0% but they are actually dragging data hardly from net, and finally they are 100% suddenly. Do not know why...       
-
-### Weibo Snaping Tool <a id="weiboSnap"></a>     
-1. Save Weibo pages of any months of any Weibo accounts automatically. Pages which the account liked can be snapped and saved too.   
-2. Set the months range.
-3. Make sure whole page contents loaded. Can expand the comments and pictures in the pages.
-4. Save the pages as local html files which can not be loaded normally due to dynamic loading of WeiBo contents. They can be used to extract texts in the pages.
-5. Save the pages' snapshots as PDF files, with options like dpi, format, page size, margins, author, etc.
-6. Save all original size pictures in the pages.
-7. Display progress information in time.
-8. Stop the progress at any time. The interrupted month will be record and input as start month for next execution.
-9. Set the retry times of failure.      
-
-![Snap-weibo](https://mararsh.github.io/MyBox/snap-weibo-en.jpg)   
 
 ## Settings <a id="settings"></a>      
 1. Interface:
@@ -1215,8 +1245,18 @@ Developers need notice: JavaFx screen is not same as physical screen and has dif
 	-  Menu Item of Colors Management: "Input MyBox Colors"
 
 
-# Development Logs <a id="devLog"></a>      
-2020-10-11 v6.3.4        
+# Development Logs <a id="devLog"></a>        
+2020-11-18 v6.3.5        
+-  Improve: Handle regular expression in pages for document find/replace; Opitimize algorithms of image reading; Deal big image more smoothly; 
+Adjust interface of Html Editor. 
+-  Add: Each version has itself's configuration file; Menu buttons; Document convertors; Encode/decode URL; Download first level links. 
+-  Remove: Can not change derby mode when start the tool; Delete function "Manage downloads".    
+-  Major issues solved: Document find/replace handle pages incorrectly; Source files should not be loaded for images list; 
+Infinite empty directories can happen in batch functions; Wrong in interface of Image Manufacture.         
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.3.5)          
+Thanks helps from [beijingjazzpanda](https://github.com/Mararsh/MyBox/issues?page=2&q=is%3Aissue+is%3Aopen).        
+
+2020-10-11 v6.3.5        
 -  Editors: Find/Replace by multiple lines, case-insensitive, from cursor, and with examples of regular expression; Pop doument; Close/Open right pane; Set whether update right pane synchronously.
 -  OCR: Base on tesseract commandd line, support win/linux/mac, and compatible with verison 3/4/5; Set psm and all parameters, and provide parameters list.
 -  Record screen: Support mac; Miaow when start and end; Set frame rate and bitrates by default.     

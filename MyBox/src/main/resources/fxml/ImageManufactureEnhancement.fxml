@@ -58,63 +58,63 @@
                 </FlowPane>
                 <CheckBox fx:id="valueCheck" mnemonicParsing="false" text="CheckBox" />
                 <Button fx:id="button" mnemonicParsing="false" text="Button" />
-            <VBox fx:id="blurABox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-               <children>
-                  <Label text="%Algorithm" />
-                  <RadioButton mnemonicParsing="false" selected="true" text="%AverageBlur">
-                     <toggleGroup>
-                        <ToggleGroup fx:id="blurGroup" />
-                     </toggleGroup>
-                  </RadioButton>
-                  <RadioButton mnemonicParsing="false" text="%GaussianBlur" toggleGroup="$blurGroup" />
-                  <RadioButton layoutX="15.0" layoutY="96.0" mnemonicParsing="false" text="%MotionBlur" toggleGroup="$blurGroup" />
-               </children>
-            </VBox>
-            <VBox fx:id="sharpenABox" layoutX="10.0" layoutY="382.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-               <children>
-                  <Label text="%Algorithm" />
-                  <RadioButton mnemonicParsing="false" selected="true" text="%UnsharpMasking">
-                     <toggleGroup>
-                        <ToggleGroup fx:id="sharpenGroup" />
-                     </toggleGroup>
-                  </RadioButton>
-                  <RadioButton mnemonicParsing="false" text="%EightNeighborLaplace" toggleGroup="$sharpenGroup" />
-                  <RadioButton layoutX="15.0" layoutY="96.0" mnemonicParsing="false" text="%FourNeighborLaplace" toggleGroup="$sharpenGroup" />
-               </children>
-            </VBox>
-            <VBox fx:id="contrastABox" layoutX="10.0" layoutY="514.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-               <children>
-                  <Label text="%Algorithm" />
-                  <RadioButton mnemonicParsing="false" selected="true" text="%HSBHistogramEqualization">
-                     <toggleGroup>
-                        <ToggleGroup fx:id="contrastGroup" />
-                     </toggleGroup>
-                  </RadioButton>
-                  <RadioButton mnemonicParsing="false" text="%GrayHistogramEqualization" toggleGroup="$contrastGroup" />
-                  <RadioButton layoutX="15.0" layoutY="96.0" mnemonicParsing="false" text="%GrayHistogramStretching" toggleGroup="$contrastGroup" />
-                  <RadioButton layoutX="15.0" layoutY="137.0" mnemonicParsing="false" text="%GrayHistogramShifting" toggleGroup="$contrastGroup" />
-               </children>
-            </VBox>
+                <VBox fx:id="blurABox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                    <children>
+                        <Label text="%Algorithm" />
+                        <RadioButton mnemonicParsing="false" selected="true" text="%AverageBlur">
+                            <toggleGroup>
+                                <ToggleGroup fx:id="blurGroup" />
+                            </toggleGroup>
+                        </RadioButton>
+                        <RadioButton mnemonicParsing="false" text="%GaussianBlur" toggleGroup="$blurGroup" />
+                        <RadioButton layoutX="15.0" layoutY="96.0" mnemonicParsing="false" text="%MotionBlur" toggleGroup="$blurGroup" />
+                    </children>
+                </VBox>
+                <VBox fx:id="sharpenABox" layoutX="10.0" layoutY="382.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                    <children>
+                        <Label text="%Algorithm" />
+                        <RadioButton mnemonicParsing="false" selected="true" text="%UnsharpMasking">
+                            <toggleGroup>
+                                <ToggleGroup fx:id="sharpenGroup" />
+                            </toggleGroup>
+                        </RadioButton>
+                        <RadioButton mnemonicParsing="false" text="%EightNeighborLaplace" toggleGroup="$sharpenGroup" />
+                        <RadioButton layoutX="15.0" layoutY="96.0" mnemonicParsing="false" text="%FourNeighborLaplace" toggleGroup="$sharpenGroup" />
+                    </children>
+                </VBox>
+                <VBox fx:id="contrastABox" layoutX="10.0" layoutY="514.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                    <children>
+                        <Label text="%Algorithm" />
+                        <RadioButton mnemonicParsing="false" selected="true" text="%HSBHistogramEqualization">
+                            <toggleGroup>
+                                <ToggleGroup fx:id="contrastGroup" />
+                            </toggleGroup>
+                        </RadioButton>
+                        <RadioButton mnemonicParsing="false" text="%GrayHistogramEqualization" toggleGroup="$contrastGroup" />
+                        <RadioButton layoutX="15.0" layoutY="96.0" mnemonicParsing="false" text="%GrayHistogramStretching" toggleGroup="$contrastGroup" />
+                        <RadioButton layoutX="15.0" layoutY="137.0" mnemonicParsing="false" text="%GrayHistogramShifting" toggleGroup="$contrastGroup" />
+                    </children>
+                </VBox>
             </children>
         </VBox>
-          <Button fx:id="okButton" onAction="#okAction">
-              <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                      <image>
-                          <Image url="@../buttons/iconOK.png" />
-                      </image>
-                  </ImageView>
-              </graphic>
-          </Button>
+        <Button fx:id="okButton" onAction="#okAction">
+            <graphic>
+                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../buttons/iconOK.png" />
+                    </image>
+                </ImageView>
+            </graphic>
+        </Button>
         <Label fx:id="commentsLabel" styleClass="blue-label," stylesheets="@../styles/MyBox.css" text="%DefineScopeAndManufacture" wrapText="true" VBox.vgrow="NEVER" />
-          <Button fx:id="demoButton" mnemonicParsing="false" onAction="#demo">
-              <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                      <image>
-                          <Image url="@../buttons/iconGo.png" />
-                      </image>
-                  </ImageView>
-              </graphic>
-          </Button>
+        <Button fx:id="demoButton" mnemonicParsing="false" onAction="#demo">
+            <graphic>
+                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../buttons/iconDemo.png" />
+                    </image>
+                </ImageView>
+            </graphic>
+        </Button>
     </children>
 </VBox>

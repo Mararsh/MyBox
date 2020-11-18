@@ -42,7 +42,7 @@ public class ImageConverterBatchController extends ImagesBatchController {
 
             super.initControls();
 
-            optionsController.initDpiBox(false);
+            optionsController.setValues(false);
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(

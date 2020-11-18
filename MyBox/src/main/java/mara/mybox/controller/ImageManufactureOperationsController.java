@@ -192,7 +192,7 @@ public class ImageManufactureOperationsController extends ImageBaseController {
         try {
             if (titledPane.getContent() == null) {
                 ImageManufactureOperationController controller
-                        = (ImageManufactureOperationController) FxmlStage.initScene(fxml);
+                        = (ImageManufactureOperationController) FxmlStage.setScene(fxml);
                 titledPane.setContent(controller.getMyScene().getRoot());
                 controller.imageController = imageController;
                 controller.scopeController = imageController.scopeController;
@@ -212,46 +212,36 @@ public class ImageManufactureOperationsController extends ImageBaseController {
     }
 
     public void resetOperationPanes() {
-        if (viewController != null) {
+        if (currentController == null) {
+            return;
+        }
+        if (viewController == currentController) {
             viewController.resetOperationPane();
-        }
-        if (copyController != null) {
+        } else if (copyController == currentController) {
             copyController.resetOperationPane();
-        }
-        if (clipboardController != null) {
+        } else if (clipboardController == currentController) {
             clipboardController.resetOperationPane();
-        }
-        if (cropController != null) {
+        } else if (cropController == currentController) {
             cropController.resetOperationPane();
-        }
-        if (scaleController != null) {
+        } else if (scaleController == currentController) {
             scaleController.resetOperationPane();
-        }
-        if (colorController != null) {
+        } else if (colorController == currentController) {
             colorController.resetOperationPane();
-        }
-        if (enhancementController != null) {
+        } else if (enhancementController == currentController) {
             enhancementController.resetOperationPane();
-        }
-        if (richTextController != null) {
+        } else if (richTextController == currentController) {
             richTextController.resetOperationPane();
-        }
-        if (textController != null) {
+        } else if (textController == currentController) {
             textController.resetOperationPane();
-        }
-        if (penController != null) {
+        } else if (penController == currentController) {
             penController.resetOperationPane();
-        }
-        if (transformController != null) {
+        } else if (transformController == currentController) {
             transformController.resetOperationPane();
-        }
-        if (arcController != null) {
+        } else if (arcController == currentController) {
             arcController.resetOperationPane();
-        }
-        if (shadowController != null) {
+        } else if (shadowController == currentController) {
             shadowController.resetOperationPane();
-        }
-        if (marginsController != null) {
+        } else if (marginsController == currentController) {
             marginsController.resetOperationPane();
         }
     }

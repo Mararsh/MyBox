@@ -29,7 +29,7 @@ import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.NetworkTools;
-import mara.mybox.tools.VisitHistoryTools;
+import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonFxValues;

@@ -37,7 +37,7 @@ License:    Apache License Version 2.0
                                     <children>
                                         <TitledPane maxWidth="1.7976931348623157E308" text="%File">
                                             <content>
-                                                <VBox spacing="5.0"> 
+                                                <VBox spacing="5.0">
                                                     <children>
                                                         <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                                                             <children>
@@ -333,7 +333,7 @@ License:    Apache License Version 2.0
                                                             </graphic>
                                                         </Button>
                                                         <Label text="%Page" />
-                                                        <TextField fx:id="pageInput" prefWidth="60.0" text="1" />
+                                                        <ComboBox fx:id="pageSelector" editable="true" prefWidth="80" />
                                                         <Label fx:id="pageLabel" />
                                                         <Button fx:id="goButton" mnemonicParsing="false" onAction="#goPageAction">
                                                             <graphic>

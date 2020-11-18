@@ -1,5 +1,6 @@
 package mara.mybox.db;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -13,12 +14,11 @@ import mara.mybox.data.VisitHistory.FileType;
 import mara.mybox.data.VisitHistory.OperationType;
 import mara.mybox.data.VisitHistory.ResourceType;
 import mara.mybox.tools.DateTools;
+import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
  * @CreateDate 2019-4-5
- * @Version 1.0
- * @Description
  * @License Apache License Version 2.0
  */
 public class TableVisitHistory extends DerbyBase {
@@ -67,7 +67,29 @@ public class TableVisitHistory extends DerbyBase {
         }
     }
 
-    public static List<VisitHistory> findList(ResultSet results) {
+    public static List<VisitHistory> checkFilesExisted(Connection conn, List<VisitHistory> records) {
+        if (records == null || records.isEmpty()) {
+            return records;
+        }
+        List<VisitHistory> valid = new ArrayList<>();
+        List<String> names = new ArrayList<>();
+        for (VisitHistory r : records) {
+            if (r.getResourceType() == ResourceType.File || r.getResourceType() == ResourceType.Path) {
+                String fname = r.getResourceValue();
+                if (!new File(fname).exists()) {
+                    delete(conn, r);
+                } else if (!names.contains(fname)) {
+                    names.add(fname);
+                    valid.add(r);
+                }
+            } else {
+                valid.add(r);
+            }
+        }
+        return valid;
+    }
+
+    public static List<VisitHistory> findList(Connection conn, ResultSet results) {
         List<VisitHistory> records = new ArrayList<>();
         try {
             while (results.next()) {
@@ -78,18 +100,18 @@ public class TableVisitHistory extends DerbyBase {
             }
         } catch (Exception e) {
             failed(e);
-            // logger.debug(e.toString());
+            logger.debug(e.toString());
         }
-        return records;
+        return checkFilesExisted(conn, records);
     }
 
-    public static List<VisitHistory> find(PreparedStatement statement) {
+    public static List<VisitHistory> find(Connection conn, PreparedStatement statement) {
         List<VisitHistory> records = new ArrayList<>();
         try ( ResultSet results = statement.executeQuery()) {
-            return findList(results);
+            records = findList(conn, results);
         } catch (Exception e) {
             failed(e);
-            // logger.debug(e.toString());
+            logger.debug(e.toString());
         }
         return records;
     }
@@ -102,7 +124,7 @@ public class TableVisitHistory extends DerbyBase {
                 if (count > 0) {
                     statement.setMaxRows(count);
                 }
-                records = find(statement);
+                records = find(conn, statement);
             }
         } catch (Exception e) {
             failed(e);
@@ -125,7 +147,7 @@ public class TableVisitHistory extends DerbyBase {
                     statement.setMaxRows(count);
                 }
                 statement.setInt(1, resourceType);
-                records = find(statement);
+                records = find(conn, statement);
             }
         } catch (Exception e) {
             failed(e);
@@ -142,6 +164,16 @@ public class TableVisitHistory extends DerbyBase {
         if (fileType < 0) {
             return records;
         }
+        if (fileType == FileType.MultipleFrames) {
+            int[] types = {FileType.Gif, FileType.Tif, FileType.MultipleFrames};
+            return find(resourceType, types, count);
+        } else if (fileType == FileType.Image) {
+            int[] types = {FileType.Image, FileType.Gif, FileType.Tif, FileType.MultipleFrames};
+            return find(resourceType, types, count);
+        } else if (fileType == FileType.Media) {
+            int[] types = {FileType.Media, FileType.Video, FileType.Audio};
+            return find(resourceType, types, count);
+        }
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             conn.setReadOnly(true);
             if (resourceType <= 0) {
@@ -152,7 +184,7 @@ public class TableVisitHistory extends DerbyBase {
                         statement.setMaxRows(count);
                     }
                     statement.setInt(1, fileType);
-                    records = find(statement);
+                    records = find(conn, statement);
                 }
             } else {
                 final String sql = " SELECT   * FROM visit_history "
@@ -164,7 +196,7 @@ public class TableVisitHistory extends DerbyBase {
                     }
                     statement.setInt(1, resourceType);
                     statement.setInt(2, fileType);
-                    records = find(statement);
+                    records = find(conn, statement);
                 }
             }
 
@@ -196,7 +228,7 @@ public class TableVisitHistory extends DerbyBase {
                 statement.setMaxRows(count);
             }
             try ( ResultSet results = statement.executeQuery(sql)) {
-                records = findList(results);
+                records = findList(conn, results);
             }
         } catch (Exception e) {
             failed(e);
@@ -205,12 +237,21 @@ public class TableVisitHistory extends DerbyBase {
         return records;
     }
 
-    public static List<VisitHistory> find(int resourceType, int fileType, int operationType,
-            int count) {
-        List<VisitHistory> records = new ArrayList<>();
-        if (operationType < 0) {
-            return records;
+    public static List<VisitHistory> find(int resourceType, int fileType, int operationType, int count) {
+        if (fileType == FileType.MultipleFrames) {
+            int[] types = {FileType.Gif, FileType.Tif, FileType.MultipleFrames};
+            return find(resourceType, types, operationType, count);
+        } else if (fileType == FileType.Image) {
+            int[] types = {FileType.Image, FileType.Gif, FileType.Tif, FileType.MultipleFrames};
+            return find(resourceType, types, operationType, count);
+        } else if (fileType == FileType.Media) {
+            int[] types = {FileType.Media, FileType.Video, FileType.Audio};
+            return find(resourceType, types, operationType, count);
         }
+        if (operationType < 0) {
+            return find(resourceType, fileType, count);
+        }
+        List<VisitHistory> records = new ArrayList<>();
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             conn.setReadOnly(true);
             if (resourceType <= 0) {
@@ -223,7 +264,7 @@ public class TableVisitHistory extends DerbyBase {
                             statement.setMaxRows(count);
                         }
                         statement.setInt(1, operationType);
-                        records = find(statement);
+                        records = find(conn, statement);
                     }
                 } else {
                     final String sql = " SELECT   * FROM visit_history "
@@ -235,7 +276,7 @@ public class TableVisitHistory extends DerbyBase {
                         }
                         statement.setInt(1, fileType);
                         statement.setInt(2, operationType);
-                        records = find(statement);
+                        records = find(conn, statement);
                     }
                 }
             } else {
@@ -249,7 +290,7 @@ public class TableVisitHistory extends DerbyBase {
                         }
                         statement.setInt(1, resourceType);
                         statement.setInt(2, operationType);
-                        records = find(statement);
+                        records = find(conn, statement);
                     }
                 } else {
                     final String sql = " SELECT   * FROM visit_history "
@@ -262,13 +303,48 @@ public class TableVisitHistory extends DerbyBase {
                         statement.setInt(1, resourceType);
                         statement.setInt(2, fileType);
                         statement.setInt(3, operationType);
-                        records = find(statement);
+                        records = find(conn, statement);
                     }
                 }
             }
         } catch (Exception e) {
             failed(e);
             // logger.debug(e.toString());
+        }
+        return records;
+    }
+
+    public static List<VisitHistory> find(int resourceType, int[] fileTypes, int operationType, int count) {
+        if (operationType < 0) {
+            return find(resourceType, fileTypes, count);
+        }
+        List<VisitHistory> records = new ArrayList<>();
+        if (fileTypes == null || fileTypes.length == 0) {
+            return records;
+        }
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
+                 Statement statement = conn.createStatement()) {
+            conn.setReadOnly(true);
+            String sql = " SELECT * FROM visit_history WHERE"
+                    + " operation_type=" + operationType
+                    + " AND ( file_type=" + fileTypes[0];
+            for (int i = 1; i < fileTypes.length; ++i) {
+                sql += " OR file_type=" + fileTypes[i];
+            }
+            sql += " )";
+            if (resourceType > 0) {
+                sql += "  AND resource_type=" + resourceType;
+            }
+            sql += " ORDER BY last_visit_time  DESC  ";
+            if (count > 0) {
+                statement.setMaxRows(count);
+            }
+            try ( ResultSet results = statement.executeQuery(sql)) {
+                records = findList(conn, results);
+            }
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
         }
         return records;
     }
@@ -287,29 +363,46 @@ public class TableVisitHistory extends DerbyBase {
         return null;
     }
 
-    public static VisitHistory find(Connection conn,
-            int resourceType, int fileType, int operationType, String value) {
-        if (conn == null
-                || resourceType < 0 || fileType < 0 || operationType < 0 || value == null) {
+    public static VisitHistory find(Connection conn, int resourceType, int fileType, int operationType, String value) {
+        if (conn == null || resourceType < 0 || operationType < 0 || value == null) {
             return null;
         }
         try {
-            final String sql = " SELECT * FROM visit_history WHERE resource_type=?"
-                    + " AND file_type=? AND operation_type=? AND  resource_value=?";
-            try ( PreparedStatement statement = conn.prepareStatement(sql)) {
-                statement.setMaxRows(1);
-                statement.setInt(1, resourceType);
-                statement.setInt(2, fileType);
-                statement.setInt(3, operationType);
-                statement.setString(4, value);
-                VisitHistory his = null;
-                try ( ResultSet results = statement.executeQuery()) {
-                    if (results.next()) {
-                        his = read(results);
+            if (fileType <= 0) {
+                final String sql = " SELECT * FROM visit_history WHERE resource_type=?"
+                        + " AND operation_type=? AND  resource_value=?";
+                try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+                    statement.setMaxRows(1);
+                    statement.setInt(1, resourceType);
+                    statement.setInt(2, operationType);
+                    statement.setString(3, value);
+                    VisitHistory his = null;
+                    try ( ResultSet results = statement.executeQuery()) {
+                        if (results.next()) {
+                            his = read(results);
+                        }
                     }
+                    return his;
                 }
-                return his;
+            } else {
+                final String sql = " SELECT * FROM visit_history WHERE resource_type=?"
+                        + " AND file_type=? AND operation_type=? AND  resource_value=?";
+                try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+                    statement.setMaxRows(1);
+                    statement.setInt(1, resourceType);
+                    statement.setInt(2, fileType);
+                    statement.setInt(3, operationType);
+                    statement.setString(4, value);
+                    VisitHistory his = null;
+                    try ( ResultSet results = statement.executeQuery()) {
+                        if (results.next()) {
+                            his = read(results);
+                        }
+                    }
+                    return his;
+                }
             }
+
         } catch (Exception e) {
             failed(e);
 //            logger.debug(e.toString());
@@ -331,7 +424,7 @@ public class TableVisitHistory extends DerbyBase {
                 }
                 statement.setInt(1, ResourceType.File);
                 statement.setInt(2, FileType.Image);
-                records = find(statement);
+                records = find(conn, statement);
             }
         } catch (Exception e) {
             failed(e);
@@ -354,7 +447,7 @@ public class TableVisitHistory extends DerbyBase {
                 }
                 statement.setInt(1, ResourceType.File);
                 statement.setInt(2, FileType.Image);
-                records = find(statement);
+                records = find(conn, statement);
             }
         } catch (Exception e) {
             failed(e);
@@ -376,7 +469,7 @@ public class TableVisitHistory extends DerbyBase {
             return false;
         }
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
-            return update(conn, resourceType, fileType, operationType, value, null);
+            return update(conn, resourceType, fileType, operationType, value, more);
         } catch (Exception e) {
             failed(e);
 //            logger.debug(e.toString());
@@ -388,8 +481,19 @@ public class TableVisitHistory extends DerbyBase {
         if (resourceType < 0 || fileType < 0 || operationType < 0 || value == null) {
             return false;
         }
+        int finalType = fileType;
+        if (fileType == FileType.MultipleFrames || fileType == FileType.Image) {
+            String v = value.toLowerCase();
+            if (v.endsWith(".gif")) {
+                finalType = FileType.Gif;
+            } else if (v.endsWith(".tif") || v.endsWith(".tiff")) {
+                finalType = FileType.Tif;
+            } else {
+                finalType = FileType.Image;
+            }
+        }
         try {
-            VisitHistory exist = find(conn, resourceType, fileType, operationType, value);
+            VisitHistory exist = find(conn, resourceType, finalType, operationType, value);
             Date d = new Date();
             if (exist != null) {
                 if (more == null) {
@@ -400,7 +504,7 @@ public class TableVisitHistory extends DerbyBase {
                         statement.setInt(1, exist.getVisitCount() + 1);
                         statement.setString(2, DateTools.datetimeToString(d));
                         statement.setInt(3, resourceType);
-                        statement.setInt(4, fileType);
+                        statement.setInt(4, finalType);
                         statement.setInt(5, operationType);
                         statement.setString(6, value);
                         return statement.executeUpdate() >= 0;
@@ -415,7 +519,7 @@ public class TableVisitHistory extends DerbyBase {
                         statement.setString(2, more);
                         statement.setString(3, DateTools.datetimeToString(d));
                         statement.setInt(4, resourceType);
-                        statement.setInt(5, fileType);
+                        statement.setInt(5, finalType);
                         statement.setInt(6, operationType);
                         statement.setString(7, value);
                         return statement.executeUpdate() >= 0;
@@ -428,7 +532,7 @@ public class TableVisitHistory extends DerbyBase {
                             + "VALUES(?, ?,?,?,?,? )";
                     try ( PreparedStatement statement = conn.prepareStatement(sql)) {
                         statement.setInt(1, resourceType);
-                        statement.setInt(2, fileType);
+                        statement.setInt(2, finalType);
                         statement.setInt(3, operationType);
                         statement.setString(4, value);
                         statement.setString(5, DateTools.datetimeToString(d));
@@ -441,7 +545,7 @@ public class TableVisitHistory extends DerbyBase {
                             + "VALUES(?, ?, ?, ?, ?, ? ,?)";
                     try ( PreparedStatement statement = conn.prepareStatement(sql)) {
                         statement.setInt(1, resourceType);
-                        statement.setInt(2, fileType);
+                        statement.setInt(2, finalType);
                         statement.setInt(3, operationType);
                         statement.setString(4, value);
                         statement.setString(5, more);
@@ -521,17 +625,34 @@ public class TableVisitHistory extends DerbyBase {
         }
     }
 
-    public static boolean delete(int resourceType, int fileType, int operationType, String value) {
+    public static boolean delete(Connection conn, int resourceType, int fileType, int operationType, String value) {
+        if (conn == null || resourceType < 0 || fileType < 0 || operationType < 0 || value == null) {
+            return false;
+        }
         final String sql = "DELETE FROM visit_history "
                 + " WHERE resource_type=? AND file_type=? "
                 + " AND operation_type=? AND resource_value=?";
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login);
-                 PreparedStatement statement = conn.prepareStatement(sql)) {
+//        logger.debug(sql);
+//        logger.debug(resourceType + " " + fileType + " " + operationType + " >>>" + value + "<<< ");
+        try ( PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setInt(1, resourceType);
             statement.setInt(2, fileType);
             statement.setInt(3, operationType);
             statement.setString(4, value);
             return statement.executeUpdate() >= 0;
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean delete(int resourceType, int fileType, int operationType, String value) {
+        if (resourceType < 0 || fileType < 0 || operationType < 0 || value == null) {
+            return false;
+        }
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            return delete(conn, resourceType, resourceType, operationType, value);
         } catch (Exception e) {
             failed(e);
             // logger.debug(e.toString());
@@ -541,6 +662,10 @@ public class TableVisitHistory extends DerbyBase {
 
     public static boolean delete(VisitHistory v) {
         return delete(v.getResourceType(), v.getFileType(), v.getOperationType(), v.getResourceValue());
+    }
+
+    public static boolean delete(Connection conn, VisitHistory v) {
+        return delete(conn, v.getResourceType(), v.getFileType(), v.getOperationType(), v.getResourceValue());
     }
 
     public static boolean clearType(int resourceType, int fileType, int operationType) {

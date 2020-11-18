@@ -118,7 +118,7 @@ public class FxmlImageManufacture {
     }
 
     // https://stackoverflow.com/questions/19548363/image-saved-in-javafx-as-jpg-is-pink-toned
-    public static BufferedImage getBufferedImage(Image image) {
+    public static BufferedImage bufferedImage(Image image) {
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
         return source;
     }
@@ -573,8 +573,7 @@ public class FxmlImageManufacture {
         return newImage;
     }
 
-    public static Image drawLines(Image image,
-            DoublePolyline polyline, Color strokeColor, int strokeWidth,
+    public static Image drawLines(Image image, DoublePolyline polyline, Color strokeColor, int strokeWidth,
             boolean dotted, float opacity) {
         if (polyline == null || strokeColor == null) {
             return image;
@@ -743,16 +742,16 @@ public class FxmlImageManufacture {
             double totalWidth = 0, totalHeight = 0, maxWidth = 0, minWidth = Integer.MAX_VALUE;
             int sizeType = imageCombine.getSizeType();
             if (sizeType == ImageCombine.CombineSizeType.AlignAsBigger) {
-                for (ImageInformation image : images) {
-                    imageWidth = image.getWidth();
+                for (ImageInformation info : images) {
+                    imageWidth = info.getWidth();
                     if (imageWidth > maxWidth) {
                         maxWidth = imageWidth;
                     }
                 }
             }
             if (sizeType == ImageCombine.CombineSizeType.AlignAsSmaller) {
-                for (ImageInformation image : images) {
-                    imageWidth = image.getWidth();
+                for (ImageInformation info : images) {
+                    imageWidth = info.getWidth();
                     if (imageWidth < minWidth) {
                         minWidth = imageWidth;
                     }
@@ -760,7 +759,7 @@ public class FxmlImageManufacture {
             }
             for (int i = 0; i < images.size(); ++i) {
                 ImageInformation imageInfo = images.get(i);
-                Image image = imageInfo.getImage();
+                Image image = imageInfo.loadImage();
                 ImageView view = new ImageView(image);
                 view.setPreserveRatio(true);
                 view.setX(x);
@@ -821,8 +820,8 @@ public class FxmlImageManufacture {
             }
             int sizeType = imageCombine.getSizeType();
             if (sizeType == ImageCombine.CombineSizeType.AlignAsBigger) {
-                for (ImageInformation image : images) {
-                    imageHeight = (int) image.getHeight();
+                for (ImageInformation info : images) {
+                    imageHeight = (int) info.getHeight();
                     if (imageHeight > maxHeight) {
                         maxHeight = imageHeight;
                     }
@@ -838,7 +837,7 @@ public class FxmlImageManufacture {
             }
             for (int i = 0; i < images.size(); ++i) {
                 ImageInformation imageInfo = images.get(i);
-                Image image = imageInfo.getImage();
+                Image image = imageInfo.loadImage();
                 ImageView view = new ImageView(image);
                 view.setPreserveRatio(true);
                 view.setX(x);

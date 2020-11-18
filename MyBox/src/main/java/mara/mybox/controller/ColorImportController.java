@@ -100,7 +100,7 @@ public class ColorImportController extends BaseController {
 
     protected void importColors(String type) {
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit() ) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -119,7 +119,7 @@ public class ColorImportController extends BaseController {
                 }
             };
             parentController.openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
+            task.setSelf(task);Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -130,7 +130,7 @@ public class ColorImportController extends BaseController {
             return;
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit() ) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -168,7 +168,7 @@ public class ColorImportController extends BaseController {
                 }
             };
             parentController.openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
+            task.setSelf(task);Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }

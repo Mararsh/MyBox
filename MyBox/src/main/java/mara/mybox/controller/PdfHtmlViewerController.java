@@ -20,10 +20,10 @@ import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.data.VisitHistory;
+import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
@@ -216,7 +216,7 @@ public class PdfHtmlViewerController extends PdfViewController {
             webEngine.load(null);
             currentPage = page;
             infoLoaded.set(false);
-            pageInput.setText("1");
+            pageSelector.setValue("1");
             pageLabel.setText("");
             thumbBox.getChildren().clear();
             outlineTree.setRoot(null);
@@ -249,7 +249,7 @@ public class PdfHtmlViewerController extends PdfViewController {
             currentPage = pdfInformation.getNumberOfPages() - 1;
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -300,13 +300,14 @@ public class PdfHtmlViewerController extends PdfViewController {
                     atBottom = false;
 
                     getMyStage().setTitle(getBaseTitle() + " " + title);
-                    pageInput.setText((currentPage + 1) + "");
+                    pageSelector.setValue((currentPage + 1) + "");
                     previousButton.setDisable(currentPage <= 0);
                     nextButton.setDisable(!infoLoaded.get() || currentPage >= (pdfInformation.getNumberOfPages() - 1));
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL,
                     MessageFormat.format(message("LoadingPageNumber"), (currentPage + 1) + ""));
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();

@@ -28,7 +28,8 @@ public class FileInformation {
     public enum FileSelectorType {
         All, ExtensionEuqalAny, ExtensionNotEqualAny,
         NameIncludeAny, NameIncludeAll, NameNotIncludeAny, NameNotIncludeAll,
-        NameMatchAnyRegularExpression, NameNotMatchAnyRegularExpression,
+        NameMatchRegularExpression, NameNotMatchRegularExpression,
+        NameIncludeRegularExpression, NameNotIncludeRegularExpression,
         FileSizeLargerThan, FileSizeSmallerThan, ModifiedTimeEarlierThan,
         ModifiedTimeLaterThan
     }
@@ -80,7 +81,7 @@ public class FileInformation {
         } else {
             this.fileSuffix = message("Others");
         }
-        this.createTime = FileTools.getFileCreateTime(fileName);
+        this.createTime = FileTools.createTime(fileName);
         this.modifyTime = file.lastModified();
     }
 
@@ -126,14 +127,27 @@ public class FileInformation {
         }
     }
 
+    /*
+        customized get/set
+     */
+    public String getFileName() {
+        if (fileName == null && file != null) {
+            fileName = file.getAbsolutePath();
+        }
+        return fileName;
+    }
+
+    public File getFile() {
+        if (file == null && fileName != null) {
+            file = new File(fileName);
+        }
+        return file;
+    }
+
 
     /*
         get/set
      */
-    public String getFileName() {
-        return fileName;
-    }
-
     public void setFileName(String fileName) {
         this.fileName = fileName;
     }
@@ -192,10 +206,6 @@ public class FileInformation {
 
     public void setFileSize(long fileSize) {
         this.fileSize = fileSize;
-    }
-
-    public File getFile() {
-        return file;
     }
 
     public void setFile(File file) {

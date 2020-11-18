@@ -4,10 +4,11 @@ import java.io.File;
 import java.text.MessageFormat;
 import javafx.fxml.FXML;
 import mara.mybox.data.PdfInformation;
+import mara.mybox.data.ProcessParameters;
 import mara.mybox.data.VisitHistory;
+import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.PdfTools;
-import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
@@ -50,12 +51,19 @@ public abstract class PdfBatchController extends BatchController<PdfInformation>
     }
 
     @Override
+    public void initValues() {
+        try {
+            super.initValues();
+            pdfsTableController = (PdfsTableController) tableController;
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    @Override
     public void initControls() {
         try {
             super.initControls();
-            allowPaused = true;
-            pdfsTableController = (PdfsTableController) tableController;
-
             if (!needUserPassword) {
                 tableView.getColumns().remove(pdfsTableController.getUserPasswordColumn());
             }
@@ -76,8 +84,11 @@ public abstract class PdfBatchController extends BatchController<PdfInformation>
             actualParameters = null;
             return false;
         }
-
-        previewParameters = copyParameters(actualParameters);
+        try {
+            previewParameters = (ProcessParameters) actualParameters.clone();
+        } catch (Exception e) {
+            return false;
+        }
         int page = 0;
         if (previewInput != null) {
             try {

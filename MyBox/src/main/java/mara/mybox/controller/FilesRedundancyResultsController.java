@@ -36,7 +36,7 @@ public class FilesRedundancyResultsController extends FilesTreeController {
 
     public void checkSelection() {
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -88,6 +88,7 @@ public class FilesRedundancyResultsController extends FilesTreeController {
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -102,7 +103,7 @@ public class FilesRedundancyResultsController extends FilesTreeController {
             return;
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -191,6 +192,7 @@ public class FilesRedundancyResultsController extends FilesTreeController {
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -255,7 +257,7 @@ public class FilesRedundancyResultsController extends FilesTreeController {
     @Override
     public void deleteAction() {
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -319,11 +321,13 @@ public class FilesRedundancyResultsController extends FilesTreeController {
                     if (digests.isEmpty()) {
                         filesTreeView.setRoot(null);
                     }
+                    super.taskQuit();
                     task = null;
                 }
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();

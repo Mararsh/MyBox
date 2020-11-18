@@ -27,15 +27,19 @@
             <children>
                 <VBox fx:id="keepBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                     <children>
-                        <RadioButton fx:id="widthRadio" mnemonicParsing="false" selected="true" text="%BaseOnWidth">
-                            <toggleGroup>
-                                <ToggleGroup fx:id="keepGroup" />
-                            </toggleGroup>
-                        </RadioButton>
-                        <RadioButton fx:id="heightRadio" contentDisplay="TOP" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%BaseOnHeight" toggleGroup="$keepGroup" />
-                        <RadioButton fx:id="largerRadio" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%BaseOnLarger" toggleGroup="$keepGroup" />
-                        <RadioButton fx:id="smallerRadio" layoutX="15.0" layoutY="97.0" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%BaseOnSmaller" toggleGroup="$keepGroup" />
-                        <RadioButton fx:id="notKeepRadio" layoutX="15.0" layoutY="138.0" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%NotKeepAspectRatio" toggleGroup="$keepGroup" />
+                  <CheckBox fx:id="keepRatioCheck" mnemonicParsing="false" text="%KeepRatio" />
+                  <VBox fx:id="ratioBox" spacing="5.0">
+                     <children>
+                              <RadioButton fx:id="widthRadio" mnemonicParsing="false" selected="true" text="%BaseOnWidth">
+                                  <toggleGroup>
+                                      <ToggleGroup fx:id="keepGroup" />
+                                  </toggleGroup>
+                              </RadioButton>
+                              <RadioButton fx:id="heightRadio" contentDisplay="TOP" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%BaseOnHeight" toggleGroup="$keepGroup" />
+                              <RadioButton fx:id="largerRadio" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%BaseOnLarger" toggleGroup="$keepGroup" />
+                              <RadioButton fx:id="smallerRadio" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%BaseOnSmaller" toggleGroup="$keepGroup" />
+                     </children>
+                  </VBox>
                     </children>
                 </VBox>
                 <ComboBox fx:id="scaleSelector" editable="true" prefWidth="200.0" />

@@ -18,15 +18,14 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tab;
 import mara.mybox.data.MediaInformation;
 import mara.mybox.data.VisitHistory;
+import mara.mybox.data.tools.VisitHistoryTools;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageInformation;
 import mara.mybox.image.ImageManufacture;
-import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
-import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
@@ -70,6 +69,20 @@ public class FFmpegMergeImagesController extends FFmpegBatchController {
     }
 
     @Override
+    public void initValues() {
+        try {
+            super.initValues();
+            targetFileController.label(message("TargetFile"))
+                    .isDirectory(false).isSource(false).mustExist(false).permitNull(false)
+                    .name(baseName + "TargetFile", false).type(VisitHistory.FileType.Media);
+            targetFileInput = targetFileController.fileInput;
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    @Override
     public void initControls() {
         try {
             super.initControls();
@@ -78,10 +91,6 @@ public class FFmpegMergeImagesController extends FFmpegBatchController {
             audiosTableController.parentFxml = myFxml;
 
             audiosData = audiosTableController.tableData;
-
-            targetFileController.label(message("TargetFile"))
-                    .isDirectory(false).isSource(false).mustExist(false).permitNull(false)
-                    .name(baseName + "TargetFile", false).type(VisitHistory.FileType.Media);
 
             ffmpegOptionsController.extensionInput.textProperty().addListener(
                     (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
@@ -130,7 +139,7 @@ public class FFmpegMergeImagesController extends FFmpegBatchController {
             }
             updateLogs(message("TargetFile") + ": " + videoFile, true);
             synchronized (this) {
-                if (task != null) {
+                if (task != null && !task.isQuit()) {
                     return;
                 }
                 processStartTime = new Date();
@@ -175,11 +184,13 @@ public class FFmpegMergeImagesController extends FFmpegBatchController {
 
                     @Override
                     protected void taskQuit() {
+                        super.taskQuit();
                         quitProcess();
                         task = null;
                     }
 
                 };
+                task.setSelf(task);
                 Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();
@@ -217,11 +228,11 @@ public class FFmpegMergeImagesController extends FFmpegBatchController {
                     }
                 }
                 try {
-                    BufferedImage image = ImageFileReaders.getBufferedImage(info);
-                    if (image == null) {
+                    BufferedImage bufferedImage = ImageInformation.getBufferedImage(info);
+                    if (bufferedImage == null) {
                         continue;
                     }
-                    BufferedImage fitImage = ImageManufacture.fitSize(image,
+                    BufferedImage fitImage = ImageManufacture.fitSize(bufferedImage,
                             ffmpegOptionsController.width, ffmpegOptionsController.height);
                     File tmpFile = FileTools.getTempFile(".png");
                     if (ImageFileWriters.writeImageFile(fitImage, tmpFile) && tmpFile.exists()) {

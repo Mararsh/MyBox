@@ -49,11 +49,10 @@ public class FilesRedundancyController extends FilesBatchController {
     @FXML
     protected Label currentLabel;
     @FXML
-    protected Button handleButton;
+    protected Button goButton;
 
     public FilesRedundancyController() {
         baseTitle = AppVariables.message("FilesRedundancy");
-        allowPaused = false;
     }
 
     @Override
@@ -83,7 +82,7 @@ public class FilesRedundancyController extends FilesBatchController {
         totalChecked = 0;
         totalRedundancy = new SimpleLongProperty(0);
         currentBox.setVisible(true);
-        handleButton.disableProperty().bind(totalRedundancy.isEqualTo(0));
+        goButton.disableProperty().bind(totalRedundancy.isEqualTo(0));
         return super.makeMoreParameters();
     }
 
@@ -251,7 +250,7 @@ public class FilesRedundancyController extends FilesBatchController {
     }
 
     @FXML
-    public void handleAction() {
+    public void goAction() {
         if (redundancy.size() > 0) {
             FilesRedundancyResultsController controller
                     = (FilesRedundancyResultsController) FxmlStage.openStage(CommonValues.FilesRedundancyResultsFxml);
@@ -267,7 +266,7 @@ public class FilesRedundancyController extends FilesBatchController {
 
     @Override
     public void donePost() {
-        handleAction();
+        goAction();
 
         showCost();
         if (operationBarController.miaoCheck.isSelected()) {

@@ -12,7 +12,7 @@ import javafx.scene.layout.Region;
 import javafx.stage.FileChooser;
 import mara.mybox.controller.BaseController;
 import mara.mybox.data.VisitHistory;
-import mara.mybox.tools.VisitHistoryTools;
+import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.message;
 
@@ -67,17 +67,25 @@ public abstract class RecentVisitMenu {
 
         List<VisitHistory> his = recentFiles();
         if (his != null && !his.isEmpty()) {
-            popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("RecentAccessedFiles"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            popMenu.getItems().add(menu);
+            List<String> files = new ArrayList<>();
             for (VisitHistory h : his) {
-                final String fname = h.getResourceValue();
-                menu = new MenuItem(fname);
-                menu.setOnAction((ActionEvent event1) -> {
-                    handleFile(fname);
-                });
+                String fname = h.getResourceValue();
+                if (!files.contains(fname)) {
+                    files.add(fname);
+                }
+            }
+            if (!files.isEmpty()) {
+                popMenu.getItems().add(new SeparatorMenuItem());
+                menu = new MenuItem(message("RecentAccessedFiles"));
+                menu.setStyle("-fx-text-fill: #2e598a;");
                 popMenu.getItems().add(menu);
+                for (String fname : files) {
+                    menu = new MenuItem(fname);
+                    menu.setOnAction((ActionEvent event1) -> {
+                        handleFile(fname);
+                    });
+                    popMenu.getItems().add(menu);
+                }
             }
         }
 
@@ -167,27 +175,27 @@ public abstract class RecentVisitMenu {
     }
 
     public List<VisitHistory> recentSourceFiles() {
-        int fileNumber = AppVariables.fileRecentNumber * 2 / 3 + 1;
-        return VisitHistoryTools.getRecentFile(SourceFileType, fileNumber);
+        int fileNumber = AppVariables.fileRecentNumber * 3 / 4;
+        return VisitHistoryTools.getRecentReadWrite(SourceFileType, fileNumber);
     }
 
     public List<VisitHistory> recentTargetFiles() {
-        int fileNumber = AppVariables.fileRecentNumber * 2 / 3 + 1;
-        return VisitHistoryTools.getRecentFile(TargetFileType, fileNumber);
+        int fileNumber = AppVariables.fileRecentNumber * 3 / 4;
+        return VisitHistoryTools.getRecentReadWrite(TargetFileType, fileNumber);
     }
 
     public List<VisitHistory> recentAddFiles() {
-        int fileNumber = AppVariables.fileRecentNumber * 2 / 3 + 1;
-        return VisitHistoryTools.getRecentFile(AddFileType, fileNumber);
+        int fileNumber = AppVariables.fileRecentNumber * 3 / 4;
+        return VisitHistoryTools.getRecentReadWrite(AddFileType, fileNumber);
     }
 
     public List<VisitHistory> recentSourcePathsBesidesFiles() {
-        int pathNumber = AppVariables.fileRecentNumber / 3 + 1;
+        int pathNumber = AppVariables.fileRecentNumber / 4 + 1;
         return VisitHistoryTools.getRecentPath(SourcePathType, pathNumber);
     }
 
     public List<VisitHistory> recentTargetPathsBesidesFiles() {
-        int pathNumber = AppVariables.fileRecentNumber / 3 + 1;
+        int pathNumber = AppVariables.fileRecentNumber / 4 + 1;
         return VisitHistoryTools.getRecentPath(TargetPathType, pathNumber);
     }
 

@@ -36,7 +36,16 @@ License:    Apache License Version 2.0
                 <HBox fx:id="currentBox" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                     <children>
                         <Label fx:id="currentLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                        <Button fx:id="handleButton" disable="true" mnemonicParsing="false" onAction="#handleAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Handle" HBox.hgrow="NEVER" />
+                        <Button fx:id="goButton" defaultButton="true" mnemonicParsing="false" onAction="#goAction"
+                                styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconGo.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
                     </children>
                     <VBox.margin>
                         <Insets bottom="10.0" left="10.0" right="10.0" />

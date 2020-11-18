@@ -51,7 +51,7 @@ public class GeographyCodeConditionTreeController extends ControlConditionTree {
     public void loadTree() {
         treeView.setRoot(null);
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit() ) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -146,7 +146,7 @@ public class GeographyCodeConditionTreeController extends ControlConditionTree {
             } else {
                 loading = openHandlingStage(task, Modality.WINDOW_MODAL);
             }
-            Thread thread = new Thread(task);
+            task.setSelf(task);Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -244,7 +244,7 @@ public class GeographyCodeConditionTreeController extends ControlConditionTree {
         }
         parent.getChildren().clear();
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit() ) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -307,7 +307,7 @@ public class GeographyCodeConditionTreeController extends ControlConditionTree {
             } else {
                 loading = openHandlingStage(task, Modality.WINDOW_MODAL);
             }
-            Thread thread = new Thread(task);
+            task.setSelf(task);Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }

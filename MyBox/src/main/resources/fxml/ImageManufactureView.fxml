@@ -51,5 +51,6 @@
                 </Label>
             </children>
         </FlowPane>
+      <CheckBox fx:id="contextMenuCheck" mnemonicParsing="false" selected="true" text="%ContextMenu" />
     </children>
 </VBox>

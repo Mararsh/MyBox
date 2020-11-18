@@ -5,9 +5,11 @@ import java.util.Arrays;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import mara.mybox.data.FileEditInformation;
 import mara.mybox.data.FileEditInformation.StringFilterType;
@@ -29,6 +31,8 @@ public class FileFilterController extends FileEditerController {
     protected ComboBox<String> filterTypeSelector;
     @FXML
     private TextField filterConditionsLabel;
+    @FXML
+    protected Button exampleRegexButton;
 
     public FileFilterController() {
         baseTitle = AppVariables.message("FileFilter");
@@ -71,15 +75,17 @@ public class FileFilterController extends FileEditerController {
                 break;
             }
         }
-        if (filterType == StringFilterType.MatchRegularExpression
-                || filterType == StringFilterType.NotMatchRegularExpression) {
-            if (regexLink != null) {
-                regexLink.setVisible(true);
+        if (filterType == FileEditInformation.StringFilterType.MatchRegularExpression
+                || filterType == FileEditInformation.StringFilterType.NotMatchRegularExpression
+                || filterType == FileEditInformation.StringFilterType.IncludeRegularExpression
+                || filterType == FileEditInformation.StringFilterType.NotIncludeRegularExpression) {
+            if (exampleRegexButton != null) {
+                exampleRegexButton.setVisible(true);
             }
             FxmlControl.removeTooltip(filterInput);
         } else {
-            if (regexLink != null) {
-                regexLink.setVisible(false);
+            if (exampleRegexButton != null) {
+                exampleRegexButton.setVisible(false);
             }
             FxmlControl.setTooltip(filterInput, new Tooltip(message("SeparateByCommaBlanksInvolved")));
         }
@@ -114,7 +120,7 @@ public class FileFilterController extends FileEditerController {
         filterConditionsLabel.setText(filterConditions);
 
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit() ) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -138,10 +144,15 @@ public class FileFilterController extends FileEditerController {
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
+            task.setSelf(task);Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
+    }
+
+    @FXML
+    public void popRegexExample(MouseEvent mouseEvent) {
+        popMenu = FxmlControl.popRegexExample(this, popMenu, filterInput, mouseEvent);
     }
 
     @FXML
@@ -161,7 +172,7 @@ public class FileFilterController extends FileEditerController {
         targetInformation.setLineBreakValue(sourceInformation.getLineBreakValue());
         targetInformation.setLineBreakWidth(sourceInformation.getLineBreakWidth());
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit() ) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -182,7 +193,7 @@ public class FileFilterController extends FileEditerController {
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
+            task.setSelf(task);Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }

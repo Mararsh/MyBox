@@ -13,13 +13,15 @@ import java.util.TimeZone;
  */
 public class CommonValues {
 
-    public static final String AppVersion = "6.3.4";
-    public static final String AppVersionDate = "2020-10-11";
+    public static final String AppVersion = "6.3.5";
+    public static final String AppVersionDate = "2020-11-18";
 
     public static final String AppDerbyUser = "mara";
     public static final String AppDerbyPassword = "mybox";
 
     public static final String MyboxFxml = "/fxml/MyBox.fxml";
+    public static final String MyBoxLoadingFxml = "/fxml/MyBoxLoading.fxml";
+    public static final String MyBoxSetupFxml = "/fxml/MyBoxSetup.fxml";
     public static final String MyBoxPropertiesFxml = "/fxml/MyBoxProperties.fxml";
     public static final String MyBoxLanguagesFxml = "/fxml/MyBoxLanguages.fxml";
     public static final String ShortcutsFxml = "/fxml/Shortcuts.fxml";
@@ -32,6 +34,7 @@ public class CommonValues {
     public static final String PdfConvertHtmlsBatchFxml = "/fxml/PdfConvertHtmlsBatch.fxml";
     public static final String PdfConvertImagesBatchFxml = "/fxml/PdfConvertImagesBatch.fxml";
     public static final String PdfCompressImagesBatchFxml = "/fxml/PdfCompressImagesBatch.fxml";
+    public static final String PdfImagesConvertBatchFxml = "/fxml/PdfImagesConvertBatch.fxml";
     public static final String PdfInformationFxml = "/fxml/PdfInformation.fxml";
     public static final String PdfOCRBatchFxml = "/fxml/PdfOCRBatch.fxml";
     public static final String ImagesCombinePdfFxml = "/fxml/ImagesCombinePdf.fxml";
@@ -92,6 +95,7 @@ public class CommonValues {
     public static final String ImageOCRFxml = "/fxml/ImageOCR.fxml";
     public static final String ImageOCRBatchFxml = "/fxml/ImageOCRBatch.fxml";
     public static final String ImagePopupFxml = "/fxml/ImagePopup.fxml";
+    public static final String ImageTooLargeFxml = "/fxml/ImageTooLarge.fxml";
     public static final String PixelsCalculatorFxml = "/fxml/PixelsCalculator.fxml";
     public static final String ConvolutionKernelManagerFxml = "/fxml/ConvolutionKernelManager.fxml";
     public static final String ManageColorsFxml = "/fxml/ColorsManage.fxml";
@@ -123,7 +127,9 @@ public class CommonValues {
     public static final String WeiboSnapingInfoFxml = "/fxml/WeiboSnapingInfo.fxml";
     public static final String TextEditerFxml = "/fxml/TextEditer.fxml";
     public static final String TextEncodingBatchFxml = "/fxml/TextEncodingBatch.fxml";
+    public static final String TextReplaceBatchFxml = "/fxml/TextReplaceBatch.fxml";
     public static final String TextLineBreakBatchFxml = "/fxml/TextLineBreakBatch.fxml";
+    public static final String TextToHtmlFxml = "/fxml/TextToHtml.fxml";
     public static final String BytesEditerFxml = "/fxml/BytesEditer.fxml";
     public static final String FileFilterFxml = "/fxml/FileFilter.fxml";
     public static final String FileCutFxml = "/fxml/FileCut.fxml";
@@ -138,12 +144,22 @@ public class CommonValues {
     public static final String BarcodeDecoderFxml = "/fxml/BarcodeDecoder.fxml";
     public static final String MarkdownEditorFxml = "/fxml/MarkdownEditor.fxml";
     public static final String MarkdownToHtmlFxml = "/fxml/MarkdownToHtml.fxml";
+    public static final String MarkdownToTextFxml = "/fxml/MarkdownToText.fxml";
+    public static final String MarkdownToPdfFxml = "/fxml/MarkdownToPdf.fxml";
     public static final String HtmlToMarkdownFxml = "/fxml/HtmlToMarkdown.fxml";
+    public static final String HtmlToTextFxml = "/fxml/HtmlToText.fxml";
+    public static final String HtmlToPdfFxml = "/fxml/HtmlToPdf.fxml";
+    public static final String HtmlToUTF8Fxml = "/fxml/HtmlToUTF8.fxml";
+    public static final String HtmlSnapFxml = "/fxml/HtmlSnap.fxml";
+    public static final String HtmlMergeAsHtmlFxml = "/fxml/HtmlMergeAsHtml.fxml";
+    public static final String HtmlMergeAsMarkdownFxml = "/fxml/HtmlMergeAsMarkdown.fxml";
+    public static final String HtmlMergeAsPDFFxml = "/fxml/HtmlMergeAsPDF.fxml";
+    public static final String HtmlMergeAsTextFxml = "/fxml/HtmlMergeAsText.fxml";
+    public static final String HtmlFramesetFxml = "/fxml/HtmlFrameset.fxml";
     public static final String MessageDigestFxml = "/fxml/MessageDigest.fxml";
     public static final String FilesCompareFxml = "/fxml/FilesCompare.fxml";
     public static final String FilesRedundancyFxml = "/fxml/FilesRedundancy.fxml";
     public static final String FilesRedundancyResultsFxml = "/fxml/FilesRedundancyResults.fxml";
-    public static final String MyBoxLoadingFxml = "/fxml/MyboxLoading.fxml";
     public static final String FilesArchiveCompressFxml = "/fxml/FilesArchiveCompress.fxml";
     public static final String FilesCompressBatchFxml = "/fxml/FilesCompressBatch.fxml";
     public static final String FileDecompressUnarchiveFxml = "/fxml/FileDecompressUnarchive.fxml";
@@ -153,6 +169,7 @@ public class CommonValues {
     public static final String WebBrowserFxml = "/fxml/WebBrowser.fxml";
     public static final String WebBrowserBoxFxml = "/fxml/WebBrowserBox.fxml";
     public static final String WebBrowserHistoryFxml = "/fxml/WebBrowserHistory.fxml";
+    public static final String HtmlConvertUrlFxml = "/fxml/HtmlConvertUrl.fxml";
     public static final String MediaPlayerFxml = "/fxml/MediaPlayer.fxml";
     public static final String MediaListFxml = "/fxml/MediaList.fxml";
     public static final String FFmpegInformationFxml = "/fxml/FFmpegInformation.fxml";
@@ -165,7 +182,9 @@ public class CommonValues {
     public static final String SecurityCertificatesFxml = "/fxml/SecurityCertificates.fxml";
     public static final String SecurityCertificateAddFxml = "/fxml/SecurityCertificateAdd.fxml";
     public static final String SecurityCertificatesBypassFxml = "/fxml/SecurityCertificatesBypass.fxml";
-    public static final String DownloadFxml = "/fxml/Download.fxml";
+    public static final String DownloadManageFxml = "/fxml/DownloadManage.fxml";
+    public static final String DownloadFirstLevelLinksFxml = "/fxml/DownloadFirstLevelLinks.fxml";
+    public static final String DownloadFirstLevelLinksSetFxml = "/fxml/DownloadFirstLevelLinksSet.fxml";
     public static final String GameElimniationFxml = "/fxml/GameElimination.fxml";
     public static final String GameMineFxml = "/fxml/GameMine.fxml";
     public static final String GeographyCodeFxml = "/fxml/GeographyCode.fxml";

@@ -9,12 +9,12 @@ import java.sql.DriverManager;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
+import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
@@ -32,7 +32,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Hyperlink;
@@ -58,10 +57,12 @@ import javafx.stage.Modality;
 import javafx.stage.Popup;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import mara.mybox.data.BaseTask;
 import mara.mybox.data.GeographyCode;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.data.VisitHistory.FileType;
+import mara.mybox.data.tools.VisitHistoryTools;
 import static mara.mybox.db.DerbyBase.dbHome;
 import static mara.mybox.db.DerbyBase.failed;
 import static mara.mybox.db.DerbyBase.login;
@@ -74,7 +75,6 @@ import mara.mybox.fxml.FxmlStage;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.NetworkTools;
-import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.MyboxDataPath;
 import static mara.mybox.value.AppVariables.getUserConfigBoolean;
@@ -93,7 +93,7 @@ import mara.mybox.value.CommonValues;
  */
 public class BaseController implements Initializable {
 
-    protected String TipsLabelKey, LastPathKey, targetPathKey, sourcePathKey, defaultPathKey, SaveAsOptionsKey;
+    protected String TipsLabelKey, LastPathKey, targetPathKey, sourcePathKey, defaultPathKey;
     protected int SourceFileType, SourcePathType, TargetFileType, TargetPathType, AddFileType, AddPathType,
             operationType, dpi;
     protected List<FileChooser.ExtensionFilter> sourceExtensionFilter, targetExtensionFilter;
@@ -101,7 +101,7 @@ public class BaseController implements Initializable {
     protected Stage myStage;
     protected Scene myScene;
     protected Alert loadingAlert;
-    protected Task<Void> task, backgroundTask;
+    protected SingletonTask<Void> task, backgroundTask;
     protected BaseController parentController, myController;
     protected Timer popupTimer, timer;
     protected Popup popup;
@@ -139,23 +139,20 @@ public class BaseController implements Initializable {
             okButton, startButton, firstButton, lastButton, previousButton, nextButton, goButton, previewButton,
             cropButton, saveAsButton, recoverButton, renameButton, tipsButton, viewButton, popButton, refButton,
             undoButton, redoButton, transparentButton, whiteButton, blackButton, playButton, stopButton,
-            selectAllButton, selectNoneButton, withdrawButton;
+            selectAllButton, selectNoneButton, withdrawButton, runButton;
     @FXML
     protected VBox paraBox;
     @FXML
     protected Label bottomLabel, tipsLabel;
     @FXML
-    protected ImageView tipsView, linksView, leftPaneControl, rightPaneControl;
-    @FXML
-    protected ChoiceBox saveAsOptionsBox;
-    @FXML
-    protected Hyperlink regexLink;
+    protected ImageView tipsView, rightTipsView, linksView, leftPaneControl, rightPaneControl;
     @FXML
     protected CheckBox topCheck, saveCloseCheck, closeRightPaneCheck;
     @FXML
-    protected ToggleGroup targetExistGroup, fileTypeGroup;
+    protected ToggleGroup saveAsGroup, targetExistGroup, fileTypeGroup;
     @FXML
-    protected RadioButton targetReplaceRadio, targetRenameRadio, targetSkipRadio;
+    protected RadioButton saveLoadRadio, saveOpenRadio, saveJustRadio,
+            targetReplaceRadio, targetRenameRadio, targetSkipRadio;
     @FXML
     protected SplitPane splitPane;
     @FXML
@@ -178,7 +175,6 @@ public class BaseController implements Initializable {
         targetPathKey = "targetPath";
         sourcePathKey = "sourcePath";
         defaultPathKey = null;
-        SaveAsOptionsKey = "SaveAsOptionsKey";
 
         sourceExtensionFilter = CommonFxValues.AllExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
@@ -309,64 +305,57 @@ public class BaseController implements Initializable {
             if (tipsView != null && TipsLabelKey != null) {
                 FxmlControl.setTooltip(tipsView, new Tooltip(message(TipsLabelKey)));
             }
+            if (rightTipsView != null && TipsLabelKey != null) {
+                FxmlControl.setTooltip(rightTipsView, new Tooltip(message(TipsLabelKey)));
+            }
 
-            if (saveAsOptionsBox != null) {
-                try {
-                    String vv = AppVariables.getUserConfigValue(SaveAsOptionsKey, SaveAsType.Load + "");
-                    if ((SaveAsType.Load + "").equals(vv)) {
-                        saveAsType = SaveAsType.Load;
-
-                    } else if ((SaveAsType.Open + "").equals(vv)) {
-                        saveAsType = SaveAsType.Open;
-
-                    } else if ((SaveAsType.None + "").equals(vv)) {
-                        saveAsType = SaveAsType.None;
+            saveAsType = SaveAsType.Open;
+            if (saveAsGroup != null && saveOpenRadio != null) {
+                String v = AppVariables.getUserConfigValue(baseName + "SaveAsType", SaveAsType.Open.name());
+                for (SaveAsType s : SaveAsType.values()) {
+                    if (v.equals(s.name())) {
+                        saveAsType = s;
+                        break;
                     }
-
-                } catch (Exception e) {
-//                logger.error(e.toString());
-                    saveAsType = SaveAsType.Load;
                 }
-
-                List<String> optionsList = Arrays.asList(message("LoadAfterSaveAs"),
-                        message("OpenAfterSaveAs"), message("JustSaveAs"));
-                saveAsOptionsBox.getItems().addAll(optionsList);
-                saveAsOptionsBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+                if (saveAsType == null || (saveLoadRadio == null && saveAsType == SaveAsType.Load)) {
+                    saveAsType = SaveAsType.Open;
+                }
+                switch (saveAsType) {
+                    case Load:
+                        saveLoadRadio.setSelected(true);
+                        break;
+                    case Open:
+                        saveOpenRadio.setSelected(true);
+                        break;
+                    case None:
+                        saveJustRadio.setSelected(true);
+                        break;
+                    default:
+                        break;
+                }
+                saveAsGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                     @Override
-                    public void changed(ObservableValue ov, Number oldValue,
-                            Number newValue) {
-                        checkSaveAsOption();
+                    public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
+                        if (saveOpenRadio.isSelected()) {
+                            saveAsType = SaveAsType.Open;
+                        } else if (saveJustRadio.isSelected()) {
+                            saveAsType = SaveAsType.None;
+                        } else if (saveLoadRadio != null && saveLoadRadio.isSelected()) {
+                            saveAsType = SaveAsType.Load;
+                        } else {
+                            saveAsType = SaveAsType.Open;
+                        }
+                        AppVariables.setUserConfigValue(baseName + "SaveAsType", saveAsType.name());
                     }
                 });
-                if (null != saveAsType) {
-                    switch (saveAsType) {
-                        case Load:
-                            saveAsOptionsBox.getSelectionModel().select(0);
-                            break;
-                        case Open:
-                            saveAsOptionsBox.getSelectionModel().select(1);
-                            break;
-                        case None:
-                            saveAsOptionsBox.getSelectionModel().select(2);
-                            break;
-                        default:
-                            break;
-                    }
-                }
-
             }
 
             if (topCheck != null) {
                 topCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
-                    public void changed(ObservableValue ov, Boolean oldValue,
-                            Boolean newValue) {
-                        if (!topCheck.isVisible() || topCheck.isDisabled()) {
-                            return;
-                        }
-                        if (getMyStage() != null) {
-                            myStage.setAlwaysOnTop(topCheck.isSelected());
-                        }
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        checkAlwaysTop();
                         AppVariables.setUserConfigValue(baseName + "Top", newValue);
                     }
                 });
@@ -442,14 +431,14 @@ public class BaseController implements Initializable {
                             controlLeftPane();
                         }
                     });
-                } else {
-                    leftPaneControl.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                        @Override
-                        public void handle(MouseEvent event) {
-                            controlLeftPane();
-                        }
-                    });
                 }
+                leftPaneControl.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        controlLeftPane();
+                    }
+                });
+                leftPaneControl.setPickOnBounds(getUserConfigBoolean("ControlSplitPanesSensitive", false));
             }
 
             if (splitPane != null && rightPane != null && rightPaneControl != null) {
@@ -460,14 +449,14 @@ public class BaseController implements Initializable {
                             controlRightPane();
                         }
                     });
-                } else {
-                    rightPaneControl.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                        @Override
-                        public void handle(MouseEvent event) {
-                            controlRightPane();
-                        }
-                    });
                 }
+                rightPaneControl.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        controlRightPane();
+                    }
+                });
+                rightPaneControl.setPickOnBounds(getUserConfigBoolean("ControlSplitPanesSensitive", false));
             }
 
         } catch (Exception e) {
@@ -481,7 +470,6 @@ public class BaseController implements Initializable {
 
     // This is called automatically after window is opened
     public void afterStageShown() {
-
         getMyStage();
     }
 
@@ -617,16 +605,21 @@ public class BaseController implements Initializable {
 
     public void toFront() {
         try {
+            if (topCheck == null || !topCheck.isVisible() || topCheck.isDisabled()) {
+                return;
+            }
+            getMyStage().toFront();
+            topCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "Top", true));
+            if (!topCheck.isSelected()) {
+                return;
+            }
             timer = new Timer();
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
                     Platform.runLater(() -> {
                         getMyStage().toFront();
-                        if (topCheck != null && topCheck.isVisible() && !topCheck.isDisabled()) {
-                            topCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "Top", true));
-                            getMyStage().setAlwaysOnTop(topCheck.isSelected());
-                        }
+                        checkAlwaysTop();
                         timer = null;
                     });
                 }
@@ -636,11 +629,30 @@ public class BaseController implements Initializable {
         }
     }
 
+    public void checkAlwaysTop() {
+        if (topCheck == null || !topCheck.isVisible() || topCheck.isDisabled()
+                || getMyStage() == null) {
+            return;
+        }
+        myStage.setAlwaysOnTop(topCheck.isSelected());
+        if (topCheck.isSelected()) {
+            popWarn(message("AlwaysTopWarning"), 5000);
+            FadeTransition fade = new FadeTransition(Duration.millis(500));
+            fade.setFromValue(1.0);
+            fade.setToValue(0f);
+            fade.setCycleCount(6);
+            fade.setAutoReverse(true);
+            fade.setNode(topCheck);
+            fade.play();
+        }
+    }
+
     public void initSplitPanes() {
         try {
             if (splitPane == null || splitPane.getDividers().isEmpty()) {
                 return;
             }
+
             if (closeRightPaneCheck != null) {
                 closeRightPaneCheck.selectedProperty().addListener(
                         (ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
@@ -866,25 +878,6 @@ public class BaseController implements Initializable {
         }
     }
 
-    public void checkSaveAsOption() {
-        switch (saveAsOptionsBox.getSelectionModel().getSelectedIndex()) {
-            case 0:
-                AppVariables.setUserConfigValue(SaveAsOptionsKey, SaveAsType.Load + "");
-                saveAsType = SaveAsType.Load;
-                break;
-            case 1:
-                AppVariables.setUserConfigValue(SaveAsOptionsKey, SaveAsType.Open + "");
-                saveAsType = SaveAsType.Open;
-                break;
-            case 2:
-                AppVariables.setUserConfigValue(SaveAsOptionsKey, SaveAsType.None + "");
-                saveAsType = SaveAsType.None;
-                break;
-            default:
-                break;
-        }
-    }
-
     public void checkSourcetPathInput() {
         try {
             final File file = new File(sourcePathInput.getText());
@@ -1005,6 +998,43 @@ public class BaseController implements Initializable {
         if (!event.isControlDown() || event.getCode() == null) {
             return;
         }
+        controlAltHandler(event);
+    }
+
+    public void altHandler(KeyEvent event) {
+        if (!event.isAltDown() || event.getCode() == null) {
+            return;
+        }
+        switch (event.getCode()) {
+            case HOME:
+                if (firstButton != null && !firstButton.isDisabled()) {
+                    firstAction();
+                }
+                return;
+            case END:
+                if (lastButton != null && !lastButton.isDisabled()) {
+                    lastAction();
+                }
+                return;
+
+            case PAGE_UP:
+                if (previousButton != null && !previousButton.isDisabled()) {
+                    previousAction();
+                }
+                return;
+            case PAGE_DOWN:
+                if (nextButton != null && !nextButton.isDisabled()) {
+                    nextAction();
+                }
+                return;
+        }
+        controlAltHandler(event);
+    }
+
+    public void controlAltHandler(KeyEvent event) {
+        if (event.getCode() == null) {
+            return;
+        }
         switch (event.getCode()) {
             case E:
                 if (startButton != null && !startButton.isDisabled()) {
@@ -1103,124 +1133,6 @@ public class BaseController implements Initializable {
 
     }
 
-    public void altHandler(KeyEvent event) {
-        if (!event.isAltDown() || event.getCode() == null) {
-            return;
-        }
-        switch (event.getCode()) {
-            case HOME:
-                if (firstButton != null && !firstButton.isDisabled()) {
-                    firstAction();
-                }
-                return;
-            case END:
-                if (lastButton != null && !lastButton.isDisabled()) {
-                    lastAction();
-                }
-                return;
-
-            case PAGE_UP:
-                if (previousButton != null && !previousButton.isDisabled()) {
-                    previousAction();
-                }
-                return;
-            case PAGE_DOWN:
-                if (nextButton != null && !nextButton.isDisabled()) {
-                    nextAction();
-                }
-                return;
-            case E:
-                if (startButton != null && !startButton.isDisabled()) {
-                    startAction();
-                } else if (okButton != null && !okButton.isDisabled()) {
-                    okAction();
-                }
-                return;
-            case N:
-                if (createButton != null && !createButton.isDisabled()) {
-                    createAction();
-                } else if (addButton != null && !addButton.isDisabled()) {
-                    addAction(null);
-                }
-                return;
-            case C:
-                if (copyButton != null && !copyButton.isDisabled()) {
-                    copyAction();
-                }
-                return;
-            case V:
-                if (pasteButton != null && !pasteButton.isDisabled()) {
-                    pasteAction();
-                }
-                return;
-            case S:
-                if (saveButton != null && !saveButton.isDisabled()) {
-                    saveAction();
-                }
-                return;
-            case D:
-                if (deleteButton != null && !deleteButton.isDisabled()) {
-                    deleteAction();
-                }
-                return;
-            case A:
-                if (allButton != null && !allButton.isDisabled()) {
-                    allAction();
-                } else if (selectAllButton != null && !selectAllButton.isDisabled()) {
-                    selectAllAction();
-                }
-                return;
-            case O:
-                if (selectNoneButton != null && !selectNoneButton.isDisabled()) {
-                    selectNoneAction();
-                }
-                return;
-            case X:
-                if (cropButton != null && !cropButton.isDisabled()) {
-                    cropAction();
-                }
-                return;
-            case G:
-                if (clearButton != null && !clearButton.isDisabled()) {
-                    clearAction();
-                }
-                return;
-            case R:
-                if (recoverButton != null && !recoverButton.isDisabled()) {
-                    recoverAction();
-                }
-                break;
-            case Z:
-                if (undoButton != null && !undoButton.isDisabled()) {
-                    undoAction();
-                }
-                return;
-            case Y:
-                if (redoButton != null && !redoButton.isDisabled()) {
-                    redoAction();
-                }
-                break;
-            case P:
-                if (popButton != null && !popButton.isDisabled()) {
-                    popAction();
-                }
-                return;
-            case W:
-                if (cancelButton != null && !cancelButton.isDisabled()) {
-                    cancelAction();
-                } else if (withdrawButton != null && !withdrawButton.isDisabled()) {
-                    withdrawAction();
-                }
-                return;
-            case MINUS:
-                setSceneFontSize(AppVariables.sceneFontSize - 1);
-                break;
-            case EQUALS:
-                setSceneFontSize(AppVariables.sceneFontSize + 1);
-        }
-
-    }
-
     public void keyHandler(KeyEvent event) {
         KeyCode code = event.getCode();
         if (code == null) {
@@ -1251,6 +1163,8 @@ public class BaseController implements Initializable {
                     setAction();
                 } else if (playButton != null && !playButton.isDisabled()) {
                     playAction();
+                } else if (runButton != null && !runButton.isDisabled()) {
+                    runAction();
                 }
                 return;
             case F2:
@@ -1512,7 +1426,6 @@ public class BaseController implements Initializable {
                 AppVariables.setUserConfigValue(conn, targetPathKey, path);
                 AppVariables.setUserConfigValue(conn, LastPathKey, path);
                 VisitHistoryTools.writePath(conn, TargetPathType, path);
-                VisitHistoryTools.readPath(conn, TargetPathType, path);
             } else {
                 String path = file.getParent();
                 String fname = file.getAbsolutePath();
@@ -1520,8 +1433,6 @@ public class BaseController implements Initializable {
                 AppVariables.setUserConfigValue(conn, LastPathKey, path);
                 VisitHistoryTools.writePath(conn, TargetPathType, path);
                 VisitHistoryTools.writeFile(conn, TargetFileType, fname);
-                VisitHistoryTools.readPath(conn, TargetPathType, path);
-                VisitHistoryTools.readFile(conn, TargetFileType, fname);
             }
         } catch (Exception e) {
             failed(e);
@@ -1550,6 +1461,32 @@ public class BaseController implements Initializable {
                 AppVariables.setUserConfigValue(conn, LastPathKey, path);
                 VisitHistoryTools.readPath(conn, SourcePathType, path);
                 VisitHistoryTools.readFile(conn, AddFileType, fname);
+            }
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+        }
+    }
+
+    public void recordFileAdded(List<File> files) {
+        if (files == null || files.isEmpty()) {
+            return;
+        }
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    String path = file.getPath();
+                    AppVariables.setUserConfigValue(conn, sourcePathKey, path);
+                    AppVariables.setUserConfigValue(conn, LastPathKey, path);
+                    VisitHistoryTools.readPath(conn, SourcePathType, path);
+                } else {
+                    String path = file.getParent();
+                    String fname = file.getAbsolutePath();
+                    AppVariables.setUserConfigValue(conn, sourcePathKey, path);
+                    AppVariables.setUserConfigValue(conn, LastPathKey, path);
+                    VisitHistoryTools.readPath(conn, SourcePathType, path);
+                    VisitHistoryTools.readFile(conn, AddFileType, fname);
+                }
             }
         } catch (Exception e) {
             failed(e);
@@ -1649,7 +1586,7 @@ public class BaseController implements Initializable {
         if (sourcePathInput != null) {
             sourcePathInput.setText(directory.getPath());
         }
-        recordFileWritten(directory);
+        recordFileOpened(directory);
     }
 
     public void openTarget(ActionEvent event) {
@@ -1735,7 +1672,7 @@ public class BaseController implements Initializable {
 
             @Override
             public List<VisitHistory> recentPaths() {
-                int pathNumber = AppVariables.fileRecentNumber / 3 + 1;
+                int pathNumber = AppVariables.fileRecentNumber / 4 + 1;
                 if (controller.getAddPathType() <= 0) {
                     controller.AddPathType = controller.SourcePathType;
                 }
@@ -1773,7 +1710,7 @@ public class BaseController implements Initializable {
 
             @Override
             public List<VisitHistory> recentPaths() {
-                int pathNumber = AppVariables.fileRecentNumber / 3 + 1;
+                int pathNumber = AppVariables.fileRecentNumber / 4 + 1;
                 if (controller.getAddPathType() <= 0) {
                     controller.AddPathType = controller.SourcePathType;
                 }
@@ -1811,7 +1748,7 @@ public class BaseController implements Initializable {
 
             @Override
             public List<VisitHistory> recentPaths() {
-                int pathNumber = AppVariables.fileRecentNumber / 3 + 1;
+                int pathNumber = AppVariables.fileRecentNumber / 4 + 1;
                 if (controller.getAddPathType() <= 0) {
                     controller.AddPathType = controller.SourcePathType;
                 }
@@ -1854,7 +1791,7 @@ public class BaseController implements Initializable {
 
             @Override
             public List<VisitHistory> recentPaths() {
-                int pathNumber = AppVariables.fileRecentNumber / 3 + 1;
+                int pathNumber = AppVariables.fileRecentNumber / 4 + 1;
                 if (controller.getAddPathType() <= 0) {
                     controller.AddPathType = controller.SourcePathType;
                 }
@@ -2043,10 +1980,11 @@ public class BaseController implements Initializable {
         }
     }
 
-    public File makeTargetFile(String sourceFile, File targetPath) {
+    //
+    public File makeTargetFile(String fileName, File targetPath) {
         try {
-            String namePrefix = FileTools.getFilePrefix(sourceFile);
-            String nameSuffix = FileTools.getFileSuffix(sourceFile);
+            String namePrefix = FileTools.getNamePrefix(fileName);
+            String nameSuffix = FileTools.getFileSuffix(fileName);
             if (targetFileType != null) {
                 nameSuffix = "." + targetFileType;
             } else if (!nameSuffix.isEmpty()) {
@@ -2058,8 +1996,7 @@ public class BaseController implements Initializable {
         }
     }
 
-    public File makeTargetFile(String namePrefix, String nameSuffix,
-            File targetPath) {
+    public File makeTargetFile(String namePrefix, String nameSuffix, File targetPath) {
         try {
             String targetPrefix = targetPath.getAbsolutePath() + File.separator + namePrefix;
             File target = new File(targetPrefix + nameSuffix);
@@ -2147,6 +2084,11 @@ public class BaseController implements Initializable {
 
     @FXML
     public void playAction() {
+
+    }
+
+    @FXML
+    public void runAction() {
 
     }
 
@@ -2308,7 +2250,7 @@ public class BaseController implements Initializable {
             return;
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -2332,6 +2274,7 @@ public class BaseController implements Initializable {
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -2372,10 +2315,9 @@ public class BaseController implements Initializable {
     }
 
     @FXML
-    public void openUserPath(ActionEvent event) {
+    public void openDataPath(ActionEvent event) {
         try {
             browseURI(new File(MyboxDataPath).toURI());
-
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -2454,7 +2396,7 @@ public class BaseController implements Initializable {
                 }
             }
 
-            if (backgroundTask != null && backgroundTask.isRunning()) {
+            if (backgroundTask != null && !backgroundTask.isQuit()) {
                 backgroundTask.cancel();
                 backgroundTask = null;
             }
@@ -2483,8 +2425,7 @@ public class BaseController implements Initializable {
     }
 
     public File chooseSaveFile(String title, File defaultPath,
-            String defaultName,
-            List<FileChooser.ExtensionFilter> filters, boolean mustHaveExtension) {
+            String defaultName, List<FileChooser.ExtensionFilter> filters, boolean mustHaveExtension) {
         try {
             FileChooser fileChooser = new FileChooser();
             if (title != null) {
@@ -2497,7 +2438,11 @@ public class BaseController implements Initializable {
             String suffix = null;
             if (filters != null) {
                 suffix = FileTools.getFileSuffix(filters.get(0).getExtensions().get(0));
+
                 fileChooser.getExtensionFilters().addAll(filters);
+            }
+            if ("*".equals(suffix)) {
+                suffix = null;
             }
             if (suffix != null) {
                 if (name == null) {
@@ -2560,8 +2505,7 @@ public class BaseController implements Initializable {
         popText(text, delay, color, "1.1em", null);
     }
 
-    public void popText(String text, int delay, String color, String size,
-            Region attach) {
+    public void popText(String text, int delay, String color, String size, Region attach) {
         try {
             if (popup != null) {
                 popup.hide();
@@ -2667,6 +2611,7 @@ public class BaseController implements Initializable {
                 myScene = thisPane.getScene();
                 if (myScene != null) {
                     myStage = (Stage) myScene.getWindow();
+                    myStage.setUserData(this);
                 }
             }
         }
@@ -2688,13 +2633,11 @@ public class BaseController implements Initializable {
         }
     }
 
-    public LoadingController openHandlingStage(final Task<?> task,
-            Modality block) {
+    public LoadingController openHandlingStage(final Task<?> task, Modality block) {
         return openHandlingStage(task, block, null);
     }
 
-    public LoadingController openHandlingStage(final Task<?> task,
-            Modality block, String info) {
+    public LoadingController openHandlingStage(final Task<?> task, Modality block, String info) {
         try {
             final LoadingController controller
                     = FxmlStage.openLoadingStage(getMyStage(), block, task, info);
@@ -2790,12 +2733,12 @@ public class BaseController implements Initializable {
                 recordFileOpened(path);
             } else if (result.get() == buttonBrowse) {
                 final ImagesBrowserController controller = FxmlStage.openImagesBrowser(getMyStage());
-                if (controller != null && sourceFile != null) {
+                if (controller != null) {
                     controller.loadFiles(fileNames);
                 }
             } else if (result.get() == buttonBrowseNew) {
                 final ImagesBrowserController controller = FxmlStage.openImagesBrowser(null);
-                if (controller != null && sourceFile != null) {
+                if (controller != null) {
                     controller.loadFiles(fileNames);
                 }
             }
@@ -2863,12 +2806,6 @@ public class BaseController implements Initializable {
             }
         }
 
-        @Override
-        protected void taskQuit() {
-            endTime = new Date();
-            task = null;    // Notice: This must be done in each task!! Replace as real task name!
-        }
-
     };
 
     /*
@@ -2884,6 +2821,10 @@ public class BaseController implements Initializable {
 
     public Pane getThisPane() {
         return thisPane;
+    }
+
+    public String getBaseName() {
+        return baseName;
     }
 
     public String getLastPathKey() {
@@ -2954,11 +2895,11 @@ public class BaseController implements Initializable {
         this.popMenu = popMenu;
     }
 
-    public Task<Void> getTask() {
+    public SingletonTask<Void> getTask() {
         return task;
     }
 
-    public void setTask(Task<Void> task) {
+    public void setTask(SingletonTask<Void> task) {
         this.task = task;
     }
 

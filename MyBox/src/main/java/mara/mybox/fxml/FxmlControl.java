@@ -16,7 +16,6 @@ import java.util.TimeZone;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -55,6 +54,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Popup;
 import javafx.stage.PopupWindow;
@@ -63,10 +63,13 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
+import mara.mybox.controller.BaseController;
+import mara.mybox.data.BaseTask;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.tools.FileTools.getFileSuffix;
+import mara.mybox.tools.HtmlTools;
 import mara.mybox.tools.MediaTools;
 import mara.mybox.tools.SoundTools;
 import mara.mybox.value.AppVariables;
@@ -218,9 +221,9 @@ public class FxmlControl {
     }
 
     public static void playClip(final String file, final String userFile) {
-        Task miaoTask = new Task<Void>() {
+        BaseTask miaoTask = new BaseTask<Void>() {
             @Override
-            protected Void call() {
+            protected boolean handle() {
                 try {
                     File sound = FxmlControl.getInternalFile(file, "sound", userFile);
                     FloatControl control = SoundTools.getControl(sound);
@@ -228,7 +231,7 @@ public class FxmlControl {
                     player.start();
                 } catch (Exception e) {
                 }
-                return null;
+                return true;
             }
         };
         Thread thread = new Thread(miaoTask);
@@ -237,16 +240,16 @@ public class FxmlControl {
     }
 
     public static void playClip(final File file) {
-        Task miaoTask = new Task<Void>() {
+        BaseTask miaoTask = new BaseTask<Void>() {
             @Override
-            protected Void call() {
+            protected boolean handle() {
                 try {
                     FloatControl control = SoundTools.getControl(file);
                     Clip player = SoundTools.playback(file, control.getMaximum() * 0.6f);
                     player.start();
                 } catch (Exception e) {
                 }
-                return null;
+                return true;
             }
         };
         Thread thread = new Thread(miaoTask);
@@ -1147,7 +1150,8 @@ public class FxmlControl {
         }
     }
 
-    public static ContextMenu popRegexExample(ContextMenu inPopMenu, TextInputControl input, MouseEvent mouseEvent) {
+    public static ContextMenu popRegexExample(BaseController parent, ContextMenu inPopMenu,
+            TextInputControl input, MouseEvent mouseEvent) {
         try {
             if (inPopMenu != null && inPopMenu.isShowing()) {
                 inPopMenu.hide();
@@ -1181,7 +1185,7 @@ public class FxmlControl {
                     "[A-Za-z0-9]+      " + message("EnglishAndNumber"),
                     "\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*      " + message("Email"),
                     "(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\\d{8}      " + message("PhoneNumber"),
-                    "[a-zA-z]+://[^\\s]* 或 ^http://([\\w-]+\\.)+[\\w-]+(/[\\w-./?%&=]*)?      " + message("URL"),
+                    "[a-zA-z]+://[^\\s]*       " + message("URL"),
                     "\\n\\s*\\r      " + message("BlankLine"),
                     "\\d+\\.\\d+\\.\\d+\\.\\d+      " + message("IP")
             ));
@@ -1195,6 +1199,13 @@ public class FxmlControl {
                 });
                 popMenu.getItems().add(menu);
             }
+
+            popMenu.getItems().add(new SeparatorMenuItem());
+            menu = new MenuItem(message("AboutRegularExpression"));
+            menu.setOnAction((ActionEvent event) -> {
+                parent.regexHelp();
+            });
+            popMenu.getItems().add(menu);
 
             popMenu.getItems().add(new SeparatorMenuItem());
             menu = new MenuItem(message("PopupClose"));
@@ -1245,6 +1256,60 @@ public class FxmlControl {
         }
         PixelReader pixelReader = view.getImage().getPixelReader();
         return pixelReader.getColor((int) p.getX(), (int) p.getY());
+    }
+
+    public static ContextMenu popHtmlStyle(MouseEvent mouseEvent,
+            BaseController controller, ContextMenu inPopMenu, WebEngine webEngine) {
+        try {
+            if (inPopMenu != null && inPopMenu.isShowing()) {
+                inPopMenu.hide();
+            }
+            final ContextMenu popMenu = new ContextMenu();
+            popMenu.setAutoHide(true);
+            String baseName = controller == null ? "" : controller.getBaseName();
+            MenuItem menu;
+            for (HtmlTools.HtmlStyle style : HtmlTools.HtmlStyle.values()) {
+                menu = new MenuItem(message(style.name()));
+                menu.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        try {
+                            AppVariables.setUserConfigValue(baseName + "HtmlStyle", style.name());
+                            if (webEngine == null) {
+                                return;
+                            }
+                            Object c = webEngine.executeScript("document.documentElement.outerHTML");
+                            if (c == null) {
+                                return;
+                            }
+                            String html = (String) c;
+                            html = HtmlTools.setStyle(html, style);
+                            webEngine.loadContent(html);
+                        } catch (Exception e) {
+                            logger.error(e.toString());
+                        }
+                    }
+                });
+                popMenu.getItems().add(menu);
+            }
+
+            popMenu.getItems().add(new SeparatorMenuItem());
+            menu = new MenuItem(message("PopupClose"));
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    popMenu.hide();
+                }
+            });
+            popMenu.getItems().add(menu);
+
+            FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
+            return popMenu;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
     }
 
 }

@@ -97,7 +97,7 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
     @FXML
     public void rotateRight() {
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit() ) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -121,7 +121,7 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
                 }
             };
             imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
+            task.setSelf(task);Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -130,7 +130,7 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
     @FXML
     public void rotateLeft() {
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit() ) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -155,7 +155,7 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
 
             };
             imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
+            task.setSelf(task);Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -164,7 +164,7 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
     @FXML
     public void horizontalAction() {
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit() ) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -188,7 +188,7 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
 
             };
             imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
+            task.setSelf(task);Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -197,7 +197,7 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
     @FXML
     public void verticalAction() {
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit() ) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -221,7 +221,7 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
 
             };
             imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
+            task.setSelf(task);Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -230,7 +230,7 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
     @FXML
     public void shearAction() {
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit() ) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -254,7 +254,7 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
 
             };
             imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
+            task.setSelf(task);Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -268,7 +268,7 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
     @Override
     public void okAction() {
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit() ) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -293,7 +293,7 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
                 }
             };
             imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
+            task.setSelf(task);Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }

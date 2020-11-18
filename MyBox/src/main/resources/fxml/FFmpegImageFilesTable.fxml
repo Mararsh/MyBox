@@ -183,7 +183,15 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-                <Hyperlink fx:id="regexLink" onAction="#regexHelp" text="%RegularExpression" />
+                <Button fx:id="exampleRegexButton" mnemonicParsing="false" onMouseEntered="#popRegexExample">
+                    <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconExamples.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
             </children>
         </FlowPane>
         <FlowPane fx:id="setPDFPane" hgap="5.0" vgap="5.0">

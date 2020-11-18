@@ -150,7 +150,7 @@ License:    Apache License Version 2.0
                                                                 <Insets left="60.0" />
                                                             </HBox.margin>
                                                         </CheckBox>
-                                          <CheckBox fx:id="invertCheck" layoutX="608.0" layoutY="10.0" mnemonicParsing="false" text="%Invert" />
+                                                        <CheckBox fx:id="invertCheck" layoutX="608.0" layoutY="10.0" mnemonicParsing="false" text="%Invert" />
                                                     </children>
                                                 </HBox>
                                                 <HBox alignment="CENTER_LEFT" spacing="10.0">
@@ -172,11 +172,11 @@ License:    Apache License Version 2.0
                                         </Label>
                                         <HBox fx:id="actionBox" alignment="CENTER_RIGHT" spacing="10.0">
                                             <children>
-                                                <Button fx:id="testButton" mnemonicParsing="false" onAction="#testAction">
+                                                <Button fx:id="demoButton" mnemonicParsing="false" onAction="#demo">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
-                                                                <Image url="@../buttons/iconGo.png" />
+                                                                <Image url="@../buttons/iconExamples.png" />
                                                             </image>
                                                         </ImageView>
                                                     </graphic>
@@ -185,7 +185,16 @@ License:    Apache License Version 2.0
                                                 <Button mnemonicParsing="false" onAction="#oneAction" text="1" />
                                                 <Button fx:id="gaussButton" mnemonicParsing="false" onAction="#gaussianDistribution" text="%GaussianDistribution" />
                                                 <Button mnemonicParsing="false" onAction="#normalization" text="%Normalization" />
-                                                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Save" />
+                                                <Button fx:id="saveButton"   defaultButton="true" mnemonicParsing="false" onAction="#saveAction" HBox.hgrow="NEVER"
+                                                        styleClass="big" stylesheets="@../styles/MyBox.css" >
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconSave.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
                                             </children>
                                         </HBox>
                                     </children>

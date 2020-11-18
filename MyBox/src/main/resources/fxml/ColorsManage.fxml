@@ -97,6 +97,11 @@ License:    Apache License Version 2.0
                         <CheckBox fx:id="mergeCheck" mnemonicParsing="false" text="%Merge" />
                         <CheckBox fx:id="allColumnsCheck" mnemonicParsing="false" selected="true" text="%AllColumns" />
                         <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                  <ImageView fx:id="rightTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/iconTipsRight.png" />
+                     </image>
+                  </ImageView>
                         <Button fx:id="csvButton" mnemonicParsing="false" onMouseEntered="#popCsvMenu">
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

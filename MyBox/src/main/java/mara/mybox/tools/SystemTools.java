@@ -383,4 +383,90 @@ public class SystemTools {
 
     }
 
+    public static List<String> ttfList() {
+        List<String> names = new ArrayList<>();
+        try {
+            String os = os();
+            File ttfPath = null;
+            switch (os) {
+                case "win":
+                    ttfPath = new File("C:/Windows/Fonts/");
+                    names = ttfList(ttfPath);
+                    break;
+                case "linux":
+                    ttfPath = new File("/usr/share/fonts/");
+                    names = ttfList(ttfPath);
+                    break;
+                case "mac":
+                    ttfPath = new File("/Library/Fonts/");
+                    names = ttfList(ttfPath);
+                    ttfPath = new File("/System/Library/Fonts/");
+                    names.addAll(ttfList(ttfPath));
+                    break;
+            }
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+        return names;
+    }
+
+    public static List<String> ttfList(File path) {
+        List<String> names = new ArrayList<>();
+        try {
+            if (path == null || !path.exists() || !path.isDirectory()) {
+                return names;
+            }
+            File[] fontFiles = path.listFiles();
+            if (fontFiles == null || fontFiles.length == 0) {
+                return names;
+            }
+            for (File file : fontFiles) {
+                String filename = file.getAbsolutePath();
+                if (!filename.toLowerCase().endsWith(".ttf")) {
+                    continue;
+                }
+                names.add(filename);
+            }
+            String pathname = path.getAbsolutePath() + File.separator;
+            List<String> cnames = new ArrayList<>();
+            if (names.contains(pathname + "STSONG.TTF")) {
+                cnames.add(pathname + "STSONG.TTF" + "      华文宋体");
+            }
+            if (names.contains(pathname + "simfang.ttf")) {
+                cnames.add(pathname + "simfang.ttf" + "      仿宋");
+            }
+            if (names.contains(pathname + "simkai.ttf")) {
+                cnames.add(pathname + "simkai.ttf" + "      楷体");
+            }
+
+            if (names.contains(pathname + "STKAITI.TTF")) {
+                cnames.add(pathname + "STKAITI.TTF" + "      华文楷体");
+            }
+            if (names.contains(pathname + "SIMLI.TTF")) {
+                cnames.add(pathname + "SIMLI.TTF" + "      隶书");
+            }
+            if (names.contains(pathname + "STXINWEI.TTF")) {
+                cnames.add(pathname + "STXINWEI.TTF" + "      华文新魏");
+            }
+            if (names.contains(pathname + "SIMYOU.TTF")) {
+                cnames.add(pathname + "SIMYOU.TTF" + "      幼圆");
+            }
+            if (names.contains(pathname + "FZSTK.TTF")) {
+                cnames.add(pathname + "FZSTK.TTF" + "      方正舒体");
+            }
+
+            if (names.contains(pathname + "STXIHEI.TTF")) {
+                cnames.add(pathname + "STXIHEI.TTF" + "      华文细黑");
+            }
+            if (names.contains(pathname + "simhei.ttf")) {
+                cnames.add(pathname + "simhei.ttf" + "      黑体");
+            }
+            names.addAll(0, cnames);
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+        return names;
+    }
+
 }

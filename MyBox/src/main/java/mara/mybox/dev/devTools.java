@@ -37,9 +37,6 @@ public class devTools {
             parentController.popError(message("WrongSourceCodesPath"));
             return null;
         }
-        if (parentController.getTask() != null) {
-            return null;
-        }
         BaseTask<Void> task = new BaseTask<Void>() {
 
             @Override
@@ -58,7 +55,7 @@ public class devTools {
                     List<String> keeps = Arrays.asList(
                             "iconChina.png", "iconMyBox.png", "iconRGB.png", "iconWOW.png", "iconSaveAs.png",
                             "iconHue.png", "iconColorWheel.png", "iconColor.png", "iconButterfly.png", "iconPalette.png",
-                            "iconMosaic.png", "iconBlackWhite.png", "iconGrayscale.png", "iconMap.png"
+                            "iconMosaic.png", "iconBlackWhite.png", "iconGrayscale.png", "iconMap.png", "iconSynchronize.png"
                     );
                     File[] icons = new File(lightBluePath).listFiles();
                     BufferedImage src = null;
@@ -119,13 +116,9 @@ public class devTools {
 
             @Override
             protected void whenSucceeded() {
-                parentController.popInformation(message("TakeEffectNextTime"));
+                parentController.popInformation(message("TakeEffectWhenReboot"));
             }
 
-            @Override
-            protected void taskQuit() {
-                parentController.setTask(null);
-            }
         };
         return task;
     }

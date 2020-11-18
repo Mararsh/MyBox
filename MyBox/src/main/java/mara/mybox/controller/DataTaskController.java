@@ -8,6 +8,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import mara.mybox.fxml.ControlStyle;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
@@ -21,7 +22,6 @@ public class DataTaskController extends BaseController {
 
     protected int logsMaxLines, logsTotalLines, logsCacheLines = 200;
     protected boolean cancelled;
-    protected String cancelName;
 
     @FXML
     protected TabPane tabPane;
@@ -35,7 +35,6 @@ public class DataTaskController extends BaseController {
     protected TextField maxLinesinput;
 
     public DataTaskController() {
-        cancelName = "Cancel";
     }
 
     @Override
@@ -54,16 +53,21 @@ public class DataTaskController extends BaseController {
         if (!checkOptions()) {
             return;
         }
-        if (message(cancelName).equals(startButton.getText())) {
+        if (startButton.getUserData() != null) {
+            ControlStyle.setIcon(startButton, ControlStyle.getIcon("iconStart.png"));
+            startButton.applyCss();
+            startButton.setUserData(null);
             cancelAction();
             return;
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             initLogs();
-            startButton.setText(message(cancelName));
+            ControlStyle.setIcon(startButton, ControlStyle.getIcon("iconStop.png"));
+            startButton.applyCss();
+            startButton.setUserData("started");
             tabPane.getSelectionModel().select(logsTab);
             startTask();
         }
@@ -86,17 +90,20 @@ public class DataTaskController extends BaseController {
 
             @Override
             protected void whenCanceled() {
-                updateLogs(message(cancelName), true);
+                updateLogs(message("Cancel"), true);
             }
 
             @Override
             protected void finalAction() {
-                startButton.setText(message("Start"));
+                ControlStyle.setIcon(startButton, ControlStyle.getIcon("iconStart.png"));
+                startButton.applyCss();
+                startButton.setUserData(null);
                 updateLogs(message("Completed") + " " + message("Cost")
                         + " " + DateTools.datetimeMsDuration(new Date(), startTime),
                         true);
             }
         };
+        task.setSelf(task);
         Thread thread = new Thread(task);
         thread.setDaemon(true);
         thread.start();
@@ -113,6 +120,7 @@ public class DataTaskController extends BaseController {
     public void cancelAction() {
         if (task != null) {
             task.cancel();
+            task = null;
         }
     }
 

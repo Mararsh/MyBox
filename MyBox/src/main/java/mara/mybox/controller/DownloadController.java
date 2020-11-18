@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -43,6 +44,8 @@ public class DownloadController extends BaseController {
 
     public final static ObservableList<DownloadItem> downloadData = FXCollections.observableArrayList();
 
+    protected File downloadPath;
+
     @FXML
     protected Button downloadButton;
     @FXML
@@ -58,6 +61,16 @@ public class DownloadController extends BaseController {
 
     public DownloadController() {
         baseTitle = AppVariables.message("DownloadManage");
+    }
+
+    @Override
+    public void initValues() {
+        try {
+            super.initValues();
+            downloadPath = AppVariables.MyBoxDownloadsPath;
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
     }
 
     @Override
@@ -272,6 +285,8 @@ public class DownloadController extends BaseController {
             protected void whenFailed() {
                 if (error != null) {
                     popError(error);
+                } else {
+                    popFailed();
                 }
             }
 
@@ -301,7 +316,7 @@ public class DownloadController extends BaseController {
                 this.item = inItem;
                 readHead = false;
                 address = inAddress;
-                targetPath = AppVariables.MyBoxDownloadsPath;
+                targetPath = downloadPath;
                 if (!super.initValues()) {
                     return false;
                 }
@@ -367,7 +382,7 @@ public class DownloadController extends BaseController {
 
     @FXML
     public void openAction() {
-        browseURI(AppVariables.MyBoxDownloadsPath.toURI());
+        browseURI(downloadPath.toURI());
     }
 
 }

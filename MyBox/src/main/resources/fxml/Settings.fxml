@@ -120,6 +120,7 @@ License:    Apache License Version 2.0
                                                     </toggleGroup>
                                                 </RadioButton>
                                                 <RadioButton fx:id="splitPaneClickedRadio" layoutX="124.0" layoutY="15.0" mnemonicParsing="false" onAction="#setSplitPaneClicked" text="%MouseClicked" toggleGroup="$splitPanesGroup" />
+                                    <CheckBox fx:id="splitPaneSensitiveCheck" mnemonicParsing="false" onAction="#splitPaneSensitive" text="%Sensitive" />
                                             </children>
                                         </HBox>
                                     </children>
@@ -161,6 +162,40 @@ License:    Apache License Version 2.0
                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                     <image>
                                                                         <Image url="@../buttons/iconRecover.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
+                                                    </children>
+                                                </HBox>
+                                            </children>
+                                        </VBox>
+                                        <VBox layoutX="20.0" layoutY="30.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                            <children>
+                                                <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="180.0" spacing="10.0">
+                                                    <children>
+                                                        <Label text="%WebConnectTimeout" />
+                                                        <TextField fx:id="webConnectTimeoutInput" prefWidth="160.0" />
+                                                        <Button fx:id="okWebConnectTimeoutButton" mnemonicParsing="false" onAction="#okWebConnectTimeout">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/iconOK.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
+                                                    </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER_LEFT" layoutX="15.0" layoutY="15.0" spacing="10.0">
+                                                    <children>
+                                                        <Label text="%WebReadTimeout" />
+                                                        <TextField fx:id="webReadTimeoutInput" prefWidth="160.0" />
+                                                        <Button fx:id="okWebReadTimeoutButton1" mnemonicParsing="false" onAction="#okWebReadTimeout">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/iconOK.png" />
                                                                     </image>
                                                                 </ImageView>
                                                             </graphic>
@@ -453,7 +488,7 @@ License:    Apache License Version 2.0
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button fx:id="settingsOpenButton" mnemonicParsing="false" onAction="#openUserPath">
+                        <Button fx:id="settingsOpenButton" mnemonicParsing="false" onAction="#openDataPath">
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                     <image>

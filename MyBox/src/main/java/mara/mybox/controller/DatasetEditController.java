@@ -16,9 +16,9 @@ import javafx.scene.paint.Paint;
 import mara.mybox.data.Dataset;
 import mara.mybox.data.Era;
 import mara.mybox.data.VisitHistory;
+import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.db.TableDataset;
 import mara.mybox.fxml.FxmlControl;
-import mara.mybox.tools.VisitHistoryTools;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import static mara.mybox.value.AppVariables.tableMessage;
@@ -58,8 +58,6 @@ public class DatasetEditController extends BaseController {
         AddPathType = VisitHistory.FileType.Image;
 
         sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Image);
-        SaveAsOptionsKey = VisitHistoryTools.getSaveAsOptionsKey(VisitHistory.FileType.Image);
-
         sourceExtensionFilter = CommonFxValues.ImageExtensionFilter;
     }
 

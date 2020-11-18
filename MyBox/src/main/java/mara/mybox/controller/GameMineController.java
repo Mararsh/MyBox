@@ -68,7 +68,6 @@ public class GameMineController extends BaseController {
     protected DropShadow dropShadow;
     protected String mineImage;
     protected long startTime, cost;
-    protected HtmlTools.HtmlStyle htmlStyle;
 
     protected enum ChessStatus {
         Disclosed, Closed, Marked, Suspected
@@ -83,14 +82,14 @@ public class GameMineController extends BaseController {
     @FXML
     protected Label chessesLabel, scoreLabel, imageLabel;
     @FXML
-    protected ComboBox<String> chessSizeSelector, htmlStyleSelector, historiesNumberSelector;
+    protected ComboBox<String> chessSizeSelector, historiesNumberSelector;
     @FXML
     protected RadioButton guaiRadio, benRadio, guaiBenRadio, muteRadio, customizedSoundRadio,
             deadRenewRadio, deadChanceRadio, deadPromptRadio,
             speed1Radio, speed2Radio, speed3Radio, speed5Radio,
             flush0Radio, flush1Radio, flush2Radio, flush3Radio;
     @FXML
-    protected Button helpMeButton, replayButton, newGameButton, okHistoriesNumberButton;
+    protected Button helpMeButton, okHistoriesNumberButton;
     @FXML
     protected TextField boardWidthInput, boardHeightInput, boardMinesInput;
     @FXML
@@ -140,21 +139,6 @@ public class GameMineController extends BaseController {
             boardMinesInput.setText(minesNumber + "");
             chessSizeSelector.setValue(chessSize + "");
 
-            htmlStyleSelector.getItems().addAll(Arrays.asList(message("Default"), message("Console"), message("Blackboard")));
-            htmlStyleSelector.getSelectionModel().selectedItemProperty().addListener(
-                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                        if (message("Console").equals(newValue)) {
-                            htmlStyle = HtmlTools.HtmlStyle.Console;
-                        } else if (message("Blackboard").equals(newValue)) {
-                            htmlStyle = HtmlTools.HtmlStyle.Blackboard;
-                        } else {
-                            htmlStyle = HtmlTools.HtmlStyle.Default;
-                        }
-                        AppVariables.setUserConfigValue("HtmlStyle", newValue);
-                        loadRecords();
-                    });
-            htmlStyleSelector.getSelectionModel().select(AppVariables.getUserConfigValue("HtmlStyle", message("Default")));
-
             historiesNumberSelector.getItems().addAll(Arrays.asList("50", "100", "200", "20", "10", "300", "500"));
             historiesNumberSelector.getSelectionModel().select(AppVariables.getUserConfigValue(baseName + "HistoriesNumber", "50"));
 
@@ -167,7 +151,7 @@ public class GameMineController extends BaseController {
             });
 
             loadRecords();
-            newGame();
+            createAction();
 
         } catch (Exception e) {
             logger.debug(e.toString());
@@ -183,10 +167,13 @@ public class GameMineController extends BaseController {
                     helpMe();
                     return;
                 case N:
-                    newGame();
+                    createAction();
                     return;
                 case R:
-                    replay();
+                    recoverAction();
+                    return;
+                case Z:
+                    undoAction();
                     return;
             }
         }
@@ -196,13 +183,15 @@ public class GameMineController extends BaseController {
     @Override
     public void afterSceneLoaded() {
         super.afterSceneLoaded();
-        FxmlControl.setTooltip(replayButton, "r / R");
-        FxmlControl.setTooltip(newGameButton, "n / N");
+        FxmlControl.setTooltip(undoButton, message("Undo") + "\nz / Z");
+        FxmlControl.setTooltip(recoverButton, message("Replay") + "\nr / R");
+        FxmlControl.setTooltip(createButton, message("NewGame") + "\nn / N");
         FxmlControl.setTooltip(helpMeButton, message("HelpMe") + "\nh / H");
     }
 
     @FXML
-    public void newGame() {
+    @Override
+    public void createAction() {
         if (isSettingValues) {
             return;
         }
@@ -446,7 +435,7 @@ public class GameMineController extends BaseController {
     protected void loadRecords() {
         hisView.getEngine().loadContent("");
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit() ) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -475,6 +464,7 @@ public class GameMineController extends BaseController {
                         ));
                         table.add(row);
                     }
+                    String htmlStyle = AppVariables.getUserConfigValue(baseName + "HtmlStyle", "Default");
                     html = HtmlTools.html(null, htmlStyle, StringTable.tableDiv(table));
                     return true;
                 }
@@ -485,16 +475,21 @@ public class GameMineController extends BaseController {
                 }
             };
 //            openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
+            task.setSelf(task);Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
     }
 
     @FXML
+    public void popLinksStyle(MouseEvent mouseEvent) {
+        popMenu = FxmlControl.popHtmlStyle(mouseEvent, this, popMenu, hisView.getEngine());
+    }
+
+    @FXML
     public void clearHistories() {
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit() ) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -510,7 +505,7 @@ public class GameMineController extends BaseController {
                 }
             };
 //            openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
+            task.setSelf(task);Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -529,7 +524,7 @@ public class GameMineController extends BaseController {
                 displayChess(v, h, ChessStatus.Disclosed, chessValue[v][h]);
             }
         }
-        recoverButton.setDisable(false);
+        undoButton.setDisable(false);
     }
 
     @FXML
@@ -539,18 +534,18 @@ public class GameMineController extends BaseController {
                 displayChess(v, h, ChessStatus.Disclosed, chessValue[v][h]);
             }
         }
-        recoverButton.setDisable(false);
+        undoButton.setDisable(false);
     }
 
     @FXML
     @Override
-    public void recoverAction() {
+    public void undoAction() {
         for (int v = 0; v < vNumber; ++v) {
             for (int h = 0; h < hNumber; ++h) {
                 displayChess(v, h);
             }
         }
-        recoverButton.setDisable(true);
+        undoButton.setDisable(true);
         if (disclosed > 0) {
             timing();
         }
@@ -637,9 +632,10 @@ public class GameMineController extends BaseController {
     }
 
     @FXML
-    public void replay() {
+    @Override
+    public void recoverAction() {
         if (chessValue == null) {
-            newGame();
+            createAction();
             return;
         }
         resetPanes();
@@ -660,7 +656,7 @@ public class GameMineController extends BaseController {
         disclosed = 0;
         minesLabel.setText(0 + "/" + total);
         timeLabel.setText("");
-        recoverButton.setDisable(true);
+        undoButton.setDisable(true);
     }
 
     @FXML
@@ -772,7 +768,7 @@ public class GameMineController extends BaseController {
         AppVariables.setUserConfigInt(baseName + "BoardHeight", vNumber);
         AppVariables.setUserConfigInt(baseName + "BoardWidth", hNumber);
         AppVariables.setUserConfigInt(baseName + "MinesNumber", minesNumber);
-        newGame();
+        createAction();
         tabPane.getSelectionModel().select(playTab);
     }
 
@@ -793,7 +789,7 @@ public class GameMineController extends BaseController {
             return;
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit() ) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -809,7 +805,7 @@ public class GameMineController extends BaseController {
                 }
             };
 //            openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
+            task.setSelf(task);Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }

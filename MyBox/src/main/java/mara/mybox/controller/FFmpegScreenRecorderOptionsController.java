@@ -38,7 +38,7 @@ public class FFmpegScreenRecorderOptionsController extends FFmpegOptionsControll
     protected String os, audioDevice, vcodec, title;
 
     @FXML
-    protected CheckBox audioCheck, videoCheck;
+    protected CheckBox audioCheck, videoCheck, miaoCheck;
     @FXML
     protected VBox videoBox;
     @FXML

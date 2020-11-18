@@ -40,9 +40,9 @@ public abstract class ImagesListController extends ImageViewerController {
     protected CheckBox viewCheck;
 
     @Override
-    public void initControls() {
+    public void initValues() {
         try {
-            super.initControls();
+            super.initValues();
             if (tableController != null) {
                 tableController.parentController = this;
                 tableController.parentFxml = myFxml;
@@ -50,6 +50,15 @@ public abstract class ImagesListController extends ImageViewerController {
                 tableData = tableController.tableData;
                 tableView = tableController.tableView;
             }
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+    @Override
+    public void initControls() {
+        try {
+            super.initControls();
             initOptionsSection();
         } catch (Exception e) {
             logger.debug(e.toString());
@@ -61,11 +70,16 @@ public abstract class ImagesListController extends ImageViewerController {
             if (optionsBox != null) {
                 optionsBox.setDisable(true);
             }
-            tableBox.setDisable(true);
-
-            saveButton.disableProperty().bind(Bindings.isEmpty(tableController.tableData));
-            saveAsButton.disableProperty().bind(saveButton.disableProperty());
-            if (viewButton != null) {
+            if (tableBox != null) {
+                tableBox.setDisable(true);
+            }
+            if (saveButton != null && tableController != null) {
+                saveButton.disableProperty().bind(Bindings.isEmpty(tableController.tableData));
+            }
+            if (saveAsButton != null && tableController != null) {
+                saveAsButton.disableProperty().bind(saveButton.disableProperty());
+            }
+            if (viewButton != null && saveAsButton != null) {
                 viewButton.disableProperty().bind(saveButton.disableProperty());
             }
         } catch (Exception e) {
@@ -167,8 +181,11 @@ public abstract class ImagesListController extends ImageViewerController {
             if (sourceFile != null) {
                 title = getBaseTitle() + " " + sourceFile.getAbsolutePath();
                 if (imageInformation != null) {
-                    if (imageInformation.isIsSampled()) {
-                        title += " - " + message("Sampled");
+                    if (imageInformation.getImageFileInformation().getNumberOfImages() > 1) {
+                        title += " - " + message("Image") + " " + imageInformation.getIndex();
+                    }
+                    if (imageInformation.isIsScaled()) {
+                        title += " - " + message("Scaled");
                     }
                 }
             } else {
@@ -260,7 +277,9 @@ public abstract class ImagesListController extends ImageViewerController {
                 optionsBox.setDisable(false);
             }
             tableBox.setDisable(false);
-            getMyStage().setTitle(getBaseTitle() + "  " + sourceFile.getAbsolutePath());
+            if (sourceFile != null) {
+                getMyStage().setTitle(getBaseTitle() + "  " + sourceFile.getAbsolutePath());
+            }
 
             isSettingValues = true;
             tableController.tableData.clear();

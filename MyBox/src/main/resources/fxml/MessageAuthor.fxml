@@ -23,31 +23,41 @@ License:    Apache License Version 2.0
         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
             <children>
                 <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="%MessageAuthor" textAlignment="CENTER" VBox.vgrow="NEVER" />
-            <Separator prefWidth="200.0" />
-            <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
-               <children>
-                      <CheckBox fx:id="miaowCheck" mnemonicParsing="false" selected="true" text="%Miaow" />
-                      <CheckBox fx:id="usefulCheck" mnemonicParsing="false" text="%MyBoxUseful" />
-                      <CheckBox fx:id="uselessCheck" mnemonicParsing="false" text="%MyBoxUseless" />
-               </children>
-            </HBox>
+                <Separator prefWidth="200.0" />
+                <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                    <children>
+                        <CheckBox fx:id="miaowCheck" mnemonicParsing="false" selected="true" text="%Miaow" />
+                        <CheckBox fx:id="usefulCheck" mnemonicParsing="false" text="%MyBoxUseful" />
+                        <CheckBox fx:id="uselessCheck" mnemonicParsing="false" text="%MyBoxUseless" />
+                    </children>
+                </HBox>
                 <Label text="%IssueCommentSuggestion" VBox.vgrow="NEVER">
-               <VBox.margin>
-                  <Insets top="10.0" />
-               </VBox.margin></Label>
+                    <VBox.margin>
+                        <Insets top="10.0" />
+                    </VBox.margin>
+                </Label>
                 <TextArea fx:id="commentsArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" VBox.vgrow="ALWAYS" />
                 <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                     <children>
                         <Label text="%YourName" />
                         <TextField fx:id="nameInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                  <Label layoutX="10.0" layoutY="19.0" text="%OperatingSystem" />
-                  <TextField fx:id="osInput" layoutX="177.0" layoutY="10.0" prefWidth="140.0" HBox.hgrow="NEVER" />
+                        <Label layoutX="10.0" layoutY="19.0" text="%OperatingSystem" />
+                        <TextField fx:id="osInput" layoutX="177.0" layoutY="10.0" prefWidth="140.0" HBox.hgrow="NEVER" />
                     </children>
                 </HBox>
                 <HBox fx:id="closeBox" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                     <children>
                         <Label fx:id="sizeLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                        <Button fx:id="sendButton" mnemonicParsing="false" onAction="#sendAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Send" />
+                        <Button fx:id="startButton" defaultButton="true" mnemonicParsing="false" onAction="#startAction"
+                                styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconStart.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
                     </children>
                 </HBox>
 

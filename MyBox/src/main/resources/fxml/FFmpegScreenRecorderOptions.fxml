@@ -73,8 +73,12 @@ License:    Apache License Version 2.0
             <children>
                 <Label text="%DelaySeconds" />
                 <fx:include fx:id="delay" source="ControlTimeLength.fxml" />
-                <Label text="%DurationSeconds" />
+                <Label text="%DurationSeconds">
+               <HBox.margin>
+                  <Insets left="20.0" />
+               </HBox.margin></Label>
                 <fx:include fx:id="duration" source="ControlTimeLength.fxml" />
+            <CheckBox fx:id="miaoCheck" mnemonicParsing="false" text="%Miaow" />
             </children>
         </HBox>
         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
@@ -204,6 +208,15 @@ License:    Apache License Version 2.0
             <children>
                 <Label minWidth="-Infinity" text="%MoreArguments" HBox.hgrow="NEVER" />
                 <TextField fx:id="moreInput" maxWidth="1.7976931348623157E308" promptText="%SeparateBySpace" HBox.hgrow="ALWAYS" />
+            <Button fx:id="helpMeButton" mnemonicParsing="false" onAction="#helpMe">
+               <graphic>
+                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/iconCatFoot.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
             </children>
         </HBox>
 

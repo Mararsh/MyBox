@@ -31,7 +31,6 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeItem;
@@ -47,6 +46,7 @@ import javafx.stage.Stage;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.data.VisitHistory;
+import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlStage;
@@ -55,7 +55,6 @@ import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.PdfTools;
-import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
@@ -91,9 +90,7 @@ public class PdfViewController extends ImageViewerController {
     protected Process process;
 
     @FXML
-    protected TextField pageInput;
-    @FXML
-    protected ComboBox<String> percentBox, dpiBox;
+    protected ComboBox<String> percentBox, dpiBox, pageSelector;
     @FXML
     protected CheckBox transparentBackgroundCheck, bookmarksCheck, thumbCheck;
     @FXML
@@ -124,6 +121,7 @@ public class PdfViewController extends ImageViewerController {
         TargetPathType = VisitHistory.FileType.Image;
 
         sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.PDF);
+        targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Image);
         TipsLabelKey = "PdfViewTips";
 
         sourceExtensionFilter = CommonFxValues.PdfExtensionFilter;
@@ -146,11 +144,12 @@ public class PdfViewController extends ImageViewerController {
         try {
             super.initControls();
 
-            ocrOptionsController.setValues(this, false, false);
+            if (ocrOptionsController != null) {
+                ocrOptionsController.setValues(this, false, false);
+            }
 
             if (tipsView != null) {
-                FxmlControl.setTooltip(tipsView,
-                        new Tooltip(message("PDFComments") + "\n\n" + message("PdfViewTips")));
+                FxmlControl.setTooltip(tipsView, new Tooltip(message("PDFComments") + "\n\n" + message("PdfViewTips")));
             }
         } catch (Exception e) {
             logger.error(e.toString());
@@ -188,26 +187,25 @@ public class PdfViewController extends ImageViewerController {
                 });
             }
 
-            if (pageInput != null) {
-                pageInput.textProperty().addListener(new ChangeListener<String>() {
+            if (pageSelector != null) {
+                pageSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                     @Override
-                    public void changed(ObservableValue ov, String oldValue,
-                            String newValue) {
+                    public void changed(ObservableValue ov, String oldValue, String newValue) {
                         if (isSettingValues) {
                             return;
                         }
                         try {
-                            int v = Integer.valueOf(pageInput.getText()) - 1;
+                            int v = Integer.valueOf(newValue) - 1;
                             if (v >= 0 && v < pdfInformation.getNumberOfPages()) {
                                 currentPageTmp = v;
-                                pageInput.setStyle(null);
+                                pageSelector.getEditor().setStyle(null);
                                 goButton.setDisable(false);
                             } else {
-                                pageInput.setStyle(badStyle);
+                                pageSelector.getEditor().setStyle(badStyle);
                                 goButton.setDisable(true);
                             }
                         } catch (Exception e) {
-                            pageInput.setStyle(badStyle);
+                            pageSelector.getEditor().setStyle(badStyle);
                             goButton.setDisable(true);
                         }
                     }
@@ -217,25 +215,23 @@ public class PdfViewController extends ImageViewerController {
             if (bookmarksCheck != null) {
                 bookmarksCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
-                    public void changed(ObservableValue ov, Boolean oldValue,
-                            Boolean newValue) {
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                         checkOutline();
-                        AppVariables.setUserConfigValue("PDFBookmarks", bookmarksCheck.isSelected());
+                        AppVariables.setUserConfigValue(baseName + "Bookmarks", bookmarksCheck.isSelected());
                     }
                 });
-                bookmarksCheck.setSelected(AppVariables.getUserConfigBoolean("PDFBookmarks", true));
+                bookmarksCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "Bookmarks", true));
             }
 
             if (thumbCheck != null) {
                 thumbCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
-                    public void changed(ObservableValue ov, Boolean oldValue,
-                            Boolean newValue) {
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                         checkThumbs();
-                        AppVariables.setUserConfigValue("PDFThumbnails", thumbCheck.isSelected());
+                        AppVariables.setUserConfigValue(baseName + "Thumbnails", thumbCheck.isSelected());
                     }
                 });
-                thumbCheck.setSelected(AppVariables.getUserConfigBoolean("PDFThumbnails", false));
+                thumbCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "Thumbnails", false));
             }
 
             if (thumbScrollPane != null) {
@@ -251,13 +247,14 @@ public class PdfViewController extends ImageViewerController {
             if (transparentBackgroundCheck != null) {
                 transparentBackgroundCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
-                    public void changed(ObservableValue ov, Boolean oldValue,
-                            Boolean newValue) {
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                         isTransparent = transparentBackgroundCheck.isSelected();
+                        AppVariables.setUserConfigValue(baseName + "Transparent", transparentBackgroundCheck.isSelected());
                         loadPage();
                     }
                 });
-                FxmlControl.setTooltip(transparentBackgroundCheck, new Tooltip(AppVariables.message("OnlyForTexts")));
+                transparentBackgroundCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "Transparent", false));
+                FxmlControl.setTooltip(transparentBackgroundCheck, new Tooltip(message("OnlyForTexts")));
             }
 
             if (dpiBox != null) {
@@ -437,7 +434,7 @@ public class PdfViewController extends ImageViewerController {
             currentPage = page;
             orcPage = -1;
             infoLoaded.set(pdfInfo != null);
-            pageInput.setText("1");
+            pageSelector.setValue("1");
             pageLabel.setText("");
             percent = 0;
             thumbBox.getChildren().clear();
@@ -465,7 +462,7 @@ public class PdfViewController extends ImageViewerController {
             return;
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -508,6 +505,14 @@ public class PdfViewController extends ImageViewerController {
                 @Override
                 protected void whenSucceeded() {
                     bottomLabel.setText("");
+                    int size = pdfInformation.getNumberOfPages();
+                    pageSelector.getItems().clear();
+                    List<String> pages = new ArrayList<>();
+                    for (int i = 1; i <= size; i++) {
+                        pages.add(i + "");
+                    }
+                    pageSelector.getItems().setAll(pages);
+                    pageSelector.setValue(size + "");
                     pageLabel.setText("/" + pdfInformation.getNumberOfPages());
                     loadPage();
                     checkOutline();
@@ -515,6 +520,7 @@ public class PdfViewController extends ImageViewerController {
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL, message("LoadingFileInfo"));
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -532,7 +538,7 @@ public class PdfViewController extends ImageViewerController {
             return;
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             if (currentPage < 0) {
@@ -540,7 +546,7 @@ public class PdfViewController extends ImageViewerController {
             } else if (infoLoaded.get() && currentPage >= pdfInformation.getNumberOfPages()) {
                 currentPage = pdfInformation.getNumberOfPages() - 1;
             }
-            pageInput.setText((currentPage + 1) + "");
+            pageSelector.setValue((currentPage + 1) + "");
             previousButton.setDisable(currentPage <= 0);
             nextButton.setDisable(!infoLoaded.get() || currentPage >= (pdfInformation.getNumberOfPages() - 1));
             bottomLabel.setText("");
@@ -577,6 +583,7 @@ public class PdfViewController extends ImageViewerController {
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL, MessageFormat.format(message("LoadingPageNumber"), (currentPage + 1) + ""));
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -591,57 +598,46 @@ public class PdfViewController extends ImageViewerController {
             if (outlineTask != null) {
                 outlineTask.cancel();
             }
-            outlineTask = new Task<Void>() {
+            outlineTask = new SingletonTask<Void>() {
                 protected PDDocument doc;
 
                 @Override
-                protected Void call() {
+                protected boolean handle() {
                     try {
                         doc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage);
+                        return doc != null;
                     } catch (Exception e) {
+                        error = e.toString();
                         logger.debug(e.toString());
+                        return false;
                     }
-                    return null;
                 }
 
                 @Override
-                protected void succeeded() {
-                    super.succeeded();
-                    outlineTask = null;
-                    if (doc != null) {
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    PDDocumentOutline outline = doc.getDocumentCatalog().getDocumentOutline();
-                                    TreeItem outlineRoot = new TreeItem<>(AppVariables.message("Bookmarks"));
-                                    outlineRoot.setExpanded(true);
-                                    outlineTree.setRoot(outlineRoot);
-                                    if (outline != null) {
-                                        loadOutlineItem(outline, outlineRoot);
-                                    }
-                                    doc.close();
-                                } catch (Exception e) {
-                                    logger.debug(e.toString());
-                                }
-                            }
-                        });
+                protected void whenSucceeded() {
+                    try {
+                        PDDocumentOutline outline = doc.getDocumentCatalog().getDocumentOutline();
+                        TreeItem outlineRoot = new TreeItem<>(AppVariables.message("Bookmarks"));
+                        outlineRoot.setExpanded(true);
+                        outlineTree.setRoot(outlineRoot);
+                        if (outline != null) {
+                            loadOutlineItem(outline, outlineRoot);
+                        }
+                        doc.close();
+                    } catch (Exception e) {
+                        logger.debug(e.toString());
+                    }
+                }
+
+                @Override
+                protected void whenFailed() {
+                    if (error != null) {
+                        popError(error);
                     } else {
                         popFailed();
                     }
                 }
 
-                @Override
-                protected void failed() {
-                    super.failed();
-                    outlineTask = null;
-                }
-
-                @Override
-                protected void cancelled() {
-                    super.cancelled();
-                    outlineTask = null;
-                }
             };
             openHandlingStage(outlineTask, Modality.WINDOW_MODAL);
             Thread thread = new Thread(outlineTask);
@@ -711,13 +707,13 @@ public class PdfViewController extends ImageViewerController {
             if (thumbTask != null) {
                 thumbTask.cancel();
             }
-            thumbTask = new Task<Void>() {
-                protected boolean ok;
+            thumbTask = new SingletonTask<Void>() {
+
                 protected Map<Integer, Image> images;
                 protected int end;
 
                 @Override
-                protected Void call() {
+                protected boolean handle() {
                     try {
                         try ( PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage)) {
                             PDFRenderer renderer = new PDFRenderer(doc);
@@ -741,56 +737,44 @@ public class PdfViewController extends ImageViewerController {
                             }
                             doc.close();
                         }
-                        ok = true;
+                        return true;
                     } catch (Exception e) {
+                        error = e.toString();
                         logger.debug(e.toString());
+                        return false;
                     }
-                    return null;
                 }
 
                 @Override
-                protected void succeeded() {
-                    super.succeeded();
-                    thumbTask = null;
-                    if (ok && images != null) {
-                        Platform.runLater(new Runnable() {
+                protected void whenSucceeded() {
+                    for (int i = pos; i < end; ++i) {
+                        ImageView view = (ImageView) thumbBox.getChildren().get(2 * i);
+                        if (view.getImage() != null) {
+                            continue;
+                        }
+                        view.setImage(images.get(i));
+                        view.setFitHeight(view.getImage().getHeight());
+                        final int p = i;
+                        view.setOnMouseClicked(new EventHandler<MouseEvent>() {
                             @Override
-                            public void run() {
-                                for (int i = pos; i < end; ++i) {
-                                    ImageView view = (ImageView) thumbBox.getChildren().get(2 * i);
-                                    if (view.getImage() != null) {
-                                        continue;
-                                    }
-                                    view.setImage(images.get(i));
-                                    view.setFitHeight(view.getImage().getHeight());
-                                    final int p = i;
-                                    view.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                                        @Override
-                                        public void handle(MouseEvent event) {
-                                            loadPage(p);
-                                        }
-                                    });
-                                }
-                                thumbBox.layout();
-                                adjustSplitPane();
+                            public void handle(MouseEvent event) {
+                                loadPage(p);
                             }
                         });
+                    }
+                    thumbBox.layout();
+                    adjustSplitPane();
+                }
+
+                @Override
+                protected void whenFailed() {
+                    if (error != null) {
+                        popError(error);
                     } else {
                         popFailed();
                     }
                 }
 
-                @Override
-                protected void failed() {
-                    super.failed();
-                    thumbTask = null;
-                }
-
-                @Override
-                protected void cancelled() {
-                    super.cancelled();
-                    thumbTask = null;
-                }
             };
             openHandlingStage(thumbTask, Modality.WINDOW_MODAL);
             Thread thread = new Thread(thumbTask);
@@ -1074,7 +1058,7 @@ public class PdfViewController extends ImageViewerController {
             return;
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -1130,6 +1114,7 @@ public class PdfViewController extends ImageViewerController {
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();

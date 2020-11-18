@@ -13,13 +13,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.ToolBar;
 import javafx.scene.image.Image;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.stage.Modality;
@@ -65,11 +64,9 @@ public class ImagesCombineController extends ImagesListController {
     @FXML
     protected Button newWindowButton;
     @FXML
-    protected ToolBar imageBar;
+    protected HBox opBox;
     @FXML
     protected CheckBox openCheck;
-    @FXML
-    protected Label imageLabel;
 
     public ImagesCombineController() {
         baseTitle = AppVariables.message("ImagesCombine");
@@ -96,6 +93,15 @@ public class ImagesCombineController extends ImagesListController {
             initArraySection();
             initSizeSection();
             initTargetSection();
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    @Override
+    public void initOptionsSection() {
+        try {
+            saveButton.disableProperty().bind(Bindings.isEmpty(tableController.tableData));
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -175,6 +181,7 @@ public class ImagesCombineController extends ImagesListController {
             MarginsBox.getSelectionModel().select(AppVariables.getUserConfigValue(ImageCombineMarginsKey, "5"));
 
             colorSetController.init(this, baseName + "Color");
+            imageCombine.setBgColor(colorSetController.color());
             colorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
                 public void changed(ObservableValue<? extends Paint> observable,
@@ -413,10 +420,8 @@ public class ImagesCombineController extends ImagesListController {
 
     public void initTargetSection() {
         try {
-
-            imageBar.disableProperty().bind(
-                    Bindings.isEmpty(tableData)
-                            .or(tableController.hasSampled)
+            opBox.disableProperty().bind(Bindings.isEmpty(tableData).
+                    or(tableController.hasSampled)
             );
 
         } catch (Exception e) {
@@ -511,7 +516,7 @@ public class ImagesCombineController extends ImagesListController {
         targetFile = file;
 
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -522,7 +527,7 @@ public class ImagesCombineController extends ImagesListController {
                 protected boolean handle() {
                     filename = targetFile.getAbsolutePath();
                     String format = FileTools.getFileSuffix(filename);
-                    final BufferedImage bufferedImage = FxmlImageManufacture.getBufferedImage(image);
+                    final BufferedImage bufferedImage = FxmlImageManufacture.bufferedImage(image);
                     return ImageFileWriters.writeImageFile(bufferedImage, format, filename);
                 }
 
@@ -534,6 +539,7 @@ public class ImagesCombineController extends ImagesListController {
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();

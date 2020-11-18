@@ -70,10 +70,11 @@ public class SettingsController extends BaseController {
     @FXML
     protected CheckBox stopAlarmCheck, newWindowCheck, restoreStagesSizeCheck,
             copyToSystemClipboardCheck, anchorSolidCheck, controlsTextCheck,
-            clearCurrentRootCheck, hidpiCheck, devModeCheck;
+            clearCurrentRootCheck, hidpiCheck, devModeCheck, splitPaneSensitiveCheck;
     @FXML
     protected TextField jvmInput, dataDirInput, fileRecentInput, thumbnailWidthInput,
-            tiandituWebKeyInput, gaodeWebKeyInput, gaodeServiceKeyInput;
+            tiandituWebKeyInput, gaodeWebKeyInput, gaodeServiceKeyInput,
+            webConnectTimeoutInput, webReadTimeoutInput;
     @FXML
     protected VBox localBox, dataBox;
     @FXML
@@ -197,6 +198,8 @@ public class SettingsController extends BaseController {
             } else {
                 splitPaneClickedRadio.fire();
             }
+
+            splitPaneSensitiveCheck.setSelected(getUserConfigBoolean("ControlSplitPanesSensitive", false));
 
             checkLanguage();
             checkPdfMem();
@@ -419,6 +422,11 @@ public class SettingsController extends BaseController {
         AppVariables.setUserConfigValue("ControlSplitPanesEntered", false);
     }
 
+    @FXML
+    protected void splitPaneSensitive() {
+        AppVariables.setUserConfigValue("ControlSplitPanesSensitive", splitPaneSensitiveCheck.isSelected());
+    }
+
     /*
         Base settings
      */
@@ -464,22 +472,6 @@ public class SettingsController extends BaseController {
             settingsJVMButton.setDisable(true);
             isSettingValues = false;
 
-            dataDirInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    String p = dataDirInput.getText();
-                    if (isSettingValues || p == null || p.trim().isEmpty()
-                            || p.trim().equals(AppVariables.MyboxDataPath)) {
-                        settingsChangeRootButton.setDisable(true);
-                        return;
-                    }
-                    settingsChangeRootButton.setDisable(false);
-                }
-            });
-            dataDirInput.setText(AppVariables.MyboxDataPath);
-            currentDataPathLabel.setText(MessageFormat.format(message("CurrentValue"), AppVariables.MyboxDataPath));
-            clearCurrentRootCheck.setText(MessageFormat.format(message("ClearPathWhenChange"), AppVariables.MyboxDataPath));
-
             hidpiCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
@@ -505,70 +497,11 @@ public class SettingsController extends BaseController {
             hidpiCheck.setSelected(AppVariables.disableHiDPI);
             isSettingValues = false;
 
-            setDerbyMode();
-            derbyGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                @Override
-                public void changed(ObservableValue ov, Toggle old_val, Toggle new_val) {
-                    checkDerbyMode();
-                }
-            });
+            webConnectTimeoutInput.setText(AppVariables.getUserConfigInt("WebConnectTimeout", 10000) + "");
+            webReadTimeoutInput.setText(AppVariables.getUserConfigInt("WebReadTimeout", 10000) + "");
 
         } catch (Exception e) {
             logger.debug(e.toString());
-        }
-    }
-
-    public void setDerbyMode() {
-        isSettingValues = true;
-        if (DerbyStatus.Nerwork == DerbyBase.status) {
-            networkRadio.setSelected(true);
-            derbyStatus.setText(MessageFormat.format(message("DerbyServerListening"), DerbyBase.port + ""));
-        } else if (DerbyStatus.Embedded == DerbyBase.status) {
-            embeddedRadio.setSelected(true);
-            derbyStatus.setText(message("DerbyEmbeddedMode"));
-        } else {
-            networkRadio.setSelected(false);
-            embeddedRadio.setSelected(false);
-            derbyStatus.setText(MessageFormat.format(message("DerbyNotAvalibale"), AppVariables.MyBoxDerbyPath));
-        }
-        isSettingValues = false;
-    }
-
-    public void checkDerbyMode() {
-        if (isSettingValues) {
-            return;
-        }
-        DerbyBase.mode = networkRadio.isSelected() ? "client" : "embedded";
-        ConfigTools.writeConfigValue("DerbyMode", DerbyBase.mode);
-        derbyBox.setDisable(true);
-        synchronized (this) {
-            if (task != null) {
-                return;
-            }
-            task = new SingletonTask<Void>() {
-                private String ret;
-
-                @Override
-                protected boolean handle() {
-                    ret = DerbyBase.startDerby();
-                    return ret != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    popInformation(ret, 6000);
-                    setDerbyMode();
-                }
-
-                protected void finalAction() {
-                    derbyBox.setDisable(false);
-                }
-
-            };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
-            thread.setDaemon(true);
-            thread.start();
         }
     }
 
@@ -672,17 +605,73 @@ public class SettingsController extends BaseController {
         }
     }
 
+    @FXML
+    protected void okWebConnectTimeout() {
+        try {
+            int v = Integer.parseInt(webConnectTimeoutInput.getText());
+            if (v > 0) {
+                AppVariables.setUserConfigInt("WebConnectTimeout", v);
+                webConnectTimeoutInput.setStyle(null);
+                popSuccessful();
+            } else {
+                webConnectTimeoutInput.setStyle(badStyle);
+            }
+        } catch (Exception e) {
+            webConnectTimeoutInput.setStyle(badStyle);
+        }
+    }
+
+    @FXML
+    protected void okWebReadTimeout() {
+        try {
+            int v = Integer.parseInt(webReadTimeoutInput.getText());
+            if (v > 0) {
+                AppVariables.setUserConfigInt("WebReadTimeout", v);
+                webReadTimeoutInput.setStyle(null);
+                popSuccessful();
+            } else {
+                webReadTimeoutInput.setStyle(badStyle);
+            }
+        } catch (Exception e) {
+            webReadTimeoutInput.setStyle(badStyle);
+        }
+    }
+
+
     /*
         Data settings
      */
     public void initDataTab() {
         try {
-
             fileRecentInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable,
                         String oldValue, String newValue) {
                     checkRecentFile();
+                }
+            });
+
+            dataDirInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    String p = dataDirInput.getText();
+                    if (isSettingValues || p == null || p.trim().isEmpty()
+                            || p.trim().equals(AppVariables.MyboxDataPath)) {
+                        settingsChangeRootButton.setDisable(true);
+                        return;
+                    }
+                    settingsChangeRootButton.setDisable(false);
+                }
+            });
+            dataDirInput.setText(AppVariables.MyboxDataPath);
+            currentDataPathLabel.setText(MessageFormat.format(message("CurrentValue"), AppVariables.MyboxDataPath));
+            clearCurrentRootCheck.setText(MessageFormat.format(message("ClearPathWhenChange"), AppVariables.MyboxDataPath));
+
+            setDerbyMode();
+            derbyGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                @Override
+                public void changed(ObservableValue ov, Toggle old_val, Toggle new_val) {
+                    checkDerbyMode();
                 }
             });
 
@@ -699,16 +688,14 @@ public class SettingsController extends BaseController {
     }
 
     @FXML
-    protected void setFileRecentAction(ActionEvent event
-    ) {
+    protected void setFileRecentAction(ActionEvent event) {
         AppVariables.setUserConfigInt("FileRecentNumber", recentFileNumber);
         AppVariables.fileRecentNumber = recentFileNumber;
         popSuccessful();
     }
 
     @FXML
-    protected void clearFileHistories(ActionEvent event
-    ) {
+    protected void clearFileHistories(ActionEvent event) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(getBaseTitle());
         alert.setContentText(AppVariables.message("SureClear"));
@@ -729,12 +716,67 @@ public class SettingsController extends BaseController {
     }
 
     @FXML
-    protected void noFileHistories(ActionEvent event
-    ) {
+    protected void noFileHistories(ActionEvent event) {
         fileRecentInput.setText("0");
         AppVariables.setUserConfigInt("FileRecentNumber", 0);
         AppVariables.fileRecentNumber = 0;
         popSuccessful();
+    }
+
+    public void setDerbyMode() {
+        isSettingValues = true;
+        if (DerbyStatus.Nerwork == DerbyBase.status) {
+            networkRadio.setSelected(true);
+            derbyStatus.setText(MessageFormat.format(message("DerbyServerListening"), DerbyBase.port + ""));
+        } else if (DerbyStatus.Embedded == DerbyBase.status) {
+            embeddedRadio.setSelected(true);
+            derbyStatus.setText(message("DerbyEmbeddedMode"));
+        } else {
+            networkRadio.setSelected(false);
+            embeddedRadio.setSelected(false);
+            derbyStatus.setText(MessageFormat.format(message("DerbyNotAvalibale"), AppVariables.MyBoxDerbyPath));
+        }
+        isSettingValues = false;
+    }
+
+    public void checkDerbyMode() {
+        if (isSettingValues) {
+            return;
+        }
+        DerbyBase.mode = networkRadio.isSelected() ? "client" : "embedded";
+        ConfigTools.writeConfigValue("DerbyMode", DerbyBase.mode);
+        derbyBox.setDisable(true);
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+                private String ret;
+
+                @Override
+                protected boolean handle() {
+                    ret = DerbyBase.startDerby();
+                    return ret != null;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    popInformation(ret, 6000);
+                    setDerbyMode();
+                }
+
+                @Override
+                protected void finalAction() {
+                    derbyBox.setDisable(false);
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
     }
 
     /*

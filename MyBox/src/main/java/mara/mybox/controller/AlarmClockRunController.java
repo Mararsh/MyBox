@@ -1,13 +1,21 @@
 package mara.mybox.controller;
 
+import java.io.File;
+import java.util.List;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.stage.Stage;
 import javax.sound.sampled.Clip;
 import mara.mybox.data.AlarmClock;
 import static mara.mybox.data.AlarmClock.getTypeString;
+import mara.mybox.fxml.FxmlControl;
+import mara.mybox.fxml.FxmlStage;
+import mara.mybox.tools.SoundTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -31,13 +39,43 @@ public class AlarmClockRunController extends BaseController {
     }
 
     @FXML
-    private void manageAction(ActionEvent event) {
-        openStage(CommonValues.AlarmClockFxml);
+    public void manageAction(ActionEvent event) {
         knowAction(event);
+        List<Stage> stages = FxmlStage.findStages(message("AlarmClock"));
+        if (stages != null && !stages.isEmpty()) {
+            Stage stage = stages.get(0);
+            stage.toFront();
+            stage.requestFocus();
+        } else {
+            openStage(CommonValues.AlarmClockFxml);
+        }
+    }
+
+    public void inactive(ActionEvent event) {
+        alarm.setIsActive(false);
+        alarm.setStatus(AppVariables.message("Inactive"));
+        alarm.setNextTime(-1);
+        alarm.setNext("");
+        AlarmClock.scheduleAlarmClock(alarm);
+        AlarmClock.writeAlarmClock(alarm);
+        knowAction(event);
+        List<Stage> stages = FxmlStage.findStages(message("AlarmClock"));
+        if (stages != null) {
+            for (Stage stage : stages) {
+                if (stage.getUserData() != null) {
+                    try {
+                        AlarmClockController controller = (AlarmClockController) (stage.getUserData());
+                        controller.alertClockTableController.refreshAction();
+                    } catch (Exception e) {
+                        logger.debug(e.toString());
+                    }
+                }
+            }
+        }
     }
 
     @FXML
-    private void knowAction(ActionEvent event) {
+    public void knowAction(ActionEvent event) {
         if (player != null) {
             player.stop();
             player.drain();
@@ -49,6 +87,7 @@ public class AlarmClockRunController extends BaseController {
 
     public void runAlarm(final AlarmClock alarm) {
         this.alarm = alarm;
+        getMyStage().setTitle(baseTitle + " - " + alarm.getDescription());
         descLabel.setText(alarm.getDescription());
         String soundString = alarm.getSound() + "   ";
         if (alarm.isIsSoundLoop()) {
@@ -68,21 +107,20 @@ public class AlarmClockRunController extends BaseController {
             @Override
             protected Void call() {
                 try {
-//                    String sound = alarm.getSound();
-//                    if (AppVariables.message("Meow").equals(sound)) {
-//                        File miao = FxmlControl.getInternalFile("/sound/miao4.mp3", "sound", "miao4.mp3");
-//                        sound = miao.getAbsolutePath();
-//                    }
-//                    player = MediaTools.playback(sound, alarm.getVolume());
-//                    if (alarm.isIsSoundLoop()) {
-//                        if (alarm.isIsSoundContinully()) {
-//                            player.loop(Clip.LOOP_CONTINUOUSLY);
-//                        } else {
-//                            player.loop(alarm.getSoundLoopTimes() - 1);
-//                        }
-//                    }
-
-//                    player.start();
+                    String sound = alarm.getSound();
+                    if (AppVariables.message("Meow").equals(sound)) {
+                        File miao = FxmlControl.getInternalFile("/sound/miao4.mp3", "sound", "miao4.mp3");
+                        sound = miao.getAbsolutePath();
+                    }
+                    player = SoundTools.playback(sound, alarm.getVolume());
+                    if (alarm.isIsSoundLoop()) {
+                        if (alarm.isIsSoundContinully()) {
+                            player.loop(Clip.LOOP_CONTINUOUSLY);
+                        } else {
+                            player.loop(alarm.getSoundLoopTimes() - 1);
+                        }
+                    }
+                    player.start();
                 } catch (Exception e) {
                 }
                 return null;

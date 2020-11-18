@@ -60,7 +60,7 @@ public final class AlarmClock {
             for (AlarmClock a : alarms) {
                 setExtraValues(a);
                 if (a.isIsActive()) {
-                    scehduleAlarmClock(a);
+                    scheduleAlarmClock(a);
                 }
             }
             writeAlarmClocks(alarms);
@@ -99,7 +99,7 @@ public final class AlarmClock {
                         setExtraValues(alarm);
                         alarms.add(alarm);
                         if (alarm.isIsActive()) {
-                            scehduleAlarmClock(alarm);
+                            scheduleAlarmClock(alarm);
                         }
                     } catch (Exception e) {
                     }
@@ -320,7 +320,7 @@ public final class AlarmClock {
         }
     }
 
-    public static void scehduleAlarmClock(AlarmClock alarm) {
+    public static void scheduleAlarmClock(AlarmClock alarm) {
         if (alarm == null || alarm.getKey() <= 0) {
             return;
         }

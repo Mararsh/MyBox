@@ -47,7 +47,7 @@ public class MessageAuthorController extends BaseController {
     }
 
     @FXML
-    public void sendAction() {
+    public void startAction() {
         try {
             Properties props = new Properties();
             props.put("mail.smtp.host", "smtp.163.com");

@@ -1,5 +1,7 @@
 package mara.mybox.data;
 
+import java.awt.Rectangle;
+
 /**
  * @Author Mara
  * @CreateDate 2018-11-11 12:23:40
@@ -15,6 +17,15 @@ public class DoubleRectangle implements DoubleShape {
     public DoubleRectangle() {
         maxX = Integer.MAX_VALUE;
         maxY = Integer.MAX_VALUE;
+    }
+
+    public DoubleRectangle(Rectangle rectangle) {
+        maxX = Integer.MAX_VALUE;
+        maxY = Integer.MAX_VALUE;
+        smallX = rectangle.getX();
+        smallY = rectangle.getY();
+        bigX = rectangle.getX() + rectangle.getWidth() - 1;
+        bigY = rectangle.getY() + rectangle.getHeight() - 1;
     }
 
     public DoubleRectangle(double x1, double y1, double x2, double y2) {
@@ -83,6 +94,10 @@ public class DoubleRectangle implements DoubleShape {
     @Override
     public DoubleRectangle getBound() {
         return this;
+    }
+
+    public Rectangle rectangle() {
+        return new Rectangle((int) smallX, (int) smallY, (int) width, (int) height);
     }
 
     public double getWidth() {

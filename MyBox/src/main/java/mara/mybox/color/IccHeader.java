@@ -8,13 +8,14 @@ import mara.mybox.color.IccTag.TagType;
 import static mara.mybox.color.IccXML.iccHeaderXml;
 import mara.mybox.tools.ByteTools;
 import static mara.mybox.tools.ByteTools.bytesToHex;
-import static mara.mybox.tools.ByteTools.bytesToHexFormat;
 import static mara.mybox.tools.ByteTools.bytesToInt;
 import static mara.mybox.tools.ByteTools.intToBytes;
 import static mara.mybox.tools.ByteTools.subBytes;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import static mara.mybox.value.CommonValues.Indent;
+import static mara.mybox.tools.ByteTools.bytesToHexFormat;
+import static mara.mybox.tools.ByteTools.bytesToHexFormat;
 
 /**
  * @Author Mara

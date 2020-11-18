@@ -54,7 +54,11 @@ public class FilesDeleteNestedDirectoriesController extends FilesBatchController
                 result = AppVariables.message("NotFound");
             } else if (currentParameters.currentSourceFile.isDirectory()) {
                 FileTools.deleteNestedDir(currentParameters.currentSourceFile);
-                result = message("DeletedSuccessfully");
+                if (currentParameters.currentSourceFile.exists()) {
+                    result = message("Failed");
+                } else {
+                    result = message("DeletedSuccessfully");
+                }
             } else {
                 result = AppVariables.message("Skip");
             }

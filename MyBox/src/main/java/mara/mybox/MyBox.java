@@ -33,9 +33,9 @@ public class MyBox {
         }
 
         initBaseValues();
-        logger.info("MyBox Config file:" + AppVariables.MyboxConfigFile);
-        logger.info("MyBox Data Path:" + AppVariables.MyboxDataPath);
-
+        if (AppVariables.MyboxDataPath != null) {
+            logger.info("MyBox Data Path:" + AppVariables.MyboxDataPath);
+        }
         launchApp();
     }
 
@@ -68,6 +68,7 @@ public class MyBox {
             }
         }
         AppVariables.MyboxConfigFile = ConfigTools.defaultConfigFile();
+        logger.info("MyBox Config file:" + AppVariables.MyboxConfigFile);
         String dataPath = ConfigTools.readValue("MyBoxDataPath");
         if (dataPath != null) {
             try {
@@ -85,9 +86,6 @@ public class MyBox {
             } catch (Exception e) {
             }
         }
-        AppVariables.MyboxDataPath = ConfigTools.defaultDataPathFile().getAbsolutePath();
-        ConfigTools.writeConfigValue("MyBoxDataPath", AppVariables.MyboxDataPath);
-
         return true;
     }
 
@@ -115,6 +113,10 @@ public class MyBox {
         if (JVMmemory == null) {
             return false;
         }
+        long jvmM = Runtime.getRuntime().maxMemory() / (1024 * 1024);
+        if (JVMmemory.equals("-Xms" + jvmM + "m")) {
+            return false;
+        }
         if (AppVariables.appArgs == null || AppVariables.appArgs.length == 0) {
             return true;
         }
@@ -140,8 +142,10 @@ public class MyBox {
 
             // https://blog.csdn.net/iteye_3493/article/details/82060349
             // https://stackoverflow.com/questions/1004327/getting-rid-of-derby-log/1933310#1933310
-            System.setProperty("derby.stream.error.file", AppVariables.MyboxDataPath
-                    + File.separator + "mybox_derby" + File.separator + "derby.log");
+            if (AppVariables.MyboxDataPath != null) {
+                System.setProperty("derby.stream.error.file", AppVariables.MyboxDataPath
+                        + File.separator + "mybox_derby" + File.separator + "derby.log");
+            }
 //            System.setProperty("derby.language.logQueryPlan", "true");
             System.setProperty("javax.net.ssl.trustStore", SystemTools.keystore());
             System.setProperty("javax.net.ssl.trustStorePassword", SystemTools.keystorePassword());

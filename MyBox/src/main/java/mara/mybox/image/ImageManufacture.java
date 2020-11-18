@@ -97,8 +97,7 @@ public class ImageManufacture {
     }
 
     // https://bugs.java.com/bugdatabase/view_bug.do?bug_id=4836466
-    public static BufferedImage checkAlpha(BufferedImage source,
-            String targetFormat) {
+    public static BufferedImage checkAlpha(BufferedImage source, String targetFormat) {
         if (targetFormat == null) {
             return source;
         }
@@ -200,12 +199,9 @@ public class ImageManufacture {
         return true;
     }
 
-    public static BufferedImage scaleImage(BufferedImage source, int width,
-            int height) {
-        if (width == source.getWidth() && height == source.getHeight()) {
-            return source;
-        }
-        if (width <= 0 || height <= 0) {
+    public static BufferedImage scaleImage(BufferedImage source, int width, int height) {
+        if (width <= 0 || height <= 0
+                || (width == source.getWidth() && height == source.getHeight())) {
             return source;
         }
         int imageType = source.getType();
@@ -222,21 +218,26 @@ public class ImageManufacture {
         return target;
     }
 
-    public static BufferedImage scaleImageWidthKeep(BufferedImage source,
-            int width) {
+    public static BufferedImage scaleImageWidthKeep(BufferedImage source, int width) {
+        if (width <= 0 || width == source.getWidth()) {
+            return source;
+        }
         int height = source.getHeight() * width / source.getWidth();
         return scaleImage(source, width, height);
     }
 
-    public static BufferedImage scaleImageHeightKeep(BufferedImage source,
-            int height) {
+    public static BufferedImage scaleImageHeightKeep(BufferedImage source, int height) {
         int width = source.getWidth() * height / source.getHeight();
         return scaleImage(source, width, height);
     }
 
-    public static BufferedImage scaleImage(BufferedImage source, float scale) {
-        int width = (int) (source.getWidth() * scale);
-        int height = (int) (source.getHeight() * scale);
+    public static BufferedImage scaleImageByScale(BufferedImage source, float scale) {
+        return scaleImageByScale(source, scale, scale);
+    }
+
+    public static BufferedImage scaleImageByScale(BufferedImage source, float xscale, float yscale) {
+        int width = (int) (source.getWidth() * xscale);
+        int height = (int) (source.getHeight() * yscale);
         return scaleImage(source, width, height);
     }
 
@@ -248,37 +249,38 @@ public class ImageManufacture {
         if (scale >= 1) {
             return source;
         }
-        return scaleImage(source, scale);
+        return scaleImageByScale(source, scale);
     }
 
-    public static int[] scale(int sourceX, int sourceY, int newWidth,
-            int newHeight, int keepRatioType) {
+    public static int[] scale(int sourceX, int sourceY, int newWidth, int newHeight, int keepRatioType) {
         int finalW = newWidth;
         int finalH = newHeight;
-        double ratioW = (double) newWidth / sourceX;
-        double ratioH = (double) newHeight / sourceY;
-        if (ratioW != ratioH) {
-            switch (keepRatioType) {
-                case KeepRatioType.BaseOnWidth:
-                    finalH = (int) (ratioW * sourceY);
-                    break;
-                case KeepRatioType.BaseOnHeight:
-                    finalW = (int) (ratioH * sourceX);
-                    break;
-                case KeepRatioType.BaseOnLarger:
-                    if (ratioW > ratioH) {
+        if (keepRatioType != KeepRatioType.None) {
+            double ratioW = (double) newWidth / sourceX;
+            double ratioH = (double) newHeight / sourceY;
+            if (ratioW != ratioH) {
+                switch (keepRatioType) {
+                    case KeepRatioType.BaseOnWidth:
                         finalH = (int) (ratioW * sourceY);
-                    } else {
+                        break;
+                    case KeepRatioType.BaseOnHeight:
                         finalW = (int) (ratioH * sourceX);
-                    }
-                    break;
-                case KeepRatioType.BaseOnSmaller:
-                    if (ratioW < ratioH) {
-                        finalH = (int) (ratioW * sourceY);
-                    } else {
-                        finalW = (int) (ratioH * sourceX);
-                    }
-                    break;
+                        break;
+                    case KeepRatioType.BaseOnLarger:
+                        if (ratioW > ratioH) {
+                            finalH = (int) (ratioW * sourceY);
+                        } else {
+                            finalW = (int) (ratioH * sourceX);
+                        }
+                        break;
+                    case KeepRatioType.BaseOnSmaller:
+                        if (ratioW < ratioH) {
+                            finalH = (int) (ratioW * sourceY);
+                        } else {
+                            finalW = (int) (ratioH * sourceX);
+                        }
+                        break;
+                }
             }
         }
         int[] d = new int[2];
@@ -288,8 +290,7 @@ public class ImageManufacture {
     }
 
     public static BufferedImage scaleImage(BufferedImage source,
-            int targetW, int targetH,
-            boolean keepRatio, int keepType) {
+            int targetW, int targetH, boolean keepRatio, int keepType) {
         int finalW = targetW;
         int finalH = targetH;
         if (keepRatio) {
@@ -495,8 +496,7 @@ public class ImageManufacture {
     }
 
     public static BufferedImage addShadowAlpha(BufferedImage source,
-            int shadowWidth,
-            Color shadowColor) {
+            int shadowWidth, Color shadowColor) {
         try {
             int width = source.getWidth();
             int height = source.getHeight();
@@ -554,9 +554,7 @@ public class ImageManufacture {
         }
     }
 
-    public static BufferedImage addShadowNoAlpha(BufferedImage source,
-            int shadowWidth,
-            Color shadowColor) {
+    public static BufferedImage addShadowNoAlpha(BufferedImage source, int shadowWidth, Color shadowColor) {
         try {
             int width = source.getWidth();
             int height = source.getHeight();
@@ -704,8 +702,7 @@ public class ImageManufacture {
     }
 
     public static BufferedImage cutMargins(BufferedImage source,
-            int MarginWidth, boolean cutTop, boolean cutBottom, boolean cutLeft,
-            boolean cutRight) {
+            int MarginWidth, boolean cutTop, boolean cutBottom, boolean cutLeft, boolean cutRight) {
         try {
             if (source == null || MarginWidth <= 0) {
                 return source;
@@ -736,8 +733,7 @@ public class ImageManufacture {
     }
 
     public static BufferedImage addMargins(BufferedImage source, Color addColor,
-            int MarginWidth, boolean addTop, boolean addBottom, boolean addLeft,
-            boolean addRight) {
+            int MarginWidth, boolean addTop, boolean addBottom, boolean addLeft, boolean addRight) {
         try {
             if (source == null || MarginWidth <= 0) {
                 return source;
@@ -781,9 +777,7 @@ public class ImageManufacture {
     }
 
     public static BufferedImage blurMarginsAlpha(BufferedImage source,
-            int blurWidth,
-            boolean blurTop, boolean blurBottom, boolean blurLeft,
-            boolean blurRight) {
+            int blurWidth, boolean blurTop, boolean blurBottom, boolean blurLeft, boolean blurRight) {
         try {
             int width = source.getWidth();
             int height = source.getHeight();
@@ -837,9 +831,7 @@ public class ImageManufacture {
     }
 
     public static BufferedImage blurMarginsNoAlpha(BufferedImage source,
-            int blurWidth,
-            boolean blurTop, boolean blurBottom, boolean blurLeft,
-            boolean blurRight) {
+            int blurWidth, boolean blurTop, boolean blurBottom, boolean blurLeft, boolean blurRight) {
         try {
             int width = source.getWidth();
             int height = source.getHeight();
@@ -986,8 +978,7 @@ public class ImageManufacture {
         }
     }
 
-    public static BufferedImage shearImage(BufferedImage source, float shearX,
-            float shearY) {
+    public static BufferedImage shearImage(BufferedImage source, float shearX, float shearY) {
         try {
             int scale = Math.round(Math.abs(shearX));
             if (scale <= 1) {
@@ -1038,15 +1029,13 @@ public class ImageManufacture {
         return createCompatibleImage(width, height, Transparency.TRANSLUCENT);
     }
 
-    public static BufferedImage createCompatibleImage(int width, int height,
-            int transparency) {
+    public static BufferedImage createCompatibleImage(int width, int height, int transparency) {
         BufferedImage image = getGraphicsConfiguration().createCompatibleImage(width, height, transparency);
         image.coerceData(true);
         return image;
     }
 
-    public static BufferedImage cropOutside(BufferedImage source,
-            DoubleShape shape, Color bgColor) {
+    public static BufferedImage cropOutside(BufferedImage source, DoubleShape shape, Color bgColor) {
         try {
             if (shape == null || !shape.isValid()) {
                 return source;
@@ -1087,8 +1076,7 @@ public class ImageManufacture {
         }
     }
 
-    public static BufferedImage cropInside(BufferedImage source,
-            DoubleShape shape, Color bgColor) {
+    public static BufferedImage cropInside(BufferedImage source, DoubleShape shape, Color bgColor) {
         try {
             if (shape == null || !shape.isValid()) {
                 return source;
@@ -1117,19 +1105,16 @@ public class ImageManufacture {
         }
     }
 
-    public static BufferedImage cropOutside(BufferedImage source,
-            DoubleRectangle rectangle) {
+    public static BufferedImage cropOutside(BufferedImage source, DoubleRectangle rectangle) {
         return cropOutside(source, rectangle.getSmallX(), rectangle.getSmallY(),
                 rectangle.getBigX(), rectangle.getBigY());
     }
 
-    public static BufferedImage cropOutside(BufferedImage source,
-            double x1, double y1, double x2, double y2) {
+    public static BufferedImage cropOutside(BufferedImage source, double x1, double y1, double x2, double y2) {
         return cropOutside(source, new DoubleRectangle(x1, y1, x2, y2), Color.WHITE);
     }
 
-    public static BufferedImage mergeImagesVertical(List<File> files, int width,
-            int height) {
+    public static BufferedImage mergeImagesVertical(List<File> files, int width, int height) {
         if (files == null || files.isEmpty()) {
             return null;
         }
@@ -1154,8 +1139,7 @@ public class ImageManufacture {
         }
     }
 
-    public static BufferedImage combineSingleColumn(
-            List<javafx.scene.image.Image> images) {
+    public static BufferedImage combineSingleColumn(List<javafx.scene.image.Image> images) {
         if (images == null || images.isEmpty()) {
             return null;
         }
@@ -1188,8 +1172,30 @@ public class ImageManufacture {
         }
     }
 
-    public static javafx.scene.image.Image combineSingleColumn(
-            ImageCombine imageCombine,
+    public static BufferedImage sample(BufferedImage source, DoubleRectangle rectangle, int xscale, int yscale) {
+        try {
+            int realXScale = xscale > 0 ? xscale : 1;
+            int realYScale = yscale > 0 ? yscale : 1;
+            BufferedImage bufferedImage = cropOutside(source, rectangle);
+            int width = bufferedImage.getWidth() / realXScale;
+            int height = bufferedImage.getHeight() / realYScale;
+            bufferedImage = scaleImage(bufferedImage, width, height);
+            return bufferedImage;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return source;
+        }
+    }
+
+    public static BufferedImage sample(BufferedImage source,
+            int x1, int y1, int x2, int y2, int xscale, int yscale) {
+        if (x1 >= x2 || y1 >= y2 || x1 < 0 || x2 < 0 || y1 < 0 || y2 < 0) {
+            return null;
+        }
+        return sample(source, new DoubleRectangle(x1, y1, x2, y2), xscale, yscale);
+    }
+
+    public static javafx.scene.image.Image combineSingleColumn(ImageCombine imageCombine,
             List<ImageInformation> images, boolean isPart, boolean careTotal) {
         if (imageCombine == null || images == null) {
             return null;
@@ -1200,7 +1206,7 @@ public class ImageManufacture {
             int sizeType = imageCombine.getSizeType();
             if (sizeType == CombineSizeType.AlignAsBigger) {
                 for (ImageInformation image : images) {
-                    imageWidth = (int) image.getImage().getWidth();
+                    imageWidth = (int) image.loadImage().getWidth();
                     if (imageWidth > maxWidth) {
                         maxWidth = imageWidth;
                     }
@@ -1208,7 +1214,7 @@ public class ImageManufacture {
             }
             if (sizeType == CombineSizeType.AlignAsSmaller) {
                 for (ImageInformation image : images) {
-                    imageWidth = (int) image.getImage().getWidth();
+                    imageWidth = (int) image.loadImage().getWidth();
                     if (imageWidth < minWidth) {
                         minWidth = imageWidth;
                     }
@@ -1220,7 +1226,7 @@ public class ImageManufacture {
             List<Integer> heights = new ArrayList<>();
             for (int i = 0; i < images.size(); ++i) {
                 ImageInformation imageInfo = images.get(i);
-                javafx.scene.image.Image image = imageInfo.getImage();
+                javafx.scene.image.Image image = imageInfo.loadImage();
                 imageWidth = (int) image.getWidth();
                 imageHeight = (int) image.getHeight();
                 if (sizeType == CombineSizeType.KeepSize
@@ -1275,8 +1281,7 @@ public class ImageManufacture {
         }
     }
 
-    public static javafx.scene.image.Image combineSingleRow(
-            ImageCombine imageCombine,
+    public static javafx.scene.image.Image combineSingleRow(ImageCombine imageCombine,
             List<ImageInformation> images, boolean isPart, boolean careTotal) {
         if (imageCombine == null || images == null) {
             return null;
@@ -1291,15 +1296,14 @@ public class ImageManufacture {
             }
             if (sizeType == CombineSizeType.AlignAsBigger) {
                 for (ImageInformation image : images) {
-                    imageHeight = (int) image.getImage().getHeight();
+                    imageHeight = (int) image.loadImage().getHeight();
                     if (imageHeight > maxHeight) {
                         maxHeight = imageHeight;
                     }
                 }
-            }
-            if (sizeType == CombineSizeType.AlignAsSmaller) {
+            } else if (sizeType == CombineSizeType.AlignAsSmaller) {
                 for (ImageInformation image : images) {
-                    imageHeight = (int) image.getImage().getHeight();
+                    imageHeight = (int) image.loadImage().getHeight();
                     if (imageHeight < minHeight) {
                         minHeight = imageHeight;
                     }
@@ -1311,7 +1315,7 @@ public class ImageManufacture {
             List<Integer> heights = new ArrayList<>();
             for (int i = 0; i < images.size(); ++i) {
                 ImageInformation imageInfo = images.get(i);
-                javafx.scene.image.Image image = imageInfo.getImage();
+                javafx.scene.image.Image image = imageInfo.loadImage();
                 imageWidth = (int) image.getWidth();
                 imageHeight = (int) image.getHeight();
                 if (sizeType == CombineSizeType.KeepSize
@@ -1383,7 +1387,7 @@ public class ImageManufacture {
 
             for (int i = 0; i < images.size(); ++i) {
                 ImageInformation imageInfo = images.get(i);
-                javafx.scene.image.Image image = imageInfo.getImage();
+                javafx.scene.image.Image image = imageInfo.loadImage();
                 BufferedImage source = SwingFXUtils.fromFXImage(image, null);
                 g.drawImage(source, xs.get(i), ys.get(i), widths.get(i), heights.get(i), null);
             }

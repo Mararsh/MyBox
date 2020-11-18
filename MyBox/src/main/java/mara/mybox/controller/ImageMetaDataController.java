@@ -14,7 +14,7 @@ import mara.mybox.fxml.FxmlStage;
 import mara.mybox.image.ImageFileInformation;
 import mara.mybox.image.ImageInformation;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.VisitHistoryTools;
+import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.CommonFxValues;
 
@@ -56,7 +56,7 @@ public class ImageMetaDataController extends BaseController {
         }
         fileInput.setText(info.getFileName());
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit() ) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -101,7 +101,7 @@ public class ImageMetaDataController extends BaseController {
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
+            task.setSelf(task);Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -130,7 +130,7 @@ public class ImageMetaDataController extends BaseController {
             return;
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit() ) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -152,7 +152,7 @@ public class ImageMetaDataController extends BaseController {
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
+            task.setSelf(task);Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }

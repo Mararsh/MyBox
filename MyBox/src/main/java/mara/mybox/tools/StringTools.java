@@ -1,18 +1,19 @@
 package mara.mybox.tools;
 
 import java.math.BigDecimal;
+import java.nio.charset.Charset;
+import java.text.Collator;
 import java.text.DecimalFormat;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Comparator;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javafx.scene.control.IndexRange;
 import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
  * @CreateDate 2018-6-11 17:43:53
- * @Description
  * @License Apache License Version 2.0
  */
 public class StringTools {
@@ -41,7 +42,7 @@ public class StringTools {
         return splitted;
     }
 
-    public static String fillLeftZero(int value, int digit) {
+    public static String fillLeftZero(Number value, int digit) {
         String v = value + "";
         for (int i = v.length(); i < digit; ++i) {
             v = "0" + v;
@@ -49,7 +50,7 @@ public class StringTools {
         return v;
     }
 
-    public static String fillRightZero(int value, int digit) {
+    public static String fillRightZero(Number value, int digit) {
         String v = value + "";
         for (int i = v.length(); i < digit; ++i) {
             v += "0";
@@ -57,7 +58,7 @@ public class StringTools {
         return v;
     }
 
-    public static String fillRightBlank(int value, int digit) {
+    public static String fillRightBlank(Number value, int digit) {
         String v = value + "";
         for (int i = v.length(); i < digit; ++i) {
             v += " ";
@@ -65,23 +66,7 @@ public class StringTools {
         return v;
     }
 
-    public static String fillLeftBlank(int value, int digit) {
-        String v = value + "";
-        for (int i = v.length(); i < digit; ++i) {
-            v = " " + v;
-        }
-        return v;
-    }
-
-    public static String fillRightBlank(double value, int digit) {
-        String v = value + "";
-        for (int i = v.length(); i < digit; ++i) {
-            v += " ";
-        }
-        return v;
-    }
-
-    public static String fillLeftBlank(double value, int digit) {
+    public static String fillLeftBlank(Number value, int digit) {
         String v = new BigDecimal(value + "").toString() + "";
         for (int i = v.length(); i < digit; ++i) {
             v = " " + v;
@@ -95,6 +80,96 @@ public class StringTools {
             v += " ";
         }
         return v;
+    }
+
+    public static int numberPrefix(String string) {
+        if (string == null) {
+            return CommonValues.InvalidInteger;
+        }
+        try {
+            String s = string.trim();
+            int sign = 1;
+            if (s.startsWith("-")) {
+                if (s.length() == 1) {
+                    return CommonValues.InvalidInteger;
+                }
+                sign = -1;
+                s = s.substring(1);
+            }
+            String prefix = "";
+            for (int i = 0; i < s.length(); i++) {
+                char c = s.charAt(i);
+                if (c >= '0' && c <= '9') {
+                    prefix += c;
+                } else {
+                    break;
+                }
+            }
+            if (prefix.isBlank()) {
+                return CommonValues.InvalidInteger;
+            }
+            return Integer.parseInt(prefix) * sign;
+        } catch (Exception e) {
+            return CommonValues.InvalidInteger;
+        }
+    }
+
+    public static int firstNumber(String string) {
+        if (string == null) {
+            return CommonValues.InvalidInteger;
+        }
+        try {
+            String s = string.trim();
+            String number = "";
+            boolean startNumber = false;
+            for (int i = 0; i < s.length(); i++) {
+                char c = s.charAt(i);
+                if (c >= '0' && c <= '9') {
+                    startNumber = true;
+                    number += c;
+                } else {
+                    if (startNumber) {
+                        break;
+                    }
+                }
+            }
+            if (number.isBlank()) {
+                return CommonValues.InvalidInteger;
+            }
+            return Integer.parseInt(number);
+        } catch (Exception e) {
+            return CommonValues.InvalidInteger;
+        }
+    }
+
+    public static int compareWithNumber(String string1, String string2) {
+        if (string1 == null) {
+            return string2 == null ? 0 : -1;
+        }
+        if (string2 == null) {
+            return 1;
+        }
+        int int1 = StringTools.firstNumber(string1);
+        int int2 = StringTools.firstNumber(string2);
+        if (int1 != CommonValues.InvalidInteger && int2 != CommonValues.InvalidInteger) {
+            int pos1 = string1.indexOf(int1 + "");
+            int pos2 = string2.indexOf(int2 + "");
+            if (pos1 != pos2
+                    || (pos1 > 0 && !string1.substring(0, pos1).equals(string2.substring(0, pos2)))) {
+                Comparator<Object> compare = Collator.getInstance(Locale.getDefault());
+                return compare.compare(string1, string2);
+            }
+            if (int1 == int2) {
+                return 0;
+            } else if (int1 > int2) {
+                return 1;
+            } else {
+                return -1;
+            }
+        } else {
+            Comparator<Object> compare = Collator.getInstance(Locale.getDefault());
+            return compare.compare(string1, string2);
+        }
     }
 
     public static String format(long data) {
@@ -111,7 +186,7 @@ public class StringTools {
     }
 
     public static boolean match(String string, String find, boolean caseInsensitive) {
-        if (string == null || find == null) {
+        if (string == null || find == null || find.isEmpty()) {
             return false;
         }
         try {
@@ -125,162 +200,19 @@ public class StringTools {
         }
     }
 
-    public static IndexRange first(String string, String find, int from,
-            boolean isRegex, boolean caseInsensitive, boolean multiline) {
-        if (string == null || find == null) {
-            return null;
+    public static boolean include(String string, String find, boolean caseInsensitive) {
+        if (string == null || find == null || find.isEmpty()) {
+            return false;
         }
         try {
-            int mode = (isRegex ? 0x00 : Pattern.LITERAL)
-                    | (caseInsensitive ? Pattern.CASE_INSENSITIVE : 0x00)
-                    | (multiline ? Pattern.MULTILINE : 0x00);
+            int mode = (caseInsensitive ? Pattern.CASE_INSENSITIVE : 0x00) | Pattern.MULTILINE;
             Pattern pattern = Pattern.compile(find, mode);
             Matcher matcher = pattern.matcher(string);
-            if (matcher.find(from < 0 ? 0 : from)) {
-                IndexRange range = new IndexRange(matcher.start(), matcher.end());
-                return range;
-            } else {
-                return null;
-            }
+            return matcher.find();
         } catch (Exception e) {
             logger.debug(e.toString());
-            return null;
+            return false;
         }
-    }
-
-    public static IndexRange last(String string, String find, int from,
-            boolean isRegex, boolean caseInsensitive, boolean multiline) {
-        if (string == null || find == null) {
-            return null;
-        }
-        try {
-            int mode = (isRegex ? 0x00 : Pattern.LITERAL)
-                    | (caseInsensitive ? Pattern.CASE_INSENSITIVE : 0x00)
-                    | (multiline ? Pattern.MULTILINE : 0x00);
-            Pattern pattern = Pattern.compile(find, mode);
-            Matcher matcher = pattern.matcher(string);
-            if (!matcher.find(from < 0 ? 0 : from)) {
-                return null;
-            }
-            IndexRange range = new IndexRange(matcher.start(), matcher.end());
-            while (matcher.find()) {
-                range = new IndexRange(matcher.start(), matcher.end());
-            }
-            return range;
-        } catch (Exception e) {
-            logger.debug(e.toString());
-            return null;
-        }
-    }
-
-    public static Map<String, Object> lastAndCount(String string, String regex,
-            boolean isRegex, boolean caseInsensitive, boolean multiline) {
-        Map<String, Object> results = new HashMap<>();
-        results.put("count", 0);
-        results.put("lastRange", null);
-        results.put("lastMatch", "");
-        try {
-            if (string == null || string.isEmpty() || regex == null || regex.isEmpty()) {
-                return results;
-            }
-            int mode = (isRegex ? 0x00 : Pattern.LITERAL)
-                    | (caseInsensitive ? Pattern.CASE_INSENSITIVE : 0x00)
-                    | (multiline ? Pattern.MULTILINE : 0x00);
-            int count = 0;
-            String lastMatch = "";
-            Pattern pattern = Pattern.compile(regex, mode);
-            Matcher matcher = pattern.matcher(string);
-            IndexRange range = null;
-            while (matcher.find()) {
-                count++;
-                lastMatch = matcher.group();
-                range = new IndexRange(matcher.start(), matcher.end());
-            }
-            results.put("count", count);
-            results.put("lastRange", range);
-            results.put("lastMatch", lastMatch);
-        } catch (Exception e) {
-            logger.debug(e.toString());
-        }
-        return results;
-    }
-
-    public static int countNumber(String string, String find,
-            boolean isRegex, boolean caseInsensitive, boolean multiline) {
-        if (string == null || string.isEmpty() || find == null || find.isEmpty()) {
-            return 0;
-        }
-        try {
-            int mode = (isRegex ? 0x00 : Pattern.LITERAL)
-                    | (caseInsensitive ? Pattern.CASE_INSENSITIVE : 0x00)
-                    | (multiline ? Pattern.MULTILINE : 0x00);
-            Pattern pattern = Pattern.compile(find, mode);
-            Matcher matcher = pattern.matcher(string);
-            int count = 0;
-            while (matcher.find()) {
-                count++;
-            }
-            return count;
-        } catch (Exception e) {
-            //            logger.debug(e.toString());
-            return 0;
-        }
-    }
-
-    public static int countNumber(String string, String find) {
-        return countNumber(string, find, false, false, true);
-    }
-
-    public static String replace(String string, String find, String newString, int from,
-            boolean isRegex, boolean caseInsensitive, boolean multiline) {
-        if (string == null || find == null || newString == null) {
-            return string;
-        }
-        try {
-            int mode = (isRegex ? 0x00 : Pattern.LITERAL)
-                    | (caseInsensitive ? Pattern.CASE_INSENSITIVE : 0x00)
-                    | (multiline ? Pattern.MULTILINE : 0x00);
-            Pattern pattern = Pattern.compile(find, mode);
-            Matcher matcher = pattern.matcher(string);
-            if (matcher.find(from < 0 ? 0 : from)) {
-                StringBuffer s = new StringBuffer();
-                matcher.appendReplacement(s, newString);
-                matcher.appendTail(s);
-                return s.toString();
-            } else {
-                return string;
-            }
-        } catch (Exception e) {
-            logger.debug(e.toString());
-            return string;
-        }
-    }
-
-    public static String replaceAll(String string, String find, String newString,
-            boolean isRegex, boolean caseInsensitive, boolean multiline) {
-        if (string == null || find == null || newString == null) {
-            return string;
-        }
-        try {
-            int mode = (isRegex ? 0x00 : Pattern.LITERAL)
-                    | (caseInsensitive ? Pattern.CASE_INSENSITIVE : 0x00)
-                    | (multiline ? Pattern.MULTILINE : 0x00);
-            Pattern pattern = Pattern.compile(find, mode);
-            Matcher matcher = pattern.matcher(string);
-            StringBuffer s = new StringBuffer();
-            while (matcher.find()) {
-                matcher.appendReplacement(s, newString);
-            }
-            matcher.appendTail(s);
-            return s.toString();
-        } catch (Exception e) {
-            logger.debug(e.toString());
-            return string;
-        }
-    }
-
-    public static String replaceAll(String string, String oldString, String newString) {
-        return replaceAll(string, oldString, newString, false, false, true);
     }
 
     // https://blog.csdn.net/zx1749623383/article/details/79540748
@@ -312,6 +244,28 @@ public class StringTools {
             unicode.append("\\u").append(Integer.toHexString(c));
         }
         return unicode.toString();
+    }
+
+    public static String convertCharset(String source, String sourceCharset, String targetCharset) {
+        try {
+            if (sourceCharset.equals(targetCharset)) {
+                return source;
+            }
+            return new String(source.getBytes(sourceCharset), targetCharset);
+        } catch (Exception e) {
+            return source;
+        }
+    }
+
+    public static String convertCharset(String source, Charset sourceCharset, Charset targetCharset) {
+        try {
+            if (sourceCharset.equals(targetCharset)) {
+                return source;
+            }
+            return new String(source.getBytes(sourceCharset), targetCharset);
+        } catch (Exception e) {
+            return source;
+        }
     }
 
 }

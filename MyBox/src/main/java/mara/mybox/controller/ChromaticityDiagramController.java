@@ -55,7 +55,7 @@ import mara.mybox.image.file.ImageFileWriters;
 import static mara.mybox.tools.DoubleTools.scale;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.FloatTools;
-import mara.mybox.tools.VisitHistoryTools;
+import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
@@ -152,11 +152,10 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
             super.initControls();
 
             initToolBar();
-            initDiagram();
             initDataBox();
             initCIETables();
-
             initCIEData();
+            initDiagram();
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -338,11 +337,10 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
 
     private void initDiagram() {
         try {
-            colorSetController.init(this, baseName + "Color", Color.THISTLE);
             colorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
-                public void changed(ObservableValue<? extends Paint> observable,
-                        Paint oldValue, Paint newValue) {
+                public void changed(ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) {
+                    logger.debug("here");
                     calculateColor();
                 }
             });
@@ -385,8 +383,7 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
         try {
             dataGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
-                public void changed(ObservableValue<? extends Toggle> observable,
-                        Toggle oldValue, Toggle newValue) {
+                public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
                     loadTableData();
                 }
             });
@@ -689,7 +686,7 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
 
     private void initCIEData() {
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit() ) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -734,11 +731,12 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
                     d10n5TableView.setItems(degree10nm5Data);
                     d10n5Area.setText(degree10nm5String);
 
-                    loadTableData();
+                    afterInitCIEData();
                 }
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -746,75 +744,9 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
 
     }
 
-    private void displayChromaticityDiagram() {
-        if (isSettingValues) {
-            return;
-        }
-        synchronized (this) {
-            if (task != null) {
-                return;
-            }
-            task = new SingletonTask<Void>() {
-                private Image image;
-
-                @Override
-                protected boolean handle() {
-                    try {
-                        LinkedHashMap<ChromaticityDiagram.DataType, Boolean> selections = new LinkedHashMap();
-                        selections.put(DataType.CIE2Degree, degree2Check.isSelected());
-                        selections.put(DataType.CIE10Degree, degree10Check.isSelected());
-                        selections.put(DataType.CIEDataSource, inputCheck.isSelected());
-                        selections.put(DataType.Calculate, calculateCheck.isSelected());
-                        selections.put(DataType.Wave, waveCheck.isSelected());
-                        selections.put(DataType.WhitePoints, whitePointsCheck.isSelected());
-                        selections.put(DataType.Grid, gridCheck.isSelected());
-                        selections.put(DataType.CIELines, cdCIECheck.isSelected());
-                        selections.put(DataType.ECILines, cdECICheck.isSelected());
-                        selections.put(DataType.sRGBLines, cdSRGBCheck.isSelected());
-                        selections.put(DataType.AdobeLines, cdAdobeCheck.isSelected());
-                        selections.put(DataType.AppleLines, cdAppleCheck.isSelected());
-                        selections.put(DataType.PALLines, cdPALCheck.isSelected());
-                        selections.put(DataType.NTSCLines, cdNTSCCheck.isSelected());
-                        selections.put(DataType.ColorMatchLines, cdColorMatchCheck.isSelected());
-                        selections.put(DataType.ProPhotoLines, cdProPhotoCheck.isSelected());
-                        selections.put(DataType.SMPTECLines, cdSMPTECCheck.isSelected());
-
-                        ChromaticityDiagram cd = new ChromaticityDiagram();
-                        cd.setIsLine(isLine);
-                        cd.setDotSize(dotSize);
-                        cd.setBgColor(bgColor);
-                        cd.setFontSize(fontSize);
-                        cd.setDataSourceTexts(sourceDataArea.getText());
-                        if (x >= 0 && x <= 1 && y > 0 && y <= 1) {
-                            cd.setCalculateX(x);
-                            cd.setCalculateY(y);
-                            cd.setCalculateColor(calculateColor);
-                        }
-                        image = SwingFXUtils.toFXImage(cd.drawData(selections), null);
-
-                    } catch (Exception e) {
-                        error = e.toString();
-                    }
-                    return image != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    cieDiagram.setImage(image);
-                    FxmlControl.paneSize(cieDiagramScroll, cieDiagram);
-                    d2n1Area.home();
-                    d2n5Area.home();
-                    d10n1Area.home();
-                    d10n5Area.home();
-                }
-
-            };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
-            thread.setDaemon(true);
-            thread.start();
-        }
-
+    private void afterInitCIEData() {
+        loadTableData();
+        colorSetController.init(this, baseName + "Color", Color.THISTLE);
     }
 
     private void loadTableData() {
@@ -861,7 +793,7 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
             return;
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit() ) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -893,6 +825,7 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -1150,6 +1083,7 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
     }
 
     protected void calculateColor() {
+        logger.debug(isSettingValues);
         CIEData d = new CIEData((Color) colorSetController.rect.getFill());
         isSettingValues = true;
         XInput.setText(scale(d.getX(), 8) + "");
@@ -1180,8 +1114,8 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
     }
 
     private void displayCalculatedValued() {
-        if (x >= 0 && x <= 1 && y > 0 && y <= 1
-                && (x + y) <= 1) {
+        logger.debug(isSettingValues);
+        if (x >= 0 && x <= 1 && y > 0 && y <= 1 && (x + y) <= 1) {
             double[] srgb = CIEColorSpace.XYZd50toSRGBd65(X, Y, Z);
             if (!isSettingValues) {
                 isSettingValues = true;
@@ -1189,6 +1123,7 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
                 colorSetController.rect.setFill(pColor);
                 isSettingValues = false;
             }
+            logger.debug(isSettingValues);
             Color pColor = (Color) colorSetController.rect.getFill();
             calculateColor = new java.awt.Color((float) pColor.getRed(), (float) pColor.getGreen(), (float) pColor.getBlue());
 
@@ -1254,6 +1189,81 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
 
     }
 
+    private void displayChromaticityDiagram() {
+        logger.debug(isSettingValues);
+        if (isSettingValues) {
+            return;
+        }
+        synchronized (this) {
+            if (task != null && !task.isQuit() ) {
+                return;
+            }
+            logger.debug(isSettingValues);
+            task = new SingletonTask<Void>() {
+                private Image image;
+
+                @Override
+                protected boolean handle() {
+                    try {
+                        LinkedHashMap<ChromaticityDiagram.DataType, Boolean> selections = new LinkedHashMap();
+                        selections.put(DataType.CIE2Degree, degree2Check.isSelected());
+                        selections.put(DataType.CIE10Degree, degree10Check.isSelected());
+                        selections.put(DataType.CIEDataSource, inputCheck.isSelected());
+                        selections.put(DataType.Calculate, calculateCheck.isSelected());
+                        selections.put(DataType.Wave, waveCheck.isSelected());
+                        selections.put(DataType.WhitePoints, whitePointsCheck.isSelected());
+                        selections.put(DataType.Grid, gridCheck.isSelected());
+                        selections.put(DataType.CIELines, cdCIECheck.isSelected());
+                        selections.put(DataType.ECILines, cdECICheck.isSelected());
+                        selections.put(DataType.sRGBLines, cdSRGBCheck.isSelected());
+                        selections.put(DataType.AdobeLines, cdAdobeCheck.isSelected());
+                        selections.put(DataType.AppleLines, cdAppleCheck.isSelected());
+                        selections.put(DataType.PALLines, cdPALCheck.isSelected());
+                        selections.put(DataType.NTSCLines, cdNTSCCheck.isSelected());
+                        selections.put(DataType.ColorMatchLines, cdColorMatchCheck.isSelected());
+                        selections.put(DataType.ProPhotoLines, cdProPhotoCheck.isSelected());
+                        selections.put(DataType.SMPTECLines, cdSMPTECCheck.isSelected());
+
+                        ChromaticityDiagram cd = new ChromaticityDiagram();
+                        cd.setIsLine(isLine);
+                        cd.setDotSize(dotSize);
+                        cd.setBgColor(bgColor);
+                        cd.setFontSize(fontSize);
+                        cd.setDataSourceTexts(sourceDataArea.getText());
+                        if (x >= 0 && x <= 1 && y > 0 && y <= 1) {
+                            cd.setCalculateX(x);
+                            cd.setCalculateY(y);
+                            cd.setCalculateColor(calculateColor);
+                        }
+                        image = SwingFXUtils.toFXImage(cd.drawData(selections), null);
+
+                    } catch (Exception e) {
+                        error = e.toString();
+                        logger.debug(e.toString());
+                    }
+                    return image != null;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    cieDiagram.setImage(image);
+                    FxmlControl.paneSize(cieDiagramScroll, cieDiagram);
+                    d2n1Area.home();
+                    d2n5Area.home();
+                    d10n1Area.home();
+                    d10n5Area.home();
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
+
+    }
+
     @FXML
     @Override
     public void saveAction() {
@@ -1265,7 +1275,7 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
         recordFileWritten(file, VisitHistory.FileType.Image);
 
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit() ) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -1273,7 +1283,7 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
                 @Override
                 protected boolean handle() {
                     String format = FileTools.getFileSuffix(file.getName());
-                    final BufferedImage bufferedImage = FxmlImageManufacture.getBufferedImage(cieDiagram.getImage());
+                    final BufferedImage bufferedImage = FxmlImageManufacture.bufferedImage(cieDiagram.getImage());
                     if (this == null || this.isCancelled()) {
                         return false;
                     }
@@ -1288,6 +1298,7 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -1303,7 +1314,7 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
         recordFileWritten(file, VisitHistory.FileType.Text);
 
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit() ) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -1321,6 +1332,7 @@ public class ChromaticityDiagramController extends ChromaticityBaseController {
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();

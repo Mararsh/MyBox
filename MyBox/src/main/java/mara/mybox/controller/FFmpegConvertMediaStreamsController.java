@@ -29,7 +29,7 @@ public class FFmpegConvertMediaStreamsController extends FFmpegConvertMediaFiles
                 return;
             }
             synchronized (this) {
-                if (task != null) {
+                if (task != null && !task.isQuit()) {
                     return;
                 }
                 processStartTime = new Date();
@@ -82,11 +82,13 @@ public class FFmpegConvertMediaStreamsController extends FFmpegConvertMediaFiles
 
                     @Override
                     protected void taskQuit() {
+                        super.taskQuit();
                         quitProcess();
                         task = null;
                     }
 
                 };
+                task.setSelf(task);
                 Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();

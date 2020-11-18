@@ -12,12 +12,12 @@ License:    Apache License Version 2.0
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane fx:id="thisPane" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.PdfAttributesController">
+<BorderPane fx:id="thisPane" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.PdfAttributesController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
     <center>
-        <VBox maxWidth="1.7976931348623157E308" spacing="5.0">
+        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
             <children>
                 <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
                     <children>
@@ -50,9 +50,9 @@ License:    Apache License Version 2.0
                         <Insets bottom="20.0" />
                     </VBox.margin>
                 </HBox>
-            <ScrollPane fitToHeight="true" fitToWidth="true" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="604.0" prefViewportWidth="1506.0">
-               <content>
-                        <VBox maxWidth="1.7976931348623157E308" spacing="10.0">
+                <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="604.0" prefViewportWidth="1506.0" VBox.vgrow="ALWAYS">
+                    <content>
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
                             <children>
                                 <HBox alignment="CENTER_LEFT" spacing="5.0">
                                     <children>
@@ -130,13 +130,22 @@ License:    Apache License Version 2.0
                                 </HBox>
                             </children>
                         </VBox>
-               </content>
-            </ScrollPane>
+                    </content>
+                </ScrollPane>
                 <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="220.0" spacing="5.0" VBox.vgrow="NEVER">
                     <children>
                         <Label maxWidth="1.7976931348623157E308" text=" " HBox.hgrow="ALWAYS" />
                         <Button mnemonicParsing="false" onAction="#resetAction" text="%Reset" />
-                        <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Save" />
+                        <Button fx:id="saveButton" defaultButton="true" mnemonicParsing="false" onAction="#saveAction"
+                                styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconSave.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
                     </children>
                     <VBox.margin>
                         <Insets top="20.0" />

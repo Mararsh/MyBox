@@ -159,7 +159,7 @@ public class TableUserConf extends DerbyBase {
             return defaultValue;
         } catch (Exception e) {
             failed(e);
-//            // logger.debug(e.toString());
+            logger.debug(e.toString());
             return defaultValue;
         }
     }
@@ -254,7 +254,7 @@ public class TableUserConf extends DerbyBase {
             }
         } catch (Exception e) {
             failed(e);
-//            logger.debug(e.toString());
+            logger.debug(e.toString());
             return -1;
         }
     }

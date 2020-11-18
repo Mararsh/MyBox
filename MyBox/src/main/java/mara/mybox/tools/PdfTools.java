@@ -121,6 +121,29 @@ public class PdfTools {
         }
     }
 
+    public static PDImageXObject imageObject(PDDocument document, String format, BufferedImage bufferedImage) {
+        try {
+            PDImageXObject imageObject;
+            bufferedImage = ImageManufacture.checkAlpha(bufferedImage, format);
+            switch (format) {
+                case "tif":
+                case "tiff":
+                    imageObject = CCITTFactory.createFromImage(document, bufferedImage);
+                    break;
+                case "jpg":
+                case "jpeg":
+                    imageObject = JPEGFactory.createFromImage(document, bufferedImage, 1f);
+                    break;
+                default:
+                    imageObject = LosslessFactory.createFromImage(document, bufferedImage);
+                    break;
+            }
+            return imageObject;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public static boolean writePage(PDDocument document, PDFont font,
             String sourceFormat, BufferedImage bufferedImage,
             int index, int total, PdfImageFormat targetFormat,
@@ -521,8 +544,8 @@ public class PdfTools {
                 document.setVersion(1.0f);
                 int x1, y1, x2, y2;
                 BufferedImage wholeSource = null;
-                if (!imageInformation.isIsSampled()) {
-                    wholeSource = FxmlImageManufacture.getBufferedImage(imageInformation.getImage());
+                if (imageInformation.getImage() != null && !imageInformation.isIsScaled()) {
+                    wholeSource = FxmlImageManufacture.bufferedImage(imageInformation.getImage());
                 }
                 int count = 0;
                 int total = (rows.size() - 1) * (cols.size() - 1);
@@ -533,8 +556,8 @@ public class PdfTools {
                         x1 = cols.get(j);
                         x2 = cols.get(j + 1);
                         BufferedImage target;
-                        if (imageInformation.isIsSampled()) {
-                            target = ImageFileReaders.readRectangle(sourceFormat, sourceFile, x1, y1, x2, y2);
+                        if (wholeSource == null) {
+                            target = ImageFileReaders.readFrame(sourceFormat, sourceFile, x1, y1, x2, y2);
                         } else {
                             target = ImageManufacture.cropOutside(wholeSource, x1, y1, x2, y2);
                         }

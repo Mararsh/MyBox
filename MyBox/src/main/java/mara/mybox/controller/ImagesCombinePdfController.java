@@ -22,13 +22,12 @@ import javafx.scene.layout.Region;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mara.mybox.data.VisitHistory;
+import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageInformation;
-import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.tools.PdfTools.PdfImageFormat;
-import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
@@ -468,10 +467,9 @@ public class ImagesCombinePdfController extends ImagesListController {
         if (file == null) {
             return;
         }
-        AppVariables.setUserConfigValue(VisitHistoryTools.getPathKey(VisitHistory.FileType.PDF), file.getParent());
-        recordFileWritten(file);
+        recordFileWritten(file, VisitHistory.FileType.PDF);
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -496,7 +494,7 @@ public class ImagesCombinePdfController extends ImagesListController {
                                     return false;
                                 }
                                 ImageInformation imageInfo = (ImageInformation) source;
-                                BufferedImage bufferedImage = ImageFileReaders.getBufferedImage(imageInfo);
+                                BufferedImage bufferedImage = ImageInformation.getBufferedImage(imageInfo);
                                 if (bufferedImage != null) {
                                     PdfTools.writePage(document, font, imageInfo.getImageFormat(), bufferedImage,
                                             ++count, total, pdfFormat,
@@ -525,6 +523,7 @@ public class ImagesCombinePdfController extends ImagesListController {
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();

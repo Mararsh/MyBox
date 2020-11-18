@@ -41,7 +41,6 @@ public class FilesFindController extends FilesBatchController {
 
     public FilesFindController() {
         baseTitle = AppVariables.message("FilesFind");
-        allowPaused = false;
     }
 
     @Override

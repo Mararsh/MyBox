@@ -50,7 +50,7 @@ public class ImageTiffFile {
     public static IIOMetadata getTiffIIOMetadata(File file) {
         try {
             ImageReader reader = ImageIO.getImageReadersByFormatName("tif").next();
-            try (ImageInputStream iis = ImageIO.createImageInputStream(file)) {
+            try ( ImageInputStream iis = ImageIO.createImageInputStream(file)) {
                 reader.setInput(iis, false);
                 IIOMetadata metadata = reader.getImageMetadata(0);
                 reader.dispose();
@@ -177,7 +177,7 @@ public class ImageTiffFile {
         try {
             ImageWriter writer = getWriter();
             File tmpFile = FileTools.getTempFile();
-            try (ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
+            try ( ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                 writer.setOutput(out);
                 ImageWriteParam param = getPara(attributes, writer);
                 IIOMetadata metaData = getWriterMeta(attributes, image, writer, param);
@@ -209,7 +209,7 @@ public class ImageTiffFile {
             }
             ImageWriter writer = getWriter();
             File tmpFile = FileTools.getTempFile();
-            try (ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
+            try ( ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                 writer.setOutput(out);
                 ImageWriteParam param = getPara(attributes, writer);
                 writer.prepareWriteSequence(null);
@@ -246,12 +246,12 @@ public class ImageTiffFile {
             }
             ImageWriter writer = getWriter();
             File tmpFile = FileTools.getTempFile();
-            try (ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
+            try ( ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                 writer.setOutput(out);
                 ImageWriteParam param = getPara(attributes, writer);
                 writer.prepareWriteSequence(null);
                 for (ImageInformation info : imagesInfo) {
-                    BufferedImage bufferedImage = ImageFileReaders.getBufferedImage(info);
+                    BufferedImage bufferedImage = ImageInformation.getBufferedImage(info);
                     if (bufferedImage != null) {
                         bufferedImage = ImageConvert.convertColorType(bufferedImage, attributes);
                         IIOMetadata metaData = getWriterMeta(attributes, bufferedImage, writer, param);
@@ -286,7 +286,7 @@ public class ImageTiffFile {
             }
             ImageWriter writer = getWriter();
             File tmpFile = FileTools.getTempFile();
-            try (ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
+            try ( ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                 writer.setOutput(out);
                 ImageWriteParam param = getPara(attributes, writer);
                 writer.prepareWriteSequence(null);
@@ -350,14 +350,14 @@ public class ImageTiffFile {
             }
             ImageWriter writer = getWriter();
             File tmpFile = FileTools.getTempFile();
-            try (ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
+            try ( ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                 writer.setOutput(out);
                 ImageWriteParam param = getPara(attributes, writer);
                 writer.prepareWriteSequence(null);
                 int x1, y1, x2, y2;
                 BufferedImage wholeSource = null;
-                if (!imageInformation.isIsSampled()) {
-                    wholeSource = FxmlImageManufacture.getBufferedImage(imageInformation.getImage());
+                if (imageInformation.getImage() != null && !imageInformation.isIsScaled()) {
+                    wholeSource = FxmlImageManufacture.bufferedImage(imageInformation.getImage());
                 }
                 for (int i = 0; i < rows.size() - 1; ++i) {
                     y1 = rows.get(i);
@@ -366,10 +366,10 @@ public class ImageTiffFile {
                         x1 = cols.get(j);
                         x2 = cols.get(j + 1);
                         BufferedImage bufferedImage;
-                        if (!imageInformation.isIsSampled()) {
+                        if (wholeSource != null) {
                             bufferedImage = ImageManufacture.cropOutside(wholeSource, x1, y1, x2, y2);
                         } else {
-                            bufferedImage = ImageFileReaders.readRectangle(sourceFormat, sourceFile, x1, y1, x2, y2);
+                            bufferedImage = ImageFileReaders.readFrame(sourceFormat, sourceFile, x1, y1, x2, y2);
                         }
                         bufferedImage = ImageConvert.convertColorType(bufferedImage, attributes);
                         IIOMetadata metaData = getWriterMeta(attributes, bufferedImage, writer, param);

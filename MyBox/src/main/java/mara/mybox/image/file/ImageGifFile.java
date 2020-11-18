@@ -3,6 +3,7 @@ package mara.mybox.image.file;
 import com.github.jaiimageio.impl.plugins.gif.GIFImageMetadata;
 import com.github.jaiimageio.impl.plugins.gif.GIFImageWriter;
 import com.github.jaiimageio.impl.plugins.gif.GIFImageWriterSpi;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -20,10 +21,10 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
+import mara.mybox.data.DoubleRectangle;
 import mara.mybox.image.ImageAttributes;
 import mara.mybox.image.ImageInformation;
 import mara.mybox.image.ImageManufacture;
-import static mara.mybox.image.file.ImageFileReaders.needSampled;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import static mara.mybox.value.AppVariables.logger;
@@ -133,25 +134,22 @@ public class ImageGifFile {
     }
 
     public static BufferedImage readBrokenGifFile(String src, int index,
-            int xscale, int yscale) {
-        BufferedImage image = null;
+            Rectangle bounds, int xscale, int yscale) {
+        BufferedImage bufferedImage = null;
         try {
             try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(src))) {
                 final GifImage gif = GifDecoder.read(in);
 //                logger.error(gif.getFrameCount());
-                image = gif.getFrame(index);
-                int width = image.getWidth() / xscale;
-                int height = image.getHeight() / yscale;
-                image = ImageManufacture.scaleImage(image, width, height);
+                bufferedImage = gif.getFrame(index);
+                bufferedImage = ImageManufacture.sample(bufferedImage, new DoubleRectangle(bounds), xscale, yscale);
             }
         } catch (Exception e) {
             logger.error(e.toString());
         }
-        return image;
+        return bufferedImage;
     }
 
-    public static List<BufferedImage> readBrokenGifFile(String src, int xscale,
-            int yscale) {
+    public static List<BufferedImage> readBrokenGifFile(String src, int xscale, int yscale) {
         try {
 //            logger.debug("readBrokenGifFile");
             List<BufferedImage> images = new ArrayList<>();
@@ -172,8 +170,7 @@ public class ImageGifFile {
         }
     }
 
-    public static List<BufferedImage> readBrokenGifFileWithWidth(String src,
-            int width) {
+    public static List<BufferedImage> readBrokenGifFileWithWidth(String src, int width) {
         try {
 //            logger.debug("readBrokenGifFile");
             List<BufferedImage> images = new ArrayList<>();
@@ -192,8 +189,7 @@ public class ImageGifFile {
         }
     }
 
-    public static List<BufferedImage> readBrokenGifFile(String src,
-            List<ImageInformation> imagesInfo) {
+    public static List<BufferedImage> readBrokenGifFile(String src, List<ImageInformation> imagesInfo) {
         try {
 //            logger.debug("readBrokenGifFile");
             List<BufferedImage> images = new ArrayList<>();
@@ -202,16 +198,14 @@ public class ImageGifFile {
                 final int frameCount = gif.getFrameCount();
                 for (int i = 0; i < frameCount; ++i) {
                     ImageInformation info = imagesInfo.get(i);
-                    boolean needSampled = needSampled(info, frameCount);
-                    final BufferedImage img = gif.getFrame(i);
-                    if (needSampled) {
-                        Map<String, Long> sizes = info.getSizes();
-                        images.add(ImageManufacture.scaleImageWidthKeep(img, sizes.get("sampledWidth").intValue()));
+                    final BufferedImage bufferedImage = gif.getFrame(i);
+                    if (info.isNeedSample()) {
+                        images.add(ImageManufacture.scaleImageByScale(bufferedImage, 1f / info.getSampleScale()));
                         info.setIsSampled(true);
                     } else {
-                        images.add(img);
+                        images.add(bufferedImage);
                         info.setIsSampled(false);
-                        info.setBufferedImage(img);
+                        info.setBufferedImage(bufferedImage);
                     }
                 }
             }
@@ -222,17 +216,14 @@ public class ImageGifFile {
         }
     }
 
-    public static BufferedImage readBrokenGifFile(String src,
-            ImageInformation imageInfo) {
+    public static BufferedImage readBrokenGifFile(String src, ImageInformation imageInfo) {
         try {
             BufferedImage bufferedImage;
             try ( BufferedInputStream in = new BufferedInputStream(new FileInputStream(src))) {
                 final GifImage gif = GifDecoder.read(in);
-                boolean needSampled = needSampled(imageInfo, 1);
                 bufferedImage = gif.getFrame(0);
-                if (needSampled) {
-                    Map<String, Long> sizes = imageInfo.getSizes();
-                    bufferedImage = ImageManufacture.scaleImageWidthKeep(bufferedImage, sizes.get("sampledWidth").intValue());
+                if (imageInfo.isNeedSample()) {
+                    bufferedImage = ImageManufacture.scaleImageByScale(bufferedImage, 1f / imageInfo.getSampleScale());
                     imageInfo.setIsSampled(true);
                 } else {
                     imageInfo.setIsSampled(false);
@@ -246,8 +237,7 @@ public class ImageGifFile {
         }
     }
 
-    public static List<String> extractGifImages(File source, File target,
-            int from, int to) {
+    public static List<String> extractGifImages(File source, File target, int from, int to) {
         try {
             if (source == null || target == null || from < 0 || to < 0 || from > to) {
                 return null;
@@ -414,7 +404,7 @@ public class ImageGifFile {
 
                 gifWriter.prepareWriteSequence(null);
                 for (ImageInformation info : imagesInfo) {
-                    BufferedImage bufferedImage = ImageFileReaders.getBufferedImage(info);
+                    BufferedImage bufferedImage = ImageInformation.getBufferedImage(info);
 //                    bufferedImage = ImageManufacture.removeAlpha(bufferedImage);
                     if (bufferedImage != null) {
                         if (!keepSize) {

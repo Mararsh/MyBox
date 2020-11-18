@@ -264,7 +264,7 @@ public class ImageManufactureBatchSizeController extends ImageManufactureBatchCo
         try {
             BufferedImage target = null;
             if (sizeType == SizeType.Scale) {
-                target = ImageManufacture.scaleImage(source, scale);
+                target = ImageManufacture.scaleImageByScale(source, scale);
 
             } else if (sizeType == SizeType.Width) {
                 target = ImageManufacture.scaleImageWidthKeep(source, keepWidth);

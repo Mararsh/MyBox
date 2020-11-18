@@ -46,11 +46,11 @@ License:    Apache License Version 2.0
                                         <Image url="@../buttons/iconTips.png" />
                                     </image>
                                 </ImageView>
-                        <Hyperlink onAction="#aboutColor" text="%AboutColor" />
+                                <Hyperlink onAction="#aboutColor" text="%AboutColor" />
                                 <Label prefWidth="10.0" text=" " />
                                 <Button mnemonicParsing="false" text="" visible="false" />
                                 <Label fx:id="editLabel" styleClass="darkRed-label" stylesheets="@../styles/MyBox.css" />
-                                <Button mnemonicParsing="false" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Save" visible="false" />
+                                <Button mnemonicParsing="false" styleClass="big" stylesheets="@../styles/MyBox.css" text="%Save" visible="false" />
                             </items>
                         </ToolBar>
                         <ToolBar HBox.hgrow="NEVER">
@@ -74,7 +74,16 @@ License:    Apache License Version 2.0
                                     </graphic>
                                 </Button>
                                 <CheckBox fx:id="saveConfirmCheck" mnemonicParsing="false" selected="true" text="%ConfirmWhenSave" />
-                                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" onMouseEntered="#popSave" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Save" />
+                                <Button fx:id="saveButton" defaultButton="true" mnemonicParsing="false" onAction="#saveAction"  onMouseEntered="#popSave"
+                                        styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconSave.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
                             </items>
                         </ToolBar>
                     </children>

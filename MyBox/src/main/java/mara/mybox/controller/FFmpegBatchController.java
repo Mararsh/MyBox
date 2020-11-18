@@ -2,7 +2,7 @@ package mara.mybox.controller;
 
 import javafx.fxml.FXML;
 import mara.mybox.data.VisitHistory;
-import mara.mybox.tools.VisitHistoryTools;
+import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.CommonFxValues;
 

@@ -47,6 +47,38 @@ License:    Apache License Version 2.0
                                                 </Button>
                                                 <VBox fx:id="imageOptionsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="5.0">
                                                     <children>
+                                                        <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                                                            <children>
+                                                                <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                                <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/iconInfo.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
+                                                                <Button fx:id="previousButton" mnemonicParsing="false" onAction="#previousAction">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/iconPrevious.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
+                                                                <Button fx:id="nextButton" mnemonicParsing="false" onAction="#nextAction">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/iconNext.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
+                                                            </children>
+                                                        </HBox>
                                                         <CheckBox fx:id="startCheck" mnemonicParsing="false" text="%StartWhenImageLoad" />
                                                         <CheckBox fx:id="LoadCheck" mnemonicParsing="false" text="%LoadAfterSaveAs" />
                                                         <Separator prefWidth="200.0" />
@@ -103,258 +135,242 @@ License:    Apache License Version 2.0
                                         </VBox>
                                         <VBox fx:id="imagesBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                             <children>
-                                                <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
-                                                    <children>
-                                                        <Label maxWidth="1.7976931348623157E308" text="%ImagePreprocessed" HBox.hgrow="ALWAYS" />
-                                                        <CheckBox fx:id="selectAreaCheck" mnemonicParsing="false">
-                                                            <graphic>
-                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/iconTarget.png" />
-                                                                    </image>
-                                                                </ImageView>
-                                                            </graphic>
-                                                        </CheckBox>
-                                                        <Button fx:id="selectAllButton" mnemonicParsing="false" onAction="#selectAllAction">
-                                                            <graphic>
-                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/iconSelectAll.png" />
-                                                                    </image>
-                                                                </ImageView>
-                                                            </graphic>
-                                                        </Button>
-                                                        <Button fx:id="saveAsPreprocessButton" mnemonicParsing="false" onAction="#savePreprocessAction" onMouseEntered="#popSavePreprocess">
-                                                            <graphic>
-                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/iconSaveAs.png" />
-                                                                    </image>
-                                                                </ImageView>
-                                                            </graphic>
-                                                        </Button>
-                                                        <Button fx:id="recoverButton" mnemonicParsing="false" onAction="#recoverAction">
-                                                            <graphic>
-                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/iconRecover.png" />
-                                                                    </image>
-                                                                </ImageView>
-                                                            </graphic>
-                                                        </Button>
-                                                        <ImageView fx:id="rightPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconDoubleRIght.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </children>
-                                                </HBox>
-                                                <HBox fx:id="operation1Box" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
-                                                    <children>
-                                                        <Label fx:id="imageLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="bottom-label" stylesheets="@../styles/MyBox.css" wrapText="true" HBox.hgrow="ALWAYS">
-                                                        </Label>
-                                                        <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut">
-                                                            <graphic>
-                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/iconZoomOut.png" />
-                                                                    </image>
-                                                                </ImageView>
-                                                            </graphic>
-                                                        </Button>
-                                                        <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#zoomIn">
-                                                            <graphic>
-                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/iconZoomIn.png" />
-                                                                    </image>
-                                                                </ImageView>
-                                                            </graphic>
-                                                        </Button>
-                                                        <Button fx:id="paneSizeButton" mnemonicParsing="false" onAction="#paneSize">
-                                                            <graphic>
-                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/iconPicBig.png" />
-                                                                    </image>
-                                                                </ImageView>
-                                                            </graphic>
-                                                        </Button>
-                                                        <Button fx:id="imageSizeButton" mnemonicParsing="false" onAction="#loadedSize">
-                                                            <graphic>
-                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/iconPicSmall.png" />
-                                                                    </image>
-                                                                </ImageView>
-                                                            </graphic>
-                                                        </Button>
-                                                        <Button fx:id="manufacturePreprocessButton" mnemonicParsing="false" onMouseEntered="#popAlgorithmsMenu">
-                                                            <graphic>
-                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/iconEdit.png" />
-                                                                    </image>
-                                                                </ImageView>
-                                                            </graphic>
-                                                        </Button>
-                                                        <Button fx:id="demoButton" mnemonicParsing="false" onAction="#demo">
-                                                            <graphic>
-                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/iconGo.png" />
-                                                                    </image>
-                                                                </ImageView>
-                                                            </graphic>
-                                                        </Button>
-                                                    </children>
-                                                </HBox>
-                                                <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="504.0" prefViewportWidth="538.0" VBox.vgrow="ALWAYS">
+                                                <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%ImagePreprocessed" VBox.vgrow="ALWAYS">
                                                     <content>
-                                                        <AnchorPane fx:id="maskPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#paneClicked" VBox.vgrow="ALWAYS">
+                                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                             <children>
-                                                                <ImageView fx:id="imageView" cache="true" fitHeight="300.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true">
-                                                                </ImageView>
-                                                                <Rectangle fx:id="topLeftHandler" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#topLeftHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                                                    <cursor>
-                                                                        <Cursor fx:constant="NW_RESIZE" />
-                                                                    </cursor>
-                                                                </Rectangle>
-                                                                <Rectangle fx:id="bottomLeftHandler" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#bottomLeftHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                                                    <cursor>
-                                                                        <Cursor fx:constant="SW_RESIZE" />
-                                                                    </cursor>
-                                                                </Rectangle>
-                                                                <Rectangle fx:id="bottomCenterHandler" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#bottomCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                                                    <cursor>
-                                                                        <Cursor fx:constant="N_RESIZE" />
-                                                                    </cursor>
-                                                                </Rectangle>
-                                                                <Rectangle fx:id="bottomRightHandler" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#bottomRightHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                                                    <cursor>
-                                                                        <Cursor fx:constant="SE_RESIZE" />
-                                                                    </cursor>
-                                                                </Rectangle>
-                                                                <Rectangle fx:id="rightCenterHandler" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#rightCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                                                    <cursor>
-                                                                        <Cursor fx:constant="E_RESIZE" />
-                                                                    </cursor>
-                                                                </Rectangle>
-                                                                <Rectangle fx:id="topCenterHandler" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#topCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                                                    <cursor>
-                                                                        <Cursor fx:constant="N_RESIZE" />
-                                                                    </cursor>
-                                                                </Rectangle>
-                                                                <Rectangle fx:id="topRightHandler" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#topRightHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                                                    <cursor>
-                                                                        <Cursor fx:constant="NE_RESIZE" />
-                                                                    </cursor>
-                                                                </Rectangle>
-                                                                <Rectangle fx:id="leftCenterHandler" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#leftCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                                                    <cursor>
-                                                                        <Cursor fx:constant="W_RESIZE" />
-                                                                    </cursor>
-                                                                </Rectangle>
-                                                                <Rectangle fx:id="maskRectangleLine" arcHeight="5.0" arcWidth="5.0" fill="#ffffff00" height="241.0" onMousePressed="#handlerPressed" onMouseReleased="#rectangleReleased" stroke="RED" strokeType="INSIDE" width="334.0">
-                                                                    <cursor>
-                                                                        <Cursor fx:constant="MOVE" />
-                                                                    </cursor>
-                                                                </Rectangle>
+                                                                <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                                                                    <children>
+                                                                        <Label fx:id="imageLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="bottom-label" stylesheets="@../styles/MyBox.css" wrapText="true" HBox.hgrow="ALWAYS">
+                                                                        </Label>
+                                                                        <CheckBox fx:id="selectAreaCheck" mnemonicParsing="false">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/iconTarget.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </CheckBox>
+                                                                        <Button fx:id="selectAllButton" mnemonicParsing="false" onAction="#selectAllAction">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/iconSelectAll.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </Button>
+                                                                        <Button fx:id="saveAsPreprocessButton" mnemonicParsing="false" onAction="#savePreprocessAction" onMouseEntered="#popSavePreprocess">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/iconSaveAs.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </Button>
+                                                                        <Button fx:id="recoverButton" mnemonicParsing="false" onAction="#recoverAction">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/iconRecover.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </Button>
+                                                                        <ImageView fx:id="rightPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/iconDoubleRIght.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </children>
+                                                                </HBox>
+                                                                <HBox fx:id="operation1Box" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                                                                    <children>
+                                                                        <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                                        <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/iconZoomOut.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </Button>
+                                                                        <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#zoomIn">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/iconZoomIn.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </Button>
+                                                                        <Button fx:id="paneSizeButton" mnemonicParsing="false" onAction="#paneSize">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/iconPicBig.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </Button>
+                                                                        <Button fx:id="imageSizeButton" mnemonicParsing="false" onAction="#loadedSize">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/iconPicSmall.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </Button>
+                                                                        <Button fx:id="manufacturePreprocessButton" mnemonicParsing="false" onMouseEntered="#popAlgorithmsMenu">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/iconEdit.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </Button>
+                                                                        <Button fx:id="demoButton" mnemonicParsing="false" onAction="#demo">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/iconDemo.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </Button>
+                                                                    </children>
+                                                                </HBox>
+                                                                <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="504.0" prefViewportWidth="538.0" VBox.vgrow="ALWAYS">
+                                                                    <content>
+                                                                        <AnchorPane fx:id="maskPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#paneClicked" VBox.vgrow="ALWAYS">
+                                                                            <children>
+                                                                                <ImageView fx:id="imageView" cache="true" fitHeight="300.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true">
+                                                                                </ImageView>
+                                                                                <Rectangle fx:id="topLeftHandler" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#topLeftHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                                                                    <cursor>
+                                                                                        <Cursor fx:constant="NW_RESIZE" />
+                                                                                    </cursor>
+                                                                                </Rectangle>
+                                                                                <Rectangle fx:id="bottomLeftHandler" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#bottomLeftHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                                                                    <cursor>
+                                                                                        <Cursor fx:constant="SW_RESIZE" />
+                                                                                    </cursor>
+                                                                                </Rectangle>
+                                                                                <Rectangle fx:id="bottomCenterHandler" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#bottomCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                                                                    <cursor>
+                                                                                        <Cursor fx:constant="N_RESIZE" />
+                                                                                    </cursor>
+                                                                                </Rectangle>
+                                                                                <Rectangle fx:id="bottomRightHandler" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#bottomRightHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                                                                    <cursor>
+                                                                                        <Cursor fx:constant="SE_RESIZE" />
+                                                                                    </cursor>
+                                                                                </Rectangle>
+                                                                                <Rectangle fx:id="rightCenterHandler" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#rightCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                                                                    <cursor>
+                                                                                        <Cursor fx:constant="E_RESIZE" />
+                                                                                    </cursor>
+                                                                                </Rectangle>
+                                                                                <Rectangle fx:id="topCenterHandler" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#topCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                                                                    <cursor>
+                                                                                        <Cursor fx:constant="N_RESIZE" />
+                                                                                    </cursor>
+                                                                                </Rectangle>
+                                                                                <Rectangle fx:id="topRightHandler" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#topRightHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                                                                    <cursor>
+                                                                                        <Cursor fx:constant="NE_RESIZE" />
+                                                                                    </cursor>
+                                                                                </Rectangle>
+                                                                                <Rectangle fx:id="leftCenterHandler" fill="#ffffff00" height="10.0" onMousePressed="#handlerPressed" onMouseReleased="#leftCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                                                                    <cursor>
+                                                                                        <Cursor fx:constant="W_RESIZE" />
+                                                                                    </cursor>
+                                                                                </Rectangle>
+                                                                                <Rectangle fx:id="maskRectangleLine" arcHeight="5.0" arcWidth="5.0" fill="#ffffff00" height="241.0" onMousePressed="#handlerPressed" onMouseReleased="#rectangleReleased" stroke="RED" strokeType="INSIDE" width="334.0">
+                                                                                    <cursor>
+                                                                                        <Cursor fx:constant="MOVE" />
+                                                                                    </cursor>
+                                                                                </Rectangle>
+                                                                            </children>
+                                                                        </AnchorPane>
+                                                                    </content>
+                                                                </ScrollPane>
                                                             </children>
-                                                        </AnchorPane>
+                                                        </VBox>
                                                     </content>
-                                                </ScrollPane>
-                                                <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
-                                                    <children>
-                                                        <Label maxWidth="1.7976931348623157E308" text="%OriginalImage" HBox.hgrow="ALWAYS" />
-                                                        <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction">
-                                                            <graphic>
-                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/iconInfo.png" />
-                                                                    </image>
-                                                                </ImageView>
-                                                            </graphic>
-                                                        </Button>
-                                                        <Button fx:id="previousButton" mnemonicParsing="false" onAction="#previousAction">
-                                                            <graphic>
-                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/iconPrevious.png" />
-                                                                    </image>
-                                                                </ImageView>
-                                                            </graphic>
-                                                        </Button>
-                                                        <Button fx:id="nextButton" mnemonicParsing="false" onAction="#nextAction">
-                                                            <graphic>
-                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/iconNext.png" />
-                                                                    </image>
-                                                                </ImageView>
-                                                            </graphic>
-                                                        </Button>
-                                                    </children>
-                                                </HBox>
-                                                <HBox alignment="CENTER_LEFT" spacing="5.0">
-                                                    <children>
-                                                        <Label fx:id="originalViewLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="bottom-label" stylesheets="@../styles/MyBox.css" wrapText="true" HBox.hgrow="ALWAYS" />
-                                                        <Button fx:id="zoomOut2Button" mnemonicParsing="false" onAction="#zoomOutOriginal">
-                                                            <graphic>
-                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/iconZoomOut.png" />
-                                                                    </image>
-                                                                </ImageView>
-                                                            </graphic>
-                                                        </Button>
-                                                        <Button fx:id="zoomIn2Button" mnemonicParsing="false" onAction="#zoomInOriginal">
-                                                            <graphic>
-                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/iconZoomIn.png" />
-                                                                    </image>
-                                                                </ImageView>
-                                                            </graphic>
-                                                        </Button>
-                                                        <Button fx:id="paneSize2Button" mnemonicParsing="false" onAction="#paneSizeOriginal">
-                                                            <graphic>
-                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/iconPicBig.png" />
-                                                                    </image>
-                                                                </ImageView>
-                                                            </graphic>
-                                                        </Button>
-                                                        <Button fx:id="imageSize2Button" mnemonicParsing="false" onAction="#loadedSizeOriginal">
-                                                            <graphic>
-                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/iconPicSmall.png" />
-                                                                    </image>
-                                                                </ImageView>
-                                                            </graphic>
-                                                        </Button>
-                                                        <Button fx:id="manufactureOriginalButton" mnemonicParsing="false" onAction="#manufactureAction">
-                                                            <graphic>
-                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/iconEdit.png" />
-                                                                    </image>
-                                                                </ImageView>
-                                                            </graphic>
-                                                        </Button>
-                                                    </children>
-                                                </HBox>
-                                                <ScrollPane fx:id="originalScrollPane" fitToHeight="true" fitToWidth="true" layoutX="10.0" layoutY="63.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="504.0" prefViewportWidth="538.0" VBox.vgrow="ALWAYS">
+                                                </TitledPane>
+                                                <TitledPane layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%OriginalImage" VBox.vgrow="ALWAYS">
                                                     <content>
-                                                        <AnchorPane fx:id="maskPane1" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#paneClicked" VBox.vgrow="ALWAYS">
+                                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                             <children>
-                                                                <ImageView fx:id="originalView" cache="true" fitHeight="300.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" />
+                                                                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                                                    <children>
+                                                                        <Label fx:id="originalViewLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="bottom-label" stylesheets="@../styles/MyBox.css" wrapText="true" HBox.hgrow="ALWAYS" />
+                                                                        <Button fx:id="zoomOut2Button" mnemonicParsing="false" onAction="#zoomOutOriginal">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/iconZoomOut.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </Button>
+                                                                        <Button fx:id="zoomIn2Button" mnemonicParsing="false" onAction="#zoomInOriginal">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/iconZoomIn.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </Button>
+                                                                        <Button fx:id="paneSize2Button" mnemonicParsing="false" onAction="#paneSizeOriginal">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/iconPicBig.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </Button>
+                                                                        <Button fx:id="imageSize2Button" mnemonicParsing="false" onAction="#loadedSizeOriginal">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/iconPicSmall.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </Button>
+                                                                        <Button fx:id="manufactureOriginalButton" mnemonicParsing="false" onAction="#manufactureAction">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/iconEdit.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </Button>
+                                                                    </children>
+                                                                </HBox>
+                                                                <ScrollPane fx:id="originalScrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="504.0" prefViewportWidth="538.0" VBox.vgrow="ALWAYS">
+                                                                    <content>
+                                                                        <AnchorPane fx:id="maskPane1" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#paneClicked" VBox.vgrow="ALWAYS">
+                                                                            <children>
+                                                                                <ImageView fx:id="originalView" cache="true" fitHeight="300.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" />
+                                                                            </children>
+                                                                        </AnchorPane>
+                                                                    </content>
+                                                                </ScrollPane>
                                                             </children>
-                                                        </AnchorPane>
+                                                        </VBox>
                                                     </content>
-                                                </ScrollPane>
+                                                </TitledPane>
                                             </children>
                                         </VBox>
                                     </items>
@@ -373,7 +389,16 @@ License:    Apache License Version 2.0
                                                     </image>
                                                 </ImageView>
                                                 <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                <Button fx:id="startButton" mnemonicParsing="false" onAction="#startAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Start" HBox.hgrow="NEVER" />
+                                                <Button fx:id="startButton" defaultButton="true" mnemonicParsing="false" onAction="#startAction"
+                                                        styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconStart.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
                                             </children>
                                         </HBox>
                                         <TabPane fx:id="ocrTabPane" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
@@ -398,7 +423,7 @@ License:    Apache License Version 2.0
                                                                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                                     <children>
                                                                         <Label maxWidth="1.7976931348623157E308" visible="false" HBox.hgrow="ALWAYS" />
-                                                                        <Button fx:id="saveAsButton" mnemonicParsing="false" onAction="#saveAsAction" onMouseEntered="#popSaveAs">
+                                                                        <Button fx:id="saveAsTextButton" mnemonicParsing="false" onAction="#saveAsAction" onMouseEntered="#popSaveAs">
                                                                             <graphic>
                                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                                     <image>

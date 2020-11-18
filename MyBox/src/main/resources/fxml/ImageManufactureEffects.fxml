@@ -51,28 +51,28 @@
                         <RadioButton fx:id="hsbQuanRadio" mnemonicParsing="false" text="%HSBUniformQuantization" toggleGroup="$quanGroup" />
                         <RadioButton fx:id="popularQuanRadio" mnemonicParsing="false" text="%PopularityQuantization" toggleGroup="$quanGroup" />
                         <RadioButton fx:id="kmeansQuanRadio" layoutX="15.0" layoutY="97.0" mnemonicParsing="false" text="%KMeansClustering" toggleGroup="$quanGroup" />
-                  <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
-                     <children>
-                        <Label fx:id="stringLabel1" text="%ColorsNumber" />
-                        <ComboBox fx:id="quanColorsSelector" editable="true" maxWidth="1.7976931348623157E308" prefWidth="140.0" />
-                     </children>
-                  </HBox>
-                  <HBox fx:id="depthBox" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
-                     <children>
-                              <Label fx:id="depthLabel" text="%RegionsBitDepth" />
-                              <ComboBox fx:id="depthSelector" prefWidth="100.0" />
-                     </children>
-                  </HBox>
-                  <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
-                     <children>
-                        <CheckBox fx:id="quanDitherCheck" mnemonicParsing="false" selected="true" text="%Dithering" />
-                        <ImageView fx:id="quanTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../buttons/iconTips.png" />
-                           </image>
-                        </ImageView>
-                     </children>
-                  </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                            <children>
+                                <Label fx:id="stringLabel1" text="%ColorsNumber" />
+                                <ComboBox fx:id="quanColorsSelector" editable="true" maxWidth="1.7976931348623157E308" prefWidth="140.0" />
+                            </children>
+                        </HBox>
+                        <HBox fx:id="depthBox" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                            <children>
+                                <Label fx:id="depthLabel" text="%RegionsBitDepth" />
+                                <ComboBox fx:id="depthSelector" prefWidth="100.0" />
+                            </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                            <children>
+                                <CheckBox fx:id="quanDitherCheck" mnemonicParsing="false" selected="true" text="%Dithering" />
+                                <ImageView fx:id="quanTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconTips.png" />
+                                    </image>
+                                </ImageView>
+                            </children>
+                        </HBox>
                         <CheckBox fx:id="quanDataCheck" mnemonicParsing="false" selected="true" text="%ShowData" />
                     </children>
                 </VBox>
@@ -128,19 +128,19 @@
                         <RadioButton fx:id="radio3" mnemonicParsing="false" text="%Threshold" toggleGroup="$bwGroup" />
                     </children>
                 </VBox>
-            <VBox fx:id="edgeBox" layoutX="10.0" layoutY="10.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-               <children>
-                  <Label text="%Algorithm" />
-                  <RadioButton fx:id="eightLaplaceRadio" mnemonicParsing="false" selected="true" text="%EightNeighborLaplace">
-                     <toggleGroup>
-                        <ToggleGroup fx:id="edgeGroup" />
-                     </toggleGroup>
-                  </RadioButton>
-                  <RadioButton fx:id="eightLaplaceExcludedRadio" mnemonicParsing="false" text="%EightNeighborLaplaceInvert" toggleGroup="$edgeGroup" />
-                  <RadioButton fx:id="fourLaplaceRadio" mnemonicParsing="false" text="%FourNeighborLaplace" toggleGroup="$edgeGroup" />
-                  <RadioButton fx:id="fourLaplaceExcludedRadio" layoutX="15.0" layoutY="97.0" mnemonicParsing="false" text="%FourNeighborLaplaceInvert" toggleGroup="$edgeGroup" />
-               </children>
-            </VBox>
+                <VBox fx:id="edgeBox" layoutX="10.0" layoutY="10.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                    <children>
+                        <Label text="%Algorithm" />
+                        <RadioButton fx:id="eightLaplaceRadio" mnemonicParsing="false" selected="true" text="%EightNeighborLaplace">
+                            <toggleGroup>
+                                <ToggleGroup fx:id="edgeGroup" />
+                            </toggleGroup>
+                        </RadioButton>
+                        <RadioButton fx:id="eightLaplaceExcludedRadio" mnemonicParsing="false" text="%EightNeighborLaplaceInvert" toggleGroup="$edgeGroup" />
+                        <RadioButton fx:id="fourLaplaceRadio" mnemonicParsing="false" text="%FourNeighborLaplace" toggleGroup="$edgeGroup" />
+                        <RadioButton fx:id="fourLaplaceExcludedRadio" layoutX="15.0" layoutY="97.0" mnemonicParsing="false" text="%FourNeighborLaplaceInvert" toggleGroup="$edgeGroup" />
+                    </children>
+                </VBox>
             </children>
         </VBox>
         <Button fx:id="okButton" onAction="#okAction">
@@ -157,7 +157,7 @@
             <graphic>
                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                     <image>
-                        <Image url="@../buttons/iconGo.png" />
+                        <Image url="@../buttons/iconDemo.png" />
                     </image>
                 </ImageView>
             </graphic>

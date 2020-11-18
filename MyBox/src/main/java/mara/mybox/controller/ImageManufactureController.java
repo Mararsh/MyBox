@@ -15,12 +15,10 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -36,7 +34,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
@@ -45,6 +42,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import mara.mybox.data.BaseTask;
 import mara.mybox.data.ConvolutionKernel;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.db.TableImageHistory;
@@ -61,6 +59,7 @@ import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.getUserConfigBoolean;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
@@ -78,7 +77,6 @@ public class ImageManufactureController extends ImageViewerController {
     protected SimpleIntegerProperty historyIndex;
     protected ChangeListener<Number> mainDividerListener;
     protected ImageOperation operation;
-    protected boolean noContextMenu;
 
     public static enum ImageOperation {
         Load, History, Saved, Recover, Clipboard, Paste, Arc, Color, Crop, Copy,
@@ -143,8 +141,8 @@ public class ImageManufactureController extends ImageViewerController {
                             if (imageInformation.getImageFileInformation().getNumberOfImages() > 1) {
                                 title += " - " + message("Image") + " " + imageInformation.getIndex();
                             }
-                            if (imageInformation.isIsSampled()) {
-                                title += " - " + message("Sampled");
+                            if (imageInformation.isIsScaled()) {
+                                title += " - " + message("Scaled");
                             }
                         }
                         if (imageUpdated.get()) {
@@ -353,14 +351,14 @@ public class ImageManufactureController extends ImageViewerController {
                         controlScopePane();
                     }
                 });
-            } else {
-                imagePaneControl.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent event) {
-                        controlScopePane();
-                    }
-                });
             }
+            imagePaneControl.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    controlScopePane();
+                }
+            });
+            imagePaneControl.setPickOnBounds(getUserConfigBoolean("ControlSplitPanesSensitive", false));
 
             if (AppVariables.getUserConfigBoolean("ControlSplitPanesEntered", true)) {
                 scopePaneControl.setOnMouseEntered(new EventHandler<MouseEvent>() {
@@ -369,14 +367,14 @@ public class ImageManufactureController extends ImageViewerController {
                         controlImagePane();
                     }
                 });
-            } else {
-                scopePaneControl.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent event) {
-                        controlImagePane();
-                    }
-                });
             }
+            scopePaneControl.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    controlImagePane();
+                }
+            });
+            scopePaneControl.setPickOnBounds(getUserConfigBoolean("ControlSplitPanesSensitive", false));
 
             try {
                 String mv = AppVariables.getUserConfigValue(baseName + "MainPanePosition", "0.7");
@@ -409,14 +407,14 @@ public class ImageManufactureController extends ImageViewerController {
     }
 
     @Override
-    public void afterImageLoaded() {
+    public boolean afterImageLoaded() {
         try {
-            super.afterImageLoaded();
-
-            if (image == null) {
-                return;
+            if (!super.afterImageLoaded()) {
+                return false;
             }
-
+            if (image == null) {
+                return false;
+            }
             if (imageInformation != null) {
                 if (imageInformation.getImageType() == BufferedImage.TYPE_BYTE_INDEXED
                         && imageInformation.getColorChannels() == 4) {
@@ -438,30 +436,25 @@ public class ImageManufactureController extends ImageViewerController {
                     Optional<ButtonType> result = alert.showAndWait();
                     if (result.get() == buttonConvert) {
                         openStage(CommonValues.ImageConverterBatchFxml);
-                        return;
+                        return false;
                     }
                 }
             }
+
             imageLoaded.set(true);
             imageUpdated.set(false);
-            scopeController.initController(this, sourceFile, image, imageInformation);
+            scopeController.initController(this);
             operationsController.resetOperationPanes();
             resetImagePane();
 
             historyIndex.set(-1);
             loadImageHistories();
             updateBottom(message("Loaded"));
+            return true;
         } catch (Exception e) {
             logger.debug(e.toString());
+            return false;
         }
-    }
-
-    @Override
-    protected void popImageMenu(Node node, ContextMenuEvent event) {
-        if (noContextMenu) {
-            return;
-        }
-        super.popImageMenu(node, event);
     }
 
     @FXML
@@ -648,64 +641,46 @@ public class ImageManufactureController extends ImageViewerController {
             if (loadTask != null) {
                 return;
             }
-            loadTask = new Task<Void>() {
+            loadTask = new SingletonTask<Void>() {
                 private List<ImageHistory> list;
                 private File currentFile;
 
                 @Override
-                protected Void call() {
+                protected boolean handle() {
                     try {
                         currentFile = sourceFile;
                         int max = AppVariables.getUserConfigInt("MaxImageHistories", 20);
                         if (max <= 0 || currentFile == null) {
-                            return null;
+                            return false;
                         }
                         list = TableImageHistory.read(currentFile.getAbsolutePath());
                         if (list != null) {
                             for (ImageHistory his : list) {
                                 if (loadTask == null || isCancelled()
                                         || !currentFile.equals(sourceFile)) {
-                                    return null;
+                                    return false;
                                 }
                                 loadThumbnail(his);
                             }
                         }
-
+                        return true;
                     } catch (Exception e) {
+                        error = e.toString();
                         logger.debug(e.toString());
+                        return false;
                     }
-                    return null;
                 }
 
                 @Override
-                protected void succeeded() {
-                    super.succeeded();
-                    loadTask = null;
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
+                protected void whenSucceeded() {
+                    if (currentFile.equals(sourceFile)) {
+                        if (list != null) {
                             if (currentFile.equals(sourceFile)) {
-                                if (list != null) {
-                                    if (currentFile.equals(sourceFile)) {
-                                        historiesList.getItems().addAll(list);
-                                    }
-                                }
-                                recordImageHistory(ImageOperation.Load, image);
+                                historiesList.getItems().addAll(list);
                             }
                         }
-                    });
-                }
-
-                @Override
-                protected void failed() {
-                    super.failed();
-                    loadTask = null;
-                }
-
-                @Override
-                protected void cancelled() {
-                    super.cancelled();
-                    loadTask = null;
+                        recordImageHistory(ImageOperation.Load, image);
+                    }
                 }
 
             };
@@ -734,7 +709,7 @@ public class ImageManufactureController extends ImageViewerController {
                 imageHistoriesPath = AppVariables.getImageHisPath();
             }
             synchronized (this) {
-                if (task != null) {
+                if (task != null && !task.isQuit()) {
                     return;
                 }
                 task = new SingletonTask<Void>() {
@@ -763,7 +738,7 @@ public class ImageManufactureController extends ImageViewerController {
                     protected boolean handle() {
                         try {
                             currentFile = sourceFile;
-                            BufferedImage bufferedImage = FxmlImageManufacture.getBufferedImage(newImage);
+                            BufferedImage bufferedImage = FxmlImageManufacture.bufferedImage(newImage);
                             if (isCancelled()) {
                                 return false;
                             }
@@ -824,6 +799,7 @@ public class ImageManufactureController extends ImageViewerController {
                         checkHistoryIndex();
                     }
                 };
+                task.setSelf(task);
                 Thread thread = new Thread(task);
 //            openHandlingStage(task, Modality.WINDOW_MODAL);
                 thread.setDaemon(true);
@@ -847,7 +823,7 @@ public class ImageManufactureController extends ImageViewerController {
             if (thumbfile.exists()) {
                 bufferedImage = ImageFileReaders.readImage(thumbfile);
             } else {
-                bufferedImage = ImageFileReaders.readFileByWidth("png", fname, width);
+                bufferedImage = ImageFileReaders.readImageByWidth("png", fname, width);
             }
             if (bufferedImage != null) {
                 his.setThumbnail(SwingFXUtils.toFXImage(bufferedImage, null));
@@ -869,16 +845,15 @@ public class ImageManufactureController extends ImageViewerController {
             return;
         }
         synchronized (this) {
-            if (loadTask != null) {
+            if (loadTask != null && !loadTask.isQuit()) {
                 return;
             }
-            loadTask = new Task<Void>() {
-                private boolean ok;
+            loadTask = new SingletonTask<Void>() {
                 private Image hisImage;
                 private String hisDesc;
 
                 @Override
-                protected Void call() {
+                protected boolean handle() {
                     try {
                         ImageHistory his = historiesList.getItems().get(index);
                         File file = new File(his.getHistoryLocation());
@@ -890,58 +865,37 @@ public class ImageManufactureController extends ImageViewerController {
                                     historiesList.getItems().remove(his);
                                 }
                             });
-                            return null;
+                            return false;
                         }
                         BufferedImage bufferedImage = ImageFileReaders.readImage(file);
                         if (bufferedImage != null) {
                             hisImage = SwingFXUtils.toFXImage(bufferedImage, null);
                         }
                         hisDesc = DateTools.datetimeToString(his.getOperationTime()) + " " + message(his.getUpdateType());
-                        ok = true;
+                        return true;
                     } catch (Exception e) {
                         logger.debug(e.toString());
+                        return false;
                     }
-                    return null;
                 }
 
                 @Override
-                protected void succeeded() {
-                    super.succeeded();
-                    loadTask = null;
-                    if (!ok) {
-                        return;
+                protected void whenSucceeded() {
+                    String info = MessageFormat.format(message("CurrentImageSetAs"), hisDesc);
+                    popText(info, AppVariables.getCommentsDelay(), "white", "1.5em", null);
+                    updateImage(hisImage, message("History"));
+
+                    historiesList.getSelectionModel().clearSelection();
+                    historiesList.getSelectionModel().select(index);
+                    historyIndex.set(index);
+                    // Force listView to refresh
+                    // https://stackoverflow.com/questions/13906139/javafx-update-of-listview-if-an-element-of-observablelist-changes?r=SearchResults
+                    for (int i = 0; i < historiesList.getItems().size(); ++i) {
+                        historiesList.getItems().set(i, historiesList.getItems().get(i));
                     }
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            String info = MessageFormat.format(message("CurrentImageSetAs"), hisDesc);
-                            popText(info, AppVariables.getCommentsDelay(), "white", "1.5em", null);
-                            updateImage(hisImage, message("History"));
-
-                            historiesList.getSelectionModel().clearSelection();
-                            historiesList.getSelectionModel().select(index);
-                            historyIndex.set(index);
-                            // Force listView to refresh
-                            // https://stackoverflow.com/questions/13906139/javafx-update-of-listview-if-an-element-of-observablelist-changes?r=SearchResults
-                            for (int i = 0; i < historiesList.getItems().size(); ++i) {
-                                historiesList.getItems().set(i, historiesList.getItems().get(i));
-                            }
-                            checkHistoryIndex();
-                        }
-                    });
+                    checkHistoryIndex();
                 }
 
-                @Override
-                protected void failed() {
-                    super.failed();
-                    loadTask = null;
-                }
-
-                @Override
-                protected void cancelled() {
-                    super.cancelled();
-                    loadTask = null;
-                }
             };
             Thread thread = new Thread(loadTask);
             openHandlingStage(loadTask, Modality.WINDOW_MODAL);
@@ -1081,7 +1035,7 @@ public class ImageManufactureController extends ImageViewerController {
         }
 
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -1093,7 +1047,7 @@ public class ImageManufactureController extends ImageViewerController {
                         format = imageInformation.getImageFormat();
                     }
                     final BufferedImage bufferedImage
-                            = FxmlImageManufacture.getBufferedImage(imageView.getImage());
+                            = FxmlImageManufacture.bufferedImage(imageView.getImage());
                     if (bufferedImage == null || task == null || isCancelled()) {
                         return false;
                     }
@@ -1117,6 +1071,7 @@ public class ImageManufactureController extends ImageViewerController {
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -1138,7 +1093,7 @@ public class ImageManufactureController extends ImageViewerController {
             recordFileWritten(file);
 
             synchronized (this) {
-                if (task != null) {
+                if (task != null && !task.isQuit()) {
                     return;
                 }
                 task = new SingletonTask<Void>() {
@@ -1147,7 +1102,7 @@ public class ImageManufactureController extends ImageViewerController {
                     protected boolean handle() {
                         String format = FileTools.getFileSuffix(file.getName());
                         final BufferedImage bufferedImage
-                                = FxmlImageManufacture.getBufferedImage(imageView.getImage());
+                                = FxmlImageManufacture.bufferedImage(imageView.getImage());
                         if (task == null || isCancelled()) {
                             return false;
                         }
@@ -1167,6 +1122,7 @@ public class ImageManufactureController extends ImageViewerController {
                     }
                 };
                 openHandlingStage(task, Modality.WINDOW_MODAL);
+                task.setSelf(task);
                 Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();
@@ -1207,6 +1163,7 @@ public class ImageManufactureController extends ImageViewerController {
 
     public void updateImage(Image newImage, String info) {
         try {
+
             updateImage(newImage);
             showImagePane();
             scopeController.updateImage(newImage);
@@ -1240,15 +1197,20 @@ public class ImageManufactureController extends ImageViewerController {
 
     public void updateBottom(String info) {
         try {
+            if (bottomLabel == null) {
+                return;
+            }
             String bottom = info != null ? info + "  " : "";
             if (imageInformation != null) {
                 bottom += message("Format") + ":" + imageInformation.getImageFormat() + "  ";
                 bottom += message("Pixels") + ":" + imageInformation.getWidth() + "x" + imageInformation.getHeight() + "  ";
             }
-            bottom += message("LoadedSize") + ":"
-                    + (int) imageView.getImage().getWidth() + "x" + (int) imageView.getImage().getHeight() + "  "
-                    + message("DisplayedSize") + ":"
-                    + (int) imageView.getFitWidth() + "x" + (int) imageView.getFitHeight();
+            if (imageView != null && imageView.getImage() != null) {
+                bottom += message("LoadedSize") + ":"
+                        + (int) imageView.getImage().getWidth() + "x" + (int) imageView.getImage().getHeight() + "  "
+                        + message("DisplayedSize") + ":"
+                        + (int) imageView.getFitWidth() + "x" + (int) imageView.getFitHeight();
+            }
             if (sourceFile != null) {
                 bottom += "  " + message("FileSize") + ":" + FileTools.showFileSize(sourceFile.length()) + "  "
                         + message("ModifyTime") + ":" + DateTools.datetimeToString(sourceFile.lastModified()) + "  ";
@@ -1369,14 +1331,6 @@ public class ImageManufactureController extends ImageViewerController {
         operationsController.okAction();
     }
 
-    @FXML
-    public void settingsAction() {
-        SettingsController controller = (SettingsController) openStage(CommonValues.SettingsFxml);
-        controller.setParentController(this);
-        controller.parentFxml = myFxml;
-        controller.tabPane.getSelectionModel().select(controller.imageTab);
-    }
-
     @Override
     public void imageClicked(MouseEvent event, DoublePoint p) {
         scopeController.imageClicked(event, p);
@@ -1444,7 +1398,6 @@ public class ImageManufactureController extends ImageViewerController {
     public void resetImagePane() {
         operation = null;
         scope = null;
-        noContextMenu = false;
 
         imageView.setRotate(0);
         imageView.setVisible(true);

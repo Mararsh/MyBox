@@ -39,7 +39,7 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlTools;
 import mara.mybox.tools.MediaTools;
 import mara.mybox.tools.SystemTools;
-import mara.mybox.tools.VisitHistoryTools;
+import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
@@ -283,7 +283,7 @@ public class FFmpegProbeMediaInformationController extends FFmpegOptionsControll
             probeResult = null;
 
             synchronized (this) {
-                if (task != null) {
+                if (task != null && !task.isQuit() ) {
                     return;
                 }
                 task = new SingletonTask<Void>() {
@@ -312,7 +312,7 @@ public class FFmpegProbeMediaInformationController extends FFmpegOptionsControll
                     }
                 };
                 openHandlingStage(task, Modality.WINDOW_MODAL);
-                Thread thread = new Thread(task);
+                task.setSelf(task);Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();
             }
@@ -665,7 +665,7 @@ public class FFmpegProbeMediaInformationController extends FFmpegOptionsControll
                 return;
             }
             synchronized (this) {
-                if (task != null) {
+                if (task != null && !task.isQuit() ) {
                     return;
                 }
                 task = new SingletonTask<Void>() {
@@ -694,7 +694,7 @@ public class FFmpegProbeMediaInformationController extends FFmpegOptionsControll
                     }
                 };
                 openHandlingStage(task, Modality.WINDOW_MODAL);
-                Thread thread = new Thread(task);
+                task.setSelf(task);Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();
             }
@@ -818,7 +818,7 @@ public class FFmpegProbeMediaInformationController extends FFmpegOptionsControll
                 return;
             }
             synchronized (this) {
-                if (task != null) {
+                if (task != null && !task.isQuit() ) {
                     return;
                 }
                 task = new SingletonTask<Void>() {
@@ -847,7 +847,7 @@ public class FFmpegProbeMediaInformationController extends FFmpegOptionsControll
                     }
                 };
                 openHandlingStage(task, Modality.WINDOW_MODAL);
-                Thread thread = new Thread(task);
+                task.setSelf(task);Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();
             }

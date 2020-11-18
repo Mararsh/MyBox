@@ -148,7 +148,7 @@ public class ColorPaletteManageController extends BaseController {
     public void load() {
         colorsPane.getChildren().clear();
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit() ) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -176,7 +176,7 @@ public class ColorPaletteManageController extends BaseController {
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
+            task.setSelf(task);Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -421,7 +421,7 @@ public class ColorPaletteManageController extends BaseController {
     @Override
     public void saveAction() {
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit() ) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -445,7 +445,7 @@ public class ColorPaletteManageController extends BaseController {
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
+            task.setSelf(task);Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -572,6 +572,17 @@ public class ColorPaletteManageController extends BaseController {
     public void closePopup(KeyEvent event) {
         super.closePopup(event);
         colorImportController.closePopup(event);
+    }
+
+    @Override
+    public boolean checkBeforeNextAction() {
+        if (parentController != null && (parentController instanceof ImageBaseController)) {
+            ImageBaseController c = (ImageBaseController) parentController;
+            if (c.pickColorCheck != null && c.pickColorCheck.isSelected()) {
+                c.pickColorCheck.setSelected(false);
+            }
+        }
+        return true;
     }
 
 }

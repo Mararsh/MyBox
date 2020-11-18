@@ -25,7 +25,6 @@ import java.util.TimerTask;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -46,6 +45,7 @@ import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import mara.mybox.data.BaseTask;
 import mara.mybox.data.WeiboSnapParameters;
 import mara.mybox.db.TableBrowserBypassSSL;
 import mara.mybox.db.TableStringValues;
@@ -1088,20 +1088,22 @@ public class WeiboSnapRunController extends BaseController {
         if (filename == null || contents == null) {
             return;
         }
-        Task<Void> saveHtmlTask = new Task<Void>() {
+        BaseTask<Void> saveHtmlTask = new SingletonTask<Void>() {
+
             @Override
-            protected Void call() {
+            protected boolean handle() {
                 try {
                     try ( BufferedWriter out = new BufferedWriter(new FileWriter(filename, Charset.forName("utf-8"), false))) {
                         out.write(contents);
                         out.flush();
                         savedHtmlCount++;
                     }
+                    return true;
                 } catch (Exception e) {
                     loadFailed = true;
                     errorString = e.toString();
+                    return false;
                 }
-                return null;
             }
         };
         new Thread(saveHtmlTask).start();
@@ -1111,9 +1113,9 @@ public class WeiboSnapRunController extends BaseController {
         if (address == null) {
             return;
         }
-        Task<Void> savePicturesTask = new Task<Void>() {
+        BaseTask<Void> savePicturesTask = new SingletonTask<Void>() {
             @Override
-            protected Void call() {
+            protected boolean handle() {
                 try {
                     String s = (String) address;
                     s = s.replaceAll("/thumb150/", "/large/");
@@ -1164,7 +1166,7 @@ public class WeiboSnapRunController extends BaseController {
                 } catch (Exception e) {
                     logger.error(e.toString());
                 }
-                return null;
+                return true;
             }
         };
         new Thread(savePicturesTask).start();
@@ -1360,9 +1362,9 @@ public class WeiboSnapRunController extends BaseController {
     protected void mergeMonthPdf(final File path, final String month,
             final int pageCount) {
 
-        Task<Void> mergeTask = new Task<Void>() {
+        BaseTask<Void> mergeTask = new SingletonTask<Void>() {
             @Override
-            protected Void call() {
+            protected boolean handle() {
                 try {
                     List<File> files = new ArrayList<>();
                     long totalSize = 0;
@@ -1377,7 +1379,7 @@ public class WeiboSnapRunController extends BaseController {
                     }
                     if (files.isEmpty() || (maxMergedSize > 0 && totalSize > maxMergedSize)) {
                         pdfs.remove(month);
-                        return null;
+                        return true;
                     }
 
                     String monthFileName = path.getAbsolutePath() + File.separator + accountName + "-" + month + ".pdf";
@@ -1390,7 +1392,7 @@ public class WeiboSnapRunController extends BaseController {
                         savedMonthPdfCount++;
                         savedPagePdfCount--;
                         pdfs.remove(month);
-                        return null;
+                        return true;
                     }
 
                     boolean keep = parameters.isKeepPagePdf();
@@ -1434,14 +1436,11 @@ public class WeiboSnapRunController extends BaseController {
                             }
                         }
                     }
-
                     pdfs.remove(month);
-
                 } catch (Exception e) {
                     logger.error(e.toString());
                 }
-
-                return null;
+                return true;
             }
         };
         new Thread(mergeTask).start();

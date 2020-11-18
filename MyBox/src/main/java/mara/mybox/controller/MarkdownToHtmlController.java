@@ -9,6 +9,7 @@ import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.data.MutableDataHolder;
 import com.vladsch.flexmark.util.data.MutableDataSet;
 import java.io.File;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -19,7 +20,7 @@ import javafx.scene.control.TextField;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlTools;
-import mara.mybox.tools.VisitHistoryTools;
+import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
@@ -32,9 +33,9 @@ import mara.mybox.value.CommonFxValues;
  */
 public class MarkdownToHtmlController extends FilesBatchController {
 
-    protected Parser parser;
-    protected HtmlRenderer renderer;
-    protected MutableDataHolder parserOptions;
+    protected Parser htmlParser;
+    protected HtmlRenderer htmlRender;
+    protected MutableDataHolder htmlOptions;
     protected int indentSize = 4;
 
     @FXML
@@ -102,25 +103,25 @@ public class MarkdownToHtmlController extends FilesBatchController {
     @Override
     public boolean makeMoreParameters() {
         try {
-            parserOptions = new MutableDataSet();
-            parserOptions.setFrom(ParserEmulationProfile.valueOf(emulationSelector.getValue()));
-            parserOptions.set(Parser.EXTENSIONS, Arrays.asList(
+            htmlOptions = new MutableDataSet();
+            htmlOptions.setFrom(ParserEmulationProfile.valueOf(emulationSelector.getValue()));
+            htmlOptions.set(Parser.EXTENSIONS, Arrays.asList(
                     //                    AbbreviationExtension.create(),
                     //                    DefinitionExtension.create(),
                     //                    FootnoteExtension.create(),
                     //                    TypographicExtension.create(),
                     TablesExtension.create()
             ));
-            parserOptions.set(HtmlRenderer.INDENT_SIZE, indentSize)
+            htmlOptions.set(HtmlRenderer.INDENT_SIZE, indentSize)
                     //                    .set(HtmlRenderer.PERCENT_ENCODE_URLS, true)
                     //                    .set(TablesExtension.COLUMN_SPANS, false)
                     .set(TablesExtension.TRIM_CELL_WHITESPACE, trimCheck.isSelected())
-                    .set(TablesExtension.APPEND_MISSING_COLUMNS, appendCheck.isSelected())
                     .set(TablesExtension.DISCARD_EXTRA_COLUMNS, discardCheck.isSelected())
                     .set(TablesExtension.APPEND_MISSING_COLUMNS, appendCheck.isSelected());
 
-            parser = Parser.builder(parserOptions).build();
-            renderer = HtmlRenderer.builder(parserOptions).build();
+            htmlParser = Parser.builder(htmlOptions).build();
+            htmlRender = HtmlRenderer.builder(htmlOptions).build();
+
         } catch (Exception e) {
             logger.error(e.toString());
             return false;
@@ -147,8 +148,8 @@ public class MarkdownToHtmlController extends FilesBatchController {
             if (target == null) {
                 return AppVariables.message("Skip");
             }
-            Node document = parser.parse(FileTools.readTexts(srcFile));
-            String html = renderer.render(document);
+            Node document = htmlParser.parse(FileTools.readTexts(srcFile));
+            String html = htmlRender.render(document);
             String style;
             if (message("ConsoleStyle").equals(styleSelector.getValue())) {
                 style = HtmlTools.ConsoleStyle;
@@ -157,13 +158,11 @@ public class MarkdownToHtmlController extends FilesBatchController {
             } else {
                 style = null;
             }
-            html = HtmlTools.html(titleInput.getText(), style, html);
+            html = HtmlTools.htmlStyleValue(titleInput.getText(), style, html);
 
-            FileTools.writeFile(target, html);
-            if (verboseCheck == null || verboseCheck.isSelected()) {
-                updateLogs(MessageFormat.format(message("ConvertSuccessfully"),
-                        srcFile.getAbsolutePath(), target.getAbsolutePath()));
-            }
+            FileTools.writeFile(target, html, Charset.forName("utf-8"));
+            updateLogs(MessageFormat.format(message("ConvertSuccessfully"),
+                    srcFile.getAbsolutePath(), target.getAbsolutePath()));
             targetFileGenerated(target);
             return AppVariables.message("Successful");
         } catch (Exception e) {

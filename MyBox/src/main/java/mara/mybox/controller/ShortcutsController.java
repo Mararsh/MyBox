@@ -8,6 +8,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.layout.HBox;
 import mara.mybox.data.StringTable;
 import mara.mybox.tools.HtmlTools;
+import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
@@ -51,6 +52,7 @@ public class ShortcutsController extends HtmlViewerController {
             if (table == null) {
                 table();
             }
+            String htmlStyle = AppVariables.getUserConfigValue(baseName + "HtmlStyle", "Default");
             html = HtmlTools.html(message("Shortcuts"), htmlStyle, StringTable.tableDiv(table));
             webView.getEngine().loadContent​(html);
         } catch (Exception e) {
@@ -76,7 +78,7 @@ public class ShortcutsController extends HtmlViewerController {
             key("F8", "", message("ControlImagePane"), "");
             key("F9", "", message("CloseStage"), "");
             key("F10", "", message("RefreshStage"), "");
-            key("F11", "", message("SaveAs"), "CTRL+f / ALT+f");
+            key("F11", "", message("SaveAs"), "");
             key("DELETE", "", message("Delete"), "CTRL+d / ALT+d");
             key("PAGE_UP", "", message("Previous"), "ALT+PAGE_UP");
             key("PAGE_DOWN", "", message("Next"), "ALT+PAGE_DOWN");
@@ -100,17 +102,17 @@ public class ShortcutsController extends HtmlViewerController {
             key("CTRL", "w", message("Cancel") + " / " + message("Withdraw"), "ESCAPE");
             key("CTRL", "p", message("Pop"), "ALT+p");
             key("CTRL", "q", message("Query"), "ALT+q");
-            key("CTRL", "1", message("OriginalSize") + " / " + message("First"), "");
-            key("CTRL", "2", message("PaneSize") + " / " + message("Previous"), "");
-            key("CTRL", "3", message("ZoomIn") + " / " + message("Next"), "");
-            key("CTRL", "4", message("ZoomOut") + " / " + message("Last"), "");
+            key("CTRL", "1", message("OriginalSize") + " / " + message("Previous"), "");
+            key("CTRL", "2", message("PaneSize") + " / " + message("Next"), "");
+            key("CTRL", "3", message("ZoomIn"), "");
+            key("CTRL", "4", message("ZoomOut"), "");
             key("CTRL", "-", message("DecreaseFontSize"), "");
             key("CTRL", "=", message("IncreaseFontSize"), "");
 
-            key("ALT", "1", message("Set") + " / " + message("First"), "F1");
-            key("ALT", "2", message("Increase") + " / " + message("Previous"), "");
-            key("ALT", "3", message("Decrease") + " / " + message("Next"), "");
-            key("ALT", "4", message("Filter") + " / " + message("Last"), "");
+            key("ALT", "1", message("Set") + " / " + message("Previous"), "F1");
+            key("ALT", "2", message("Increase") + " / " + message("Next"), "");
+            key("ALT", "3", message("Decrease"), "");
+            key("ALT", "4", message("Filter"), "");
             key("ALT", "5", message("Invert"), "");
             key("ALT", "PAGE_UP", message("Previous"), "PAGE_UP");
             key("ALT", "PAGE_DOWN", message("Next"), "PAGE_DOWN");

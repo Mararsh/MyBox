@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Properties;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -41,7 +42,8 @@ public class ConfigTools {
 
     public static File defaultConfigFile() {
         File defaultPath = defaultDataPathFile();
-        File configFile = new File(defaultPath.getAbsolutePath() + File.separator + "MyBox.ini");
+        File configFile = new File(defaultPath.getAbsolutePath() + File.separator
+                + "MyBox_v" + CommonValues.AppVersion + ".ini");
         return configFile;
     }
 

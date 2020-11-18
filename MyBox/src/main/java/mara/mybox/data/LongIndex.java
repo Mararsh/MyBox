@@ -21,12 +21,12 @@ public class LongIndex {
 
     public LongIndex(long start, long end) {
         this.start = start;
-        this.end = start;
+        this.end = end;
     }
 
     public long getLength() {
         if (length < 0) {
-            length = end - start + 1;
+            length = end - start;
         }
         return length;
     }

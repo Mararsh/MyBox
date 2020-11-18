@@ -13,23 +13,23 @@
             <children>
                 <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                     <children>
-                        <RadioButton fx:id="polylineRadio" mnemonicParsing="false" selected="true">
+                        <RadioButton fx:id="linesRadio" mnemonicParsing="false" selected="true">
                             <toggleGroup>
                                 <ToggleGroup fx:id="typeGroup" />
                             </toggleGroup>
                             <graphic>
                                 <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../buttons/iconPolyline.png" />
+                                        <Image url="@../buttons/iconDraw.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
                         </RadioButton>
-                        <RadioButton fx:id="linesRadio" mnemonicParsing="false" toggleGroup="$typeGroup">
+                        <RadioButton fx:id="polylineRadio" mnemonicParsing="false" toggleGroup="$typeGroup">
                             <graphic>
                                 <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../buttons/iconDraw.png" />
+                                        <Image url="@../buttons/iconPolyline.png" />
                                     </image>
                                 </ImageView>
                             </graphic>

@@ -119,10 +119,10 @@ public class BarcodeCreatorController extends ImageViewerController {
                 @Override
                 public void changed(ObservableValue<? extends String> v, String oldV, String newV) {
                     if (newV.startsWith("-----")) {
-                        startButton.setDisable(true);
+                        createButton.setDisable(true);
                         return;
                     }
-                    startButton.setDisable(false);
+                    createButton.setDisable(false);
                     codeType = BarcodeType.valueOf(newV);
                     AppVariables.setUserConfigValue("BarcodeType", newV);
 
@@ -670,10 +670,10 @@ public class BarcodeCreatorController extends ImageViewerController {
 
     @FXML
     @Override
-    public void startAction() {
+    public void createAction() {
         try {
             synchronized (this) {
-                if (task != null) {
+                if (task != null && !task.isQuit() ) {
                     return;
                 }
                 task = new SingletonTask<Void>() {
@@ -797,7 +797,7 @@ public class BarcodeCreatorController extends ImageViewerController {
 
                 };
                 openHandlingStage(task, Modality.WINDOW_MODAL);
-                Thread thread = new Thread(task);
+                task.setSelf(task);Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();
             }
@@ -820,7 +820,7 @@ public class BarcodeCreatorController extends ImageViewerController {
             recordFileWritten(file);
 
             synchronized (this) {
-                if (task != null) {
+                if (task != null && !task.isQuit() ) {
                     return;
                 }
                 task = new SingletonTask<Void>() {
@@ -829,7 +829,7 @@ public class BarcodeCreatorController extends ImageViewerController {
                     protected boolean handle() {
                         String format = FileTools.getFileSuffix(file.getName());
                         final BufferedImage bufferedImage
-                                = FxmlImageManufacture.getBufferedImage(imageView.getImage());
+                                = FxmlImageManufacture.bufferedImage(imageView.getImage());
                         if (task == null || isCancelled()) {
                             return false;
                         }
@@ -844,7 +844,7 @@ public class BarcodeCreatorController extends ImageViewerController {
 
                 };
                 openHandlingStage(task, Modality.WINDOW_MODAL);
-                Thread thread = new Thread(task);
+                task.setSelf(task);Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();
             }

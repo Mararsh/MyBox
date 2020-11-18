@@ -1,21 +1,19 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
@@ -24,8 +22,8 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
-import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
@@ -36,7 +34,7 @@ import javafx.stage.Modality;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.IntPoint;
 import mara.mybox.data.VisitHistory;
-import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.darkRedText;
@@ -44,10 +42,10 @@ import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.image.ImageAttributes;
 import mara.mybox.image.ImageFileInformation;
 import mara.mybox.image.ImageInformation;
-import mara.mybox.image.file.ImageFileReaders;
+import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
@@ -64,16 +62,14 @@ public class ImageBaseController extends BaseController {
     protected ImageInformation imageInformation;
     protected Image image;
     protected ImageAttributes attributes;
-    protected boolean careFrames, handleLoadedSize, isPaneSize;
-    protected int loadWidth, defaultLoadWidth, frameIndex, sizeChangeAware = 10;
+    protected boolean careFrames, isPickingColor, imageChanged, operateOriginalSize,
+            needNotRulers, needNotCoordinates, needNotContextMenu;
+    protected int loadWidth, defaultLoadWidth, frameIndex, sizeChangeAware = 10,
+            xZoomStep = 50, yZoomStep = 50;
     protected LoadingController loadingController;
-    protected Task loadTask;
-    protected boolean imageChanged, isCropped;
+    protected SingletonTask loadTask;
     protected double mouseX, mouseY;
-    protected int xZoomStep = 50, yZoomStep = 50;
-    protected boolean isPickingColor;
     protected ColorPaletteManageController paletteController;
-    protected boolean needNotRulers, needNotCoordinates, changed;
     protected Label imageLabelOriginal;
 
     @FXML
@@ -81,18 +77,19 @@ public class ImageBaseController extends BaseController {
     @FXML
     protected AnchorPane maskPane;
     @FXML
-    protected ImageView imageView;
+    protected ImageView imageView, sampledView;
     @FXML
     protected Rectangle borderLine;
     @FXML
     protected Text sizeText, xyText;
     @FXML
-    protected Label sampledTips, imageLabel;
+    protected Label imageLabel;
     @FXML
     protected Button imageSizeButton, paneSizeButton, zoomInButton, zoomOutButton,
             rotateLeftButton, rotateRightButton, turnOverButton;
     @FXML
-    protected CheckBox pickColorCheck, rulerXCheck, rulerYCheck, coordinateCheck;
+    protected CheckBox pickColorCheck, rulerXCheck, rulerYCheck, coordinateCheck,
+            contextMenuCheck, copyToSystemClipboardCheck;
 
     public ImageBaseController() {
         SourceFileType = VisitHistory.FileType.Image;
@@ -105,15 +102,9 @@ public class ImageBaseController extends BaseController {
         targetPathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Image);
         sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Image);
 
-        SaveAsOptionsKey = VisitHistoryTools.getSaveAsOptionsKey(VisitHistory.FileType.Image);
-
         sourceExtensionFilter = CommonFxValues.ImageExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
-        careFrames = true;
-        handleLoadedSize = true;
-        loadWidth = -1;
-        defaultLoadWidth = -1;
-        frameIndex = 0;
+
     }
 
     public void initController(ImageViewerController parent) {
@@ -153,7 +144,14 @@ public class ImageBaseController extends BaseController {
     public void initValues() {
         try {
             super.initValues();
-            isPickingColor = false;
+
+            isPickingColor = imageChanged = operateOriginalSize
+                    = needNotRulers = needNotCoordinates = needNotContextMenu = false;
+            careFrames = true;
+            loadWidth = defaultLoadWidth = -1;
+            frameIndex = 0;
+            sizeChangeAware = 10;
+            xZoomStep = yZoomStep = 50;
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -181,12 +179,13 @@ public class ImageBaseController extends BaseController {
                     }
                 });
             }
-
+            if (sampledView != null) {
+                sampledView.setVisible(false);
+            }
             initImageView();
+            initViewControls();
             initMaskPane();
-            initRulersControls();
             initMaskControls(false);
-
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -257,39 +256,12 @@ public class ImageBaseController extends BaseController {
                     }
                 });
             }
-            if (maskPane == null) {
-                imageView.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
-                    @Override
-                    public void handle(ContextMenuEvent event) {
-                        popImageMenu(imageView, event);
-                    }
-                });
-            }
         } catch (Exception e) {
             logger.error(e.toString());
         }
     }
 
-    public void initMaskPane() {
-        if (maskPane == null) {
-            return;
-        }
-        try {
-            maskPane.prefWidthProperty().bind(imageView.fitWidthProperty());
-            maskPane.prefHeightProperty().bind(imageView.fitHeightProperty());
-
-            maskPane.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
-                @Override
-                public void handle(ContextMenuEvent event) {
-                    popImageMenu(maskPane, event);
-                }
-            });
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    public void initRulersControls() {
+    protected void initViewControls() {
         try {
             if (rulerXCheck != null) {
                 rulerXCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -323,14 +295,51 @@ public class ImageBaseController extends BaseController {
                 coordinateCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "PopCooridnate", false));
             }
 
+            if (contextMenuCheck != null) {
+                contextMenuCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        AppVariables.setUserConfigValue(baseName + "ContextMenu", contextMenuCheck.isSelected());
+                    }
+                });
+                contextMenuCheck.setSelected(AppVariables.getUserConfigBoolean(baseName + "ContextMenu", true));
+            }
+
+            if (copyToSystemClipboardCheck != null) {
+                copyToSystemClipboardCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        AppVariables.setUserConfigValue("CopyToSystemClipboard", copyToSystemClipboardCheck.isSelected());
+                    }
+                });
+                copyToSystemClipboardCheck.setSelected(AppVariables.getUserConfigBoolean("CopyToSystemClipboard", true));
+            }
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    public void initMaskPane() {
+        if (maskPane == null) {
+            return;
+        }
+        try {
+            maskPane.prefWidthProperty().bind(imageView.fitWidthProperty());
+            maskPane.prefHeightProperty().bind(imageView.fitHeightProperty());
+
         } catch (Exception e) {
             logger.error(e.toString());
         }
     }
 
     public void initMaskControls(boolean show) {
-        drawMaskRulerX();
-        drawMaskRulerY();
+        try {
+            drawMaskRulerX();
+            drawMaskRulerY();
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
     }
 
     public void viewSizeChanged(double change) {
@@ -342,6 +351,15 @@ public class ImageBaseController extends BaseController {
 //            refinePane();
 //        }
         drawMaskControls();
+    }
+
+    @Override
+    public void sourceFileChanged(final File file) {
+        if (file == null) {
+            return;
+        }
+        careFrames = true;
+        loadImage(file, loadWidth);
     }
 
     public void clear() {
@@ -381,13 +399,13 @@ public class ImageBaseController extends BaseController {
     }
 
     public void drawMaskRulerX() {
-        if (needNotRulers || maskPane == null || imageView.getImage() == null) {
+        if (needNotRulers || maskPane == null || imageView == null || imageView.getImage() == null) {
             return;
         }
         clearMaskRulerX();
         if (AppVariables.getUserConfigBoolean(baseName + "RulerX", false)) {
             Color strokeColor = Color.web(AppVariables.getUserConfigValue("StrokeColor", "#FF0000"));
-            double imageWidth = getImageWidth();
+            double imageWidth = getImageWidth() / widthRatio();
             double ratio = imageView.getBoundsInParent().getWidth() / imageWidth;
             int step = getRulerStep(imageWidth);
             for (int i = step; i < imageWidth; i += step) {
@@ -423,7 +441,7 @@ public class ImageBaseController extends BaseController {
     }
 
     public void clearMaskRulerX() {
-        if (needNotRulers || maskPane == null || imageView.getImage() == null) {
+        if (needNotRulers || maskPane == null || imageView == null || imageView.getImage() == null) {
             return;
         }
         List<Node> nodes = new ArrayList<>();
@@ -437,13 +455,13 @@ public class ImageBaseController extends BaseController {
     }
 
     public void drawMaskRulerY() {
-        if (needNotRulers || maskPane == null || imageView.getImage() == null) {
+        if (needNotRulers || maskPane == null || imageView == null || imageView.getImage() == null) {
             return;
         }
         clearMaskRulerY();
         if (AppVariables.getUserConfigBoolean(baseName + "RulerY", false)) {
             Color strokeColor = Color.web(AppVariables.getUserConfigValue("StrokeColor", "#FF0000"));
-            double imageHeight = getImageHeight();
+            double imageHeight = getImageHeight() / heightRatio();
             double ratio = imageView.getBoundsInParent().getHeight() / imageHeight;
             int step = getRulerStep(imageHeight);
             for (int j = step; j < imageHeight; j += step) {
@@ -491,113 +509,6 @@ public class ImageBaseController extends BaseController {
         }
     }
 
-    protected void popImageMenu(Node node, ContextMenuEvent event) {
-        if (node == null || imageView == null || imageView.getImage() == null) {
-            return;
-        }
-        List<MenuItem> items = makeImageContextMenu();
-        if (items == null || items.isEmpty()) {
-            return;
-        }
-        MenuItem menu = new MenuItem(message("PopupClose"));
-        menu.setStyle("-fx-text-fill: #2e598a;");
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = null;
-        });
-        items.add(menu);
-
-        if (popMenu != null && popMenu.isShowing()) {
-            popMenu.hide();
-        }
-        popMenu = new ContextMenu();
-        popMenu.setAutoHide(true);
-        popMenu.getItems().addAll(items);
-        popMenu.show(node, event.getScreenX(), event.getScreenY());
-
-    }
-
-    protected List<MenuItem> makeImageContextMenu() {
-        try {
-            List<MenuItem> items = new ArrayList<>();
-            MenuItem menu;
-            boolean groupExist = false;
-
-            if (imageSizeButton != null && imageSizeButton.isVisible() && !imageSizeButton.isDisabled()) {
-                menu = new MenuItem(message("LoadedSize") + "  CTRL+1");
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    loadedSize();
-                });
-                items.add(menu);
-                groupExist = true;
-            }
-
-            if (paneSizeButton != null && paneSizeButton.isVisible() && !paneSizeButton.isDisabled()) {
-                menu = new MenuItem(message("PaneSize") + "  CTRL+2");
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    paneSize();
-                });
-                items.add(menu);
-                groupExist = true;
-            }
-
-            if (zoomInButton != null && zoomInButton.isVisible() && !zoomInButton.isDisabled()) {
-                menu = new MenuItem(message("ZoomIn") + "  CTRL+3");
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    zoomIn();
-                });
-                items.add(menu);
-                groupExist = true;
-            }
-
-            if (zoomOutButton != null && zoomOutButton.isVisible() && !zoomOutButton.isDisabled()) {
-                menu = new MenuItem(message("ZoomOut") + "  CTRL+4");
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    zoomIn();
-                });
-                items.add(menu);
-                groupExist = true;
-            }
-
-            if (popButton != null && popButton.isVisible() && !popButton.isDisabled()) {
-                menu = new MenuItem(message("Pop") + "  CTRL+p");
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    popAction();
-                });
-                items.add(menu);
-                groupExist = true;
-            }
-
-            if (pickColorCheck != null && pickColorCheck.isVisible() && !pickColorCheck.isDisabled()) {
-                CheckMenuItem checkMenu = new CheckMenuItem(message("PickColor"));
-                checkMenu.setOnAction((ActionEvent menuItemEvent) -> {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    checkMenu.setSelected(!pickColorCheck.isSelected());
-                    pickColorCheck.setSelected(!pickColorCheck.isSelected());
-                });
-                isSettingValues = true;
-                checkMenu.setSelected(pickColorCheck.isSelected());
-                isSettingValues = false;
-                items.add(checkMenu);
-                groupExist = true;
-            }
-
-            if (groupExist) {
-                items.add(new SeparatorMenuItem());
-            }
-
-            return items;
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-            return null;
-        }
-    }
-
     public void setMaskStroke() {
         try {
             if (isSettingValues) {
@@ -636,37 +547,51 @@ public class ImageBaseController extends BaseController {
     }
 
     public double getImageWidth() {
-        if (imageView == null || imageView.getImage() == null) {
-            return 1;
-        }
-        try {
+        if (imageView != null && imageView.getImage() != null) {
             return imageView.getImage().getWidth();
-//            if (handleLoadedSize || imageInformation == null) {
-//                return imageView.getImage().getWidth();
-//            } else {
-//                return imageInformation.getWidth();
-//            }
-        } catch (Exception e) {
-            logger.error(e.toString());
-            return 1;
+        } else if (image != null) {
+            return image.getWidth();
+        } else if (imageInformation != null) {
+            return imageInformation.getWidth();
+        } else {
+            return -1;
         }
     }
 
     public double getImageHeight() {
-        if (imageView == null || imageView.getImage() == null) {
-            return 1;
-        }
-        try {
+        if (imageView != null && imageView.getImage() != null) {
             return imageView.getImage().getHeight();
-//            if (handleLoadedSize || imageInformation == null) {
-//                return imageView.getImage().getHeight();
-//            } else {
-//                return imageInformation.getHeight();
-//            }
-        } catch (Exception e) {
-            logger.error(e.toString());
+        } else if (image != null) {
+            return image.getHeight();
+        } else if (imageInformation != null) {
+            return imageInformation.getHeight();
+        } else {
+            return -1;
+        }
+    }
+
+    public double widthRatio() {
+        if (!operateOriginalSize || imageInformation == null || image == null) {
             return 1;
         }
+        double ratio = 1d * getImageWidth() / imageInformation.getWidth();
+        return ratio;
+    }
+
+    public double heightRatio() {
+        if (!operateOriginalSize || imageInformation == null || image == null) {
+            return 1;
+        }
+        double ratio = 1d * getImageHeight() / imageInformation.getHeight();
+        return ratio;
+    }
+
+    public int getOperationWidth() {
+        return (int) (getImageWidth() / widthRatio());
+    }
+
+    public int getOperationHeight() {
+        return (int) (getImageHeight() / heightRatio());
     }
 
     @FXML
@@ -675,7 +600,6 @@ public class ImageBaseController extends BaseController {
             return;
         }
         try {
-            isPaneSize = false;
             FxmlControl.imageSize(scrollPane, imageView);
             refinePane();
         } catch (Exception e) {
@@ -689,7 +613,6 @@ public class ImageBaseController extends BaseController {
             return;
         }
         try {
-            isPaneSize = true;
             FxmlControl.paneSize(scrollPane, imageView);
             refinePane();
         } catch (Exception e) {
@@ -719,7 +642,6 @@ public class ImageBaseController extends BaseController {
         if (scrollPane == null || imageView == null || imageView.getImage() == null) {
             return;
         }
-        isPaneSize = false;
         FxmlControl.zoomIn(scrollPane, imageView, xZoomStep, yZoomStep);
         refinePane();
     }
@@ -729,7 +651,6 @@ public class ImageBaseController extends BaseController {
         if (scrollPane == null || imageView == null || imageView.getImage() == null) {
             return;
         }
-        isPaneSize = false;
         FxmlControl.zoomOut(scrollPane, imageView, xZoomStep, yZoomStep);
         refinePane();
     }
@@ -750,107 +671,77 @@ public class ImageBaseController extends BaseController {
         loadImage(file, onlyInformation, loadWidth, frameIndex, careFrames);
     }
 
-    public void loadImage(final File file, final boolean onlyInformation,
-            final int inLoadWidth, final int inFrameIndex,
-            final boolean inCareFrames) {
-        if (file == null) {
+    public void loadImage(File file, boolean onlyInformation,
+            int requiredWidth, int inFrameIndex, boolean inCareFrames) {
+        if (file == null || !file.exists() || !file.isFile()) {
             return;
         }
         recordFileOpened(file);
         synchronized (this) {
-            if (loadTask != null) {
+            if (loadTask != null && !loadTask.isQuit()) {
                 return;
             }
             final String fileName = file.getPath();
-            loadTask = new Task<Void>() {
-                private boolean ok, multiplied;
+            loadTask = new SingletonTask<Void>() {
+                private boolean multiplied, needSample;
                 private ImageInformation imageInfo;
 
                 @Override
-                public Void call() {
-
-                    final ImageFileInformation imageFileInformation
-                            = ImageInformation.loadImageFileInformation(file);
+                protected boolean handle() {
+                    final ImageFileInformation imageFileInformation = ImageInformation.loadImageFileInformation(file);
                     if (imageFileInformation == null
                             || imageFileInformation.getImagesInformation() == null
                             || imageFileInformation.getImagesInformation().isEmpty()) {
-                        return null;
+                        return false;
                     }
                     String format = FileTools.getFileSuffix(fileName).toLowerCase();
                     if (loadTask == null || isCancelled() || "raw".equals(format)) {
-                        return null;
+                        return false;
                     }
-                    boolean needSampled = false;
+                    imageInfo = imageFileInformation.getImagesInformation().get(inFrameIndex);
                     if (!onlyInformation) {
-                        if (!"ico".equals(format) && !"icon".equals(format)) {
-                            if (imageFileInformation.getImagesInformation().size() > 1
-                                    && careFrames) {
-                                multiplied = true;
-                                return null;
-                            }
-                            needSampled = ImageFileReaders.needSampled(imageFileInformation.getImageInformation(), 1);
-                            if (needSampled) {
-                                Platform.runLater(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        if (loadTask == null || !loadTask.isRunning() || loadingController == null) {
-                                            return;
-                                        }
-                                        imageInfo = imageFileInformation.getImageInformation();
-                                        loadingController.setInfo(MessageFormat.format(AppVariables.message("ImageLargeSampling"),
-                                                imageInfo.getWidth() + "x" + imageInfo.getHeight()));
-                                    }
-                                });
-                            }
+                        if (imageFileInformation.getImagesInformation().size() > 1 && careFrames) {
+                            multiplied = true;
+                            return false;
                         }
-
-                        imageInfo = ImageInformation.loadImage(file,
-                                inLoadWidth, inFrameIndex, imageFileInformation, needSampled);
-
+                        int maxWidth = ImageInformation.countMaxWidth(imageInfo);
+                        int checkWidth = requiredWidth > 0 ? requiredWidth : imageInfo.getWidth();
+                        if (maxWidth < checkWidth) {
+                            needSample = true;
+                            return false;
+                        }
+                        ImageInformation.loadImage(imageInfo, checkWidth);
+                        image = imageInfo.getThumbnail();
+                    } else {
+                        image = null;
                     }
-
-                    ok = true;
-                    return null;
+                    return imageInfo != null;
                 }
 
                 @Override
-                public void succeeded() {
-                    super.succeeded();
-                    loadTask = null;
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (ok) {
-                                sourceFile = file;
-                                imageInformation = imageInfo;
-                                image = imageInformation.getImage();
-                                loadWidth = inLoadWidth;
-                                frameIndex = inFrameIndex;
-                                careFrames = inCareFrames;
-                                getMyStage().setTitle(getBaseTitle() + " " + fileName);
-                                afterInfoLoaded();
-                                afterImageLoaded();
-                                refinePane();
-                            } else if (multiplied) {
-                                loadMultipleFramesImage(file);
-                            } else {
-                                popError(AppVariables.message("FailOpenImage"));
-                            }
-                        }
-                    });
+                protected void whenSucceeded() {
+                    sourceFile = file;
+                    imageInformation = imageInfo;
+
+                    frameIndex = inFrameIndex;
+                    careFrames = inCareFrames;
+                    getMyStage().setTitle(getBaseTitle() + " " + fileName);
+                    afterInfoLoaded();
+                    afterImageLoaded();
+                    refinePane();
                 }
 
                 @Override
-                public void cancelled() {
-                    super.cancelled();
-                    loadTask = null;
+                protected void whenFailed() {
+                    if (multiplied) {
+                        loadMultipleFramesImage(file);
+                    } else if (needSample) {
+                        needSample(imageInfo);
+                    } else {
+                        popError(AppVariables.message("FailOpenImage"));
+                    }
                 }
 
-                @Override
-                public void failed() {
-                    super.failed();
-                    loadTask = null;
-                }
             };
             loadingController = openHandlingStage(loadTask, Modality.WINDOW_MODAL);
             Thread thread = new Thread(loadTask);
@@ -859,8 +750,16 @@ public class ImageBaseController extends BaseController {
         }
     }
 
+    public void needSample(ImageInformation imageInfo) {
+        ImageTooLargeController controller = (ImageTooLargeController) openStage(CommonValues.ImageTooLargeFxml, true);
+        controller.setValues(this, imageInfo);
+    }
+
     public void loadImage(final String fileName) {
         try {
+            if (fileName == null) {
+                return;
+            }
             sourceFile = new File(fileName).getAbsoluteFile(); // Must convert to AbsoluteFile!
 //            infoAction(fileName + "\n" + sourceFile.getAbsolutePath());
             if (sourceFileInput != null) {
@@ -873,60 +772,166 @@ public class ImageBaseController extends BaseController {
         }
     }
 
-    public void loadImage(File sourceFile, Image image, ImageInformation imageInformation) {
-        boolean exist = this.sourceFile != null || this.image != null;
+    public void loadImage(File sourceFile, ImageInformation imageInformation) {
+        if (imageInformation == null) {
+            loadImage(sourceFile);
+            return;
+        }
+        boolean exist = this.sourceFile != null || image != null;
         this.sourceFile = sourceFile;
         this.imageInformation = imageInformation;
-        this.image = image;
-        afterImageLoaded();
-        setImageChanged(exist);
+
+        synchronized (this) {
+            if (loadTask != null && !loadTask.isQuit()) {
+                return;
+            }
+            loadTask = new SingletonTask<Void>() {
+
+                @Override
+                protected boolean handle() {
+                    image = imageInformation.loadImage(loadWidth);
+                    return image != null;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    afterImageLoaded();
+                    setImageChanged(exist);
+                }
+
+            };
+            loadingController = openHandlingStage(loadTask, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(loadTask);
+            thread.setDaemon(true);
+            thread.start();
+        }
     }
 
     public void loadImage(ImageInformation imageInformation) {
-        boolean exist = this.sourceFile != null || this.image != null;
-        this.sourceFile = new File(imageInformation.getFileName());
-        this.imageInformation = imageInformation;
-        this.image = imageInformation.getImage();
-        afterImageLoaded();
-        setImageChanged(exist);
+        if (imageInformation == null) {
+            loadImage(sourceFile);
+            return;
+        }
+        loadImage(imageInformation.getFile(), imageInformation);
     }
 
-    public void loadImage(final Image inImage) {
-        boolean exist = this.sourceFile != null || this.image != null;
+    public void loadImage(Image inImage) {
         sourceFile = null;
         imageInformation = null;
         image = inImage;
         afterImageLoaded();
-        setImageChanged(exist);
+        setImageChanged(true);
     }
 
-    public void loadImage(final Image inImage, int maxWidth) {
-        boolean exist = this.sourceFile != null || this.image != null;
+    public void loadImage(File sourceFile, ImageInformation imageInformation, Image image) {
+        this.sourceFile = sourceFile;
+        this.imageInformation = imageInformation;
+        this.image = image;
+        afterImageLoaded();
+        setImageChanged(true);
+    }
+
+    public void loadImage(Image inImage, int maxWidth) {
         sourceFile = null;
         imageInformation = null;
         image = FxmlImageManufacture.scaleImage(inImage, maxWidth);
         loadWidth = maxWidth;
         afterImageLoaded();
-        setImageChanged(exist);
+        setImageChanged(true);
     }
 
     public void setImageChanged(boolean imageChanged) {
+        try {
+            this.imageChanged = imageChanged;
+            updateLabelTitle();
+            if (saveButton != null && !saveButton.disableProperty().isBound()) {
+                if (imageInformation != null
+                        && imageInformation.getImageFileInformation().getNumberOfImages() > 1) {
+                    saveButton.setDisable(true);
+                } else {
+                    saveButton.setDisable(!imageChanged);
+                }
+            }
 
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
     }
 
     public void afterInfoLoaded() {
 
     }
 
-    public void afterImageLoaded() {
+    public boolean afterImageLoaded() {
+        return true;
     }
 
     public void loadMultipleFramesImage(File file) {
+        if (file == null || !file.exists() || file.length() == 0) {
+            return;
+        }
+        String format = FileTools.getFileSuffix(file.getAbsolutePath()).toLowerCase();
+        if (format.contains("gif")) {
+            final ImageGifViewerController controller
+                    = (ImageGifViewerController) openStage(CommonValues.ImageGifViewerFxml);
+            controller.loadImage(file.getAbsolutePath());
 
+        } else {
+            final ImageFramesViewerController controller
+                    = (ImageFramesViewerController) openStage(CommonValues.ImageFramesViewerFxml);
+            controller.selectSourceFile(file);
+        }
     }
 
     public void updateLabelTitle() {
+        try {
+            if (getMyStage() == null) {
+                return;
+            }
+            String title;
+            if (sourceFile != null) {
+                title = getBaseTitle() + " " + sourceFile.getAbsolutePath();
+                if (imageInformation != null) {
+                    if (imageInformation.getImageFileInformation().getNumberOfImages() > 1) {
+                        title += " - " + message("Image") + " " + imageInformation.getIndex();
+                    }
+                    if (imageInformation.isIsScaled()) {
+                        title += " - " + message("Scaled");
+                    }
+                }
+            } else {
+                title = getBaseTitle();
+            }
+            if (imageChanged) {
+                title += "  " + "*";
+            }
+            getMyStage().setTitle(title);
 
+            if (bottomLabel != null) {
+                if (imageView != null && imageView.getImage() != null) {
+                    String bottom = "";
+                    if (imageInformation != null) {
+                        bottom += AppVariables.message("Format") + ":" + imageInformation.getImageFormat() + "  ";
+                        bottom += AppVariables.message("Pixels") + ":" + imageInformation.getWidth() + "x" + imageInformation.getHeight() + "  ";
+                    }
+                    bottom += AppVariables.message("LoadedSize") + ":"
+                            + (int) imageView.getImage().getWidth() + "x" + (int) imageView.getImage().getHeight() + "  "
+                            + AppVariables.message("DisplayedSize") + ":"
+                            + (int) imageView.getFitWidth() + "x" + (int) imageView.getFitHeight();
+                    if (sourceFile != null) {
+                        bottom += "  " + AppVariables.message("FileSize") + ":" + FileTools.showFileSize(sourceFile.length()) + "  "
+                                + AppVariables.message("ModifyTime") + ":" + DateTools.datetimeToString(sourceFile.lastModified()) + "  ";
+                    }
+                    bottomLabel.setText(bottom);
+
+                } else {
+                    bottomLabel.setText("");
+                }
+            }
+
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
     }
 
     @FXML
@@ -934,8 +939,9 @@ public class ImageBaseController extends BaseController {
     public void popAction() {
         ImageViewerController controller
                 = (ImageViewerController) openStage(CommonValues.ImagePopupFxml);
-        controller.loadImage(sourceFile, image, imageInformation);
+        controller.loadImage(sourceFile, imageInformation, image);
         controller.paneSize();
+        controller.checkAlwaysTop();
     }
 
     @FXML
@@ -960,7 +966,8 @@ public class ImageBaseController extends BaseController {
         }
         PixelReader pixelReader = imageView.getImage().getPixelReader();
         Color color = pixelReader.getColor((int) p.getX(), (int) p.getY());
-        String s = (int) Math.round(p.getX()) + "," + (int) Math.round(p.getY()) + "\n"
+        String s = (int) Math.round(p.getX() / widthRatio()) + ","
+                + (int) Math.round(p.getY() / heightRatio()) + "\n"
                 + FxmlColor.colorDisplaySimple(color);
         if (isPickingColor) {
             s = message("PickingColorsNow") + "\n" + s;
@@ -989,19 +996,50 @@ public class ImageBaseController extends BaseController {
 
     @FXML
     public void paneClicked(MouseEvent event) {
-//        logger.debug("paneClicked");
         if (imageView.getImage() == null) {
             imageView.setCursor(Cursor.OPEN_HAND);
             return;
         }
+        DoublePoint p = FxmlControl.getImageXY(event, imageView);
+        imageClicked(event, p);
+    }
 
-        if (isPickingColor) {
-            DoublePoint p = FxmlControl.getImageXY(event, imageView);
-            if (p == null) {
-                return;
-            }
-            pickColor(p, imageView);
+    public void imageClicked(MouseEvent event, DoublePoint p) {
+        if (p == null || imageView.getImage() == null) {
+            imageView.setCursor(Cursor.OPEN_HAND);
+            return;
         }
+        if (isPickingColor) {
+            pickColor(p, imageView);
+
+        } else if (event.getClickCount() > 1) {  // Notice: Double click always trigger single click at first
+            imageDoubleClicked(event, p);
+
+        } else if (event.getClickCount() == 1) {
+            imageSingleClicked(event, p);
+        }
+    }
+
+    public void imageDoubleClicked(MouseEvent event, DoublePoint p) {
+
+    }
+
+    public void imageSingleClicked(MouseEvent event, DoublePoint p) {
+        if (needNotContextMenu || !AppVariables.getUserConfigBoolean(baseName + "ContextMenu", true)
+                || imageView == null || imageView.getImage() == null
+                || event == null || event.getButton() != MouseButton.SECONDARY) {
+            return;
+        }
+        Timer menuTimer = new Timer();
+        menuTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Platform.runLater(() -> {
+                    popImageMenu(imageView, event);
+                });
+            }
+        }, 100);  // double click will be eaten by the menu if not delay
+
     }
 
     @FXML
@@ -1040,6 +1078,7 @@ public class ImageBaseController extends BaseController {
     protected void startPickingColor() {
         if (paletteController == null || !paletteController.getMyStage().isShowing()) {
             paletteController = (ColorPaletteManageController) openStage(CommonValues.ColorPaletteManageFxml);
+            paletteController.parentController = this;
             popInformation(message("PickingColorsNow"));
             paletteController.myStage.setX(0);
             paletteController.myStage.setY(0);
@@ -1069,6 +1108,77 @@ public class ImageBaseController extends BaseController {
         }
     }
 
+    protected void popImageMenu(Node node, MouseEvent event) {
+        if (needNotContextMenu || !AppVariables.getUserConfigBoolean(baseName + "ContextMenu", true)
+                || node == null || imageView == null || imageView.getImage() == null) {
+            return;
+        }
+        List<MenuItem> items = makeImageContextMenu();
+        if (items == null || items.isEmpty()) {
+            return;
+        }
+        MenuItem menu = new MenuItem(message("PopupClose"));
+        menu.setStyle("-fx-text-fill: #2e598a;");
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            if (popMenu != null && popMenu.isShowing()) {
+                popMenu.hide();
+            }
+            popMenu = null;
+        });
+        items.add(menu);
+
+        if (popMenu != null && popMenu.isShowing()) {
+            popMenu.hide();
+        }
+        popMenu = new ContextMenu();
+        popMenu.setAutoHide(true);
+        popMenu.getItems().addAll(items);
+        popMenu.show(node, event.getScreenX(), event.getScreenY());
+
+    }
+
+    protected List<MenuItem> makeImageContextMenu() {
+        try {
+            if (imageView == null || imageView.getImage() == null) {
+                return null;
+            }
+            List<MenuItem> items = new ArrayList<>();
+            MenuItem menu;
+
+            menu = new MenuItem(message("LoadedSize") + "  CTRL+1");
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                loadedSize();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("PaneSize") + "  CTRL+2");
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                paneSize();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("ZoomIn") + "  CTRL+3");
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                zoomIn();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("ZoomOut") + "  CTRL+4");
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                zoomIn();
+            });
+            items.add(menu);
+
+            items.add(new SeparatorMenuItem());
+
+            return items;
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
     @Override
     public ImageBaseController refresh() {
         File oldfile = sourceFile;
@@ -1081,7 +1191,7 @@ public class ImageBaseController extends BaseController {
         }
         ImageBaseController c = (ImageBaseController) b;
         if (oldfile != null && oldImage != null && oldInfo != null) {
-            c.loadImage(oldfile, oldImage, oldInfo);
+            c.loadImage(oldfile, oldInfo);
         } else if (oldInfo != null) {
             c.loadImage(oldInfo);
         } else if (oldfile != null) {

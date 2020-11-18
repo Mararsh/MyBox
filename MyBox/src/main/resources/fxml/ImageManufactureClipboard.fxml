@@ -8,10 +8,10 @@
 
 <VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" spacing="5.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufactureClipboardController">
     <children>
-      <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
-        <tabs>
-          <Tab fx:id="imagesPane" text="%Images">
-               <content>
+        <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+            <tabs>
+                <Tab fx:id="imagesPane" text="%Images">
+                    <content>
                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                             <children>
                                 <HBox alignment="CENTER_LEFT" layoutX="22.0" layoutY="559.0" spacing="5.0" VBox.vgrow="NEVER">
@@ -104,64 +104,64 @@
                                 </HBox>
                             </children>
                         </VBox>
-               </content>
-            </Tab>
-          <Tab fx:id="setPane" text="%Settings">
-               <content>
-                  <VBox spacing="5.0">
-                     <children>
-                        <CheckBox fx:id="enlargeCheck" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%EnlargeImageWhenClipOut" />
-                                  <CheckBox fx:id="keepRatioCheck" mnemonicParsing="false" selected="true" text="%KeepRatio" />
-                                  <ComboBox fx:id="ratioBox" prefWidth="150.0" />
-                                  <HBox alignment="CENTER_LEFT" spacing="5.0">
-                                      <children>
-                                          <Label fx:id="blendLabel" text="%BlendMode">
-                                              <FlowPane.margin>
-                                                  <Insets left="20.0" />
-                                              </FlowPane.margin>
-                                          </Label>
-                                          <ComboBox fx:id="blendBox" prefWidth="140.0" />
-                                      </children>
-                                  </HBox>
-                                  <HBox alignment="CENTER_LEFT" spacing="5.0">
-                                      <children>
-                                          <Label text="%Opacity">
-                                              <FlowPane.margin>
-                                                  <Insets left="20.0" />
-                                              </FlowPane.margin>
-                                          </Label>
-                                          <ComboBox fx:id="opacityBox" prefWidth="100.0" />
-                                      </children>
-                                  </HBox>
-                                  <HBox alignment="CENTER_LEFT" spacing="5.0">
-                                      <children>
-                                          <Label text="%Rotate" />
-                                          <Slider fx:id="angleSlider" blockIncrement="1.0" max="360.0" showTickLabels="true" showTickMarks="true" />
-                                      </children>
-                                  </HBox>
-                                  <FlowPane hgap="5.0" prefWidth="200.0" vgap="5.0">
-                                      <children>
-                                          <ComboBox fx:id="angleBox" editable="true" prefWidth="100.0" />
-                                          <Button fx:id="rotateLeftButton" mnemonicParsing="false" onAction="#rotateLeft">
-                                              <graphic>
-                                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                      <image>
-                                                          <Image url="@../buttons/iconRotateLeft.png" />
-                                                      </image>
-                                                  </ImageView>
-                                              </graphic>
-                                          </Button>
-                                          <Button fx:id="rotateRightButton" mnemonicParsing="false" onAction="#rotateRight">
-                                              <graphic>
-                                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                      <image>
-                                                          <Image url="@../buttons/iconRotateRight.png" />
-                                                      </image>
-                                                  </ImageView>
-                                              </graphic>
-                                          </Button>
-                                      </children>
-                                  </FlowPane>
+                    </content>
+                </Tab>
+                <Tab fx:id="setPane" text="%Settings">
+                    <content>
+                        <VBox spacing="5.0">
+                            <children>
+                                <CheckBox fx:id="enlargeCheck" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%EnlargeImageWhenClipOut" />
+                                <CheckBox fx:id="keepRatioCheck" mnemonicParsing="false" selected="true" text="%KeepRatio" />
+                                <ComboBox fx:id="ratioBox" prefWidth="150.0" />
+                                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                    <children>
+                                        <Label fx:id="blendLabel" text="%BlendMode">
+                                            <FlowPane.margin>
+                                                <Insets left="20.0" />
+                                            </FlowPane.margin>
+                                        </Label>
+                                        <ComboBox fx:id="blendBox" prefWidth="140.0" />
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                    <children>
+                                        <Label text="%Opacity">
+                                            <FlowPane.margin>
+                                                <Insets left="20.0" />
+                                            </FlowPane.margin>
+                                        </Label>
+                                        <ComboBox fx:id="opacityBox" prefWidth="100.0" />
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                    <children>
+                                        <Label text="%Rotate" />
+                                        <Slider fx:id="angleSlider" blockIncrement="1.0" max="360.0" showTickLabels="true" showTickMarks="true" />
+                                    </children>
+                                </HBox>
+                                <FlowPane hgap="5.0" prefWidth="200.0" vgap="5.0">
+                                    <children>
+                                        <ComboBox fx:id="angleBox" editable="true" prefWidth="100.0" />
+                                        <Button fx:id="rotateLeftButton" mnemonicParsing="false" onAction="#rotateLeft">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconRotateLeft.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <Button fx:id="rotateRightButton" mnemonicParsing="false" onAction="#rotateRight">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconRotateRight.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                    </children>
+                                </FlowPane>
                                 <HBox alignment="CENTER_LEFT" spacing="5.0">
                                     <children>
                                         <Button fx:id="okButton" onAction="#okAction">
@@ -189,20 +189,20 @@
                                         <Insets bottom="20.0" />
                                     </VBox.margin>
                                 </Label>
-                        <Button fx:id="demoButton" mnemonicParsing="false" onAction="#demo">
-                           <graphic>
-                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../buttons/iconGo.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                        </Button>
-                     </children>
-                  </VBox>
-               </content>
-            </Tab>
-        </tabs>
-      </TabPane>
+                                <Button fx:id="demoButton" mnemonicParsing="false" onAction="#demo">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconDemo.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                            </children>
+                        </VBox>
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
     </children>
 </VBox>

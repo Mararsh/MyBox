@@ -43,14 +43,23 @@ License:    Apache License Version 2.0
                             <toggleGroup>
                                 <ToggleGroup fx:id="deleteType" />
                             </toggleGroup>
-                     <HBox.margin>
-                        <Insets />
-                     </HBox.margin>
+                            <HBox.margin>
+                                <Insets />
+                            </HBox.margin>
                         </RadioButton>
                         <RadioButton fx:id="deleteRadio" mnemonicParsing="false" text="%DeleteDirectly" toggleGroup="$deleteType" />
-                  <Button fx:id="exceptLastButton" layoutX="1004.0" layoutY="13.0" mnemonicParsing="false" onAction="#exceptLastAction" text="%ExceptLast" />
+                        <Button fx:id="exceptLastButton" layoutX="1004.0" layoutY="13.0" mnemonicParsing="false" onAction="#exceptLastAction" text="%ExceptLast" />
                         <Button fx:id="exceptFirstButton" mnemonicParsing="false" onAction="#exceptFirstAction" text="%ExceptFirst" />
-                        <Button fx:id="deleteButton" disable="true" mnemonicParsing="false" onAction="#deleteAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Delete" HBox.hgrow="NEVER" />
+                        <Button fx:id="deleteButton" defaultButton="true" mnemonicParsing="false" onAction="#deleteAction"
+                                styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconDelete.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
                     </children>
                 </HBox>
                 <Label fx:id="bottomLabel" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" wrapText="true" VBox.vgrow="NEVER">

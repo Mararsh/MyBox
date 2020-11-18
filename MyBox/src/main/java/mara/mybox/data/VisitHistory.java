@@ -1,13 +1,6 @@
 package mara.mybox.data;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import javafx.stage.FileChooser;
-import mara.mybox.db.TableVisitHistory;
-import mara.mybox.value.AppVariables;
-import mara.mybox.value.CommonFxValues;
 
 /**
  * @Author Mara
@@ -61,6 +54,7 @@ public class VisitHistory {
         public static int Media = 15;
         public static int Certificate = 16;
         public static int StreamMedia = 17;
+
         public static int TextEditHistory = 50;
 
         public static int None = 100;
@@ -72,11 +66,10 @@ public class VisitHistory {
         public static int Read = 2;
         public static int Write = 3;
         public static int Alpha = 4;
+        public static int Download = 5;
 
         public static int None = 100;
     }
-
-
 
     /*
         get/set

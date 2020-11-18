@@ -218,7 +218,7 @@ public class GeographyCodeController extends DataAnalysisController<GeographyCod
             return;
         }
         synchronized (this) {
-            if (backgroundTask != null) {
+            if (backgroundTask != null && !backgroundTask.isQuit()) {
                 return;
             }
             backgroundTask = new SingletonTask<Void>() {
@@ -239,10 +239,12 @@ public class GeographyCodeController extends DataAnalysisController<GeographyCod
 
                 @Override
                 protected void taskQuit() {
+                    super.taskQuit();
                     backgroundTask = null;
                 }
             };
             openHandlingStage(backgroundTask, Modality.WINDOW_MODAL);
+            backgroundTask.setSelf(backgroundTask);
             Thread thread = new Thread(backgroundTask);
             thread.setDaemon(true);
             thread.start();
@@ -399,7 +401,7 @@ public class GeographyCodeController extends DataAnalysisController<GeographyCod
 
     public void predefined() {
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -416,6 +418,7 @@ public class GeographyCodeController extends DataAnalysisController<GeographyCod
                 }
             };
             loading = openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -424,7 +427,7 @@ public class GeographyCodeController extends DataAnalysisController<GeographyCod
 
     public void importChinaTowns() {
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -443,6 +446,7 @@ public class GeographyCodeController extends DataAnalysisController<GeographyCod
                 }
             };
             loading = openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -494,7 +498,7 @@ public class GeographyCodeController extends DataAnalysisController<GeographyCod
             return;
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -519,6 +523,7 @@ public class GeographyCodeController extends DataAnalysisController<GeographyCod
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();

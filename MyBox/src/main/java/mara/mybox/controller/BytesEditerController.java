@@ -8,118 +8,47 @@ import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.IndexRange;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Region;
 import javafx.stage.Modality;
 import mara.mybox.data.FileEditInformation;
 import mara.mybox.data.FileEditInformation.Line_Break;
+import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara
  * @CreateDate 2018-12-09
- * @Description
  * @License Apache License Version 2.0
  */
 public class BytesEditerController extends FileEditerController {
 
     @FXML
-    protected ComboBox<String> symbolBox, capitalBox, smallBox, numberBox;
+    protected TextField lbWidthInput, lbBytesInput;
     @FXML
-    protected TextField bytesNumberInput, hexInput;
-    @FXML
-    private RadioButton bytesNumberRadio, byteRadio;
+    private RadioButton lbWidthRadio, bytesRadio, lbLFRadio, lbCRRadio, lbCRLFRsadio;
 
     public BytesEditerController() {
         baseTitle = AppVariables.message("BytesEditer");
-
         TipsLabelKey = "BytesEditerTips";
 
         setBytesType();
-    }
-
-    @Override
-    public void initControls() {
-        try {
-            super.initControls();
-            initCharInputTab();
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-
-    }
-
-    protected void initCharInputTab() {
-        List<String> symbolList = Arrays.asList("LF", "CR", AppVariables.message("Space"), "!", "\"", "#", "$", "%", "&", "'", "(", ")", "*", "+", "-",
-                ",", ".", "/", ":", ";", "<", "=", ">", "?", "@", "[", "]", "\\", "^", "_", "`",
-                "{", "}", "|", "~");
-        symbolBox.getItems().addAll(symbolList);
-        symbolBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue ov, String oldValue, String newValue) {
-                String s = newValue;
-                if (newValue.equals(AppVariables.message("Space"))) {
-                    s = " ";
-                } else if (newValue.equals("LF")) {
-                    s = "\n";
-                } else if (newValue.equals("CR")) {
-                    s = "\r";
-                }
-                mainArea.insertText(mainArea.getSelection().getStart(), ByteTools.stringToHexFormat(s));
-            }
-        });
-
-        List<String> capitalList = new ArrayList<>();
-        for (char i = 'A'; i <= 'Z'; ++i) {
-            capitalList.add(i + "");
-        }
-        capitalBox.getItems().addAll(capitalList);
-        capitalBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue ov, String oldValue, String newValue) {
-                mainArea.insertText(mainArea.getSelection().getStart(), ByteTools.stringToHexFormat(newValue));
-            }
-        });
-
-        List<String> smallList = new ArrayList<>();
-        for (char i = 'a'; i <= 'z'; ++i) {
-            smallList.add(i + "");
-        }
-        smallBox.getItems().addAll(smallList);
-        smallBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue ov, String oldValue, String newValue) {
-                mainArea.insertText(mainArea.getSelection().getStart(), ByteTools.stringToHexFormat(newValue));
-            }
-        });
-
-        List<String> numberList = new ArrayList<>();
-        for (char i = '0'; i <= '9'; ++i) {
-            numberList.add(i + "");
-        }
-        numberBox.getItems().addAll(numberList);
-        numberBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue ov, String oldValue, String newValue) {
-                mainArea.insertText(mainArea.getSelection().getStart(), ByteTools.stringToHexFormat(newValue));
-            }
-        });
-
-        inputPane.expandedProperty().addListener(
-                (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                    AppVariables.setUserConfigValue(baseName + "InputPane", inputPane.isExpanded());
-                });
-        inputPane.setExpanded(AppVariables.getUserConfigBoolean(baseName + "InputPane", true));
     }
 
     @Override
@@ -129,25 +58,23 @@ public class BytesEditerController extends FileEditerController {
 
             lineBreakGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
-                public void changed(ObservableValue<? extends Toggle> ov,
-                        Toggle old_toggle, Toggle new_toggle) {
+                public void changed(ObservableValue<? extends Toggle> ov, Toggle old_toggle, Toggle new_toggle) {
                     if (!isSettingValues) {
                         checkLineBreakGroup();
                     }
                 }
             });
 
-            hexInput.textProperty().addListener(new ChangeListener<String>() {
+            lbBytesInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue<? extends String> ov,
-                        String oldValue, String newValue) {
+                public void changed(ObservableValue<? extends String> ov, String oldValue, String newValue) {
                     if (!isSettingValues) {
                         checkBytesHex();
                     }
                 }
             });
 
-            bytesNumberInput.textProperty().addListener(new ChangeListener<String>() {
+            lbWidthInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> ov,
                         String oldValue, String newValue) {
@@ -158,12 +85,19 @@ public class BytesEditerController extends FileEditerController {
             });
 
             isSettingValues = true;
-            hexInput.setText(AppVariables.getUserConfigValue(LineBreakValueKey, "0A 0D"));
-            bytesNumberInput.setText(AppVariables.getUserConfigValue(LineBreakWidthKey, "30"));
-            if (AppVariables.getUserConfigValue(BytesLineBreakKey, "Width").equals("Width")) {
-                bytesNumberRadio.fire();
+            lbBytesInput.setText(AppVariables.getUserConfigValue(baseName + "LineBreakValue", "0D 0A "));
+            lbWidthInput.setText(AppVariables.getUserConfigValue(baseName + "LineBreakWidth", "30"));
+            String savedLB = AppVariables.getUserConfigValue(baseName + "LineBreak", "Width");
+            if (savedLB.equals(Line_Break.Value.toString())) {
+                bytesRadio.fire();
+            } else if (savedLB.equals(Line_Break.LF.toString())) {
+                lbLFRadio.fire();
+            } else if (savedLB.equals(Line_Break.CR.toString())) {
+                lbCRRadio.fire();
+            } else if (savedLB.equals(Line_Break.CRLF.toString())) {
+                lbCRLFRsadio.fire();
             } else {
-                byteRadio.fire();
+                lbWidthRadio.fire();
             }
             isSettingValues = false;
             checkLineBreakGroup();
@@ -189,8 +123,12 @@ public class BytesEditerController extends FileEditerController {
                 lineBreak = Line_Break.CR;
                 lineBreakValue = "0D ";
                 sourceInformation.setLineBreakValue("0D ");
+            } else if (AppVariables.message("CRLFHex").equals(selected.getText())) {
+                lineBreak = Line_Break.CRLF;
+                lineBreakValue = "0D 0A ";
+                sourceInformation.setLineBreakValue("0D 0A ");
             }
-            AppVariables.setUserConfigValue(BytesLineBreakKey, lineBreak.toString());
+            AppVariables.setUserConfigValue(baseName + "LineBreak", lineBreak.toString());
             sourceInformation.setLineBreak(lineBreak);
             checkBytesHex();
             checkBytesNumber();
@@ -212,25 +150,25 @@ public class BytesEditerController extends FileEditerController {
     private void checkBytesHex() {
         try {
             if (lineBreak != Line_Break.Value) {
-                hexInput.setStyle(null);
+                lbBytesInput.setStyle(null);
                 return;
             }
-            final String v = ByteTools.validateTextHex(hexInput.getText());
+            final String v = ByteTools.validateTextHex(lbBytesInput.getText());
             if (v == null || v.isEmpty()) {
-                hexInput.setStyle(badStyle);
+                lbBytesInput.setStyle(badStyle);
             } else {
                 lineBreakValue = v;
-                hexInput.setStyle(null);
+                lbBytesInput.setStyle(null);
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
                         isSettingValues = true;
-                        hexInput.setText(v);
-                        hexInput.end();
+                        lbBytesInput.setText(v);
+                        lbBytesInput.end();
                         isSettingValues = false;
                     }
                 });
-                AppVariables.setUserConfigValue(LineBreakValueKey, lineBreakValue);
+                AppVariables.setUserConfigValue(baseName + "LineBreakValue", lineBreakValue);
                 sourceInformation.setLineBreakValue(lineBreakValue);
                 if (!isSettingValues) {
                     if (sourceFile == null) {
@@ -243,7 +181,7 @@ public class BytesEditerController extends FileEditerController {
             }
 
         } catch (Exception e) {
-            hexInput.setStyle(badStyle);
+            lbBytesInput.setStyle(badStyle);
         }
 
     }
@@ -251,18 +189,17 @@ public class BytesEditerController extends FileEditerController {
     private void checkBytesNumber() {
         try {
             if (lineBreak != Line_Break.Width) {
-                bytesNumberInput.setStyle(null);
+                lbWidthInput.setStyle(null);
                 return;
             }
-            int v = Integer.valueOf(bytesNumberInput.getText());
+            int v = Integer.valueOf(lbWidthInput.getText());
             if (v > 0) {
                 lineBreakWidth = v;
-                bytesNumberInput.setStyle(null);
-                AppVariables.setUserConfigInt(LineBreakWidthKey, v);
+                lbWidthInput.setStyle(null);
+                AppVariables.setUserConfigInt(baseName + "LineBreakWidth", v);
                 sourceInformation.setLineBreakWidth(lineBreakWidth);
                 if (!isSettingValues) {
                     if (sourceFile == null) {
-                        logger.debug(lineBreakWidth);
                         updateInterface(false);
                     } else {
                         sourceInformation.setTotalNumberRead(false);
@@ -270,69 +207,11 @@ public class BytesEditerController extends FileEditerController {
                     }
                 }
             } else {
-                bytesNumberInput.setStyle(badStyle);
+                lbWidthInput.setStyle(badStyle);
             }
 
         } catch (Exception e) {
-            bytesNumberInput.setStyle(badStyle);
-        }
-    }
-
-    @Override
-    protected boolean validateFindString(String string) {
-        if (isSettingValues) {
-            return true;
-        }
-        final String v = ByteTools.validateTextHex(string);
-        if (v == null) {
-            findArea.setStyle(badStyle);
-            return false;
-        } else {
-            if (v.length() >= sourceInformation.getPageSize() * 3) {
-                popError(AppVariables.message("FindStringLimitation"));
-                findArea.setStyle(badStyle);
-                return false;
-            }
-            findArea.setStyle(null);
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    isSettingValues = true;
-                    findArea.setText(v);
-                    findArea.end();
-                    isSettingValues = false;
-                }
-            });
-            return true;
-        }
-    }
-
-    @Override
-    protected boolean checkReplaceString(String string) {
-        if (isSettingValues || string.trim().isEmpty()) {
-            return true;
-        }
-        final String v = ByteTools.validateTextHex(string);
-        if (v == null) {
-            replaceArea.setStyle(badStyle);
-            return false;
-        } else {
-            if (v.length() >= sourceInformation.getPageSize() * 3) {
-                popError(AppVariables.message("FindStringLimitation"));
-                replaceArea.setStyle(badStyle);
-                return false;
-            }
-            replaceArea.setStyle(null);
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    isSettingValues = true;
-                    replaceArea.setText(v);
-                    replaceArea.end();
-                    isSettingValues = false;
-                }
-            });
-            return true;
+            lbWidthInput.setStyle(badStyle);
         }
     }
 
@@ -345,14 +224,14 @@ public class BytesEditerController extends FileEditerController {
             @Override
             public void changed(ObservableValue ov, String oldValue, String newValue) {
                 sourceInformation.setCharset(Charset.forName(newValue));
-                AppVariables.setUserConfigValue(BytesCharsetKey, newValue);
+                AppVariables.setUserConfigValue(baseName + "Charset", newValue);
                 charsetByUser = !isSettingValues;
                 if (!isSettingValues) {
                     updatePairArea();
                 }
             }
         });
-        encodeBox.getSelectionModel().select(AppVariables.getUserConfigValue(BytesCharsetKey, "UTF-8"));
+        encodeBox.getSelectionModel().select(AppVariables.getUserConfigValue(baseName + "Charset", "UTF-8"));
     }
 
     @Override
@@ -373,25 +252,6 @@ public class BytesEditerController extends FileEditerController {
             return true;
         } else {
             return false;
-        }
-    }
-
-    @Override
-    protected void countCurrentFound() {
-        if (!findWhole || sourceInformation.getPagesNumber() <= 1) {
-            return;
-        }
-        currentFound = null;
-        if (sourceInformation.getCurrentFound() != null) {
-            long start = sourceInformation.getCurrentFound().getStart();
-            long end = sourceInformation.getCurrentFound().getEnd();
-            int pos = (int) (start % sourceInformation.getPageSize());
-            int p = (int) (start / sourceInformation.getPageSize() + 1);
-            if (p == currentPage) {
-                int pstart = pos * 3;
-                int pend = pstart + (int) (end - start);
-                currentFound = new IndexRange(pstart, pend);
-            }
         }
     }
 
@@ -444,30 +304,15 @@ public class BytesEditerController extends FileEditerController {
         isSettingValues = false;
     }
 
-    @FXML
-    @Override
-    public void selectSourceFile() {
-        super.selectSourceFile();
-        inputPane.setExpanded(true);
-    }
-
-    @FXML
-    private void openAscii() {
-        try {
-            browseURI(new URI("https://www.ascii-code.com/"));
-//           browseURI(new URI("https://en.wikipedia.org/wiki/ASCII"));  // this address in unavaliable to someones
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
     @Override
     protected void checkFilterStrings() {
         String f = filterInput.getText();
         boolean invalid = f.isEmpty() || sourceFile == null || mainArea.getText().isEmpty();
         if (!invalid) {
             if (filterType == FileEditInformation.StringFilterType.MatchRegularExpression
-                    || filterType == FileEditInformation.StringFilterType.NotMatchRegularExpression) {
+                    || filterType == FileEditInformation.StringFilterType.NotMatchRegularExpression
+                    || filterType == FileEditInformation.StringFilterType.IncludeRegularExpression
+                    || filterType == FileEditInformation.StringFilterType.NotIncludeRegularExpression) {
                 filterStrings = new String[1];
                 filterStrings[0] = filterInput.getText();
             } else {
@@ -523,6 +368,186 @@ public class BytesEditerController extends FileEditerController {
         });
         return true;
 
+    }
+
+    @FXML
+    public void popNumber(MouseEvent mouseEvent) {
+        try {
+            if (popMenu != null && popMenu.isShowing()) {
+                popMenu.hide();
+            }
+            popMenu = new ContextMenu();
+            popMenu.setAutoHide(true);
+
+            MenuItem menuItem;
+            for (int i = 0; i <= 9; ++i) {
+                final String name = i + "";
+                menuItem = new MenuItem(name);
+                menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        mainArea.insertText(mainArea.getSelection().getStart(), ByteTools.stringToHexFormat(name));
+                    }
+                });
+                popMenu.getItems().add(menuItem);
+            }
+            popMenu.getItems().add(new SeparatorMenuItem());
+
+            menuItem = new MenuItem(message("AsciiTable"));
+            menuItem.setOnAction((ActionEvent event) -> {
+                try {
+                    browseURI(new URI("https://www.ascii-code.com/"));
+//           browseURI(new URI("https://en.wikipedia.org/wiki/ASCII"));  // this address is unavaliable to someones
+                } catch (Exception e) {
+                    logger.error(e.toString());
+                }
+            });
+            popMenu.getItems().add(menuItem);
+
+            popMenu.getItems().add(new SeparatorMenuItem());
+            MenuItem menu = new MenuItem(message("PopupClose"));
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    popMenu.hide();
+                }
+            });
+            popMenu.getItems().add(menu);
+
+            FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    @FXML
+    public void popLowerLetter(MouseEvent mouseEvent) {
+        try {
+            if (popMenu != null && popMenu.isShowing()) {
+                popMenu.hide();
+            }
+            popMenu = new ContextMenu();
+            popMenu.setAutoHide(true);
+
+            MenuItem menuItem;
+            for (char i = 'a'; i <= 'z'; ++i) {
+                final String name = i + "";
+                menuItem = new MenuItem(name);
+                menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        mainArea.insertText(mainArea.getSelection().getStart(), ByteTools.stringToHexFormat(name));
+                    }
+                });
+                popMenu.getItems().add(menuItem);
+            }
+
+            popMenu.getItems().add(new SeparatorMenuItem());
+            MenuItem menu = new MenuItem(message("PopupClose"));
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    popMenu.hide();
+                }
+            });
+            popMenu.getItems().add(menu);
+
+            FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    @FXML
+    public void popUpperLetter(MouseEvent mouseEvent) {
+        try {
+            if (popMenu != null && popMenu.isShowing()) {
+                popMenu.hide();
+            }
+            popMenu = new ContextMenu();
+            popMenu.setAutoHide(true);
+
+            MenuItem menuItem;
+            for (char i = 'A'; i <= 'Z'; ++i) {
+                final String name = i + "";
+                menuItem = new MenuItem(name);
+                menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        mainArea.insertText(mainArea.getSelection().getStart(), ByteTools.stringToHexFormat(name));
+                    }
+                });
+                popMenu.getItems().add(menuItem);
+            }
+
+            popMenu.getItems().add(new SeparatorMenuItem());
+            MenuItem menu = new MenuItem(message("PopupClose"));
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    popMenu.hide();
+                }
+            });
+            popMenu.getItems().add(menu);
+
+            FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    @FXML
+    public void popSpecial(MouseEvent mouseEvent) {
+        try {
+            if (popMenu != null && popMenu.isShowing()) {
+                popMenu.hide();
+            }
+            popMenu = new ContextMenu();
+            popMenu.setAutoHide(true);
+
+            MenuItem menuItem;
+
+            List<String> symbolList = Arrays.asList("LF", "CR", AppVariables.message("Space"),
+                    "!", "\"", "#", "$", "%", "&", "'", "(", ")", "*", "+", "-",
+                    ",", ".", "/", ":", ";", "<", "=", ">", "?", "@", "[", "]", "\\", "^", "_", "`",
+                    "{", "}", "|", "~");
+            for (String symbol : symbolList) {
+                menuItem = new MenuItem(symbol);
+                menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        String value = symbol;
+                        if (value.equals(AppVariables.message("Space"))) {
+                            value = " ";
+                        } else if (value.equals("LF")) {
+                            value = "\n";
+                        } else if (value.equals("CR")) {
+                            value = "\r";
+                        }
+                        mainArea.insertText(mainArea.getSelection().getStart(), ByteTools.stringToHexFormat(value));
+                    }
+                });
+                popMenu.getItems().add(menuItem);
+            }
+
+            popMenu.getItems().add(new SeparatorMenuItem());
+            MenuItem menu = new MenuItem(message("PopupClose"));
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    popMenu.hide();
+                }
+            });
+            popMenu.getItems().add(menu);
+
+            FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
     }
 
 }

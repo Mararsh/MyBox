@@ -32,11 +32,12 @@ import mara.mybox.db.DerbyBase;
 import static mara.mybox.db.DerbyBase.dbHome;
 import static mara.mybox.db.DerbyBase.login;
 import static mara.mybox.db.DerbyBase.protocol;
+import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.VisitHistoryTools;
+import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
@@ -322,22 +323,27 @@ public class DataExportController extends DataQueryController {
             }
         }
         Platform.runLater(() -> {
-            if (!okButton.getText().equals(message("Cancel"))) {
+            if (okButton.getUserData() == null) {
                 start();
-                okButton.setText(message("Cancel"));
+                ControlStyle.setIcon(okButton, ControlStyle.getIcon("iconCancel.png"));
+                okButton.applyCss();
+                okButton.setUserData("cancel");
             } else {
                 cancelled = true;
                 if (task != null) {
                     task.cancel();
+                    task = null;
                 }
-                okButton.setText(buttonName());
+                ControlStyle.setIcon(okButton, ControlStyle.getIcon("iconOK.png"));
+                okButton.applyCss();
+                okButton.setUserData(null);
             }
         });
     }
 
     public void start() {
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             cancelled = false;
@@ -434,6 +440,7 @@ public class DataExportController extends DataQueryController {
                     browseURI(targetPath.toURI());
                 }
             };
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -475,7 +482,7 @@ public class DataExportController extends DataQueryController {
             synchronized (this) {
                 ++taskCount;
             }
-            BaseTask dTask = new BaseTask<Void>() {
+            SingletonTask dTask = new SingletonTask<Void>() {
                 @Override
                 protected boolean handle() {
                     return writeInternalCSV(file, sql);
@@ -534,7 +541,7 @@ public class DataExportController extends DataQueryController {
             }
             String filename = file.getAbsolutePath();
             updateLogs(message("Exporting") + " " + filename);
-            BaseTask dTask = new BaseTask<Void>() {
+            SingletonTask dTask = new SingletonTask<Void>() {
                 @Override
                 protected boolean handle() {
                     return writeExternalCSV(file, sql);
@@ -599,7 +606,7 @@ public class DataExportController extends DataQueryController {
             }
             String filename = file.getAbsolutePath();
             updateLogs(message("Exporting") + " " + filename);
-            BaseTask dTask = new BaseTask<Void>() {
+            SingletonTask dTask = new SingletonTask<Void>() {
                 @Override
                 protected boolean handle() {
                     return writeXML(file, sql);
@@ -670,7 +677,7 @@ public class DataExportController extends DataQueryController {
             }
             String filename = file.getAbsolutePath();
             updateLogs(message("Exporting") + " " + filename);
-            BaseTask dTask = new BaseTask<Void>() {
+            SingletonTask dTask = new SingletonTask<Void>() {
                 @Override
                 protected boolean handle() {
                     return writeJSON(file, sql);
@@ -744,7 +751,7 @@ public class DataExportController extends DataQueryController {
             }
             String filename = file.getAbsolutePath();
             updateLogs(message("Exporting") + " " + filename);
-            BaseTask dTask = new BaseTask<Void>() {
+            SingletonTask dTask = new SingletonTask<Void>() {
                 @Override
                 protected boolean handle() {
                     return writeExcel(file, sql);
@@ -806,7 +813,7 @@ public class DataExportController extends DataQueryController {
             }
             String filename = file.getAbsolutePath();
             updateLogs(message("Exporting") + " " + filename);
-            BaseTask dTask = new BaseTask<Void>() {
+            SingletonTask dTask = new SingletonTask<Void>() {
                 @Override
                 protected boolean handle() {
                     return writeHTML(file, sql);
@@ -837,7 +844,9 @@ public class DataExportController extends DataQueryController {
                 if (!cancelled) {
                     updateLogs(message("MissionCompleted"));
                 }
-                okButton.setText(buttonName());
+                ControlStyle.setIcon(okButton, ControlStyle.getIcon("iconOK.png"));
+                okButton.applyCss();
+                okButton.setUserData(null);
             }
         }
     }

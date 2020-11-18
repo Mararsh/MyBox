@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.stage.Modality;
 import mara.mybox.data.VisitHistory;
@@ -34,23 +33,10 @@ public class ImageTiffEditerController extends ImagesListController {
     }
 
     @Override
-    public void initOptionsSection() {
-        try {
-            tableBox.setDisable(true);
-
-            saveButton.disableProperty().bind(Bindings.isEmpty(tableData));
-            saveAsButton.disableProperty().bind(saveButton.disableProperty());
-            viewButton.disableProperty().bind(saveButton.disableProperty());
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    @Override
     public void saveFileDo(final File outFile) {
 
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -76,6 +62,7 @@ public class ImageTiffEditerController extends ImagesListController {
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();

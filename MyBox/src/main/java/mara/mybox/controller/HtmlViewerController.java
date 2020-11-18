@@ -6,22 +6,20 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.ComboBox;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import mara.mybox.data.StringTable;
 import mara.mybox.data.VisitHistory;
+import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlTools;
-import mara.mybox.tools.HtmlTools.HtmlStyle;
-import mara.mybox.tools.VisitHistoryTools;
+import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
-import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonFxValues;
 
 /**
@@ -37,12 +35,9 @@ public class HtmlViewerController extends BaseController {
     protected StringTable table;
     protected String html;
     protected String title;
-    protected HtmlStyle htmlStyle;
 
     @FXML
     protected WebView webView;
-    @FXML
-    protected ComboBox<String> htmlStyleSelector;
 
     public HtmlViewerController() {
         baseTitle = AppVariables.message("Html");
@@ -59,35 +54,6 @@ public class HtmlViewerController extends BaseController {
 
         sourceExtensionFilter = CommonFxValues.HtmlExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
-    }
-
-    @Override
-    public void initControls() {
-        try {
-            super.initControls();
-
-            htmlStyle = HtmlStyle.Default;
-            htmlStyleSelector.getItems().addAll(Arrays.asList(
-                    message("Default"), message("Console"), message("Blackboard")
-            ));
-            htmlStyleSelector.getSelectionModel().selectedItemProperty().addListener(
-                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                        if (message("Console").equals(newValue)) {
-                            htmlStyle = HtmlStyle.Console;
-                        } else if (message("Blackboard").equals(newValue)) {
-                            htmlStyle = HtmlStyle.Blackboard;
-                        } else {
-                            htmlStyle = HtmlStyle.Default;
-                        }
-                        AppVariables.setUserConfigValue("HtmlStyle", newValue);
-                        displayHtml();
-                    });
-            htmlStyleSelector.getSelectionModel().select(
-                    AppVariables.getUserConfigValue("HtmlStyle", message("Default")));
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
     }
 
     @Override
@@ -110,6 +76,7 @@ public class HtmlViewerController extends BaseController {
 
     @FXML
     protected void editHtml() {
+        String htmlStyle = AppVariables.getUserConfigValue(baseName + "HtmlStyle", "Default");
         if (table != null) {
             html = HtmlTools.html(title, htmlStyle, StringTable.tableDiv(table));
 
@@ -120,6 +87,7 @@ public class HtmlViewerController extends BaseController {
     }
 
     public void displayHtml() {
+        String htmlStyle = AppVariables.getUserConfigValue(baseName + "HtmlStyle", "Default");
         if (table != null) {
             html = HtmlTools.html(title, htmlStyle, StringTable.tableDiv(table));
 
@@ -156,6 +124,7 @@ public class HtmlViewerController extends BaseController {
             if (body == null) {
                 return;
             }
+            String htmlStyle = AppVariables.getUserConfigValue(baseName + "HtmlStyle", "Default");
             html = HtmlTools.html(title, htmlStyle, body);
             displayHtml(html);
         } catch (Exception e) {
@@ -170,6 +139,7 @@ public class HtmlViewerController extends BaseController {
         }
         this.title = table.getTitle();
         this.fields = table.getNames();
+        String htmlStyle = AppVariables.getUserConfigValue(baseName + "HtmlStyle", "Default");
         html = HtmlTools.html(title, htmlStyle, StringTable.tableDiv(table));
         displayHtml(html);
     }
@@ -203,6 +173,11 @@ public class HtmlViewerController extends BaseController {
     public void clear() {
         html = null;
         webView.getEngine().loadContent("");
+    }
+
+    @FXML
+    public void popLinksStyle(MouseEvent mouseEvent) {
+        popMenu = FxmlControl.popHtmlStyle(mouseEvent, this, popMenu, webView.getEngine());
     }
 
     @FXML
@@ -242,7 +217,7 @@ public class HtmlViewerController extends BaseController {
             return;
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit() ) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -264,7 +239,7 @@ public class HtmlViewerController extends BaseController {
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
+            task.setSelf(task);Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }

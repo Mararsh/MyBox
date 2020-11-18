@@ -6,14 +6,17 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 import javafx.util.converter.LongStringConverter;
 import mara.mybox.data.FileInformation;
+import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
@@ -37,6 +40,8 @@ public class FFmpegImageFilesTableController extends FilesTableController {
     protected TableColumn<FileInformation, Long> durationColumn;
     @FXML
     protected TextField durationInput;
+    @FXML
+    protected Button exampleRegexButton;
 
     public FFmpegImageFilesTableController() {
     }
@@ -137,6 +142,11 @@ public class FFmpegImageFilesTableController extends FilesTableController {
             logger.error(e.toString());
         }
 
+    }
+
+    @FXML
+    public void popRegexExample(MouseEvent mouseEvent) {
+        popMenu = FxmlControl.popRegexExample(this, popMenu, tableFiltersInput, mouseEvent);
     }
 
 }

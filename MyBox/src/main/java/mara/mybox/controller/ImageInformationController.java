@@ -14,6 +14,7 @@ import mara.mybox.image.ImageValue;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlTools;
+import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
@@ -72,7 +73,7 @@ public class ImageInformationController extends HtmlViewerController {
                 }
                 s.append(makeImageInformationTable(i, iInfo)).append("</br>\n");
             }
-
+            String htmlStyle = AppVariables.getUserConfigValue(baseName + "HtmlStyle", "Default");
             html = HtmlTools.html(finfo.getFileName(), htmlStyle, s.toString());
             webView.getEngine().loadContent​(html);
             if (indexSelector.getItems().isEmpty()) {

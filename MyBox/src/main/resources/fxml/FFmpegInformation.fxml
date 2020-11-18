@@ -49,14 +49,22 @@ License:    Apache License Version 2.0
                         </Button>
                         <Label fx:id="executableLabel" text="%FFmpegExecutable" />
                         <TextField fx:id="executableInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                        <Button fx:id="startButton" mnemonicParsing="false" onAction="#startAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Read" />
+                        <Button fx:id="startButton" defaultButton="true" mnemonicParsing="false" onAction="#startAction" styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconStart.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
                     </children>
                 </HBox>
                 <VBox fx:id="functionBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS">
                     <children>
                         <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
                             <tabs>
-                                <Tab fx:id="streamsTab" text="%Version">
+                                <Tab text="%Version">
                                     <content>
                                         <TextArea fx:id="versionArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true">
                                             <padding>
@@ -82,7 +90,7 @@ License:    Apache License Version 2.0
                                         </VBox>
                                     </content>
                                 </Tab>
-                                <Tab fx:id="formatsTab1" text="%Codecs">
+                                <Tab text="%Codecs">
                                     <content>
                                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                             <children>
@@ -103,7 +111,7 @@ License:    Apache License Version 2.0
                                         </VBox>
                                     </content>
                                 </Tab>
-                                <Tab fx:id="formatsTab2" text="%Filters">
+                                <Tab text="%Filters">
                                     <content>
                                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                             <children>
@@ -122,7 +130,7 @@ License:    Apache License Version 2.0
                                         </VBox>
                                     </content>
                                 </Tab>
-                                <Tab fx:id="subtitlesTab" text="%Query">
+                                <Tab fx:id="queryTab" text="%Query">
                                     <content>
                                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                             <children>

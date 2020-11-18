@@ -1,45 +1,53 @@
 package mara.mybox.controller;
 
-import com.vladsch.flexmark.ast.util.TextCollectingVisitor;
+import com.vladsch.flexmark.ext.abbreviation.AbbreviationExtension;
+import com.vladsch.flexmark.ext.definition.DefinitionExtension;
+import com.vladsch.flexmark.ext.footnotes.FootnoteExtension;
 import com.vladsch.flexmark.ext.tables.TablesExtension;
+import com.vladsch.flexmark.ext.typographic.TypographicExtension;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.parser.ParserEmulationProfile;
-import com.vladsch.flexmark.profiles.pegdown.Extensions;
-import com.vladsch.flexmark.profiles.pegdown.PegdownOptionsAdapter;
+import com.vladsch.flexmark.profile.pegdown.Extensions;
+import com.vladsch.flexmark.profile.pegdown.PegdownOptionsAdapter;
 import com.vladsch.flexmark.util.ast.Node;
+import com.vladsch.flexmark.util.ast.TextCollectingVisitor;
 import com.vladsch.flexmark.util.data.DataHolder;
-import com.vladsch.flexmark.util.data.MutableDataHolder;
 import com.vladsch.flexmark.util.data.MutableDataSet;
-import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.IndexRange;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Modality;
-import mara.mybox.data.FileEditInformation.Edit_Type;
-import mara.mybox.data.VisitHistory;
-import mara.mybox.fxml.RecentVisitMenu;
-import mara.mybox.tools.FileTools;
+import mara.mybox.data.Link;
+import mara.mybox.data.StringTable;
+import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.HtmlTools;
-import mara.mybox.tools.VisitHistoryTools;
+import mara.mybox.tools.MarkdownTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
-import mara.mybox.value.CommonFxValues;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -51,19 +59,20 @@ import mara.mybox.value.CommonValues;
 public class MarkdownEditerController extends TextEditerController {
 
     protected WebEngine webEngine;
-    protected Parser parser;
-    protected HtmlRenderer renderer;
-    protected MutableDataHolder parserOptions;
+    protected MutableDataSet htmlOptions, textOptions;
+    protected Parser htmlParser, textParser;
+    protected HtmlRenderer htmlRenderer;
+    protected TextCollectingVisitor textCollectingVisitor;
     protected int indentSize = 4;
 
     @FXML
     protected TabPane tabPane;
     @FXML
-    protected Tab htmlTab, codesTab, textTab;
+    protected Tab htmlTab, codesTab, textTab, tocTab, linksTab;
     @FXML
-    protected WebView webView;
+    protected WebView webView, linksWebview;
     @FXML
-    protected TextArea htmlArea, textArea;
+    protected TextArea htmlArea, textArea, tocArea;
     @FXML
     protected ComboBox<String> emulationSelector, indentSelector, styleSelector;
     @FXML
@@ -71,60 +80,41 @@ public class MarkdownEditerController extends TextEditerController {
     @FXML
     protected TextField titleInput;
     @FXML
-    protected HBox mdBox, htmlBox, textBox;
-    @FXML
     protected TitledPane conversionPane;
 
     public MarkdownEditerController() {
         baseTitle = AppVariables.message("MarkdownEditer");
         TipsLabelKey = "MarkdownEditerTips";
-        editType = Edit_Type.Text;
 
-        SourceFileType = VisitHistory.FileType.Markdown;
-        SourcePathType = VisitHistory.FileType.Markdown;
-        TargetPathType = VisitHistory.FileType.Markdown;
-        TargetFileType = VisitHistory.FileType.Markdown;
-        AddFileType = VisitHistory.FileType.Markdown;
-        AddPathType = VisitHistory.FileType.Markdown;
-
-        sourcePathKey = VisitHistoryTools.getPathKey(VisitHistory.FileType.Markdown);
-        PageSizeKey = "MarkdownPageSize";
-
-        sourceExtensionFilter = CommonFxValues.MarkdownExtensionFilter;
-        targetExtensionFilter = sourceExtensionFilter;
-
-        AppVariables.setUserConfigInt(PageSizeKey, 200000000); // All in one page
+        setMarkdownType();
     }
 
     @Override
     public void initControls() {
         try {
-            initPage(null);
+//            initPage(null);
             super.initControls();
 
             initConversionOptions();
-            initInputPane();
             initHtmlTab();
             initTextTab();
+            initLinksTab();
 
-            tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
-                @Override
-                public void changed(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) {
-                    refreshPairAction();
-                }
-            });
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-
-    }
-
-    @Override
-    protected void initMainBox() {
-        try {
-            super.initMainBox();
-            mdBox.disableProperty().bind(mainArea.textProperty().isEmpty());
+            if (!AppVariables.getUserConfigBoolean(baseName + "ShowHtml", true)) {
+                tabPane.getTabs().remove(htmlTab);
+            }
+            if (!AppVariables.getUserConfigBoolean(baseName + "ShowCodes", true)) {
+                tabPane.getTabs().remove(codesTab);
+            }
+            if (!AppVariables.getUserConfigBoolean(baseName + "ShowToc", true)) {
+                tabPane.getTabs().remove(tocTab);
+            }
+            if (!AppVariables.getUserConfigBoolean(baseName + "ShowText", true)) {
+                tabPane.getTabs().remove(textTab);
+            }
+            if (!AppVariables.getUserConfigBoolean(baseName + "ShowLinks", true)) {
+                tabPane.getTabs().remove(linksTab);
+            }
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -136,7 +126,7 @@ public class MarkdownEditerController extends TextEditerController {
             webView.setContextMenuEnabled(true);
             webEngine = webView.getEngine();
 
-            htmlBox.disableProperty().bind(mdBox.disableProperty());
+            htmlTab.disableProperty().bind(mainArea.textProperty().isEmpty());
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -145,7 +135,32 @@ public class MarkdownEditerController extends TextEditerController {
 
     protected void initTextTab() {
         try {
-            textBox.disableProperty().bind(mdBox.disableProperty());
+            textTab.disableProperty().bind(mainArea.textProperty().isEmpty());
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    protected void initTocTab() {
+        try {
+            tocTab.disableProperty().bind(mainArea.textProperty().isEmpty());
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    protected void initLinksTab() {
+        try {
+            linksTab.disableProperty().bind(mainArea.textProperty().isEmpty());
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+
+    }
+
+    protected void initCodesTab() {
+        try {
+            codesTab.disableProperty().bind(mainArea.textProperty().isEmpty());
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -167,7 +182,7 @@ public class MarkdownEditerController extends TextEditerController {
                 @Override
                 public void changed(ObservableValue ov, String oldValue,
                         String newValue) {
-                    makeConverter();
+                    makeHtmlConverter();
                 }
             });
             emulationSelector.getSelectionModel().select(0);
@@ -183,7 +198,7 @@ public class MarkdownEditerController extends TextEditerController {
                         int v = Integer.parseInt(newValue);
                         if (v >= 0) {
                             indentSize = v;
-                            makeConverter();
+                            makeHtmlConverter();
                         }
                     } catch (Exception e) {
                     }
@@ -195,28 +210,28 @@ public class MarkdownEditerController extends TextEditerController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue,
                         Boolean newValue) {
-                    makeConverter();
+                    makeHtmlConverter();
                 }
             });
             appendCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue,
                         Boolean newValue) {
-                    makeConverter();
+                    makeHtmlConverter();
                 }
             });
             discardCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue,
                         Boolean newValue) {
-                    makeConverter();
+                    makeHtmlConverter();
                 }
             });
             linesCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue,
                         Boolean newValue) {
-                    makeConverter();
+                    makeHtmlConverter();
                 }
             });
 
@@ -227,7 +242,7 @@ public class MarkdownEditerController extends TextEditerController {
                 @Override
                 public void changed(ObservableValue ov, String oldValue,
                         String newValue) {
-                    makeConverter();
+                    makeHtmlConverter();
                 }
             });
             styleSelector.getSelectionModel().select(0);
@@ -237,44 +252,25 @@ public class MarkdownEditerController extends TextEditerController {
         }
     }
 
-    protected void initInputPane() {
-        try {
-            inputPane.expandedProperty().addListener(
-                    (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                        AppVariables.setUserConfigValue(baseName + "InputPane", inputPane.isExpanded());
-                    });
-            inputPane.setExpanded(AppVariables.getUserConfigBoolean(baseName + "InputPane", true));
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    @Override
-    protected void updatePairArea() {
-        if (isSettingValues || !splitPane.getItems().contains(rightPane)
-                || !updateSyncCheck.isSelected()) {
-            return;
-        }
-        refreshPairAction();
-    }
-
     @FXML
     @Override
     public void refreshPairAction() {
         if (isSettingValues || !splitPane.getItems().contains(rightPane)) {
             return;
         }
-        Tab tab = tabPane.getSelectionModel().getSelectedItem();
-        if (tab == textTab) {
-            markdown2text();
-        } else {
-            markdown2html();
-        }
+        markdown2all();
     }
 
     @Override
     protected void setPairAreaSelection() {
+    }
+
+    @Override
+    protected void scrollTopPairArea(double value) {
+    }
+
+    @Override
+    protected void scrollLeftPairArea(double value) {
     }
 
     @Override
@@ -284,40 +280,23 @@ public class MarkdownEditerController extends TextEditerController {
             webEngine.loadContent("");
         }
         textArea.setText("");
+        tocArea.setText("");
     }
 
-    @Override
-    protected void scrollTopPairArea(double value) {
-//        if (isSettingValues || !splitPane.getItems().contains(rightPane)) {
-//            return;
-//        }
-//        isSettingValues = true;
-//        pairArea.setScrollTop(value);
-//        isSettingValues = false;
-    }
-
-    @Override
-    protected void scrollLeftPairArea(double value) {
-//        if (isSettingValues || !splitPane.getItems().contains(rightPane)) {
-//            return;
-//        }
-//        isSettingValues = true;
-//        pairArea.setScrollLeft(value);
-//        isSettingValues = false;
-    }
-
-    protected void makeConverter() {
+    // https://github.com/vsch/flexmark-java/wiki/Usage
+    protected void makeHtmlConverter() {
         try {
-            parserOptions = new MutableDataSet();
-            parserOptions.setFrom(ParserEmulationProfile.valueOf(emulationSelector.getValue()));
-            parserOptions.set(Parser.EXTENSIONS, Arrays.asList(
-                    //                    AbbreviationExtension.create(),
-                    //                    DefinitionExtension.create(),
-                    //                    FootnoteExtension.create(),
-                    //                    TypographicExtension.create(),
-                    TablesExtension.create()
+            htmlOptions = new MutableDataSet();
+            htmlOptions.setFrom(ParserEmulationProfile.valueOf(emulationSelector.getValue()));
+            htmlOptions.set(Parser.EXTENSIONS, Arrays.asList(
+                    AbbreviationExtension.create(),
+                    DefinitionExtension.create(),
+                    FootnoteExtension.create(),
+                    TablesExtension.create(),
+                    TypographicExtension.create()
             ));
-            parserOptions.set(HtmlRenderer.INDENT_SIZE, indentSize)
+
+            htmlOptions.set(HtmlRenderer.INDENT_SIZE, indentSize)
                     //                    .set(HtmlRenderer.PERCENT_ENCODE_URLS, true)
                     //                    .set(TablesExtension.COLUMN_SPANS, false)
                     .set(TablesExtension.TRIM_CELL_WHITESPACE, trimCheck.isSelected())
@@ -325,126 +304,105 @@ public class MarkdownEditerController extends TextEditerController {
                     .set(TablesExtension.DISCARD_EXTRA_COLUMNS, discardCheck.isSelected())
                     .set(TablesExtension.APPEND_MISSING_COLUMNS, appendCheck.isSelected());
 
-            parser = Parser.builder(parserOptions).build();
-            renderer = HtmlRenderer.builder(parserOptions).build();
+            htmlParser = Parser.builder(htmlOptions).build();
+            htmlRenderer = HtmlRenderer.builder(htmlOptions).build();
+
+//            DataHolder OPTIONS = PegdownOptionsAdapter.flexmarkOptions(
+//                    Extensions.ALL & ~(Extensions.HARDWRAPS),
+//                    HeadingExtension.create()).toMutable()
+//                    .set(HtmlRenderer.INDENT_SIZE, 2);
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    protected void makeTextConverter() {
+        try {
+            DataHolder textHolder = PegdownOptionsAdapter.flexmarkOptions(Extensions.ALL);
+            textOptions = new MutableDataSet();
+            textOptions.set(Parser.EXTENSIONS, textHolder.get(Parser.EXTENSIONS));
+            textParser = Parser.builder(textOptions).build();
+            textCollectingVisitor = new TextCollectingVisitor();
 
         } catch (Exception e) {
             logger.error(e.toString());
         }
     }
 
-    protected void markdown2html() {
-        webEngine.getLoadWorker().cancel();
-        if (mainArea.getText().isEmpty()) {
-            htmlArea.setText("");
-            webEngine.loadContent("");
-            return;
-        }
-        synchronized (this) {
-            if (task != null) {
-                return;
-            }
-            double scrollLeft = htmlArea.getScrollLeft();
-            double scrollTop = htmlArea.getScrollTop();
-            int anchor = htmlArea.getAnchor();
-            int caretPosition = htmlArea.getCaretPosition();
-
-            double width = (Integer) webEngine.executeScript("document.documentElement.scrollWidth || document.body.scrollWidth;");
-            double height = (Integer) webEngine.executeScript("document.documentElement.scrollHeight || document.body.scrollHeight;");
-
-            task = new SingletonTask<Void>() {
-
-                private String html;
-
-                @Override
-                protected boolean handle() {
-                    html = convert2html();
-                    return html != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    try {
-                        htmlArea.setText(html);
-                        htmlArea.setScrollLeft(scrollLeft);
-                        htmlArea.setScrollTop(scrollTop);
-                        htmlArea.selectRange(anchor, caretPosition);
-
-                        webEngine.loadContent(html);
-                        webEngine.executeScript("window.scrollTo(" + width + "," + height + ");");
-                    } catch (Exception e) {
-                        logger.debug(e.toString());
-                        webEngine.getLoadWorker().cancel();
-                    }
-                }
-
-            };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
-            thread.setDaemon(true);
-            thread.start();
-        }
-    }
-
-    protected void markdown2text() {
-        if (mainArea.getText().isEmpty()) {
-            textArea.setText("");
-            return;
-        }
-        synchronized (this) {
-            if (task != null) {
-                return;
-            }
-            double scrollLeft = textArea.getScrollLeft();
-            double scrollTop = textArea.getScrollTop();
-            int anchor = textArea.getAnchor();
-            int caretPosition = textArea.getCaretPosition();
-            task = new SingletonTask<Void>() {
-
-                private String text;
-
-                @Override
-                protected boolean handle() {
-                    text = convert2text();
-                    return text != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    textArea.setText(text);
-                    textArea.setScrollLeft(scrollLeft);
-                    textArea.setScrollTop(scrollTop);
-                    textArea.selectRange(anchor, caretPosition);
-                }
-            };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
-            thread.setDaemon(true);
-            thread.start();
-        }
+    public void loadMarkdown(String md) {
+        mainArea.setText(md);
+        markdown2all();
     }
 
     protected void markdown2all() {
+        if (!tabPane.getTabs().contains(htmlTab)
+                && !tabPane.getTabs().contains(codesTab)
+                && !tabPane.getTabs().contains(tocTab)
+                && !tabPane.getTabs().contains(linksTab)
+                && !tabPane.getTabs().contains(textTab)) {
+            return;
+        }
+        webEngine.getLoadWorker().cancel();
+        webEngine.loadContent("");
+        linksWebview.getEngine().getLoadWorker().cancel();
+        linksWebview.getEngine().loadContent("");
+        htmlArea.clear();
+        textArea.clear();
+        tocArea.clear();
         if (mainArea.getText().isEmpty()) {
-            htmlArea.setText("");
-            webEngine.loadContent("");
-            textArea.setText("");
             return;
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
+            double htmlScrollLeft = htmlArea.getScrollLeft();
+            double htmlScrollTop = htmlArea.getScrollTop();
+            int htmlAnchor = htmlArea.getAnchor();
+            int htmlCaretPosition = htmlArea.getCaretPosition();
+            double htmlWidth = (Integer) webEngine.executeScript("document.documentElement.scrollWidth || document.body.scrollWidth;");
+            double htmlHeight = (Integer) webEngine.executeScript("document.documentElement.scrollHeight || document.body.scrollHeight;");
+
+            double textScrollLeft = textArea.getScrollLeft();
+            double textScrollTop = textArea.getScrollTop();
+            int textAnchor = textArea.getAnchor();
+            int textCaretPosition = textArea.getCaretPosition();
+
             task = new SingletonTask<Void>() {
 
-                private String html, text;
+                private String html, text, toc;
+                private List<Link> links;
 
                 @Override
                 protected boolean handle() {
                     try {
-                        html = convert2html();
-                        text = convert2text();
-                        return html != null || text != null;
+                        if (htmlOptions == null || htmlParser == null || htmlRenderer == null) {
+                            makeHtmlConverter();
+                        }
+                        Node document = htmlParser.parse(mainArea.getText());
+                        html = htmlRenderer.render(document);
+
+                        if (tabPane.getTabs().contains(htmlTab)) {
+                            String style = AppVariables.getUserConfigValue(baseName + "LinksStyle", message("Default"));
+                            html = HtmlTools.htmlStyleValue(titleInput.getText(), style, html);
+                        }
+                        if (tabPane.getTabs().contains(tocTab)) {
+                            toc = MarkdownTools.toc(document, indentSize);
+                        }
+                        if (tabPane.getTabs().contains(linksTab)) {
+                            links = new ArrayList<>();
+                            MarkdownTools.links(document, links);
+                        }
+
+                        if (tabPane.getTabs().contains(textTab)) {
+                            if (textOptions == null || textParser == null || textCollectingVisitor == null) {
+                                makeTextConverter();
+                            }
+                            // https://github.com/vsch/flexmark-java/blob/master/flexmark-java-samples/src/com/vladsch/flexmark/java/samples/MarkdownToText.java
+                            document = textParser.parse(mainArea.getText());
+                            text = textCollectingVisitor.collectAndGetText(document);
+                        }
+                        return html != null;
                     } catch (Exception e) {
                         error = e.toString();
                         return false;
@@ -453,61 +411,435 @@ public class MarkdownEditerController extends TextEditerController {
 
                 @Override
                 protected void whenSucceeded() {
-                    htmlArea.setText(html);
-                    webEngine.loadContent(html);
-                    textArea.setText(text);
+                    try {
+                        if (tabPane.getTabs().contains(codesTab)) {
+                            Platform.runLater(() -> {
+                                htmlArea.setText(html);
+                                htmlArea.setScrollLeft(htmlScrollLeft);
+                                htmlArea.setScrollTop(htmlScrollTop);
+                                htmlArea.selectRange(htmlAnchor, htmlCaretPosition);
+                            });
+                        }
+                        if (tabPane.getTabs().contains(htmlTab)) {
+                            Platform.runLater(() -> {
+                                webEngine.loadContent(html);
+                                webEngine.executeScript("window.scrollTo(" + htmlWidth + "," + htmlHeight + ");");
+                            });
+                        }
+                        if (tabPane.getTabs().contains(textTab)) {
+                            Platform.runLater(() -> {
+                                textArea.setText(text);
+                                textArea.setScrollLeft(textScrollLeft);
+                                textArea.setScrollTop(textScrollTop);
+                                textArea.selectRange(textAnchor, textCaretPosition);
+                            });
+                        }
+
+                        if (tabPane.getTabs().contains(tocTab)) {
+                            Platform.runLater(() -> {
+                                tocArea.setText(toc);
+                            });
+                        }
+                        if (tabPane.getTabs().contains(linksTab)) {
+                            Platform.runLater(() -> {
+                                displayLinks(links);
+                            });
+                        }
+
+                    } catch (Exception e) {
+                        logger.debug(e.toString());
+                        webEngine.getLoadWorker().cancel();
+                    }
+
                 }
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
     }
 
-    public String convert2html() {
+    protected void displayLinks(List<Link> links) {
+        if (links == null) {
+            linksWebview.getEngine().loadContent("");
+            return;
+        }
         try {
-            if (parserOptions == null || parser == null || renderer == null) {
-                makeConverter();
+            List<String> names = new ArrayList<>();
+            names.addAll(Arrays.asList(
+                    message("Index"), message("Name"), message("Title"), message("Address")
+            ));
+            StringTable table = new StringTable(names);
+            for (Link link : links) {
+                List<String> row = new ArrayList<>();
+                row.addAll(Arrays.asList(
+                        link.getIndex() >= 0 ? link.getIndex() + "" : "",
+                        link.getName() == null ? "" : link.getName(),
+                        link.getTitle() == null ? "" : link.getTitle(),
+                        link.getAddress() == null ? "" : link.getAddress()
+                ));
+                table.add(row);
             }
-            Node document = parser.parse(mainArea.getText());
-            String html = renderer.render(document);
-            String style;
-            if (message("ConsoleStyle").equals(styleSelector.getValue())) {
-                style = HtmlTools.ConsoleStyle;
-            } else if (message("DefaultStyle").equals(styleSelector.getValue())) {
-                style = HtmlTools.DefaultStyle;
-            } else {
-                style = null;
-            }
-            html = HtmlTools.html(titleInput.getText(), style, html);
-            return html;
+            String style = AppVariables.getUserConfigValue(baseName + "HtmlStyle", "Default");
+            String html = HtmlTools.html(null, style, StringTable.tableDiv(table));
+            linksWebview.getEngine().loadContent(html);
         } catch (Exception e) {
-            return e.toString();
+            logger.debug(e.toString());
         }
     }
 
-    public String convert2text() {
-        try {
-            // https://github.com/vsch/flexmark-java/blob/master/flexmark-java-samples/src/com/vladsch/flexmark/samples/MarkdownToText.java
-            DataHolder OPTIONS = PegdownOptionsAdapter.flexmarkOptions(Extensions.ALL);
-            MutableDataSet FORMAT_OPTIONS = new MutableDataSet();
-            FORMAT_OPTIONS.set(Parser.EXTENSIONS, OPTIONS.get(Parser.EXTENSIONS));
-            Parser PARSER = Parser.builder(OPTIONS).build();
+    protected void markdown2html() {
+        if (!tabPane.getTabs().contains(htmlTab)
+                && !tabPane.getTabs().contains(codesTab)) {
+            return;
+        }
+        webEngine.getLoadWorker().cancel();
+        webEngine.loadContent("");
+        htmlArea.clear();
+        if (mainArea.getText().isEmpty()) {
+            return;
+        }
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            double htmlScrollLeft = htmlArea.getScrollLeft();
+            double htmlScrollTop = htmlArea.getScrollTop();
+            int htmlAnchor = htmlArea.getAnchor();
+            int htmlCaretPosition = htmlArea.getCaretPosition();
+            double htmlWidth = (Integer) webEngine.executeScript("document.documentElement.scrollWidth || document.body.scrollWidth;");
+            double htmlHeight = (Integer) webEngine.executeScript("document.documentElement.scrollHeight || document.body.scrollHeight;");
 
-            Node document = PARSER.parse(mainArea.getText());
-            TextCollectingVisitor textCollectingVisitor = new TextCollectingVisitor();
-            String text = textCollectingVisitor.collectAndGetText(document);
-            return text;
-        } catch (Exception e) {
-            return e.toString();
+            task = new SingletonTask<Void>() {
+
+                private String html;
+
+                @Override
+                protected boolean handle() {
+                    try {
+                        if (htmlOptions == null || htmlParser == null || htmlRenderer == null) {
+                            makeHtmlConverter();
+                        }
+                        Node document = htmlParser.parse(mainArea.getText());
+                        html = htmlRenderer.render(document);
+
+                        if (tabPane.getTabs().contains(htmlTab)) {
+                            String style = AppVariables.getUserConfigValue(baseName + "LinksStyle", message("Default"));
+                            html = HtmlTools.htmlStyleValue(titleInput.getText(), style, html);
+                        }
+                        return html != null;
+                    } catch (Exception e) {
+                        error = e.toString();
+                        return false;
+                    }
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    try {
+                        if (tabPane.getTabs().contains(codesTab)) {
+                            Platform.runLater(() -> {
+                                htmlArea.setText(html);
+                                htmlArea.setScrollLeft(htmlScrollLeft);
+                                htmlArea.setScrollTop(htmlScrollTop);
+                                htmlArea.selectRange(htmlAnchor, htmlCaretPosition);
+                            });
+                        }
+                        if (tabPane.getTabs().contains(htmlTab)) {
+                            Platform.runLater(() -> {
+                                webEngine.loadContent(html);
+                                webEngine.executeScript("window.scrollTo(" + htmlWidth + "," + htmlHeight + ");");
+                            });
+                        }
+
+                    } catch (Exception e) {
+                        logger.debug(e.toString());
+                        webEngine.getLoadWorker().cancel();
+                    }
+
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
         }
     }
 
-    public void loadMarkdown(String md) {
-        mainArea.setText(md);
-        markdown2all();
+    protected void markdown2toc() {
+        if (!tabPane.getTabs().contains(tocTab)) {
+            return;
+        }
+        tocArea.clear();
+        if (mainArea.getText().isEmpty()) {
+            return;
+        }
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+
+                private String toc;
+
+                @Override
+                protected boolean handle() {
+                    try {
+                        if (htmlOptions == null || htmlParser == null || htmlRenderer == null) {
+                            makeHtmlConverter();
+                        }
+                        Node document = htmlParser.parse(mainArea.getText());
+                        toc = MarkdownTools.toc(document, indentSize);
+                        return toc != null;
+                    } catch (Exception e) {
+                        error = e.toString();
+                        return false;
+                    }
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    tocArea.setText(toc);
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
+    }
+
+    protected void markdown2text() {
+        if (!tabPane.getTabs().contains(textTab)) {
+            return;
+        }
+        textArea.clear();
+        if (mainArea.getText().isEmpty()) {
+            return;
+        }
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            double textScrollLeft = textArea.getScrollLeft();
+            double textScrollTop = textArea.getScrollTop();
+            int textAnchor = textArea.getAnchor();
+            int textCaretPosition = textArea.getCaretPosition();
+
+            task = new SingletonTask<Void>() {
+
+                private String text;
+
+                @Override
+                protected boolean handle() {
+                    try {
+                        if (htmlOptions == null || htmlParser == null || htmlRenderer == null) {
+                            makeHtmlConverter();
+                        }
+                        if (textOptions == null || textParser == null || textCollectingVisitor == null) {
+                            makeTextConverter();
+                        }
+                        // https://github.com/vsch/flexmark-java/blob/master/flexmark-java-samples/src/com/vladsch/flexmark/java/samples/MarkdownToText.java
+                        Node document = textParser.parse(mainArea.getText());
+                        text = textCollectingVisitor.collectAndGetText(document);
+                        return text != null;
+                    } catch (Exception e) {
+                        error = e.toString();
+                        return false;
+                    }
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    textArea.setText(text);
+                    textArea.setScrollLeft(textScrollLeft);
+                    textArea.setScrollTop(textScrollTop);
+                    textArea.selectRange(textAnchor, textCaretPosition);
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
+    }
+
+    protected void markdown2links() {
+        if (!tabPane.getTabs().contains(linksTab)) {
+            return;
+        }
+        linksWebview.getEngine().getLoadWorker().cancel();
+        linksWebview.getEngine().loadContent("");
+        if (mainArea.getText().isEmpty()) {
+            return;
+        }
+        synchronized (this) {
+            if (task != null && !task.isQuit()) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+
+                private List<Link> links;
+
+                @Override
+                protected boolean handle() {
+                    try {
+                        if (htmlOptions == null || htmlParser == null || htmlRenderer == null) {
+                            makeHtmlConverter();
+                        }
+                        Node document = htmlParser.parse(mainArea.getText());
+                        links = new ArrayList<>();
+                        MarkdownTools.links(document, links);
+                        return links != null;
+                    } catch (Exception e) {
+                        error = e.toString();
+                        return false;
+                    }
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    displayLinks(links);
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
+    }
+
+    @FXML
+    @Override
+    public void popPanesMenu(MouseEvent mouseEvent) {
+        try {
+            if (popMenu != null && popMenu.isShowing()) {
+                popMenu.hide();
+            }
+            popMenu = new ContextMenu();
+            popMenu.setAutoHide(true);
+
+            CheckMenuItem updateMenu = new CheckMenuItem(message("UpdateSynchronously"));
+            updateMenu.setSelected(AppVariables.getUserConfigBoolean(baseName + "UpdateSynchronously", false));
+            updateMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    AppVariables.setUserConfigValue(baseName + "UpdateSynchronously", updateMenu.isSelected());
+                    if (updateMenu.isSelected()) {
+                        updatePairArea();
+                    }
+                }
+            });
+            popMenu.getItems().add(updateMenu);
+            popMenu.getItems().add(new SeparatorMenuItem());
+
+            CheckMenuItem checkMenu;
+            checkMenu = new CheckMenuItem(message("Html"));
+            checkMenu.setOnAction((ActionEvent event) -> {
+                if (tabPane.getTabs().contains(htmlTab)) {
+                    tabPane.getTabs().remove(htmlTab);
+                } else {
+                    tabPane.getTabs().add(htmlTab);
+                    Platform.runLater(() -> {
+                        markdown2html();
+                    });
+                }
+                AppVariables.setUserConfigValue(baseName + "ShowHtml",
+                        tabPane.getTabs().contains(htmlTab));
+            });
+            checkMenu.setSelected(tabPane.getTabs().contains(htmlTab));
+            popMenu.getItems().add(checkMenu);
+
+            checkMenu = new CheckMenuItem(message("HtmlCodes"));
+            checkMenu.setOnAction((ActionEvent event) -> {
+                if (tabPane.getTabs().contains(codesTab)) {
+                    tabPane.getTabs().remove(codesTab);
+                } else {
+                    tabPane.getTabs().add(codesTab);
+                    Platform.runLater(() -> {
+                        markdown2html();
+                    });
+                }
+                AppVariables.setUserConfigValue(baseName + "ShowCodes",
+                        tabPane.getTabs().contains(codesTab));
+            });
+            checkMenu.setSelected(tabPane.getTabs().contains(codesTab));
+            popMenu.getItems().add(checkMenu);
+
+            checkMenu = new CheckMenuItem(message("Headings"));
+            checkMenu.setOnAction((ActionEvent event) -> {
+                if (tabPane.getTabs().contains(tocTab)) {
+                    tabPane.getTabs().remove(tocTab);
+                } else {
+                    tabPane.getTabs().add(tocTab);
+                    Platform.runLater(() -> {
+                        markdown2toc();
+                    });
+                }
+                AppVariables.setUserConfigValue(baseName + "ShowToc",
+                        tabPane.getTabs().contains(tocTab));
+            });
+            checkMenu.setSelected(tabPane.getTabs().contains(tocTab));
+            popMenu.getItems().add(checkMenu);
+
+            checkMenu = new CheckMenuItem(message("Links"));
+            checkMenu.setOnAction((ActionEvent event) -> {
+                if (tabPane.getTabs().contains(linksTab)) {
+                    tabPane.getTabs().remove(linksTab);
+                } else {
+                    tabPane.getTabs().add(linksTab);
+                    Platform.runLater(() -> {
+                        markdown2links();
+                    });
+                }
+                AppVariables.setUserConfigValue(baseName + "ShowLinks",
+                        tabPane.getTabs().contains(linksTab));
+            });
+            checkMenu.setSelected(tabPane.getTabs().contains(linksTab));
+            popMenu.getItems().add(checkMenu);
+
+            checkMenu = new CheckMenuItem(message("Text"));
+            checkMenu.setOnAction((ActionEvent event) -> {
+                if (tabPane.getTabs().contains(textTab)) {
+                    tabPane.getTabs().remove(textTab);
+                } else {
+                    tabPane.getTabs().add(textTab);
+                    Platform.runLater(() -> {
+                        markdown2text();
+                    });
+                }
+                AppVariables.setUserConfigValue(baseName + "ShowText",
+                        tabPane.getTabs().contains(textTab));
+            });
+            checkMenu.setSelected(tabPane.getTabs().contains(textTab));
+            popMenu.getItems().add(checkMenu);
+
+            popMenu.getItems().add(new SeparatorMenuItem());
+            MenuItem menu = new MenuItem(message("PopupClose"));
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    popMenu.hide();
+                }
+            });
+            popMenu.getItems().add(menu);
+
+            FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
     }
 
     /*
@@ -584,33 +916,162 @@ public class MarkdownEditerController extends TextEditerController {
         Input formats
      */
     @FXML
-    protected void header1() {
-        addTextInFrontOfCurrentLine("# ");
-    }
+    public void popInput(MouseEvent mouseEvent) {
+        try {
+            if (popMenu != null && popMenu.isShowing()) {
+                popMenu.hide();
+            }
+            popMenu = new ContextMenu();
+            popMenu.setAutoHide(true);
 
-    @FXML
-    protected void header2() {
-        addTextInFrontOfCurrentLine("## ");
-    }
+            MenuItem menuItem;
+            menuItem = new MenuItem("#");
+            menuItem.setOnAction((ActionEvent event) -> {
+                addTextInFrontOfCurrentLine("# ");
+            });
+            popMenu.getItems().add(menuItem);
 
-    @FXML
-    protected void header3() {
-        addTextInFrontOfCurrentLine("### ");
-    }
+            menuItem = new MenuItem("##");
+            menuItem.setOnAction((ActionEvent event) -> {
+                addTextInFrontOfCurrentLine("## ");
+            });
+            popMenu.getItems().add(menuItem);
 
-    @FXML
-    protected void header4() {
-        addTextInFrontOfCurrentLine("#### ");
-    }
+            menuItem = new MenuItem("###");
+            menuItem.setOnAction((ActionEvent event) -> {
+                addTextInFrontOfCurrentLine("### ");
+            });
+            popMenu.getItems().add(menuItem);
 
-    @FXML
-    protected void header5() {
-        addTextInFrontOfCurrentLine("##### ");
-    }
+            menuItem = new MenuItem("####");
+            menuItem.setOnAction((ActionEvent event) -> {
+                addTextInFrontOfCurrentLine("#### ");
+            });
+            popMenu.getItems().add(menuItem);
 
-    @FXML
-    protected void header6() {
-        addTextInFrontOfCurrentLine("###### ");
+            popMenu.getItems().add(new SeparatorMenuItem());
+
+            menuItem = new MenuItem(message("Bold"));
+            menuItem.setOnAction((ActionEvent event) -> {
+                addTextAround("**");
+            });
+            popMenu.getItems().add(menuItem);
+
+            menuItem = new MenuItem(message("Italic"));
+            menuItem.setOnAction((ActionEvent event) -> {
+                addTextAround("*");
+            });
+            popMenu.getItems().add(menuItem);
+
+            menuItem = new MenuItem(message("BoldItalic"));
+            menuItem.setOnAction((ActionEvent event) -> {
+                addTextAround("***");
+            });
+            popMenu.getItems().add(menuItem);
+
+            menuItem = new MenuItem(message("Quote"));
+            menuItem.setOnAction((ActionEvent event) -> {
+                insertText("\n\n>");
+            });
+            popMenu.getItems().add(menuItem);
+
+            menuItem = new MenuItem(message("Code"));
+            menuItem.setOnAction((ActionEvent event) -> {
+                addTextAround("`");
+            });
+            popMenu.getItems().add(menuItem);
+
+            menuItem = new MenuItem(message("CodesBlock"));
+            menuItem.setOnAction((ActionEvent event) -> {
+                addTextAround("\n```\n", "\n```\n");
+            });
+            popMenu.getItems().add(menuItem);
+
+            menuItem = new MenuItem(message("NumberedList"));
+            menuItem.setOnAction((ActionEvent event) -> {
+                IndexRange range = mainArea.getSelection();
+                int start = range.getStart();
+                int end = range.getEnd();
+                addTextInFrontOfCurrentLine("1. ");
+                if (start == end) {
+                    return;
+                }
+                start += 3;
+                end += 3;
+                int pos;
+                int count = 1;
+                while (true) {
+                    pos = mainArea.getText(start, end).indexOf('\n');
+                    if (pos < 0) {
+                        break;
+                    }
+                    count++;
+                    mainArea.insertText(start + pos + 1, count + ". ");
+                    int nlen = 2 + (count + "").length();
+                    start += pos + 1 + nlen;
+                    end += nlen;
+                    int len = mainArea.getLength();
+                    if (start >= end || start >= len || end >= len) {
+                        break;
+                    }
+                }
+                mainArea.requestFocus();
+            });
+            popMenu.getItems().add(menuItem);
+
+            menuItem = new MenuItem(message("BulletedList"));
+            menuItem.setOnAction((ActionEvent event) -> {
+                addTextInFrontOfEachLine("- ");
+            });
+            popMenu.getItems().add(menuItem);
+
+            menuItem = new MenuItem(message("SeparatorLine"));
+            menuItem.setOnAction((ActionEvent event) -> {
+                insertText("\n---\n");
+            });
+            popMenu.getItems().add(menuItem);
+
+            menuItem = new MenuItem(message("Newline"));
+            menuItem.setOnAction((ActionEvent event) -> {
+                insertText("  \n");
+            });
+            popMenu.getItems().add(menuItem);
+
+            menuItem = new MenuItem(message("Image"));
+            menuItem.setOnAction((ActionEvent event) -> {
+                insertText("![" + message("Name") + "](http://" + message("Address") + ")");
+            });
+            popMenu.getItems().add(menuItem);
+
+            menuItem = new MenuItem(message("Link"));
+            menuItem.setOnAction((ActionEvent event) -> {
+                insertText("[" + message("Name") + "](http://" + message("Address") + ")");
+            });
+            popMenu.getItems().add(menuItem);
+
+            menuItem = new MenuItem(message("Table"));
+            menuItem.setOnAction((ActionEvent event) -> {
+                insertText("\n\n| h1 | h2 | h3 |  \n"
+                        + "| --- | --- | --- |  \n"
+                        + "| d1 | d2 | d3 |  \n");
+            });
+            popMenu.getItems().add(menuItem);
+
+            popMenu.getItems().add(new SeparatorMenuItem());
+            MenuItem menu = new MenuItem(message("PopupClose"));
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    popMenu.hide();
+                }
+            });
+            popMenu.getItems().add(menu);
+
+            FxmlControl.locateBelow((Region) mouseEvent.getSource(), popMenu);
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
     }
 
     @FXML
@@ -715,163 +1176,31 @@ public class MarkdownEditerController extends TextEditerController {
     }
 
     @FXML
-    protected void saveHtml() {
-        if (htmlArea.getText().isEmpty()) {
-            return;
-        }
-        synchronized (this) {
-            if (task != null) {
-                return;
-            }
-
-            String name = "";
-            if (sourceFile != null) {
-                name = FileTools.getFilePrefix(sourceFile.getName());
-            }
-            final File file = chooseSaveFile(AppVariables.getUserConfigPath(VisitHistoryTools.getPathKey(VisitHistory.FileType.Html)),
-                    name, CommonFxValues.HtmlExtensionFilter, true);
-            if (file == null) {
-                return;
-            }
-            recordFileWritten(file, VisitHistory.FileType.Html);
-
-            task = new SingletonTask<Void>() {
-
-                @Override
-                protected boolean handle() {
-                    return FileTools.writeFile(file, htmlArea.getText()) != null;
-                }
-
-            };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
-            thread.setDaemon(true);
-            thread.start();
-        }
-    }
-
-    @FXML
-    public void popSaveHtml(MouseEvent event) { //
-        if (AppVariables.fileRecentNumber <= 0) {
-            return;
-        }
-        new RecentVisitMenu(this, event) {
-            @Override
-            public List<VisitHistory> recentFiles() {
-                return null;
-            }
-
-            @Override
-            public List<VisitHistory> recentPaths() {
-                return VisitHistoryTools.getRecentPath(VisitHistory.FileType.Html);
-            }
-
-            @Override
-            public void handleSelect() {
-                saveHtml();
-            }
-
-            @Override
-            public void handleFile(String fname) {
-
-            }
-
-            @Override
-            public void handlePath(String fname) {
-                File file = new File(fname);
-                if (!file.exists()) {
-                    handleSelect();
-                    return;
-                }
-                AppVariables.setUserConfigValue(VisitHistoryTools.getPathKey(VisitHistory.FileType.Html), fname);
-                handleSelect();
-            }
-
-        }.pop();
-    }
-
-    @FXML
     protected void editHtml() {
-        if (htmlArea.getText().isEmpty()) {
+        String text = htmlArea.getText();
+        if (text.isEmpty()) {
             return;
         }
-        HtmlTools.editHtml(htmlArea.getText());
+        HtmlEditorController controller
+                = (HtmlEditorController) openStage(CommonValues.HtmlEditorFxml);
+        controller.loadContents(text);
     }
 
     @FXML
-    protected void saveText() {
-        if (textArea.getText().isEmpty()) {
+    protected void editText() {
+
+        String text = textArea.getText();
+        if (text.isEmpty()) {
             return;
         }
-        synchronized (this) {
-            if (task != null) {
-                return;
-            }
-
-            String name = "";
-            if (sourceFile != null) {
-                name = FileTools.getFilePrefix(sourceFile.getName());
-            }
-            final File file = chooseSaveFile(AppVariables.getUserConfigPath(VisitHistoryTools.getPathKey(VisitHistory.FileType.Text)),
-                    name, CommonFxValues.TextExtensionFilter, true);
-            if (file == null) {
-                return;
-            }
-            recordFileWritten(file, VisitHistory.FileType.Text);
-
-            task = new SingletonTask<Void>() {
-
-                @Override
-                protected boolean handle() {
-                    return FileTools.writeFile(file, textArea.getText()) != null;
-                }
-
-            };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
-            thread.setDaemon(true);
-            thread.start();
-        }
+        TextEditerController controller
+                = (TextEditerController) openStage(CommonValues.TextEditerFxml);
+        controller.mainArea.setText(text);
     }
 
     @FXML
-    public void popSaveText(MouseEvent event) { //
-        if (AppVariables.fileRecentNumber <= 0) {
-            return;
-        }
-        new RecentVisitMenu(this, event) {
-            @Override
-            public List<VisitHistory> recentFiles() {
-                return null;
-            }
-
-            @Override
-            public List<VisitHistory> recentPaths() {
-                return VisitHistoryTools.getRecentPath(VisitHistory.FileType.Text);
-            }
-
-            @Override
-            public void handleSelect() {
-                saveText();
-            }
-
-            @Override
-            public void handleFile(String fname) {
-
-            }
-
-            @Override
-            public void handlePath(String fname) {
-                File file = new File(fname);
-                if (!file.exists()) {
-                    handleSelect();
-                    return;
-                }
-                AppVariables.setUserConfigValue(VisitHistoryTools.getPathKey(VisitHistory.FileType.Text), fname);
-                handleSelect();
-            }
-
-        }.pop();
+    public void popLinksStyle(MouseEvent mouseEvent) {
+        popMenu = FxmlControl.popHtmlStyle(mouseEvent, this, popMenu, linksWebview.getEngine());
     }
 
     @FXML
@@ -879,11 +1208,6 @@ public class MarkdownEditerController extends TextEditerController {
     public void createAction() {
         super.createAction();
         clearPairArea();
-    }
-
-    @Override
-    protected void afterSaveExisted() {
-        updateInterface(false);
     }
 
 }

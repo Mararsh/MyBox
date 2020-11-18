@@ -674,7 +674,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
             return;
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit() ) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -804,7 +804,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
                 }
             };
             imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
+            task.setSelf(task);Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }

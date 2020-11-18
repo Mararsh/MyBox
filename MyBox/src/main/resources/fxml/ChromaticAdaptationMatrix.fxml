@@ -54,7 +54,14 @@ License:    Apache License Version 2.0
                                                         <RadioButton mnemonicParsing="false" text="Von Kries" toggleGroup="$algorithmGroup" />
                                                     </children>
                                                 </HBox>
-                                                <Button fx:id="calculateButton" mnemonicParsing="false" onAction="#calculateAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Calculate">
+                                                <Button fx:id="calculateButton" defaultButton="true" mnemonicParsing="false" onAction="#calculateAction" styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconCalculator.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
                                                 </Button>
                                             </children>
                                         </HBox>

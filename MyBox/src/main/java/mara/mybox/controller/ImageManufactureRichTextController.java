@@ -307,7 +307,7 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
             }
 
             synchronized (this) {
-                if (task != null) {
+                if (task != null && !task.isQuit() ) {
                     return;
                 }
                 final double rotate = webView.getRotate();
@@ -368,7 +368,7 @@ public class ImageManufactureRichTextController extends ImageManufactureOperatio
 
                 };
                 imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
-                Thread thread = new Thread(task);
+                task.setSelf(task);Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();
             }

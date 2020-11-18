@@ -21,6 +21,7 @@ import mara.mybox.data.QueryCondition;
 import mara.mybox.data.QueryCondition.DataOperation;
 import mara.mybox.db.ColumnDefinition;
 import mara.mybox.db.TableQueryCondition;
+import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import static mara.mybox.value.AppVariables.logger;
@@ -155,7 +156,9 @@ public class DataQueryController extends BaseController {
                 FxmlControl.setTooltip(topInput, message("TopNumberComments"));
                 topInput.setText(initCondition.getTop() + "");
             }
-            okButton.setText(buttonName());
+            ControlStyle.setIcon(okButton, ControlStyle.getIcon("iconOK.png"));
+            okButton.applyCss();
+            okButton.setUserData(null);
             titleInput.requestFocus();
             getMyStage().setTitle(baseTitle + " - " + dataController.baseTitle + " - " + okButton.getText());
         } catch (Exception e) {

@@ -25,20 +25,18 @@ import thridparty.EncodingDetect;
 public abstract class FileEditInformation extends FileInformation {
 
     protected Edit_Type editType;
-    protected boolean withBom, totalNumberRead, findRegex, caseInsensitive;
+    protected boolean withBom, totalNumberRead;
     protected Charset charset;
-    protected int pageSize;
-    protected long objectsNumber, currentPageLineStart, currentPageLineEnd;
-    protected long linesNumber, pagesNumber, currentPage;
-    protected long currentPageObjectStart, currentPageObjectEnd;
-    protected String findString, replaceString;
-    protected String[] filterStrings;
-    protected long currentLine;
-    protected LongIndex currentFound;
     protected Line_Break lineBreak;
-    protected StringFilterType filterType;
-    protected int lineBreakWidth, currentPosition, currentSelectionLength;
     protected String lineBreakValue;
+    protected int objectUnit, pageSize, lineBreakWidth;
+    protected long objectsNumber,
+            currentPageLineStart, currentPageLineEnd, // 1-based, include end
+            linesNumber, pagesNumber, currentPage, currentLine,
+            currentPageObjectStart, currentPageObjectEnd; // 0-based, exclude end
+    protected String[] filterStrings;
+    protected FindReplaceFile findReplace;
+    protected StringFilterType filterType;
 
     public enum Edit_Type {
         Text, Bytes, Markdown
@@ -46,7 +44,8 @@ public abstract class FileEditInformation extends FileInformation {
 
     public enum StringFilterType {
         IncludeAll, IncludeOne, NotIncludeAll, NotIncludeAny,
-        MatchRegularExpression, NotMatchRegularExpression
+        MatchRegularExpression, NotMatchRegularExpression,
+        IncludeRegularExpression, NotIncludeRegularExpression
     }
 
     public enum Line_Break {
@@ -73,12 +72,11 @@ public abstract class FileEditInformation extends FileInformation {
         withBom = totalNumberRead = false;
         charset = defaultCharset();
         objectsNumber = linesNumber = -1;
-        currentPage = pagesNumber = 1;
+        currentPage = pagesNumber = 1;  // 1-based
         pageSize = 100000;
         currentPageObjectStart = currentPageObjectEnd = -1;
         currentLine = -1;
-        currentFound = null;
-        currentPosition = -1;
+        findReplace = null;
         switch (System.lineSeparator()) {
             case "\r\n":
                 lineBreak = Line_Break.CRLF;
@@ -94,6 +92,7 @@ public abstract class FileEditInformation extends FileInformation {
                 break;
         }
         lineBreakWidth = 30;
+        objectUnit = editType == Edit_Type.Bytes ? 3 : 1;
     }
 
     public static Charset defaultCharset() {
@@ -112,8 +111,7 @@ public abstract class FileEditInformation extends FileInformation {
         }
     }
 
-    public static FileEditInformation newEditInformation(Edit_Type type,
-            File file) {
+    public static FileEditInformation newEditInformation(Edit_Type type, File file) {
         switch (type) {
             case Text:
                 return new TextEditInformation(file);
@@ -137,9 +135,7 @@ public abstract class FileEditInformation extends FileInformation {
         newInformation.setLineBreakWidth(sourceInfo.getLineBreakWidth());
         newInformation.setFilterStrings(sourceInfo.getFilterStrings());
         newInformation.setFilterType(sourceInfo.getFilterType());
-        newInformation.setFindString(sourceInfo.getFindString());
-        newInformation.setReplaceString(sourceInfo.getReplaceString());
-        newInformation.setCurrentFound(sourceInfo.getCurrentFound());
+        newInformation.setFindReplace(sourceInfo.getFindReplace());
         newInformation.setPageSize(sourceInfo.getPageSize());
         newInformation.setCurrentPage(sourceInfo.getCurrentPage());
         newInformation.setCurrentPageObjectStart(sourceInfo.getCurrentPageObjectStart());
@@ -159,8 +155,6 @@ public abstract class FileEditInformation extends FileInformation {
         newInformation.setLineBreakWidth(sourceInfo.getLineBreakWidth());
         newInformation.setFilterStrings(sourceInfo.getFilterStrings());
         newInformation.setFilterType(sourceInfo.getFilterType());
-        newInformation.setFindString(sourceInfo.getFindString());
-        newInformation.setReplaceString(sourceInfo.getReplaceString());
         newInformation.setPageSize(sourceInfo.getPageSize());
         return newInformation;
     }
@@ -232,17 +226,6 @@ public abstract class FileEditInformation extends FileInformation {
         }
     }
 
-    public String findFirst(long from, boolean findRegex, boolean caseInsensitive) {
-        if (from <= 0) {
-            currentFound = null;
-        } else {
-            currentFound = new LongIndex(from - 1);
-        }
-        this.findRegex = findRegex;
-        this.caseInsensitive = caseInsensitive;
-        return findNext();
-    }
-
     public abstract boolean readTotalNumbers();
 
     public abstract String readPage();
@@ -251,23 +234,11 @@ public abstract class FileEditInformation extends FileInformation {
 
     public abstract boolean writeObject(String text);
 
-    public abstract boolean writePage(FileEditInformation sourceInfo,
-            String text);
+    public abstract boolean writePage(FileEditInformation sourceInfo, String text);
 
-    public abstract boolean writePage(FileEditInformation sourceInfo,
-            long pageNumber, String text);
-
-    public abstract String findNext();
-
-    public abstract String findPrevious();
-
-    public abstract String findLast();
+    public abstract boolean writePage(FileEditInformation sourceInfo, long pageNumber, String text);
 
     public abstract String locateLine();
-
-    public abstract int replaceAll();
-
-    public abstract int count();
 
     public abstract File filter(boolean recordLineNumbers);
 
@@ -287,7 +258,11 @@ public abstract class FileEditInformation extends FileInformation {
             case MatchRegularExpression:
                 return matchRegularExpression(string);
             case NotMatchRegularExpression:
-                return NotMatchRegularExpression(string);
+                return notMatchRegularExpression(string);
+            case IncludeRegularExpression:
+                return includeRegularExpression(string);
+            case NotIncludeRegularExpression:
+                return notIncludeRegularExpression(string);
             default:
                 return false;
         }
@@ -337,11 +312,19 @@ public abstract class FileEditInformation extends FileInformation {
         return false;
     }
 
+    public boolean includeRegularExpression(String string) {
+        return StringTools.include(string, filterStrings[0], false);
+    }
+
+    public boolean notIncludeRegularExpression(String string) {
+        return !StringTools.include(string, filterStrings[0], false);
+    }
+
     public boolean matchRegularExpression(String string) {
         return StringTools.match(string, filterStrings[0], false);
     }
 
-    public boolean NotMatchRegularExpression(String string) {
+    public boolean notMatchRegularExpression(String string) {
         return !StringTools.match(string, filterStrings[0], false);
     }
 
@@ -363,22 +346,6 @@ public abstract class FileEditInformation extends FileInformation {
 
     public void setCharset(Charset charset) {
         this.charset = charset;
-    }
-
-    public String getFindString() {
-        return findString;
-    }
-
-    public void setFindString(String findString) {
-        this.findString = findString;
-    }
-
-    public String getReplaceString() {
-        return replaceString;
-    }
-
-    public void setReplaceString(String replaceString) {
-        this.replaceString = replaceString;
     }
 
     public Line_Break getLineBreak() {
@@ -453,30 +420,6 @@ public abstract class FileEditInformation extends FileInformation {
         this.currentPageObjectEnd = currentPageObjectEnd;
     }
 
-    public void setCaseInsensitive(boolean caseInsensitive) {
-        this.caseInsensitive = caseInsensitive;
-    }
-
-    public LongIndex getCurrentFound() {
-        return currentFound;
-    }
-
-    public void setCurrentFound(LongIndex currentFound) {
-        this.currentFound = currentFound;
-    }
-
-    public void setCurrentSelectionLength(int currentSelectionLength) {
-        this.currentSelectionLength = currentSelectionLength;
-    }
-
-    public int getCurrentPosition() {
-        return currentPosition;
-    }
-
-    public void setCurrentPosition(int currentPosition) {
-        this.currentPosition = currentPosition;
-    }
-
     public int getLineBreakWidth() {
         return lineBreakWidth;
     }
@@ -541,12 +484,20 @@ public abstract class FileEditInformation extends FileInformation {
         this.currentPage = currentPage;
     }
 
-    public boolean isFindRegex() {
-        return findRegex;
+    public FindReplaceFile getFindReplace() {
+        return findReplace;
     }
 
-    public void setFindRegex(boolean findRegex) {
-        this.findRegex = findRegex;
+    public void setFindReplace(FindReplaceFile findReplace) {
+        this.findReplace = findReplace;
+    }
+
+    public int getObjectUnit() {
+        return objectUnit;
+    }
+
+    public void setObjectUnit(int objectUnit) {
+        this.objectUnit = objectUnit;
     }
 
 }

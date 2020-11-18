@@ -45,6 +45,7 @@ import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.IntPoint;
 import mara.mybox.data.VisitHistory;
+import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.db.TableColorData;
 import mara.mybox.db.TableImageScope;
 import mara.mybox.fxml.ControlStyle;
@@ -57,7 +58,6 @@ import mara.mybox.fxml.ListColorCell;
 import mara.mybox.fxml.ListImageCell;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.image.ImageColor;
-import mara.mybox.image.ImageInformation;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.image.ImageScope;
 import mara.mybox.image.ImageScope.ColorScopeType;
@@ -66,7 +66,6 @@ import mara.mybox.image.PixelsOperation;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.tools.DoubleTools.scale;
-import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
@@ -124,16 +123,19 @@ public class ImageManufactureScopeController extends ImageViewerController {
             rectangleLabel;
 
     public ImageManufactureScopeController() {
+        needNotContextMenu = true;
     }
 
     /*
         init
      */
-    public void initController(ImageManufactureController parent, File sourceFile,
-            Image image, ImageInformation imageInformation) {
+    public void initController(ImageManufactureController parent) {
         this.parentController = parent;
         imageController = parent;
         baseName = imageController.baseName;
+        sourceFile = imageController.sourceFile;
+        imageInformation = imageController.imageInformation;
+        image = imageController.image;
 
         initScopeView();
         initAreaBox();
@@ -143,7 +145,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
         initSavedScopesBox();
         refreshStyle();
 
-        loadImage(sourceFile, image, imageInformation);
+        loadImage(sourceFile, imageInformation, imageController.image);
         checkScopeType();
         scopeAllRadio.fire();
         loadScopes();
@@ -862,7 +864,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
             return;
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             final String text = imageController.scopeLabel.getText();
@@ -912,6 +914,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
 
             };
 //            parentController.openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -1282,7 +1285,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
             return;
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -1300,6 +1303,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
 
             };
             parentController.openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -1312,7 +1316,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
             return;
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -1330,6 +1334,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
 
             };
             parentController.openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -1455,7 +1460,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
             return;
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             scopesList.getItems().clear();
@@ -1477,6 +1482,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
                 }
             };
             parentController.openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -1501,7 +1507,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
             return;
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -1521,6 +1527,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
                 }
             };
             parentController.openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -1533,7 +1540,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
             return;
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             String name = scopeNameInput.getText().trim();
@@ -1555,6 +1562,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
                 }
             };
             parentController.openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -1568,7 +1576,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
             return;
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -1585,6 +1593,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
                 }
             };
             parentController.openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -1859,7 +1868,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
         new RecentVisitMenu(this, event) {
             @Override
             public List<VisitHistory> recentFiles() {
-                int fileNumber = AppVariables.fileRecentNumber * 2 / 3 + 1;
+                int fileNumber = AppVariables.fileRecentNumber * 3 / 4;
                 return VisitHistoryTools.getRecentAlphaImages(fileNumber);
             }
 
@@ -1896,7 +1905,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
             return;
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -1921,6 +1930,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
 
             };
             parentController.openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -1963,7 +1973,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
                 return;
             }
             synchronized (this) {
-                if (task != null) {
+                if (task != null && !task.isQuit()) {
                     return;
                 }
                 task = new SingletonTask<Void>() {
@@ -2004,6 +2014,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
 
                 };
                 parentController.openHandlingStage(task, Modality.WINDOW_MODAL);
+                task.setSelf(task);
                 Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();
@@ -2018,7 +2029,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
             return;
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -2048,6 +2059,7 @@ public class ImageManufactureScopeController extends ImageViewerController {
                 }
             };
             parentController.openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();

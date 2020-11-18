@@ -524,7 +524,7 @@ public class ConvolutionKernelManagerController extends BaseController {
             return;
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -546,6 +546,7 @@ public class ConvolutionKernelManagerController extends BaseController {
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -574,7 +575,7 @@ public class ConvolutionKernelManagerController extends BaseController {
             return;
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -592,6 +593,7 @@ public class ConvolutionKernelManagerController extends BaseController {
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -652,7 +654,7 @@ public class ConvolutionKernelManagerController extends BaseController {
     }
 
     @FXML
-    private void oneAction() {
+    public void oneAction() {
         if (width < 3 || height < 3) {
             return;
         }
@@ -668,9 +670,9 @@ public class ConvolutionKernelManagerController extends BaseController {
     }
 
     @FXML
-    private void examplesAction(ActionEvent event) {
+    public void examplesAction(ActionEvent event) {
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -688,13 +690,14 @@ public class ConvolutionKernelManagerController extends BaseController {
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
     }
 
-    private boolean pickKernel() {
+    public boolean pickKernel() {
         if (kernel == null || matrixValues == null || !matrixValid) {
             return false;
         }
@@ -715,7 +718,7 @@ public class ConvolutionKernelManagerController extends BaseController {
     }
 
     @FXML
-    private void testAction(ActionEvent event) {
+    public void demo(ActionEvent event) {
         if (!pickKernel()) {
             return;
         }
@@ -732,7 +735,7 @@ public class ConvolutionKernelManagerController extends BaseController {
             return;
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -750,6 +753,7 @@ public class ConvolutionKernelManagerController extends BaseController {
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();

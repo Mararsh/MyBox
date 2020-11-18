@@ -54,7 +54,6 @@ public class ImageGifEditerController extends ImagesListController {
     @Override
     public void initOptionsSection() {
         try {
-
             optionsBox.setDisable(true);
             tableBox.setDisable(true);
 
@@ -69,9 +68,8 @@ public class ImageGifEditerController extends ImagesListController {
                         checkSize();
                     });
 
-            saveButton.disableProperty().bind(
-                    Bindings.isEmpty(tableData)
-                            .or(widthInput.styleProperty().isEqualTo(badStyle))
+            saveButton.disableProperty().bind(Bindings.isEmpty(tableData)
+                    .or(widthInput.styleProperty().isEqualTo(badStyle))
             );
             saveAsButton.disableProperty().bind(saveButton.disableProperty());
             viewButton.disableProperty().bind(saveButton.disableProperty());
@@ -111,7 +109,7 @@ public class ImageGifEditerController extends ImagesListController {
     public void saveFileDo(final File outFile) {
 
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -149,6 +147,7 @@ public class ImageGifEditerController extends ImagesListController {
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();

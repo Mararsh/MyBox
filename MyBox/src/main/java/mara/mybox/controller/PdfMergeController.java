@@ -39,7 +39,6 @@ public class PdfMergeController extends PdfBatchController {
     public void initControls() {
         try {
             super.initControls();
-            allowPaused = false;
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(

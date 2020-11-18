@@ -1,16 +1,13 @@
 package mara.mybox.controller;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
@@ -33,7 +30,6 @@ import mara.mybox.db.TableBase;
 import mara.mybox.db.TableQueryCondition;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.HtmlTools;
-import mara.mybox.tools.HtmlTools.HtmlStyle;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
@@ -54,7 +50,6 @@ public class DataAnalysisController<P> extends TableManageController<P> {
     protected QueryCondition queryCondition, exportCondition, clearCondition;
     protected boolean prefixEditable, supportTop;
     protected int topNumber;
-    protected HtmlStyle htmlStyle;
 
     @FXML
     protected TabPane tabsPane;
@@ -66,8 +61,6 @@ public class DataAnalysisController<P> extends TableManageController<P> {
     protected GeographyCodeConditionTreeController geoController;
     @FXML
     protected Button locationButton;
-    @FXML
-    protected ComboBox<String> htmlStyleSelector;
     @FXML
     protected ListView orderByList;
     @FXML
@@ -276,24 +269,6 @@ public class DataAnalysisController<P> extends TableManageController<P> {
                 csvEditController.init(this, tableDefinition);
             }
 
-            htmlStyleSelector.getItems().addAll(Arrays.asList(
-                    message("Default"), message("Console"), message("Blackboard")
-            ));
-            htmlStyleSelector.getSelectionModel().selectedItemProperty().addListener(
-                    (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                        if (message("Console").equals(newValue)) {
-                            htmlStyle = HtmlStyle.Console;
-                        } else if (message("Blackboard").equals(newValue)) {
-                            htmlStyle = HtmlStyle.Blackboard;
-                        } else {
-                            htmlStyle = HtmlStyle.Default;
-                        }
-                        AppVariables.setUserConfigValue("HtmlStyle", newValue);
-                        loadInfo();
-                    });
-            htmlStyleSelector.getSelectionModel().select(
-                    AppVariables.getUserConfigValue("HtmlStyle", message("Default")));
-
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -439,7 +414,7 @@ public class DataAnalysisController<P> extends TableManageController<P> {
                 }
                 html += loadMoreInfo();
             }
-
+            String htmlStyle = AppVariables.getUserConfigValue(baseName + "HtmlStyle", "Default");
             html = HtmlTools.html(null, htmlStyle, html);
             infoView.getEngine().loadContent​(html);
 
@@ -758,7 +733,7 @@ public class DataAnalysisController<P> extends TableManageController<P> {
         }
 
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit() ) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -788,7 +763,7 @@ public class DataAnalysisController<P> extends TableManageController<P> {
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
+            task.setSelf(task);Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -827,7 +802,7 @@ public class DataAnalysisController<P> extends TableManageController<P> {
             return;
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit() ) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -848,7 +823,7 @@ public class DataAnalysisController<P> extends TableManageController<P> {
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
+            task.setSelf(task);Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -947,6 +922,11 @@ public class DataAnalysisController<P> extends TableManageController<P> {
         } catch (Exception e) {
             logger.error(e.toString());
         }
+    }
+
+    @FXML
+    public void popLinksStyle(MouseEvent mouseEvent) {
+        popMenu = FxmlControl.popHtmlStyle(mouseEvent, this, popMenu, infoView.getEngine());
     }
 
     @Override

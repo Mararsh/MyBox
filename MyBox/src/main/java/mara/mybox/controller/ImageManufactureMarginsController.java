@@ -144,7 +144,6 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
         FxmlControl.setEditorNormal(marginWidthBox);
         distanceInput.setStyle(null);
         commentsLabel.setText("");
-        imageController.noContextMenu = false;
 
         if (opGroup.getSelectedToggle() == null) {
             return;
@@ -152,7 +151,6 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
 
         if (dragRadio.isSelected()) {
             opType = OperationType.SetMarginsByDragging;
-            imageController.noContextMenu = true;
             setBox.getChildren().addAll(colorBox);
             initDragging();
 
@@ -255,7 +253,7 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
             }
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -328,6 +326,7 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
                 }
             };
             imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();

@@ -180,7 +180,7 @@ public class EpidemicReportsEditController extends TableManageController<Epidemi
             locationColumn.setText(message("Country"));
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit() ) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -218,7 +218,7 @@ public class EpidemicReportsEditController extends TableManageController<Epidemi
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
+            task.setSelf(task);Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -317,7 +317,7 @@ public class EpidemicReportsEditController extends TableManageController<Epidemi
             return;
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit() ) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -351,7 +351,7 @@ public class EpidemicReportsEditController extends TableManageController<Epidemi
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
+            task.setSelf(task);Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }

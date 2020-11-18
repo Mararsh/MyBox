@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import java.net.URI;
 import java.util.Date;
 import java.util.List;
 import javafx.application.Platform;
@@ -13,7 +12,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
@@ -47,18 +45,16 @@ public class AlarmClockController extends BaseController {
     protected AlarmClock currentAlarm;
     protected boolean isEdit, isPaused;
     protected float volumeValue;
-    protected URI currentSound;
+    protected String currentSound;
     protected File miao;
     protected MediaPlayer mediaPlayer;
 
-    @FXML
-    private ScrollPane scrollPane;
     @FXML
     private ToggleGroup typeGroup, soundGroup, unitGroup;
     @FXML
     private TextField descInput, startInput, everyInput, sysInput, localInput, loopInput, urlInput;
     @FXML
-    private CheckBox activeCheck, loopCheck;
+    private CheckBox activeCheck;
     @FXML
     protected Pane alertClockTable;
     @FXML
@@ -66,7 +62,7 @@ public class AlarmClockController extends BaseController {
     @FXML
     protected Slider volumeSlider;
     @FXML
-    protected RadioButton miaoRadio, sysButton, localButton, internetButton, continuallyButton, loopButton;
+    protected RadioButton miaoRadio, sysButton, localButton, internetButton;
 
     public AlarmClockController() {
         baseTitle = AppVariables.message("AlarmClock");
@@ -215,12 +211,12 @@ public class AlarmClockController extends BaseController {
             if (!file.exists() || !file.isFile()) {
                 localInput.setStyle(badStyle);
             } else {
-                currentSound = file.toURI();
+                currentSound = file.getAbsolutePath();
             }
 
         } else if (message("InternetMusic").equals(selected.getText())) {
             try {
-                currentSound = new URI(urlInput.getText());
+                currentSound = urlInput.getText();
             } catch (Exception e) {
                 urlInput.setStyle(badStyle);
             }
@@ -230,11 +226,11 @@ public class AlarmClockController extends BaseController {
             if (!file.exists() || !file.isFile()) {
                 sysInput.setStyle(badStyle);
             } else {
-                currentSound = file.toURI();
+                currentSound = file.getAbsolutePath();
             }
 
         } else {
-            currentSound = miao.toURI();
+            currentSound = miao.getAbsolutePath();
         }
 
         playButton.setDisable(currentSound == null);
@@ -293,16 +289,18 @@ public class AlarmClockController extends BaseController {
         if (currentSound == null) {
             return;
         }
-        if (currentSound.getScheme().startsWith("file")) {
-            FxmlControl.playClip(new File(currentSound.getPath()));
+        File file = new File(currentSound);
+        if (file.exists() && file.isFile()) {
+            FxmlControl.playClip(new File(currentSound));
         } else {
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        mediaPlayer = MediaTools.play(currentSound.toString(), volumeValue, loopValue);
+                        mediaPlayer = MediaTools.play(currentSound, volumeValue, loopValue);
                     } catch (Exception e) {
                         logger.error(e.toString());
+                        popError(e.toString());
                     }
                 }
             });
@@ -376,13 +374,13 @@ public class AlarmClockController extends BaseController {
         currentAlarm.setDescription(descInput.getText());
         currentAlarm.setStartTime(startTime);
         currentAlarm.setIsActive(activeCheck.isSelected());
-        if (currentSound.toString().contains(miao.getAbsolutePath())) {
-            currentAlarm.setSound(message("meow"));
+        if (currentSound.contains(miao.getAbsolutePath())) {
+            currentAlarm.setSound(message("Meow"));
         } else {
-            currentAlarm.setSound(currentSound.toString());
+            currentAlarm.setSound(currentSound);
         }
         currentAlarm.setEveryValue(everyValue);
-        currentAlarm.setIsSoundLoop(loopCheck.isSelected());
+        currentAlarm.setIsSoundLoop(loopValue > 0);
         currentAlarm.setIsSoundContinully(loopValue < 0);
         currentAlarm.setSoundLoopTimes(loopValue);
         currentAlarm.setVolume(volumeValue);
@@ -395,7 +393,6 @@ public class AlarmClockController extends BaseController {
     protected void reset() {
         descInput.setText("");
         startInput.setText(DateTools.datetimeToString(new Date().getTime() + 300000));
-        saveButton.setText(message("Add"));
         isEdit = false;
         currentAlarm = null;
     }
@@ -438,16 +435,8 @@ public class AlarmClockController extends BaseController {
             sysButton.setSelected(true);
             sysInput.setText(sound);
         }
-        loopCheck.setSelected(alarm.isIsSoundLoop());
-        if (alarm.isIsSoundContinully()) {
-            continuallyButton.setSelected(true);
-        } else {
-            loopButton.setSelected(true);
-        }
         loopInput.setText(alarm.getSoundLoopTimes() + "");
         volumeSlider.setValue(alarm.getVolume());
-
-        saveButton.setText(message("Save"));
     }
 
     public boolean isIsEdit() {

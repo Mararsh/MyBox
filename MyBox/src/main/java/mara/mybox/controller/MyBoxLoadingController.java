@@ -1,49 +1,53 @@
 package mara.mybox.controller;
 
+import java.io.File;
 import java.net.URL;
+import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.Toggle;
-import javafx.scene.control.ToggleGroup;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import javax.imageio.ImageIO;
+import mara.mybox.MyBox;
+import mara.mybox.db.DataMigration;
 import mara.mybox.db.DerbyBase;
+import mara.mybox.fxml.FxmlStage;
+import mara.mybox.image.ImageValue;
 import mara.mybox.tools.ConfigTools;
+import mara.mybox.tools.FileTools;
+import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara
  * @CreateDate 2018-6-11 8:14:06
- * @Description
  * @License Apache License Version 2.0
  */
 public class MyBoxLoadingController implements Initializable {
 
-    private Stage stage;
-    private String lang;
-    private boolean isSettingValues;
+    protected String lang;
+    protected Stage myStage;
+    protected Scene myScene;
 
     @FXML
-    private ProgressIndicator progressIndicator;
+    protected Pane thisPane;
     @FXML
-    private Label infoLabel;
+    protected ProgressIndicator progressIndicator;
     @FXML
-    private ImageView imageView;
+    protected Label infoLabel, derbyLabel;
     @FXML
-    protected ToggleGroup derbyGroup;
-    @FXML
-    protected RadioButton embeddedRadio, networkRadio;
+    protected ImageView imageView;
     @FXML
     protected HBox derbyBox;
 
@@ -53,122 +57,246 @@ public class MyBoxLoadingController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
-
-            derbyBox.setVisible(false);
-
-            infoLabel.requestFocus();
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    public void pathReady() {
-        try {
             lang = Locale.getDefault().getLanguage().toLowerCase();
-            infoLabel.setText(message(lang, "Initializing..."));
-            networkRadio.setText(message(lang, "NetworkModeOnlyLocal"));
-            embeddedRadio.setText(message(lang, "EmbeddedMode"));
             derbyBox.setVisible(true);
-
-            isSettingValues = true;
-            DerbyBase.mode = DerbyBase.readMode();
-            if (DerbyBase.mode != null && "client".equals(DerbyBase.mode.toLowerCase())) {
-                networkRadio.setSelected(true);
-            } else {
-                embeddedRadio.setSelected(true);
-            }
-            isSettingValues = false;
-
-            derbyGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                @Override
-                public void changed(ObservableValue ov, Toggle old_val, Toggle new_val) {
-                    checkDerbyMode();
-                }
-            });
-
             infoLabel.requestFocus();
-
         } catch (Exception e) {
             logger.error(e.toString());
         }
     }
 
-    public void checkDerbyMode() {
-        if (isSettingValues) {
-            return;
-        }
-        DerbyBase.mode = networkRadio.isSelected() ? "client" : "embedded";
-        ConfigTools.writeConfigValue("DerbyMode", DerbyBase.mode);
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                derbyBox.setDisable(true);
-                try {
-                    String ret = DerbyBase.startDerby();
-                    if (ret != null) {
-                        isSettingValues = true;
-                        if (DerbyBase.mode != null && "client".equals(DerbyBase.mode.toLowerCase())) {
-                            networkRadio.setSelected(true);
-                        } else {
-                            embeddedRadio.setSelected(true);
-                        }
-                        isSettingValues = false;
-                    }
-                } catch (Exception e) {
-                    logger.debug(e.toString());
-                }
-                derbyBox.setDisable(false);
+    public boolean run() {
+        try {
+            myScene = thisPane.getScene();
+            if (myScene == null) {
+                return false;
             }
-        });
+            myStage = (Stage) myScene.getWindow();
+            myStage.setUserData(this);
+            infoLabel.setText(message(lang, "Initializing..."));
+            logger.info("MyBox Config file:" + AppVariables.MyboxConfigFile);
+            Task task = new Task<Void>() {
+                @Override
+                protected Void call() {
+                    try {
+                        Platform.runLater(() -> {
+                            infoLabel.setText(MessageFormat.format(message(lang,
+                                    "InitializeDataUnder"), AppVariables.MyboxDataPath));
+                        });
+                        if (!initPaths(myStage)) {
+                            return null;
+                        }
+
+                        Platform.runLater(() -> {
+                            infoLabel.setText(MessageFormat.format(message(lang,
+                                    "LoadingDatabase"), AppVariables.MyBoxDerbyPath));
+                        });
+                        DerbyBase.status = DerbyBase.DerbyStatus.NotConnected;
+                        String initDB = DerbyBase.startDerby();
+                        if (DerbyBase.status != DerbyBase.DerbyStatus.Embedded
+                                && DerbyBase.status != DerbyBase.DerbyStatus.Nerwork) {
+                            Platform.runLater(() -> {
+                                FxmlStage.alertWarning(myStage, initDB);
+                            });
+                            AppVariables.initAppVaribles();
+                        } else {
+                            // The following statements should be executed in this order
+                            Platform.runLater(() -> {
+                                infoLabel.setText(message(lang, "InitializingTables"));
+                            });
+                            DerbyBase.initTables();
+                            Platform.runLater(() -> {
+                                infoLabel.setText(message(lang, "InitializingVariables"));
+                            });
+                            AppVariables.initAppVaribles();
+                            Platform.runLater(() -> {
+                                infoLabel.setText(message(lang, "CheckingMigration"));
+                            });
+                            if (!DataMigration.checkUpdates()) {
+                                cancel();
+                                return null;
+                            }
+                            Platform.runLater(() -> {
+                                infoLabel.setText(message(lang, "InitializingTableValues"));
+                            });
+                            DerbyBase.initTableValues();
+                        }
+
+                        ImageValue.registrySupportedImageFormats();
+                        ImageIO.setUseCache(true);
+                        ImageIO.setCacheDirectory(AppVariables.MyBoxTempPath);
+
+                    } catch (Exception e) {
+                        Platform.runLater(() -> {
+                            infoLabel.setText(e.toString());
+                        });
+                    }
+                    return null;
+                }
+
+                @Override
+                protected void succeeded() {
+                    super.succeeded();
+
+                    Platform.runLater(() -> {
+                        infoLabel.setText(message(lang, "LoadingInterface"));
+
+                        String inFile = null;
+                        if (AppVariables.appArgs != null) {
+                            for (String arg : AppVariables.appArgs) {
+                                if (MyBox.InternalRestartFlag.equals(arg) || arg.startsWith("config=")) {
+                                    continue;
+                                }
+                                if (new File(arg).exists()) {
+                                    inFile = arg;
+                                    break;
+                                } else {
+                                    FxmlStage.alertError(myStage, MessageFormat.format(
+                                            message("FilepathNonAscii"), arg));
+                                }
+                            }
+                        }
+
+                        if (inFile != null) {
+                            BaseController controller = FxmlStage.openTarget(myStage, inFile, false);
+                            if (controller == null) {
+                                FxmlStage.openMyBox(myStage);
+                            }
+                        } else {
+                            FxmlStage.openMyBox(myStage);
+                        }
+                    });
+
+                }
+
+                @Override
+                protected void failed() {
+                    super.failed();
+                    myStage.close();
+                }
+
+                @Override
+                protected void cancelled() {
+                    super.cancelled();
+                    myStage.close();
+                }
+            };
+            Thread thread = new Thread(task);
+            thread.setDaemon(false);
+            thread.start();
+            return true;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return false;
+        }
     }
 
-    public void setInfo(String info) {
-        infoLabel.setText(info);
+    public Stage getMyStage() {
+        if (myStage == null) {
+            if (thisPane != null) {
+                myScene = thisPane.getScene();
+                if (myScene != null) {
+                    myStage = (Stage) myScene.getWindow();
+                    myStage.setUserData(this);
+                }
+            }
+        }
+        return myStage;
     }
 
-    public void setImage(Image image) {
-        imageView.setImage(image);
+    public boolean initRootPath(Stage stage) {
+        try {
+            if (stage == null) {
+                return false;
+            }
+            File currentDataPath = new File(AppVariables.MyboxDataPath);
+            if (!currentDataPath.exists()) {
+                if (!currentDataPath.mkdirs()) {
+                    Platform.runLater(() -> {
+                        FxmlStage.alertError(stage, MessageFormat.format(AppVariables.message(lang,
+                                "UserPathFail"), AppVariables.MyboxDataPath));
+                    });
+                    return false;
+                }
+            }
+            logger.info("MyBox Data Path:" + AppVariables.MyboxDataPath);
+
+            String oldPath = ConfigTools.readValue("MyBoxOldDataPath");
+            if (oldPath != null) {
+                if (oldPath.equals(ConfigTools.defaultDataPath())) {
+                    FileTools.deleteDirExcept(new File(oldPath), ConfigTools.defaultConfigFile());
+                } else {
+                    FileTools.deleteDir(new File(oldPath));
+                }
+                ConfigTools.writeConfigValue("MyBoxOldDataPath", null);
+            }
+            return true;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return false;
+        }
     }
 
-    public void close() {
-        stage.close();
-    }
+    public boolean initPaths(Stage stage) {
+        try {
+            if (!initRootPath(stage)) {
+                return false;
+            }
 
-    public void setProgress(float value) {
-        progressIndicator.setProgress(value);
-    }
+            AppVariables.MyBoxLanguagesPath = new File(AppVariables.MyboxDataPath + File.separator + "mybox_languages");
+            if (!AppVariables.MyBoxLanguagesPath.exists()) {
+                if (!AppVariables.MyBoxLanguagesPath.mkdirs()) {
+                    Platform.runLater(() -> {
+                        FxmlStage.alertError(stage, MessageFormat.format(AppVariables.message(lang, "UserPathFail"),
+                                AppVariables.MyBoxLanguagesPath));
+                    });
+                    return false;
+                }
+            }
 
-    public ProgressIndicator getProgressIndicator() {
-        return progressIndicator;
-    }
+            AppVariables.MyBoxDownloadsPath = new File(AppVariables.MyboxDataPath + File.separator + "downloads");
+            if (!AppVariables.MyBoxDownloadsPath.exists()) {
+                if (!AppVariables.MyBoxDownloadsPath.mkdirs()) {
+                    Platform.runLater(() -> {
+                        FxmlStage.alertError(stage, MessageFormat.format(AppVariables.message(lang, "UserPathFail"),
+                                AppVariables.MyBoxDownloadsPath));
+                    });
+                    return false;
+                }
+            }
 
-    public void setProgressIndicator(ProgressIndicator progressIndicator) {
-        this.progressIndicator = progressIndicator;
-    }
+            AppVariables.MyBoxTempPath = new File(AppVariables.MyboxDataPath + File.separator + "AppTemp");
+            if (AppVariables.MyBoxTempPath.exists()) {
+                try {
+                    FileTools.clearDir(AppVariables.MyBoxTempPath);
+                } catch (Exception e) {
+                    logger.error(e.toString());
+                }
+            } else {
+                if (!AppVariables.MyBoxTempPath.mkdirs()) {
+                    Platform.runLater(() -> {
+                        FxmlStage.alertError(stage, MessageFormat.format(AppVariables.message(lang, "UserPathFail"),
+                                AppVariables.MyBoxTempPath));
+                    });
+                    return false;
+                }
+            }
 
-    public Label getInfoLabel() {
-        return infoLabel;
-    }
-
-    public void setInfoLabel(Label infoLabel) {
-        this.infoLabel = infoLabel;
-    }
-
-    public Stage getStage() {
-        return stage;
-    }
-
-    public void setStage(Stage stage) {
-        this.stage = stage;
-    }
-
-    public ImageView getImageView() {
-        return imageView;
-    }
-
-    public void setImageView(ImageView imageView) {
-        this.imageView = imageView;
+            AppVariables.MyBoxDerbyPath = new File(AppVariables.MyboxDataPath + File.separator + "mybox_derby");
+            AppVariables.MyBoxReservePaths = new ArrayList<File>() {
+                {
+                    add(AppVariables.MyBoxTempPath);
+                    add(AppVariables.MyBoxDerbyPath);
+                    add(AppVariables.MyBoxLanguagesPath);
+                    add(AppVariables.MyBoxDownloadsPath);
+                }
+            };
+            AppVariables.AlarmClocksFile = AppVariables.MyboxDataPath + File.separator + ".alarmClocks";
+            return true;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return false;
+        }
     }
 
 }

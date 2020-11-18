@@ -21,7 +21,7 @@ import mara.mybox.data.VisitHistory;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.PdfTools;
-import mara.mybox.tools.VisitHistoryTools;
+import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
@@ -299,14 +299,6 @@ public class PdfsTableController extends BatchTableController<PdfInformation> {
 
     public void setSetAllButton(Button setAllOrSelectedButton) {
         this.setAllOrSelectedButton = setAllOrSelectedButton;
-    }
-
-    public FlowPane getSelectPane() {
-        return selectPane;
-    }
-
-    public void setSelectPane(FlowPane selectPane) {
-        this.selectPane = selectPane;
     }
 
     public FlowPane getSetPDFPane() {

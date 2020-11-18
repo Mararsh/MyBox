@@ -9,6 +9,7 @@ import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterOutputStream;
 import javafx.scene.control.IndexRange;
 import mara.mybox.data.FileEditInformation.Line_Break;
+import mara.mybox.data.FindReplaceString;
 import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonValues;
 
@@ -91,6 +92,22 @@ public class ByteTools {
         return sb.toString();
     }
 
+    public static String bytesToHexFormat(byte[] bytes) {
+        if (bytes == null) {
+            return null;
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < bytes.length; ++i) {
+            String hex = Integer.toHexString(bytes[i] & 0xFF);
+            if (hex.length() < 2) {
+                sb.append(0);
+            }
+            sb.append(hex).append(" ");
+        }
+        String s = sb.toString();
+        return s.toUpperCase();
+    }
+
     public static String stringToHexFormat(String text) {
         return bytesToHexFormatWithCF(text.getBytes());
     }
@@ -110,26 +127,6 @@ public class ByteTools {
         }
         String s = sb.toString();
         s = s.replace(newLineHex + " ", newLineHex + "\n");
-        s = s.toUpperCase();
-        return s;
-    }
-
-//    public static String bytesToHexFormat(byte[] bytes, String newLineValue) {
-//        String s = bytesToHexFormat(bytes);
-//        s = s.replace("\n", newLineHex.trim() + "\n");
-//        logger.debug(newLineHex);
-//        return s;
-//    }
-    public static String bytesToHexFormat(byte[] bytes) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < bytes.length; ++i) {
-            String hex = Integer.toHexString(bytes[i] & 0xFF);
-            if (hex.length() < 2) {
-                sb.append(0);
-            }
-            sb.append(hex).append(" ");
-        }
-        String s = sb.toString();
         s = s.toUpperCase();
         return s;
     }
@@ -321,15 +318,15 @@ public class ByteTools {
     }
 
     public static int countNumber(byte[] bytes, byte[] subBytes) {
-        return StringTools.countNumber(bytesToHex(bytes), bytesToHex(subBytes));
+        return FindReplaceString.count(bytesToHex(bytes), bytesToHex(subBytes));
     }
 
     public static int countNumber(byte[] bytes, byte c) {
-        return StringTools.countNumber(bytesToHex(bytes), byteToHex(c));
+        return FindReplaceString.count(bytesToHex(bytes), byteToHex(c));
     }
 
     public static int countNumber(byte[] bytes, String hex) {
-        return StringTools.countNumber(bytesToHex(bytes), hex);
+        return FindReplaceString.count(bytesToHex(bytes), hex);
     }
 
     public static int lineIndex(String lineText, Charset charset, int offset) {

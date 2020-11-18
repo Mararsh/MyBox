@@ -26,6 +26,7 @@ import javafx.scene.web.WebEvent;
 import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
+import mara.mybox.data.FindReplaceString;
 import mara.mybox.data.StringTable;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.fxml.ControlStyle;
@@ -37,8 +38,7 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlTools;
 import mara.mybox.tools.LocationTools;
-import mara.mybox.tools.StringTools;
-import mara.mybox.tools.VisitHistoryTools;
+import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
@@ -297,7 +297,7 @@ public class MapBaseController extends BaseController {
             String pInfo = jsString(mapOptionsController.popInfoCheck.isSelected() ? info : null);
             String pImage = markerImage;
             pImage = (pImage == null || pImage.trim().isBlank())
-                    ? "null" : "'" + StringTools.replaceAll(pImage, "\\", "/") + "'";
+                    ? "null" : "'" + FindReplaceString.replaceAll(pImage, "\\", "/") + "'";
             String pColor = textColor == null ? "null" : "'" + FxmlColor.color2rgb(textColor) + "'";
             webEngine.executeScript("addMarker("
                     + longitude + "," + latitude
@@ -366,7 +366,7 @@ public class MapBaseController extends BaseController {
         if (htmlFile == null) {
             return;
         }
-        recordFileWritten(htmlFile);
+        recordFileWritten(htmlFile, VisitHistory.FileType.Html);
 
         double scale = dpi / Screen.getPrimary().getDpi();
         scale = scale > 1 ? scale : 1;
@@ -381,7 +381,7 @@ public class MapBaseController extends BaseController {
         final Image mapSnap = snapNode.snapshot(snapPara, snapshot);
 
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -441,6 +441,7 @@ public class MapBaseController extends BaseController {
             } else {
                 openHandlingStage(task, Modality.WINDOW_MODAL);
             }
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();

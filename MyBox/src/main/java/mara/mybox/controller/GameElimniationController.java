@@ -109,7 +109,7 @@ public class GameElimniationController extends BaseController {
     @FXML
     protected VBox chessboardPane;
     @FXML
-    protected Label chessesLabel, scoreLabel, imageLabel;
+    protected Label chessesLabel, scoreLabel, imageLabel, autoLabel;
     @FXML
     protected ListView<ImageItem> imagesListview;
     @FXML
@@ -188,7 +188,10 @@ public class GameElimniationController extends BaseController {
                         Boolean newVal) {
                     autoPlaying = catButton.isSelected();
                     if (autoPlaying) {
+                        autoLabel.setText(message("Autoplaying"));
                         findAdjacentAndEliminate();
+                    } else {
+                        autoLabel.setText("");
                     }
                 }
             });
@@ -206,6 +209,12 @@ public class GameElimniationController extends BaseController {
                 case H:
                     helpMeAction();
                     return;
+                case N:
+                    createAction();
+                    return;
+                case A:
+                    setAutoplay();
+                    return;
             }
         }
         super.keyHandler(event);
@@ -214,9 +223,11 @@ public class GameElimniationController extends BaseController {
     @Override
     public void afterSceneLoaded() {
         super.afterSceneLoaded();
-        FxmlControl.setTooltip(helpMeButton, message("HelpMe") + "\nh / H");
+        FxmlControl.setTooltip(createButton, message("NewGame") + "\nn / N");
+        FxmlControl.setTooltip(helpMeButton, message("HelpMeFindExchange") + "\nh / H");
+        FxmlControl.setTooltip(catButton, message("AutoPlayGame") + "\na / A");
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit() ) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -277,14 +288,11 @@ public class GameElimniationController extends BaseController {
                     initRulersTab();
                     initSettingsTab();
 
-                    FxmlControl.setTooltip(helpMeButton, message("HelpMeFindExchange") + "\nh / H");
-                    FxmlControl.setTooltip(catButton, message("AutoPlayGame"));
-
                 }
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
+            task.setSelf(task);Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -827,7 +835,7 @@ public class GameElimniationController extends BaseController {
 
     @FXML
     @Override
-    public void startAction() {
+    public void createAction() {
         if (isSettingValues) {
             return;
         }
@@ -852,6 +860,10 @@ public class GameElimniationController extends BaseController {
         } else {
             promptDeadlock();
         }
+    }
+
+    protected void setAutoplay() {
+        catButton.setSelected(!catButton.isSelected());
     }
 
     @FXML
@@ -1569,6 +1581,9 @@ public class GameElimniationController extends BaseController {
                             Platform.runLater(new Runnable() {
                                 @Override
                                 public void run() {
+                                    if (!autoPlaying) {
+                                        return;
+                                    }
                                     recoverStyle(adjacent.exchangei1, adjacent.exchangej1);
                                     recoverStyle(adjacent.exchangei2, adjacent.exchangej2);
                                     exchange(adjacent);

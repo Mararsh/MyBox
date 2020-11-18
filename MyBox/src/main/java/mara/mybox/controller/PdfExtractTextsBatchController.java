@@ -9,6 +9,7 @@ import javafx.scene.control.TextField;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.value.CommonValues;
 import org.apache.pdfbox.text.PDFTextStripper;
 
 /**
@@ -109,6 +110,14 @@ public class PdfExtractTextsBatchController extends PdfBatchController {
             logger.error(e.toString());
         }
         fileWriter = null;
+    }
+
+    @FXML
+    public void ocr() {
+        PdfOcrBatchController controller = (PdfOcrBatchController) openStage(CommonValues.PdfOCRBatchFxml);
+        if (!tableData.isEmpty()) {
+            controller.tableData.addAll(tableData);
+        }
     }
 
 }

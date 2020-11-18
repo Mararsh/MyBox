@@ -255,7 +255,6 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                 commentsLabel.setText("");
                 return;
             }
-            imageController.noContextMenu = true;
             maskView.setImage(imageView.getImage());
             maskView.setOpacity(1);
             maskView.setVisible(true);
@@ -300,7 +299,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
 
             } else if (polylineRadio.equals(selected)) {
                 opType = PenType.Polyline;
-                imageController.initMaskline(true);
+                imageController.initMaskPolylineLine(true);
                 setBox.getChildren().addAll(strokeWidthPane, strokeColorPane, dottedCheck, opacityPane, withdrawButton, okPane);
                 commentsLabel.setText(message("PenPolylineTips"));
                 strokeWidthKey = "ImagePenLineWidth";
@@ -324,7 +323,6 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
 
             } else if (frostedRadio.equals(selected)) {
                 opType = PenType.Frosted;
-                imageController.noContextMenu = false;
                 setBox.getChildren().addAll(strokeWidthPane, intensityPane, shapePane, okPane);
                 commentsLabel.setText(message("PenMosaicTips"));
                 strokeWidthKey = "ImagePenMosaicWidth";
@@ -332,7 +330,6 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
 
             } else if (mosaicRadio.equals(selected)) {
                 opType = PenType.Mosaic;
-                imageController.noContextMenu = false;
                 setBox.getChildren().addAll(strokeWidthPane, intensityPane, shapePane, okPane);
                 commentsLabel.setText(message("PenMosaicTips"));
                 strokeWidthKey = "ImagePenMosaicWidth";
@@ -386,7 +383,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
             return;
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -409,6 +406,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
 
             };
             imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -421,7 +419,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
             return;
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -444,6 +442,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
 
             };
             imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -456,7 +455,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
             return;
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -479,6 +478,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
 
             };
             imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -495,7 +495,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
             return;
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -520,6 +520,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
 
             };
             imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -530,7 +531,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
         if (opType != PenType.Polyline || imageView == null || imageView.getImage() == null) {
             return;
         }
-        imageController.drawMaskLine(strokeWidth, (Color) strokeColorSetController.rect.getFill(),
+        imageController.drawMaskPolylineLine(strokeWidth, (Color) strokeColorSetController.rect.getFill(),
                 dottedCheck.isSelected(), opacity);
     }
 
@@ -548,7 +549,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
             return;
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -581,6 +582,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
 
             };
             imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -599,7 +601,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                 drawPolygon();
                 break;
             case Polyline:
-                imageController.maskLineData.removeLast();
+                imageController.maskPolylineLineData.removeLast();
                 drawPolyline();
                 break;
             case DrawLines:
@@ -629,7 +631,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
             return;
         }
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -648,11 +650,11 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                             newImage = maskView.getImage();
                             break;
                         case Polyline:
-                            if (imageController.maskLineData == null && imageController.maskLineData.getSize() < 2) {
+                            if (imageController.maskPolylineLineData == null && imageController.maskPolylineLineData.getSize() < 2) {
                                 return false;
                             }
                             newImage = FxmlImageManufacture.drawLines(imageView.getImage(),
-                                    imageController.maskLineData, (Color) strokeColorSetController.rect.getFill(), strokeWidth,
+                                    imageController.maskPolylineLineData, (Color) strokeColorSetController.rect.getFill(), strokeWidth,
                                     dottedCheck.isSelected(), opacity);
                             break;
                         case DrawLines:
@@ -690,6 +692,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
             };
 
             imageController.openHandlingStage(task, Modality.WINDOW_MODAL);
+            task.setSelf(task);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -712,11 +715,11 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                     imageView.setCursor(Cursor.OPEN_HAND);
                     return;
                 }
-                DoublePoint p0 = imageController.maskLineData.get(0);
+                DoublePoint p0 = imageController.maskPolylineLineData.get(0);
                 double offsetX = p.getX() - p0.getX();
                 double offsetY = p.getY() - p0.getY();
                 if (offsetX != 0 || offsetY != 0) {
-                    imageController.maskLineData = imageController.maskLineData.move(offsetX, offsetY);
+                    imageController.maskPolylineLineData = imageController.maskPolylineLineData.move(offsetX, offsetY);
                     updateMask();
                 }
             }
@@ -783,7 +786,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                     return;
                 }
                 imageController.scrollPane.setPannable(false);
-                imageController.maskLineData.add(p);
+                imageController.maskPolylineLineData.add(p);
                 lastX = event.getX();
                 lastY = event.getY();
                 drawPolyline();
@@ -822,7 +825,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                     return;
                 }
                 imageController.scrollPane.setPannable(false);
-                imageController.maskLineData.add(p);
+                imageController.maskPolylineLineData.add(p);
                 lastX = event.getX();
                 lastY = event.getY();
                 drawPolyline();
@@ -861,7 +864,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                 if (lastX == event.getX() && lastY == event.getY()) {
                     return;
                 }
-                imageController.maskLineData.add(p);
+                imageController.maskPolylineLineData.add(p);
                 lastX = event.getX();
                 lastY = event.getY();
                 drawPolyline();

@@ -107,7 +107,7 @@ public class EpidemicReportEditController extends GeographyCodeUserController {
 
     protected void loadDatasets() {
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit() ) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -135,7 +135,7 @@ public class EpidemicReportEditController extends GeographyCodeUserController {
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
+            task.setSelf(task);Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }
@@ -342,7 +342,7 @@ public class EpidemicReportEditController extends GeographyCodeUserController {
             popError(message("ValuesShouldNotZero"));
             return;
         }
-        if (task != null) {
+        if (task != null && !task.isQuit() ) {
             return;
         }
         task = new SingletonTask<Void>() {
@@ -388,7 +388,7 @@ public class EpidemicReportEditController extends GeographyCodeUserController {
             }
         };
         openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
+        task.setSelf(task);Thread thread = new Thread(task);
         thread.setDaemon(true);
         thread.start();
     }

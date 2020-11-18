@@ -61,6 +61,12 @@ public class MediaTools {
         clip.play();
     }
 
+    public static AudioClip clip(File file, double volumn) {
+        AudioClip clip = new AudioClip(file.toURI().toString());
+        clip.setVolume(volumn);
+        return clip;
+    }
+
     public static FFprobeResult FFprobleFrames(File FFprobleExcuatble, File mediaFile,
             String streams, String intervals) throws Exception {
         FFprobe probe = FFprobe.atPath(FFprobleExcuatble.toPath().getParent())

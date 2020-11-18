@@ -14,13 +14,12 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.text.Font;
-import mara.mybox.data.FileEditInformation;
-import mara.mybox.data.FileEditInformation.Edit_Type;
+import mara.mybox.data.TextEditInformation;
 import mara.mybox.data.VisitHistory;
+import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.TextTools;
-import mara.mybox.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
@@ -35,7 +34,7 @@ import mara.mybox.value.CommonFxValues;
 public class TextEncodingBatchController extends FilesBatchController {
 
     protected boolean autoDetermine;
-    protected FileEditInformation sourceInformation, targetInformation;
+    protected TextEditInformation sourceInformation, targetInformation;
 
     @FXML
     protected ToggleGroup sourceGroup;
@@ -57,7 +56,7 @@ public class TextEncodingBatchController extends FilesBatchController {
         try {
             super.initControls();
             tableController.getNameFiltersSelector().getSelectionModel().select(1);
-            tableController.getTableFiltersInput().setText("html  htm  txt ");
+            tableController.getTableFiltersInput().setText("html  htm  txt md");
 
             startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
                     .or(targetPathInput.styleProperty().isEqualTo(badStyle))
@@ -71,8 +70,8 @@ public class TextEncodingBatchController extends FilesBatchController {
     @Override
     public void initOptionsSection() {
 
-        sourceInformation = FileEditInformation.newEditInformation(Edit_Type.Text);
-        targetInformation = FileEditInformation.newEditInformation(Edit_Type.Text);
+        sourceInformation = new TextEditInformation();
+        targetInformation = new TextEditInformation();
 
         sourceGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override

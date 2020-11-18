@@ -26,6 +26,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import mara.mybox.data.BaseTask;
 import mara.mybox.dev.devTools;
 import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlStage;
@@ -33,6 +34,7 @@ import mara.mybox.tools.ConfigTools;
 import mara.mybox.tools.FloatTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -51,6 +53,7 @@ public class MainMenuController extends BaseController {
     private Label sysMemLabel, myboxMemLabel, sysCpuLabel, myboxCpuLabel;
     private ProgressBar sysMemBar, myboxMemBar, sysCpuBar, myboxCpuBar;
     private long mb;
+    private BaseTask iconTask;
 
     @FXML
     private Pane mainMenuPane;
@@ -89,19 +92,6 @@ public class MainMenuController extends BaseController {
                 }
             });
 
-//            menuBar.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-//                @Override
-//                public void handle(MouseEvent e) {
-//                    logger.debug("mouse:" + e.getButton() + "  " + e.getEventType());
-//
-////                    e.consume();
-//                }
-//            });
-//            String os = System.getProperty("os.name").toLowerCase();
-//            if (!os.contains("windows")) {
-//                imageMenu.getItems().removeAll(imageOcrMenu, imageOcrBatchMenu);
-//                pdfMenu.getItems().removeAll(pdfOcrBatchMenu);
-//            }
         } catch (Exception e) {
             logger.debug(e.toString());
         }
@@ -227,11 +217,6 @@ public class MainMenuController extends BaseController {
     @FXML
     protected void showHome(ActionEvent event) {
         openStage(CommonValues.MyboxFxml);
-    }
-
-    @FXML
-    protected void download(ActionEvent event) {
-        loadScene(CommonValues.DownloadFxml);
     }
 
     @FXML
@@ -672,6 +657,15 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
+    public void editConfigFile(ActionEvent event) {
+        TextEditerController controller = (TextEditerController) openStage(CommonValues.TextEditerFxml);
+        controller.hideLeftPane();
+        controller.hideRightPane();
+        controller.openTextFile(AppVariables.MyboxConfigFile);
+        controller.popInformation(message("TakeEffectWhenReboot"));
+    }
+
+    @FXML
     public void clearSettings(ActionEvent event) {
         parentController.clearUserSettings();
     }
@@ -743,6 +737,11 @@ public class MainMenuController extends BaseController {
     @FXML
     private void openPdfExtractImagesBatch(ActionEvent event) {
         loadScene(CommonValues.PdfExtractImagesBatchFxml);
+    }
+
+    @FXML
+    private void openPdfImagesConvertBatch(ActionEvent event) {
+        loadScene(CommonValues.PdfImagesConvertBatchFxml);
     }
 
     @FXML
@@ -1026,6 +1025,16 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
+    private void openTextReplaceBatch(ActionEvent event) {
+        loadScene(CommonValues.TextReplaceBatchFxml);
+    }
+
+    @FXML
+    private void openTextToHtml(ActionEvent event) {
+        loadScene(CommonValues.TextToHtmlFxml);
+    }
+
+    @FXML
     private void openBytesEditer(ActionEvent event) {
         loadScene(CommonValues.BytesEditerFxml);
     }
@@ -1071,8 +1080,63 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
+    private void openMarkdownToText(ActionEvent event) {
+        loadScene(CommonValues.MarkdownToTextFxml);
+    }
+
+    @FXML
+    private void openMarkdownToPdf(ActionEvent event) {
+        loadScene(CommonValues.MarkdownToPdfFxml);
+    }
+
+    @FXML
     private void openHtmlToMarkdown(ActionEvent event) {
         loadScene(CommonValues.HtmlToMarkdownFxml);
+    }
+
+    @FXML
+    private void openHtmlToText(ActionEvent event) {
+        loadScene(CommonValues.HtmlToTextFxml);
+    }
+
+    @FXML
+    private void openHtmlToPdf(ActionEvent event) {
+        loadScene(CommonValues.HtmlToPdfFxml);
+    }
+
+    @FXML
+    private void openHtmlToUTF8(ActionEvent event) {
+        loadScene(CommonValues.HtmlToUTF8Fxml);
+    }
+
+    @FXML
+    private void openHtmlSnap(ActionEvent event) {
+        loadScene(CommonValues.HtmlSnapFxml);
+    }
+
+    @FXML
+    private void openHtmlMergeAsHtml(ActionEvent event) {
+        loadScene(CommonValues.HtmlMergeAsHtmlFxml);
+    }
+
+    @FXML
+    private void openHtmlMergeAsMarkdown(ActionEvent event) {
+        loadScene(CommonValues.HtmlMergeAsMarkdownFxml);
+    }
+
+    @FXML
+    private void openHtmlMergeAsPDF(ActionEvent event) {
+        loadScene(CommonValues.HtmlMergeAsPDFFxml);
+    }
+
+    @FXML
+    private void openHtmlMergeAsText(ActionEvent event) {
+        loadScene(CommonValues.HtmlMergeAsTextFxml);
+    }
+
+    @FXML
+    private void openHtmlFrameset(ActionEvent event) {
+        loadScene(CommonValues.HtmlFramesetFxml);
     }
 
     @FXML
@@ -1137,6 +1201,11 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
+    private void openConvertUrl(ActionEvent event) {
+        loadScene(CommonValues.HtmlConvertUrlFxml);
+    }
+
+    @FXML
     private void openMediaPlayer(ActionEvent event) {
         loadScene(CommonValues.MediaPlayerFxml);
     }
@@ -1189,6 +1258,16 @@ public class MainMenuController extends BaseController {
     @FXML
     private void restoreCheckingSSLCertifications(ActionEvent event) {
         restoreCheckingSSL();
+    }
+
+    @FXML
+    protected void downloadManage(ActionEvent event) {
+        loadScene(CommonValues.DownloadManageFxml);
+    }
+
+    @FXML
+    protected void downloadFirstLevelLinks(ActionEvent event) {
+        loadScene(CommonValues.DownloadFirstLevelLinksFxml);
     }
 
     @FXML
@@ -1273,15 +1352,16 @@ public class MainMenuController extends BaseController {
     @FXML
     public void makeIcons() {
         synchronized (this) {
-            if (task != null) {
+            if (iconTask != null && !iconTask.isQuit()) {
                 return;
             }
-            task = devTools.makeIconsTask(parentController);
-            if (task == null) {
+            iconTask = devTools.makeIconsTask(parentController);
+            if (iconTask == null) {
                 return;
             }
-            parentController.openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
+            parentController.openHandlingStage(iconTask, Modality.WINDOW_MODAL);
+            iconTask.setSelf(iconTask);
+            Thread thread = new Thread(iconTask);
             thread.setDaemon(true);
             thread.start();
         }

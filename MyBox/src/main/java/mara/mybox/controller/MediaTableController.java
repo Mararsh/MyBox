@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import javafx.application.Platform;
-import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
@@ -23,6 +22,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import static mara.mybox.controller.MediaPlayerController.MiaoGuaiGuaiBenBen;
+import mara.mybox.data.BaseTask;
 import mara.mybox.data.MediaInformation;
 import mara.mybox.data.MediaList;
 import mara.mybox.data.StringTable;
@@ -35,7 +35,7 @@ import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.TableDurationCell;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.VisitHistoryTools;
+import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.value.AppVariables.message;
@@ -140,12 +140,10 @@ public class MediaTableController extends BatchTableController<MediaInformation>
     protected void readMediaInfo(MediaInformation info) {
         synchronized (this) {
             try {
-                Task infoTask = new Task<Void>() {
-
-                    private String error;
+                SingletonTask infoTask = new SingletonTask<Void>() {
 
                     @Override
-                    protected Void call() {
+                    protected boolean handle() {
                         try {
                             Media media = new Media(info.getURI().toString());
                             if (media.getError() == null) {
@@ -159,7 +157,7 @@ public class MediaTableController extends BatchTableController<MediaInformation>
                             } else {
                                 handleMediaError(info, media.getError());
                                 cancel();
-                                return null;
+                                return false;
                             }
                             MediaPlayer player = new MediaPlayer(media);
                             if (player.getError() == null) {
@@ -173,7 +171,7 @@ public class MediaTableController extends BatchTableController<MediaInformation>
                             } else {
                                 handleMediaError(info, player.getError());
                                 cancel();
-                                return null;
+                                return false;
                             }
 
                             player.setOnReady(new Runnable() {
@@ -197,20 +195,23 @@ public class MediaTableController extends BatchTableController<MediaInformation>
                                 }
                             });
 
+                            info.setFinish(true);
+                            return true;
+
                         } catch (Exception e) {
                             error = e.toString();
+                            return false;
                         }
-                        info.setFinish(true);
-                        return null;
+
                     }
 
                     @Override
-                    protected void succeeded() {
-                        super.succeeded();
+                    protected void whenFailed() {
                         if (error != null) {
                             popError(error);
+                        } else {
+                            popFailed();
                         }
-
                     }
 
                 };
@@ -649,7 +650,7 @@ public class MediaTableController extends BatchTableController<MediaInformation>
 
     public void loadMiaoSounds() {
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit()) {
                 return;
             }
             tableData.clear();
@@ -722,6 +723,7 @@ public class MediaTableController extends BatchTableController<MediaInformation>
 
                 };
                 parentController.openHandlingStage(task, Modality.WINDOW_MODAL);
+                task.setSelf(task);
                 Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();
@@ -735,7 +737,7 @@ public class MediaTableController extends BatchTableController<MediaInformation>
     }
 
     @FXML
-    public void newAction() {
+    public void addAction() {
         tableView.getSelectionModel().clearSelection();
 
         mediaListName = null;

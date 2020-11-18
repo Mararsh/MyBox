@@ -456,13 +456,19 @@ public class FilesArchiveCompressController extends FilesBatchController {
             if (!message("None").equals(compressor)) {
                 File tmpFile = FileTools.getTempFile();
                 try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(archiveFile));
-                      BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(tmpFile));
-                      CompressorOutputStream compressOut = new CompressorStreamFactory().
-                             createCompressorOutputStream(compressor, out)) {
+                         BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(tmpFile));
+                         CompressorOutputStream compressOut = new CompressorStreamFactory().
+                                createCompressorOutputStream(compressor, out)) {
                     IOUtils.copy(inputStream, compressOut);
+                }
+                if (targetFile.exists()) {
+                    targetFile.delete();
                 }
                 tmpFile.renameTo(targetFile);
             } else {
+                if (targetFile.exists()) {
+                    targetFile.delete();
+                }
                 archiveFile.renameTo(targetFile);
             }
         } catch (Exception e) {

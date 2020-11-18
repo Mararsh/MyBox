@@ -6,7 +6,7 @@ import mara.mybox.data.VisitHistory;
 import mara.mybox.image.ImageFileInformation;
 import mara.mybox.image.ImageInformation;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.VisitHistoryTools;
+import mara.mybox.data.tools.VisitHistoryTools;
 import mara.mybox.value.CommonFxValues;
 
 /**
@@ -43,7 +43,7 @@ public abstract class ImagesBatchController extends FilesBatchController {
         sourceFile = file;
         imageInformation = null;
         synchronized (this) {
-            if (task != null) {
+            if (task != null && !task.isQuit() ) {
                 return;
             }
             task = new SingletonTask<Void>() {
@@ -69,7 +69,7 @@ public abstract class ImagesBatchController extends FilesBatchController {
 
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
+            task.setSelf(task);Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         }

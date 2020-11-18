@@ -43,9 +43,10 @@ public class BarcodeDecoderController extends ImageViewerController {
     }
 
     @Override
-    public void afterImageLoaded() {
-        super.afterImageLoaded();
+    public boolean afterImageLoaded() {
         codeInput.setText("");
+        return super.afterImageLoaded();
+
     }
 
     @FXML
@@ -56,7 +57,7 @@ public class BarcodeDecoderController extends ImageViewerController {
         }
         try {
             synchronized (this) {
-                if (task != null) {
+                if (task != null && !task.isQuit()) {
                     return;
                 }
                 task = new SingletonTask<Void>() {
@@ -114,6 +115,7 @@ public class BarcodeDecoderController extends ImageViewerController {
 
                 };
                 openHandlingStage(task, Modality.WINDOW_MODAL);
+                task.setSelf(task);
                 Thread thread = new Thread(task);
                 thread.setDaemon(true);
                 thread.start();

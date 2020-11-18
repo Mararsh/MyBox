@@ -33,8 +33,7 @@ import mara.mybox.value.CommonValues;
 public abstract class TableBase<D> {
 
     protected String tableName, idColumn;
-    protected List<ColumnDefinition> columns;
-    protected List<String> primaryColumns, foreignColumns;
+    protected List<ColumnDefinition> columns, primaryColumns, foreignColumns;
     protected Era.Format timeFormat;
     protected boolean supportBatchUpdate;
 
@@ -69,7 +68,7 @@ public abstract class TableBase<D> {
         }
         try {
             try ( PreparedStatement statement = conn.prepareStatement(queryStatement())) {
-                if (setColumnsValues(statement, primaryColumns(), data, 1) < 0) {
+                if (setColumnsValues(statement, primaryColumns, data, 1) < 0) {
                     return null;
                 }
                 return query(conn, statement);
@@ -91,11 +90,10 @@ public abstract class TableBase<D> {
                 ColumnDefinition column = columns.get(i);
                 Object value = readColumnValue(results, column);
                 setValue(data, column.name, value);
-//                logger.debug(column.name + " " + value);
             }
             for (int i = 0; i < foreignColumns.size(); ++i) {
-                String name = foreignColumns.get(i);
-//                logger.debug(name);
+                ColumnDefinition column = foreignColumns.get(i);
+                String name = column.getName();
                 Object value = readForeignValue(results, name);
                 if (!setForeignValue(data, name, value)) {
                     return null;
@@ -134,9 +132,9 @@ public abstract class TableBase<D> {
                 case Short:
                     return results.getShort(column.name);
                 case Datetime:
-                    return results.getTimestamp(column.name).getTime();
+                    return results.getTimestamp(column.name);
                 case Date:
-                    return results.getDate(column.name).getTime();
+                    return results.getDate(column.name);
                 default:
                     logger.debug(column.name + " " + column.getType());
             }
@@ -329,7 +327,7 @@ public abstract class TableBase<D> {
             if (index < 0) {
                 return false;
             }
-            return setColumnsValues(statement, primaryColumns(), data, index) > 0;
+            return setColumnsValues(statement, primaryColumns, data, index) > 0;
         } catch (Exception e) {
             failed(e);
 //            logger.debug(e.toString());
@@ -341,7 +339,7 @@ public abstract class TableBase<D> {
         if (conn == null || statement == null || !valid(data)) {
             return false;
         }
-        return setColumnsValues(statement, primaryColumns(), data, 1) > 0;
+        return setColumnsValues(statement, primaryColumns, data, 1) > 0;
     }
 
     public List<String> allFields() {
@@ -393,10 +391,10 @@ public abstract class TableBase<D> {
                 idColumn = column.getName();
             }
             if (column.isIsPrimaryKey()) {
-                primaryColumns.add(column.getName());
+                primaryColumns.add(column);
             }
             if (column.getForeignTable() != null && column.getForeignColumn() != null) {
-                foreignColumns.add(column.getName());
+                foreignColumns.add(column);
             }
         }
         return this;
@@ -463,7 +461,7 @@ public abstract class TableBase<D> {
             if (i > 0) {
                 sql += ", ";
             }
-            sql += primaryColumns.get(i);
+            sql += primaryColumns.get(i).getName();
 
         }
         sql += " ) ";
@@ -511,7 +509,17 @@ public abstract class TableBase<D> {
         }
     }
 
-    public boolean clearTable(Connection conn) {
+    public boolean clearData() {
+        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
+            return clearData(conn);
+        } catch (Exception e) {
+            failed(e);
+            // logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public boolean clearData(Connection conn) {
         try {
             if (conn == null) {
                 return false;
@@ -577,13 +585,13 @@ public abstract class TableBase<D> {
             return null;
         }
         String sql = null;
-        for (String column : primaryColumns) {
+        for (ColumnDefinition column : primaryColumns) {
             if (sql == null) {
                 sql = "SELECT * FROM " + tableName + " WHERE ";
             } else {
                 sql += " AND ";
             }
-            sql += column + "=? ";
+            sql += column.getName() + "=? ";
         }
         return sql;
     }
@@ -633,22 +641,10 @@ public abstract class TableBase<D> {
         }
         List<ColumnDefinition> columnsList = new ArrayList<>();
         for (ColumnDefinition column : columns) {
-            String name = column.getName();
-            if (primaryColumns.contains(name)) {
+            if (primaryColumns.contains(column)) {
                 continue;
             }
             columnsList.add(column);
-        }
-        return columnsList;
-    }
-
-    public List<ColumnDefinition> primaryColumns() {
-        if (tableName == null || columns.isEmpty()) {
-            return null;
-        }
-        List<ColumnDefinition> columnsList = new ArrayList<>();
-        for (String name : primaryColumns) {
-            columnsList.add(column(name));
         }
         return columnsList;
     }
@@ -660,7 +656,7 @@ public abstract class TableBase<D> {
         String update = null;
         for (ColumnDefinition column : columns) {
             String name = column.getName();
-            if (primaryColumns.contains(name)) {
+            if (primaryColumns.contains(column)) {
                 continue;
             }
             if (update == null) {
@@ -671,13 +667,13 @@ public abstract class TableBase<D> {
             update += name + "=? ";
         }
         String where = null;
-        for (String key : primaryColumns) {
+        for (ColumnDefinition column : primaryColumns) {
             if (where == null) {
                 where = " WHERE ";
             } else {
                 where += " AND ";
             }
-            where += key + "=?";
+            where += column.getName() + "=?";
         }
         return update + (where != null ? where : "");
     }
@@ -688,13 +684,13 @@ public abstract class TableBase<D> {
         }
         String delete = "DELETE FROM " + tableName;
         String where = null;
-        for (String key : primaryColumns) {
+        for (ColumnDefinition column : primaryColumns) {
             if (where == null) {
                 where = " WHERE ";
             } else {
                 where += " AND ";
             }
-            where += key + "=?";
+            where += column.getName() + "=?";
         }
         return delete + (where != null ? where : "");
     }
@@ -819,6 +815,53 @@ public abstract class TableBase<D> {
             logger.debug(e.toString());
             return null;
         }
+    }
+
+    public D query(Connection conn, PreparedStatement statement, String value) {
+        if (conn == null || statement == null || value == null) {
+            return null;
+        }
+        try {
+            D data;
+            statement.setMaxRows(1);
+            statement.setString(1, value);
+            try ( ResultSet results = statement.executeQuery()) {
+                if (results.next()) {
+                    data = readData(results);
+                } else {
+                    return null;
+                }
+            }
+            return data;
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            logger.debug(value);
+            return null;
+        }
+    }
+
+    public List<D> queryPreLike(Connection conn, PreparedStatement statement, String value) {
+        List<D> dataList = new ArrayList<>();
+        if (conn == null || statement == null || value == null) {
+            return dataList;
+        }
+        try {
+            statement.setMaxRows(1);
+            statement.setString(1, "%" + value);
+            try ( ResultSet results = statement.executeQuery()) {
+                while (results.next()) {
+                    D data = readData(results);
+                    dataList.add(data);
+                }
+            }
+            return dataList;
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            logger.debug(value);
+        }
+        return dataList;
     }
 
     public List<D> query(PreparedStatement statement) {
@@ -1001,6 +1044,36 @@ public abstract class TableBase<D> {
         return count;
     }
 
+    public int update(Connection conn, PreparedStatement statement, String value) {
+        if (conn == null || statement == null || value == null) {
+            return 0;
+        }
+        try {
+            statement.setString(1, value);
+            return statement.executeUpdate();
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            logger.debug(value);
+            return 0;
+        }
+    }
+
+    public int updatePreLike(Connection conn, PreparedStatement statement, String value) {
+        if (conn == null || statement == null || value == null) {
+            return 0;
+        }
+        try {
+            statement.setString(1, "%" + value);
+            return statement.executeUpdate();
+        } catch (Exception e) {
+            failed(e);
+            logger.debug(e.toString());
+            logger.debug(value);
+            return 0;
+        }
+    }
+
     public TableBase readDefinitionFromDB(String tableName) {
         try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + login)) {
             return readDefinitionFromDB(conn, tableName);
@@ -1109,15 +1182,6 @@ public abstract class TableBase<D> {
         return this;
     }
 
-    public List<String> getPrimaryColumns() {
-        return primaryColumns;
-    }
-
-    public TableBase setPrimaryColumns(List<String> primaryColumns) {
-        this.primaryColumns = primaryColumns;
-        return this;
-    }
-
     public Era.Format getTimeFormat() {
         return timeFormat;
     }
@@ -1127,13 +1191,20 @@ public abstract class TableBase<D> {
         return this;
     }
 
-    public List<String> getForeignColumns() {
+    public List<ColumnDefinition> getPrimaryColumns() {
+        return primaryColumns;
+    }
+
+    public void setPrimaryColumns(List<ColumnDefinition> primaryColumns) {
+        this.primaryColumns = primaryColumns;
+    }
+
+    public List<ColumnDefinition> getForeignColumns() {
         return foreignColumns;
     }
 
-    public TableBase setForeignColumns(List<String> foreignColumns) {
+    public void setForeignColumns(List<ColumnDefinition> foreignColumns) {
         this.foreignColumns = foreignColumns;
-        return this;
     }
 
     public boolean isSupportBatchUpdate() {

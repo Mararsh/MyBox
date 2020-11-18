@@ -123,11 +123,11 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="addButton" mnemonicParsing="false" onAction="#newAction">
+                <Button fx:id="addButton" mnemonicParsing="false" onAction="#addAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/iconPlus.png" />
+                                <Image url="@../buttons/iconAdd.png" />
                             </image>
                         </ImageView>
                     </graphic>

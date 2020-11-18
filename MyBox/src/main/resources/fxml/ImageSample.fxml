@@ -26,9 +26,9 @@ License:    Apache License Version 2.0
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
     <center>
-        <VBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
+        <VBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" BorderPane.alignment="CENTER">
             <children>
-                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
+                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
                     <children>
                         <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile">
                             <graphic>
@@ -39,11 +39,21 @@ License:    Apache License Version 2.0
                                 </ImageView>
                             </graphic>
                         </Button>
-
-                        <Label fx:id="sampledTips" maxWidth="1.7976931348623157E308" styleClass="darkRed-label" stylesheets="@../styles/MyBox.css" text="%Sampled" visible="false" HBox.hgrow="ALWAYS" />
+                        <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconTips.png" />
+                            </image>
+                        </ImageView>
+                        <ImageView fx:id="sampledView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconSampled.png" />
+                            </image>
+                        </ImageView>
+                        <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                         <HBox fx:id="opBox" alignment="CENTER_LEFT" spacing="5.0" HBox.hgrow="NEVER">
                             <children>
                                 <Label alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" fx:id="xyLabel" />
+                        <CheckBox fx:id="contextMenuCheck" mnemonicParsing="false" selected="true" text="%ContextMenu" />
                                 <CheckBox fx:id="coordinateCheck" mnemonicParsing="false">
                                     <graphic>
                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -80,6 +90,15 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </graphic>
                                 </CheckBox>
+                              <Button fx:id="selectAllButton" mnemonicParsing="false" onAction="#selectAllAction">
+                                  <graphic>
+                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                          <image>
+                                              <Image url="@../buttons/iconSelectAll.png" />
+                                          </image>
+                                      </ImageView>
+                                  </graphic>
+                              </Button>
                                 <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -135,49 +154,22 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Save" />
+                                <Button fx:id="saveAsButton" defaultButton="true" mnemonicParsing="false" onAction="#saveAsAction" styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconSaveAs.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
                             </children>
                         </HBox>
                     </children>
                 </HBox>
-                <HBox fx:id="sampleBox" alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" spacing="5.0" VBox.vgrow="NEVER">
-                    <children>
-                        <Label fx:id="sampleLabel" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" HBox.hgrow="ALWAYS" />
-                        <Label text="%SubsampleWidth" />
-                        <Label text="1:">
-                            <padding>
-                                <Insets left="10.0" />
-                            </padding>
-                        </Label>
-                        <ComboBox fx:id="widthBox" editable="true" prefWidth="100.0" />
-                        <Label text="%SubsampleHeight">
-                            <padding>
-                                <Insets left="20.0" />
-                            </padding>
-                        </Label>
-                        <Label text="1:">
-                            <padding>
-                                <Insets left="10.0" />
-                            </padding>
-                        </Label>
-                        <ComboBox fx:id="heightBox" editable="true" prefWidth="100.0" />
-                        <Button fx:id="selectAllButton" mnemonicParsing="false" onAction="#selectAllAction">
-                            <graphic>
-                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../buttons/iconSelectAll.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                        </Button>
-                    </children>
-                    <VBox.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                    </VBox.margin>
-                </HBox>
-                <SplitPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                <SplitPane fx:id="splitPane" dividerPositions="0.7" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                     <items>
-                        <VBox fx:id="showBox" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                        <VBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                             <children>
                                 <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
                                     <content>
@@ -244,6 +236,85 @@ License:    Apache License Version 2.0
                                 </ScrollPane>
                             </children>
                         </VBox>
+                  <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="536.0" prefViewportWidth="580.0">
+                     <content>
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                           <children>
+                              <VBox fx:id="rectangleBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                 <children>
+                                    <Label fx:id="sampleLabel1" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%SampleRegion" />
+                                    <Label text="%LeftTop" />
+                                    <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" spacing="5.0">
+                                       <children>
+                                          <Label text="x" />
+                                          <TextField fx:id="rectLeftTopXInput" prefWidth="100.0" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" spacing="5.0">
+                                       <children>
+                                          <Label text="y" />
+                                          <TextField fx:id="rectLeftTopYInput" prefWidth="100.0" />
+                                       </children>
+                                    </HBox>
+                                    <Label text="%RightBottom" />
+                                    <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" spacing="5.0">
+                                       <children>
+                                          <Label text="x" />
+                                          <TextField fx:id="rightBottomXInput" prefWidth="100.0" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" spacing="5.0">
+                                       <children>
+                                          <Label text="y" />
+                                          <TextField fx:id="rightBottomYInput" prefWidth="100.0" />
+                                       </children>
+                                    </HBox>
+                                    <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
+                                       <graphic>
+                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/iconOK.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </Button>
+                                 </children>
+                              </VBox>
+                              <VBox fx:id="rectangleBox1" layoutX="15.0" layoutY="15.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                 <children>
+                                    <Label fx:id="sampleLabel11" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%SampleScale" />
+                                    <FlowPane hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
+                                       <children>
+                                          <Label fx:id="label1" text="%Width" />
+                                          <Label text="1：">
+                                             <FlowPane.margin>
+                                                <Insets left="10.0" />
+                                             </FlowPane.margin>
+                                          </Label>
+                                          <ComboBox fx:id="widthScaleSelector" editable="true" prefWidth="150.0" />
+                                       </children>
+                                    </FlowPane>
+                                    <FlowPane hgap="5.0" layoutX="15.0" layoutY="73.0" vgap="5.0">
+                                       <children>
+                                          <Label fx:id="label2" text="%Height" />
+                                          <Label text="1：">
+                                             <FlowPane.margin>
+                                                <Insets left="10.0" />
+                                             </FlowPane.margin>
+                                          </Label>
+                                          <ComboBox fx:id="heightScaleSelector" editable="true" prefWidth="150.0" />
+                                       </children>
+                                    </FlowPane>
+                                 </children>
+                              </VBox>
+                                    <Label fx:id="infoLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" />
+                           </children>
+                           <padding>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </padding>
+                        </VBox>
+                     </content>
+                  </ScrollPane>
                     </items>
                 </SplitPane>
 

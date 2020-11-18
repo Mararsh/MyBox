@@ -13,7 +13,6 @@ import javafx.scene.text.Font;
 import mara.mybox.data.FileEditInformation;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.ByteTools;
-import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
@@ -28,7 +27,6 @@ public class TextEditerController extends FileEditerController {
 
     public TextEditerController() {
         baseTitle = AppVariables.message("TextEditer");
-
         TipsLabelKey = "TextEditerTips";
 
         setTextType();
@@ -132,43 +130,11 @@ public class TextEditerController extends FileEditerController {
     }
 
     @Override
-    protected boolean validateFindString(String string) {
-        if (string.length() >= sourceInformation.getPageSize()) {
-            popError(AppVariables.message("FindStringLimitation"));
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    @Override
     protected void changeCurrentCharset() {
         sourceInformation.setCharset(Charset.forName(encodeBox.getSelectionModel().getSelectedItem()));
         charsetByUser = !isSettingValues;
         if (!isSettingValues && sourceFile != null) {
             openFile(sourceFile);
-        }
-    }
-
-    @Override
-    protected void countCurrentFound() {
-        if (!findWhole || sourceInformation.getPagesNumber() <= 1) {
-            return;
-        }
-        currentFound = null;
-        if (sourceInformation.getCurrentFound() != null) {
-            long start = sourceInformation.getCurrentFound().getStart();
-            long end = sourceInformation.getCurrentFound().getEnd();
-            int pos = (int) (start % sourceInformation.getPageSize());
-            int p = (int) (start / sourceInformation.getPageSize() + 1);
-            if (p == currentPage) {
-                if (pos > 0 && sourceInformation.getLineBreak() == FileEditInformation.Line_Break.CRLF) {
-                    pos -= StringTools.countNumber(mainArea.getText().substring(0, pos), "\n");
-                }
-                int pstart = pos;
-                int pend = pstart + (int) (end - start);
-                currentFound = new IndexRange(pstart, pend);
-            }
         }
     }
 

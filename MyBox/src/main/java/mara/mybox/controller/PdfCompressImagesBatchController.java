@@ -1,14 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Arrays;
-import java.util.Iterator;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -21,15 +15,10 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageBinary;
-import mara.mybox.tools.FileTools;
-import mara.mybox.tools.PdfTools;
 import mara.mybox.tools.PdfTools.PdfImageFormat;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.AppVariables.logger;
-import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.PDResources;
 import org.apache.pdfbox.pdmodel.graphics.image.CCITTFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.JPEGFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
@@ -37,14 +26,13 @@ import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 /**
  * @Author Mara
  * @CreateDate 2018-9-10
- * @Description
  * @License Apache License Version 2.0
  */
-public class PdfCompressImagesBatchController extends PdfBatchController {
+public class PdfCompressImagesBatchController extends PdfImagesConvertBatchController {
 
     protected String AuthorKey;
     protected int jpegQuality, threshold;
-    protected PdfImageFormat format;
+    protected PdfImageFormat pdfFormat;
     protected PDDocument targetDoc;
     protected File tmpFile;
 
@@ -55,11 +43,30 @@ public class PdfCompressImagesBatchController extends PdfBatchController {
     @FXML
     protected TextField thresholdInput, authorInput;
     @FXML
-    protected CheckBox ditherCheck, copyAllCheck;
+    protected CheckBox ditherCheck;
 
     public PdfCompressImagesBatchController() {
         baseTitle = AppVariables.message("PdfCompressImagesBatch");
         AuthorKey = "AuthorKey";
+    }
+
+    @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            startButton.disableProperty().unbind();
+            startButton.disableProperty().bind(
+                    Bindings.isEmpty(tableView.getItems())
+                            .or(Bindings.isEmpty(targetPathInput.textProperty()))
+                            .or(targetPathInput.styleProperty().isEqualTo(badStyle))
+                            .or(jpegBox.styleProperty().isEqualTo(badStyle))
+                            .or(thresholdInput.styleProperty().isEqualTo(badStyle))
+                            .or(Bindings.isEmpty(tableView.getItems()))
+            );
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
     }
 
     @Override
@@ -112,10 +119,10 @@ public class PdfCompressImagesBatchController extends PdfBatchController {
 
         RadioButton selected = (RadioButton) formatGroup.getSelectedToggle();
         if (AppVariables.message("CCITT4").equals(selected.getText())) {
-            format = PdfImageFormat.Tiff;
+            pdfFormat = PdfImageFormat.Tiff;
             thresholdInput.setDisable(false);
         } else if (AppVariables.message("JpegQuailty").equals(selected.getText())) {
-            format = PdfImageFormat.Jpeg;
+            pdfFormat = PdfImageFormat.Jpeg;
             jpegBox.setDisable(false);
             checkJpegQuality();
         }
@@ -156,114 +163,27 @@ public class PdfCompressImagesBatchController extends PdfBatchController {
     }
 
     @Override
-    public void initControls() {
-        try {
-            super.initControls();
-
-            startButton.disableProperty().unbind();
-            startButton.disableProperty().bind(
-                    Bindings.isEmpty(tableView.getItems())
-                            .or(Bindings.isEmpty(targetPathInput.textProperty()))
-                            .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-                            .or(jpegBox.styleProperty().isEqualTo(badStyle))
-                            .or(thresholdInput.styleProperty().isEqualTo(badStyle))
-                            .or(Bindings.isEmpty(tableView.getItems()))
-            );
-        } catch (Exception e) {
-            logger.debug(e.toString());
+    public PDImageXObject handleImage(BufferedImage sourceImage) {
+        if (sourceImage == null) {
+            return null;
         }
-    }
-
-    @Override
-    public boolean preHandlePages() {
         try {
-            File tFile = makeTargetFile(FileTools.getFilePrefix(currentParameters.currentSourceFile.getName()),
-                    ".pdf", currentParameters.currentTargetPath);
-            currentTargetFile = tFile.getAbsolutePath();
-            tmpFile = FileTools.getTempFile();
-            if (copyAllCheck.isSelected()) {
-//                doc.save(tFile);
-                targetDoc = doc;
-            } else {
-                targetDoc = PdfTools.createPDF(tmpFile, authorInput.getText());
-            }
+            PDImageXObject newObject = null;
+            if (pdfFormat == PdfImageFormat.Tiff) {
+                ImageBinary imageBinary = new ImageBinary(sourceImage, threshold);
+                imageBinary.setIsDithering(ditherCheck.isSelected());
+                BufferedImage newImage = imageBinary.operate();
+                newImage = ImageBinary.byteBinary(newImage);
+                newObject = CCITTFactory.createFromImage(doc, newImage);
 
+            } else if (pdfFormat == PdfImageFormat.Jpeg) {
+                newObject = JPEGFactory.createFromImage(doc, sourceImage, jpegQuality / 100f);
+            }
+            return newObject;
         } catch (Exception e) {
             logger.error(e.toString());
-            targetDoc = null;
+            return null;
         }
-        return targetDoc != null;
     }
 
-    @Override
-    public int handleCurrentPage() {
-        int count = 0;
-        try {
-            PDPage sourcePage = doc.getPage(currentParameters.currentPage - 1);  // 0-based
-            PDResources pdResources = sourcePage.getResources();
-            pdResources.getXObjectNames();
-            Iterable<COSName> iterable = pdResources.getXObjectNames();
-            if (iterable == null) {
-                return 0;
-            }
-            Iterator<COSName> pageIterator = iterable.iterator();
-            while (pageIterator.hasNext()) {
-                if (task.isCancelled()) {
-                    break;
-                }
-                COSName cosName = pageIterator.next();
-                if (!pdResources.isImageXObject(cosName)) {
-                    continue;
-                }
-                PDImageXObject pdxObject = (PDImageXObject) pdResources.getXObject(cosName);
-                BufferedImage sourceImage = pdxObject.getImage();
-                PDImageXObject newObject = null;
-                if (format == PdfImageFormat.Tiff) {
-                    ImageBinary imageBinary = new ImageBinary(sourceImage, threshold);
-                    imageBinary.setIsDithering(ditherCheck.isSelected());
-                    BufferedImage newImage = imageBinary.operate();
-                    newImage = ImageBinary.byteBinary(newImage);
-                    newObject = CCITTFactory.createFromImage(doc, newImage);
-
-                } else if (format == PdfImageFormat.Jpeg) {
-                    newObject = JPEGFactory.createFromImage(doc, sourceImage, jpegQuality / 100f);
-                }
-                if (newObject != null) {
-                    pdResources.put(cosName, newObject);
-                    count++;
-                }
-                if (isPreview) {
-                    break;
-                }
-            }
-            if (copyAllCheck.isSelected()) {
-                targetDoc.getPage(currentParameters.currentPage - 1).setResources(pdResources);
-            } else {
-                targetDoc.addPage(sourcePage);
-            }
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-        return count;
-
-    }
-
-    @Override
-    public void postHandlePages() {
-        try {
-            if (targetDoc != null) {
-                targetDoc.save(tmpFile);
-                targetDoc.close();
-                File tFile = new File(currentTargetFile);
-                if (tFile.exists()) {
-                    tFile.delete();
-                }
-                tmpFile.renameTo(tFile);
-                targetFileGenerated(tFile);
-            }
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-        targetDoc = null;
-    }
 }

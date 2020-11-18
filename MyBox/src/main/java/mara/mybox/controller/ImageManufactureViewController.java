@@ -23,21 +23,27 @@ public class ImageManufactureViewController extends ImageManufactureOperationCon
     @Override
     public void initPane() {
         try {
+            imageController.rulerXCheck = rulerXCheck;
+            imageController.rulerYCheck = rulerYCheck;
+            imageController.coordinateCheck = coordinateCheck;
+            imageController.contextMenuCheck = contextMenuCheck;
+
             zoomStepSelector.getItems().addAll(
                     Arrays.asList("10", "20", "5", "1", "3", "15", "30", "25", "45")
             );
             zoomStepSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> ov, String oldVal, String newVal) {
-                    if (imageController == null || imageController.image == null) {
-                        return;
-                    }
                     zoomStep = Integer.valueOf(newVal);
                     AppVariables.setUserConfigValue(baseName + "ZoomStep", zoomStep + "");
-                    imageController.xZoomStep = (int) (imageController.image.getWidth() * zoomStep / 100);
-                    imageController.yZoomStep = (int) (imageController.image.getHeight() * zoomStep / 100);
-                    scopeController.xZoomStep = (int) (scopeController.image.getWidth() * zoomStep / 100);
-                    scopeController.yZoomStep = (int) (scopeController.image.getHeight() * zoomStep / 100);
+                    if (imageController != null && imageController.image != null) {
+                        imageController.xZoomStep = (int) (imageController.image.getWidth() * zoomStep / 100);
+                        imageController.yZoomStep = (int) (imageController.image.getHeight() * zoomStep / 100);
+                    }
+                    if (scopeController != null && scopeController.image != null) {
+                        scopeController.xZoomStep = (int) (scopeController.image.getWidth() * zoomStep / 100);
+                        scopeController.yZoomStep = (int) (scopeController.image.getHeight() * zoomStep / 100);
+                    }
                 }
             });
             zoomStepSelector.getSelectionModel().select(AppVariables.getUserConfigValue(baseName + "ZoomStep", "10"));

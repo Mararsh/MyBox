@@ -4,7 +4,7 @@
 
     <groupId>mara</groupId>
     <artifactId>MyBox</artifactId>
-    <version>6.3.4</version>
+    <version>6.3.5</version>
     <packaging>jar</packaging>
     <name>MyBox</name>
     <properties>
@@ -65,7 +65,7 @@
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>pdfbox</artifactId>
-            <version>2.0.17</version>
+            <version>2.0.21</version>
         </dependency>
         <dependency>
             <groupId>net.sf.cssbox</groupId>
@@ -170,7 +170,7 @@
         <dependency>
             <groupId>com.vladsch.flexmark</groupId>
             <artifactId>flexmark-all</artifactId>
-            <version>0.50.26</version>
+            <version>0.62.2</version>
             <classifier>lib</classifier>
         </dependency>
         <dependency>
@@ -213,16 +213,6 @@
             <artifactId>javax.mail</artifactId>
             <version>1.6.2</version>
         </dependency>
-        <!--        <dependency>
-            <groupId>org.jcodec</groupId>
-            <artifactId>jcodec</artifactId>
-            <version>0.2.3</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jcodec</groupId>
-            <artifactId>jcodec-javase</artifactId>
-            <version>0.2.3</version>
-        </dependency>-->
     </dependencies>
 
     <!--    <repositories>

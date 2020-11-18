@@ -77,7 +77,16 @@
         </FlowPane>
         <HBox fx:id="opBox" alignment="CENTER_LEFT" spacing="5.0">
             <children>
-                <Button fx:id="editButton" mnemonicParsing="false" onAction="#editAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Edit" HBox.hgrow="NEVER" />
+                <Button fx:id="editButton"  mnemonicParsing="false" onAction="#editAction"
+                        styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconEdit.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
                 <Button fx:id="previewButton" mnemonicParsing="false" onAction="#previewAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
